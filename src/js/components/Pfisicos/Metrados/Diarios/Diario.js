@@ -61,7 +61,8 @@ class MDdiario extends Component {
     }
 
   }
-  CapturarID(data, NombComp, unidad_med, P_unit, saldo_metrado, idcomp, porcentaje, avance_metrado, metrado_temporal, index, parcial_temporal) {        
+  CapturarID(data, NombComp, unidad_med, P_unit, saldo_metrado, idcomp, porcentaje, avance_metrado, metrado_temporal, index, parcial_temporal) {
+    e.preventDefault()        
     this.setState({
       value: '',
       descripcion: '',
@@ -145,7 +146,7 @@ class MDdiario extends Component {
                                         width: '100%',
                                         height: '100%',
                                       }}
-                                      className={(row.original.u_med_temporal === "" ? 'd-none' :'')}
+                                      className={(row.original.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}
                                       >
 
                                       <div className="clearfix">
@@ -241,7 +242,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "Metrar",
                                   accessor: "_id",
-                                  maxWidth: 50,
+                                  maxWidth: 30,
                                   Cell: id => (
                                     <div className={(id.original.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}>
                                       <button className="btn btn-sm btn-outline-light text-primary" href="#myModal" onClick={((e) => this.CapturarID (id.original.id_temporal, id.original.decrip_temporal, id.original.u_med_temporal, id.original.precio_temporal, id.original.metrados_saldo, indexComp, id.original.porcentaje, id.original.avance_metrado, id.original.metrado_temporal, id.viewIndex, id.original.parcial_temporal))} >
@@ -256,7 +257,7 @@ class MDdiario extends Component {
                           defaultPageSize={10}
                           className="-striped -highlight table table-responsive table-sm small"
                           SubComponent={row => {
-                            // console.log('row>>',row.original)
+                            // console.log('row>>',row.original.actividades)
                             return (
                               <div style={{ padding: "5px" }}>
                                 <label>
@@ -270,7 +271,7 @@ class MDdiario extends Component {
                                         Header: "nombre_actividad",
                                         accessor: "nombre_actividad"
                                       }, {
-                                        Header: "VEC",
+                                        Header: "N° VECES",
                                         id: "veces_actividad",
                                         accessor: d => d.veces_actividad
                                       },{
@@ -283,12 +284,18 @@ class MDdiario extends Component {
                                         Header: "ALTO",
                                         accessor: "alto_actividad"
                                       },{
-                                        Header: "PARCIAL",
+                                        Header: "METRADO",
+                                        id: "metrado_actividad",
+                                        accessor: m => m.metrado_actividad + ' ' + m.unidad_medida,
+                                      },{
+                                        Header: "P/U S/.",
+                                        accessor: "costo_unitario"
+                                      },{
+                                        Header: "S/. PARCIAL",
                                         accessor: "parcial_actividad"
                                       },{
                                         Header: "Metrar",
                                         accessor: "id_partida",
-                                        maxWidth: 50,
                                         Cell: id => (
                                           <div className={(id.original.id_partida === "" ? 'd-none' : this.ControlAcceso())}>
                                             <button className="btn btn-sm btn-outline-light text-primary" href="#myModal" onClick={((e) => this.CapturarID (id.original.id_partida, id.original.decrip_temporal, id.original.u_med_temporal, id.original.precio_temporal, id.original.metrados_saldo, indexComp, id.original.porcentaje, id.original.avance_metrado, id.original.metrado_temporal, id.viewIndex, id.original.parcial_temporal))} >
@@ -298,7 +305,7 @@ class MDdiario extends Component {
                                         )
                                       }
                                     ]}
-                                    defaultPageSize={3}
+                                    defaultPageSize={row.original.actividades.length}
                                     showPagination={false}
                                 />
                               </div>

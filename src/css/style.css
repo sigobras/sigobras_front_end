@@ -81,24 +81,27 @@ body {
   transition: width 0.5s
 }
 
-@media only screen and (min-width: 10px) {
+@media only screen and (min-width: 9px) {
   .navbarExpland {
-    width: 50px;
+    width: 150px;
     position: inherit;
     -webkit-transition: width 0.5s;
     transition: 3s;
+    position: relative
   }
 
   .navbarCollapse .col-md-2 {
-    width: 50px;
+    width: 150px;
     position: inherit;
     -webkit-transition: width 0.5s;
-    transition: width 0.5s
+    transition: width 0.5s;
+    position: relative
+
   }
 
-  .navbarCollapse .sidebar-sticky .nav .lii span {
+  /* .navbarCollapse .sidebar-sticky .nav .lii span {
     display: none;
-  }
+  } */
 
 }
 

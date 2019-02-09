@@ -60,7 +60,7 @@ class AppAng extends Component {
                 <div>
                     <nav className="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
                         <span className="navbar-brand col-sm-3 col-md-2 mr-0">
-                            <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="30" /> ADMIN SIGOBRAS
+                            <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="30" /> SIGOBRAS
                             <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={ this.ButtonToogle }>
                             <FaAlignJustify />
                             </button>
@@ -82,53 +82,15 @@ class AppAng extends Component {
                                         </li>
 
                                         <li className="lii">
-                                            <a className="nav-link"  href="#ADMINS" id="ADMINS"><FaSuperscript /><span> OBRAS <div className="float-right"><FaPlus /></div> </span> </a>
+                                            <a className="nav-link"  href="#ADMINS" id="ADMINS"><FaSuperscript /><span> METRADOS <div className="float-right"><FaPlus /></div> </span> </a>
                                             <UncontrolledCollapse toggler="#ADMINS">
                                                 <ul className="nav flex-column ull">
                                                     <li className="lii">
-                                                        <Link to="ListaObras" className="nav-link"><FaPeopleCarry /> ListaObras</Link>
-                                                    </li>
-                                                    <li className="lii">
-                                                        <Link to="ObraNueva" className="nav-link"><FaLinode /> Obra nueva</Link>
-                                                    </li>
-                                                    <li className="lii">
-                                                        <Link to="ComponentesNuevos" className="nav-link"><FaLinode /> Registrar Componentes</Link>
-                                                    </li>
-                                                    <li className="lii">
-                                                        <Link to="PartidasNuevas" className="nav-link"><FaLinode /> Registrar partidas</Link>
+                                                        <Link to="MDdiario" className="nav-link"><FaPeopleCarry /> Diarios</Link>
                                                     </li>
                                                 </ul>
                                             </UncontrolledCollapse>
                                         </li>      
-
-                                        <li className="lii">
-                                            <a className="nav-link"  href="#CARGOS" id="CARGOS"><FaSuperscript /><span> CARGOS <div className="float-right"><FaPlus /></div> </span> </a>
-                                            <UncontrolledCollapse toggler="#CARGOS">
-                                                <ul className="nav flex-column ull">
-                                                    <li className="lii">
-                                                        <Link to="listaCargos" className="nav-link"><FaPeopleCarry /> lista Cargos</Link>
-                                                    </li>
-                                                   
-                                                </ul>
-                                            </UncontrolledCollapse>
-                                        </li>   
-
-                                        <li className="lii">
-                                            <a className="nav-link"  href="#about" id="CONFIG"><FaPeopleCarry /><span> PROCESOS GERENCIALES <div className="float-right"><FaPlus /></div> </span> </a>
-                                                <UncontrolledCollapse toggler="#CONFIG">
-                                                    <ul className="nav flex-column ">
-                                                        <li className="lii">
-                                                            <Link to="RecordObras" className="nav-link"><FaLinode /> Record de obras</Link>
-                                                        </li>
-                                                        {/* <li className="lii">
-                                                            <a className="nav-link" href="#about">sub--</a>
-                                                        </li>
-                                                        <li className="lii">
-                                                            <a className="nav-link" href="#about">sub---</a>
-                                                        </li> */}
-                                                    </ul>
-                                                </UncontrolledCollapse>
-                                        </li>
                                     </ul>
                                 </div>
                             </nav>
