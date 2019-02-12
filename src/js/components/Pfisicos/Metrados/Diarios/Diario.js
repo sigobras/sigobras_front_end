@@ -56,6 +56,8 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
+      console.log('res>>', res.data);
+      
       this.setState(({
         DataMDiario:res.data
       }))
@@ -132,7 +134,7 @@ class MDdiario extends Component {
     const { DataMDiario, debounceTimeout }= this.state
     if(sessionStorage.getItem("idacceso")){ 
       return (
-        <div>
+        <div className="pb-3">
           <Card>
             <Nav tabs>
             {/* {console.log('DataMDiario', DataMDiario)} */}
@@ -146,15 +148,16 @@ class MDdiario extends Component {
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
               {DataMDiario === undefined? 'cargando': DataMDiario.map((comp, indexComp)=>
-                <TabPane tabId={indexComp.toString()} key={ indexComp}  className="p-3">
+                <TabPane tabId={indexComp.toString()} key={ indexComp}  className="p-1">
                   <Card>
-                    <CardHeader>{comp.nombre }</CardHeader>
-                    <CardBody className="p-0">                              
+                    <CardHeader><b>{ comp.nombre }</b></CardHeader>
+                    <CardBody >                              
                         <ReactTable
                           data={comp.partidas}
                           filterable
                           defaultFilterMethod={(filter, row) =>
                               String(row[filter.id]) === filter.value}
+                              
                           columns={[
                               {
                               Header: "Descripción",
@@ -280,35 +283,34 @@ class MDdiario extends Component {
                                       matchSorter(rows, filter.value, { keys: ["parcial"] }),
                                   filterAll: true
                                   },
-                                  {
-                                  Header: "Metrar",
-                                  accessor: "_id",
-                                  maxWidth: 30,
-                                  Cell: id => (
-                                    <div className={(id.original.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}>
-                                      <button className="btn btn-sm btn-outline-light text-primary" href="#myModal" onClick={((e) => this.CapturarID (id.original.id_temporal, id.original.decrip_temporal, id.original.u_med_temporal, id.original.precio_temporal, id.original.metrados_saldo, indexComp, id.original.porcentaje, id.original.avance_metrado, id.original.metrado_temporal, id.viewIndex, id.original.parcial_temporal))} >
-                                        <FaPlus />
-                                      </button>
-                                    </div>
-                                  )
-                                  }
+                                  // {
+                                  // Header: "Metrar",
+                                  // accessor: "_id",
+                                  // maxWidth: 30,
+                                  // Cell: id => (
+                                  //   <div className={(id.original.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}>
+                                  //     <button className="btn btn-sm btn-outline-light text-primary" href="#myModal" onClick={((e) => this.CapturarID (id.original.id_temporal, id.original.decrip_temporal, id.original.u_med_temporal, id.original.precio_temporal, id.original.metrados_saldo, indexComp, id.original.porcentaje, id.original.avance_metrado, id.original.metrado_temporal, id.viewIndex, id.original.parcial_temporal))} >
+                                  //       <FaPlus />
+                                  //     </button>
+                                  //   </div>
+                                  // )
+                                  // }
                               ]
                               }
                           ]}  
                           defaultPageSize={20}
                           className="-striped -highlight table table-responsive table-sm small"
-                          SubComponent={row => {
+                          headerClassName='bg-primary'
+                          SubComponent={row => 
                             // console.log('row>>',row.original.actividades)
-                            return (
-                              <div style={{ padding: "2px" }}>
-                                <label>
-                                  Actividades de la partida
-                                </label>
+                            row.original.tipo === "titulo" ? <span className="text-center text-danger"><b>no tiene actividades</b></span>:
+                              <div className="p-1">
+                                <b className="h6"> Actividades de la partida</b>
                                 <ReactTable
                                   data={row.original.actividades}
                                   columns={[
                                       {
-                                        Header: "nombre_actividad",
+                                        Header: "NOMBRE ACTIVIDAD",
                                         accessor: "nombre_actividad"
                                       }, {
                                         Header: "N° VECES",
@@ -334,11 +336,11 @@ class MDdiario extends Component {
                                         Header: "S/. PARCIAL",
                                         accessor: "parcial_actividad"
                                       },{
-                                        Header: "Metrar",
+                                        Header: "METRAR",
                                         accessor: "id_actividad",
                                         Cell: id => (
                                           <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                            {console.log('=>>>', id.original)}
+                                            {/* {console.log('=>>>', id.original)} */}
                                             <button className="btn btn-sm btn-outline-light text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, id.viewIndex, id.original.parcial_actividad)} >
                                               <FaPlus /> 
                                               {/* {id.original.id_actividad} */}
@@ -349,10 +351,11 @@ class MDdiario extends Component {
                                     ]}
                                     defaultPageSize={row.original.actividades.length}
                                     showPagination={false}
+                                    
                                 />
                               </div>
-                            );
-                          }}
+                            
+                          }
                         />
                     </CardBody>
                   </Card>

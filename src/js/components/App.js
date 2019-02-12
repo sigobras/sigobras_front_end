@@ -15,7 +15,7 @@ import Login from './Login/Login';
 import Inicio from '../components/Inicio/Inicio'
 import MDdiario from "../components/Pfisicos/Metrados/Diarios/Diario";
 import MDHistorial from '../components/Pfisicos/Metrados/Diarios/Historial'
-// import ValEjecutadas from '../components/Pfisicos/Valorizaciones/ValEjecutadas'
+import Ejecutadas from '../components/Pfisicos/Valorizaciones/Ejecutadas'
 // import ValGeneral from '../components/Pfisicos/Valorizaciones/ValGeneral'
 // Proceso financieros
 // import PresAnalitico from '../components/Pfinancieros/Analitico/PresAnalitico'
@@ -80,7 +80,7 @@ class AppAng extends Component {
                                         <li className="lii border-top">
                                             <Link to="/inicio" className="nav-link"> <FaHouseDamage /><span> INICIO</span> </Link>
                                         </li>
-
+                                        
                                         <li className="lii">
                                             <a className="nav-link"  href="#PF" id="PF"><FaSuperscript /> PROCESOS FISICOS <div className="float-right"><FaPlus /></div></a>
                                             <UncontrolledCollapse toggler="#PF">
@@ -95,7 +95,22 @@ class AppAng extends Component {
                                                         </li>
                                                     </ul>
                                                 </UncontrolledCollapse>
+
+                                                <a className="nav-link"  href="#VALORI" id="VALORI"><FaSuperscript /> VALORIZACIONES <div className="float-right"><FaPlus /></div></a>
+                                                <UncontrolledCollapse toggler="#VALORI">
+                                                    <ul className="nav flex-column ull">
+                                                        <li className="lii">
+                                                            <Link to="Ejecutadas" className="nav-link"><FaPeopleCarry /> Ejecutadas</Link>
+                                                        </li>
+                                                        <li className="lii">
+                                                            <Link to="MDHistorial" className="nav-link"><FaPeopleCarry /> General</Link>
+                                                        </li>
+                                                    </ul>
+                                                </UncontrolledCollapse>
+
                                             </UncontrolledCollapse>
+
+                                            
                                         </li>      
                                     </ul>
                                 </div>
@@ -126,7 +141,7 @@ class AppAng extends Component {
                                     {/* procesos fisicos */}
                                     <Route path="/MDdiario" component={MDdiario} />
                                     <Route path="/MDHistorial" component={MDHistorial} />
-                                    {/* <Route path="/ValEjecutadas" component={ValEjecutadas} /> */}
+                                    <Route path="/Ejecutadas" component={Ejecutadas} />
                                     {/* <Route path="/ValGeneral" component={ValGeneral} /> */}
 
                                     {/* proceso financieros */}

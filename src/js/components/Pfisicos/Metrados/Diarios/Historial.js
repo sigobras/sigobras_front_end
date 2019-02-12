@@ -53,14 +53,16 @@ class MDHistorial extends Component {
     render() {
         const columns = [{
             Header: "PARTIDAS",
-                columns: [{
-                    Header: 'ITEM',
-                    accessor: 'item' 
+                columns: [
+                    {
+                        Header: 'ITEM',
+                        accessor: 'item' 
                     },{
-                    Header: 'DESCRIPCIÓN',
-                    accessor: 'descripcion_partida',
-                    Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-                    }],
+                        Header: 'DESCRIPCIÓN',
+                        accessor: 'descripcion_partida',
+                        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+                    }
+                ]},{
             Header: "ACTIVIDADES",
                 columns: [
                     {
@@ -92,7 +94,8 @@ class MDHistorial extends Component {
                         id: 'parcial', 
                         accessor: d => d.parcial
                     }
-            ]}
+                ]
+            }
         ]
     return ( 
         
@@ -112,7 +115,7 @@ class MDHistorial extends Component {
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     {this.state.idCom.map((comp,i)=>
-                        <TabPane tabId={i.toString()} className="p-3" key={i}>
+                        <TabPane tabId={i.toString()} className="p-1" key={i}>
                             <Card >
                                 <CardHeader>{comp.nombre_componente }</CardHeader>
                                 <CardBody>
