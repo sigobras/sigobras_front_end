@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { DebounceInput } from 'react-debounce-input';
 import { FaPlus } from 'react-icons/fa';
 
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -22,11 +23,32 @@ class MDdiario extends Component {
       DataMDiario:[],
       activeTab:'0',
       modal: false,
+
+      ValorMetrado:'',
+      DescripcionMetrado:'',
+      ObservacionMetrado:'',
+      IdMetradoActividad:'',
+      debounceTimeout: 200,
+
+      // datos para capturar en el modal
+      id_actividad:'',
+      nombre_actividad:'',
+      unidad_medida:'',
+      costo_unitario:'',
+      actividad_metrados_saldo:'',
+      indexComp:'',
+      actividad_porcentaje:'',
+      actividad_avance_metrado:'',
+      metrado_actividad:'',
+      viewIndex:'',
+      parcial_actividad:''
+
     }
     this.Tabs = this.Tabs.bind(this)
     this.ControlAcceso = this.ControlAcceso.bind(this)
     this.CapturarID = this.CapturarID.bind(this)
     this.modalMetrar = this.modalMetrar.bind(this)
+    this.EnviarMetrado = this.EnviarMetrado.bind(this)
   }
   componentWillMount(){
     document.title ="Metrados Diarios"
@@ -61,22 +83,22 @@ class MDdiario extends Component {
     }
 
   }
-  CapturarID(data, NombComp, unidad_med, P_unit, saldo_metrado, idcomp, porcentaje, avance_metrado, metrado_temporal, index, parcial_temporal) {
-    e.preventDefault()        
+  
+  CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad) {
+
+    // e.preventDefault()        
     this.setState({
-      value: '',
-      descripcion: '',
-      IdMetrado: data,
-      DescripMetrado: NombComp,
-      U_med_temporal: unidad_med,
-      Precio_unitario: P_unit,
-      Saldo_metrado: saldo_metrado,
-      idComp: idcomp,
-      porcentaje: porcentaje,
-      avance_metrado: avance_metrado,
-      metrado_temporal: metrado_temporal,
-      index: index,
-      parcial_temporal: parcial_temporal
+      id_actividad: id_actividad,
+      nombre_actividad: nombre_actividad,
+      unidad_medida: unidad_medida,
+      costo_unitario: costo_unitario,
+      actividad_metrados_saldo: actividad_metrados_saldo,
+      indexComp: indexComp,
+      actividad_porcentaje: actividad_porcentaje,
+      actividad_avance_metrado: actividad_avance_metrado,
+      metrado_actividad: metrado_actividad,
+      viewIndex: viewIndex,
+      parcial_actividad: parcial_actividad
     })
     this.modalMetrar();
 
@@ -88,14 +110,33 @@ class MDdiario extends Component {
       modal: !this.state.modal
     });
   }
+  
+  EnviarMetrado(){
+
+    const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado } = this.state
+    axios.post(`${UrlServer}/avanceActividad`,{
+      "Actividades_id_actividad":id_actividad,
+      "valor":ValorMetrado,
+      "descripcion":DescripcionMetrado,
+      "observacion":ObservacionMetrado,
+      "id_ficha":sessionStorage.getItem('idobra')
+    })
+    .then((res)=>
+    console.log('datos', res)
+    )
+    .catch((error)=>
+    console.error('algo salio mal al consultar al servidor ', error)
+    )
+  }
   render() {
-    const { DataMDiario }= this.state
+    const { DataMDiario, debounceTimeout }= this.state
     if(sessionStorage.getItem("idacceso")){ 
       return (
         <div>
           <Card>
             <Nav tabs>
-              {DataMDiario.map((comp,indexComp)=>
+            {/* {console.log('DataMDiario', DataMDiario)} */}
+              {DataMDiario === undefined? 'cargando': DataMDiario.map((comp,indexComp)=>
                 <NavItem key={ indexComp }>
                   <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => { this.Tabs(indexComp.toString()); }}>
                     COMP {comp.numero}
@@ -104,7 +145,7 @@ class MDdiario extends Component {
               )}
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
-              {DataMDiario.map((comp, indexComp)=>
+              {DataMDiario === undefined? 'cargando': DataMDiario.map((comp, indexComp)=>
                 <TabPane tabId={indexComp.toString()} key={ indexComp}  className="p-3">
                   <Card>
                     <CardHeader>{comp.nombre }</CardHeader>
@@ -254,16 +295,15 @@ class MDdiario extends Component {
                               ]
                               }
                           ]}  
-                          defaultPageSize={10}
+                          defaultPageSize={20}
                           className="-striped -highlight table table-responsive table-sm small"
                           SubComponent={row => {
                             // console.log('row>>',row.original.actividades)
                             return (
-                              <div style={{ padding: "5px" }}>
+                              <div style={{ padding: "2px" }}>
                                 <label>
                                   Actividades de la partida
                                 </label>
-                                <br />
                                 <ReactTable
                                   data={row.original.actividades}
                                   columns={[
@@ -295,11 +335,13 @@ class MDdiario extends Component {
                                         accessor: "parcial_actividad"
                                       },{
                                         Header: "Metrar",
-                                        accessor: "id_partida",
+                                        accessor: "id_actividad",
                                         Cell: id => (
-                                          <div className={(id.original.id_partida === "" ? 'd-none' : this.ControlAcceso())}>
-                                            <button className="btn btn-sm btn-outline-light text-primary" href="#myModal" onClick={((e) => this.CapturarID (id.original.id_partida, id.original.decrip_temporal, id.original.u_med_temporal, id.original.precio_temporal, id.original.metrados_saldo, indexComp, id.original.porcentaje, id.original.avance_metrado, id.original.metrado_temporal, id.viewIndex, id.original.parcial_temporal))} >
-                                              <FaPlus /> {row.original.id_partida}
+                                          <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
+                                            {console.log('=>>>', id.original)}
+                                            <button className="btn btn-sm btn-outline-light text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, id.viewIndex, id.original.parcial_actividad)} >
+                                              <FaPlus /> 
+                                              {/* {id.original.id_actividad} */}
                                             </button>
                                           </div>
                                         )
@@ -323,42 +365,66 @@ class MDdiario extends Component {
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
               <ModalHeader toggle={this.modalMetrar}><img src= { LogoSigobras } width="30px" alt="logo sigobras"/> SIGOBRAS S.A.C.</ModalHeader>
               <ModalBody>
-                <b> {this.state.DescripMetrado} </b>
+                <b> {this.state.nombre_actividad} </b>
                 <form >
-                    <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+                  <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+
                   <div className="input-group mb-3">
-                    <input type="number" className="form-control"  placeholder="Ingrese el valor a metrar" onBlur={this.handleChange}  />
+                    <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control"/>  
+                    
                     <div className="input-group-append">
-                      <span className="input-group-text">{this.state.U_med_temporal}</span>
+                      <span className="input-group-text">{this.state.unidad_medida}</span>
                     </div>
                     
                   </div>
-                    <div className="form-group">
-                      <label htmlFor="comment">DESCRIPCION:</label>
-                      <textarea className="form-control" rows="2" onBlur={this.handleChange2}></textarea>
-                    </div>
-              
 
-                    <div className="custom-file mb-3 p-3">
-                      <input type="file" className="custom-file-input disabled" id="customFile" name="filename" disabled/>
-                      <label className="custom-file-label" htmlFor="customFile">Choose file</label>
-                    </div>
+                  <div className="form-group">
+                    <label htmlFor="comment">DESCRIPCION:</label>
+                    <DebounceInput
+                      cols="60"
+                      rows="2"
+                      element="textarea"
+                      minLength={0}
+                      debounceTimeout={debounceTimeout}
+                      onChange={e => this.setState({DescripcionMetrado: e.target.value})}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="comment">OBSERVACIÓN:</label>
+                    <DebounceInput
+                      cols="60"
+                      rows="2"
+                      element="textarea"
+                      minLength={0}
+                      debounceTimeout={debounceTimeout}
+                      onChange={e => this.setState({ObservacionMetrado: e.target.value})}
+                      className="form-control"
+                    />
+                  </div>
+                  
+
+                  <div className="custom-file mb-3 p-3">
+                    <input type="file" className="custom-file-input disabled" id="customFile" name="filename" disabled/>
+                    <label className="custom-file-label" htmlFor="customFile">Choose file</label>
+                  </div>
 
                     
                 </form>
                 <div className="d-flex p-1 text-center mt-0">  
-                  <div className="card alert alert-info  p-1 m-1">Costo / {this.state.U_med_temporal} =  {this.state.Precio_unitario} <br/>
+                  <div className="card alert alert-info  p-1 m-1">Costo / {this.state.unidad_medida} =  {this.state.costo_unitario} <br/>
                     soles
                   </div>
                   <div className="card alert alert-danger p-1 m-1">Saldo de met.<br/>
-                      {this.state.Saldo_metrado}
+                      {this.state.actividad_metrados_saldo}
                   </div>
                 </div>
               </ModalBody>
               <ModalFooter>
                 
-                <Button color="primary" onClick={this.handleSubmit }>Guardar</Button>{' '}
-                <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                <Button color="primary" onClick={this.EnviarMetrado }>Guardar</Button>{' '}
+                <Button color="danger" onClick={this.modalMetrar}>Cancelar</Button>
               </ModalFooter>
             </Modal>
           {/* ///<!-- MODAL PARA METRAR --> */}  

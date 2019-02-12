@@ -86,7 +86,7 @@ body {
     width: 150px;
     position: inherit;
     -webkit-transition: width 0.5s;
-    transition: 3s;
+    transition: 0.5s;
     position: relative
   }
 

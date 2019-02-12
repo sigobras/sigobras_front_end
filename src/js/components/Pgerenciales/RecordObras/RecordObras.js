@@ -149,7 +149,7 @@ class RecordObras extends Component{
                                                 <button className="btn btn-outline-info btn-sm" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><i className="fas fa-ey"></i> { Obras.codigo } </button>
                                             </td>
                                             <td style={{width: '14%'}}>
-                                                <button type="button" className="btn btn-outline-info btn-sm mr-1" id="toggler" data-target={"#"+IndexObras}><FaList /></button>
+                                                <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
                                                 <button className="btn btn-outline-info btn-sm mr-1" id="CRONO"><FaClock /></button>
                                                 <button className="btn btn-outline-info btn-sm mr-1" onClick={this.toggle}><FaRegImages />{this.props.buttonLabel}</button>
                                                 <button className="btn btn-outline-info btn-sm"><FaChartPie /></button>
@@ -158,7 +158,7 @@ class RecordObras extends Component{
 
 										<tr >
 											<td colSpan="6">
-                                                <UncontrolledCollapse toggler="#toggler">
+                                                <UncontrolledCollapse toggler={"#toggler"+IndexObras}>
                                                     <table className="table table-bordered table-sm">
                                                         <thead>
                                                             <tr>
@@ -172,17 +172,17 @@ class RecordObras extends Component{
                                                         <tbody>
                                                             {Obras.componentes.map((ObrasComp, IndexObrasComp)=>
 
-                                                                    <tr key={ IndexObrasComp } >
-                                                                        <td>{ ObrasComp.num_componentes }</td>
-                                                                        <td>{ ObrasComp.nomb_componentes }</td>
-                                                                        <td> S/.{ ObrasComp.presupuesto_componentes }</td>
-                                                                        <td> S/.{ ObrasComp.comp_avance }</td>
-                                                                        <td>
-                                                                            <div className="progress">
-                                                                                <div className="progress-bar bg-info" style={{width:ObrasComp.porcentaje_avance_componentes+'%'}} >{ ObrasComp.porcentaje_avance_componentes } %</div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
+                                                                <tr key={ IndexObrasComp } >
+                                                                    <td>{ ObrasComp.num_componentes }</td>
+                                                                    <td>{ ObrasComp.nomb_componentes }</td>
+                                                                    <td> S/.{ ObrasComp.presupuesto_componentes }</td>
+                                                                    <td> S/.{ ObrasComp.comp_avance }</td>
+                                                                    <td>
+                                                                        <div className="progress">
+                                                                            <div className="progress-bar bg-info" style={{width:ObrasComp.porcentaje_avance_componentes+'%'}} >{ ObrasComp.porcentaje_avance_componentes } %</div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
 
                                                             )}
                                                             <tr>

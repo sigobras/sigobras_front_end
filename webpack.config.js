@@ -33,8 +33,7 @@ module.exports = {
         use: [{
           loader: "file-loader",
           options: {
-            outputPath: 'images',
-            limit: 4192
+            outputPath: 'images'
           }
         }]
       }
@@ -42,8 +41,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "public"),
-    filename: 'bundle.js',
-    publicPath: '/',
+    filename: 'main.js',
+    publicPath: '',
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),

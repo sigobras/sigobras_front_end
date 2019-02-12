@@ -48,11 +48,7 @@ class NotificacionNav extends Component {
                         
 
                         <div className={ this.state.clik === true ? '' : 'd-none' }>
-                            <img src="https://images.sex.com/images/pinporn/2018/09/29/300/20024143.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
-                            {/* <img src="http://38.media.tumblr.com/be782d17c1614ce29f9f65589729ae6f/tumblr_nejcqm0pgY1rwaupfo1_r1_500.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
-                            <img src="https://i.pinimg.com/originals/43/7d/69/437d69bfc6dca3a31e46d7c3b08b5ef0.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
-                            <img src="https://thumb-p1.xhcdn.com/a/xvI2TYH1Y8mWDLxu6wJjVw/000/116/643/941_1000.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
-                            <img src="http://www.elarcadefino.com/wp-content/uploads/2015/06/tumblr_nofmyrztA41qb139no1_500.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                         */}
+                            <img src="http://media.biobiochile.cl/wp-content/uploads/2014/03/tumblr_mec3vbcdFV1r8dy8go1_500.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
                         </div>
                     </PopoverBody>
                 </Popover>

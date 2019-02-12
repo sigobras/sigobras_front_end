@@ -20,8 +20,11 @@ class MDHistorial extends Component {
     componentWillMount(){
         document.title ="Historial de Metrados"
 
-        axios.get(UrlServer+'/Historial/'+sessionStorage.getItem("idobra"))
+        axios.post(UrlServer+'/getHistorial/',{
+            id_ficha: sessionStorage.getItem('idobra')
+        })
         .then(res=>{
+            console.log(res)
             var DataError = [];
             if(res.data.code){
                 this.setState({
@@ -46,49 +49,63 @@ class MDHistorial extends Component {
             activeTab: tab
           });
         }
-      }
-  render() {
-    const columns = [{
-        Header: 'ITEM',
-        accessor: 'item_temporal' 
-      }, {
-        Header: 'DESCRIPCIÓN',
-        accessor: 'decrip_temporal',
-        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-      }, {
-        id: 'img_avance', 
-        Header: 'IMAGEN',
-        accessor: d => d.img_avance
-      }, {
-        Header: 'REFERENCIA', 
-        id: 'descrip_metrado',
-        accessor: d => d.descrip_metrado
-      }, {
-        id: 'fecha_metrado', 
-        Header: 'FECHA',
-
-        accessor: d => d.fecha_metrado
-      }, {
-        Header: 'A. FISICO', 
-        id: 'avance_metrado',
-        accessor: d => d.avance_metrado
-      }, {
-        Header: 'A. FINANCIERO',
-        id: 'A. FINANCIERO', 
-        accessor: d => d.costo_avance
-      }]
+    }
+    render() {
+        const columns = [{
+            Header: "PARTIDAS",
+                columns: [{
+                    Header: 'ITEM',
+                    accessor: 'item' 
+                    },{
+                    Header: 'DESCRIPCIÓN',
+                    accessor: 'descripcion_partida',
+                    Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+                    }],
+            Header: "ACTIVIDADES",
+                columns: [
+                    {
+                        Header: 'NOMBRE DE ACTIVIDAD',
+                        id: 'nombre_actividad', 
+                        accessor: d => d.nombre_actividad
+                    },{
+                        Header: 'DESCRIPCION', 
+                        id: 'descripcion_actividad',
+                        accessor: d => d.descripcion_actividad
+                    },{
+                        Header: 'OBSERVACION',
+                        id: 'observacion', 
+                        accessor: d => d.observacion
+                    },{
+                        Header: 'FECHA',
+                        id: 'fecha', 
+                        accessor: d => d.fecha
+                    },{
+                        Header: 'A. FISICO', 
+                        id: 'valor',
+                        accessor: d => d.valor
+                    },{
+                        Header: 'S/. UNITARIO',
+                        id: 'costo_unitario', 
+                        accessor: d => d.costo_unitario
+                    },{
+                        Header: 'S/. PARCIAL',
+                        id: 'parcial', 
+                        accessor: d => d.parcial
+                    }
+            ]}
+        ]
     return ( 
         
         <div>   
             {this.state.idCom.length < 1 ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /></div>:
-            <div className="card">
+            <Card>
 
                 <Nav tabs>
                     {this.state.idCom.map((comp,i)=>
 
                         <NavItem key={ i }>
                             <NavLink className={classnames({ active: this.state.activeTab === i.toString() })} onClick={() => { this.Tabs( i.toString()); }}>
-                                COMP {comp.num_componentes}
+                                COMP {comp.numero}
                             </NavLink>
                         </NavItem>
                     )}
@@ -96,27 +113,24 @@ class MDHistorial extends Component {
                 <TabContent activeTab={this.state.activeTab}>
                     {this.state.idCom.map((comp,i)=>
                         <TabPane tabId={i.toString()} className="p-3" key={i}>
-                            <Row>
-                                <Col sm="12">
-                                    <Card >
-                                        <CardHeader>{comp.nomb_componentes }</CardHeader>
-                                        <CardBody className="p-0">
+                            <Card >
+                                <CardHeader>{comp.nombre_componente }</CardHeader>
+                                <CardBody>
+                                    <Row>
+                                        <Col sm="12">
                                             <ReactTable
-                                                data={comp.HistorialMetrados}
+                                                data={comp.historial}
                                                 columns={columns}
                                                 className="-striped -highlight table table-responsive  small"
                                             />
-                                        </CardBody>
-                                    </Card>
-
-                                </Col>
-                            </Row>
+                                        </Col>
+                                    </Row>
+                                </CardBody>
+                            </Card>
                         </TabPane>
                     )}
                 </TabContent>
-
-                
-            </div>
+            </Card>
         }
     </div>
     );

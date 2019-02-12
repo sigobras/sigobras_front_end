@@ -74,7 +74,7 @@ class AppAng extends Component {
 
                     <div className="container-fluid">
                         <div className="row">
-                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExpland d-none d-md-block bg-light sidebar': "navbarCollapse bg-light sidebar"}>
+                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExpland d-md-block bg-light sidebar': "navbarCollapse bg-light sidebar"}>
                                 <div className="sidebar-sticky">
                                     <ul className="nav flex-column ull">
                                         <li className="lii border-top">
@@ -82,13 +82,19 @@ class AppAng extends Component {
                                         </li>
 
                                         <li className="lii">
-                                            <a className="nav-link"  href="#ADMINS" id="ADMINS"><FaSuperscript /><span> METRADOS <div className="float-right"><FaPlus /></div> </span> </a>
-                                            <UncontrolledCollapse toggler="#ADMINS">
-                                                <ul className="nav flex-column ull">
-                                                    <li className="lii">
-                                                        <Link to="MDdiario" className="nav-link"><FaPeopleCarry /> Diarios</Link>
-                                                    </li>
-                                                </ul>
+                                            <a className="nav-link"  href="#PF" id="PF"><FaSuperscript /> PROCESOS FISICOS <div className="float-right"><FaPlus /></div></a>
+                                            <UncontrolledCollapse toggler="#PF">
+                                                <a className="nav-link"  href="#METRADOS" id="METRADOS"><FaSuperscript /> METRADOS <div className="float-right"><FaPlus /></div></a>
+                                                <UncontrolledCollapse toggler="#METRADOS">
+                                                    <ul className="nav flex-column ull">
+                                                        <li className="lii">
+                                                            <Link to="MDdiario" className="nav-link"><FaPeopleCarry /> Diarios</Link>
+                                                        </li>
+                                                        <li className="lii">
+                                                            <Link to="MDHistorial" className="nav-link"><FaPeopleCarry /> Historial</Link>
+                                                        </li>
+                                                    </ul>
+                                                </UncontrolledCollapse>
                                             </UncontrolledCollapse>
                                         </li>      
                                     </ul>
