@@ -14,28 +14,27 @@ class Ejecutadas extends Component {
         this.Tabs = this.Tabs.bind(this);
         this.TabsComponent = this.TabsComponent.bind(this);
         this.state = {
-          idCom:[],
-          activeTab: '1',
+          DataValorizacion:[],
+          activeTab: '0',
           activeTabComponet: '3',
         }; 
     }
     componentWillMount(){
-        document.title ="Valorizaciones ejecutadas"
+        document.title ="Valorizaciones"
 
-        axios.post(UrlServer+'/getHistorial/',{
+        axios.post(UrlServer+'/getValGeneral',{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then(res=>{
-            console.log(res)
+            console.log(res.data)
             var DataError = [];
             if(res.data.code){
                 this.setState({
-                    idCom: DataError
+                    DataValorizacion: DataError
                 })
             }else{
-            console.log(res.data);
                 this.setState({
-                    idCom: res.data
+                    DataValorizacion: res.data
                 })
             }
         })
@@ -61,7 +60,7 @@ class Ejecutadas extends Component {
         }
     }
     render() {
-        const { activeTab, activeTabComponet } = this.state
+        const { activeTab, activeTabComponet, DataValorizacion } = this.state
         const columns = [{
             Header: "PARTIDAS",
                 columns: [
@@ -111,20 +110,18 @@ class Ejecutadas extends Component {
     return ( 
         
         <div>   
-            {this.state.idCom.length < 1 ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /></div>:
+            {DataValorizacion.length < 1 ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /></div>:
             <Card>
                 <Nav tabs>
                     {/* PERIODOS */}
-                    <NavItem>
-                        <NavLink className={classnames({ active: activeTab === '1' })} onClick={() => { this.Tabs('1'); }} >
-                            P - 1
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink className={classnames({ active: activeTab === '2' })} onClick={() => { this.Tabs('2'); }}>
-                            P - 2
-                        </NavLink>
-                    </NavItem>
+                    { DataValorizacion.map((valorizacion, indexVal)=>
+                        <NavItem key= { indexVal }>
+                            <NavLink className={classnames({ active: activeTab === indexVal.toString() })} onClick={() => { this.Tabs(indexVal.toString()); }} >
+                                P - {valorizacion.numero_periodo}
+                            </NavLink>
+                        </NavItem>
+                    )}
+
                 </Nav>
                 <TabContent activeTab={activeTab}>
                     <TabPane tabId="1" className="p-1">
@@ -133,7 +130,7 @@ class Ejecutadas extends Component {
                                 {/* RESUMEN */}
                                 <NavItem>
                                     <NavLink className={classnames({ active: activeTabComponet === '3' })} onClick={() => { this.TabsComponent('3'); }} >
-                                        C - 1
+                                        RESUMEN
                                     </NavLink>
                                 </NavItem>
                                 
