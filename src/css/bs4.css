@@ -1,3 +1,5 @@
+/* ------------------------------------ mis correcciones a bootstrap 4  ----------------------*/
+
 /*  Vertical Tabs */
 .nav-tabs--vertical {
     border-bottom: none;
@@ -93,4 +95,34 @@
 .form-control[readonly] {
   background-color: #f8f9fa;
   opacity: 1;
+}
+
+.card {
+  border-radius: 0rem;
+}
+
+.dropdown-menu {
+  border-radius: .0rem;
+}
+
+/* fieldset  */
+
+fieldset {
+  padding: 5px;
+  margin: 0px;
+  border: 1px solid #dfdfdf;
+}
+
+/* legend  */
+legend {
+  display: block;
+  max-width: max-content;
+  padding: 2px 6px 2px 8px;
+  margin-bottom: 0.3rem;
+  font-size: 0.7rem;
+  line-height: inherit;
+  color: inherit;
+  white-space: normal;
+  border: 1px solid #dfdfdf;
+  box-shadow: 2px 3px 4px 0px #e7e7e7;
 }

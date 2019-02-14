@@ -34,7 +34,7 @@ class CronogramaAvance extends Component{
                     Cronograma de avance                    
                 </div>
                 <div className="card-body">
-                    <BarChart width={900} height={500} data={data} margin={{top: 20, right: 10, left: 20, bottom: 5}}>
+                    <BarChart width={850} height={500} data={data} margin={{top: 20, right: 10, left: 20, bottom: 5}}>
                         <CartesianGrid strokeDasharray="3 3"/>
                         <XAxis dataKey="name"/>
                         <YAxis/>

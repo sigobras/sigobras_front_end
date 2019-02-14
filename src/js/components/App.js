@@ -1,6 +1,6 @@
 // libraris
 import React, { Component } from 'react';
-import { FaAlignJustify, FaPlus, FaChartLine, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight } from 'react-icons/fa';
+import { FaAlignJustify, FaPlus, FaChartLine, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { UncontrolledCollapse } from 'reactstrap';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
@@ -23,15 +23,20 @@ import Ejecutadas from '../components/Pfisicos/Valorizaciones/Ejecutadas'
   
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
+
+
+
 class AppAng extends Component {
     constructor(){
         super();
         this.state = {
-            navbarExpland: true
+            navbarExpland: true,
+            navbarExplandRight: true
         }
 
         this.ButtonToogle = this.ButtonToogle.bind(this);
         this.YearActual = this.YearActual.bind(this);
+        this.collapseRight = this.collapseRight.bind(this)
         
     }
 
@@ -54,11 +59,16 @@ class AppAng extends Component {
         return dt+ '-'+ month +'-'+ ano
     }
 
+    collapseRight(){
+        this.setState({
+            navbarExplandRight: !this.state.navbarExplandRight
+        });
+    }
     render() {
         return (
             <Router>
                 <div>
-                    <nav className="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
+                    <nav className="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0">
                         <span className="navbar-brand col-sm-3 col-md-2 mr-0">
                             <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="30" /> SIGOBRAS
                             <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={ this.ButtonToogle }>
@@ -74,7 +84,7 @@ class AppAng extends Component {
 
                     <div className="container-fluid">
                         <div className="row">
-                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExpland d-md-block bg-light sidebar': "navbarCollapse bg-light sidebar"}>
+                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block bg-light sidebar': "navbarCollapseLeft bg-light sidebar"}>
                                 <div className="sidebar-sticky">
                                     <ul className="nav flex-column ull">
                                         <li className="lii border-top">
@@ -116,24 +126,14 @@ class AppAng extends Component {
                                 </div>
                             </nav>
 
-                            <main role="main" className="col ml-sm-auto col-lg px-2">
-                                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <main role="main" className="col ml-sm-auto col-lg px-0">
+                                <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center  pb-2 mb-1 border-bottom p-2 bg-light">
                                     <h6 className="">
                                         BIENVENIDO HOY ES : {this.YearActual()}
                                     </h6>
-                                    <div className="btn-toolbar mb-2 mb-md-0">
-                                        <div className="btn-group mr-2">
-                                            <button type="button" className="btn btn-sm btn-outline-secondary">Exportar</button>
-                                            <button type="button" className="btn btn-sm btn-outline-secondary">PDF</button>
-                                        </div>
-                                        <button type="button" className="btn btn-sm btn-outline-secondary dropdown-toggle">
-                                            <span data-feather="calendar"></span>
-                                            OPCIONES
-                                        </button>
-                                    </div>
                                 </div>
 
-                                <div className="px-1 table-responsive">
+                                <div className="px-1 scroll_contenido">
                                     <Route exact path="/" component={Login} />
                                     <Route path="/Ingreso" component={Login} />
                                     <Route path ="/inicio" component={Inicio} />
@@ -153,6 +153,18 @@ class AppAng extends Component {
                                 </div>
 
                             </main>
+                            <nav className={this.state.navbarExplandRight === true ? 'navbarExplandRight bg-light border-left' :  " navbarCollapseRight  bg-light border-left"} >
+                                {/* " navbarCollapseRight  bg-light border-left" */}
+                                <div className="sidebar-sticky">
+                                    <div className="p-1">
+                                        interfaz de algo
+                                    </div>
+                                    
+                                </div>
+                            </nav>
+                            <div className="posAbajo">
+                                <button className="btn btn-outline-darck btn-xs m-0" onClick={ this.collapseRight }> {this.state.navbarExplandRight === true ? <FaAngleRight />: <FaAngleLeft /> }</button>
+                            </div>
                         </div>
                     </div>
                 </div>

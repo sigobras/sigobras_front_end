@@ -3,6 +3,7 @@ body {
   background-color: #343a4005 !important;
 }
 
+
 /*  Sidebar */
 .sidebar {
   top: 0;
@@ -25,6 +26,8 @@ body {
   overflow-y: auto;
   /* Scrollable contents if viewport is shorter than content. */
 }
+
+
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
   .sidebar-sticky {
@@ -66,37 +69,46 @@ body {
 }
 
 
-/* nav  angerman  */
+/* nav izquierda  angerman  */
 
-.navbarExpland {
-  position: inherit;
-  -webkit-transition: width 0.5s;
-  transition: width 0.5s;
+.navbarExplandLeft  {
+  -webkit-transition: width 3s;
+  transition: width 3s;
 }
 
-.navbarCollapse {
+.navbarCollapseLeft{
   width: 0px;
-  position: inherit;
-  -webkit-transition: width 0.5s;
-  transition: width 0.5s
+  position: inherit;   
 }
+/*fin nav izquierda  angerman  */
 
-@media only screen and (min-width: 9px) {
-  .navbarExpland {
-    width: 150px;
-    position: inherit;
+/* nav derecha  */
+.navbarExplandRight{
+  width: 80px;
+}
+.navbarCollapseRight{
+  display: none
+}
+/* fin nav derecha  */
+
+
+@media only screen and (max-width: 767px) {
+  .navbarExplandLeft {
+    width: 25%;
+    position: absolute;
     -webkit-transition: width 0.5s;
     transition: 0.5s;
-    position: relative
   }
 
-  .navbarCollapse .col-md-2 {
-    width: 150px;
-    position: inherit;
+  .navbarCollapseLeft  {
+    /* width: 150px; */
+    position: absolute;
     -webkit-transition: width 0.5s;
     transition: width 0.5s;
-    position: relative
-
+  }
+  
+  .navbarExplandRight {
+    display: none
   }
 
   /* .navbarCollapse .sidebar-sticky .nav .lii span {
@@ -141,56 +153,34 @@ body {
 }
 
 
-/* ------------------------------------ mis correcciones a bootstrap 4  ----------------------*/
-.card {
-  border-radius: 0rem;
-}
-
-.dropdown-menu {
-  border-radius: .0rem;
-}
-
-/* fieldset  */
-
-fieldset {
-  padding: 5px;
-  margin: 0px;
-  border: 1px solid #dfdfdf;
-}
-
-/* legend  */
-legend {
-  display: block;
-  max-width: max-content;
-  padding: 2px 6px 2px 8px;
-  margin-bottom: 0.3rem;
-  font-size: 0.7rem;
-  line-height: inherit;
-  color: inherit;
-  white-space: normal;
-  border: 1px solid #dfdfdf;
-  box-shadow: 2px 3px 4px 0px #e7e7e7;
-}
-
 
 /* SCROLL ANG95 */
-
-body::-webkit-scrollbar {
+.scroll_contenido{
+  position: absolute;
+  height: calc(100vh - 100px);
+  overflow-x: auto;
+  overflow-y: auto;
+  width: 100%;
+  
+}
+.scroll_contenido::-webkit-scrollbar {
   width: 0.5em;
 }
 
-body::-webkit-scrollbar-thumb {
+.scroll_contenido::-webkit-scrollbar-thumb {
   background-color: rgb(145, 148, 145);
   outline: 2px solid rgb(255, 0, 0);
 }
 
 /* SCROLL NAV VERTICAL ----------------------------------------------- */
-.sidebar-sticky::-webkit-scrollbar {
-  width: 0.5em;
-}
 
 .sidebar-sticky::-webkit-scrollbar-thumb {
   background-color: rgb(195, 202, 190);
   outline: 5px solid rgb(255, 0, 0);
 }
 
+.posAbajo{
+  bottom: 3px;
+  position: absolute;
+  left: 96%;
+}
