@@ -39,10 +39,16 @@
   /* corecccion de bootstrap 4 -_-------------------__________________________________*/
 /* nav-tabs */
 .nav-tabs {
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #1d2029;
   background-color: rgba(0, 0, 0, .03);
   padding-top: 6px;
   padding-left: 8px;
+}
+/* nav-tabs activado  */
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+  color: #fff;
+  background-color: #2676bb;
+  border-color: #1d2029 #1d2029 #2e3742;
 }
 
 /* .popover--------------------------------------- */
@@ -99,6 +105,15 @@
 
 .card {
   border-radius: 0rem;
+  background-color: #2f3944;
+  border: 1px solid rgb(29, 32, 41);
+}
+/* card heder */
+.card-header {
+  padding: .75rem 1.25rem;
+  margin-bottom: 0;
+  background-color: rgb(29, 32, 41);
+  border-bottom: 1px solid rgb(29, 32, 41);
 }
 
 .dropdown-menu {
@@ -125,4 +140,34 @@ legend {
   white-space: normal;
   border: 1px solid #dfdfdf;
   box-shadow: 2px 3px 4px 0px #e7e7e7;
+}
+
+/*---------------------ediciones react-table  --------------------*/
+.ReactTable .rt-tbody .rt-td {
+  border-right: 1px solid rgb(29, 32, 41) !important;
+}
+/* filas */
+.ReactTable .rt-tbody .rt-tr-group {
+  border-bottom: solid 1px rgb(29, 32, 41) !important;
+}
+.ReactTable .rt-thead .rt-th, .ReactTable .rt-thead .rt-td {
+  padding: 5px 5px !important;
+  line-height: normal !important;
+  position: relative !important;
+  border-right: 1px solid rgb(29, 32, 41) !important;
+  transition: box-shadow .3s cubic-bezier(.175,.885,.32,1.275) !important;
+  box-shadow: inset 0 0 0 0 transparent !important;
+}
+
+.ReactTable .rt-thead.-filters input, .ReactTable .rt-thead.-filters select {
+
+  border: 1px solid rgba(0, 0, 0, 0.4)!important;
+  background: #1d2029!important;
+  padding: 2px 6px 2px 6px!important;
+  /* font-size: medium!important; */
+  border-radius: 3px!important;
+  font-weight: normal!important;
+  outline: none!important;
+  color: white!important;
+
 }

@@ -30,9 +30,9 @@ class NotificacionNav extends Component {
     render() {
         return (
             <div>
-                <Button id="notification" onClick={this.toggle}  size="sm" color="primary">
+                <a href="#" id="notification" onClick={this.toggle} className="FondoBarra nav-link text-white">
                     <FaBell />
-                </Button>
+                </a>
                 <Popover placement="bottom" isOpen={this.state.popoverOpen} target="notification" toggle={this.toggle}  >
                     <PopoverHeader>
                         <div className="d-flex small">

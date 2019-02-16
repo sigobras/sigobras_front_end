@@ -159,9 +159,6 @@ class MDdiario extends Component {
                               String(row[filter.id]) === filter.value}
                               
                           columns={[
-                              {
-                              Header: "Descripción",
-                              columns: [
                                   {
                                   Header: "ITEM",
                                   accessor: "item",
@@ -194,8 +191,8 @@ class MDdiario extends Component {
                                       >
 
                                       <div className="clearfix">
-                                        <span className="float-left">A met. {row.original.avance_metrado}{row.original.u_med_temporal}</span>
-                                        <span className="float-right">S/. {row.original.avance_costo}</span>
+                                        <span className="float-left text-warning">A met. {row.original.avance_metrado}{row.original.u_med_temporal}</span>
+                                        <span className="float-right text-warning">S/. {row.original.avance_costo}</span>
                                       </div>
 
                                       <div style={{
@@ -221,8 +218,8 @@ class MDdiario extends Component {
                                       />
                                       </div>
                                       <div className="clearfix">
-                                        <span className="float-left">Saldo: {row.original.metrados_saldo}</span>
-                                        <span className="float-right">S/. {row.original.metrados_costo_saldo}</span>
+                                        <span className="float-left text-info">Saldo: {row.original.metrados_saldo}</span>
+                                        <span className="float-right text-info">S/. {row.original.metrados_costo_saldo}</span>
                                       </div>
                                     </div>                                          
                                   ),
@@ -259,12 +256,10 @@ class MDdiario extends Component {
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["metrado"] }),
                                   filterAll: true
-                                  }
-                              ]
+                                  
+                              
                               },
-                              {
-                              Header: "Costos",
-                              columns: [
+                              
                                   {
                                   Header: "P/U S/.",
                                   id: "costo_unitario",
@@ -295,10 +290,11 @@ class MDdiario extends Component {
                                   //   </div>
                                   // )
                                   // }
-                              ]
-                              }
+                              
+                              
                           ]}  
                           defaultPageSize={20}
+                          style={{ height: 500 }}
                           className="-striped -highlight table table-responsive table-sm small"
                           headerClassName='bg-primary'
                           SubComponent={row => 
@@ -366,8 +362,8 @@ class MDdiario extends Component {
           {/* <!-- MODAL PARA METRAR --> */}
                   
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
-              <ModalHeader toggle={this.modalMetrar}><img src= { LogoSigobras } width="30px" alt="logo sigobras"/> SIGOBRAS S.A.C.</ModalHeader>
-              <ModalBody>
+              <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
+              <ModalBody className="bg-dark ">
                 <b> {this.state.nombre_actividad} </b>
                 <form >
                   <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
@@ -424,7 +420,7 @@ class MDdiario extends Component {
                   </div>
                 </div>
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="bg-dark border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                 
                 <Button color="primary" onClick={this.EnviarMetrado }>Guardar</Button>{' '}
                 <Button color="danger" onClick={this.modalMetrar}>Cancelar</Button>
