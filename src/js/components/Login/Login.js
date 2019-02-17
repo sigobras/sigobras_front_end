@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Collapse, Button, CardBody, Card } from 'reactstrap';
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios'
 import { UrlServer } from '../Utils/ServerUrlConfig'
@@ -10,13 +12,13 @@ class Login extends Component {
   constructor(){
     super();
     this.state={
-        user:'',
-    pass:'',
-    nombAcceso:'',
-    sesionCargo:'',
-    Loginsms:'',
-    alert:'',
-    isLoading: false
+      user:'',
+      pass:'',
+      nombAcceso:'',
+      sesionCargo:'',
+      Loginsms:'',
+      alert:'',
+      isLoading: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,77 +32,66 @@ class Login extends Component {
   }
 
   handleSubmit(e){
-  this.setState({ isLoading: true });
-    axios.post(UrlServer+'/login',{
+    e.preventDefault();
+    
+    
+      this.setState({ isLoading: true });
+      axios.post(UrlServer+'/login',{
           usuario: this.state.user,
           password: this.state.pass
       })
-      .then((response)=> {
-      console.log(response.data[0])
+      .then((res)=> {
+          var resUsuario = res.data[0].nombre_usuario
+        if(resUsuario !== undefined){
+          if(resUsuario === this.state.user && this.state.pass.length > 0){
+            // console.info(res.data[0])
+            sessionStorage.setItem("cargo", res.data[0].nombre_cargo);
+            sessionStorage.setItem("nombre", resUsuario);
+            sessionStorage.setItem("idacceso", res.data[0].id_acceso);
 
-    if(response.data[0].nombre_usuario){
-      sessionStorage.setItem("cargo", response.data[0].nombre_cargo);
-      sessionStorage.setItem("nombre", response.data[0].nombre_usuario);
-      sessionStorage.setItem("idacceso", response.data[0].id_acceso);			
-      setTimeout(()=>{ 	
+            // setTimeout(()=>{ 	
+                  
+            //   window.location.href = '/inicio'
             
-        window.location.href = '/inicio'
-      
-      },200);
-    
-      // axios.get(UrlServer+'/menus/'+sessionStorage.getItem("idacceso"))
-      // .then((response)=> {
-      //   // console.log(response.data)
-  
-      //   if(response.data.length){
-      //     var menupos0 = JSON.stringify(response.data[0]);
-
-      //     sessionStorage.setItem("menus_id_ficha", menupos0);
-      //     sessionStorage.setItem("menusPrivilegios", JSON.stringify(response.data));
+            // },50);
           
-  
-      //     setTimeout(()=>{ 	
-            
-      //       window.location.href = '/inicio'
-          
-      //     },200);
-      //   }
-            
-      // })
-      // .catch((error)=> {
-      //   console.log(error);
-      // });
-    }else{
-      this.setState({
-        Loginsms: 'Usuario o contraseña incorrectos',
-        alert: 'alert text-danger',
-        isLoading: false
-      })
-    }
-          
+          }else{
+            this.setState({
+              Loginsms: 'Usuario o contraseña incorrectos',
+              alert: 'alert text-danger',
+              isLoading: false
+            })
+          }
+        } 
       })
       .catch((error)=> {
-        console.log(error);
+        toast.error('Usuario o contraseña incorrectos');
+        this.setState({
+          // Loginsms: 'Usuario o contraseña incorrectos',
+          // alert: 'alert alert-danger alert-dismissible fade show text-danger',
+          isLoading: false
+        })
+        // console.log('tu error ',error);
       });
-  
-    //  {sessionStorage.getItem("nombre")}	
-    //  {sessionStorage.getItem("cargo")}	
-    //  {sessionStorage.getItem("idacceso")}
-    // {sessionStorage.getItem("misobras")};
-    // {sessionStorage.getItem("idobra")};
-    // {sessionStorage.getItem("menus_id_ficha")};
-    // {sessionStorage.getItem("id_usuario")};
-  //   consumo de axios login 
+
     
-  e.preventDefault();
   }
     render() {
-      const enabled =
-          this.state.user.length > 0 &&
-		  this.state.pass.length > 0;
+      const enabled = this.state.user.length > 0 && this.state.pass.length > 0;
 		  const { isLoading } = this.state;
         return (
             <div>
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnVisibilityChange
+                draggable
+                pauseOnHover
+              />
 
               <div className="modal-dialog modal-login shadow">
                   <div className="modal-content">
