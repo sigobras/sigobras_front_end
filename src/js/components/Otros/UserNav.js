@@ -24,7 +24,8 @@ class UserNav extends Component {
                 <a href="#" id="userLogin"  className="FondoBarra mr-1 nav-link text-white" >
                     Bienvenido:  {sessionStorage.getItem('nombre')}
                 </a>
-                <UncontrolledPopover trigger="focus" placement="bottom" target="userLogin">
+                
+                <UncontrolledPopover trigger="legacy" placement="bottom" target="userLogin">
                     <PopoverBody>
                         <label>Configuración</label>
                         <div className="divider"></div>

@@ -49,11 +49,11 @@ class Login extends Component {
             sessionStorage.setItem("nombre", resUsuario);
             sessionStorage.setItem("idacceso", res.data[0].id_acceso);
 
-            // setTimeout(()=>{ 	
+            setTimeout(()=>{ 	
                   
-            //   window.location.href = '/inicio'
+              window.location.href = '/inicio'
             
-            // },50);
+            },50);
           
           }else{
             this.setState({

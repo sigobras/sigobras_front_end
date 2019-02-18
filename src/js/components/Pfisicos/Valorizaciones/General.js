@@ -73,22 +73,6 @@ class General extends Component {
         })
         console.log(DataValorizacion)
 
-        // EJEMPLO
-        // var TableFiltrada = this.state.idCom;
-
-        // TableFiltrada = TableFiltrada[indexComp].metrados.filter((tbF) => {
-        //   if(e.target.value === 'cero'){
-        //     return( tbF.porcentaje === '0.00' && tbF.u_med_temporal !== '');
-        //   }else if(e.target.value === 'enprogreso' && tbF.u_med_temporal !== '') {
-        //     return(tbF.porcentaje < 100.00);
-        //   }else if(e.target.value === 'cien') {
-        //     return(tbF.porcentaje === '100');
-        //   }else if(e.target.value === 'todos') {
-        //     return(tbF.porcentaje < 102);
-        //   }
-        // });
-
-        // alert('filtro > '+valor_total_saldo)
     }
     render() {
         const { activeTab, activeTabComponet, DataValorizacion } = this.state
@@ -118,7 +102,7 @@ class General extends Component {
                                 <Nav tabs>
                                     {/* RESUMEN */}
                                     <NavItem>
-                                        <NavLink className={classnames({ active: activeTabComponet === 'resumen' })} onClick={() => { this.TabsComponent('resumen'); }} >
+                                        <NavLink className={classnames({ active: activeTabComponet === `resumen` })} onClick={() => { this.TabsComponent(`resumen`) }} >
                                             RESUMEN
                                         </NavLink>
                                     </NavItem>
@@ -134,13 +118,65 @@ class General extends Component {
                                 </Nav>
 
                                 <TabContent activeTab={activeTabComponet}>
-                                    <TabPane tabId="resumen" className="p-1">
+                                    <TabPane tabId={ `resumen` } className="p-1">
                                         <Card>
-                                            <CardHeader>nombre del componente</CardHeader>
+                                            <CardHeader>Resumen de componentes { indexVal}</CardHeader>
                                             <CardBody>
                                                 <Row>
                                                     <Col sm="12">
-                                                        <h4>resumen de componetes { indexVal }</h4>
+                                                        <table className="table table-bordered small table-sm">
+                                                            <thead>
+                                                                {console.log('><<', DataValorizacion[indexVal].resumen)}
+                                                                <tr className="text-center">
+                                                                    <th className="align-middle" rowSpan="3">ITEM</th>
+                                                                    <th className="align-middle" rowSpan="3">DESCRIPCION PARTIDA</th>
+                                                                    <th>{ DataValorizacion[indexVal].resumen.avance_actual }</th>
+                                                                    <th colSpan="2">{ DataValorizacion[indexVal].resumen.avance_anterior }</th>
+                                                                    <th colSpan="2">{ DataValorizacion[indexVal].resumen.avance_actual }</th>
+                                                                    <th colSpan="2">{ DataValorizacion[indexVal].resumen.avance_acumulado } </th>
+                                                                    <th colSpan="2">{ DataValorizacion[indexVal].resumen.saldo }</th>
+                                                                </tr>
+                                                                <tr className="text-center">
+                                                                    <td>MONTO ACT.</td>
+                                                                    <td colSpan="2">AVANCE ANTERIOR</td>
+                                                                    <td colSpan="2">AVANCE ACTUAL</td>
+                                                                    <td colSpan="2">AVANCE ACUMULADO</td>
+                                                                    <td colSpan="2">SALDO</td>
+                                                                </tr>
+                                                                <tr className="text-center">
+                                                                    <td>PPTO</td>
+                                                                    <td>MONTO</td>
+                                                                    <td>%</td>
+                                                                    <td>MONTO</td>
+                                                                    <td>%</td>
+                                                                    <td>MONTO</td>
+                                                                    <td>%</td>
+                                                                    <td>MONTO</td>
+                                                                    <td>%</td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                { valorizacion.componentes.map((resumen, IResumen)=>
+                                                                    <tr key={ IResumen }>
+                                                                        <td>{ resumen.componente_numero }</td>
+                                                                        <td>{ resumen.nombre }</td>
+                                                                        <td>{ resumen.presupuesto }</td>
+                                                                        <td>{ resumen.valor_total_anterior }</td>
+                                                                        <td>{ resumen.valor_total_anterior_porcentaje }</td>
+
+                                                                        <td>{ resumen.valor_total_actual}</td>
+                                                                        <td>{ resumen.valor_total_actual_porcentaje}</td>
+
+                                                                        <td>{ resumen.valor_suma_acumulado}</td>
+                                                                        <td>{ resumen.valor_suma_acumulado_porcentaje}</td>
+
+                                                                        <td>{ resumen.valor_total_saldo }</td>
+                                                                        <td>{ resumen.valor_total_saldo_porcentaje }</td>
+                                                                    </tr>
+                                                                )}
+                                                            </tbody>
+                                                        </table>
+
                                                     </Col>
                                                 </Row>
                                             </CardBody>
