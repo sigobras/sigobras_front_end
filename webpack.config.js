@@ -29,7 +29,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|svg|jpg|gif|ico)$/,
+        test: /\.(png|svg|jpg|gif)$/,
         use: [{
           loader: "file-loader",
           options: {
@@ -42,10 +42,10 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "public"),
     filename: 'main.js',
-    publicPath: '',
+    publicPath: '/',
   },
   devServer: {
-    contentBase: path.join(__dirname, 'public'),
+    contentBase: path.join(__dirname, "public"),
     compress: true,
     port: PORT,
     historyApiFallback: true,

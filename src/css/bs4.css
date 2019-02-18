@@ -171,3 +171,22 @@ legend {
   color: white!important;
 
 }
+
+/* paginacion */
+.ReactTable .-pagination .-btn {
+  -webkit-appearance: none!important;
+  -moz-appearance: none!important;
+  appearance: none!important;
+  display: block!important;
+  width: 100%!important;
+  height: 100%!important;
+  border: 0!important;
+  border-radius: 3px!important;
+  padding: 6px!important;
+  font-size: 1.2em!important;
+  color: rgb(255, 255, 255)!important;
+  background: rgba(0, 0, 0, 0.63)!important;
+  transition: all .1s ease!important;
+  cursor: pointer!important;
+  outline: none!important;
+}

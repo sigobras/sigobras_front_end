@@ -175,7 +175,7 @@ class List extends Component{
                 <tr>
                     <td colSpan="6">
                         <UncontrolledCollapse toggler={"#toggler"+IndexObras}>
-                            <table className="table table-bordered table-sm">
+                            <table className="table table-bordered table-sm bg-dark">
                                 <thead>
                                     <tr>
                                         <th>#</th>
