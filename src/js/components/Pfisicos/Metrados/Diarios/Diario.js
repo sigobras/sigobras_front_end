@@ -42,8 +42,7 @@ class MDdiario extends Component {
       metrado_actividad:'',
       viewIndex:'',
       parcial_actividad:'',
-
-      // expanded:1
+      descripcion:''
 
     }
     this.Tabs = this.Tabs.bind(this)
@@ -88,20 +87,7 @@ class MDdiario extends Component {
 
   }
   
-  CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad) {
-
-    var { DataMDiario } = this.state
-
-    var DataModificado = DataMDiario
-
-    DataModificado[indexComp].partidas[viewIndex].porcentaje = 100
-
-     this.setState({
-      DataMDiario: DataModificado
-     })
-
-    console.log('dD>', DataMDiario[0].partidas[4].porcentaje)
-    console.log('indexComp>', indexComp,'viewIndex', viewIndex)
+  CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion) {
 
     // e.preventDefault()        
     this.setState({
@@ -115,7 +101,8 @@ class MDdiario extends Component {
       actividad_avance_metrado: actividad_avance_metrado,
       metrado_actividad: metrado_actividad,
       viewIndex: viewIndex,
-      parcial_actividad: parcial_actividad
+      parcial_actividad: parcial_actividad,
+      descripcion:descripcion
     })
     this.modalMetrar();    
   }
@@ -128,7 +115,11 @@ class MDdiario extends Component {
   
   EnviarMetrado(){
 
-    const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado } = this.state
+    const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex } = this.state
+
+
+    var DataModificado = DataMDiario
+
     axios.post(`${UrlServer}/avanceActividad`,{
       "Actividades_id_actividad":id_actividad,
       "valor":ValorMetrado,
@@ -136,9 +127,16 @@ class MDdiario extends Component {
       "observacion":ObservacionMetrado,
       "id_ficha":sessionStorage.getItem('idobra')
     })
-    .then((res)=>
-      console.log('datos', res)
-    )
+    .then((res)=>{
+      console.log('datos', res.data)
+      // DataModificado[indexComp].partidas[viewIndex].porcentaje = res.data.porcentaje
+      // DataModificado[indexComp].partidas[viewIndex].metrados_saldo = res.data.porcentaje
+      DataModificado[indexComp].partidas[viewIndex] = res.data
+
+      this.setState({
+        DataMDiario: DataModificado
+      })
+    })
     .catch((error)=>
       console.error('algo salio mal al consultar al servidor ', error)
     )
@@ -147,8 +145,9 @@ class MDdiario extends Component {
       modal: !this.state.modal
     });
   }
+
   render() {
-    const { DataMDiario, debounceTimeout } = this.state
+    const { DataMDiario, debounceTimeout, descripcion } = this.state
     if(sessionStorage.getItem("idacceso")){ 
       return (
         <div className="pb-3">
@@ -269,7 +268,7 @@ class MDdiario extends Component {
                                   Header: "METRADO",
                                   id: "metrado",
                                   maxWidth: 100,
-                                  accessor: d => d.metrado +' '+ d.unidad_medida,
+                                  accessor: d => d.metrado +' '+ d.unidad_medida.replace("/DIA", ""),
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["metrado"] }),
                                   filterAll: true
@@ -339,7 +338,7 @@ class MDdiario extends Component {
                                       },{
                                         Header: "METRADO",
                                         id: "metrado_actividad",
-                                        accessor: m => m.metrado_actividad + ' ' + m.unidad_medida,
+                                        accessor: m => m.metrado_actividad + ' ' + m.unidad_medida.replace("/DIA", ""),
                                       },{
                                         Header: "SALDO METRADO",
                                         id: "actividad_metrados_saldo",
@@ -355,8 +354,8 @@ class MDdiario extends Component {
                                         accessor: "id_actividad",
                                         Cell: id => (
                                           <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                            {/* {console.log('row=>>>',row)} */}
-                                            <button className="btn btn-sm btn-outline-light text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad)} >
+                                            {console.log('row=>>>',row)}
+                                            <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad, row.original.descripcion)} >
                                               <FaPlus /> 
                                               {/* {id.original.id_actividad} */}
                                             </button>
@@ -383,6 +382,7 @@ class MDdiario extends Component {
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
               <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
               <ModalBody className="bg-dark ">
+                <label className="text-center">{ descripcion }</label>
                 <b> {this.state.nombre_actividad} </b>
                 <form >
                   <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
@@ -391,7 +391,7 @@ class MDdiario extends Component {
                     <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control"/>  
                     
                     <div className="input-group-append">
-                      <span className="input-group-text">{this.state.unidad_medida}</span>
+                      <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
                     </div>
                     
                   </div>
@@ -431,13 +431,14 @@ class MDdiario extends Component {
                     
                 </form>
                 <div className="d-flex p-1 text-center mt-0">  
-                  <div className="card alert alert-info  p-1 m-1">Costo / {this.state.unidad_medida} =  {this.state.costo_unitario} <br/>
+                  <div className="card alert bg-info text-white p-1 m-1">Costo / {this.state.unidad_medida.replace("/DIA", "")} =  {this.state.costo_unitario} <br/>
                     soles
                   </div>
-                  <div className="card alert alert-danger p-1 m-1">Saldo de met.<br/>
+                  <div className="card alert bg-secondary p-1 text-white m-1">Saldo de metrado<br/>
                       {this.state.actividad_metrados_saldo}
                   </div>
                 </div>
+                    
               </ModalBody>
               <ModalFooter className="bg-dark border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                 
