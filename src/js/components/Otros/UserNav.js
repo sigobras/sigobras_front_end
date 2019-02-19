@@ -13,7 +13,7 @@ class UserNav extends Component {
 
     cierraSesion(){
         if(confirm('estas seguro de salir?')){
-          sessionStorage.removeItem('user');
+          sessionStorage.removeItem('idacceso');
         }else{
             
         }

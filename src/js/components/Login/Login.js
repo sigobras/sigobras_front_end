@@ -83,7 +83,7 @@ class Login extends Component {
             <div>
               <ToastContainer
                 position="top-right"
-                autoClose={5000}
+                autoClose={4000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -93,32 +93,32 @@ class Login extends Component {
                 pauseOnHover
               />
 
-              <div className="modal-dialog modal-login shadow">
+              <div className="container-dialog modal-login shadow">
                   <div className="modal-content">
-                      <div className="modal-header">
-                          <div className="avatar">
-                              <img src={ LogoSigobras } className="pt-2" alt="sigoobras sac" height="75"/>
+                    <div className="modal-header">
+                        <div className="avatar">
+                            <img src={ LogoSigobras } className="pt-2" alt="sigoobras sac" height="75"/>
+                        </div>
+                        <h4 className="text-dark">Inice sesión</h4>
+                    </div>
+                    <div className="modal-body">
+                      <form>
+                          <div className="form-group">
+                              <input type="text" className="form-control" name="user" placeholder="Usuario" required="required"  onChange={this.handleChange} required autoFocus  />
                           </div>
-                          <h4 className="text-dark">Inice sesión</h4>
-                      </div>
-                      <div className="modal-body">
-                          <form>
-                              <div className="form-group">
-                                  <input type="text" className="form-control" name="user" placeholder="Usuario" required="required"  onChange={this.handleChange} required autoFocus  />
-                              </div>
-                              <div className="form-group">
-                                  <input type="password" className="form-control" name="pass" placeholder="Password" required="required" onChange={this.handleChange} />
-                              </div>
-                              <div className="form-group">
-                                  <div className={this.state.alert }>{this.state.Loginsms }</div>
+                          <div className="form-group">
+                              <input type="password" className="form-control" name="pass" placeholder="Password" required="required" onChange={this.handleChange} />
+                          </div>
+                          <div className="form-group">
+                              <div className={this.state.alert }>{this.state.Loginsms }</div>
 
-                                  <button type="submit"  disabled={!enabled} onClick={this.handleSubmit}  className="btn btn-primary btn-lg btn-block">{isLoading ? 'Cargando...' : 'INGRESAR'}</button>
-                              </div>
-                          </form>
-                      </div>
-                      <div className="modal-footer">
-                          <a href="#">SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. Ⓒ 2018 - 2019</a>
-                      </div>
+                              <button type="submit"  disabled={!enabled} onClick={this.handleSubmit}  className="btn btn-primary btn-lg btn-block">{isLoading ? 'Cargando...' : 'INGRESAR'}</button>
+                          </div>
+                      </form>
+                    </div>
+                    <div className="modal-footer">
+                        <a href="#">SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> Ⓒ 2018 - 2019</a>
+                    </div>
                   </div>
               </div>
             </div>

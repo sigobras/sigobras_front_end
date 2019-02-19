@@ -38,7 +38,7 @@
 }
 
 .modal-login {
-    background: #ecf0f1;
+    background: #383838;
     border-color: #dee4e7;
     text-align: center;
     justify-content: center;
@@ -70,8 +70,15 @@
     width: 100%;
 }
 
-.modal-login.modal-dialog {
+.modal-login {
     margin-top: 80px;
+    
+}
+
+.container-dialog{
+    max-width: 300px;
+    margin: 1.75rem auto;
+    margin-top: 100px;
 }
 
 .modal-login {

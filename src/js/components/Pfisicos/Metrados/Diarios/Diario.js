@@ -41,7 +41,9 @@ class MDdiario extends Component {
       actividad_avance_metrado:'',
       metrado_actividad:'',
       viewIndex:'',
-      parcial_actividad:''
+      parcial_actividad:'',
+
+      // expanded:1
 
     }
     this.Tabs = this.Tabs.bind(this)
@@ -88,6 +90,19 @@ class MDdiario extends Component {
   
   CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad) {
 
+    var { DataMDiario } = this.state
+
+    var DataModificado = DataMDiario
+
+    DataModificado[indexComp].partidas[viewIndex].porcentaje = 100
+
+     this.setState({
+      DataMDiario: DataModificado
+     })
+
+    console.log('dD>', DataMDiario[0].partidas[4].porcentaje)
+    console.log('indexComp>', indexComp,'viewIndex', viewIndex)
+
     // e.preventDefault()        
     this.setState({
       id_actividad: id_actividad,
@@ -102,11 +117,9 @@ class MDdiario extends Component {
       viewIndex: viewIndex,
       parcial_actividad: parcial_actividad
     })
-    this.modalMetrar();
-
-    // console.log(idcomp, ' > ' ,index);
-    
+    this.modalMetrar();    
   }
+
   modalMetrar() {
     this.setState({
       modal: !this.state.modal
@@ -124,14 +137,18 @@ class MDdiario extends Component {
       "id_ficha":sessionStorage.getItem('idobra')
     })
     .then((res)=>
-    console.log('datos', res)
+      console.log('datos', res)
     )
     .catch((error)=>
-    console.error('algo salio mal al consultar al servidor ', error)
+      console.error('algo salio mal al consultar al servidor ', error)
     )
+
+    this.setState({
+      modal: !this.state.modal
+    });
   }
   render() {
-    const { DataMDiario, debounceTimeout }= this.state
+    const { DataMDiario, debounceTimeout } = this.state
     if(sessionStorage.getItem("idacceso")){ 
       return (
         <div className="pb-3">
@@ -212,7 +229,7 @@ class MDdiario extends Component {
                                             : row.value > 50 ? '#ffbf00'
                                             :  '#ff2e00',
                                           borderRadius: '2px',
-                                          transition: 'all .3s ease-out',
+                                          transition: 'all .9s ease-in',
                                           position: 'absolute'
                                         }}
                                       />
@@ -256,10 +273,7 @@ class MDdiario extends Component {
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["metrado"] }),
                                   filterAll: true
-                                  
-                              
-                              },
-                              
+                                  },
                                   {
                                   Header: "P/U S/.",
                                   id: "costo_unitario",
@@ -290,14 +304,15 @@ class MDdiario extends Component {
                                   //   </div>
                                   // )
                                   // }
-                              
-                              
                           ]}  
                           defaultPageSize={20}
                           style={{ height: 500 }}
                           className="-striped -highlight table table-responsive table-sm small"
                           headerClassName='bg-primary'
+                          collapseOnDataChange={false} 
+                          // expanded={this.state.expanded}
                           SubComponent={row => 
+
                             // console.log('row>>',row.original.actividades)
                             row.original.tipo === "titulo" ? <span className="text-center text-danger"><b>no tiene actividades</b></span>:
                               <div className="p-1">
@@ -326,6 +341,10 @@ class MDdiario extends Component {
                                         id: "metrado_actividad",
                                         accessor: m => m.metrado_actividad + ' ' + m.unidad_medida,
                                       },{
+                                        Header: "SALDO METRADO",
+                                        id: "actividad_metrados_saldo",
+                                        accessor: m => m.actividad_metrados_saldo,
+                                      },{
                                         Header: "P/U S/.",
                                         accessor: "costo_unitario"
                                       },{
@@ -336,8 +355,8 @@ class MDdiario extends Component {
                                         accessor: "id_actividad",
                                         Cell: id => (
                                           <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                            {/* {console.log('=>>>', id.original)} */}
-                                            <button className="btn btn-sm btn-outline-light text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, id.viewIndex, id.original.parcial_actividad)} >
+                                            {/* {console.log('row=>>>',row)} */}
+                                            <button className="btn btn-sm btn-outline-light text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad)} >
                                               <FaPlus /> 
                                               {/* {id.original.id_actividad} */}
                                             </button>
