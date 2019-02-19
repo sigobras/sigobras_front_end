@@ -9,6 +9,7 @@ import { Redirect} from "react-router-dom";
 
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
+import { ToastContainer, toast } from "react-toastify";
 
 import LogoSigobras from '../../../../../images/logoSigobras.png'
 import Cubito from '../../../../../images/loaderXS.gif';
@@ -42,7 +43,10 @@ class MDdiario extends Component {
       metrado_actividad:'',
       viewIndex:'',
       parcial_actividad:'',
-      descripcion:''
+      descripcion:'',
+
+      // validacion de al momento de metrar
+      smsValidaMetrado:''
 
     }
     this.Tabs = this.Tabs.bind(this)
@@ -88,8 +92,7 @@ class MDdiario extends Component {
   }
   
   CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion) {
-
-    // e.preventDefault()        
+    this.modalMetrar();
     this.setState({
       id_actividad: id_actividad,
       nombre_actividad: nombre_actividad,
@@ -102,9 +105,11 @@ class MDdiario extends Component {
       metrado_actividad: metrado_actividad,
       viewIndex: viewIndex,
       parcial_actividad: parcial_actividad,
-      descripcion:descripcion
+      descripcion:descripcion,
+
+      smsValidaMetrado:''
     })
-    this.modalMetrar();    
+        
   }
 
   modalMetrar() {
@@ -115,45 +120,58 @@ class MDdiario extends Component {
   
   EnviarMetrado(){
 
-    const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex } = this.state
-
-
+    const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
     var DataModificado = DataMDiario
-
-    axios.post(`${UrlServer}/avanceActividad`,{
-      "Actividades_id_actividad":id_actividad,
-      "valor":ValorMetrado,
-      "descripcion":DescripcionMetrado,
-      "observacion":ObservacionMetrado,
-      "id_ficha":sessionStorage.getItem('idobra')
-    })
-    .then((res)=>{
-      console.log('datos', res.data)
-      // DataModificado[indexComp].partidas[viewIndex].porcentaje = res.data.porcentaje
-      // DataModificado[indexComp].partidas[viewIndex].metrados_saldo = res.data.porcentaje
-      DataModificado[indexComp].partidas[viewIndex] = res.data
-
-      this.setState({
-        DataMDiario: DataModificado
-      })
-    })
-    .catch((error)=>
-      console.error('algo salio mal al consultar al servidor ', error)
-    )
-
-    this.setState({
-      modal: !this.state.modal
-    });
+    
+    if(ValorMetrado === '' || ValorMetrado === '0' ){
+      this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
+    }else if( Number(ValorMetrado) < 0){
+      this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
+    }else if(Number(ValorMetrado) > Number(actividad_metrados_saldo)){
+      this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
+    }else{
+      if(confirm('¿Estas seguro de metrar?')){
+        axios.post(`${UrlServer}/avanceActividad`,{
+          "Actividades_id_actividad":id_actividad,
+          "valor":ValorMetrado,
+          "descripcion":DescripcionMetrado,
+          "observacion":ObservacionMetrado,
+          "id_ficha":sessionStorage.getItem('idobra')
+        })
+        .then((res)=>{
+          DataModificado[indexComp].partidas[viewIndex] = res.data
+    
+          this.setState({
+            DataMDiario: DataModificado,
+            modal: !this.state.modal
+          })
+          toast.success('Exito! Metrado ingresado');
+        })
+        .catch((error)=>
+          console.error('algo salio mal al consultar al servidor ', error)
+        )
+      }
+    }
   }
 
   render() {
-    const { DataMDiario, debounceTimeout, descripcion } = this.state
+    const { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado } = this.state
     if(sessionStorage.getItem("idacceso")){ 
       return (
         <div className="pb-3">
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnVisibilityChange
+            draggable
+            pauseOnHover
+          />
           <Card>
             <Nav tabs>
-            {/* {console.log('DataMDiario', DataMDiario)} */}
               {DataMDiario === undefined? 'cargando': DataMDiario.map((comp,indexComp)=>
                 <NavItem key={ indexComp }>
                   <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => { this.Tabs(indexComp.toString()); }}>
@@ -382,19 +400,19 @@ class MDdiario extends Component {
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
               <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
               <ModalBody className="bg-dark ">
-                <label className="text-center">{ descripcion }</label>
-                <b> {this.state.nombre_actividad} </b>
+                <label className="text-center">{ descripcion }</label><br/>
+                <b> {this.state.nombre_actividad} </b> 
                 <form >
                   <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
-                  <div className="input-group mb-3">
+                  <div className="input-group mb-0">
                     <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control"/>  
                     
                     <div className="input-group-append">
                       <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
                     </div>
-                    
                   </div>
+                  <div className="texto-rojo mb-3"> <b> { smsValidaMetrado }</b></div> 
 
                   <div className="form-group">
                     <label htmlFor="comment">DESCRIPCION:</label>

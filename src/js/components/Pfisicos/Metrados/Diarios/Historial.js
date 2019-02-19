@@ -100,7 +100,7 @@ class MDHistorial extends Component {
     return ( 
         
         <div>   
-            {this.state.idCom.length < 1 ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /></div>:
+            {this.state.idCom === 'vacio' ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /> <br/>No hay datos</div>:
             <Card>
 
                 <Nav tabs>

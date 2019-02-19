@@ -199,3 +199,6 @@ body {
 .border-top{
   border-top: 1px solid #000000!important;
 }
+.texto-rojo{
+  color: #ff5959;
+}

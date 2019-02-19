@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Collapse, Button, CardBody, Card } from 'reactstrap';
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios'
 import { UrlServer } from '../Utils/ServerUrlConfig'
