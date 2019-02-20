@@ -6,7 +6,7 @@ class CtrladminDirecta extends Component {
             <div className="table-responsive">
                 <label className="h6 text-center"> CONTROL DE EJECUCION DE OBRAS POR ADMINSTRACION DIRECTA</label>
                 <div className="bg-info text-center"> PROYECTO EN EJECUCION</div>
-                <table className="table table-bordered table-sm  small" border="1" style={{width:'100%'}}>
+                <table className="table table-bordered table-sm  small" border="1" style={{width:'100%', fontSize:'10px', borderCollapse: 'collapse'}} >
                     <tbody>
                         <tr>
                             <th>ENTIDAD FINANCIERA</th>
@@ -44,7 +44,7 @@ class CtrladminDirecta extends Component {
                         </tr>
                     </tbody>
                 </table>
-                
+                <br />
                 <table className="table table-bordered table-sm small" border="1" style={{width:'100%', fontSize:'10px', borderCollapse: 'collapse'}} >
                     <tbody>
                         <tr>

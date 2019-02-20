@@ -149,9 +149,10 @@ class MDdiario extends Component {
           })
           toast.success('Exito! Metrado ingresado');
         })
-        .catch((error)=>
-          console.error('algo salio mal al consultar al servidor ', error)
-        )
+        .catch((error)=>{
+          toast.error('hubo errores al ingresar el metrado');
+          // console.error('algo salio mal al consultar al servidor ', error)
+        })
       }
     }
   }
@@ -259,7 +260,7 @@ class MDdiario extends Component {
                                       </div>
 
                                       <div style={{
-                                        height: '25%',
+                                        height: '20%',
                                         backgroundColor: '#c3bbbb',
                                         borderRadius: '2px',
                                         position: 'relative'
@@ -270,7 +271,7 @@ class MDdiario extends Component {
                                         style={{
                                           width: `${row.value}%`,
                                           height: '100%',
-                                          backgroundColor: row.value > 95 ? '#85cc00'
+                                          backgroundColor: row.value > 95 ? 'rgb(164, 251, 1)'
                                             : row.value > 50 ? '#ffbf00'
                                             :  '#ff2e00',
                                           borderRadius: '2px',
@@ -387,7 +388,7 @@ class MDdiario extends Component {
                                           </div>
 
                                           <div style={{
-                                            height: '25%',
+                                            height: '11%',
                                             backgroundColor: '#c3bbbb',
                                             borderRadius: '2px',
                                             position: 'relative'
