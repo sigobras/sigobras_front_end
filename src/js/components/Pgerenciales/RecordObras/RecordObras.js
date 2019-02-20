@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking } from "react-icons/fa";
+import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking, FaPrint } from "react-icons/fa";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse } from 'reactstrap';
+import ReactToPrint from "react-to-print";
+
 // import { Progress } from 'react-sweet-progress';
 // import "react-sweet-progress/lib/style.css";
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import CronogramaAvance from '../CronogramaAvance';
 import Galeria from '../GaleriaImagenes/Galeria';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse } from 'reactstrap';
+import CtrladminDirecta from '../Reportes/CtrladminDirecta'
 
 class RecordObras extends Component{
     constructor(props){
@@ -14,19 +17,15 @@ class RecordObras extends Component{
         this.state = {
           DataRecorObra:[],
           items:[],
-          modal: false,
-          event:''
+          event:'',
+          visiblilidad: false
         };
         
         this.filterList = this.filterList.bind(this);
-        this.toggle = this.toggle.bind(this);
+        // this.toggle = this.toggle.bind(this);
 
     }
-    toggle() {
-        this.setState({
-          modal: !this.state.modal
-        });
-    }
+    
 
     componentWillMount(){
         axios.post(`${UrlServer}/PGlistaObras`,{
@@ -68,9 +67,6 @@ class RecordObras extends Component{
         // console.log('>>>>', DataFiltrado);
       };
 
-    
-
-
     render(){
         return(
             <div>  
@@ -79,11 +75,10 @@ class RecordObras extends Component{
                         RECORD DE EJECUCION PRESUPUESTAL
                         <div className="float-right">
                             <select className="form-control form-control-sm" onChange={this.filterList} >
-                                <option value="S" >Seleccione:</option>
+                                <option value="">Todo</option>
                                 <option value="E">Edificaciones</option>
                                 <option value="C">Carreteras</option>
-                                <option value="P">Prueba</option>
-                                <option value="">Todo</option>                                
+                                <option value="P">Prueba</option>                                
                             </select>
                         </div>
                     </div>
@@ -102,19 +97,25 @@ class RecordObras extends Component{
                                 </thead>
                                 {this.state.event.length === 0 ? <List items={this.state.DataRecorObra}/> :  <List items={this.state.items}/>}
                             </table>
+
+                            <ReactToPrint
+                                trigger={() => <a href="#">imprimir</a>}
+                                content={() => this.componentRef}
+                                pageStyle='bg-danger'
+                                bodyClass='bg-light'
+                                copyStyles = {false}
+                                // onBeforePrint= { this.setState({visiblilidad: true})  }
+                            />
+                            <div className={this.state.visiblilidad === false ? 'sos un falso pendejo': 'sos un true pendejo'}>
+                                {this.state.visiblilidad === false ? 'sos un falso pendejo': 'sos un true pendejo'}
+                                <CtrladminDirecta ref={el => (this.componentRef = el)} />
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
 
-                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}  style={{maxWidth: '90%'}}>
-                    <ModalHeader toggle={this.toggle}>GALERIA DE IMAGENES METRADOS</ModalHeader>
-                    <ModalBody>
-                        <Galeria />
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="danger" onClick={this.toggle}>Cancelar</Button>
-                    </ModalFooter>
-                </Modal>  
+                
                                 
             </div>
         );
@@ -125,9 +126,14 @@ class RecordObras extends Component{
 class List extends Component{
     constructor(props){
         super(props)
-        this.Setobra = this.Setobra.bind(this);
+        this.state = {
+          modal: false,
 
+        }
+        this.Setobra = this.Setobra.bind(this);
+        this.toggle = this.toggle.bind(this);
     }
+
     Setobra(idFicha){
         // console.log('id' + idFicha);
 
@@ -144,6 +150,11 @@ class List extends Component{
         },50);
         
       } 
+    toggle() {
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
     render(){
         const datos = this.props.items.map((Obras, IndexObras)=>{
                         
@@ -164,11 +175,12 @@ class List extends Component{
                     <td  className="text-center"> 
                         <span className="badge badge-primary p-1">{ Obras.estado_nombre } </span>
                     </td>
-                    <td style={{width: '14%'}}  className="text-center">
+                    <td style={{width: '18%'}}  className="text-center">
                         <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
-                        <button className="btn btn-outline-info btn-sm mr-1" id="CRONO"><FaClock /></button>
+                        <button className="btn btn-outline-info btn-sm mr-1" id={"CRONO"+IndexObras }><FaClock /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" onClick={this.toggle}><FaRegImages />{this.props.buttonLabel}</button>
-                        <button className="btn btn-outline-info btn-sm"><FaChartPie /></button>
+                        <button className="btn btn-outline-info btn-sm mr-1"><FaChartPie /></button>
+                        <button className="btn btn-outline-warning btn-sm"><FaPrint /></button>
                     </td>
                 </tr> 
 
@@ -215,12 +227,22 @@ class List extends Component{
                                 </tbody> 
                             </table>
                         </UncontrolledCollapse>
-                        <UncontrolledCollapse toggler="#CRONO">
+                        
+                        <UncontrolledCollapse toggler={"#CRONO"+IndexObras}>
                             <CronogramaAvance />
                         </UncontrolledCollapse>
 
                     </td>
                 </tr>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}  style={{maxWidth: '90%'}}>
+                    <ModalHeader toggle={this.toggle}>GALERIA DE IMAGENES METRADOS</ModalHeader>
+                    <ModalBody>
+                        <Galeria />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.toggle}>Cancelar</Button>
+                    </ModalFooter>
+                </Modal>  
             </tbody>
         )})
 

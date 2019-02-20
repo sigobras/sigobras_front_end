@@ -142,6 +142,41 @@ legend {
   box-shadow: 2px 3px 4px 0px #e7e7e7;
 }
 
+/* bordes de tabla  */
+.table-bordered td, .table-bordered th {
+  border: 1px solid #1d2029;
+  border-bottom-color: rgb(29, 32, 41);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+/* th de la tabla */
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #1d2029;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*---------------------ediciones react-table  --------------------*/
 .ReactTable .rt-tbody .rt-td {
   border-right: 1px solid rgb(29, 32, 41) !important;
@@ -190,3 +225,4 @@ legend {
   cursor: pointer!important;
   outline: none!important;
 }
+

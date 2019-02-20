@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaCheck } from 'react-icons/fa';
 
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import classnames from 'classnames';
@@ -198,7 +198,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "ITEM",
                                   accessor: "item",
-                                  maxWidth: 100,
+                                  width: 100,
                                   filterMethod: (filter, row) =>
                                       row[filter.id].startsWith(filter.value) &&
                                       row[filter.id].endsWith(filter.value)
@@ -206,7 +206,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "DESCRIPCION",
                                   id: "descripcion",
-                                  width: 438,
+                                  width: 480,
                                   accessor: d => d.descripcion,
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["descripcion"] }),
@@ -215,7 +215,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "METRADO",
                                   id: "metrado",
-                                  maxWidth: 100,
+                                  width: 70,
                                   accessor: d => d.metrado +' '+ d.unidad_medida.replace("/DIA", ""),
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["metrado"] }),
@@ -224,7 +224,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "P/U S/.",
                                   id: "costo_unitario",
-                                  maxWidth: 100,
+                                  width: 70,
                                   accessor: d => d.costo_unitario,
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["costo_unitario"] }),
@@ -233,7 +233,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "P/P S/.",
                                   id: "parcial",
-                                  maxWidth: 100,
+                                  width: 70,
                                   accessor: d => d.parcial,
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["parcial"] }),
@@ -242,7 +242,7 @@ class MDdiario extends Component {
                                   {
                                   Header: "METRADOS - SALDOS",
                                   id: "porcentaje",
-                                  maxWidth: 200,
+                                  width: 150,
                                   accessor: p => p.porcentaje,
                                   
                                   Cell: row => (
@@ -328,39 +328,49 @@ class MDdiario extends Component {
                                   columns={[
                                       {
                                         Header: "NOMBRE ACTIVIDAD",
-                                        accessor: "nombre_actividad"
+                                        accessor: "nombre_actividad",
+                                        
                                       }, {
                                         Header: "N° VECES",
                                         id: "veces_actividad",
+                                        width:50,
                                         accessor: d => d.veces_actividad
                                       },{
                                         Header: "LARGO",
-                                        accessor: "largo_actividad"
+                                        accessor: "largo_actividad",
+                                        width:50,
                                       }, {
                                         Header: "ANCHO",
-                                        accessor: "ancho_actividad"
+                                        accessor: "ancho_actividad",
+                                        width:50,
                                       },{
                                         Header: "ALTO",
-                                        accessor: "alto_actividad"
+                                        accessor: "alto_actividad",
+                                        width:50,
                                       },{
                                         Header: "METRADO",
                                         id: "metrado_actividad",
+                                        className:'text-center',
                                         accessor: m => m.metrado_actividad + ' ' + m.unidad_medida.replace("/DIA", ""),
                                       },{
-                                        Header: "SALDO METRADO",
+                                        Header: "SALDO",
                                         id: "actividad_metrados_saldo",
+                                        width:70,
+                                        className:'text-center',
                                         accessor: m => m.actividad_metrados_saldo,
                                       },{
                                         Header: "P/U S/.",
-                                        accessor: "costo_unitario"
+                                        accessor: "costo_unitario",
+                                        className:'text-right',
                                       },{
-                                        Header: "S/. PARCIAL",
-                                        accessor: "parcial_actividad"
+                                        Header: "PARCIAL S/.",
+                                        accessor: "parcial_actividad",
+                                        className:'text-right',
                                       },
                                       {
                                       Header: "ACTIVIDADES - SALDOS",
                                       id: "actividad_porcentaje",
-                                      // Width: 250,
+                                      width: 130,
                                       accessor: p => p.actividad_porcentaje,
                                       
                                       Cell: rowPor => (
@@ -428,30 +438,21 @@ class MDdiario extends Component {
                                               <option value="true">En Progeso</option>
                                           </select>
                                       },
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
-                                      
+
                                       
                                       {
                                         Header: "METRAR",
                                         accessor: "id_actividad",
+                                        width: 40,
+                                        className: "text-center",
                                         Cell: id => (
                                           <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                            {/* {console.log('row=>>>',row)} */}
-                                            <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad, row.original.descripcion)} >
-                                              <FaPlus /> 
-                                              {/* {id.original.id_actividad} */}
-                                            </button>
+                                            {/* {console.log('>>', typeof id.original.actividad_metrados_saldo)} */}
+                                            {id.original.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> : 
+                                              <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad, row.original.descripcion)} >
+                                                <FaPlus /> 
+                                              </button>
+                                            }
                                           </div>
                                         )
                                       }
