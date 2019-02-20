@@ -112,27 +112,18 @@ class AppAng extends Component {
                                                     <li className="lii">
                                                         <a className="nav-link"  href="#PF" id="PF"><FaSuperscript /> PROCESOS FISICOS <div className="float-right"><FaPlus /></div></a>
                                                         <UncontrolledCollapse toggler="#PF">
-                                                            <a className="nav-link"  href="#METRADOS" id="METRADOS"><FaSuperscript /> METRADOS <div className="float-right"><FaPlus /></div></a>
-                                                            <UncontrolledCollapse toggler="#METRADOS">
-                                                                <ul className="nav flex-column ull">
-                                                                    <li className="lii">
-                                                                        <Link to="MDdiario" className="nav-link"><FaPeopleCarry /> Diarios</Link>
-                                                                    </li>
-                                                                    <li className="lii">
-                                                                        <Link to="MDHistorial" className="nav-link"><FaPeopleCarry /> Historial</Link>
-                                                                    </li>
-                                                                </ul>
-                                                            </UncontrolledCollapse>
-
-                                                            {/* <a className="nav-link"  href="#VALORI" id="VALORI"><FaSuperscript /> VALORIZACIONES <div className="float-right"><FaPlus /></div></a>
-                                                            <UncontrolledCollapse toggler="#VALORI"> */}
-                                                                <ul className="nav flex-column ull">
-                                                                    <li className="lii">
-                                                                        <Link to="General" className="nav-link"><FaPeopleCarry /> Valorizaciones</Link>
-                                                                    </li>
-                                                                </ul>
-                                                            {/* </UncontrolledCollapse> */}
-
+                                                           
+                                                            <ul className="nav flex-column ull">
+                                                                <li className="lii pl-3">
+                                                                    <Link to="MDdiario" className="nav-link"><FaPeopleCarry /> Merados Diarios</Link>
+                                                                </li>
+                                                                <li className="lii pl-3">
+                                                                    <Link to="MDHistorial" className="nav-link"><FaPeopleCarry /> Historial de metrados</Link>
+                                                                </li>
+                                                                <li className="lii pl-3">
+                                                                    <Link to="General" className="nav-link"><FaPeopleCarry /> Valorizaciones</Link>
+                                                                </li>
+                                                            </ul>
                                                         </UncontrolledCollapse>
                                                     </li>      
                                                 </ul>

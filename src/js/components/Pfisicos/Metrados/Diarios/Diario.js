@@ -118,8 +118,9 @@ class MDdiario extends Component {
     });
   }
   
-  EnviarMetrado(){
+  EnviarMetrado(e){
 
+    e.preventDefault()
     const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
     var DataModificado = DataMDiario
     
@@ -139,6 +140,7 @@ class MDdiario extends Component {
           "id_ficha":sessionStorage.getItem('idobra')
         })
         .then((res)=>{
+          console.log(res.data)
           DataModificado[indexComp].partidas[viewIndex] = res.data
     
           this.setState({
@@ -161,7 +163,7 @@ class MDdiario extends Component {
         <div className="pb-3">
           <ToastContainer
             position="top-right"
-            autoClose={2000}
+            autoClose={1000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
@@ -211,6 +213,33 @@ class MDdiario extends Component {
                                   filterAll: true
                                   },
                                   {
+                                  Header: "METRADO",
+                                  id: "metrado",
+                                  maxWidth: 100,
+                                  accessor: d => d.metrado +' '+ d.unidad_medida.replace("/DIA", ""),
+                                  filterMethod: (filter, rows) =>
+                                      matchSorter(rows, filter.value, { keys: ["metrado"] }),
+                                  filterAll: true
+                                  },
+                                  {
+                                  Header: "P/U S/.",
+                                  id: "costo_unitario",
+                                  maxWidth: 100,
+                                  accessor: d => d.costo_unitario,
+                                  filterMethod: (filter, rows) =>
+                                      matchSorter(rows, filter.value, { keys: ["costo_unitario"] }),
+                                  filterAll: true
+                                  },
+                                  {
+                                  Header: "P/P S/.",
+                                  id: "parcial",
+                                  maxWidth: 100,
+                                  accessor: d => d.parcial,
+                                  filterMethod: (filter, rows) =>
+                                      matchSorter(rows, filter.value, { keys: ["parcial"] }),
+                                  filterAll: true
+                                  },
+                                  {
                                   Header: "METRADOS - SALDOS",
                                   id: "porcentaje",
                                   maxWidth: 200,
@@ -225,7 +254,7 @@ class MDdiario extends Component {
                                       >
 
                                       <div className="clearfix">
-                                        <span className="float-left text-warning">A met. {row.original.avance_metrado}{row.original.u_med_temporal}</span>
+                                        <span className="float-left text-warning">A met. {row.original.avance_metrado}{row.original.unidad_medida.replace("/DIA", "")}</span>
                                         <span className="float-right text-warning">S/. {row.original.avance_costo}</span>
                                       </div>
 
@@ -237,7 +266,6 @@ class MDdiario extends Component {
                                         }}
 
                                       >
-                                          {/* {console.log(row)} */}
                                       <div
                                         style={{
                                           width: `${row.value}%`,
@@ -281,46 +309,7 @@ class MDdiario extends Component {
                                           <option value="100">100%</option>
                                           <option value="true">En Progeso</option>
                                       </select>
-                                  },
-                                  {
-                                  Header: "METRADO",
-                                  id: "metrado",
-                                  maxWidth: 100,
-                                  accessor: d => d.metrado +' '+ d.unidad_medida.replace("/DIA", ""),
-                                  filterMethod: (filter, rows) =>
-                                      matchSorter(rows, filter.value, { keys: ["metrado"] }),
-                                  filterAll: true
-                                  },
-                                  {
-                                  Header: "P/U S/.",
-                                  id: "costo_unitario",
-                                  maxWidth: 100,
-                                  accessor: d => d.costo_unitario,
-                                  filterMethod: (filter, rows) =>
-                                      matchSorter(rows, filter.value, { keys: ["costo_unitario"] }),
-                                  filterAll: true
-                                  },
-                                  {
-                                  Header: "P/P S/.",
-                                  id: "parcial",
-                                  maxWidth: 100,
-                                  accessor: d => d.parcial,
-                                  filterMethod: (filter, rows) =>
-                                      matchSorter(rows, filter.value, { keys: ["parcial"] }),
-                                  filterAll: true
-                                  },
-                                  // {
-                                  // Header: "Metrar",
-                                  // accessor: "_id",
-                                  // maxWidth: 30,
-                                  // Cell: id => (
-                                  //   <div className={(id.original.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}>
-                                  //     <button className="btn btn-sm btn-outline-light text-primary" href="#myModal" onClick={((e) => this.CapturarID (id.original.id_temporal, id.original.decrip_temporal, id.original.u_med_temporal, id.original.precio_temporal, id.original.metrados_saldo, indexComp, id.original.porcentaje, id.original.avance_metrado, id.original.metrado_temporal, id.viewIndex, id.original.parcial_temporal))} >
-                                  //       <FaPlus />
-                                  //     </button>
-                                  //   </div>
-                                  // )
-                                  // }
+                                  }
                           ]}  
                           defaultPageSize={20}
                           style={{ height: 500 }}
@@ -367,12 +356,98 @@ class MDdiario extends Component {
                                       },{
                                         Header: "S/. PARCIAL",
                                         accessor: "parcial_actividad"
-                                      },{
+                                      },
+                                      {
+                                      Header: "ACTIVIDADES - SALDOS",
+                                      id: "actividad_porcentaje",
+                                      // Width: 250,
+                                      accessor: p => p.actividad_porcentaje,
+                                      
+                                      Cell: rowPor => (
+                                        <div style={{
+                                            width: '100%',
+                                            height: '100%',
+                                          }}
+                                          // className={(rowPor.original.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}
+                                          >
+                                          {/* {console.log(rowPor)} */}
+                                          <div className="clearfix">
+                                            <span className="float-left text-warning">A met. {rowPor.original.actividad_avance_metrado}{rowPor.original.unidad_medida.replace("/DIA", "")}</span>
+                                            <span className="float-right text-warning">S/. {rowPor.original.actividad_avance_costo}</span>
+                                          </div>
+
+                                          <div style={{
+                                            height: '25%',
+                                            backgroundColor: '#c3bbbb',
+                                            borderRadius: '2px',
+                                            position: 'relative'
+                                            }}
+
+                                          >
+                                          <div
+                                            style={{
+                                              width: `${rowPor.value}%`,
+                                              height: '100%',
+                                              backgroundColor: rowPor.value > 95 ? '#85cc00'
+                                                : rowPor.value > 50 ? '#ffbf00'
+                                                :  '#ff2e00',
+                                              borderRadius: '2px',
+                                              transition: 'all .9s ease-in',
+                                              position: 'absolute'
+                                            }}
+                                          />
+                                          </div>
+                                          <div className="clearfix">
+                                            <span className="float-left text-info">Saldo: {rowPor.original.actividad_metrados_saldo}</span>
+                                            <span className="float-right text-info">S/. {rowPor.original.actividad_metrados_costo_saldo}</span>
+                                          </div>
+                                        </div>                                          
+                                      ),
+
+                                      filterMethod: (filter, rowPor) => {
+                                          if (filter.value === "all") {
+                                          return true;
+                                          }
+                                          if (filter.value === "true") {
+                                          return rowPor[filter.id] <= 99;
+                                          }
+                                          if (filter.value === "100") {
+                                          return rowPor[filter.id] === 100;
+                                          }
+                                          return rowPor[filter.id] < 21;
+                                      },
+                                      Filter: ({ filter, onChange }) =>
+                                          <select
+                                              onChange={event => onChange(event.target.value)}
+                                              style={{ width: "100%" }}
+                                              value={filter ? filter.value : "all"}
+                                          >
+                                              <option value="all">Todo</option>
+                                              <option value="false">0%</option>
+                                              <option value="100">100%</option>
+                                              <option value="true">En Progeso</option>
+                                          </select>
+                                      },
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      {
                                         Header: "METRAR",
                                         accessor: "id_actividad",
                                         Cell: id => (
                                           <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                            {console.log('row=>>>',row)}
+                                            {/* {console.log('row=>>>',row)} */}
                                             <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad, row.original.descripcion)} >
                                               <FaPlus /> 
                                               {/* {id.original.id_actividad} */}
@@ -383,10 +458,8 @@ class MDdiario extends Component {
                                     ]}
                                     defaultPageSize={row.original.actividades.length}
                                     showPagination={false}
-                                    
                                 />
                               </div>
-                            
                           }
                         />
                     </CardBody>
@@ -398,15 +471,16 @@ class MDdiario extends Component {
           {/* <!-- MODAL PARA METRAR --> */}
                   
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
+            <form onSubmit={e => this.EnviarMetrado(e) }>
               <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
               <ModalBody className="bg-dark ">
                 <label className="text-center">{ descripcion }</label><br/>
-                <b> {this.state.nombre_actividad} </b> 
-                <form >
+                <b> {this.state.nombre_actividad} </b> <br/>
+                
                   <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
                   <div className="input-group mb-0">
-                    <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control"/>  
+                    <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                     
                     <div className="input-group-append">
                       <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
@@ -417,7 +491,7 @@ class MDdiario extends Component {
                   <div className="form-group">
                     <label htmlFor="comment">DESCRIPCION:</label>
                     <DebounceInput
-                      cols="60"
+                      cols="40"
                       rows="2"
                       element="textarea"
                       minLength={0}
@@ -430,7 +504,7 @@ class MDdiario extends Component {
                   <div className="form-group">
                     <label htmlFor="comment">OBSERVACIÓN:</label>
                     <DebounceInput
-                      cols="60"
+                      cols="40"
                       rows="2"
                       element="textarea"
                       minLength={0}
@@ -447,7 +521,7 @@ class MDdiario extends Component {
                   </div>
 
                     
-                </form>
+                
                 <div className="d-flex p-1 text-center mt-0">  
                   <div className="card alert bg-info text-white p-1 m-1">Costo / {this.state.unidad_medida.replace("/DIA", "")} =  {this.state.costo_unitario} <br/>
                     soles
@@ -460,10 +534,11 @@ class MDdiario extends Component {
               </ModalBody>
               <ModalFooter className="bg-dark border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                 
-                <Button color="primary" onClick={this.EnviarMetrado }>Guardar</Button>{' '}
+                <Button color="primary" type="submit">Guardar</Button>{' '}
                 <Button color="danger" onClick={this.modalMetrar}>Cancelar</Button>
               </ModalFooter>
-            </Modal>
+              </form>
+          </Modal>
           {/* ///<!-- MODAL PARA METRAR --> */}  
         </div>
       );
