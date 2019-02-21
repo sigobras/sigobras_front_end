@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { MdMoreVert } from "react-icons/md";
+import { MdMoreVert, MdDone } from "react-icons/md";
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody} from 'reactstrap';
 import classnames from 'classnames';
 import ReactTable from "react-table";
@@ -29,7 +29,7 @@ class General extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then(res=>{
-            console.log(res.data)
+            // console.log(res.data)
             var DataError = [];
             if(res.data.code){
                 this.setState({
@@ -86,7 +86,7 @@ class General extends Component {
                     { DataValorizacion.map((valorizacion, indexVal)=>
                         <NavItem key= { indexVal }>
                             <NavLink className={classnames({ active: activeTab === indexVal.toString() })} onClick={() => { this.Tabs(indexVal.toString()); }} >
-                                P - {valorizacion.numero_periodo}
+                                {valorizacion.numero_periodo}
                             </NavLink>
                         </NavItem>
                     )}
@@ -126,7 +126,7 @@ class General extends Component {
                                                     <Col sm="12">
                                                         <table className="table table-bordered small table-sm">
                                                             <thead>
-                                                                {console.log('><<', DataValorizacion[indexVal].resumen)}
+                                                                {/* {console.log('><<', DataValorizacion[indexVal].resumen)}s */}
                                                                 <tr className="text-center">
                                                                     <th className="align-middle" rowSpan="3">ITEM</th>
                                                                     <th className="align-middle" rowSpan="3">DESCRIPCION PARTIDA</th>
@@ -264,7 +264,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "MET.",
                                                                             id: "metrado_anterior",
-                                                                            accessor: d => d.metrado_anterior,
+                                                                            className: "text-center",
+                                                                            accessor: d =>( d.metrado_anterior=== '0.00'? '':  d.metrado_anterior ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["metrado_anterior"] }),
                                                                             filterAll: true
@@ -272,7 +273,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "VAL.",
                                                                             id: "valor_anterior",
-                                                                            accessor: d => d.valor_anterior,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.valor_anterior === '0.00'? '':d.valor_anterior),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["valor_anterior"] }),
                                                                             filterAll: true
@@ -280,7 +282,9 @@ class General extends Component {
                                                                         {
                                                                             Header: "%",
                                                                             id: "porcentaje_anterior",
-                                                                            accessor: d => d.porcentaje_anterior,
+                                                                            width: 50,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.porcentaje_anterior === '0.00' ? '': d.porcentaje_anterior ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["porcentaje_anterior"] }),
                                                                             filterAll: true
@@ -291,7 +295,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "MET.",
                                                                             id: "metrado_actual",
-                                                                            accessor: d => d.metrado_actual,
+                                                                            className: "text-center",
+                                                                            accessor: d => (d.metrado_actual === '0.00'? '' :d.metrado_actual ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["metrado_actual"] }),
                                                                             filterAll: true
@@ -299,7 +304,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "VAL.",
                                                                             id: "valor_actual",
-                                                                            accessor: d => d.valor_actual,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.valor_actual === '0.00'? '': d.valor_actual  ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["valor_actual"] }),
                                                                             filterAll: true
@@ -307,7 +313,9 @@ class General extends Component {
                                                                         {
                                                                             Header: "%",
                                                                             id: "porcentaje_actual",
-                                                                            accessor: d => d.porcentaje_actual,
+                                                                            width: 50,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.porcentaje_actual === '0.00' ? '': d.porcentaje_actual ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["porcentaje_actual"] }),
                                                                             filterAll: true
@@ -318,7 +326,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "MET.",
                                                                             id: "metrado_total",
-                                                                            accessor: d => d.metrado_total,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.metrado_total === '0.00' ? '': d.metrado_total ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["metrado_total"] }),
                                                                             filterAll: true
@@ -326,7 +335,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "VAL.",
                                                                             id: "valor_total",
-                                                                            accessor: d => d.valor_total,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.valor_total === '0.00' ? '': d.valor_total ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["valor_total"] }),
                                                                             filterAll: true
@@ -334,7 +344,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "%",
                                                                             id: "porcentaje_total",
-                                                                            accessor: d => d.porcentaje_total,
+                                                                            width: 50,
+                                                                            accessor: d => ( d.porcentaje_total === '0.00' ? '': d.porcentaje_total ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["porcentaje_total"] }),
                                                                             filterAll: true
@@ -345,7 +356,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "MET.",
                                                                             id: "metrado_saldo",
-                                                                            accessor: d => d.metrado_saldo,
+                                                                            className: "text-center",
+                                                                            accessor: d =>  ( d.metrado_saldo !== '0.00' ? d.metrado_saldo : d.parcial === "" ? '': <MdDone size={20} className="text-success" /> ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["metrado_saldo"] }),
                                                                             filterAll: true
@@ -353,7 +365,8 @@ class General extends Component {
                                                                         {
                                                                             Header: "VAL.",
                                                                             id: "valor_saldo",
-                                                                            accessor: d => d.valor_saldo,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.valor_saldo === '0.00' ? '': d.valor_saldo ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["valor_saldo"] }),
                                                                             filterAll: true
@@ -361,7 +374,9 @@ class General extends Component {
                                                                         {
                                                                             Header: "%",
                                                                             id: "porcentaje_saldo",
-                                                                            accessor: d => d.porcentaje_saldo,
+                                                                            width: 50,
+                                                                            className: "text-center",
+                                                                            accessor: d => ( d.porcentaje_saldo === '0.00' ? '': d.parcial === ""?'': d.porcentaje_saldo ),
                                                                             filterMethod: (filter, rows) =>
                                                                                 matchSorter(rows, filter.value, { keys: ["porcentaje_saldo"] }),
                                                                             filterAll: true

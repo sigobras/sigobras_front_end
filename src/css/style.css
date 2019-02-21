@@ -44,10 +44,10 @@ body {
   margin-right: 0px;
   color: rgb(255, 255, 255);
 }
-
+/* 
 .sidebar .nav-link .active {
-  color: #00ff4c;
-}
+  color: #0080ff;
+} */
 
 
 /*
@@ -138,17 +138,12 @@ body {
 }
 
 .lii a.active {
-  background-color: #1e7d34;
+  background-color:#0080ff;;
   color: white !important;
 }
 
 .lii a:hover:not(.active) {
   background-color: #0080ff !important;
-}
-
-.btn-activo {
-  background-color: #1e7d34;
-  color: white !important;
 }
 
 

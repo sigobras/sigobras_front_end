@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck } from 'react-icons/fa';
+import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import classnames from 'classnames';
@@ -61,7 +62,7 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
-      console.log('res>>', res.data);
+      // console.log('res>>', res.data);
       
       this.setState(({
         DataMDiario:res.data
@@ -217,7 +218,7 @@ class MDdiario extends Component {
                                   Header: "METRADO",
                                   id: "metrado",
                                   width: 70,
-                                  accessor: d => d.metrado +' '+ d.unidad_medida.replace("/DIA", ""),
+                                  accessor: d => ( d.metrado === '0.00'? '' : d.metrado +' '+ d.unidad_medida.replace("/DIA", "")),
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["metrado"] }),
                                   filterAll: true
@@ -226,7 +227,7 @@ class MDdiario extends Component {
                                   Header: "P/U S/.",
                                   id: "costo_unitario",
                                   width: 70,
-                                  accessor: d => d.costo_unitario,
+                                  accessor: d => (d.costo_unitario === '0.00'?'': d.costo_unitario),
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["costo_unitario"] }),
                                   filterAll: true
@@ -235,7 +236,7 @@ class MDdiario extends Component {
                                   Header: "P/P S/.",
                                   id: "parcial",
                                   width: 70,
-                                  accessor: d => d.parcial,
+                                  accessor: d => (d.parcial === '0.00'? '': d.parcial ),
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["parcial"] }),
                                   filterAll: true
@@ -260,7 +261,7 @@ class MDdiario extends Component {
                                       </div>
 
                                       <div style={{
-                                        height: '20%',
+                                        height: '4%',
                                         backgroundColor: '#c3bbbb',
                                         borderRadius: '2px',
                                         position: 'relative'
@@ -276,7 +277,10 @@ class MDdiario extends Component {
                                             :  '#ff2e00',
                                           borderRadius: '2px',
                                           transition: 'all .9s ease-in',
-                                          position: 'absolute'
+                                          position: 'absolute',
+                                          boxShadow: `0 0 6px 1px ${row.value > 95 ? 'rgb(164, 251, 1)'
+                                            : row.value > 50 ? '#ffbf00'
+                                            :  '#ff2e00'}`
                                         }}
                                       />
                                       </div>
@@ -323,7 +327,7 @@ class MDdiario extends Component {
                             // console.log('row>>',row.original.actividades)
                             row.original.tipo === "titulo" ? <span className="text-center text-danger"><b>no tiene actividades</b></span>:
                               <div className="p-1">
-                                <b className="h6"> Actividades de la partida</b>
+                                <b > <MdReportProblem size={ 20 } className="text-warning" /> {row.original.descripcion }</b><MdFlashOn size={ 20 } className="text-warning" />
                                 <ReactTable
                                   data={row.original.actividades}
                                   columns={[
@@ -388,7 +392,7 @@ class MDdiario extends Component {
                                           </div>
 
                                           <div style={{
-                                            height: '11%',
+                                            height: '4%',
                                             backgroundColor: '#c3bbbb',
                                             borderRadius: '2px',
                                             position: 'relative'
@@ -399,12 +403,15 @@ class MDdiario extends Component {
                                             style={{
                                               width: `${rowPor.value}%`,
                                               height: '100%',
-                                              backgroundColor: rowPor.value > 95 ? '#85cc00'
+                                              backgroundColor: rowPor.value > 95 ? 'rgb(164, 251, 1)'
                                                 : rowPor.value > 50 ? '#ffbf00'
                                                 :  '#ff2e00',
                                               borderRadius: '2px',
                                               transition: 'all .9s ease-in',
-                                              position: 'absolute'
+                                              position: 'absolute',
+                                              boxShadow: `0 0 6px 1px ${rowPor.value > 95 ? 'rgb(164, 251, 1)'
+                                              : rowPor.value > 50 ? '#ffbf00'
+                                              :  '#ff2e00'}`
                                             }}
                                           />
                                           </div>

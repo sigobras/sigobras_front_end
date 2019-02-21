@@ -4,8 +4,9 @@ import { FaBars, FaPlus, FaChartLine, FaHouseDamage, FaInfinity, FaPeopleCarry, 
 import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
 
 import { UncontrolledCollapse } from 'reactstrap';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
 import Fullscreen from "react-full-screen";
+import Circle from 'react-circle';
 
 // app assets
 import LogoSigobras from '../../images/logoSigobras.png';
@@ -106,7 +107,7 @@ class AppAng extends Component {
                                             <div className="sidebar-sticky">
                                                 <ul className="nav flex-column ull">
                                                     <li className="lii">
-                                                        <Link to="/inicio" className="nav-link"> <FaHouseDamage /><span> INICIO</span> </Link>
+                                                        <NavLink to="/inicio" activeclassname="nav-link active"> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                                     </li>
                                                     
                                                     <li className="lii">
@@ -115,19 +116,30 @@ class AppAng extends Component {
                                                            
                                                             <ul className="nav flex-column ull">
                                                                 <li className="lii pl-3">
-                                                                    <Link to="MDdiario" className="nav-link"><FaPeopleCarry /> Merados Diarios</Link>
+                                                                    <NavLink to="/MDdiario" activeclassname="nav-link active"  ><FaPeopleCarry /> Merados Diarios</NavLink>
                                                                 </li>
                                                                 <li className="lii pl-3">
-                                                                    <Link to="MDHistorial" className="nav-link"><FaPeopleCarry /> Historial de metrados</Link>
+                                                                    <NavLink  to="/MDHistorial" activeclassname="nav-link active" ><FaPeopleCarry /> Historial de metrados</NavLink>
                                                                 </li>
                                                                 <li className="lii pl-3">
-                                                                    <Link to="General" className="nav-link"><FaPeopleCarry /> Valorizaciones</Link>
+                                                                    <NavLink to="/General" activeclassname="nav-link active"><FaPeopleCarry /> Valorizaciones</NavLink>
                                                                 </li>
                                                             </ul>
                                                         </UncontrolledCollapse>
-                                                    </li>      
+                                                    </li> 
+                                                    <Circle
+                                                        animate={true} // Boolean: Animated/Static progress
+                                                        animationDuration="1s" //String: Length of animation
+                                                        responsive={true} // Boolean: Make SVG adapt to parent size
+                                                        progress={69} // Number: Update to change the progress and percentage.
+                                                        progressColor="cornflowerblue"  // String: Color of "progress" portion of circle.
+                                                        bgColor="whitesmoke" // String: Color of "empty" portion of circle.
+                                                        textColor="hotpink" // String: Color of percentage text color.
+                                                    />     
                                                 </ul>
+                                                
                                             </div>
+                                            
                                         </nav>
             
 

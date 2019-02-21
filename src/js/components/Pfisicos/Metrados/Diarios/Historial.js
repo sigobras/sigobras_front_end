@@ -24,14 +24,14 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then(res=>{
-            console.log(res)
+            // console.log(res)
             var DataError = [];
             if(res.data.code){
                 this.setState({
                     idCom: DataError
                 })
             }else{
-            console.log(res.data);
+            // console.log(res.data);
                 this.setState({
                     idCom: res.data
                 })

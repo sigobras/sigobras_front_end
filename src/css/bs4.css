@@ -245,3 +245,23 @@ legend {
   outline: none!important;
 }
 
+/* scroll de button */
+/* .ReactTable .rt-tbody {
+  -webkit-box-flex: 99999;
+  -ms-flex: 99999 1 auto;
+  flex: 99999 1 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  overflow: hidden !important ;
+} */
+
+/* thead rc */
+.ReactTable .rt-thead.-header {
+  /* box-shadow: 0 2px 15px 0 rgba(0,0,0,0.15); */
+  background: #1d2029 !important ;
+}
