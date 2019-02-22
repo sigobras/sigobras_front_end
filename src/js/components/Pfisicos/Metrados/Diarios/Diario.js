@@ -62,7 +62,7 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
-      console.log('res>>', res.data);
+      // console.log('res>>', res.data);
       
       this.setState({
         DataMDiario:res.data

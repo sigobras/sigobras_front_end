@@ -225,18 +225,14 @@ class List extends Component{
                                                 </div>
                                             
                                             </div> 
-
-
-
-
                                             </td>
                                         </tr>
 
                                     )}
                                     <tr>
                                         <td colSpan="2">TOTAL </td>
-                                        <td> S/. { Obras.presu_avance }</td>
                                         <td> S/. { Obras.g_total_presu }</td>
+                                        <td> S/. { Obras.presu_avance }</td>
                                         <td>
 
                                             <div style={{
