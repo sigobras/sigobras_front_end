@@ -39,13 +39,13 @@ class Login extends Component {
           password: this.state.pass
       })
       .then((res)=> {
-          var resUsuario = res.data[0].nombre_usuario
+          var resUsuario = res.data.nombre_usuario
         if(resUsuario !== undefined){
           if(resUsuario === this.state.user && this.state.pass.length > 0){
-            // console.info(res.data[0])
-            sessionStorage.setItem("cargo", res.data[0].nombre_cargo);
+            // console.info(res.data)
+            sessionStorage.setItem("cargo", res.data.nombre_cargo);
             sessionStorage.setItem("nombre", resUsuario);
-            sessionStorage.setItem("idacceso", res.data[0].id_acceso);
+            sessionStorage.setItem("idacceso", res.data.id_acceso);
 
             setTimeout(()=>{ 	
                   
