@@ -167,7 +167,9 @@ body {
 }
 
 /* SCROLL NAV VERTICAL ----------------------------------------------- */
-
+.sidebar-sticky::-webkit-scrollbar {
+  width: 0.5em;
+}
 .sidebar-sticky::-webkit-scrollbar-thumb {
   background-color: rgb(195, 202, 190);
   outline: 5px solid rgb(255, 0, 0);
@@ -196,4 +198,10 @@ body {
 }
 .texto-rojo{
   color: #ff5959;
+}
+.abajoCirculos{
+  /* /* bottom: 0px;
+  position: absolute; */
+  width: 100%; 
+  padding-top: 45%;
 }

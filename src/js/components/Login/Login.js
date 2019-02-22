@@ -33,7 +33,6 @@ class Login extends Component {
   handleSubmit(e){
     e.preventDefault();
     
-    
       this.setState({ isLoading: true });
       axios.post(UrlServer+'/login',{
           usuario: this.state.user,
@@ -98,7 +97,7 @@ class Login extends Component {
                         <div className="avatar">
                             <img src={ LogoSigobras } className="pt-2" alt="sigoobras sac" height="75"/>
                         </div>
-                        <h4 className="text-dark">Inice sesión</h4>
+                        <h4 className="text-dark">Inicie sesión</h4>
                     </div>
                     <div className="modal-body">
                       <form>

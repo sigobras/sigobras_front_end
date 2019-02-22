@@ -3,13 +3,15 @@ import React, { Component } from 'react';
 import { FaBars, FaPlus, FaChartLine, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
 
-import { UncontrolledCollapse } from 'reactstrap';
+import { UncontrolledCollapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
 import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';
 
+import axios from 'axios';
 // app assets
 import LogoSigobras from '../../images/logoSigobras.png';
+import {UrlServer} from './Utils/ServerUrlConfig'
 
 // app components
 import UserNav from './Otros/UserNav';
@@ -38,6 +40,7 @@ class AppAng extends Component {
             navbarExpland: true,
             navbarExplandRight: true,
             isFull: false,
+            DataObra:[]
         }
 
         this.ButtonToogle = this.ButtonToogle.bind(this);
@@ -45,6 +48,21 @@ class AppAng extends Component {
         this.collapseRight = this.collapseRight.bind(this)
         this.irFullScreen = this.irFullScreen.bind(this)
         
+    }
+
+    componentWillMount(){
+        axios.post(`${UrlServer}/getDatosGenerales`,{
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        .then((res)=>{
+            // console.log('data', res.data)
+            this.setState({
+                DataObra:res.data
+            })
+        })
+        .catch(error=>
+            console.log(error)
+        )
     }
 
     ButtonToogle(){
@@ -78,7 +96,7 @@ class AppAng extends Component {
         });        
     }
     render() {
-        const{ navbarExplandRight, isFull } = this.state
+        const{ navbarExplandRight, isFull, DataObra } = this.state
         return (
            
             <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
@@ -116,10 +134,10 @@ class AppAng extends Component {
                                                            
                                                             <ul className="nav flex-column ull">
                                                                 <li className="lii pl-3">
-                                                                    <NavLink to="/MDdiario" activeclassname="nav-link active"  ><FaPeopleCarry /> Merados Diarios</NavLink>
+                                                                    <NavLink to="/MDdiario" activeclassname="nav-link active"><FaPeopleCarry /> Merados Diarios</NavLink>
                                                                 </li>
                                                                 <li className="lii pl-3">
-                                                                    <NavLink  to="/MDHistorial" activeclassname="nav-link active" ><FaPeopleCarry /> Historial de metrados</NavLink>
+                                                                    <NavLink to="/MDHistorial" activeclassname="nav-link active" ><FaPeopleCarry /> Historial de metrados</NavLink>
                                                                 </li>
                                                                 <li className="lii pl-3">
                                                                     <NavLink to="/General" activeclassname="nav-link active"><FaPeopleCarry /> Valorizaciones</NavLink>
@@ -127,17 +145,36 @@ class AppAng extends Component {
                                                             </ul>
                                                         </UncontrolledCollapse>
                                                     </li> 
-                                                    <Circle
-                                                        animate={true} // Boolean: Animated/Static progress
-                                                        animationDuration="1s" //String: Length of animation
-                                                        responsive={true} // Boolean: Make SVG adapt to parent size
-                                                        progress={69} // Number: Update to change the progress and percentage.
-                                                        progressColor="cornflowerblue"  // String: Color of "progress" portion of circle.
-                                                        bgColor="whitesmoke" // String: Color of "empty" portion of circle.
-                                                        textColor="hotpink" // String: Color of percentage text color.
-                                                    />     
+                                                      
                                                 </ul>
-                                                
+                                                <div className="abajoCirculos pl-2 pr-2">
+                                                    <div className="row">
+                                                        <div className="col-6">
+                                                            <Circle
+                                                                animate={true} 
+                                                                animationDuration="1s"
+                                                                responsive={true} 
+                                                                progress={DataObra.porcentaje_acumulado}
+                                                                progressColor="orange"
+                                                                bgColor="whitesmoke"
+                                                                textColor="orange"
+                                                            />   
+                                                            <label className="text-center">Acumulado S/.{ DataObra.avance_acumulado }</label>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <Circle
+                                                                animate={true} 
+                                                                animationDuration="1s"
+                                                                responsive={true} 
+                                                                progress={ DataObra.porcentaje_actual }
+                                                                progressColor="cornflowerblue"
+                                                                bgColor="whitesmoke"
+                                                                textColor="hotpink"
+                                                            />
+                                                            <label className="text-center">Actual S/. {DataObra.avance_actual}</label>                                                               
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             
                                         </nav>
@@ -147,7 +184,8 @@ class AppAng extends Component {
                                             
                                             <div className="d-flex  mb-1 border-button pt-3 p-2 text-light bg-dark m-0">
                                                 <h6 className="">
-                                                    BIENVENIDO HOY ES : {this.YearActual()}
+                                                    {/* BIENVENIDO HOY ES : {this.YearActual()} */}
+                                                    { DataObra.g_meta === undefined?'': DataObra.g_meta.toUpperCase()}
                                                 </h6>
                                             </div>
                 
@@ -172,10 +210,32 @@ class AppAng extends Component {
 
                                         </main>
 
-                                            <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' :  " navbarCollapseRight  border-left FondoBarra"} >
+                                            <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' :  "navbarCollapseRight  border-left FondoBarra"} >
                                                 <div className="sidebar-sticky">
                                                     <div className="p-1">
-                                                        <button className="btn btn-outline-warning"><FaChartLine /> </button>
+                                                        {/* <button className="btn btn-outline-warning"><FaChartLine /> </button> */}
+                                                        {/* <br/> */}
+                                                        <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
+
+                                                        <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
+                                                            <PopoverHeader>Tiempo de ejecución</PopoverHeader>
+                                                            <PopoverBody>
+                                                                <fieldset>
+                                                                    <legend>Dias transcurridos</legend>
+                                                                    { DataObra.dias_ejecutados } Dias
+                                                                </fieldset>
+                                                                <div className="divider"></div>
+                                                                <br />
+                                                                <fieldset>
+                                                                    <legend>Te quedan</legend>
+                                                                    {DataObra.dias_saldo > 0 ? 
+                                                                        <div><b> { DataObra.dias_saldo } </b> Dias </div>
+                                                                    : 
+                                                                        <div><b>oh no Te pasaste </b>{ DataObra.dias_saldo } Dias </div> 
+                                                                    }
+                                                                </fieldset>
+                                                            </PopoverBody>
+                                                        </UncontrolledPopover>
                                                     </div>
                                                 </div>
                                             </nav>
@@ -186,7 +246,6 @@ class AppAng extends Component {
                                 </div>
                             </div>
                         }
-
                     </div>
                 </Router>
             </Fullscreen>

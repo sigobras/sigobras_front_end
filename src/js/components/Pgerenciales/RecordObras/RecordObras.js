@@ -18,7 +18,6 @@ class RecordObras extends Component{
           DataRecorObra:[],
           items:[],
           event:'',
-          visiblilidad: false
         };
         
         this.filterList = this.filterList.bind(this);
@@ -38,10 +37,10 @@ class RecordObras extends Component{
             })
             if( sessionStorage.getItem("idobra") === null){
                 sessionStorage.setItem("idobra", res.data[0].id_ficha);
-               console.log('no seteado');  
+            //    console.log('no seteado');  
 
             }else{
-                console.log('seteando');  
+                // console.log('seteando');  
 
             }
             
@@ -98,19 +97,6 @@ class RecordObras extends Component{
                                 {this.state.event.length === 0 ? <List items={this.state.DataRecorObra}/> :  <List items={this.state.items}/>}
                             </table>
 
-                            <ReactToPrint
-                                trigger={() => <a href="#">imprimir</a>}
-                                content={() => this.componentRef}
-                                pageStyle='bg-danger'
-                                bodyClass='bg-light'
-                                copyStyles = {false}
-                                // onBeforePrint= { this.setState({visiblilidad: true})  }
-                            />
-                            <div className={this.state.visiblilidad === false ? 'sos un falso pendejo': 'sos un true pendejo'}>
-                                {this.state.visiblilidad === false ? 'sos un falso pendejo': 'sos un true pendejo'}
-                                <CtrladminDirecta ref={el => (this.componentRef = el)} />
-                            </div>
-                            
                         </div>
                     </div>
                 </div>
@@ -180,7 +166,7 @@ class List extends Component{
                         <button className="btn btn-outline-info btn-sm mr-1" id={"CRONO"+IndexObras }><FaClock /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" onClick={this.toggle}><FaRegImages />{this.props.buttonLabel}</button>
                         <button className="btn btn-outline-info btn-sm mr-1"><FaChartPie /></button>
-                        <button className="btn btn-outline-warning btn-sm"><FaPrint /></button>
+                        <button className="btn btn-outline-warning btn-sm" id={"adminDirecta"+IndexObras }><FaPrint /></button>
                     </td>
                 </tr> 
 
@@ -202,25 +188,89 @@ class List extends Component{
 
                                         <tr key={ IndexObrasComp } >
                                             <td>{ ObrasComp.num_componentes }</td>
-                                            <td>{ ObrasComp.nomb_componentes }</td>
-                                            <td> S/.{ ObrasComp.presupuesto_componentes }</td>
+                                            <td>{ ObrasComp.nombre }</td>
+                                            <td> S/.{ ObrasComp.presupuesto }</td>
                                             <td> S/.{ ObrasComp.comp_avance }</td>
                                             <td>
-                                                <div className="progress">
-                                                    <div className="progress-bar bg-info" style={{width:ObrasComp.porcentaje_avance_componentes+'%'}} >{ ObrasComp.porcentaje_avance_componentes } %</div>
+                                            
+                                            <div style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+
+                                                <div style={{
+                                                    height: '4%',
+                                                    backgroundColor: '#c3bbbb',
+                                                    borderRadius: '2px',
+                                                    position: 'relative'
+                                                    }}
+                                                >
+                                                <div
+                                                    style={{
+                                                    width: `${ObrasComp.porcentaje_avance_componentes}%`,
+                                                    height: '100%',
+                                                    backgroundColor: ObrasComp.porcentaje_avance_componentes > 95 ? 'rgb(164, 251, 1)'
+                                                        : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
+                                                        :  '#ff2e00',
+                                                    borderRadius: '2px',
+                                                    transition: 'all .9s ease-in',
+                                                    position: 'absolute',
+                                                    boxShadow: `0 0 6px 1px ${ObrasComp.porcentaje_avance_componentes > 95 ? 'rgb(164, 251, 1)'
+                                                        : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
+                                                        :  '#ff2e00'}`
+                                                    }}
+                                                /><span style={{ position:'inherit', fontSize:'0.6rem', fontWeight:900, color: ObrasComp.porcentaje_avance_componentes <1 ?'black': 'white' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
                                                 </div>
+                                            
+                                            </div> 
+
+
+
+
                                             </td>
                                         </tr>
 
                                     )}
                                     <tr>
                                         <td colSpan="2">TOTAL </td>
-                                        <td> S/.{ Obras.g_total_presu_ficha }</td>
-                                        <td> S/.{ Obras.presu_avance }</td>
+                                        <td> S/. { Obras.presu_avance }</td>
+                                        <td> S/. { Obras.g_total_presu }</td>
                                         <td>
-                                            <div className="progress small" style={{height:'12px'}}>
-                                                <div className="progress-bar" style={{width:Obras.porcentaje_avance+'%'}} >{ Obras.porcentaje_avance } %</div>
-                                            </div>
+
+                                            <div style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+
+                                                <div style={{
+                                                    height: '4%',
+                                                    backgroundColor: '#c3bbbb',
+                                                    borderRadius: '2px',
+                                                    position: 'relative'
+                                                    }}
+                                                >
+                                                <div
+                                                    style={{
+                                                    width: `${Obras.porcentaje_avance}%`,
+                                                    height: '100%',
+                                                    backgroundColor: Obras.porcentaje_avance > 95 ? 'rgb(164, 251, 1)'
+                                                        : Obras.porcentaje_avance > 50 ? '#ffbf00'
+                                                        :  '#ff2e00',
+                                                    borderRadius: '2px',
+                                                    transition: 'all .9s ease-in',
+                                                    position: 'absolute',
+                                                    boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 95 ? 'rgb(164, 251, 1)'
+                                                        : Obras.porcentaje_avance > 50 ? '#ffbf00'
+                                                        :  '#ff2e00'}`
+                                                    }}
+                                                /><span style={{ position:'inherit', fontSize:'0.6rem', fontWeight:900, color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
+                                                </div>
+                                            
+                                            </div> 
                                             
                                         </td>
                                     </tr>
@@ -231,7 +281,20 @@ class List extends Component{
                         <UncontrolledCollapse toggler={"#CRONO"+IndexObras}>
                             <CronogramaAvance />
                         </UncontrolledCollapse>
-
+                        <UncontrolledCollapse toggler={"#adminDirecta"+IndexObras}>
+                            <ReactToPrint
+                                trigger={() => <a href="#" className="btn btn-outline-success">Imprimir</a>}
+                                content={() => this.componentRef}
+                                pageStyle='bg-danger'
+                                // bodyClass='bg-light'
+                                copyStyles = {false}
+                                // onBeforePrint= { this.setState({visiblilidad: true})  }
+                            />
+                            <div>
+                                <CtrladminDirecta ref={el => (this.componentRef = el)} />
+                            </div>
+                        </UncontrolledCollapse>
+                        
                     </td>
                 </tr>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}  style={{maxWidth: '90%'}}>

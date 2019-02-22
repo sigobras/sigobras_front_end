@@ -51,34 +51,6 @@
   border-color: #1d2029 #1d2029 #2e3742;
 }
 
-/* .popover--------------------------------------- */
-.popover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1060;
-  display: block;
-  max-width: 417px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.5;
-  text-align: left;
-  text-align: start;
-  text-decoration: none;
-  text-shadow: none;
-  text-transform: none;
-  letter-spacing: normal;
-  word-break: normal;
-  word-spacing: normal;
-  white-space: normal;
-  line-break: auto;
-  font-size: .875rem;
-  word-wrap: break-word;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, .2);
-  border-radius: 0rem;
-}
 .modal-content {
   border-radius: .0rem;
   outline: 0;
@@ -160,6 +132,62 @@ legend {
 .text-success {
   color: #08ff1d!important;
 }
+
+
+
+/* .popover--------------------------------------- */
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1060;
+  display: block;
+  max-width: 417px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  text-align: start;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: normal;
+  line-break: auto;
+  font-size: .875rem;
+  word-wrap: break-word;
+  background-color: #2e3742;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 0rem;
+}
+/* popover - header */
+.popover-header {
+  padding: .5rem .75rem;
+  margin-bottom: 0;
+  font-size: 0.8rem;
+  color: inherit;
+  background-color: #1d2029;
+  border-bottom: 1px solid #1d2029;
+  border-top-left-radius: calc(.3rem - 1px);
+  border-top-right-radius: calc(.3rem - 1px);
+}
+/* popover - body */
+
+.popover-body {
+  padding: .5rem .75rem;
+  color: #ffffff;
+}
+/* iconito para apuntar */
+.bs-popover-auto[x-placement^=bottom] .arrow::after, .bs-popover-bottom .arrow::after {
+  top: 1px;
+  border-bottom-color: #2e3742;
+}
+
+
+
 
 
 

@@ -23,7 +23,7 @@ class MDHistorial extends Component {
         axios.post(UrlServer+'/getHistorial/',{
             id_ficha: sessionStorage.getItem('idobra')
         })
-        .then(res=>{
+        .then((res)=>{
             // console.log(res)
             var DataError = [];
             if(res.data.code){
@@ -31,13 +31,13 @@ class MDHistorial extends Component {
                     idCom: DataError
                 })
             }else{
-            // console.log(res.data);
+            // console.log('sasa',res.data);
                 this.setState({
                     idCom: res.data
                 })
             }
         })
-        .catch(err=>{
+        .catch((err)=>{
             console.log('ERROR ANG'+ err.res);
             
         });
@@ -100,7 +100,7 @@ class MDHistorial extends Component {
     return ( 
         
         <div>   
-            {this.state.idCom === 'vacio' ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /> <br/>No hay datos</div>:
+            {this.state.idCom === '' ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /> <br/>No hay datos</div>:
             <Card>
 
                 <Nav tabs>

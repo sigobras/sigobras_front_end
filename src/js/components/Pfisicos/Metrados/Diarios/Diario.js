@@ -6,7 +6,7 @@ import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import classnames from 'classnames';
-import { Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
@@ -62,12 +62,11 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
-      // console.log('res>>', res.data);
+      console.log('res>>', res.data);
       
-      this.setState(({
+      this.setState({
         DataMDiario:res.data
-      }))
-      // console.info('res',res)
+      })
     })
     .catch((error)=>{
       console.error('algo salio mal verifique el',error);
@@ -122,6 +121,9 @@ class MDdiario extends Component {
   EnviarMetrado(e){
 
     e.preventDefault()
+    this.setState({
+      modal: !this.state.modal
+    })
     const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
     var DataModificado = DataMDiario
     
@@ -141,16 +143,15 @@ class MDdiario extends Component {
           "id_ficha":sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-          console.log(res.data)
+          // console.log(res.data)
           DataModificado[indexComp].partidas[viewIndex] = res.data
     
           this.setState({
-            DataMDiario: DataModificado,
-            modal: !this.state.modal
+            DataMDiario: DataModificado
           })
           toast.success('Exito! Metrado ingresado');
         })
-        .catch((error)=>{
+        .catch((errors)=>{
           toast.error('hubo errores al ingresar el metrado');
           // console.error('algo salio mal al consultar al servidor ', error)
         })
@@ -160,7 +161,7 @@ class MDdiario extends Component {
 
   render() {
     const { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado } = this.state
-    if(sessionStorage.getItem("idacceso")){ 
+    if(sessionStorage.getItem("idacceso")!== null ){ 
       return (
         <div className="pb-3">
           <ToastContainer
@@ -552,7 +553,7 @@ class MDdiario extends Component {
         </div>
       );
     }else{
-        return <Redirect to='' />;
+      return <Redirect to='/'/>;
     }
   }
 }
