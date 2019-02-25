@@ -39,12 +39,12 @@ class Login extends Component {
           password: this.state.pass
       })
       .then((res)=> {
-          var resUsuario = res.data.nombre_usuario
+          // console.log('lñlñ', res.data)
+          var resUsuario = res.data.usuario
         if(resUsuario !== undefined){
           if(resUsuario === this.state.user && this.state.pass.length > 0){
-            // console.info(res.data)
             sessionStorage.setItem("cargo", res.data.nombre_cargo);
-            sessionStorage.setItem("nombre", resUsuario);
+            sessionStorage.setItem("nombre",  res.data.nombre_usuario);
             sessionStorage.setItem("idacceso", res.data.id_acceso);
 
             setTimeout(()=>{ 	
@@ -54,9 +54,10 @@ class Login extends Component {
             },50);
           
           }else{
+            toast.error('Usuario o contraseña incorrectos');
             this.setState({
-              Loginsms: 'Usuario o contraseña incorrectos',
-              alert: 'alert text-danger',
+              // Loginsms: 'Usuario o contraseña incorrectos',
+              // alert: 'alert text-danger',
               isLoading: false
             })
           }

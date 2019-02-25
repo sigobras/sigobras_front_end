@@ -332,22 +332,10 @@ class List extends Component{
                             <CronogramaAvance />
                         </UncontrolledCollapse>
                         <UncontrolledCollapse toggler={"#adminDirecta"+IndexObras}>
-                            <button onClick={this.printDocument}>Print</button>
+                            <button onClick={this.printDocument}>PDF</button>
                             <div id="divToPrint" >
                                 <CtrladminDirecta />
                             </div>
-                            <ReactToPrint
-                                trigger={() => <a href="#" className="btn btn-outline-success">Imprimir</a>}
-                                content={() => this.componentRef}
-                                pageStyle='bg-danger'
-                                bodyClass='bg-light'
-                                copyStyles = {false}
-                                // onBeforePrint= { this.setState({visiblilidad: true})  }
-                            />
-                            <div>
-                                <CtrladminDirecta ref={el => (this.componentRef = el)} />
-                            </div>
-
                         </UncontrolledCollapse>
                         
                     </td>

@@ -9,7 +9,7 @@ class CtrladminDirecta extends Component {
             <div className="table-responsive">
                 <label className="h6 text-center"> CONTROL DE EJECUCION DE OBRAS POR ADMINSTRACION DIRECTA</label>
                 <div className="bg-info text-center"> PROYECTO EN EJECUCION</div>
-                <table className="table table-bordered table-sm small bg-dark" style={{width:'100%', fontSize:'8px', border:'1px solid #000000'}} >
+                <table className="table table-bordered table-sm small" >
                     <tbody>
                         <tr>
                             <th>ENTIDAD FINANCIERA</th>
@@ -47,8 +47,7 @@ class CtrladminDirecta extends Component {
                         </tr>
                     </tbody>
                 </table>
-                <br />
-                <table className="table table-bordered table-sm small bg-dark" style={{width:'100%', fontSize:'8px', border:'1px solid #000000'}} >
+                <table className="table-bordered table-sm small" >
                     <thead>
                         <tr>
                             <th colSpan="20">CONSOLIDADO DEL INFORME MENSUAL DE OBRA</th>
@@ -114,13 +113,13 @@ class CtrladminDirecta extends Component {
                 <table>
                     <tbody>
                         <tr>
-                            <td style={{ width: '400px'}}>
+                            <td>
                                <HigtChart /> 
                             </td>
                             <td>
-                               <img src={ imgx1 } className="img-fluid" width="250px" />
+                               <img src={ imgx1 } className="img-fluid" />
                                <br />
-                               <img src={ img2 } className="img-fluid" width="250px"/>
+                               <img src={ img2 } className="img-fluid" />
                             </td>
                         </tr>
                     </tbody>
