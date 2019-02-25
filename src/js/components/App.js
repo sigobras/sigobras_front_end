@@ -55,7 +55,7 @@ class AppAng extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log('data', res.data)
+            console.log('data', res.data)
             this.setState({
                 DataObra:res.data
             })
@@ -173,6 +173,14 @@ class AppAng extends Component {
                                                             />
                                                             <label className="text-center">Actual S/. {DataObra.avance_actual}</label>                                                               
                                                         </div>
+                                                        
+                                                    </div>
+                                                    <br />
+                                                    <br />
+                                                    <br />
+                                                    
+                                                    <div className="text-center">
+                                                        Ayer S/. {DataObra.avance_ayer}
                                                     </div>
                                                 </div>
                                             </div>

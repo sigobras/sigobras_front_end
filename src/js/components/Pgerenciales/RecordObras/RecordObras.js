@@ -4,6 +4,10 @@ import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking, FaPrint } from "re
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse } from 'reactstrap';
 import ReactToPrint from "react-to-print";
 
+import html2canvas from 'html2canvas';
+import * as jsPDF from 'jspdf'
+
+
 // import { Progress } from 'react-sweet-progress';
 // import "react-sweet-progress/lib/style.css";
 import { UrlServer } from '../../Utils/ServerUrlConfig'
@@ -118,6 +122,8 @@ class List extends Component{
         }
         this.Setobra = this.Setobra.bind(this);
         this.toggle = this.toggle.bind(this);
+        this.printDocument = this.printDocument.bind(this);
+        
     }
 
     Setobra(idFicha){
@@ -141,6 +147,19 @@ class List extends Component{
             modal: !this.state.modal
         });
     }
+
+    printDocument() {
+        const input = document.getElementById('divToPrint');
+        html2canvas(input)
+          .then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('l', 'mm', 'a4')
+            pdf.text('hola como estas que', 10, 10)
+            pdf.addImage(imgData, 'JPEG', 0, 15);
+            window.open(pdf.output('bloburl'), '_blank');
+          })
+        ;
+    }
     render(){
         const datos = this.props.items.map((Obras, IndexObras)=>{
                         
@@ -151,9 +170,44 @@ class List extends Component{
                     <td>{ IndexObras +1 }</td>
                     <td>{ Obras.g_meta }</td>
                     <td style={{width: '15%'}}>
+
+                    <div style={{
+                        width: '100%',
+                        height: '20px',
+                        textAlign: 'center'
+                        }}
+                    >
+
+                        <div style={{
+                            height: '8px',
+                            backgroundColor: '#c3bbbb',
+                            borderRadius: '2px',
+                            position: 'relative'
+                            }}
+                        >
+                        <div
+                            style={{
+                            width: `${Obras.porcentaje_avance}%`,
+                            height: '100%',
+                            backgroundColor: Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
+                                : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
+                                :  'rgb(2, 235, 255)',
+                            borderRadius: '2px',
+                            transition: 'all .9s ease-in',
+                            position: 'absolute',
+                            boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
+                                : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
+                                :  'rgb(2, 235, 255)'}`
+                            }}
+                        /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
+                        </div>
+                    
+                    </div> 
+
+{/* 
                         <div className="progress small" style={{height:'12px'}}>
                             <div className="progress-bar" style={{width:Obras.porcentaje_avance+'%'}} >{ Obras.porcentaje_avance } %</div>
-                        </div>
+                        </div> */}
                     </td>
                     <td> 
                         <button className="btn btn-outline-info btn-sm" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><FaWalking />  { Obras.codigo } </button>
@@ -178,30 +232,30 @@ class List extends Component{
                                     <tr>
                                         <th>#</th>
                                         <th>COMPONENTE</th>
-                                        <th>PRESUPUESTO</th>
-                                        <th>EJECUCIÓN </th>
-                                        <th>AVANCE</th>
+                                        <th>PRESUPUESTO BASE</th>
+                                        <th>EJECUCIÓN FÍSICA</th>
+                                        <th>BARRRA PORCENTUAL</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Obras.componentes.map((ObrasComp, IndexObrasComp)=>
 
                                         <tr key={ IndexObrasComp } >
-                                            <td>{ ObrasComp.num_componentes }</td>
+                                            <td>{ ObrasComp.numero }</td>
                                             <td>{ ObrasComp.nombre }</td>
-                                            <td> S/.{ ObrasComp.presupuesto }</td>
-                                            <td> S/.{ ObrasComp.comp_avance }</td>
+                                            <td> S/. { ObrasComp.presupuesto }</td>
+                                            <td> S/. { ObrasComp.comp_avance }</td>
                                             <td>
                                             
                                             <div style={{
                                                     width: '100%',
-                                                    height: '100%',
+                                                    height: '20px',
                                                     textAlign: 'center'
                                                 }}
                                             >
 
                                                 <div style={{
-                                                    height: '4%',
+                                                    height: '5px',
                                                     backgroundColor: '#c3bbbb',
                                                     borderRadius: '2px',
                                                     position: 'relative'
@@ -221,7 +275,7 @@ class List extends Component{
                                                         : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
                                                         :  '#ff2e00'}`
                                                     }}
-                                                /><span style={{ position:'inherit', fontSize:'0.6rem', fontWeight:900, color: ObrasComp.porcentaje_avance_componentes <1 ?'black': 'white' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
+                                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: ObrasComp.porcentaje_avance_componentes <1 ?'black': 'white' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
                                                 </div>
                                             
                                             </div> 
@@ -237,13 +291,13 @@ class List extends Component{
 
                                             <div style={{
                                                     width: '100%',
-                                                    height: '100%',
+                                                    height: '20px',
                                                     textAlign: 'center'
                                                 }}
                                             >
 
                                                 <div style={{
-                                                    height: '4%',
+                                                    height: '8px',
                                                     backgroundColor: '#c3bbbb',
                                                     borderRadius: '2px',
                                                     position: 'relative'
@@ -263,7 +317,7 @@ class List extends Component{
                                                         : Obras.porcentaje_avance > 50 ? '#ffbf00'
                                                         :  '#ff2e00'}`
                                                     }}
-                                                /><span style={{ position:'inherit', fontSize:'0.6rem', fontWeight:900, color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
+                                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
                                                 </div>
                                             
                                             </div> 
@@ -278,17 +332,22 @@ class List extends Component{
                             <CronogramaAvance />
                         </UncontrolledCollapse>
                         <UncontrolledCollapse toggler={"#adminDirecta"+IndexObras}>
+                            <button onClick={this.printDocument}>Print</button>
+                            <div id="divToPrint" >
+                                <CtrladminDirecta />
+                            </div>
                             <ReactToPrint
                                 trigger={() => <a href="#" className="btn btn-outline-success">Imprimir</a>}
                                 content={() => this.componentRef}
                                 pageStyle='bg-danger'
-                                // bodyClass='bg-light'
+                                bodyClass='bg-light'
                                 copyStyles = {false}
                                 // onBeforePrint= { this.setState({visiblilidad: true})  }
                             />
                             <div>
                                 <CtrladminDirecta ref={el => (this.componentRef = el)} />
                             </div>
+
                         </UncontrolledCollapse>
                         
                     </td>
