@@ -6,6 +6,7 @@ import ReactToPrint from "react-to-print";
 
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
+import 'jspdf-autotable';
 
 
 // import { Progress } from 'react-sweet-progress';
@@ -123,6 +124,9 @@ class List extends Component{
         this.Setobra = this.Setobra.bind(this);
         this.toggle = this.toggle.bind(this);
         this.printDocument = this.printDocument.bind(this);
+
+
+
         
     }
 
@@ -148,14 +152,60 @@ class List extends Component{
         });
     }
 
+
+
+
+
+
+
+
+    
     printDocument() {
         const input = document.getElementById('divToPrint');
         html2canvas(input)
           .then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('l', 'mm', 'a4')
-            pdf.text('hola como estas que', 10, 10)
-            pdf.addImage(imgData, 'JPEG', 0, 15);
+            const pdf = new jsPDF({
+                orientation: 'l',
+                // unit: 'mm',
+                format: 'a4',
+                hotfixes: [] 
+            })
+            pdf.text("CONTROL DE EJECUCION DE OBRAS POR ADMINSTRACION DIRECTA", 8, 10);
+            
+            var res1 = pdf.autoTableHtmlToJson(document.getElementById('tbl1'));
+            var res2 = pdf.autoTableHtmlToJson(document.getElementById('tbl2'));
+            pdf.autoTable(res1.columns, res1.data, {
+                theme: 'striped',
+                startY: pdf.autoTableEndPosY() + 20,
+                styles: {
+                    cellPadding: 0.9,
+                    overflow: 'linebreak',
+                    valign: 'middle',
+                    halign: 'center',
+                    lineColor: [0, 0, 0],
+                    lineWidth: 0.1,
+                    fontSize: 9
+                  },
+            });
+
+            pdf.autoTable(res2.columns, res2.data, {
+                theme: 'striped',
+                startY: pdf.autoTableEndPosY() + 5,
+                styles: {
+                    cellPadding: 0.8,
+                    overflow: 'linebreak',
+                    valign: 'middle',
+                    halign: 'center',
+                    lineColor: [0, 0, 0],
+                    lineWidth: 0.1,
+                    fontSize: 7
+                  },
+
+            });
+            // pdf.setFontSize(4);
+            pdf.text('GOBIERNO REGIONAL PUNO', 5, 5)
+            pdf.addImage(imgData, 'JPEG', 0, 90);
             window.open(pdf.output('bloburl'), '_blank');
           })
         ;
@@ -171,49 +221,45 @@ class List extends Component{
                     <td>{ Obras.g_meta }</td>
                     <td style={{width: '15%'}}>
 
-                    <div style={{
-                        width: '100%',
-                        height: '20px',
-                        textAlign: 'center'
-                        }}
-                    >
-
                         <div style={{
-                            height: '8px',
-                            backgroundColor: '#c3bbbb',
-                            borderRadius: '2px',
-                            position: 'relative'
+                            width: '100%',
+                            height: '20px',
+                            textAlign: 'center'
                             }}
                         >
-                        <div
-                            style={{
-                            width: `${Obras.porcentaje_avance}%`,
-                            height: '100%',
-                            backgroundColor: Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
-                                : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
-                                :  'rgb(2, 235, 255)',
-                            borderRadius: '2px',
-                            transition: 'all .9s ease-in',
-                            position: 'absolute',
-                            boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
-                                : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
-                                :  'rgb(2, 235, 255)'}`
-                            }}
-                        /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
-                        </div>
-                    
-                    </div> 
 
-{/* 
-                        <div className="progress small" style={{height:'12px'}}>
-                            <div className="progress-bar" style={{width:Obras.porcentaje_avance+'%'}} >{ Obras.porcentaje_avance } %</div>
-                        </div> */}
+                            <div style={{
+                                height: '8px',
+                                backgroundColor: '#c3bbbb',
+                                borderRadius: '2px',
+                                position: 'relative'
+                                }}
+                            >
+                            <div
+                                style={{
+                                width: `${Obras.porcentaje_avance}%`,
+                                height: '100%',
+                                backgroundColor: Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
+                                    : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
+                                    :  'rgb(2, 235, 255)',
+                                borderRadius: '2px',
+                                transition: 'all .9s ease-in',
+                                position: 'absolute',
+                                boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
+                                    : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
+                                    :  'rgb(2, 235, 255)'}`
+                                }}
+                            /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
+                            </div>
+                        
+                        </div> 
+
                     </td>
                     <td> 
                         <button className="btn btn-outline-info btn-sm" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><FaWalking />  { Obras.codigo } </button>
                     </td>
                     <td  className="text-center"> 
-                        <span className="badge badge-primary p-1">{ Obras.estado_nombre } </span>
+                        <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1":Obras.estado_nombre === "Paralizado" ? "badge badge-danger p-1" : "badge badge-primary p-1"}>{ Obras.estado_nombre } </span>
                     </td>
                     <td style={{width: '18%'}}  className="text-center">
                         <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
@@ -332,8 +378,145 @@ class List extends Component{
                             <CronogramaAvance />
                         </UncontrolledCollapse>
                         <UncontrolledCollapse toggler={"#adminDirecta"+IndexObras}>
-                            <button onClick={this.printDocument}>PDF</button>
-                            <div id="divToPrint" >
+                            <button onClick={this.printDocument} className="btn btn-outline-warning btn-xs">GENERAR REPORTE PDF</button>
+                            
+                            <div className="table-responsive">
+
+                                <table className="table table-bordered table-sm small" id="tbl1" style={{color:'#000000'}} >
+                                    <tbody> 
+                                        <tr className="d-none">
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan="8" className="bg-info text-center">PROYECTO EN EJECUCION</td>
+                                        </tr>
+                                    
+                                        <tr style={{color:'#000000'}} >
+                                            <td>ENTIDAD FINANCIERA</td>
+                                            <td>: GOBIERNO REGIONAL PUNO</td>
+                                            <td rowSpan="4"></td>
+                                            <td>PRESUPUESTO BASE</td>
+                                            <td>S/. 9892323</td>
+                                            <td rowSpan="4"></td>
+                                            <td>PLAZO DE EJECUCION INICIAL</td>
+                                            <td>180 DIAS CALENDARIO</td>
+                                        </tr>
+                                        <tr style={{color:'#000000'}}>
+                                            <td >MODALIDAD DE EJECUCION</td>
+                                            <td>: ADMIN DIRECTA</td>
+                                            <td>AMPLIACION PRESUPUESTO N° 1</td>
+                                            <td>S/. 232323</td>
+                                            <td>AMPLIACION DE PLAZO N° 01</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr style={{color:'#000000'}}>
+                                            <td>FUENTE DE INFORMACION</td>
+                                            <td>:SUB GERENCIA DE OBRA</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="table-responsive">
+                            <table className="table table-bordered table-sm small" id="tbl2">
+                                <tbody>
+                                    <tr className="d-none">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="20" className="bg-info text-center">CONSOLIDADO DEL INFORME MENSUAL DE OBRA</td>
+                                    </tr>
+                                    <tr style={{color:'#000000'}}>
+                                        <td rowSpan="3">ITEM</td>
+                                        <td rowSpan="3">DESCRIPCIÓN DEL PROYECTO</td>
+                                        <td rowSpan="3">PPTO E.T. (S/.) + ADICIONALES</td>
+                                        <td colSpan="2">RESPONSABLES DE OBRA</td>
+                                        <td colSpan="4">TIEMPO DE EJECUCIÓN</td>
+                                        <td colSpan="6">VALORACIÓN ACUMULADA</td>
+                                        <td rowSpan="3">MES REPORTADO</td>
+                                        <td rowSpan="3">SITUACION ACTUAL</td>
+                                        <td rowSpan="3">METAS PROGRAMADAS</td>
+                                        <td rowSpan="3">METAS EJECUTADAS</td>
+                                        <td rowSpan="3">COMENTARIO</td>
+                                    </tr>
+                                    <tr style={{color:'#000000'}}>
+                                        <td rowSpan="2">SUPERVISOR DE OBRA</td>
+                                        <td rowSpan="2">RESIDENTE DE OBRA</td>
+                                        <td rowSpan="2">PLAZO DE EJECUCIÓN (DÍAS CALENDARIOS)</td>
+                                        <td rowSpan="2">FECHA INICIO E.T. INICIAL</td>
+                                        <td rowSpan="2">FECHA CULMINACIÓN E.T. INICIAL</td>
+                                        <td rowSpan="2">AMPLÍACION DE PLAZO (FECHA DE TÉRMINO)</td>
+                                        <td colSpan="2">FINANCIERO</td>
+                                        <td colSpan="2">FÍSICO PRES. BASE</td>
+                                        <td colSpan="2">AMPLIACIÓN PRESUPUESTAL VAL. FÍSICA</td>
+                                    </tr>
+                                    <tr style={{color:'#000000'}}>
+                                        <td>MONTO EN S/.</td>
+                                        <td>ACUM. %</td>
+                                        <td>MONTO EN S/.</td>
+                                        <td>ACUM. %</td>
+                                        <td>MONTO EN S/.<br /></td>
+                                        <td>ACUM. %</td>
+                                    </tr>
+                                    <tr style={{color:'#000000'}}>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+
+
+
+                            <div id="divToPrint" className="p-2">
                                 <CtrladminDirecta />
                             </div>
                         </UncontrolledCollapse>
