@@ -62,7 +62,7 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
-      // console.log('res>>', res.data);
+      console.log('res>>', res.data);
       
       this.setState({
         DataMDiario:res.data
@@ -219,7 +219,7 @@ class MDdiario extends Component {
                                   Header: "METRADO",
                                   id: "metrado",
                                   width: 70,
-                                  accessor: d => ( d.metrado === '0.00'? '' : d.metrado +' '+ d.unidad_medida.replace("/DIA", "")),
+                                  accessor: d => ( d.metrado === '0.00'? '' : d.unidad_medida === null ? '': d.metrado +' '+ d.unidad_medida.replace("/DIA", "")),
                                   filterMethod: (filter, rows) =>
                                       matchSorter(rows, filter.value, { keys: ["metrado"] }),
                                   filterAll: true
@@ -257,7 +257,7 @@ class MDdiario extends Component {
                                       >
 
                                       <div className="clearfix">
-                                        <span className="float-left text-warning">A met. {row.original.avance_metrado}{row.original.unidad_medida.replace("/DIA", "")}</span>
+                                        <span className="float-left text-warning">A met. {row.original.avance_metrado}{row.original.unidad_medida === null ? '': row.original.unidad_medida.replace("/DIA", "")}</span>
                                         <span className="float-right text-warning">S/. {row.original.avance_costo}</span>
                                       </div>
 
