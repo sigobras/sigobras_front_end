@@ -121,9 +121,7 @@ class MDdiario extends Component {
   EnviarMetrado(e){
 
     e.preventDefault()
-    this.setState({
-      modal: !this.state.modal
-    })
+    
     const { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
     var DataModificado = DataMDiario
     
@@ -135,6 +133,9 @@ class MDdiario extends Component {
       this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
     }else{
       if(confirm('¿Estas seguro de metrar?')){
+        this.setState({
+          modal: !this.state.modal
+        })
         axios.post(`${UrlServer}/avanceActividad`,{
           "Actividades_id_actividad":id_actividad,
           "valor":ValorMetrado,
@@ -164,6 +165,7 @@ class MDdiario extends Component {
     if(sessionStorage.getItem("idacceso")!== null ){ 
       return (
         <div className="pb-3">
+
           <ToastContainer
             position="top-right"
             autoClose={1000}
@@ -481,7 +483,7 @@ class MDdiario extends Component {
           {/* <!-- MODAL PARA METRAR --> */}
                   
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
-            <form onSubmit={e => this.EnviarMetrado(e) }>
+            <form onSubmit={this.EnviarMetrado }>
               <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
               <ModalBody className="bg-dark ">
                 <label className="text-center">{ descripcion }</label><br/>

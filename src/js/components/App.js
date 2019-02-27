@@ -50,8 +50,16 @@ class AppAng extends Component {
                             "ruta": "/MDdiario"
                         },
                         {
-                            "nombreMenu": "Corte de metrados",
-                            "ruta": "/MDdiario"
+                            "nombreMenu": "Corte de obra",
+                            "ruta": "/CorteObra"
+                        },
+                        {
+                            "nombreMenu": "Actualización de obra",
+                            "ruta": "/CorteActualizacionObra"
+                        },
+                        {
+                            "nombreMenu": "Paralizado ",
+                            "ruta": "/CorteActualizacionObra"
                         },
                         {
                             "nombreMenu": "Historial de metrados",
@@ -75,9 +83,7 @@ class AppAng extends Component {
                             "ruta": "/Otros"
                         }
                     ]
-
                 }
-
             ]
         }
 
@@ -174,7 +180,7 @@ class AppAng extends Component {
 
                                                                     {menus.submenus.map((subMenu, IndexSub)=>
                                                                         <li className="lii pl-3" key={ IndexSub }>
-                                                                            <NavLink to={subMenu.ruta} activeclassname="nav-link active"><FaPeopleCarry />{ subMenu.nombreMenu }</NavLink>
+                                                                            <NavLink to={subMenu.ruta} activeclassname="nav-link active">{ subMenu.nombreMenu }</NavLink>
                                                                         </li>
                                                                     )}
                                                                 </ul>
