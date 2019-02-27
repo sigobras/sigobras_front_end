@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking, FaPrint } from "react-icons/fa";
+import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking, FaPrint, FaEye } from "react-icons/fa";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse } from 'reactstrap';
-import ReactToPrint from "react-to-print";
-
+import { IoIosInfinite } from "react-icons/io";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
@@ -42,6 +41,7 @@ class RecordObras extends Component{
             })
             if( sessionStorage.getItem("idobra") === null){
                 sessionStorage.setItem("idobra", res.data[0].id_ficha);
+                sessionStorage.setItem("estadoObra", res.data[0].estado_nombre);
             //    console.log('no seteado');  
 
             }else{
@@ -144,22 +144,13 @@ class List extends Component{
           window.location.href = '/MDdiario'
         
         },50);
-        
-      } 
+    } 
     toggle() {
         this.setState({
             modal: !this.state.modal
         });
     }
 
-
-
-
-
-
-
-
-    
     printDocument() {
         const input = document.getElementById('divToPrint');
         html2canvas(input)
@@ -256,7 +247,7 @@ class List extends Component{
 
                     </td>
                     <td> 
-                        <button className="btn btn-outline-info btn-sm" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><FaWalking />  { Obras.codigo } </button>
+                        <button className="btn btn-outline-dark btn-sm" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
                     </td>
                     <td  className="text-center"> 
                         <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1":Obras.estado_nombre === "Paralizado" ? "badge badge-danger p-1" : "badge badge-primary p-1"}>{ Obras.estado_nombre } </span>
@@ -512,9 +503,6 @@ class List extends Component{
                                 </tbody>
                             </table>
                             </div>
-
-
-
 
                             <div id="divToPrint" className="p-2">
                                 <CtrladminDirecta />

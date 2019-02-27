@@ -498,6 +498,16 @@ class MDdiario extends Component {
                   </div>
                   <div className="texto-rojo mb-3"> <b> { smsValidaMetrado }</b></div> 
 
+
+                  <div className="d-flex p-1 text-center mt-0">  
+                    <div className="card alert bg-info text-white p-1 m-1">Costo / {this.state.unidad_medida.replace("/DIA", "")} =  {this.state.costo_unitario} <br/>
+                      soles
+                    </div>
+                    <div className="card alert bg-secondary p-1 text-white m-1">Saldo de metrado<br/>
+                        {this.state.actividad_metrados_saldo}
+                    </div>
+                  </div>
+
                   <div className="form-group">
                     <label htmlFor="comment">DESCRIPCION:</label>
                     <DebounceInput
@@ -530,17 +540,6 @@ class MDdiario extends Component {
                     <label className="custom-file-label" htmlFor="customFile">Choose file</label>
                   </div>
 
-                    
-                
-                <div className="d-flex p-1 text-center mt-0">  
-                  <div className="card alert bg-info text-white p-1 m-1">Costo / {this.state.unidad_medida.replace("/DIA", "")} =  {this.state.costo_unitario} <br/>
-                    soles
-                  </div>
-                  <div className="card alert bg-secondary p-1 text-white m-1">Saldo de metrado<br/>
-                      {this.state.actividad_metrados_saldo}
-                  </div>
-                </div>
-                    
               </ModalBody>
               <ModalFooter className="bg-dark border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                 
@@ -553,7 +552,7 @@ class MDdiario extends Component {
         </div>
       );
     }else{
-      return <Redirect to='/'/>;
+      return <Redirect to=''/>;
     }
   }
 }

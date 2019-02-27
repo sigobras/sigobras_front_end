@@ -40,7 +40,45 @@ class AppAng extends Component {
             navbarExpland: true,
             navbarExplandRight: true,
             isFull: false,
-            DataObra:[]
+            DataObra:[],
+            DataMenus: [{
+                    "nombreMenu": "PROCESOS FISICOS",
+                    "ruta": "",
+                    "submenus": [
+                        {
+                            "nombreMenu": "Metrados diarios",
+                            "ruta": "/MDdiario"
+                        },
+                        {
+                            "nombreMenu": "Corte de metrados",
+                            "ruta": "/MDdiario"
+                        },
+                        {
+                            "nombreMenu": "Historial de metrados",
+                            "ruta": "/MDHistorial"
+                        },
+                        {
+                            "nombreMenu": "Valorizaciones",
+                            "ruta": "/General"
+                        }
+                    ]
+                },
+                {
+                    "nombreMenu": "PROCESOS GERENCIALES",
+                    "ruta": "",
+                    "submenus": [{
+                            "nombreMenu": "Analitico",
+                            "ruta": "/Analitico"
+                        },
+                        {
+                            "nombreMenu": "Otos",
+                            "ruta": "/Otros"
+                        }
+                    ]
+
+                }
+
+            ]
         }
 
         this.ButtonToogle = this.ButtonToogle.bind(this);
@@ -96,7 +134,7 @@ class AppAng extends Component {
         });        
     }
     render() {
-        const{ navbarExplandRight, isFull, DataObra } = this.state
+        const{ navbarExplandRight, isFull, DataObra, DataMenus } = this.state
         return (
            
             <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
@@ -124,28 +162,27 @@ class AppAng extends Component {
                                         <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block bg-dark text-light sidebar': "navbarCollapseLeft bg-dark text-light sidebar"}>
                                             <div className="sidebar-sticky">
                                                 <ul className="nav flex-column ull">
-                                                    <li className="lii">
-                                                        <NavLink to="/inicio" activeclassname="nav-link active"> <FaHouseDamage /><span> INICIO</span> </NavLink>
-                                                    </li>
                                                     
-                                                    <li className="lii">
-                                                        <a className="nav-link"  href="#PF" id="PF"><FaSuperscript /> PROCESOS FISICOS <div className="float-right"><FaPlus /></div></a>
-                                                        <UncontrolledCollapse toggler="#PF">
-                                                           
-                                                            <ul className="nav flex-column ull">
-                                                                <li className="lii pl-3">
-                                                                    <NavLink to="/MDdiario" activeclassname="nav-link active"><FaPeopleCarry /> Merados Diarios</NavLink>
-                                                                </li>
-                                                                <li className="lii pl-3">
-                                                                    <NavLink to="/MDHistorial" activeclassname="nav-link active" ><FaPeopleCarry /> Historial de metrados</NavLink>
-                                                                </li>
-                                                                <li className="lii pl-3">
-                                                                    <NavLink to="/General" activeclassname="nav-link active"><FaPeopleCarry /> Valorizaciones</NavLink>
-                                                                </li>
-                                                            </ul>
-                                                        </UncontrolledCollapse>
-                                                    </li> 
+                                                        <li className="lii">
+                                                            <NavLink to="/inicio" activeclassname="nav-link active"> <FaHouseDamage /><span> INICIO</span> </NavLink>
+                                                        </li>
+                                                    {DataMenus.map((menus, indesMenu)=>    
+                                                        <li className="lii" key={ indesMenu }>
+                                                            <a className="nav-link" href={"#PF1"+indesMenu} id={"PF1"+indesMenu}><FaSuperscript /> {menus.nombreMenu} <div className="float-right"><FaPlus /></div></a>
+                                                            <UncontrolledCollapse toggler={"#PF1"+indesMenu}>
+                                                                <ul className="nav flex-column ull">
+
+                                                                    {menus.submenus.map((subMenu, IndexSub)=>
+                                                                        <li className="lii pl-3" key={ IndexSub }>
+                                                                            <NavLink to={subMenu.ruta} activeclassname="nav-link active"><FaPeopleCarry />{ subMenu.nombreMenu }</NavLink>
+                                                                        </li>
+                                                                    )}
+                                                                </ul>
+                                                            </UncontrolledCollapse>
+                                                        </li> 
                                                       
+                                                    )}
+                                                    
                                                 </ul>
                                                 <div className="abajoCirculos pl-2 pr-2">
                                                     <div className="row">
@@ -198,9 +235,9 @@ class AppAng extends Component {
                                             </div>
                 
                                             <div className="px-1 scroll_contenido">
-                                                {/* <Route exact path="/" component={Login} />
-                                                <Route path="/Ingreso" component={Login} /> */}
-                                                <Route path ="/inicio" component={Inicio} />
+                                               <Route exact path="/Inicio" component={Inicio} />
+                                                 {/* <Route path="/Ingreso" component={Login} /> */}
+                                                {/* <Route path ="/inicio" component={Inicio} /> */}
 
                                                 {/* procesos fisicos */}
                                                 <Route path="/MDdiario" component={MDdiario} />
