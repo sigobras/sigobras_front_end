@@ -18,16 +18,15 @@ import UserNav from './Otros/UserNav';
 import NotificacionNav from './Otros/NotificacionNav';
 import MensajeNav from "./Otros/MensajesNav";
 
-import Login from './Login/Login';
-import Inicio from '../components/Inicio/Inicio'
-import MDdiario from "../components/Pfisicos/Metrados/Diarios/Diario";
-import MDHistorial from '../components/Pfisicos/Metrados/Diarios/Historial'
+// procesos fiscos
+import Login from './Login/Login'
+import Inicio from './Inicio/Inicio'
+import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
+import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
+import Corte from './Pfisicos/Metrados/Diarios/Corte'
+
 import General from '../components/Pfisicos/Valorizaciones/General'
-// import ValGeneral from '../components/Pfisicos/Valorizaciones/ValGeneral'
-// Proceso financieros
-// import PresAnalitico from '../components/Pfinancieros/Analitico/PresAnalitico'
-// import ListRegistrosAnalitico from '../components/Pfinancieros/Analitico/ListRegistrosAnalitico'
-  
+
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 
@@ -140,7 +139,7 @@ class AppAng extends Component {
         });        
     }
     render() {
-        const{ navbarExplandRight, isFull, DataObra, DataMenus } = this.state
+        var { navbarExplandRight, isFull, DataObra, DataMenus } = this.state
         return (
            
             <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
@@ -246,9 +245,10 @@ class AppAng extends Component {
                                                 {/* <Route path ="/inicio" component={Inicio} /> */}
 
                                                 {/* procesos fisicos */}
-                                                <Route path="/MDdiario" component={MDdiario} />
-                                                <Route path="/MDHistorial" component={MDHistorial} />
-                                                <Route path="/General" component={General} />
+                                                <Route path="/MDdiario" component={ MDdiario } />
+                                                <Route path="/MDHistorial" component={ MDHistorial } />
+                                                <Route path="/CorteObra" component={ Corte } />
+                                                <Route path="/General" component={ General } />
                                                 {/* <Route path="/ValGeneral" component={ValGeneral} /> */}
 
                                                 {/* proceso financieros */}

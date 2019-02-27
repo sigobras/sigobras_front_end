@@ -4,7 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap';
 import classnames from 'classnames';
 import { Redirect } from "react-router-dom";
 
@@ -17,7 +17,7 @@ import Cubito from '../../../../../images/loaderXS.gif';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 
 
-class MDdiario extends Component {
+class Corte extends Component {
   constructor(){
     super();
 
@@ -47,7 +47,8 @@ class MDdiario extends Component {
       descripcion:'',
 
       // validacion de al momento de metrar
-      smsValidaMetrado:''
+      smsValidaMetrado:'',
+      ValorMetradoRestante:''
 
     }
     this.Tabs = this.Tabs.bind(this)
@@ -62,7 +63,7 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
-      // console.log('res>>', res.data);
+    //   console.log('res>>', res.data);
       
       this.setState({
         DataMDiario:res.data
@@ -124,22 +125,23 @@ class MDdiario extends Component {
     
     var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
     var DataModificado = DataMDiario
-    actividad_metrados_saldo = Number(actividad_metrados_saldo)
+    console.log('result',this.state.ValorMetrado - this.state.actividad_avance_metrado);
     
-    if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
-      this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
-    }else if( Number(ValorMetrado) < 0){
-      this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
-    }else if(Number(ValorMetrado) > actividad_metrados_saldo){
-      this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
-    }else{
+    
+    // if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
+    //   this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
+    // }else if( Number(ValorMetrado) < 0){
+    //   this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
+    // }else if(Number(ValorMetrado) > actividad_metrados_saldo){
+    //   this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
+    // }else{
       if(confirm('¿Estas seguro de metrar?')){
         this.setState({
           modal: !this.state.modal
         })
         axios.post(`${UrlServer}/avanceActividad`,{
           "Actividades_id_actividad":id_actividad,
-          "valor":ValorMetrado,
+          "valor":this.state.ValorMetrado - this.state.actividad_avance_metrado,
           "descripcion":DescripcionMetrado,
           "observacion":ObservacionMetrado,
           "id_ficha":sessionStorage.getItem('idobra')
@@ -158,7 +160,7 @@ class MDdiario extends Component {
           // console.error('algo salio mal al consultar al servidor ', error)
         })
       }
-    }
+    // }
   }
 
   render() {
@@ -460,11 +462,11 @@ class MDdiario extends Component {
                                         Cell: id => (
                                           <div className={(id.original.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
                                             {/* {console.log('>>', typeof id.original.actividad_metrados_saldo)} */}
-                                            {id.original.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> : 
+                                            {/* {id.original.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> :  */}
                                               <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID (id.original.id_actividad, id.original.nombre_actividad, id.original.unidad_medida, id.original.costo_unitario, id.original.actividad_metrados_saldo, indexComp, id.original.actividad_porcentaje, id.original.actividad_avance_metrado, id.original.metrado_actividad, row.index, id.original.parcial_actividad, row.original.descripcion)} >
                                                 <FaPlus /> 
                                               </button>
-                                            }
+                                            {/* } */}
                                           </div>
                                         )
                                       }
@@ -492,13 +494,27 @@ class MDdiario extends Component {
                 
                   <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
-                  <div className="input-group mb-0">
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="p-1">{ this.state.actividad_avance_metrado }</InputGroupText>
+                        <InputGroupText className="p-1">-</InputGroupText>
+                    </InputGroupAddon>
+                    {/* <Input placeholder="valor" /> */}
+                    <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="p-1">=</InputGroupText>
+                        <InputGroupText className="p-1">{ this.state.ValorMetrado - this.state.actividad_avance_metrado}</InputGroupText>
+                        <InputGroupText className="p-1">{this.state.unidad_medida.replace("/DIA", "")}</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            
+                  {/* <div className="input-group mb-0">
                     <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                     
                     <div className="input-group-append">
                       <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="texto-rojo mb-3"> <b> { smsValidaMetrado }</b></div> 
 
 
@@ -538,10 +554,10 @@ class MDdiario extends Component {
                   </div>
                   
 
-                  <div className="custom-file mb-3 p-3">
+                  {/* <div className="custom-file mb-3 p-3">
                     <input type="file" className="custom-file-input disabled" id="customFile" name="filename" disabled/>
                     <label className="custom-file-label" htmlFor="customFile">Choose file</label>
-                  </div>
+                  </div> */}
 
               </ModalBody>
               <ModalFooter className="bg-dark border border-dark border-top border-right-0 border-bottom-0 border-button-0">
@@ -560,6 +576,4 @@ class MDdiario extends Component {
   }
 }
 
-
-
-export default MDdiario;
+export default Corte;
