@@ -247,7 +247,7 @@ class List extends Component{
 
                     </td>
                     <td> 
-                        <button className="btn btn-outline-dark btn-sm" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
+                        <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
                     </td>
                     <td  className="text-center"> 
                         <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1":Obras.estado_nombre === "Paralizado" ? "badge badge-danger p-1" : "badge badge-primary p-1"}>{ Obras.estado_nombre } </span>
