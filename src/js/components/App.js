@@ -40,50 +40,7 @@ class AppAng extends Component {
             navbarExplandRight: true,
             isFull: false,
             DataObra:[],
-            DataMenus: [{
-                    "nombreMenu": "PROCESOS FISICOS",
-                    "ruta": "",
-                    "submenus": [
-                        {
-                            "nombreMenu": "Metrados diarios",
-                            "ruta": "/MDdiario"
-                        },
-                        {
-                            "nombreMenu": "Corte de obra",
-                            "ruta": "/CorteObra"
-                        },
-                        {
-                            "nombreMenu": "Actualización de obra",
-                            "ruta": "/CorteActualizacionObra"
-                        },
-                        {
-                            "nombreMenu": "Paralizado ",
-                            "ruta": "/CorteActualizacionObra"
-                        },
-                        {
-                            "nombreMenu": "Historial de metrados",
-                            "ruta": "/MDHistorial"
-                        },
-                        {
-                            "nombreMenu": "Valorizaciones",
-                            "ruta": "/General"
-                        }
-                    ]
-                },
-                {
-                    "nombreMenu": "PROCESOS GERENCIALES",
-                    "ruta": "",
-                    "submenus": [{
-                            "nombreMenu": "Analitico",
-                            "ruta": "/Analitico"
-                        },
-                        {
-                            "nombreMenu": "Otos",
-                            "ruta": "/Otros"
-                        }
-                    ]
-                }
-            ]
+            DataMenus: []
         }
 
         this.ButtonToogle = this.ButtonToogle.bind(this);
@@ -93,6 +50,22 @@ class AppAng extends Component {
         
     }
 
+    componentDidMount(){
+        // obtiende datos para el menu
+        axios.post(`${UrlServer}/getMenu`,{
+            id_ficha: sessionStorage.getItem('idobra'),
+            id_acceso: sessionStorage.getItem('idacceso')
+        })
+        .then((res)=>{
+            console.log('getMenu', res.data)
+            this.setState({
+                DataMenus:res.data
+            })
+        })
+        .catch(error=>
+            console.log(error)
+        )
+    }
     componentWillMount(){
         axios.post(`${UrlServer}/getDatosGenerales`,{
             id_ficha: sessionStorage.getItem('idobra')

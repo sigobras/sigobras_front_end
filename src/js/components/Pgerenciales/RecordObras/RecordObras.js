@@ -30,7 +30,7 @@ class RecordObras extends Component{
     }
     
 
-    componentWillMount(){
+    componentDidMount(){
         axios.post(`${UrlServer}/PGlistaObras`,{
             id_acceso:sessionStorage.getItem("idacceso")
         })
@@ -137,7 +137,7 @@ class List extends Component{
         sessionStorage.setItem("idobra", idFicha);
         // let menus_id_ficha = JSON.parse(sessionStorage.getItem("menus_id_ficha"));
         let menu_ficha = JSON.parse(sessionStorage.getItem("menusPrivilegios"));
-        console.log('menu_ficha, ', menu_ficha);
+        // console.log('menu_ficha, ', menu_ficha);
 
         setTimeout(()=>{ 	
                         
@@ -145,6 +145,8 @@ class List extends Component{
         
         },50);
     } 
+
+
     toggle() {
         this.setState({
             modal: !this.state.modal
@@ -201,6 +203,7 @@ class List extends Component{
           })
         ;
     }
+
     render(){
         const datos = this.props.items.map((Obras, IndexObras)=>{
                         

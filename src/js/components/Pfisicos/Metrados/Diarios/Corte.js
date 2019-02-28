@@ -139,7 +139,7 @@ class Corte extends Component {
         this.setState({
           modal: !this.state.modal
         })
-        axios.post(`${UrlServer}/avanceActividad`,{
+        axios.post(`${UrlServer}/avanceActividadCorte`,{
           "Actividades_id_actividad":id_actividad,
           "valor":this.state.ValorMetrado - this.state.actividad_avance_metrado,
           "descripcion":DescripcionMetrado,
