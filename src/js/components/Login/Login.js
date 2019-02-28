@@ -51,7 +51,7 @@ class Login extends Component {
                   
               window.location.href = '/inicio'
             
-            },50);
+            },100);
           
           }else{
             toast.error('Usuario o contraseña incorrectos');

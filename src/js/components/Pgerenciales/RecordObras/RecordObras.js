@@ -130,20 +130,27 @@ class List extends Component{
         
     }
 
-    Setobra(idFicha){
-        // console.log('id' + idFicha);
+    Setobra(idFicha, estado_nombre){
 
-        // storage.setItem
         sessionStorage.setItem("idobra", idFicha);
-        // let menus_id_ficha = JSON.parse(sessionStorage.getItem("menus_id_ficha"));
-        let menu_ficha = JSON.parse(sessionStorage.getItem("menusPrivilegios"));
-        // console.log('menu_ficha, ', menu_ficha);
 
-        setTimeout(()=>{ 	
-                        
-          window.location.href = '/MDdiario'
+            // console.log('><',estado_nombre, 'Ejecucion');
         
-        },50);
+        switch(estado_nombre) {
+            case 'Corte':
+                setTimeout(()=>{ window.location.href = '/CorteObra'},50);            
+            break;
+            case 'Actualizacion':
+                setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
+            break;
+            case 'Parilizado':
+                setTimeout(()=>{ window.location.href = '/Parilizado'},50);
+            break;
+
+            default: 'Ejecucion'
+                setTimeout(()=>{ window.location.href = '/MDdiario'},50);
+        }
+        
     } 
 
 
@@ -250,7 +257,7 @@ class List extends Component{
 
                     </td>
                     <td> 
-                        <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
+                        <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre  )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
                     </td>
                     <td  className="text-center"> 
                         <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1":Obras.estado_nombre === "Paralizado" ? "badge badge-danger p-1" : "badge badge-primary p-1"}>{ Obras.estado_nombre } </span>

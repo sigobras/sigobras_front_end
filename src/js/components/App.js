@@ -30,8 +30,6 @@ import General from '../components/Pfisicos/Valorizaciones/General'
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 
-
-
 class AppAng extends Component {
     constructor(){
         super();
@@ -66,6 +64,8 @@ class AppAng extends Component {
             console.log(error)
         )
     }
+
+
     componentWillMount(){
         axios.post(`${UrlServer}/getDatosGenerales`,{
             id_ficha: sessionStorage.getItem('idobra')
@@ -115,7 +115,7 @@ class AppAng extends Component {
         var { navbarExplandRight, isFull, DataObra, DataMenus } = this.state
         return (
            
-            <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
+            // <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
                 <Router>
                     <div>
                         {sessionStorage.getItem("idacceso") === null ? <Route exact path="/" component={Login} />:
@@ -213,21 +213,21 @@ class AppAng extends Component {
                                             </div>
                 
                                             <div className="px-1 scroll_contenido">
-                                               <Route exact path="/Inicio" component={Inicio} />
-                                                 {/* <Route path="/Ingreso" component={Login} /> */}
-                                                {/* <Route path ="/inicio" component={Inicio} /> */}
+                                            <Route exact path="/Inicio" component={Inicio} />
 
-                                                {/* procesos fisicos */}
+                                            {/* {DataMenus.map((menus, indesMenu)=>
+                                                menus.submenus.map((submenus, indexSubmenus)=>
+                                                <div key={ indexSubmenus }>
+                                                    <Route key={submenus.ruta} path={submenus.ruta} component={ MDdiario } />
+                                                </div>
+                                                )
+                                            )} */}
+
                                                 <Route path="/MDdiario" component={ MDdiario } />
                                                 <Route path="/MDHistorial" component={ MDHistorial } />
                                                 <Route path="/CorteObra" component={ Corte } />
                                                 <Route path="/General" component={ General } />
-                                                {/* <Route path="/ValGeneral" component={ValGeneral} /> */}
 
-                                                {/* proceso financieros */}
-                                                {/* <Route path="/PresAnalitico" component={PresAnalitico} />
-                                                <Route path="/ListRegistrosAnalitico" component={ListRegistrosAnalitico} /> */}
-                                                {/* procesos gerenciales */}
                                                 <Route path="/RecordObras" component={RecordObras} />
 
                                             </div>
@@ -238,7 +238,7 @@ class AppAng extends Component {
                                                 <div className="sidebar-sticky">
                                                     <div className="p-1">
                                                         {/* <button className="btn btn-outline-warning"><FaChartLine /> </button> */}
-                                                        {/* <br/> */}
+
                                                         <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
 
                                                         <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
@@ -263,6 +263,7 @@ class AppAng extends Component {
                                                     </div>
                                                 </div>
                                             </nav>
+
                                             <div className="posAbajo">
                                                 <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={ this.collapseRight }> {navbarExplandRight === true ? <FaAngleRight />: <FaAngleLeft /> }</button>
                                             </div>
@@ -272,7 +273,7 @@ class AppAng extends Component {
                         }
                     </div>
                 </Router>
-            </Fullscreen>
+            // </Fullscreen>
         );
     }
 }
