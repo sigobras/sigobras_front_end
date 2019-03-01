@@ -51,7 +51,13 @@ module.exports = {
     compress: true,
     port: PORT,
     historyApiFallback: true,
-    public: 'www.sigobras.com'
+    public: 'www.sigobras.com',
+    allowedHosts: [
+      'www.sigobras.com',
+      'sigobras.com',
+      '190.117.94.80'
+    ],
+    filename: 'main.js'
   },
   plugins: [
     new HtmlWebPackPlugin({
