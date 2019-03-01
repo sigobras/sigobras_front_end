@@ -163,7 +163,7 @@ class MDdiario extends Component {
 
   render() {
     var { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado } = this.state
-    if(sessionStorage.getItem("idacceso")){ 
+    if(sessionStorage.getItem("idacceso") !== null){ 
       return (
         <div className="pb-3">
 
@@ -555,7 +555,7 @@ class MDdiario extends Component {
         </div>
       );
     }else{
-      return <Redirect to="/login" />
+      return window.location.href = '/'
     }
   }
 }

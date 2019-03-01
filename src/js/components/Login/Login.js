@@ -27,7 +27,7 @@ class Login extends Component {
   handleChange(e) {
     this.setState({[e.target.name]: e.target.value});
       //  console.log(sessionStorage.getItem("api"));	
-
+      console.log(window.location.port)
   }
 
   handleSubmit(e){
@@ -51,7 +51,7 @@ class Login extends Component {
                   
               window.location.href = '/inicio'
             
-            },100);
+            },10);
           
           }else{
             toast.error('Usuario o contraseña incorrectos');
@@ -116,7 +116,7 @@ class Login extends Component {
                       </form>
                     </div>
                     <div className="modal-footer">
-                        <a href="#">SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> Ⓒ 2018 - 2019</a>
+                        <label className="text-dark">SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> Ⓒ 2018 - 2019</label>
                     </div>
                   </div>
               </div>
