@@ -118,24 +118,17 @@ class List extends Component{
     constructor(props){
         super(props)
         this.state = {
-          modal: false,
-
+            modal: false,
         }
         this.Setobra = this.Setobra.bind(this);
         this.toggle = this.toggle.bind(this);
-        this.printDocument = this.printDocument.bind(this);
-
-
-
-        
+        this.printDocument = this.printDocument.bind(this);        
     }
 
     Setobra(idFicha, estado_nombre){
 
         sessionStorage.setItem("idobra", idFicha);
 
-            // console.log('><',estado_nombre, 'Ejecucion');
-        
         switch(estado_nombre) {
             case 'Corte':
                 setTimeout(()=>{ window.location.href = '/CorteObra'},50);            
@@ -150,7 +143,6 @@ class List extends Component{
             default: 'Ejecucion'
                 setTimeout(()=>{ window.location.href = '/MDdiario'},50);
         }
-        
     } 
 
 

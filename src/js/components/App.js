@@ -48,7 +48,20 @@ class AppAng extends Component {
         
     }
 
-    componentDidMount(){
+    componentWillMount(){
+        axios.post(`${UrlServer}/getDatosGenerales`,{
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        .then((res)=>{
+            // console.log('data', res.data)
+            this.setState({
+                DataObra:res.data
+            })
+        })
+        .catch(error=>
+            console.log(error)
+        )
+
         // obtiende datos para el menu
         axios.post(`${UrlServer}/getMenu`,{
             id_ficha: sessionStorage.getItem('idobra'),
@@ -58,22 +71,6 @@ class AppAng extends Component {
             console.log('getMenu', res.data)
             this.setState({
                 DataMenus:res.data
-            })
-        })
-        .catch(error=>
-            console.log(error)
-        )
-    }
-
-
-    componentWillMount(){
-        axios.post(`${UrlServer}/getDatosGenerales`,{
-            id_ficha: sessionStorage.getItem('idobra')
-        })
-        .then((res)=>{
-            // console.log('data', res.data)
-            this.setState({
-                DataObra:res.data
             })
         })
         .catch(error=>
@@ -260,6 +257,8 @@ class AppAng extends Component {
                                                                 </fieldset>
                                                             </PopoverBody>
                                                         </UncontrolledPopover>
+                                                        <br />
+                                                        <button className="btn btn-outline-warning"> terminar<br /> corte</button>
                                                     </div>
                                                 </div>
                                             </nav>

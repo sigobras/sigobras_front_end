@@ -46,11 +46,12 @@ module.exports = {
     publicPath: '/',
   },
   devServer: {
-    host: "0.0.0.0",
+    // host: "0.0.0.0",
     contentBase: path.join(__dirname, "public"),
     compress: true,
     port: PORT,
     historyApiFallback: true,
+    public: 'sigobras.com'
   },
   plugins: [
     new HtmlWebPackPlugin({
