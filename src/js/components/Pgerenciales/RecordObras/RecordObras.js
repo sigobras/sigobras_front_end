@@ -69,7 +69,7 @@ class RecordObras extends Component{
 
         this.setState({items: DataFiltrado});
         // console.log('>>>>', DataFiltrado);
-      };
+    };
 
     render(){
         return(
@@ -125,9 +125,22 @@ class List extends Component{
         this.printDocument = this.printDocument.bind(this);        
     }
 
+    componentWillMount(){
+        axios.post(`${UrlServer}/informeControlEjecucionObras`,{
+            "id_ficha":sessionStorage.getItem("idobra")
+        })
+        .then((res)=>{
+            console.info('data>',res.data)
+        })
+        .catch((err)=>{
+            console.error('algo salio mal ', err);
+        })
+    }
+
     Setobra(idFicha, estado_nombre){
 
         sessionStorage.setItem("idobra", idFicha);
+        sessionStorage.setItem("estadoObra", estado_nombre);
 
         switch(estado_nombre) {
             case 'Corte':
@@ -144,7 +157,6 @@ class List extends Component{
                 setTimeout(()=>{ window.location.href = '/MDdiario'},50);
         }
     } 
-
 
     toggle() {
         this.setState({
@@ -506,7 +518,7 @@ class List extends Component{
                             </table>
                             </div>
 
-                            <div id="divToPrint" className="p-2">
+                            <div id="divToPrint">
                                 <CtrladminDirecta />
                             </div>
                         </UncontrolledCollapse>

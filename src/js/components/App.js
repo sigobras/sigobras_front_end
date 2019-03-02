@@ -1,7 +1,7 @@
 // libraris
 import React, { Component } from 'react';
 import { FaBars, FaPlus, FaChartLine, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
-import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
+import { MdFullscreen, MdFullscreenExit, MdDehaze, MdBusiness } from "react-icons/md";
 
 import {Spinner, UncontrolledCollapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
@@ -17,6 +17,7 @@ import {UrlServer} from './Utils/ServerUrlConfig'
 import UserNav from './Otros/UserNav';
 import NotificacionNav from './Otros/NotificacionNav';
 import MensajeNav from "./Otros/MensajesNav";
+import Btns from './Otros/Btns'
 
 // procesos fiscos
 import Inicio from './Inicio/Inicio'
@@ -28,6 +29,7 @@ import General from '../components/Pfisicos/Valorizaciones/General'
 
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
+
 
 class AppAng extends Component {
     constructor(){
@@ -79,7 +81,7 @@ class AppAng extends Component {
                 .catch(error=>
                     console.log(error)
                 )
-                },2000)
+            },2000)
             
         }else{
 
@@ -142,6 +144,8 @@ class AppAng extends Component {
                                     <div className="float-right"><MensajeNav /></div>
                                     <div className="float-right"><NotificacionNav /></div>
                                     <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ?<MdFullscreen size={20}/> : <MdFullscreenExit size={20}/> }</a></div>
+                                    <div className="float-right"><span className="badge badge-success p-2 mt-2">Estado de la obra: { sessionStorage.getItem('estadoObra') }</span></div>
+
                                 </div>
                             </nav>
 
@@ -200,7 +204,6 @@ class AppAng extends Component {
                                                     </div>
                                                     
                                                 </div>
-                                                <br />
                                                 <br />
                                                 <br />
                                                 
@@ -271,7 +274,11 @@ class AppAng extends Component {
                                                         </PopoverBody>
                                                     </UncontrolledPopover>
                                                     <br />
-                                                    <button className="btn btn-outline-warning"> terminar<br /> corte</button>
+                                                    <br />
+                                                    {sessionStorage.getItem('estadoObra') === 'Ejecucion' || sessionStorage.getItem('estadoObra') === 'Paralizado'?'':
+                                                        <Btns />
+                                                    }
+                                                    
                                                 </div>
                                             </div>
                                         </nav>

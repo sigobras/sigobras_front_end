@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, Button, CardBody, Card } from 'reactstrap';
+import { Collapse, Button, CardBody, Card, Spinner } from 'reactstrap';
 import { ToastContainer, toast } from "react-toastify";
 
 import axios from 'axios'
@@ -27,7 +27,7 @@ class Login extends Component {
   handleChange(e) {
     this.setState({[e.target.name]: e.target.value});
       //  console.log(sessionStorage.getItem("api"));	
-      console.log(window.location.port)
+      // console.log(window.location.port)
   }
 
   handleSubmit(e){
@@ -111,7 +111,7 @@ class Login extends Component {
                           <div className="form-group">
                               <div className={this.state.alert }>{this.state.Loginsms }</div>
 
-                              <button type="submit"  disabled={!enabled} onClick={this.handleSubmit}  className="btn btn-primary btn-lg btn-block">{isLoading ? 'Cargando...' : 'INGRESAR'}</button>
+                              <button type="submit"  disabled={!enabled} onClick={this.handleSubmit}  className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" /> : 'INGRESAR'}</button>
                           </div>
                       </form>
                     </div>
