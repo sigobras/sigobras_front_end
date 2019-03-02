@@ -11,14 +11,14 @@ class Inicio extends Component{
     render() {
         return (
             <div className="mt-1">
-                {sessionStorage.getItem("idacceso") === null ? <Redirect to='/' /> :
+                {/* {sessionStorage.getItem("idobra") === null ? <Redirect to='' /> : */}
                     <div className="card">
                         <div className="card-body">
                             <h4 className="text-center">BIENVENIDO  AL SISTEMA DE INFORMACION GERENCIAL DE OBRAS  -  SIGOBRAS SAC</h4>
                             <RecordObras />
                         </div>
                     </div>
-                }
+                {/* } */}
             </div>         
         );
     }

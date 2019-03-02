@@ -24,6 +24,7 @@ import Inicio from './Inicio/Inicio'
 import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
 import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
 import Corte from './Pfisicos/Metrados/Diarios/Corte'
+import ActualizacionObra from './Pfisicos/Metrados/Diarios/ActualizacionObra'
 
 import General from '../components/Pfisicos/Valorizaciones/General'
 
@@ -74,9 +75,19 @@ class AppAng extends Component {
                     id_acceso: sessionStorage.getItem('idacceso')
                 })
                 .then((res)=>{
-                    this.setState({
-                        DataMenus:res.data
-                    })
+                    console.log('data >>>',res.data)
+                    if(res.data === 'null'){
+                        console.log('es null hay error');
+                        this.setState({
+                            DataMenus:[]
+                        })
+                    }else{
+                        console.log('no error ');
+                        this.setState({
+                            DataMenus:res.data
+                        })
+                    }
+                    
                 })
                 .catch(error=>
                     console.log(error)
@@ -85,9 +96,9 @@ class AppAng extends Component {
             
         }else{
 
-            this.setState({
-                DataMenus:res.data
-            })
+            // this.setState({
+            //     DataMenus:res.data
+            // })
  
         }
         
@@ -158,12 +169,13 @@ class AppAng extends Component {
                                                 <li className="lii">
                                                     <NavLink to="/inicio" activeclassname="nav-link active"> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                                 </li>
-                                                { DataMenus.length === 0 ? <label className="text-center text-white"><Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, indesMenu)=>    
+                                                {console.log('zzz', typeof DataMenus)}
+                                                {console.log('zss', DataMenus)}
+                                                { DataMenus.length === 0  ? <label className="text-center text-white"><Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, indesMenu)=>    
                                                     <li className="lii" key={ indesMenu }>
                                                         <a className="nav-link" href={"#PF1"+indesMenu} id={"PF1"+indesMenu}><FaSuperscript /> {menus.nombreMenu} <div className="float-right"><FaPlus /></div></a>
                                                         <UncontrolledCollapse toggler={"#PF1"+indesMenu}>
                                                             <ul className="nav flex-column ull">
-
                                                                 {menus.submenus.map((subMenu, IndexSub)=>
                                                                     <li className="lii pl-3" key={ IndexSub }>
                                                                         <NavLink to={subMenu.ruta} activeclassname="nav-link active">{ subMenu.nombreMenu }</NavLink>
@@ -239,6 +251,7 @@ class AppAng extends Component {
                                             <Route path="/MDdiario" component={ MDdiario } />
                                             <Route path="/MDHistorial" component={ MDHistorial } />
                                             <Route path="/CorteObra" component={ Corte } />
+                                            <Route path="/ActualizacionObra" component={ ActualizacionObra } />
                                             <Route path="/General" component={ General } />
 
                                             <Route path="/RecordObras" component={RecordObras} />

@@ -73,7 +73,7 @@ class RecordObras extends Component{
 
     render(){
         return(
-            <div>  
+            <div>
                 <div className="card">
                     <div className="card-header">
                         RECORD DE EJECUCION PRESUPUESTAL
@@ -105,9 +105,6 @@ class RecordObras extends Component{
                         </div>
                     </div>
                 </div>
-
-                
-                                
             </div>
         );
     }
@@ -147,7 +144,7 @@ class List extends Component{
                 setTimeout(()=>{ window.location.href = '/CorteObra'},50);            
             break;
             case 'Actualizacion':
-                setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
+                setTimeout(()=>{ window.location.href = '/ActualizacionObra'},50);            
             break;
             case 'Parilizado':
                 setTimeout(()=>{ window.location.href = '/Parilizado'},50);
@@ -216,7 +213,7 @@ class List extends Component{
     }
 
     render(){
-        const datos = this.props.items.map((Obras, IndexObras)=>{
+        const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6">no hay datos</td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
                         
         return(
             <tbody  key={ IndexObras }>
@@ -264,7 +261,7 @@ class List extends Component{
                         <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre  )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
                     </td>
                     <td  className="text-center"> 
-                        <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1":Obras.estado_nombre === "Paralizado" ? "badge badge-danger p-1" : "badge badge-primary p-1"}>{ Obras.estado_nombre } </span>
+                        <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warnnig p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
                     </td>
                     <td style={{width: '18%'}}  className="text-center">
                         <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
