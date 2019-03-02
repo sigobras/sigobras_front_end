@@ -39,27 +39,33 @@ class Login extends Component {
           password: this.state.pass
       })
       .then((res)=> {
-          // console.log('lñlñ', res.data)
+        if(res.status === 204){
+          toast.error('Usuario o contraseña incorrectos');
+          this.setState({
+            isLoading: false
+          })
+        }else{
           var resUsuario = res.data.usuario
-        if(resUsuario !== undefined){
-          if(resUsuario === this.state.user && this.state.pass.length > 0){
-            sessionStorage.setItem("cargo", res.data.nombre_cargo);
-            sessionStorage.setItem("nombre",  res.data.nombre_usuario);
-            sessionStorage.setItem("idacceso", res.data.id_acceso);
+          if(resUsuario !== undefined){
+            if(resUsuario === this.state.user && this.state.pass.length > 0){
+              sessionStorage.setItem("cargo", res.data.nombre_cargo);
+              sessionStorage.setItem("nombre",  res.data.nombre_usuario);
+              sessionStorage.setItem("idacceso", res.data.id_acceso);
 
-            setTimeout(()=>{ 	
-                  
-              window.location.href = '/inicio'
+              setTimeout(()=>{ 	
+                    
+                window.location.href = '/inicio'
+              
+              },10);
             
-            },10);
-          
-          }else{
-            toast.error('Usuario o contraseña incorrectos');
-            this.setState({
-              // Loginsms: 'Usuario o contraseña incorrectos',
-              // alert: 'alert text-danger',
-              isLoading: false
-            })
+            }else{
+              toast.error('Usuario o contraseña incorrectos');
+              this.setState({
+                // Loginsms: 'Usuario o contraseña incorrectos',
+                // alert: 'alert text-danger',
+                isLoading: false
+              })
+            }
           }
         } 
       })
