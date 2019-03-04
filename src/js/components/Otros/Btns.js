@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
 import axios from 'axios'
+import { ToastContainer, toast } from "react-toastify";
+import { MdModeEdit } from "react-icons/md";
 import { UrlServer } from '../Utils/ServerUrlConfig'
 
-import { MdBusiness } from "react-icons/md";
+
+import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 class Btns extends Component {
     constructor(){
         super()
         this.state={
             DataEstadosObra:[],
+            modal: false,
+            DataSegunEstado:[],
+            IdEstado:''
         }
         this.CambiaEstadoObra = this.CambiaEstadoObra.bind(this)
+        this.ModalEstadoObra = this.ModalEstadoObra.bind(this)
+        this.SubmitEsadoObra = this.SubmitEsadoObra.bind(this)
     }
 
     componentWillMount(){
@@ -25,48 +33,127 @@ class Btns extends Component {
             console.error(err)
         )
     }
+    
+    ModalEstadoObra() {
+        this.setState(prevState => ({
+          modal: !prevState.modal
+        }));
+    }
+    
+    CambiaEstadoObra(){
+        
+        this.ModalEstadoObra()
+        var dataEstadosObra = this.state.DataEstadosObra
+        var SituacionActualObra = sessionStorage.getItem("estadoObra")
 
-    CambiaEstadoObra(estado){
-
-        if(confirm('¿Cambiar estado de obra? !tenga en cuenta que este proceso habilitará nuevos privilegios !')){
-            if(estado === "Corte"){
-                estado = "Actualizacion"
-            }else if(estado === "Actualizacion"){
-                estado = "Ejecucion"
-            }
-            // console.log('estado', estado)
-            var DataFiltrado = this.state.DataEstadosObra;
-
-            DataFiltrado = DataFiltrado.filter((item)=>{
-                return item.nombre.toLowerCase().search(
-                    estado.toLowerCase()) !== -1;
-            });
+        var DataSegunEstado = []
+        
+        switch (SituacionActualObra) {
+            case "Ejecucion":
+                DataSegunEstado.push(dataEstadosObra[3])
+                break;
             
-            sessionStorage.setItem('estadoObra', DataFiltrado[0].nombre)
+            case "Corte":
+                DataSegunEstado.push(dataEstadosObra[0],dataEstadosObra[2],dataEstadosObra[3])
+                break;
 
+            case "Actualizacion":
+                DataSegunEstado.push(dataEstadosObra[0],dataEstadosObra[3])
+                break;
+
+            case "Paralizado":
+                DataSegunEstado.push(dataEstadosObra[0])
+                break;
+
+            case "Compatibilidad":
+                DataSegunEstado.push(dataEstadosObra[0], dataEstadosObra[3])
+                break;
+
+        }
+        
+        this.setState({
+            DataSegunEstado
+        })
+
+    }
+
+    SubmitEsadoObra(){
+        if(confirm('¿cambiar situación de la obra')){
+            
             axios.post(`${UrlServer}/ActualizarEstado`,{
                 "Fichas_id_ficha":sessionStorage.getItem('idobra'),
-                "Estados_id_estado":DataFiltrado[0].id_Estado
+                "Estados_id_estado":this.state.IdEstado
             })
             .then((res)=>{
-                console.log('res>', res);
-                // window.location.reload()
-                alert('perfecto estado actual'+  sessionStorage.getItem('estadoObra'))
+                // console.log('res>',res.data.nombre);
+
+                if(res.data){
+                    toast.success('✔ situación actual de la obra actualizada ');
+                    sessionStorage.setItem('estadoObra',res.data.nombre)                
+
+                    setTimeout(()=>{ 
+                        window.location.reload() 
+                    }, 20);
+                }else{
+                    toast.error('❌ errores en cambiar la situacion actual de la obra');
+                }
             })
             .catch((err)=>{
+                toast.error('❌ errores en cambiar la situacion actual de la obra');
                 console.log('hubo errores >>', err)
             })
-
-            console.log('>>>>', DataFiltrado);
-            console.log('s>', DataFiltrado[0].nombre);
         }
-    };
+    }
 
     
     render() {
+        const { DataSegunEstado } = this.state
         return (
             <div>
-                <button className="btn btn-outline-danger" title="Estado de la obra CORTE" onClick={ e=> this.CambiaEstadoObra(sessionStorage.getItem('estadoObra')) } ><MdBusiness /> C</button>
+                <ToastContainer
+                    position="bottom-right"
+                    autoClose={1000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnVisibilityChange
+                    draggable
+                    pauseOnHover
+                />
+                {/* <button className="btn btn-outline-danger" title="Estado de la obra CORTE" onClick={ e=> this.CambiaEstadoObra(sessionStorage.getItem('estadoObra')) } ><MdBusiness /> C</button> */}
+                <button className="btn btn-outline-danger" title="Estado de la obra CORTE" onClick={ this.CambiaEstadoObra } ><MdModeEdit /></button>
+
+
+                <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalEstadoObra} backdrop={false}>
+                    <ModalHeader toggle={this.ModalEstadoObra}>Cambiar situación de la obra</ModalHeader>
+                    <ModalBody>
+                        <Row>
+                            <Col sm="6">
+                               <span className="h4 text-center">situación actual:<br/> {sessionStorage.getItem("estadoObra")}</span> 
+                            </Col>
+                            <Col sm="6">
+                                <FormGroup>
+                                    <Label >Cambiar a:</Label>
+                                    <Input type="select" className="form-control-sm" onChange={ e=> this.setState({IdEstado: e.target.value})}>
+                                        <option>seleccione </option>
+                                        {  DataSegunEstado.map((EstadoObra, IndexObra)=>
+                                            <option value={ EstadoObra.id_Estado } key={ IndexObra }>
+                                                { EstadoObra.nombre }
+                                            </option>                                
+                                        )}
+                                        
+                                    </Input>
+                                </FormGroup>
+                            </Col>                            
+                        </Row>
+                            
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="success" onClick={this.SubmitEsadoObra}>Cambiar estado</Button>{' '}
+                        <Button color="danger" onClick={this.ModalEstadoObra}>Cancelar</Button>
+                    </ModalFooter>
+                </Modal>
             </div>
         );
     }

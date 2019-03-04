@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking, FaPrint, FaEye } from "react-icons/fa";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse, Spinner } from 'reactstrap';
 import { IoIosInfinite } from "react-icons/io";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
@@ -29,7 +29,6 @@ class RecordObras extends Component{
 
     }
     
-
     componentDidMount(){
         axios.post(`${UrlServer}/PGlistaObras`,{
             id_acceso:sessionStorage.getItem("idacceso")
@@ -213,7 +212,7 @@ class List extends Component{
     }
 
     render(){
-        const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6">no hay datos</td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
+        const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
                         
         return(
             <tbody  key={ IndexObras }>
@@ -261,7 +260,7 @@ class List extends Component{
                         <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre  )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
                     </td>
                     <td  className="text-center"> 
-                        <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warnnig p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
+                        <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
                     </td>
                     <td style={{width: '18%'}}  className="text-center">
                         <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
@@ -382,54 +381,51 @@ class List extends Component{
                         <UncontrolledCollapse toggler={"#adminDirecta"+IndexObras}>
                             <button onClick={this.printDocument} className="btn btn-outline-warning btn-xs">GENERAR REPORTE PDF</button>
                             
-                            <div className="table-responsive">
+                            <table className="table table-bordered table-sm small" id="tbl1" >
+                                <tbody> 
+                                    <tr className="d-none">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan="8" className="bg-info text-center">PROYECTO EN EJECUCION</td>
+                                    </tr>
+                                
+                                    <tr >
+                                        <td>ENTIDAD FINANCIERA</td>
+                                        <td>: GOBIERNO REGIONAL PUNO</td>
+                                        <td rowSpan="4"></td>
+                                        <td>PRESUPUESTO BASE</td>
+                                        <td>S/. 9892323</td>
+                                        <td rowSpan="4"></td>
+                                        <td>PLAZO DE EJECUCION INICIAL</td>
+                                        <td>180 DIAS CALENDARIO</td>
+                                    </tr>
+                                    <tr>
+                                        <td >MODALIDAD DE EJECUCION</td>
+                                        <td>: ADMIN DIRECTA</td>
+                                        <td>AMPLIACION PRESUPUESTO N° 1</td>
+                                        <td>S/. 232323</td>
+                                        <td>AMPLIACION DE PLAZO N° 01</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FUENTE DE INFORMACION</td>
+                                        <td>:SUB GERENCIA DE OBRA</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                                <table className="table table-bordered table-sm small" id="tbl1" style={{color:'#000000'}} >
-                                    <tbody> 
-                                        <tr className="d-none">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan="8" className="bg-info text-center">PROYECTO EN EJECUCION</td>
-                                        </tr>
-                                    
-                                        <tr style={{color:'#000000'}} >
-                                            <td>ENTIDAD FINANCIERA</td>
-                                            <td>: GOBIERNO REGIONAL PUNO</td>
-                                            <td rowSpan="4"></td>
-                                            <td>PRESUPUESTO BASE</td>
-                                            <td>S/. 9892323</td>
-                                            <td rowSpan="4"></td>
-                                            <td>PLAZO DE EJECUCION INICIAL</td>
-                                            <td>180 DIAS CALENDARIO</td>
-                                        </tr>
-                                        <tr style={{color:'#000000'}}>
-                                            <td >MODALIDAD DE EJECUCION</td>
-                                            <td>: ADMIN DIRECTA</td>
-                                            <td>AMPLIACION PRESUPUESTO N° 1</td>
-                                            <td>S/. 232323</td>
-                                            <td>AMPLIACION DE PLAZO N° 01</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr style={{color:'#000000'}}>
-                                            <td>FUENTE DE INFORMACION</td>
-                                            <td>:SUB GERENCIA DE OBRA</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="table-responsive">
                             <table className="table table-bordered table-sm small" id="tbl2">
                                 <tbody>
                                     <tr className="d-none">
@@ -457,7 +453,7 @@ class List extends Component{
                                     <tr>
                                         <td colSpan="20" className="bg-info text-center">CONSOLIDADO DEL INFORME MENSUAL DE OBRA</td>
                                     </tr>
-                                    <tr style={{color:'#000000'}}>
+                                    <tr>
                                         <td rowSpan="3">ITEM</td>
                                         <td rowSpan="3">DESCRIPCIÓN DEL PROYECTO</td>
                                         <td rowSpan="3">PPTO E.T. (S/.) + ADICIONALES</td>
@@ -470,7 +466,7 @@ class List extends Component{
                                         <td rowSpan="3">METAS EJECUTADAS</td>
                                         <td rowSpan="3">COMENTARIO</td>
                                     </tr>
-                                    <tr style={{color:'#000000'}}>
+                                    <tr>
                                         <td rowSpan="2">SUPERVISOR DE OBRA</td>
                                         <td rowSpan="2">RESIDENTE DE OBRA</td>
                                         <td rowSpan="2">PLAZO DE EJECUCIÓN (DÍAS CALENDARIOS)</td>
@@ -481,7 +477,7 @@ class List extends Component{
                                         <td colSpan="2">FÍSICO PRES. BASE</td>
                                         <td colSpan="2">AMPLIACIÓN PRESUPUESTAL VAL. FÍSICA</td>
                                     </tr>
-                                    <tr style={{color:'#000000'}}>
+                                    <tr>
                                         <td>MONTO EN S/.</td>
                                         <td>ACUM. %</td>
                                         <td>MONTO EN S/.</td>
@@ -489,7 +485,7 @@ class List extends Component{
                                         <td>MONTO EN S/.<br /></td>
                                         <td>ACUM. %</td>
                                     </tr>
-                                    <tr style={{color:'#000000'}}>
+                                    <tr>
                                         <td>-</td>
                                         <td>-</td>
                                         <td>-</td>
@@ -513,7 +509,6 @@ class List extends Component{
                                     </tr>
                                 </tbody>
                             </table>
-                            </div>
 
                             <div id="divToPrint">
                                 <CtrladminDirecta />

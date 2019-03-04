@@ -10,11 +10,11 @@ class Inicio extends Component{
       }
     render() {
         return (
-            <div className="mt-1">
+            <div className="">
                 {/* {sessionStorage.getItem("idobra") === null ? <Redirect to='' /> : */}
                     <div className="card">
-                        <div className="card-body">
-                            <h4 className="text-center">BIENVENIDO  AL SISTEMA DE INFORMACION GERENCIAL DE OBRAS  -  SIGOBRAS SAC</h4>
+                        <div className="card-body p-1">
+                            <div className="text-center pb-2">BIENVENIDO  AL SISTEMA DE INFORMACION GERENCIAL DE OBRAS  -  SIGOBRAS SAC</div>
                             <RecordObras />
                         </div>
                     </div>

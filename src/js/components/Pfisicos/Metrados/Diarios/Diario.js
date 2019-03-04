@@ -62,7 +62,7 @@ class MDdiario extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
     .then((res)=>{
-      // console.log('res>>', res.data);
+      console.log('res>>', res.data);
       
       this.setState({
         DataMDiario:res.data
@@ -125,7 +125,12 @@ class MDdiario extends Component {
     var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
     var DataModificado = DataMDiario
     actividad_metrados_saldo = Number(actividad_metrados_saldo)
-    
+    // DataModificado[indexComp].partidas[viewIndex].porcentaje = 100
+    // console.log('dats', DataModificado[indexComp].partidas[viewIndex].porcentaje);
+
+    // this.setState({
+    //   DataMDiario: DataModificado
+    // })
     if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
       this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
     }else if( Number(ValorMetrado) < 0){
@@ -137,6 +142,7 @@ class MDdiario extends Component {
         this.setState({
           modal: !this.state.modal
         })
+
         axios.post(`${UrlServer}/avanceActividad`,{
           "Actividades_id_actividad":id_actividad,
           "valor":ValorMetrado,
@@ -145,7 +151,7 @@ class MDdiario extends Component {
           "id_ficha":sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-          // console.log(res.data)
+          console.log(res.data)
           DataModificado[indexComp].partidas[viewIndex] = res.data
     
           this.setState({
@@ -265,8 +271,9 @@ class MDdiario extends Component {
                                       </div>
 
                                       <div style={{
-                                        height: '4%',
-                                        backgroundColor: '#c3bbbb',
+                                        height: '2px',
+                                        width: '100%',
+                                        background: '#c3bbbb',
                                         borderRadius: '2px',
                                         position: 'relative'
                                         }}
@@ -276,17 +283,18 @@ class MDdiario extends Component {
                                         style={{
                                           width: `${row.value}%`,
                                           height: '100%',
-                                          backgroundColor: row.value > 95 ? 'rgb(164, 251, 1)'
+                                          background: row.value > 95 ? '#a4fb01'
                                             : row.value > 50 ? '#ffbf00'
                                             :  '#ff2e00',
                                           borderRadius: '2px',
-                                          transition: 'all .9s ease-in',
+                                          transition: 'all 2s linear 0s',
                                           position: 'absolute',
-                                          boxShadow: `0 0 6px 1px ${row.value > 95 ? 'rgb(164, 251, 1)'
+                                          boxShadow: `0 0 6px 1px ${row.value > 95 ? '#a4fb01'
                                             : row.value > 50 ? '#ffbf00'
                                             :  '#ff2e00'}`
                                         }}
                                       />
+                                      {row.value}
                                       </div>
                                       <div className="clearfix">
                                         <span className="float-left text-info">Saldo: {row.original.metrados_saldo}</span>
@@ -298,6 +306,9 @@ class MDdiario extends Component {
                                   filterMethod: (filter, row) => {
                                       if (filter.value === "all") {
                                       return true;
+                                      }
+                                      if (filter.value === "false") {
+                                      return row[filter.id] <= 0;
                                       }
                                       if (filter.value === "true") {
                                       return row[filter.id] <= 99;

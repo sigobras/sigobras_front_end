@@ -1,5 +1,5 @@
 body {
-  font-size: .789rem !important;
+  font-size: .7rem !important;
   color: #fff !important;
   background-color: #2e3742;
   /* background-color: #343a4005 !important; */
@@ -23,7 +23,7 @@ body {
   position: relative;
   top: 50px;
   height: calc(100vh - 50px);
-  padding-top: .5rem;
+  /* padding-top: .5rem; */
   overflow-x: hidden;
   overflow-y: auto;
   /* Scrollable contents if viewport is shorter than content. */
@@ -55,7 +55,7 @@ body {
  */
 
 [role="main"] {
-  padding-top: 44px;
+  padding-top: 4px;
 }
 
 /* Navbar */

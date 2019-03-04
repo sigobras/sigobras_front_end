@@ -1,9 +1,9 @@
 // libraris
 import React, { Component } from 'react';
-import { FaBars, FaPlus, FaChartLine, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
+import { FaBars, FaChevronRight, FaChevronUp, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { MdFullscreen, MdFullscreenExit, MdDehaze, MdBusiness } from "react-icons/md";
 
-import {Spinner, UncontrolledCollapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
+import {Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
 import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';
@@ -39,6 +39,7 @@ class AppAng extends Component {
             navbarExpland: true,
             navbarExplandRight: true,
             isFull: false,
+            collapse: 900,
             DataObra:[],
             DataMenus: []
         }
@@ -47,6 +48,7 @@ class AppAng extends Component {
         this.YearActual = this.YearActual.bind(this);
         this.collapseRight = this.collapseRight.bind(this)
         this.irFullScreen = this.irFullScreen.bind(this)
+        this.CollapseMenu = this.CollapseMenu.bind(this)
         
     }
 
@@ -75,14 +77,12 @@ class AppAng extends Component {
                     id_acceso: sessionStorage.getItem('idacceso')
                 })
                 .then((res)=>{
-                    console.log('data >>>',res.data)
+                    // console.log('data >>>',res.data)
                     if(res.data === 'null'){
-                        console.log('es null hay error');
                         this.setState({
                             DataMenus:[]
                         })
                     }else{
-                        console.log('no error ');
                         this.setState({
                             DataMenus:res.data
                         })
@@ -134,8 +134,13 @@ class AppAng extends Component {
             isFull: !this.state.isFull 
         });        
     }
+
+    CollapseMenu(e) {
+        let event = Number(e.target.dataset.event);
+        this.setState({ collapse: this.state.collapse === event ? 900 : event });
+    }
     render() {
-        var { navbarExplandRight, isFull, DataObra, DataMenus } = this.state
+        var { navbarExplandRight, isFull, DataObra, DataMenus, collapse } = this.state
         return (
            
             // <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
@@ -143,7 +148,7 @@ class AppAng extends Component {
                     <div>
                         {/* {sessionStorage.getItem('idobra') === null? window.location.reload(): ''} */}
                         <div>
-                            <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-2 border-button">
+                            <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
                                 <span className="col-md-2 mr-0 m-0 p-0 text-light h5">
                                     <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="30" /> SIGOBRAS
                                     <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={ this.ButtonToogle }>
@@ -167,14 +172,13 @@ class AppAng extends Component {
                                             <ul className="nav flex-column ull">
                                                 
                                                 <li className="lii">
-                                                    <NavLink to="/inicio" activeclassname="nav-link active"> <FaHouseDamage /><span> INICIO</span> </NavLink>
+                                                    <NavLink to="/inicio" activeclassname="nav-link active"  onClick={ this.CollapseMenu } data-event={ 100 }> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                                 </li>
-                                                {console.log('zzz', typeof DataMenus)}
-                                                {console.log('zss', DataMenus)}
-                                                { DataMenus.length === 0  ? <label className="text-center text-white"><Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, indesMenu)=>    
-                                                    <li className="lii" key={ indesMenu }>
-                                                        <a className="nav-link" href={"#PF1"+indesMenu} id={"PF1"+indesMenu}><FaSuperscript /> {menus.nombreMenu} <div className="float-right"><FaPlus /></div></a>
-                                                        <UncontrolledCollapse toggler={"#PF1"+indesMenu}>
+                                                
+                                                { DataMenus.length === 0  ? <label className="text-center text-white"><Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, index)=>    
+                                                    <li className="lii" key={ index }>
+                                                        <a href="#" className="nav-link" onClick={ this.CollapseMenu } data-event={ index } activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index? <FaChevronUp />:<FaChevronRight /> }</div></a>
+                                                        <Collapse isOpen={collapse === index}>
                                                             <ul className="nav flex-column ull">
                                                                 {menus.submenus.map((subMenu, IndexSub)=>
                                                                     <li className="lii pl-3" key={ IndexSub }>
@@ -182,7 +186,7 @@ class AppAng extends Component {
                                                                     </li>
                                                                 )}
                                                             </ul>
-                                                        </UncontrolledCollapse>
+                                                        </Collapse>
                                                     </li> 
                                                     
                                                 )}
@@ -230,15 +234,17 @@ class AppAng extends Component {
 
                                     <main role="main" className="col ml-sm-auto col-lg px-0" style={{backgroundColor: '#2e3742'}}>
                                         
-                                        <div className="d-flex  mb-1 border-button pt-3 p-2 text-light bg-dark m-0">
-                                            <h6 className="">
-                                                {/* BIENVENIDO HOY ES : {this.YearActual()} */}
-                                                { DataObra.g_meta === undefined?'': DataObra.g_meta.toUpperCase()}
-                                            </h6>
+                                        <div className="d-flex mb-0 border-button pt-5 p-1 text-light bg-dark m-0">
+                                            <label>
+                                                <b>
+                                                    {/* BIENVENIDO HOY ES : {this.YearActual()} */}
+                                                    { DataObra.g_meta === undefined?'': DataObra.g_meta.toUpperCase()}
+                                                </b>
+                                            </label>
                                         </div>
             
-                                        <div className="px-1 scroll_contenido">
-                                        <Route exact path="/Inicio" component={Inicio} />
+                                        <div className="px-1 scroll_contenido mt-2">
+                                            <Route exact path="/Inicio" component={Inicio} />
 
                                         {/* {DataMenus.map((menus, indesMenu)=>
                                             menus.submenus.map((submenus, indexSubmenus)=>
@@ -263,8 +269,6 @@ class AppAng extends Component {
                                         <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' :  "navbarCollapseRight  border-left FondoBarra"} >
                                             <div className="sidebar-sticky">
                                                 <div className="p-1">
-                                                    {/* <button className="btn btn-outline-warning"><FaChartLine /> </button> */}
-
                                                     <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
 
                                                     <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
@@ -281,14 +285,14 @@ class AppAng extends Component {
                                                                 {DataObra.dias_saldo > 0 ? 
                                                                     <div><b> { DataObra.dias_saldo } </b> Dias </div>
                                                                 : 
-                                                                    <div><b>oh no Te pasaste </b>{ DataObra.dias_saldo } Dias </div> 
+                                                                    <div><b>oh no Te pasaste  </b><br />{ DataObra.dias_saldo } Dias </div> 
                                                                 }
                                                             </fieldset>
                                                         </PopoverBody>
                                                     </UncontrolledPopover>
                                                     <br />
                                                     <br />
-                                                    {sessionStorage.getItem('estadoObra') === 'Ejecucion' || sessionStorage.getItem('estadoObra') === 'Paralizado'?'':
+                                                    {sessionStorage.getItem('estadoObra') === 'Ejecucion' || sessionStorage.getItem('estadoObra') === 'Paralizado' || sessionStorage.getItem('estadoObra') === null?'':
                                                         <Btns />
                                                     }
                                                     

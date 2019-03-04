@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, Button, CardBody, Card, Spinner } from 'reactstrap';
+import { Collapse, Button, CardHeader, CardBody, Card, Spinner } from 'reactstrap';
 import { ToastContainer, toast } from "react-toastify";
 
 import axios from 'axios'
@@ -97,7 +97,6 @@ class Login extends Component {
                 draggable
                 pauseOnHover
               />
-
               <div className="container-dialog modal-login shadow">
                   <div className="modal-content">
                     <div className="modal-header">
@@ -126,6 +125,7 @@ class Login extends Component {
                     </div>
                   </div>
               </div>
+              {/* <Apps/> */}
             </div>
         );
     }
@@ -134,91 +134,44 @@ class Login extends Component {
 export default Login;
 
 
-class Example extends Component {
-  constructor(props) {
-    super(props);
-    this.onEntering = this.onEntering.bind(this);
-    this.onEntered = this.onEntered.bind(this);
-    this.onExiting = this.onExiting.bind(this);
-    this.onExited = this.onExited.bind(this);
-    this.toggle = this.toggle.bind(this);
-    this.toggle1 = this.toggle1.bind(this);
 
-    this.state = { 
-        collapse: false, 
-        status: 'cerrado' 
-    };
-  }
+class Apps extends Component {
+  constructor() {
+      super();
+      this.toggle = this.toggle.bind(this);
+      this.state = { 
+        collapse: 0, 
+        cards: [1, 2, 3, 4, 5] 
+      };
+    }
 
-  onEntering() {
-    this.setState({ status: 'abriendo...' });
-  }
+    toggle(e) {
+      let event = e.target.dataset.event;
+      console.log('icon', event)
+      this.setState({ collapse: this.state.collapse === Number(event) ? 0 : Number(event) });
+    }
 
-  onEntered() {
-    this.setState({ status: 'abierto' });
-  }
-
-  onExiting() {
-    this.setState({ status: 'cerrando...' });
-  }
-
-  onExited() {
-    this.setState({ status: 'cerrado' });
-  }
-
-  toggle() {
-    this.setState({ collapse: !this.state.collapse });
-  }  
-  
-  toggle1() {
-    this.setState({ collapse: !this.state.collapse });
-  }
-
-  render() {
-    return (
-      <div>
-        <Button color="primary" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Toggle</Button>
-        <h5>Current state: {this.state.status}</h5>
-        
-        <Collapse
-          isOpen={this.state.collapse}
-          onEntering={this.onEntering}
-          onEntered={this.onEntered}
-          onExiting={this.onExiting}
-          onExited={this.onExited}
-        >
-          <Card>
-            <CardBody>
-              Anim pariatur cliche reprehenderit,
-             enim eiusmod high life accusamus terry richardson ad squid. Nihil
-             anim keffiyeh helvetica, craft beer labore wes anderson cred
-             nesciunt sapiente ea proident.
-            </CardBody>
-          </Card>
-        </Collapse>
-            <hr/>
-
-
-        <Button color="primary" onClick={this.toggle1} style={{ marginBottom: '1rem' }}>Toggle1</Button>
-        <h5>Current state: {this.state.status}</h5>
-        <Collapse
-          isOpen={this.state.collapse}
-          onEntering={this.onEntering}
-          onEntered={this.onEntered}
-          onExiting={this.onExiting}
-          onExited={this.onExited}
-        >
-          <Card>
-            <CardBody>
-              Anim pariatur cliche reprehenderit,
-             enim eiusmod high life accusamus terry richardson ad squid. Nihil
-             anim keffiyeh helvetica, craft beer labore wes anderson cred
-             nesciunt sapiente ea proident.
-            </CardBody>
-          </Card>
-        </Collapse>
-        
-      </div>
-    );
-  }
+    render() {
+      const {cards, collapse} = this.state;
+      return (
+        <div className="container">
+            <h3 className="page-header">Reactstrap Accordion using card component</h3>
+            {cards.map(index => 
+                <Card style={{ marginBottom: '1rem' }} key={index}>
+                  <CardHeader onClick={this.toggle} data-event={index}> Header {collapse === index?'➖':'➕'}</CardHeader>
+                  <Collapse isOpen={collapse === index}>
+                  <CardBody>
+                      Anim pariatur cliche reprehenderit,
+                      enim eiusmod high life accusamus terry richardson ad squid. Nihil
+                      anim keffiyeh helvetica, craft beer labore wes anderson cred
+                      nesciunt sapiente ea proident.
+                  </CardBody>
+                  </Collapse>
+                </Card>
+              
+            )}     
+            
+          </div>
+      );
+    }
 }
