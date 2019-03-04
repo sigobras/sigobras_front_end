@@ -97,13 +97,13 @@ class Login extends Component {
                 draggable
                 pauseOnHover
               />
-              <div className="container-dialog modal-login shadow">
+              <div className="container-dialog modal-login">
                   <div className="modal-content">
                     <div className="modal-header">
                         <div className="avatar">
                             <img src={ LogoSigobras } className="pt-2" alt="sigoobras sac" height="75"/>
                         </div>
-                        <h4 className="text-dark">Inicie sesión</h4>
+                        <h4>Inicie sesión</h4>
                     </div>
                     <div className="modal-body">
                       <form>
@@ -120,7 +120,7 @@ class Login extends Component {
                           </div>
                       </form>
                     </div>
-                    <div className="modal-footer">
+                    <div className="modal-footer p-1 text-center">
                         <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> Ⓒ 2018 - 2019</label>
                     </div>
                   </div>

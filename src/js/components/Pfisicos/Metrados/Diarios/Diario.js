@@ -294,7 +294,7 @@ class MDdiario extends Component {
                                             :  '#ff2e00'}`
                                         }}
                                       />
-                                      {row.value}
+                                      {/* {row.value} */}
                                       </div>
                                       <div className="clearfix">
                                         <span className="float-left text-info">Saldo: {row.original.metrados_saldo}</span>
@@ -418,13 +418,13 @@ class MDdiario extends Component {
                                             style={{
                                               width: `${rowPor.value}%`,
                                               height: '100%',
-                                              backgroundColor: rowPor.value > 95 ? 'rgb(164, 251, 1)'
+                                              backgroundColor: rowPor.value > 95 ? '#A4FB01'
                                                 : rowPor.value > 50 ? '#ffbf00'
                                                 :  '#ff2e00',
                                               borderRadius: '2px',
                                               transition: 'all .9s ease-in',
                                               position: 'absolute',
-                                              boxShadow: `0 0 6px 1px ${rowPor.value > 95 ? 'rgb(164, 251, 1)'
+                                              boxShadow: `0 0 6px 1px ${rowPor.value > 95 ? '#A4FB01'
                                               : rowPor.value > 50 ? '#ffbf00'
                                               :  '#ff2e00'}`
                                             }}

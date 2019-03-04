@@ -3,10 +3,11 @@
     width: 350px;
 }
 
-.modal-login .modal-content {
+.modal-login {
     padding: 10px;
     border-radius: 5px;
     border: none;
+    box-shadow: 0 0 8px 5px #54a1a1;
 }
 
 .modal-login .modal-header {
@@ -21,9 +22,6 @@
     margin: 30px 0 -15px;
 }
 
-.modal-login .form-control:focus {
-    border-color: #70c5c0;
-}
 
 .modal-login .form-control,
 .modal-login .btn {
@@ -31,21 +29,6 @@
     border-radius: 3px;
 }
 
-.modal-login .close {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-}
-
-.modal-login {
-    background: #383838;
-    border-color: #dee4e7;
-    text-align: center;
-    justify-content: center;
-    margin: 0 -20px -20px;
-    border-radius: 5px;
-    font-size: 13px;
-}
 
 .modal-login .modal-footer a {
     color: #999;
@@ -61,9 +44,9 @@
     height: 118px;
     border-radius: 50%;
     z-index: 9;
-    background: #ffffff;
+    background: #3a4856;
     padding: 15px;
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 6px 3px #60c7c1;
 }
 
 .modal-login .avatar img {
@@ -72,6 +55,7 @@
 
 .modal-login {
     margin-top: 80px;
+    color: #fff;
     
 }
 
@@ -80,20 +64,4 @@
     margin: 1.75rem auto;
     margin-top: 100px;
 }
-
-.modal-login {
-    color: #fff;
-    border-radius: 4px;
-    background: #60c7c1;
-    text-decoration: none;
-    transition: all 0.4s;
-    line-height: normal;
-    border: none;
-}
-
-/* .modal-login .btn:hover,
-.modal-login .btn:focus {
-    background: #45aba6;
-    outline: none;
-} */
 
