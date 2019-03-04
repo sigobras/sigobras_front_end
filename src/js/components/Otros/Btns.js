@@ -121,8 +121,7 @@ class Btns extends Component {
                     draggable
                     pauseOnHover
                 />
-                {/* <button className="btn btn-outline-danger" title="Estado de la obra CORTE" onClick={ e=> this.CambiaEstadoObra(sessionStorage.getItem('estadoObra')) } ><MdBusiness /> C</button> */}
-                <button className="btn btn-outline-danger" title="Estado de la obra CORTE" onClick={ this.CambiaEstadoObra } ><MdModeEdit /></button>
+                <button className="btn btn-outline-danger ml-2" title={`situación de la obra ${sessionStorage.getItem('estadoObra') }`} onClick={ this.CambiaEstadoObra } ><MdModeEdit /></button>
 
 
                 <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalEstadoObra} backdrop={false}>

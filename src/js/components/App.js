@@ -25,6 +25,7 @@ import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
 import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
 import Corte from './Pfisicos/Metrados/Diarios/Corte'
 import ActualizacionObra from './Pfisicos/Metrados/Diarios/ActualizacionObra'
+import ParalizacionObra  from './Pfisicos/Metrados/Diarios/ParalizacionObra'
 
 import General from '../components/Pfisicos/Valorizaciones/General'
 
@@ -258,6 +259,7 @@ class AppAng extends Component {
                                             <Route path="/MDHistorial" component={ MDHistorial } />
                                             <Route path="/CorteObra" component={ Corte } />
                                             <Route path="/ActualizacionObra" component={ ActualizacionObra } />
+                                            <Route path="/ParalizacionObra" component={ ParalizacionObra } />
                                             <Route path="/General" component={ General } />
 
                                             <Route path="/RecordObras" component={RecordObras} />
@@ -292,7 +294,7 @@ class AppAng extends Component {
                                                     </UncontrolledPopover>
                                                     <br />
                                                     <br />
-                                                    {sessionStorage.getItem('estadoObra') === 'Ejecucion' || sessionStorage.getItem('estadoObra') === 'Paralizado' || sessionStorage.getItem('estadoObra') === null?'':
+                                                    {sessionStorage.getItem('estadoObra') === 'Ejecucion' || sessionStorage.getItem('estadoObra') === null?'':
                                                         <Btns />
                                                     }
                                                     
