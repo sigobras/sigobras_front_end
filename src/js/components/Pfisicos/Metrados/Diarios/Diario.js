@@ -181,6 +181,8 @@ class MDdiario extends Component {
 
   render() {
     var { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado, collapse, llamarComponentePartidaNueva } = this.state
+    
+
     if(sessionStorage.getItem("idacceso") !== null){ 
       return (
         <div className="pb-3">
@@ -197,9 +199,9 @@ class MDdiario extends Component {
             pauseOnHover
           />
 
-          
+
         <Card>
-            <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1}> 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'} </CardHeader>
+            <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'} </CardHeader>
             <Collapse isOpen={collapse === 1}>
               <CardBody> 
               

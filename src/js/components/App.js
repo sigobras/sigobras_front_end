@@ -163,8 +163,7 @@ class AppAng extends Component {
                                     <div className="float-right"><MensajeNav /></div>
                                     <div className="float-right"><NotificacionNav /></div>
                                     <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ?<MdFullscreen size={20}/> : <MdFullscreenExit size={20}/> }</a></div>
-                                    <div className="float-right"><span className="badge badge-success p-2 mt-2">Estado de la obra: { sessionStorage.getItem('estadoObra') }</span></div>
-
+                                    <div className="float-right"> {sessionStorage.getItem('estadoObra') === null?'':<Btns />} </div>
                                 </div>
                             </nav>
 
@@ -295,11 +294,7 @@ class AppAng extends Component {
                                                             </fieldset>
                                                         </PopoverBody>
                                                     </UncontrolledPopover>
-                                                    <br />
-                                                    <br />
-                                                    {sessionStorage.getItem('estadoObra') === null?'':
-                                                        <Btns />
-                                                    }
+
                                                     
                                                 </div>
                                             </div>
