@@ -8,9 +8,11 @@ class Inicio extends Component{
         this.state = {
         };
       }
+
     render() {
         return (
             <div className="">
+
                 {/* {sessionStorage.getItem("idobra") === null ? <Redirect to='' /> : */}
                     <div className="card">
                         <div className="card-body p-1">

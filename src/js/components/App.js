@@ -23,6 +23,8 @@ import Btns from './Otros/Btns'
 import Inicio from './Inicio/Inicio'
 import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
 import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
+import PartidasNuevas from './Pfisicos/Metrados/Diarios/PartidasNuevas'
+
 import Corte from './Pfisicos/Metrados/Diarios/Corte'
 import ActualizacionObra from './Pfisicos/Metrados/Diarios/ActualizacionObra'
 import ParalizacionObra  from './Pfisicos/Metrados/Diarios/ParalizacionObra'
@@ -38,7 +40,7 @@ class AppAng extends Component {
         super();
         this.state = {
             navbarExpland: true,
-            navbarExplandRight: true,
+            navbarExplandRight: false,
             isFull: false,
             collapse: 900,
             DataObra:[],
@@ -257,6 +259,7 @@ class AppAng extends Component {
 
                                             <Route path="/MDdiario" component={ MDdiario } />
                                             <Route path="/MDHistorial" component={ MDHistorial } />
+                                            <Route path="/PartidasNuevas" component={ PartidasNuevas } />
                                             <Route path="/CorteObra" component={ Corte } />
                                             <Route path="/ActualizacionObra" component={ ActualizacionObra } />
                                             <Route path="/ParalizacionObra" component={ ParalizacionObra } />
@@ -294,7 +297,7 @@ class AppAng extends Component {
                                                     </UncontrolledPopover>
                                                     <br />
                                                     <br />
-                                                    {sessionStorage.getItem('estadoObra') === 'Ejecucion' || sessionStorage.getItem('estadoObra') === null?'':
+                                                    {sessionStorage.getItem('estadoObra') === null?'':
                                                         <Btns />
                                                     }
                                                     
