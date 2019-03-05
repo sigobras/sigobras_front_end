@@ -145,12 +145,14 @@ class List extends Component{
             case 'Actualizacion':
                 setTimeout(()=>{ window.location.href = '/ActualizacionObra'},50);            
             break;
-            case 'Parilizado':
-                setTimeout(()=>{ window.location.href = '/Parilizado'},50);
+            case 'Paralizado':
+                setTimeout(()=>{ window.location.href = '/ParalizacionObra'},50);
             break;
 
             default: 'Ejecucion'
                 setTimeout(()=>{ window.location.href = '/MDdiario'},50);
+            break;
+            
         }
     } 
 
