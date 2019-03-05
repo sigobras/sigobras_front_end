@@ -252,7 +252,7 @@ class List extends Component{
                                     : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
                                     :  'rgb(2, 235, 255)'}`
                                 }}
-                            /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
+                            /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_avance} %</span>
                             </div>
                         
                         </div> 
@@ -324,7 +324,7 @@ class List extends Component{
                                                         : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
                                                         :  '#ff2e00'}`
                                                     }}
-                                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: ObrasComp.porcentaje_avance_componentes <1 ?'black': 'white' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
+                                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
                                                 </div>
                                             
                                             </div> 
@@ -366,7 +366,7 @@ class List extends Component{
                                                         : Obras.porcentaje_avance > 50 ? '#ffbf00'
                                                         :  '#ff2e00'}`
                                                     }}
-                                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px', color: Obras.porcentaje_avance <1 ?'black': 'white' }}>{Obras.porcentaje_avance} %</span>
+                                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_avance} %</span>
                                                 </div>
                                             
                                             </div> 

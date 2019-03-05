@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios'
+import { DebounceInput } from 'react-debounce-input';
 import { ToastContainer, toast } from "react-toastify";
 import { MdModeEdit } from "react-icons/md";
 import { UrlServer } from '../Utils/ServerUrlConfig'
 
 
-import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon } from 'reactstrap';
 
 class Btns extends Component {
     constructor(){
@@ -13,11 +14,15 @@ class Btns extends Component {
         this.state={
             DataEstadosObra:[],
             modal: false,
+            modalClave: false,
             DataSegunEstado:[],
-            IdEstado:''
+            IdEstado:'',
+            pass:'',
+            mensajes:''
         }
         this.CambiaEstadoObra = this.CambiaEstadoObra.bind(this)
         this.ModalEstadoObra = this.ModalEstadoObra.bind(this)
+        this.ModalPassword = this.ModalPassword.bind(this)
         this.SubmitEsadoObra = this.SubmitEsadoObra.bind(this)
     }
 
@@ -37,6 +42,12 @@ class Btns extends Component {
     ModalEstadoObra() {
         this.setState(prevState => ({
           modal: !prevState.modal
+        }));
+    }
+
+    ModalPassword() {
+        this.setState(prevState => ({
+          modalClave: !prevState.modalClave
         }));
     }
     
@@ -77,31 +88,61 @@ class Btns extends Component {
 
     }
 
-    SubmitEsadoObra(){
-        if(confirm('¿cambiar situación de la obra')){
+    
+
+    SubmitEsadoObra(e){
+        
+        e.preventDefault()
+            // this.ModalPassword()
             
-            axios.post(`${UrlServer}/ActualizarEstado`,{
-                "Fichas_id_ficha":sessionStorage.getItem('idobra'),
-                "Estados_id_estado":this.state.IdEstado
-            })
-            .then((res)=>{
-                // console.log('res>',res.data.nombre);
+        if(this.state.pass.length >0){
+            if(confirm('¿cambiar situación de la obra?')){
+                axios.post(UrlServer+'/login',{
+                    usuario: sessionStorage.getItem("usuario"),
+                    password: this.state.pass
+                })
+                .then((res)=> {
+                    // console.log(res.data)
 
-                if(res.data){
-                    toast.success('✔ situación actual de la obra actualizada ');
-                    sessionStorage.setItem('estadoObra',res.data.nombre)                
+                    if(sessionStorage.getItem("usuario") === res.data.usuario){
 
-                    setTimeout(()=>{ 
-                        window.location.reload() 
-                    }, 20);
-                }else{
-                    toast.error('❌ errores en cambiar la situacion actual de la obra');
-                }
-            })
-            .catch((err)=>{
-                toast.error('❌ errores en cambiar la situacion actual de la obra');
-                console.log('hubo errores >>', err)
-            })
+                        axios.post(`${UrlServer}/ActualizarEstado`,{
+                            "Fichas_id_ficha":sessionStorage.getItem('idobra'),
+                            "Estados_id_estado":this.state.IdEstado
+                        })
+                        .then((res)=>{
+                            // console.log('res>',res.data.nombre);
+            
+                            if(res.data){
+                                toast.success('✔ situación actual de la obra actualizada ');
+                                sessionStorage.setItem('estadoObra',res.data.nombre)                
+            
+                                setTimeout(()=>{ 
+                                    window.location.reload() 
+                                }, 50);
+                            }else{
+                                toast.error('❌ errores en cambiar la situacion actual de la obra');
+                            }
+                        })
+                        .catch((err)=>{
+                            toast.error('❌ errores en cambiar la situacion actual de la obra');
+                            console.log('hubo errores >>', err)
+                        })
+                    }else{
+                        this.setState({mensajes:"¡Contraseña incorrecta! se esta registrando sus datos"})
+                        // console.log('la contraseña es incorrecta')
+
+                    }
+                })
+                .catch((err)=>{
+                    console.error('error' , err);
+                    
+                })
+            }
+
+        }else{
+            this.setState({mensajes:"¡Ingrese su contraseña¡"})
+
         }
     }
 
@@ -110,17 +151,7 @@ class Btns extends Component {
         const { DataSegunEstado } = this.state
         return (
             <div>
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={1000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnVisibilityChange
-                    draggable
-                    pauseOnHover
-                />
+               
                 
                 <button className={ sessionStorage.getItem('estadoObra') === "Ejecucion"? "btn btn-outline-success  p-1 mt-1": sessionStorage.getItem('estadoObra') === "Paralizado" ? "btn btn-outline-warning  p-1 mt-1" : sessionStorage.getItem('estadoObra') === "Corte"? "btn btn-outline-danger  p-1 mt-1":  sessionStorage.getItem('estadoObra')=== "Actualizacion"? "btn btn-outline-primary  p-1 mt-1": "btn btn-outline-info  p-1 mt-1"} title={`situación de la obra ${sessionStorage.getItem('estadoObra') }`} onClick={ this.CambiaEstadoObra }  >situación actual: { sessionStorage.getItem('estadoObra') }</button>
 
@@ -150,9 +181,40 @@ class Btns extends Component {
                             
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="success" onClick={this.SubmitEsadoObra}>Cambiar estado</Button>{' '}
+                        <Button color="success" onClick={this.ModalPassword}>Cambiar estado</Button>{' '}
                         <Button color="danger" onClick={this.ModalEstadoObra}>Cancelar</Button>
                     </ModalFooter>
+                </Modal>
+
+
+
+
+
+                <Modal isOpen={this.state.modalClave} fade={false} toggle={this.ModalPassword} size="sm">
+                    <ModalHeader toggle={this.ModalPassword}>Ingrese su contraseña</ModalHeader>
+                    <ModalBody>
+                        <InputGroup>
+                            <DebounceInput debounceTimeout={200} onChange={e => this.setState({pass: e.target.value})} type="password" className="form-control" autoFocus/>  
+                            
+                            
+                            
+                        </InputGroup>
+                        {this.state.mensajes}<br/><br/>
+
+                        <Button color="success" onClick={this.SubmitEsadoObra}>Confirmar </Button>{' '}
+                        <Button color="danger" onClick={this.ModalPassword}>Cancelar</Button>
+                    </ModalBody>
+                    <ToastContainer
+                        position="bottom-right"
+                        autoClose={4000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnVisibilityChange
+                        draggable
+                        pauseOnHover
+                    />
                 </Modal>
             </div>
         );
