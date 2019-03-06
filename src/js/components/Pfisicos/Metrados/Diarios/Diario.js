@@ -201,7 +201,7 @@ class MDdiario extends Component {
 
 
         <Card>
-            <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} className="stretched-link" > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'}  </CardHeader>
+            <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'}  </CardHeader>
             <Collapse isOpen={collapse === 1}>
               <CardBody> 
               
