@@ -57,7 +57,6 @@ class PartidasNuevas extends Component {
     this.EnviarMetrado = this.EnviarMetrado.bind(this)
   }
   componentWillMount(){
-    document.title ="Metrados Diarios"
     axios.post(`${UrlServer}/listaPartidasNuevas`,{
       id_ficha: sessionStorage.getItem('idobra')
     })
@@ -182,7 +181,7 @@ class PartidasNuevas extends Component {
 
           <Card>
             <Nav tabs>
-              {DataMDiario === undefined ? 'cargando': DataMDiario.map((comp,indexComp)=>
+              {DataMDiario.length === 0 ? 'no hay datos': DataMDiario.map((comp,indexComp)=>
                 <NavItem key={ indexComp }>
                   <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => { this.Tabs(indexComp.toString()); }}>
                     COMP {comp.numero}
@@ -191,7 +190,7 @@ class PartidasNuevas extends Component {
               )}
             </Nav>
             <TabContent activeTab={this.state.activeTab}>
-              {DataMDiario === undefined? 'cargando': DataMDiario.map((comp, indexComp)=>
+              {DataMDiario.length  === 0 ? '': DataMDiario.map((comp, indexComp)=>
                 <TabPane tabId={indexComp.toString()} key={ indexComp}  className="p-1">
                   <Card>
                     <CardHeader><b>{ comp.nombre }</b></CardHeader>

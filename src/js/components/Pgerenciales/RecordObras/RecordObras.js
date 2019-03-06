@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { FaList, FaClock, FaRegImages, FaChartPie, FaUserFriends, FaPrint, FaEye } from "react-icons/fa";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse, Spinner, Nav, NavItem, TabContent, NavLink, TabPane  } from 'reactstrap';
-import classnames from 'classnames';
 import { IoIosInfinite } from "react-icons/io";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
@@ -15,6 +14,7 @@ import { UrlServer } from '../../Utils/ServerUrlConfig'
 import CronogramaAvance from '../CronogramaAvance';
 import Galeria from '../GaleriaImagenes/Galeria';
 import CtrladminDirecta from '../Reportes/CtrladminDirecta'
+import PersonalInfo from './PersonalInfo'
 
 class RecordObras extends Component{
     constructor(props){
@@ -116,13 +116,15 @@ class List extends Component{
         this.state = {
             modal: false,
             modalUsuarios: false,
-            activeTab:'1'
+            idObra:''
+            
         }
         this.Setobra = this.Setobra.bind(this);
         this.toggle = this.toggle.bind(this);
         this.ModalMostrarUsuarios = this.ModalMostrarUsuarios.bind(this);
         this.printDocument = this.printDocument.bind(this);   
         this.tabs = this.tabs.bind(this)     
+        this.ObtieneIdObra = this.ObtieneIdObra.bind(this)     
     }
 
     componentWillMount(){
@@ -229,14 +231,19 @@ class List extends Component{
             activeTab: tab
           });
         }
-      }
+    }
+
+    ObtieneIdObra(idObra){
+        this.ModalMostrarUsuarios()
+        this.setState({idObra})
+    }
 
     render(){
         const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
-                        
+                
         return(
             <tbody  key={ IndexObras }>
-            
+
                 <tr>
                     <td>{ IndexObras +1 }</td>
                     <td>{ Obras.g_meta }</td>
@@ -288,7 +295,7 @@ class List extends Component{
                         <button className="btn btn-outline-info btn-sm mr-1" onClick={this.toggle}><FaRegImages />{this.props.buttonLabel}</button>
                         <button className="btn btn-outline-info btn-sm mr-1"><FaChartPie /></button>
                         <button className="btn btn-outline-warning btn-sm mr-1" id={"adminDirecta"+IndexObras }><FaPrint /></button>
-                        <button className="btn btn-outline-primary btn-sm" onClick={this.ModalMostrarUsuarios} title="usuarios"><FaUserFriends /></button>
+                        <button className="btn btn-outline-primary btn-sm" onClick={ e=> this.ObtieneIdObra(Obras.id_ficha) } title="usuarios"><FaUserFriends /></button>
                     </td>
                 </tr> 
 
@@ -548,37 +555,12 @@ class List extends Component{
                     </ModalFooter>
                 </Modal>  
 
-                <Modal isOpen={this.state.modalUsuarios} toggle={this.ModalMostrarUsuarios} className={this.props.className} >
+                <Modal isOpen={this.state.modalUsuarios} toggle={this.ModalMostrarUsuarios} className={this.props.className} size="lg" >
                     <ModalHeader toggle={this.ModalMostrarUsuarios}>Usuarios</ModalHeader>
                     <ModalBody>
-                                                    
-                        <Nav tabs>
-                            <NavItem>
-                                <NavLink
-                                className={classnames({ active: this.state.activeTab === '1' })}
-                                onClick={() => { this.tabs('1'); }}
-                                >
-                                Tab1
-                                </NavLink>
-                            </NavItem>
-                            <NavItem>
-                                <NavLink
-                                className={classnames({ active: this.state.activeTab === '2' })}
-                                onClick={() => { this.tabs('2'); }}
-                                >
-                                Moar Tabs
-                                </NavLink>
-                            </NavItem>
-                        </Nav>
-                        <TabContent activeTab={this.state.activeTab}>
-                            <TabPane tabId="1">
-                                hola mesasasa4548
-                            </TabPane>
-                            <TabPane tabId="2">
-                                hola manes
-                            </TabPane>
-                        </TabContent>
-                     
+                        {/* <PersonalInfo idobraSeleccionada={ this.state.idObra }/> */}
+                        {console.log('dsd', this.state.idObra.length)}
+                        { this.state.idObra.length === 0? 'no hay datos que cargar en el modal': <PersonalInfo idobra={ this.state.idObra }/>}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="danger" onClick={this.ModalMostrarUsuarios}>Cerrar</Button>

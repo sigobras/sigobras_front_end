@@ -201,7 +201,7 @@ class MDdiario extends Component {
 
 
         <Card>
-            <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'} </CardHeader>
+            <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} className="stretched-link" > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'}  </CardHeader>
             <Collapse isOpen={collapse === 1}>
               <CardBody> 
               
@@ -212,7 +212,7 @@ class MDdiario extends Component {
 
                 <Card>
                   <Nav tabs>
-                    {DataMDiario === undefined ? 'cargando': DataMDiario.map((comp,indexComp)=>
+                    {DataMDiario.length === 0 ? 'cargando': DataMDiario.map((comp,indexComp)=>
                       <NavItem key={ indexComp }>
                         <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => { this.Tabs(indexComp.toString()); }}>
                           COMP {comp.numero}
@@ -221,7 +221,7 @@ class MDdiario extends Component {
                     )}
                   </Nav>
                   <TabContent activeTab={this.state.activeTab}>
-                    {DataMDiario === undefined? 'cargando': DataMDiario.map((comp, indexComp)=>
+                    {DataMDiario.length === 0 ? 'cargando': DataMDiario.map((comp, indexComp)=>
                       <TabPane tabId={indexComp.toString()} key={ indexComp}  className="p-1">
                         <Card>
                           <CardHeader><b>{ comp.nombre }</b></CardHeader>
@@ -541,7 +541,7 @@ class MDdiario extends Component {
 
           {/* <!-- MODAL PARA METRAR --> */}
                   
-          <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
+          <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false}>
             <form onSubmit={this.EnviarMetrado }>
               <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
               <ModalBody className="bg-dark ">
