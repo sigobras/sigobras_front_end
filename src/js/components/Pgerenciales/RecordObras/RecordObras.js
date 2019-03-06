@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { FaList, FaClock, FaRegImages, FaChartPie, FaWalking, FaPrint, FaEye } from "react-icons/fa";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse, Spinner } from 'reactstrap';
+import { FaList, FaClock, FaRegImages, FaChartPie, FaUserFriends, FaPrint, FaEye } from "react-icons/fa";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse, Spinner, Nav, NavItem, TabContent, NavLink, TabPane  } from 'reactstrap';
+import classnames from 'classnames';
 import { IoIosInfinite } from "react-icons/io";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
@@ -81,7 +82,6 @@ class RecordObras extends Component{
                                 <option value="">Todo</option>
                                 <option value="E">Edificaciones</option>
                                 <option value="C">Carreteras</option>
-                                <option value="P">Prueba</option>                                
                             </select>
                         </div>
                     </div>
@@ -115,10 +115,14 @@ class List extends Component{
         super(props)
         this.state = {
             modal: false,
+            modalUsuarios: false,
+            activeTab:'1'
         }
         this.Setobra = this.Setobra.bind(this);
         this.toggle = this.toggle.bind(this);
-        this.printDocument = this.printDocument.bind(this);        
+        this.ModalMostrarUsuarios = this.ModalMostrarUsuarios.bind(this);
+        this.printDocument = this.printDocument.bind(this);   
+        this.tabs = this.tabs.bind(this)     
     }
 
     componentWillMount(){
@@ -155,6 +159,12 @@ class List extends Component{
             
         }
     } 
+
+    ModalMostrarUsuarios(){
+        this.setState({
+            modalUsuarios: !this.state.modalUsuarios
+        });
+    }
 
     toggle() {
         this.setState({
@@ -213,6 +223,14 @@ class List extends Component{
         ;
     }
 
+    tabs(tab) {
+        if (this.state.activeTab !== tab) {
+          this.setState({
+            activeTab: tab
+          });
+        }
+      }
+
     render(){
         const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
                         
@@ -264,12 +282,13 @@ class List extends Component{
                     <td  className="text-center"> 
                         <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
                     </td>
-                    <td style={{width: '18%'}}  className="text-center">
+                    <td style={{width: '20%'}}  className="text-center">
                         <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" id={"CRONO"+IndexObras }><FaClock /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" onClick={this.toggle}><FaRegImages />{this.props.buttonLabel}</button>
                         <button className="btn btn-outline-info btn-sm mr-1"><FaChartPie /></button>
-                        <button className="btn btn-outline-warning btn-sm" id={"adminDirecta"+IndexObras }><FaPrint /></button>
+                        <button className="btn btn-outline-warning btn-sm mr-1" id={"adminDirecta"+IndexObras }><FaPrint /></button>
+                        <button className="btn btn-outline-primary btn-sm" onClick={this.ModalMostrarUsuarios} title="usuarios"><FaUserFriends /></button>
                     </td>
                 </tr> 
 
@@ -528,6 +547,46 @@ class List extends Component{
                         <Button color="danger" onClick={this.toggle}>Cancelar</Button>
                     </ModalFooter>
                 </Modal>  
+
+                <Modal isOpen={this.state.modalUsuarios} toggle={this.ModalMostrarUsuarios} className={this.props.className} >
+                    <ModalHeader toggle={this.ModalMostrarUsuarios}>Usuarios</ModalHeader>
+                    <ModalBody>
+                                                    
+                        <Nav tabs>
+                            <NavItem>
+                                <NavLink
+                                className={classnames({ active: this.state.activeTab === '1' })}
+                                onClick={() => { this.tabs('1'); }}
+                                >
+                                Tab1
+                                </NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink
+                                className={classnames({ active: this.state.activeTab === '2' })}
+                                onClick={() => { this.tabs('2'); }}
+                                >
+                                Moar Tabs
+                                </NavLink>
+                            </NavItem>
+                        </Nav>
+                        <TabContent activeTab={this.state.activeTab}>
+                            <TabPane tabId="1">
+                                hola mesasasa4548
+                            </TabPane>
+                            <TabPane tabId="2">
+                                hola manes
+                            </TabPane>
+                        </TabContent>
+                     
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.ModalMostrarUsuarios}>Cerrar</Button>
+                    </ModalFooter>
+                </Modal>
+
+
+                
             </tbody>
         )})
 
