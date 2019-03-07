@@ -119,7 +119,7 @@ class Btns extends Component {
                                 sessionStorage.setItem('estadoObra',res.data.nombre)                
             
                                 setTimeout(()=>{ 
-                                    window.location.reload() 
+                                    window.location.href= '/inicio' 
                                 }, 50);
                             }else{
                                 toast.error('❌ errores en cambiar la situacion actual de la obra');

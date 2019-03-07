@@ -245,7 +245,7 @@ class General extends Component {
                                                                                             {
                                                                                                 Header: "ITEM",
                                                                                                 id: "item",
-                                                                                                maxWidth: 100,
+                                                                                                maxWidth: 60,
                                                                                                 accessor: d => d.item,
                                                                                                 filterMethod: (filter, rows) =>
                                                                                                     matchSorter(rows, filter.value, { keys: ["item"] }),
@@ -265,6 +265,7 @@ class General extends Component {
                                                                                             {
                                                                                                 Header: "METRADO",
                                                                                                 id: "metrado",
+                                                                                                width: 60,                                                                                                
                                                                                                 accessor: d => d.metrado,
                                                                                                 filterMethod: (filter, rows) =>
                                                                                                     matchSorter(rows, filter.value, { keys: ["metrado"] }),
@@ -273,14 +274,16 @@ class General extends Component {
                                                                                             {
                                                                                                 Header: "P. U. S/.",
                                                                                                 id: "costo_unitario",
+                                                                                                width: 70,                                                                                                
                                                                                                 accessor: d => d.costo_unitario,
                                                                                                 filterMethod: (filter, rows) =>
                                                                                                     matchSorter(rows, filter.value, { keys: ["costo_unitario"] }),
                                                                                                 filterAll: true
                                                                                             },
                                                                                             {
-                                                                                                Header: "P. PARCIAL S/.",
+                                                                                                Header: "P. P. S/.",
                                                                                                 id: "parcial",
+                                                                                                width: 70,                                                                                                
                                                                                                 accessor: d => d.parcial,
                                                                                                 filterMethod: (filter, rows) =>
                                                                                                     matchSorter(rows, filter.value, { keys: ["parcial"] }),
