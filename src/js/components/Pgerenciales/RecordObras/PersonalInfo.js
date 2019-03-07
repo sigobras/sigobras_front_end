@@ -11,48 +11,7 @@ class PersonalInfo extends Component {
     constructor(props){
         super(props)
         this.state = {
-            DataPersonalObra:[
-                {
-                    "cargo_nombre": "residente",
-                    "data":[
-                            {
-                                "nombre_usuario": "GERMAN APAZA NINARAQUE",
-                                "celular": 925710617,
-                                "direccion": "DAGSDKA",
-                                "dni": "SDS",
-                                "email": "DSD"
-                            }
-                        ]
-                    
-                },
-                {
-                    "cargo_nombre": "otro men",
-                    "data":[
-                            {
-                                "nombre_usuario": "guerra  flores luijhy",
-                                "celular": null,
-                                "direccion": "",
-                                "dni": "",
-                                "email": ""
-                            }
-                        ]
-                    
-                },
-                {
-                    "cargo_nombre": "cordinador",
-                    "data":[
-                            {
-                                "nombre_usuario": "guerra  flores luijhy",
-                                "celular": null,
-                                "direccion": "",
-                                "dni": "",
-                                "email": ""
-                            }
-                        ]
-                    
-                }
-                
-            ],
+            DataPersonalObra:[],
             activeTab:'0'
         }
         this.tabs = this.tabs.bind(this)     
@@ -60,10 +19,13 @@ class PersonalInfo extends Component {
     }
     componentWillMount(){
         axios.post(`${UrlServer}/getCargosById`,{
-            "id_Ficha":this.props.idobraSeleccionada
+            "id_ficha":this.props.idobraSeleccionada
         })
         .then((res)=>{
-            console.log('res', res)
+            // console.log('res', res)
+            this.setState({
+                DataPersonalObra:res.data
+            })
         })
         .catch((err)=>{
             console.error('algo salio mal al obtener los usuarios', err)
@@ -99,7 +61,7 @@ class PersonalInfo extends Component {
                             { cargos.data.map((usuarios, IdUsuario )=>
                                 <div className="row no-gutters position-relative" key={ IdUsuario }>
                                     <div className="col-md-4 mb-md-0 p-md-4">
-                                        <img src={ Usuario } className="w-100" alt="..." />
+                                        <img src={ Usuario } className="w-75" alt="users sigobras" />
                                     </div>
                                     <div className="col-md-8 position-static p-4 pl-md-0">
                                         <h5 className="mt-0 text-uppercase">{ usuarios.nombre_usuario }</h5>

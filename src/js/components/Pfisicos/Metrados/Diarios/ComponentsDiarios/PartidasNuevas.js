@@ -6,15 +6,13 @@ import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Tooltip , CardText, Row, Col,  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import classnames from 'classnames';
-import { Redirect } from "react-router-dom";
 
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import { ToastContainer, toast } from "react-toastify";
 
-import LogoSigobras from '../../../../../images/logoSigobras.png'
-import Cubito from '../../../../../images/loaderXS.gif';
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
+// import LogoSigobras from '../../../../../../images/logoSigobras.png'
+import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 
 
 class PartidasNuevas extends Component {
@@ -491,7 +489,9 @@ class PartidasNuevas extends Component {
                   
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm"  fade={false}>
             <form onSubmit={this.EnviarMetrado }>
-              <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button"><img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.</ModalHeader>
+              <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button">
+                {/* <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C. */}
+              </ModalHeader>
               <ModalBody className="bg-dark ">
                 <label className="text-center">{ descripcion }</label><br/>
                 <b> {this.state.nombre_actividad} </b> <br/>

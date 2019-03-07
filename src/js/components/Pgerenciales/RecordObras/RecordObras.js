@@ -558,17 +558,12 @@ class List extends Component{
                 <Modal isOpen={this.state.modalUsuarios} toggle={this.ModalMostrarUsuarios} className={this.props.className} size="lg" >
                     <ModalHeader toggle={this.ModalMostrarUsuarios}>Usuarios</ModalHeader>
                     <ModalBody>
-                        {/* <PersonalInfo idobraSeleccionada={ this.state.idObra }/> */}
-                        {console.log('dsd', this.state.idObra.length)}
-                        { this.state.idObra.length === 0? 'no hay datos que cargar en el modal': <PersonalInfo idobra={ this.state.idObra }/>}
+                        { this.state.idObra === ''? 'no hay datos que cargar en el modal': <PersonalInfo idobraSeleccionada={ this.state.idObra }/>}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="danger" onClick={this.ModalMostrarUsuarios}>Cerrar</Button>
                     </ModalFooter>
                 </Modal>
-
-
-                
             </tbody>
         )})
 

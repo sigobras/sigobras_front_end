@@ -7,6 +7,7 @@ import './css/style.css';
 import './css/bs4.css';
 import 'react-table/react-table.css'
 import 'react-toastify/dist/ReactToastify.css';
+
 const wrapper = document.getElementById("zoe");
 
 if(sessionStorage.getItem("idacceso") === null){

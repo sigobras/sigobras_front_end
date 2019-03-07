@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios'
 import { DebounceInput } from 'react-debounce-input';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { MdModeEdit } from "react-icons/md";
 import { UrlServer } from '../Utils/ServerUrlConfig'
 
 
-import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup } from 'reactstrap';
 
 class Btns extends Component {
     constructor(){
@@ -35,7 +35,7 @@ class Btns extends Component {
             })
         })
         .catch((err)=>
-            console.error(err)
+            console.error('falló al obtener datos ❌',err)
         )
     }
     
@@ -81,6 +81,7 @@ class Btns extends Component {
                 break;
 
         }
+        // console.log('>', DataSegunEstado);
         
         this.setState({
             DataSegunEstado
@@ -167,8 +168,8 @@ class Btns extends Component {
                                 <FormGroup>
                                     <Label >Cambiar a:</Label>
                                     <Input type="select" className="form-control-sm" onChange={ e=> this.setState({IdEstado: e.target.value})}>
-                                        <option>seleccione </option>
-                                        {  DataSegunEstado.map((EstadoObra, IndexObra)=>
+                                        <option>Seleccione </option>
+                                        {DataSegunEstado.length === 0 ?'no hay datos':  DataSegunEstado.map((EstadoObra, IndexObra)=>
                                             <option value={ EstadoObra.id_Estado } key={ IndexObra }>
                                                 { EstadoObra.nombre }
                                             </option>                                
@@ -204,17 +205,7 @@ class Btns extends Component {
                         <Button color="success" onClick={this.SubmitEsadoObra}>Confirmar </Button>{' '}
                         <Button color="danger" onClick={this.ModalPassword}>Cancelar</Button>
                     </ModalBody>
-                    <ToastContainer
-                        position="bottom-right"
-                        autoClose={4000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnVisibilityChange
-                        draggable
-                        pauseOnHover
-                    />
+                    
                 </Modal>
             </div>
         );

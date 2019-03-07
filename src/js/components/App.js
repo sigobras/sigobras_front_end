@@ -7,6 +7,7 @@ import {Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } fro
 import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
 import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';
+import { ToastContainer } from "react-toastify";
 
 import axios from 'axios';
 // app assets
@@ -23,7 +24,6 @@ import Btns from './Otros/Btns'
 import Inicio from './Inicio/Inicio'
 import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
 import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
-import PartidasNuevas from './Pfisicos/Metrados/Diarios/PartidasNuevas'
 
 import Corte from './Pfisicos/Metrados/Diarios/Corte'
 import ActualizacionObra from './Pfisicos/Metrados/Diarios/ActualizacionObra'
@@ -56,6 +56,8 @@ class AppAng extends Component {
     }
 
     componentWillMount(){
+        localStorage.setItem('thema', 'dia');
+
         axios.post(`${UrlServer}/getDatosGenerales`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
@@ -168,6 +170,17 @@ class AppAng extends Component {
                             </nav>
 
                             <div className="container-fluid ">
+                                <ToastContainer
+                                    position="bottom-right"
+                                    autoClose={4000}
+                                    hideProgressBar={false}
+                                    newestOnTop={false}
+                                    closeOnClick
+                                    rtl={false}
+                                    pauseOnVisibilityChange
+                                    draggable
+                                    pauseOnHover
+                                />
                                 <div className="row">
                                     <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block bg-dark text-light sidebar': "navbarCollapseLeft bg-dark text-light sidebar"}>
                                         <div className="sidebar-sticky">
@@ -258,7 +271,7 @@ class AppAng extends Component {
 
                                             <Route path="/MDdiario" component={ MDdiario } />
                                             <Route path="/MDHistorial" component={ MDHistorial } />
-                                            <Route path="/PartidasNuevas" component={ PartidasNuevas } />
+
                                             <Route path="/CorteObra" component={ Corte } />
                                             <Route path="/ActualizacionObra" component={ ActualizacionObra } />
                                             <Route path="/ParalizacionObra" component={ ParalizacionObra } />
