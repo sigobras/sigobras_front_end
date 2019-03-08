@@ -43,10 +43,11 @@ class MetradosDiarios extends Component {
           viewIndex:'',
           parcial_actividad:'',
           descripcion:'',
+          metrado:'',
     
           // validacion de al momento de metrar
           smsValidaMetrado:'',
-
+          parcial:''
     
         }
         this.Tabs = this.Tabs.bind(this)
@@ -90,9 +91,8 @@ class MetradosDiarios extends Component {
 
     }
       
-    CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion) {
+    CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial) {
         this.modalMetrar();
-        console.log('id 1> ',indexComp, 'id 2> ', viewIndex)
         this.setState({
             id_actividad: id_actividad,
             nombre_actividad: nombre_actividad,
@@ -106,7 +106,9 @@ class MetradosDiarios extends Component {
             viewIndex: viewIndex,
             parcial_actividad: parcial_actividad,
             descripcion:descripcion,
-            smsValidaMetrado:''
+            smsValidaMetrado:'', 
+            metrado:metrado,
+            parcial:parcial
         })
         
     }
@@ -273,16 +275,16 @@ class MetradosDiarios extends Component {
                                             >
                                             <div
                                               style={{
-                                                width: `${row.row.porcentaje}%`,
+                                                width: `${row.value}%`,
                                                 height: '100%',
-                                                background: row.row.porcentaje > 95 ? '#a4fb01'
-                                                  : row.row.porcentaje > 50 ? '#ffbf00'
+                                                background: row.value > 95 ? '#a4fb01'
+                                                  : row.value > 50 ? '#ffbf00'
                                                   :  '#ff2e00',
                                                 borderRadius: '2px',
                                                 transition: 'all 2s linear 0s',
                                                 position: 'absolute',
-                                                boxShadow: `0 0 6px 1px ${row.row.porcentaje > 95 ? '#a4fb01'
-                                                  : row.row.porcentaje > 50 ? '#ffbf00'
+                                                boxShadow: `0 0 6px 1px ${row.value > 95 ? '#a4fb01'
+                                                  : row.value > 50 ? '#ffbf00'
                                                   :  '#ff2e00'}`
                                               }}
                                             />
@@ -354,7 +356,6 @@ class MetradosDiarios extends Component {
                                           </tr>
                                         </thead>
                                         <tbody>
-                                        {/* {console.log('datos', row)} */}
                                           {row.original.actividades.map((actividades, indexA)=>
                                             <tr key={ indexA }>
                                               <td>{ actividades.nombre_actividad }</td>
@@ -401,7 +402,6 @@ class MetradosDiarios extends Component {
                                                           :  '#ff2e00'}`
                                                         }}
                                                     />
-                                                    {/* hols{ actividades.actividad_porcentaje} */}
                                                     </div>
                                                     <div className="clearfix">
                                                       <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
@@ -411,14 +411,16 @@ class MetradosDiarios extends Component {
                                                 }
                                               </td>
                                               <td>
+                                              {console.log('hola', row.original)}
                                                 {actividades.actividad_tipo === "titulo"? "":
-                                                    <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                                      { actividades.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> : 
-                                                        <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID (actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, indexComp, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, row.index, actividades.parcial_actividad, row.original.descripcion)} >
-                                                          <FaPlus /> 
-                                                        </button>
-                                                      }
-                                                    </div>
+                                                  
+                                                  <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
+                                                    { actividades.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> : 
+                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, indexComp, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, row.index, actividades.parcial_actividad, row.original.descripcion, row.original.metrado, row.original.parcial)} >
+                                                        <FaPlus /> 
+                                                      </button>
+                                                    }
+                                                  </div>
                                                   }
                                               </td>
                                             </tr>
@@ -443,71 +445,81 @@ class MetradosDiarios extends Component {
                   
                 <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false}>
                     <form onSubmit={this.EnviarMetrado }>
-                    <ModalHeader toggle={this.modalMetrar} className="bg-dark border-button">
+                    <ModalHeader toggle={this.modalMetrar} className="border-button">
                         <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
                     </ModalHeader>
-                    <ModalBody className="bg-dark ">
-                        <label className="text-center">{ descripcion }</label><br/>
-                        <b> {this.state.nombre_actividad} </b> <br/>
+                    <ModalBody>
+                        <label className="text-center mt-0">{ descripcion } </label><br/>
+
+
+                        <div className="d-flex justify-content-between ">
+                          <div className=""><b> {this.state.nombre_actividad} </b></div>
+                          <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida.replace("/DIA", "")}</div>
+                        </div>
+
                         
                         <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
-                        <div className="input-group mb-0">
+                        <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                             
                             <div className="input-group-append">
                             <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
                             </div>
                         </div>
-                        <div className="texto-rojo mb-3"> <b> { smsValidaMetrado }</b></div> 
+                        <div className="texto-rojo mb-0"> <b> { smsValidaMetrado }</b></div> 
 
 
-                        <div className="d-flex p-1 text-center mt-0">  
-                            <div className="card alert bg-info text-white p-1 m-1">Costo / {this.state.unidad_medida.replace("/DIA", "")} =  {this.state.costo_unitario} <br/>
-                            soles
+                        <div className="d-flex justify-content-center text-center mt-1"> 
+                          <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br/>
+                              { this.state.metrado } {this.state.unidad_medida.replace("/DIA", "")}
                             </div>
-                            <div className="card alert bg-secondary p-1 text-white m-1">Saldo de metrado<br/>
-                                {this.state.actividad_metrados_saldo}
+
+                            <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida.replace("/DIA", "")}  <br/>
+                              = S/.  {this.state.parcial} <br/>
                             </div>
+                            <div className={ Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white": "bg-success p-1 mr-1 text-white"}>Saldo <br/>
+                                {this.state.actividad_metrados_saldo} {this.state.unidad_medida.replace("/DIA", "")}
+                            </div>
+                          
                         </div>
 
                         <div className="form-group">
                             <label htmlFor="comment">DESCRIPCION:</label>
                             <DebounceInput
-                            cols="40"
-                            rows="2"
-                            element="textarea"
-                            minLength={0}
-                            debounceTimeout={debounceTimeout}
-                            onChange={e => this.setState({DescripcionMetrado: e.target.value})}
-                            className="form-control"
+                              cols="40"
+                              rows="1"
+                              element="textarea"
+                              minLength={0}
+                              debounceTimeout={debounceTimeout}
+                              onChange={e => this.setState({DescripcionMetrado: e.target.value})}
+                              className="form-control"
                             />
                         </div>
 
                         <div className="form-group">
                             <label htmlFor="comment">OBSERVACIÓN:</label>
                             <DebounceInput
-                            cols="40"
-                            rows="2"
-                            element="textarea"
-                            minLength={0}
-                            debounceTimeout={debounceTimeout}
-                            onChange={e => this.setState({ObservacionMetrado: e.target.value})}
-                            className="form-control"
+                              cols="40"
+                              rows="1"
+                              element="textarea"
+                              minLength={0}
+                              debounceTimeout={debounceTimeout}
+                              onChange={e => this.setState({ObservacionMetrado: e.target.value})}
+                              className="form-control"
                             />
                         </div>
                         
 
-                        <div className="custom-file mb-3 p-3">
+                        <div className="custom-file">
                             <input type="file" className="custom-file-input disabled" id="customFile" name="filename" disabled/>
                             <label className="custom-file-label" htmlFor="customFile">Choose file</label>
                         </div>
 
                     </ModalBody>
-                    <ModalFooter className="bg-dark border border-dark border-top border-right-0 border-bottom-0 border-button-0">
-                        
-                        <Button color="primary" type="submit">Guardar</Button>{' '}
-                        <Button color="danger" onClick={this.modalMetrar}>Cancelar</Button>
+                    <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
+                      <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
+                      <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
                     </ModalFooter>
                     </form>
                 </Modal>

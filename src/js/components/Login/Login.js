@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 
 import axios from 'axios'
 import { UrlServer } from '../Utils/ServerUrlConfig'
-import LogoSigobras from '../../../images/logoSigobras.png'
+import LogoSigobras from '../../../images/sigobras-neon.jpg'
 import '../../../css/login.css'
 
 class Login extends Component {
@@ -100,10 +100,11 @@ class Login extends Component {
               />
               <div className="container-dialog modal-login">
                   <div className="modal-content">
-                    <div className="modal-header">
-                        <div className="avatar">
-                            <img src={ LogoSigobras } className="pt-2" alt="sigoobras sac" height="75"/>
+                    <div className="modal-headers">
+                        <div className="img">
+                          <img src={ LogoSigobras } className="mx-auto d-block" alt="sigoobras sac" height="75"/>
                         </div>
+                        
                         <h4>Inicie sesión</h4>
                     </div>
                     <div className="modal-body">

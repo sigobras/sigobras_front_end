@@ -10,7 +10,7 @@
     box-shadow: 0 0 8px 5px #54a1a1;
 }
 
-.modal-login .modal-header {
+.modal-login .modal-headers {
     border-bottom: none;
     position: relative;
     justify-content: center;
@@ -23,18 +23,11 @@
 }
 
 
-.modal-login .form-control,
-.modal-login .btn {
-    min-height: 40px;
-    border-radius: 3px;
-}
-
-
 .modal-login .modal-footer a {
     color: #999;
 }
 
-.modal-login .avatar {
+/* .modal-login .avatar {
     position: absolute;
     margin: 0 auto;
     left: 0;
@@ -47,7 +40,7 @@
     background: #3a4856;
     padding: 15px;
     box-shadow: 0 0 6px 3px #60c7c1;
-}
+} */
 
 .modal-login .avatar img {
     width: 100%;

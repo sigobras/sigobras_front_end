@@ -1,6 +1,6 @@
 // libraris
 import React, { Component } from 'react';
-import { FaBars, FaChevronRight, FaChevronUp, FaHouseDamage, FaInfinity, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
+import { FaBars, FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { MdFullscreen, MdFullscreenExit, MdDehaze, MdBusiness } from "react-icons/md";
 
 import {Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
@@ -34,6 +34,10 @@ import General from '../components/Pfisicos/Valorizaciones/General'
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 
+
+// reportes 
+import ReportesGenerales from './Reportes/ReportesGenerales'
+import ReportValorizacionGeneral from './Reportes/Valorizaciones/ReportValorizacionGeneral'
 
 class AppAng extends Component {
     constructor(){
@@ -207,7 +211,7 @@ class AppAng extends Component {
                             <div className="container-fluid ">
                                 <ToastContainer
                                     position="bottom-right"
-                                    autoClose={4000}
+                                    autoClose={1000}
                                     hideProgressBar={false}
                                     newestOnTop={false}
                                     closeOnClick
@@ -238,8 +242,11 @@ class AppAng extends Component {
                                                             </ul>
                                                         </Collapse>
                                                     </li> 
-                                                    
                                                 )}
+
+                                                <li className="lii">
+                                                    <NavLink to="/ReportesGenerales" activeclassname="nav-link active"  onClick={ this.CollapseMenu } data-event={ 101 }> <FaFile /><span> REPORTES </span> </NavLink>
+                                                </li>
                                                 
                                             </ul>
                                             <div className="abajoCirculos pl-2 pr-2">
@@ -313,6 +320,7 @@ class AppAng extends Component {
                                             <Route path="/General" component={ General } />
 
                                             <Route path="/RecordObras" component={RecordObras} />
+                                            <Route path="/ReportesGenerales" component={ ReportesGenerales } />
 
                                         </div>
 
@@ -345,6 +353,11 @@ class AppAng extends Component {
 
                                                     
                                                 </div>
+                                                
+                                                <div>
+                                                    <ReportValorizacionGeneral />
+                                                </div>
+
                                             </div>
                                         </nav>
 

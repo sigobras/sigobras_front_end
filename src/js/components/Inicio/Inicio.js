@@ -15,7 +15,7 @@ class Inicio extends Component{
 
                 {/* {sessionStorage.getItem("idobra") === null ? <Redirect to='' /> : */}
                     <div className="card">
-                        <div className="card-body p-1">
+                        <div className="card-body">
                             <div className="text-center pb-2">BIENVENIDO  AL SISTEMA DE INFORMACION GERENCIAL DE OBRAS  -  SIGOBRAS SAC</div>
                             <RecordObras />
                         </div>

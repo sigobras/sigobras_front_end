@@ -124,7 +124,7 @@ class MDHistorial extends Component {
                                             <ReactTable
                                                 data={comp.historial}
                                                 columns={columns}
-                                                className="-striped -highlight table table-responsive  small"
+                                                className="-striped -highlight table-sm small"
                                             />
                                         </Col>
                                     </Row>

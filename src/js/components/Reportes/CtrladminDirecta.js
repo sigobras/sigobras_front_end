@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import HigtChart from "../HigtChart";
-import imgx1 from './../GaleriaImagenes/imagenesTemporal/sigobras1.jpeg';
-import img2 from './../GaleriaImagenes/imagenesTemporal/sigobras2.jpg';
+import HigtChart from "../Pgerenciales/HigtChart";
+
+import imgx1 from '../Pgerenciales/GaleriaImagenes/imagenesTemporal/sigobras1.jpeg';
+import img2 from '../Pgerenciales/GaleriaImagenes/imagenesTemporal/sigobras2.jpg';
+
 
 class CtrladminDirecta extends Component {
     render() {

@@ -13,7 +13,8 @@ import 'jspdf-autotable';
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import CronogramaAvance from '../CronogramaAvance';
 import Galeria from '../GaleriaImagenes/Galeria';
-import CtrladminDirecta from '../Reportes/CtrladminDirecta'
+import CtrladminDirecta from '../../Reportes/CtrladminDirecta'
+
 import PersonalInfo from './PersonalInfo'
 
 class RecordObras extends Component{
