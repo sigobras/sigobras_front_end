@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody } from 'reactstrap';
+import ResumenValorizacionObra from './Valorizaciones/ResumenValorizacionObra'
 import { FaFilePdf } from "react-icons/fa";
 
 class ReportesGenerales extends Component {
@@ -28,6 +29,8 @@ class ReportesGenerales extends Component {
                                     <a href="#" ><FaFilePdf />  VALORIZACIÓN POR MAYORES METRADOS (Si se generó)</a>
                                 </li>
                             </ul>
+
+                            <ResumenValorizacionObra />
                         </fieldset>
                     </CardBody>
                 </Card>

@@ -66,7 +66,6 @@ class AppAng extends Component {
                     id_ficha: sessionStorage.getItem('idobra')
                 })
                 .then((res)=>{
-                    console.log('data', res.data)
                     this.setState({
                         DataObra:res.data
                     })
@@ -143,7 +142,7 @@ class AppAng extends Component {
     reenviaPeticion(){
         // para reenviar peticiones a menu
         setTimeout(()=>{
-        console.log('reenviaPeticion')
+        // console.log('reenviaPeticion')
 
             axios.post(`${UrlServer}/getMenu`,{
                 id_ficha: sessionStorage.getItem('idobra'),
@@ -170,7 +169,7 @@ class AppAng extends Component {
                 id_ficha: sessionStorage.getItem('idobra')
             })
             .then((res)=>{
-                console.log('data', res.data)
+                // console.log('data', res.data)
                 this.setState({
                     DataObra:res.data
                 })

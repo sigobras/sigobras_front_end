@@ -25,7 +25,7 @@ class RecordObras extends Component{
           items:[],
           event:'',
         };
-        
+            
         this.filterList = this.filterList.bind(this);
         // this.toggle = this.toggle.bind(this);
 
@@ -44,9 +44,6 @@ class RecordObras extends Component{
                 sessionStorage.setItem("idobra", res.data[0].id_ficha);
                 sessionStorage.setItem("estadoObra", res.data[0].estado_nombre);
             //    console.log('no seteado');  
-
-            }else{
-                // console.log('seteando');  
 
             }
             
@@ -133,7 +130,7 @@ class List extends Component{
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
-            console.info('data>',res.data)
+            // console.info('data>',res.data)
         })
         .catch((err)=>{
             console.error('algo salio mal ', err);
