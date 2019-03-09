@@ -105,217 +105,220 @@ class AvCompDiagGant extends Component {
       <div>
         <div>
           <li className="lii">
-              <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/> AVANCE COMPARATIVO DIAGRAMA DE GANT</a>
+              <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/> AVANCE COMPARATIVO DIAGRAMA DE GANT ✔</a>
           </li>
         </div>
-        <table id="tabgant1" className="table table-bordered">
-            <tbody>
-              <tr className="d-none">
-                <td></td>
-                <td></td>
-              </tr>
-                <tr>
-                    <td>OBRA:</td>
-                    <td >"MEJORAMIENTO DE LOS SERVICIOS DE EDUCACIÓN INICIAL I.E.I. N° 597 DEL CENTRO POBLADO DE PALCA,</td>
+        
+        <div className="d-none">
+          
+          <table id="tabgant1" className="table table-bordered">
+              <tbody>
+                <tr className="d-none">
+                  <td></td>
+                  <td></td>
                 </tr>
-                <tr>
-                    <td>PERIODO:</td>
-                    <td >ENERO 2019</td>
-                </tr>
-            </tbody>
-        </table>
-
-
-        <table id="tabgant2" className="table table-bordered">
-          <tbody>
-            <tr className="d-none">
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>AVANCE ACUMULADO %</td>
-              <td rowSpan="3">CHART</td>
-            </tr>
-            <tr>
-              <td>PRESUPUESTO TOTAL S/. 1366992.55</td>
-            </tr>
-            <tr>
-              <td>COSTO DIRECTO S/. 97266666.99</td>
-            </tr>
-          </tbody>
-        </table>
-
-
-        <table id="tabgant3" className="table table-bordered">
-          <tbody>
-            <tr className="d-none">
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>MES</td>
-              <td>INICIO</td>
-              <td>OCTUBRE</td>
-              <td>NOVIEMBRE</td>
-              <td>DICIEMBRE</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>FECHA DE INICIO</td>
-              <td></td>
-              <td>01-Oct</td>
-              <td>01-NoV</td>
-              <td>01-Dic</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>DIAS PARCIAL</td>
-              <td></td>
-              <td>10</td>
-              <td>30</td>
-              <td>31</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>DIAS ACUMULADO</td>
-              <td></td>
-              <td>31</td>
-              <td>40</td>
-              <td>71</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table id="tabgant4" className="table table-bordered">
-            <tbody>
-              <tr className="d-none">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>COSTO MENSUAL PROGRAMADO</td>
-                <td>727, 395. 92</td>
-                <td>12, 281. 86</td>
-                <td>65, 433. 87</td>
-                <td>167, 384. 89</td>
-                <td>972, 496. 54</td>
-              </tr>
-              <tr>
-                <td>COSTO ACUMULADO MENSUAL PROGRAMADO</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL PROGRAMADO EN %</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL ACUMULADO PROGRAMADO EN %</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL EJECUTADO</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL ACUMULADO EJECUTADO</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL EJECUTADO EN %</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL ACUMULADO EJECUTADO EN %</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>DESVIACIÓN DE EJECUCION FISICA</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL FINANCIERO</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL ACUMULADO FINANCIERO</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL FINANCIERO EN %</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>AVANCE MENSUAL ACUMULADO FINANCIERO EN %</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>DESVIACION DE EJECUCION FINANCIERA</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
+                  <tr>
+                      <td>OBRA:</td>
+                      <td >"MEJORAMIENTO DE LOS SERVICIOS DE EDUCACIÓN INICIAL I.E.I. N° 597 DEL CENTRO POBLADO DE PALCA,</td>
+                  </tr>
+                  <tr>
+                      <td>PERIODO:</td>
+                      <td >ENERO 2019</td>
+                  </tr>
               </tbody>
-            </table>
+          </table>
 
+
+          <table id="tabgant2" className="table table-bordered">
+            <tbody>
+              <tr className="d-none">
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>AVANCE ACUMULADO %</td>
+                <td rowSpan="3">CHART</td>
+              </tr>
+              <tr>
+                <td>PRESUPUESTO TOTAL S/. 1366992.55</td>
+              </tr>
+              <tr>
+                <td>COSTO DIRECTO S/. 97266666.99</td>
+              </tr>
+            </tbody>
+          </table>
+
+
+          <table id="tabgant3" className="table table-bordered">
+            <tbody>
+              <tr className="d-none">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>MES</td>
+                <td>INICIO</td>
+                <td>OCTUBRE</td>
+                <td>NOVIEMBRE</td>
+                <td>DICIEMBRE</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>FECHA DE INICIO</td>
+                <td></td>
+                <td>01-Oct</td>
+                <td>01-NoV</td>
+                <td>01-Dic</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>DIAS PARCIAL</td>
+                <td></td>
+                <td>10</td>
+                <td>30</td>
+                <td>31</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>DIAS ACUMULADO</td>
+                <td></td>
+                <td>31</td>
+                <td>40</td>
+                <td>71</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table id="tabgant4" className="table table-bordered">
+              <tbody>
+                <tr className="d-none">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>COSTO MENSUAL PROGRAMADO</td>
+                  <td>727, 395. 92</td>
+                  <td>12, 281. 86</td>
+                  <td>65, 433. 87</td>
+                  <td>167, 384. 89</td>
+                  <td>972, 496. 54</td>
+                </tr>
+                <tr>
+                  <td>COSTO ACUMULADO MENSUAL PROGRAMADO</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL PROGRAMADO EN %</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL ACUMULADO PROGRAMADO EN %</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL EJECUTADO</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL ACUMULADO EJECUTADO</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL EJECUTADO EN %</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL ACUMULADO EJECUTADO EN %</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>DESVIACIÓN DE EJECUCION FISICA</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL FINANCIERO</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL ACUMULADO FINANCIERO</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL FINANCIERO EN %</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>AVANCE MENSUAL ACUMULADO FINANCIERO EN %</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>DESVIACION DE EJECUCION FINANCIERA</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                </tbody>
+              </table>
+        </div>
       </div>
     )
   }

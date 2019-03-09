@@ -268,9 +268,9 @@ class AppAng extends Component {
                                                             animationDuration="1s"
                                                             responsive={true} 
                                                             progress={ DataObra.porcentaje_actual }
-                                                            progressColor="cornflowerblue"
+                                                            progressColor="#007bff"
                                                             bgColor="whitesmoke"
-                                                            textColor="hotpink"
+                                                            textColor="#007bff"
                                                         />
                                                         <label className="text-center">Actual S/. {DataObra.avance_actual}</label>                                                               
                                                     </div>

@@ -1,16 +1,35 @@
 import React, { Component } from 'react';
+import axios from 'axios'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import UrlServer from '../../Utils/ServerUrlConfig'
 
 class ReportValorizacionGeneral extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          modal: false
+          modal: false,
+          DataValGenral:[]
         };
     
         this.modalValGeneral = this.modalValGeneral.bind(this);
     }
-    
+
+    componentWillMount(){
+        axios.post(`${UrlServer}/resumenValorizacionPrincipal`,{
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        .then((res)=>{
+            console.log(res.data)
+            this.setState({
+                DataValGenral: res.data
+            })
+        })
+        .catch((err)=>{
+            console.log('ERROR ANG ❌'+ err);
+        });
+        
+    }
+
     modalValGeneral() {
         this.setState(prevState => ({
             modal: !prevState.modal
@@ -18,6 +37,7 @@ class ReportValorizacionGeneral extends Component {
     }
 
     render() {
+        const { DataValGenral } = this.state
         return (
         <div className="">
             <button className="btn btn-outline-success btn-xs" onClick={ this.modalValGeneral }>VAL</button>

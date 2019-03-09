@@ -6,13 +6,15 @@ import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
 import { logoSigobras, logoGRPuno } from "../imgB64"
 import { UrlServer } from '../../Utils/ServerUrlConfig'
+import { Redondea } from '../../Utils/Funciones'
     
 
 class ResumenValorizacionObra extends Component {
     constructor(){
         super();
         this.state={
-            DataInfoObra:[]
+            DataInfoObra:[],
+            DataComponentes:[]
         }
         this.printDocument=this.printDocument.bind(this)
       }
@@ -22,7 +24,7 @@ class ResumenValorizacionObra extends Component {
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
-            console.info('data >',res.data)
+            // console.info('data >',res.data)
             this.setState({
                 DataInfoObra:res.data
             })
@@ -30,7 +32,22 @@ class ResumenValorizacionObra extends Component {
         .catch((err)=>{
             console.error('algo salio mal ', err);
         })
+
+        // COMPONENTES 
+        axios.post(`${UrlServer}/resumenValorizacionPrincipal`,{
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        .then((res)=>{
+            // console.log(res.data)
+            this.setState({
+                DataComponentes: res.data
+            })
+        })
+        .catch((err)=>{
+            console.log('ERROR ANG ❌'+ err);
+        });
     }
+
 
     printDocument() {
         //const input = document.getElementById('img');
@@ -85,12 +102,14 @@ class ResumenValorizacionObra extends Component {
         
     
     render() {
+        const { DataInfoObra, DataComponentes } = this.state
         return (
                <div>
                     <li className="lii">
-                        <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/>  RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE</a>
+                        <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/>  RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE ✔</a>
                     </li>
                     <div className="d-none">
+                    {/* <div> */}
                         <table id="tab1" className="table table-bordered">
                             <tbody>
                                 <tr className="d-none">
@@ -103,36 +122,36 @@ class ResumenValorizacionObra extends Component {
                                 </tr>
                                 <tr>
                                     <td>OBRA</td>
-                                    <td colSpan="5">"MEJORAMIENTO DE LOS SERVICIOS DE EDUCACIÓN INICIAL DE LA I.E.I. N° 597 DEL CENTRO POBLADO DE PALCA, DISTRITO DE OLLACHEA-CARABAYA-PUNO"</td>
+                                    <td colSpan="5">{ DataInfoObra.g_meta } </td>
 
                                 </tr>
                                 <tr>
                                     <td>MONTO DE LA OBRA</td>
-                                    <td colSpan="3">dineri</td>
+                                    <td colSpan="3">{ DataInfoObra.presupuesto_general }</td>
                                     <td>REGION</td>
-                                    <td></td>
+                                    <td>{ DataInfoObra.region }</td>
                                 </tr>
                                 <tr>
                                     <td>MES</td>
-                                    <td></td>
+                                    <td>{ DataInfoObra.mes }</td>
                                     <td>RESIDENTE DE OBRA</td>
-                                    <td></td>
+                                    <td>{ DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal }</td>
                                     <td>PROVINCIA</td>
-                                    <td></td>
+                                    <td>{ DataInfoObra.provincia }</td>
                                 </tr>
                                 <tr>
                                     <td>PLAZO DE EJECUCIÓN</td>
-                                    <td></td>
+                                    <td>{ DataInfoObra.plazo_de_ejecucion }</td>
                                     <td>SUPERVISOR DE OBRA</td>
-                                    <td></td>
+                                    <td>WOSS LUIS ARPASI LLANQUI</td>
                                     <td>DISTRITO</td>
-                                    <td></td>
+                                    <td>{ DataInfoObra.distrito } </td>
                                 </tr>
                                 <tr>
-                                    <td>%AVANCE DE FISICO</td>
-                                    <td></td>
+                                    <td>% AVANCE DE FISICO</td>
+                                    <td>%</td>
                                     <td>AVANCE ACUMULADO</td>
-                                    <td></td>
+                                    <td>S/. { Redondea(DataInfoObra.avance_acumulado_valor) }</td>
                                     <td>LUGAR</td>
                                     <td></td>
                                 </tr>
@@ -158,7 +177,7 @@ class ResumenValorizacionObra extends Component {
                                     <td rowSpan="3">ITEM</td>
                                     <td rowSpan="3">COMPONENTE</td>
                                     <td rowSpan="2">MONTO PPTDO</td>
-                                    <td colSpan="6">NOVIEMBRE DEL 2018</td>
+                                    <td colSpan="6">{ DataInfoObra.mes } DEL 2019</td>
                                     <td colSpan="2" rowSpan="2">SALDO</td>
                                 </tr>
                                 <tr>
@@ -177,136 +196,23 @@ class ResumenValorizacionObra extends Component {
                                     <td>ValorizadoS/</td>
                                     <td>%</td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>COSTO DIRECTO</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>COSTO INDIRECTO</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS GENERALES</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS DE GESTIÓN DE PROYECTOS</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS DE SUPERVISION</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS DE LIQUIDACIÓN</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS DE MONITOREO Y SEGUIMIENTO</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS DE ELABORACIÓN DE EXPEDIENTE</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>GASTOS EN EXCESO</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                {DataComponentes.map((comp, iComp)=>
+                                    <tr key={ iComp }>
+                                        <td>{ comp.numero }</td>
+                                        <td>{ comp.nombre }</td>
+                                        <td>{ Redondea(comp.presupuesto) }</td>
+                                        <td>{ comp.anterior_valorizado }</td>
+                                        <td>{ comp.anterior_porcentaj }</td>
+                                        <td>{ comp.actual_valorizado }</td>
+                                        <td>{ comp.actual_porcentaje }</td>
+                                        <td>{ comp.acumulado_valorizado }</td>
+                                        <td>{ comp.acumulado_porcentaje }</td>
+                                        <td>{ 0 }</td>
+                                        <td>{ 0 }</td>
+                                    </tr>
+                                )}
+                                    
+                                
                             </tbody>
                         </table>  
                    

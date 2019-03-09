@@ -7,6 +7,8 @@ import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
 
+import { logoSigobras, logoGRPuno } from '../../Reportes/imgB64'
+
 
 // import { Progress } from 'react-sweet-progress';
 // import "react-sweet-progress/lib/style.css";
@@ -114,7 +116,8 @@ class List extends Component{
         this.state = {
             modal: false,
             modalUsuarios: false,
-            idObra:''
+            idObra:'',
+            DataCabeceraReporte:[]
             
         }
         this.Setobra = this.Setobra.bind(this);
@@ -126,11 +129,26 @@ class List extends Component{
     }
 
     componentWillMount(){
+        axios.post(`${UrlServer}/getInformeDataGeneral`,{
+            "id_ficha":sessionStorage.getItem("idobra")
+        })
+        .then((res)=>{
+            // console.info('data>',res.data)
+            
+        })
+        .catch((err)=>{
+            console.error('algo salio mal ', err);
+        })
+
+        // CONSOLIDADO DE INFORME MENSUAL DE LA OBRA
         axios.post(`${UrlServer}/informeControlEjecucionObras`,{
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
             // console.info('data>',res.data)
+            this.setState({
+                DataCabeceraReporte:res.data
+            })
         })
         .catch((err)=>{
             console.error('algo salio mal ', err);
@@ -183,10 +201,14 @@ class List extends Component{
                 format: 'a4',
                 hotfixes: [] 
             })
-            pdf.text("CONTROL DE EJECUCION DE OBRAS POR ADMINSTRACION DIRECTA", 8, 10);
-            
+            pdf.setFontSize(8);
+            pdf.text("CONTROL DE EJECUCION DE OBRAS POR ADMINSTRACION DIRECTA", 100, 18);
+            pdf.addImage(logoGRPuno, 'JPEG',10, 4, 100, 10)
+            pdf.addImage(logoSigobras, 'JPEG', 270, 4, 15, 11)
+
             var res1 = pdf.autoTableHtmlToJson(document.getElementById('tbl1'));
             var res2 = pdf.autoTableHtmlToJson(document.getElementById('tbl2'));
+            var res3 = pdf.autoTableHtmlToJson(document.getElementById('tbl3'));
             pdf.autoTable(res1.columns, res1.data, {
                 theme: 'striped',
                 startY: pdf.autoTableEndPosY() + 20,
@@ -197,7 +219,7 @@ class List extends Component{
                     halign: 'center',
                     lineColor: [0, 0, 0],
                     lineWidth: 0.1,
-                    fontSize: 9
+                    fontSize: 6
                   },
             });
 
@@ -211,12 +233,27 @@ class List extends Component{
                     halign: 'center',
                     lineColor: [0, 0, 0],
                     lineWidth: 0.1,
-                    fontSize: 7
+                    fontSize: 5
+                  },
+
+            });
+            
+            pdf.autoTable(res3.columns, res3.data, {
+                theme: 'striped',
+                startY: pdf.autoTableEndPosY() + 5,
+                styles: {
+                    cellPadding: 0.8,
+                    overflow: 'linebreak',
+                    valign: 'middle',
+                    halign: 'center',
+                    lineColor: [0, 0, 0],
+                    lineWidth: 0.1,
+                    fontSize: 5
                   },
 
             });
             // pdf.setFontSize(4);
-            pdf.text('GOBIERNO REGIONAL PUNO', 5, 5)
+            // pdf.text('GOBIERNO REGIONAL PUNO', 5, 5)
             pdf.addImage(imgData, 'JPEG', 0, 90);
             window.open(pdf.output('bloburl'), '_blank');
           })
@@ -237,6 +274,7 @@ class List extends Component{
     }
 
     render(){
+        const { DataCabeceraReporte } = this.state
         const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
                 
         return(
@@ -425,25 +463,25 @@ class List extends Component{
                                 
                                     <tr >
                                         <td>ENTIDAD FINANCIERA</td>
-                                        <td>: GOBIERNO REGIONAL PUNO</td>
+                                        <td>: { DataCabeceraReporte.entidad_financiera }</td>
                                         <td rowSpan="4"></td>
                                         <td>PRESUPUESTO BASE</td>
-                                        <td>S/. 9892323</td>
+                                        <td>S/. {DataCabeceraReporte.presupuesto }</td>
                                         <td rowSpan="4"></td>
                                         <td>PLAZO DE EJECUCION INICIAL</td>
-                                        <td>180 DIAS CALENDARIO</td>
+                                        <td>{ DataCabeceraReporte.plazo_ejecucion_inicial } DIAS CALENDARIO</td>
                                     </tr>
                                     <tr>
                                         <td >MODALIDAD DE EJECUCION</td>
-                                        <td>: ADMIN DIRECTA</td>
+                                        <td>: {  DataCabeceraReporte.modalidad_ejecucion }</td>
                                         <td>AMPLIACION PRESUPUESTO N° 1</td>
-                                        <td>S/. 232323</td>
+                                        <td>S/. { DataCabeceraReporte.ampliacion_presupuestal }</td>
                                         <td>AMPLIACION DE PLAZO N° 01</td>
-                                        <td></td>
+                                        <td>{ DataCabeceraReporte.ampliacion_plazo_n }</td>
                                     </tr>
                                     <tr>
                                         <td>FUENTE DE INFORMACION</td>
-                                        <td>:SUB GERENCIA DE OBRA</td>
+                                        <td>: { DataCabeceraReporte.fuente_informacion}</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -472,25 +510,23 @@ class List extends Component{
                                         <td></td>
                                         <td></td>
                                         <td></td>
+
+                                        {/* <td></td>
                                         <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td></td> */}
                                     </tr>
                                     <tr>
-                                        <td colSpan="20" className="bg-info text-center">CONSOLIDADO DEL INFORME MENSUAL DE OBRA</td>
+                                        <td colSpan="17" className="bg-info text-center">CONSOLIDADO DEL INFORME MENSUAL DE OBRA</td>
                                     </tr>
                                     <tr>
                                         <td rowSpan="3">ITEM</td>
-                                        <td rowSpan="3">DESCRIPCIÓN DEL PROYECTO</td>
+                                        <td rowSpan="3">NOMBRE DE LA OBRA: { DataCabeceraReporte.g_meta }</td>
                                         <td rowSpan="3">PPTO E.T. (S/.) + ADICIONALES</td>
                                         <td colSpan="2">RESPONSABLES DE OBRA</td>
                                         <td colSpan="4">TIEMPO DE EJECUCIÓN</td>
                                         <td colSpan="6">VALORACIÓN ACUMULADA</td>
                                         <td rowSpan="3">MES REPORTADO</td>
                                         <td rowSpan="3">SITUACION ACTUAL</td>
-                                        <td rowSpan="3">METAS PROGRAMADAS</td>
-                                        <td rowSpan="3">METAS EJECUTADAS</td>
-                                        <td rowSpan="3">COMENTARIO</td>
                                     </tr>
                                     <tr>
                                         <td rowSpan="2">SUPERVISOR DE OBRA</td>
@@ -512,26 +548,41 @@ class List extends Component{
                                         <td>ACUM. %</td>
                                     </tr>
                                     <tr>
+                                        <td>{ DataCabeceraReporte.codigo }</td>
                                         <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
+                                        <td>{ DataCabeceraReporte.g_total_presu }</td>
+                                        <td>{ DataCabeceraReporte.personal[0].nombre_personal}</td>
+                                        <td>{ DataCabeceraReporte.personal[0].nombre_personal}</td>
+                                        <td>{ DataCabeceraReporte.plazo_ejecucion}</td>
+                                        <td>{ DataCabeceraReporte.fecha_inicial }</td>
+                                        <td>{ DataCabeceraReporte.fecha_termino }</td>
+                                        <td>{ DataCabeceraReporte.dias_ampliados }</td>
+                                        <td>{ DataCabeceraReporte.financiero_acumulado }</td>
+                                        <td>{ DataCabeceraReporte.financiero_porcentaje_acumulado }</td>
+                                        <td>{ DataCabeceraReporte.fisico_acumulado }</td>
+                                        <td>{ DataCabeceraReporte.fisico_porcentaje_acumulado }</td>
+                                        <td>{ DataCabeceraReporte.ampliacion_acumulado }</td>
+                                        <td>{ DataCabeceraReporte.ampliacion_porcentaje_acumulado }</td>
+                                        <td>{ DataCabeceraReporte.mes_reportado}</td>
+                                        <td>{ DataCabeceraReporte.estado_obra }</td>
+                                        {/* <td>{ DataCabeceraReporte.metas_programadas }</td>
+                                        <td>{ DataCabeceraReporte.mets_ejecutadas }</td>
+                                        <td>{ DataCabeceraReporte.comentario }</td> */}
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table className="table table-bordered table-sm small" id="tbl3">
+                                <tbody>
+                                    <tr className="d-none">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>METAS PROGRAMADAS: { DataCabeceraReporte.metas_programadas }</td>
+                                        <td>METAS EJECUTADAS{ DataCabeceraReporte.mets_ejecutadas }</td>
+                                        <td>COMENTARIO: { DataCabeceraReporte.comentario }</td>
                                     </tr>
                                 </tbody>
                             </table>

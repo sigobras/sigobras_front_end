@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
+import ReportGeneral from './Valorizaciones/ReportGeneral'
 import ResumenValorizacionObra  from './Valorizaciones/ResumenValorizacionObra'
 import AvCompDiagGant  from './Valorizaciones/AvCompDiagGant'
+
 
 class ReportesGenerales extends Component {
     constructor(props) {
@@ -25,10 +27,8 @@ class ReportesGenerales extends Component {
                                 <li className="lii">
                                     <a href="#" ><FaFilePdf className="text-danger"/> CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) </a>
                                 </li>
-
-                                <li className="lii">
-                                    <a href="#" ><FaFilePdf className="text-danger"/> VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE </a>
-                                </li>
+                                
+                                <ReportGeneral />
                                 {/* 6.3 */}
                                 <ResumenValorizacionObra />
                                 

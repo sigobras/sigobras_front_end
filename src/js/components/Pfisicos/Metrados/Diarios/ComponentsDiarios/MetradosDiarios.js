@@ -601,7 +601,7 @@ class MetradosDiarios extends Component {
                         <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({nombre: e.target.value})}  type="text" className="form-control"/>  
                         </div>
-                        <label htmlFor="comment">OPCIONES :</label>
+                        {/* <label htmlFor="comment">OPCIONES :</label>
                         <div class="form-check-inline">
                           <label class="form-check-label">
                             <input type="radio" class="form-check-input" name="optradio" />titulo 
@@ -612,7 +612,7 @@ class MetradosDiarios extends Component {
                             <input type="radio" class="form-check-input" name="optradio" />actividad 
                           </label>
                         </div>
-                        <br/>
+                        <br/> */}
                         <label htmlFor="comment">N° VECES:</label>
                         <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})}  type="text" className="form-control"/>  

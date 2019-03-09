@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-// import ValPartidasNuevas from './ValPartidasNuevas'
+import ValPartidasNuevas from './ValPartidasNuevas'
 import Cubito from '../../../../images/loaderXS.gif';
 
 class General extends Component {
@@ -446,9 +446,9 @@ class General extends Component {
                     <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. VALORIZACION PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader>
                     <Collapse isOpen={collapse === 2}>
                         <CardBody>
-                        {/* { llamarComponentePartidaNueva !== true ? 'CARGANDO' : 
+                        { llamarComponentePartidaNueva !== true ? 'CARGANDO' : 
                             <ValPartidasNuevas />
-                        } */}
+                        }
                         </CardBody>                   
                     </Collapse>
                 </Card>
