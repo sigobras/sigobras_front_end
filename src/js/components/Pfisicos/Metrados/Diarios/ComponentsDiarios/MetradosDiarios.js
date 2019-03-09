@@ -404,7 +404,7 @@ class MetradosDiarios extends Component {
                                     <div className="p-1">
                                       {/* {console.log(row)} */}
                                       <b> <MdReportProblem size={ 20 } className="text-warning" /> {row.original.descripcion }</b><MdFlashOn size={ 20 } className="text-warning" />
-                                      <button className="btn btn-outline-warning btn-xs mb-1" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(row.original.id_partida, indexComp, row.index) }> <FaPlus /> MM</button>
+                                      <button className="btn btn-outline-warning btn-xs p-0 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(row.original.id_partida, indexComp, row.index) }> <FaPlus size={10} /> MM</button>
                                       
                                       <table className="table table-bordered">
                                         <thead className="thead-dark">
@@ -600,25 +600,32 @@ class MetradosDiarios extends Component {
                         <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
                         <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({nombre: e.target.value})}  type="text" className="form-control"/>  
-                            
                         </div>
-                        
+                        <label htmlFor="comment">OPCIONES :</label>
+                        <div class="form-check-inline">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" />titulo 
+                          </label>
+                        </div>
+                        <div class="form-check-inline">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" />actividad 
+                          </label>
+                        </div>
+                        <br/>
                         <label htmlFor="comment">N° VECES:</label>
                         <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})}  type="text" className="form-control"/>  
-                            
                         </div>
 
                         <label htmlFor="comment">LARGO:</label>
                         <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})}  type="text" className="form-control"/>  
-                            
                         </div>
 
                         <label htmlFor="comment">ANCHO:</label>
                         <div className="input-group input-group-sm mb-0">
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})}  type="text" className="form-control"/>  
-                            
                         </div>
 
                         <label htmlFor="comment">ALTO:</label>

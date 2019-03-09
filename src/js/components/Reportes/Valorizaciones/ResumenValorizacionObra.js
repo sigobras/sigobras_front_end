@@ -1,17 +1,38 @@
 import React, { Component } from 'react';
+import axios from 'axios'
+import { FaFilePdf } from "react-icons/fa";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
+import { logoSigobras, logoGRPuno } from "../imgB64"
+import { UrlServer } from '../../Utils/ServerUrlConfig'
+    
 
 class ResumenValorizacionObra extends Component {
     constructor(){
         super();
         this.state={
-    
+            DataInfoObra:[]
         }
         this.printDocument=this.printDocument.bind(this)
       }
-      printDocument() {
+      
+    componentWillMount(){
+        axios.post(`${UrlServer}/getInformeDataGeneral`,{
+            "id_ficha":sessionStorage.getItem("idobra")
+        })
+        .then((res)=>{
+            console.info('data >',res.data)
+            this.setState({
+                DataInfoObra:res.data
+            })
+        })
+        .catch((err)=>{
+            console.error('algo salio mal ', err);
+        })
+    }
+
+    printDocument() {
         //const input = document.getElementById('img');
         // html2canvas()
           // .then((canvas) => {
@@ -22,7 +43,10 @@ class ResumenValorizacionObra extends Component {
                 format: 'a4',
                 hotfixes: [] 
             })
-            pdf.text("CONTROL DE EJECUCION DE OBRAS POR ADMINSTRACION DIRECTA", 8, 10);
+            pdf.setFontSize(8);
+            pdf.text("RESUMEN DE VALORIZACION DE OBRA N° 02-2019", 100, 19);
+            pdf.addImage(logoGRPuno, 'JPEG',10, 4, 100, 10)
+            pdf.addImage(logoSigobras, 'JPEG', 270, 4, 15, 11)
             
             var res1 = pdf.autoTableHtmlToJson(document.getElementById('tab1'));
             var res2 = pdf.autoTableHtmlToJson(document.getElementById('tab2'));
@@ -36,7 +60,7 @@ class ResumenValorizacionObra extends Component {
                     halign: 'center',
                     lineColor: [0, 0, 0],
                     lineWidth: 0.1,
-                    fontSize: 9
+                    fontSize: 7
                   },
             });
     
@@ -50,15 +74,12 @@ class ResumenValorizacionObra extends Component {
                     // halign: 'center',
                     lineColor: [0, 0, 0],
                     lineWidth: 0.1,
-                    fontSize: 7
+                    fontSize: 6
                   },
     
             });
-            // pdf.setFontSize(4);
-            pdf.text('GOBIERNO REGIONAL PUNO', 5, 5)
-            //pdf.addImage(imgData, 'JPEG', 0, 90);
             window.open(pdf.output('bloburl'), '_blank');
-          // })
+            // pdf.output('save', 'filename.pdf')
         ;
     }
         
@@ -66,7 +87,10 @@ class ResumenValorizacionObra extends Component {
     render() {
         return (
                <div>
-                    <button onClick={this.printDocument}> imprimir</button>
+                    <li className="lii">
+                        <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/>  RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE</a>
+                    </li>
+                    <div className="d-none">
                         <table id="tab1" className="table table-bordered">
                             <tbody>
                                 <tr className="d-none">
@@ -285,9 +309,9 @@ class ResumenValorizacionObra extends Component {
                                 </tr>
                             </tbody>
                         </table>  
-                    <div id="img">
-                    hola
+                   
                     </div>
+                      
                 </div> 
         );
     }

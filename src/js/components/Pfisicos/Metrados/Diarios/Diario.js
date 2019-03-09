@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import MetradosDiarios from './ComponentsDiarios/MetradosDiarios'
-// import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
+import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
 
 
 class MDdiario extends Component {
@@ -51,9 +51,9 @@ class MDdiario extends Component {
           <a href="#" className="text-white"><CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader></a>
             <Collapse isOpen={collapse === 2}>
                 <CardBody>
-                  {/* { llamarComponentePartidaNueva !== true ? 'CARGANDO' : 
+                  { llamarComponentePartidaNueva !== true ? 'CARGANDO' : 
                     <PartidasNuevas />
-                  } */}
+                  }
                 </CardBody>                   
             </Collapse>
         </Card>

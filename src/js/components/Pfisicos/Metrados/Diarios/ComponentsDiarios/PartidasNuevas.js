@@ -23,12 +23,13 @@ class PartidasNuevas extends Component {
           DataMDiario:[],
           activeTab:'0',
           modal: false,
+          modalMm: false,
     
           ValorMetrado:'',
           DescripcionMetrado:'',
           ObservacionMetrado:'',
           IdMetradoActividad:'',
-          debounceTimeout: 200,
+          debounceTimeout: 300,
     
           // datos para capturar en el modal
           id_actividad:'',
@@ -45,20 +46,34 @@ class PartidasNuevas extends Component {
           descripcion:'',
           metrado:'',
     
+          // registrar inputs de mayores metrados
+          nombre:'',
+          veces:'',
+          largo:'',
+          ancho:'',
+          alto:'',
+          parcial:'',
+          tipo:'',
+          partidas_id_partida:'',
+
           // validacion de al momento de metrar
           smsValidaMetrado:'',
-          parcial:''
+          parcial:'',
+
+
     
         }
         this.Tabs = this.Tabs.bind(this)
         this.ControlAcceso = this.ControlAcceso.bind(this)
         this.CapturarID = this.CapturarID.bind(this)
         this.modalMetrar = this.modalMetrar.bind(this)
+        this.modalMayorMetrado = this.modalMayorMetrado.bind(this)
         this.EnviarMetrado = this.EnviarMetrado.bind(this)
+        this.capturaidMM = this.capturaidMM.bind(this)
+        this.EnviarMayorMetrado = this.EnviarMayorMetrado.bind(this)
     }
     componentWillMount(){
-        document.title ="Metrados Diarios"
-        axios.post(`${UrlServer}/listaPartidas`,{
+        axios.post(`${UrlServer}/listaPartidasNuevas`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
@@ -118,57 +133,111 @@ class PartidasNuevas extends Component {
             modal: !this.state.modal
         });
     }
-    
-    EnviarMetrado(e){
 
-        e.preventDefault()
-        
-        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
-        var DataModificado = DataMDiario
-        actividad_metrados_saldo = Number(actividad_metrados_saldo)
-
-        if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
-            this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
-        }else if( Number(ValorMetrado) < 0){
-            this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
-        }else if(Number(ValorMetrado) > actividad_metrados_saldo){
-            this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
-        }else{
-            if(confirm('¿Estas seguro de metrar?')){
-              this.setState({
-                  modal: !this.state.modal
-              })
-
-              axios.post(`${UrlServer}/avanceActividad`,{
-                  "Actividades_id_actividad":id_actividad,
-                  "valor":ValorMetrado,
-                  "descripcion":DescripcionMetrado,
-                  "observacion":ObservacionMetrado,
-                  "id_ficha":sessionStorage.getItem('idobra')
-              })
-              .then((res)=>{
-                  // console.log(res.data)
-                  // console.log('modificado')
-
-                  DataModificado[indexComp].partidas[viewIndex] = res.data
-          
-                  this.setState({
-                    DataMDiario: DataModificado
-                  })
-                  toast.success('Exito! Metrado ingresado');
-              })
-              .catch((errors)=>{
-                  toast.error('hubo errores al ingresar el metrado');
-                  // console.error('algo salio mal al consultar al servidor ', error)
-              })
-            }
-        }
+    modalMayorMetrado() {
+      this.setState({
+          modalMm: !this.state.modalMm
+      });
     }
 
+    EnviarMetrado(e){
+
+      e.preventDefault()
+      
+      var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
+      var DataModificado = DataMDiario
+      actividad_metrados_saldo = Number(actividad_metrados_saldo)
+
+      if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
+          this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
+      }else if( Number(ValorMetrado) < 0){
+          this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
+      }else if(Number(ValorMetrado) > actividad_metrados_saldo){
+          this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
+      }else{
+          if(confirm('¿Estas seguro de metrar?')){
+            this.setState({
+                modal: !this.state.modal
+            })
+
+            axios.post(`${UrlServer}/avanceActividad`,{
+                "Actividades_id_actividad":id_actividad,
+                "valor":ValorMetrado,
+                "descripcion":DescripcionMetrado,
+                "observacion":ObservacionMetrado,
+                "id_ficha":sessionStorage.getItem('idobra')
+            })
+            .then((res)=>{
+                // console.log(res.data)
+                // console.log('modificado')
+
+                DataModificado[indexComp].partidas[viewIndex] = res.data
+        
+                this.setState({
+                  DataMDiario: DataModificado
+                })
+                toast.success('Exito! Metrado ingresado');
+            })
+            .catch((errors)=>{
+                toast.error('hubo errores al ingresar el metrado');
+                // console.error('algo salio mal al consultar al servidor ', error)
+            })
+          }
+      }
+    }
+
+    capturaidMM(partidas_id_partida, indexComp, indexPartida){
+      // console.log('id1', indexComp,'id2', indexPartida)
+      // console.log('data', this.state.DataMDiario);
+      
+      this.modalMayorMetrado()
+      this.setState({
+        partidas_id_partida: partidas_id_partida,
+        indexComp:indexComp,
+        viewIndex:indexPartida
+      })
+    }
+
+    EnviarMayorMetrado(e){
+      e.preventDefault()
+
+      var { DataMDiario, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexComp, viewIndex } = this.state
+      var DataModificado = DataMDiario
+
+      if(confirm('¿Estas seguro de registar el mayor metrado?')){
+        this.setState({
+          modalMm: !this.state.modalMm
+        })
+
+        axios.post(`${UrlServer}/postNuevaActividadMayorMetrado`,{
+          "nombre":nombre,
+          "veces":veces,
+          "largo":largo,
+          "ancho":ancho,
+          "alto":alto,
+          "parcial":parcial,
+          "tipo":'subtitulo',
+          "partidas_id_partida":partidas_id_partida
+        })
+        .then((res)=>{
+            // console.log(res.data)
+
+            DataModificado[indexComp].partidas[viewIndex] = res.data
+            this.setState({
+              DataMDiario:DataModificado
+            })
+
+            toast.success('Exito! Metrado mayor metrado registrado al sistema');
+        })
+        .catch((err)=>{
+            toast.error('hubo errores al ingresar el metrado');
+            console.error('algo salio mal al consultar al servidor❌❌ ', err)
+        })
+      }
+    }
     
     render() {
-        var { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado } = this.state
-
+      var { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado } = this.state
         return (
             <div>
               
@@ -190,10 +259,7 @@ class PartidasNuevas extends Component {
                         <Card>
                           <CardHeader><b>{ comp.nombre }</b></CardHeader>
                           <CardBody >    
-
-                          
                 
-                                         
                               <ReactTable
                                 data={comp.partidas}
                                 filterable
@@ -333,11 +399,11 @@ class PartidasNuevas extends Component {
                                 // expanded={this.state.expanded}
                                 SubComponent={row => 
 
-                                  // console.log('row>>',row.original.actividades)
                                   row.original.tipo === "titulo" ? <span className="text-center text-danger"><b>no tiene actividades</b></span>:
                                     <div className="p-1">
-                                      
-                                      <b > <MdReportProblem size={ 20 } className="text-warning" /> {row.original.descripcion }</b><MdFlashOn size={ 20 } className="text-warning" />
+                                      {/* {console.log(row)} */}
+                                      <b> <MdReportProblem size={ 20 } className="text-warning" /> {row.original.descripcion }</b><MdFlashOn size={ 20 } className="text-warning" />
+                                      <button className="btn btn-outline-warning btn-xs p-0 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(row.original.id_partida, indexComp, row.index) }> <FaPlus size={10} /> MM</button>
                                       
                                       <table className="table table-bordered">
                                         <thead className="thead-dark">
@@ -411,7 +477,6 @@ class PartidasNuevas extends Component {
                                                 }
                                               </td>
                                               <td>
-                                              {console.log('hola', row.original)}
                                                 {actividades.actividad_tipo === "titulo"? "":
                                                   
                                                   <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
@@ -440,7 +505,6 @@ class PartidasNuevas extends Component {
 
 
 
-
                 {/* <!-- MODAL PARA METRAR --> */}
                   
                 <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false}>
@@ -457,7 +521,6 @@ class PartidasNuevas extends Component {
                           <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida.replace("/DIA", "")}</div>
                         </div>
 
-                        
                         <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
                         <div className="input-group input-group-sm mb-0">
@@ -468,7 +531,6 @@ class PartidasNuevas extends Component {
                             </div>
                         </div>
                         <div className="texto-rojo mb-0"> <b> { smsValidaMetrado }</b></div> 
-
 
                         <div className="d-flex justify-content-center text-center mt-1"> 
                           <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br/>
@@ -523,9 +585,72 @@ class PartidasNuevas extends Component {
                     </ModalFooter>
                     </form>
                 </Modal>
-                {/* ///<!-- MODAL PARA METRAR --> */}  
+                {/* ///<!-- MODAL PARA METRAR --> */} 
+
+                {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
+                  
+                <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} size="sm" fade={false}>
+                    <form onSubmit={this.EnviarMayorMetrado }>
+                    <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
+                        <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+                    </ModalHeader>
+                    <ModalBody>
+                        
+                        <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
+                        <div className="input-group input-group-sm mb-0">
+                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({nombre: e.target.value})}  type="text" className="form-control"/>  
+                        </div>
+                        <label htmlFor="comment">OPCIONES :</label>
+                        <div class="form-check-inline">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" />titulo 
+                          </label>
+                        </div>
+                        <div class="form-check-inline">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" />actividad 
+                          </label>
+                        </div>
+                        <br/>
+                        <label htmlFor="comment">N° VECES:</label>
+                        <div className="input-group input-group-sm mb-0">
+                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})}  type="text" className="form-control"/>  
+                        </div>
+
+                        <label htmlFor="comment">LARGO:</label>
+                        <div className="input-group input-group-sm mb-0">
+                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})}  type="text" className="form-control"/>  
+                        </div>
+
+                        <label htmlFor="comment">ANCHO:</label>
+                        <div className="input-group input-group-sm mb-0">
+                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})}  type="text" className="form-control"/>  
+                        </div>
+
+                        <label htmlFor="comment">ALTO:</label>
+                        <div className="input-group input-group-sm mb-0">
+                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})}  type="text" className="form-control"/>  
+                        </div>
+                        
+                        <label htmlFor="comment">METRADO:</label>
+                        {/* ESTE ES EL METRADO = parcial */}
+                        <div className="input-group input-group-sm mb-0">
+                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({parcial: e.target.value})}  type="text" className="form-control"/>  
+                        </div>
+                        
+                        
+
+                    </ModalBody>
+                    <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
+                      <div className="float-left"><Button color="primary" type="submit">Guardar mayor metrado</Button>{' '}</div>
+                      <div className="float-right"><Button color="danger" onClick={this.modalMayorMetrado}>Cancelar</Button></div>
+                    </ModalFooter>
+                    </form>
+                </Modal>
+                {/* ///<!-- MODAL PARA modalMM --> */}  
             </div>
         );
     }
 }
+
 export default PartidasNuevas;

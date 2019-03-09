@@ -1,0 +1,3 @@
+poner unidad de medida y titulo en mayores metrados
+poner pequeño el boton 
+poner dos radios butons 

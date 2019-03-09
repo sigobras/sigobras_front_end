@@ -7,6 +7,8 @@ import { UrlServer } from '../Utils/ServerUrlConfig'
 import LogoSigobras from '../../../images/sigobras-neon.jpg'
 import '../../../css/login.css'
 
+import SubirImagen from './SubirImagen'
+
 class Login extends Component {
   constructor(){
     super();
@@ -98,6 +100,7 @@ class Login extends Component {
                 draggable
                 pauseOnHover
               />
+              {/* <SubirImagen /> */}
               <div className="container-dialog modal-login">
                   <div className="modal-content">
                     <div className="modal-headers">

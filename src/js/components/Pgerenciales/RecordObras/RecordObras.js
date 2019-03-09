@@ -91,7 +91,7 @@ class RecordObras extends Component{
                                         <th>#</th>
                                         <th>OBRA</th>
                                         <th>AVANCE </th>
-                                        <th>IR A</th>
+                                        <th className="text-center">IR</th>
                                         <th>ESTADO</th>
                                         <th>OPCIONES</th>
                                     </tr>
@@ -282,7 +282,7 @@ class List extends Component{
 
                     </td>
                     <td> 
-                        <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre  )) }><IoIosInfinite size={ 15 } />   {/*{ Obras.codigo }*/} </button> 
+                        <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre  )) }>{ Obras.codigo } </button> 
                     </td>
                     <td  className="text-center"> 
                         <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
@@ -291,7 +291,7 @@ class List extends Component{
                         <button type="button" className="btn btn-outline-info btn-sm mr-1" id={"toggler"+IndexObras} data-target={"#"+IndexObras}><FaList /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" id={"CRONO"+IndexObras }><FaClock /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" onClick={this.toggle}><FaRegImages />{this.props.buttonLabel}</button>
-                        <button className="btn btn-outline-info btn-sm mr-1"><FaChartPie /></button>
+                        {/* <button className="btn btn-outline-info btn-sm mr-1"><FaChartPie /></button> */}
                         <button className="btn btn-outline-warning btn-sm mr-1" id={"adminDirecta"+IndexObras }><FaPrint /></button>
                         <button className="btn btn-outline-primary btn-sm" onClick={ e=> this.ObtieneIdObra(Obras.id_ficha) } title="usuarios"><FaUserFriends /></button>
                     </td>
