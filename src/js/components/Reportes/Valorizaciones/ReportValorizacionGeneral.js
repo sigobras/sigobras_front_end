@@ -214,7 +214,7 @@ class ReportValorizacionGeneral extends Component {
                         </tr>
                     </table>
 
-                    <table  className="table table-bordered table-sm small">> 
+                    <table  className="table table-bordered table-sm small">
                         <tr>
                             <th colspan="3" rowspan="3">PARTIDA</th>
                             <th colspan="11" rowspan="3">DESCRIPCION</th>

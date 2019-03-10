@@ -222,7 +222,7 @@ class ReportGeneral extends Component {
                                 </tbody>
                             )}
                                 
-                            {/* <tbody>
+                            <tbody>
                                 <tr>
                                     <th  colspan="3" rowspan="3">PARTIDA</th>
                                     <th colspan="11" rowspan="3">DESCRIPCION</th>
@@ -273,7 +273,7 @@ class ReportGeneral extends Component {
                                     <td ></td>
                                     <td ></td>
                                 </tr>
-                            </tbody> */}
+                            </tbody>
 
 
 

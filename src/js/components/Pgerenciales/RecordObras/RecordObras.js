@@ -551,8 +551,16 @@ class List extends Component{
                                         <td>{ DataCabeceraReporte.codigo }</td>
                                         <td>-</td>
                                         <td>{ DataCabeceraReporte.g_total_presu }</td>
-                                        <td>{ DataCabeceraReporte.personal[0].nombre_personal}</td>
-                                        <td>{ DataCabeceraReporte.personal[0].nombre_personal}</td>
+                                        <td>
+                                        {/* { DataCabeceraReporte.personal[0].nombre_personal} */}
+                                        JHONATHAN LUIS CABRERA
+                                        
+                                        </td>
+                                        <td>
+                                        {/* { DataCabeceraReporte.personal[0].nombre_personal} */}
+                                        JHONATHAN LUIS CABRERA
+
+                                        </td>
                                         <td>{ DataCabeceraReporte.plazo_ejecucion}</td>
                                         <td>{ DataCabeceraReporte.fecha_inicial }</td>
                                         <td>{ DataCabeceraReporte.fecha_termino }</td>
