@@ -15,16 +15,20 @@ class SubirImagen extends Component {
     onFormSubmit(e){
         e.preventDefault();
         const formData = new FormData();
-        console.log('subir imagen', formData)
+        console.log('subir imagen',   formData.append('myImage',this.state.file))
         formData.append('myImage',this.state.file);
         const config = {
             headers: {
                 'content-type': 'multipart/form-data'
             }
         };
-        axios.post("http://190.117.94.80:9000/listaestados",formData,config)
-            .then((response) => {
-                alert("The file is successfully uploaded");
+        axios.post("http://192.168.0.5:9000/photos",
+            formData,
+            config
+            )
+            .then((res) => {
+                console.log('res  img', res)
+                alert("archivo enviado con exito ");
             })
             .catch((error) => {
             });

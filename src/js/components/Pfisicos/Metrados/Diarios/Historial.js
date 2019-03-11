@@ -13,10 +13,11 @@ class MDHistorial extends Component {
         super();
         this.Tabs = this.Tabs.bind(this);
         this.state = {
-          idCom:[],
+          DataHistorial:[],
           activeTab: '0'
         }; 
     }
+
     componentWillMount(){
         document.title ="Historial de Metrados"
 
@@ -24,16 +25,16 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log(res)
+            console.log(res)
             var DataError = [];
             if(res.data.code){
                 this.setState({
-                    idCom: DataError
+                    DataHistorial: DataError
                 })
             }else{
             // console.log('sasa',res.data);
                 this.setState({
-                    idCom: res.data
+                    DataHistorial: res.data
                 })
             }
         })
@@ -100,11 +101,11 @@ class MDHistorial extends Component {
     return ( 
         
         <div>   
-            {this.state.idCom === '' ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /> <br/>No hay datos</div>:
+            {this.state.DataHistorial === '' ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /> <br/>No hay datos</div>:
             <Card>
 
                 <Nav tabs>
-                    {this.state.idCom.map((comp,i)=>
+                    {this.state.DataHistorial.map((comp,i)=>
 
                         <NavItem key={ i }>
                             <NavLink className={classnames({ active: this.state.activeTab === i.toString() })} onClick={() => { this.Tabs( i.toString()); }}>
@@ -114,7 +115,7 @@ class MDHistorial extends Component {
                     )}
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
-                    {this.state.idCom.map((comp,i)=>
+                    {this.state.DataHistorial.map((comp,i)=>
                         <TabPane tabId={i.toString()} className="p-1" key={i}>
                             <Card >
                                 <CardHeader>{comp.nombre_componente }</CardHeader>

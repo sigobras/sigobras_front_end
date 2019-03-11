@@ -37,7 +37,6 @@ import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 
 // reportes 
 import ReportesGenerales from './Reportes/ReportesGenerales'
-import ReportValorizacionGeneral from './Reportes/Valorizaciones/ReportValorizacionGeneral'
 
 class AppAng extends Component {
     constructor(){
@@ -351,10 +350,6 @@ class AppAng extends Component {
                                                     </UncontrolledPopover>
 
                                                     
-                                                </div>
-                                                
-                                                <div>
-                                                    <ReportValorizacionGeneral />
                                                 </div>
 
                                             </div>

@@ -25,7 +25,7 @@ class ReportValorizacionGeneral extends Component {
             })
         })
         .catch((err)=>{
-            console.log('ERROR ANG ❌'+ err);
+            console.log('ERROR ANG JODER ❌'+ err);
         });
         
     }

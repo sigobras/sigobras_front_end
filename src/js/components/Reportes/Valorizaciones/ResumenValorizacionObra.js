@@ -44,7 +44,7 @@ class ResumenValorizacionObra extends Component {
             })
         })
         .catch((err)=>{
-            console.log('ERROR ANG ❌'+ err);
+            console.log('ERROR DE ALGO NO SE QUE PASO ❌'+ err);
         });
     }
 
