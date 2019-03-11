@@ -152,7 +152,7 @@ body {
 .scroll_contenido{
   position: absolute;
   height: calc(100vh - 100px);
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
   
@@ -209,4 +209,10 @@ body {
 /* tamaño de fuente pequeño */
 .fsize{
   font-size: 0.5rem
+}
+
+/* color de tabla actividades */
+
+.bg-mm {
+  background-color: #ecc30636!important;
 }

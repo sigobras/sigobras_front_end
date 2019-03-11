@@ -139,7 +139,7 @@ class MetradosDiarios extends Component {
       this.setState({
           modalMm: !this.state.modalMm
       });
-  }
+    }
     EnviarMetrado(e){
 
         e.preventDefault()
@@ -243,7 +243,6 @@ class MetradosDiarios extends Component {
             <div>
               
                 <Card>
-
                   <Nav tabs>
                     {DataMDiario.length === 0 ? 'cargando': DataMDiario.map((comp,indexComp)=>
                       <NavItem key={ indexComp }>
@@ -424,7 +423,7 @@ class MetradosDiarios extends Component {
                                         </thead>
                                         <tbody>
                                           {row.original.actividades.map((actividades, indexA)=>
-                                            <tr key={ indexA }>
+                                            <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
                                               <td>{ actividades.nombre_actividad }</td>
                                               <td>{ actividades.veces_actividad }</td>
                                               <td>{ actividades.largo_actividad }</td>
