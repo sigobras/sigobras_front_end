@@ -100,7 +100,7 @@ class Login extends Component {
                 draggable
                 pauseOnHover
               />
-              <SubirImagen />
+              {/* <SubirImagen /> */}
               <div className="container-dialog modal-login">
                   <div className="modal-content">
                     <div className="modal-headers">
