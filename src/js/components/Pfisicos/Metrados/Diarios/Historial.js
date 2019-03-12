@@ -24,7 +24,7 @@ class MDHistorial extends Component {
     componentWillMount(){
         document.title ="Historial de Metrados"
 
-        axios.post(UrlServer+'/getHistorial/',{
+        axios.post(UrlServer+'/getHistorial',{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{

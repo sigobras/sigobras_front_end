@@ -6,6 +6,7 @@ import { IoIosInfinite } from "react-icons/io";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
+import { toast } from "react-toastify";
 
 import { logoSigobras, logoGRPuno } from '../../Reportes/imgB64'
 
@@ -32,6 +33,7 @@ class RecordObras extends Component{
         // this.toggle = this.toggle.bind(this);
 
     }
+  
     
     componentDidMount(){
         axios.post(`${UrlServer}/PGlistaObras`,{
@@ -51,7 +53,9 @@ class RecordObras extends Component{
             
         })
         .catch(err=>{
-            console.log(err);
+            console.log('errores de conxion',err.request);
+            toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
+
         });
     }
 

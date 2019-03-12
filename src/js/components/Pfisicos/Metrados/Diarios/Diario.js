@@ -10,7 +10,6 @@ class MDdiario extends Component {
 
     this.state = {
       collapse: 0,
-      llamarComponentePartidaNueva: true
 
     }
 
@@ -20,20 +19,12 @@ class MDdiario extends Component {
 
   CollapseCard(valor){
     let event = valor
-    if( valor === 2){
-      this.setState({
-        llamarComponentePartidaNueva: true
-      })
-    }else{
-      this.setState({
-        llamarComponentePartidaNueva: false
-      })
-    }
+    
     this.setState({ collapse: this.state.collapse === Number(event) ? 0 : Number(event) });
   }
 
   render() {
-    var { collapse, llamarComponentePartidaNueva } = this.state
+    var { collapse } = this.state
     if(sessionStorage.getItem("idacceso") !== null){ 
       return (
         <div className="pb-3">
@@ -51,9 +42,7 @@ class MDdiario extends Component {
           <a href="#" className="text-white"><CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader></a>
             <Collapse isOpen={collapse === 2}>
                 <CardBody>
-                  { llamarComponentePartidaNueva !== true ? 'CARGANDO' : 
-                    <PartidasNuevas />
-                  }
+                  {collapse === 2 ? <PartidasNuevas /> : '' }
                 </CardBody>                   
             </Collapse>
         </Card>

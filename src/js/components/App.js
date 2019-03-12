@@ -294,7 +294,7 @@ class AppAng extends Component {
                                             <label>
                                                 <b>
                                                     {/* BIENVENIDO HOY ES : {this.YearActual()} */}
-                                                    { DataObra.g_meta === undefined?<label className="text-center text-white"><Spinner color="primary" size="sm" /></label>: DataObra.g_meta.toUpperCase()}
+                                                    { DataObra.g_meta === undefined?<div className="text-center text-white"><Spinner color="primary" size="sm" /></div>: DataObra.g_meta.toUpperCase()}
                                                 </b>
                                             </label>
                                         </div>
