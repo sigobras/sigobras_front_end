@@ -108,7 +108,7 @@ class Login extends Component {
                           <img src={ LogoSigobras } className="mx-auto d-block" alt="sigoobras sac" height="75"/>
                         </div>
                         
-                        <h4>Inicie sesión</h4>
+                        <h4>Inicie sesiónes de sigobras</h4>
                     </div>
                     <div className="modal-body">
                       <form>
