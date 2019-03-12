@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { MdMoreVert, MdDone } from "react-icons/md";
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody} from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner } from 'reactstrap';
 import classnames from 'classnames';
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-
-import Cubito from '../../../../images/loaderXS.gif';
 
 class ValPartidasNuevas extends Component {
     constructor(){
@@ -84,17 +82,7 @@ class ValPartidasNuevas extends Component {
         <div>
 
 
-
-
-
-
-
-
-
-
-
-
-            {DataValorizacion.length < 1 ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /></div>:
+            {DataValorizacion.length < 1 ? <label className="text-center" >  <Spinner color="primary" size="sm" /></label>:
             <Card>
                 <Nav tabs>
                     {/* PERIODOS */}

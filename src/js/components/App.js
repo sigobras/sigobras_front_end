@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { FaBars, FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { MdFullscreen, MdFullscreenExit, MdDehaze, MdBusiness } from "react-icons/md";
 
-import {Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
 import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';

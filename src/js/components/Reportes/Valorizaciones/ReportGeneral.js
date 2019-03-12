@@ -87,7 +87,7 @@ class ReportGeneral extends Component {
                pdf.setTextColor(40);
                pdf.setFontStyle('normal');
                 //pdf.addImage(imgData, 'JPEG', data.settings.margin.left, 20, 50, 50);
-               pdf.text("componente de datos", data.settings.margin.left, 20);
+            //    pdf.text("componente de datos", data.settings.margin.left, 20);
               };
 
             var options = {
@@ -126,6 +126,7 @@ class ReportGeneral extends Component {
             window.open(pdf.output('bloburl'), '_blank');
         
     }
+    
     render() {
         const { DataInfoObra, DataValGeneral } = this.state
         return (
@@ -133,146 +134,147 @@ class ReportGeneral extends Component {
                 <li className="lii">
                     <a href="#"  onClick={this.ValorizacionGeneral} ><FaFilePdf className="text-danger"/> CONSOLIDACION GENERAL DE VALORIZACION DE OBRA N°08 - 2018 ✔</a>
                 </li>
-
-                <table id="tbl1revalge" className="table table-bordered table-sm small">
-                    <tbody>
-                        <tr className="d-none">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>PROYECTO</td>
-                            <td colSpan="5"></td>
-                        </tr>
-                        <tr>
-                            <td>OBRA</td>
-                            <td colSpan="3">{ DataInfoObra.g_meta }</td>
-                            <td>MES</td>
-                            <td>{ DataInfoObra.mes }</td>
-                        </tr>
-                        <tr>
-                            <td>MONTO DE LA OBRA</td>
-                            <td colSpan="3">{ DataInfoObra.presupuesto_general }</td>
-                            <td>REGION</td>
-                            <td>{ DataInfoObra.region }</td>
-                        </tr>
-                        <tr>
-                            <td>FECHA DE INICIO DE OBRA</td>
-                            <td></td>
-                            <td>RESIDENTE DE OBRA</td>
-                            <td>{ DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal }</td>
-                            <td>PROVINCIA</td>
-                            <td>{ DataInfoObra.provincia }</td>
-                        </tr>
-                        <tr>
-                            <td>PLAZO DE EJECUCION</td>
-                            <td>{ DataInfoObra.plazo_de_ejecucion }</td>
-                            <td>SUPERVISOR DE OBRA</td>
-                            <td>WOSS LUIS ARPASI LLANQUI XD....</td>
-                            <td>DISTRITO</td>
-                            <td>{ DataInfoObra.distrito }</td>
-                        </tr>
-                        <tr>
-                            <td>% DE AVANCE FISICO</td>
-                            <td></td>
-                            <td>AVANCE ACUMULADO</td>
-                            <td>S/. { Redondea(DataInfoObra.avance_acumulado_valor) }</td>
-                            <td>LUGAR</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <table id= "tbl2revalge" className="table table-bordered table-sm small">
-                        <thead>
-                            <tr className="d-none">
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            <tr>
-                                <th rowSpan="3">PARTIDA</th>
-                                <th rowSpan="3">DESCRIPCION</th>
-                                <th rowSpan="3">UND</th>
-                                <th colSpan="3" rowSpan="2">PRESUPUESTO PROGRAMADO</th>
-                                <th colSpan="9">JUNIO DEL 2018</th>
-                                <th colSpan="3" rowSpan="2">SALDO</th>
-                            </tr>
-                            <tr>
-                                <th colSpan="3">ANTERIOR</th>
-                                <th colSpan="3">ACTUAL</th>
-                                <th colSpan="3">ACUMULADO</th>
-                            </tr>
-                            <tr>
-                                <th>METRADO</th>
-                                <th>P. UNIT S/.</th>
-                                <th>PRESUP. S/.</th>
-                                <th>METRADO</th>
-                                <th>VALORIZADO</th>
-                                <th>%</th>
-                                <th>METRADO</th>
-                                <th>VALORIZADO</th>
-                                <th>%</th>
-                                <th>METRADO</th>
-                                <th>VALORIZADO</th>
-                                <th>%</th>
-                                <th>METRADO</th>
-                                <th>VALORIZADO</th>
-                                <th>%</th>
-                            </tr>
-                        </thead>
-                        
+                <div className="d-none">
+                    <table id="tbl1revalge" className="table table-bordered table-sm small">
                         <tbody>
-                            { DataValGeneral.map((valG, indexVG)=>
-                                valG.partidas.map((par,indexpar)=>
-                                    <tr key={ indexpar }>
-                                        <td>{ par.item }</td>
-                                        <td>{ par.descripcion }</td>
-                                        <td>{ par.unidad_medida }</td>
-                                        <td>{ par.metrado }</td>
-                                        <td>{ par.costo_unitario }</td>
-                                        <td>{ par.parcial }</td>
-
-                                        <td>{ par.metrado_anterior }</td>
-                                        <td>{ par.valor_anterior }</td>
-                                        <td>{ par.porcentaje_anterior === "100.00" ? 100 : par.porcentaje_anterior }</td>
-
-                                        <td>{ par.metrado_actual }</td>
-                                        <td>{ par.valor_actual }</td>
-                                        <td>{ par.porcentaje_actual === "100.00" ? 100 : par.porcentaje_actual }</td>
-
-                                        <td>{ par.metrado_total }</td>
-                                        <td>{ par.valor_total }</td>
-                                        <td>{ par.porcentaje_total  === "100.00" ? 100 : par.porcentaje_total}</td>
-
-                                        <td>{ par.metrado_saldo }</td>
-                                        <td>{ par.valor_saldo }</td>
-                                        <td>{ par.porcentaje_saldo === "100.00" ? 100 : par.porcentaje_saldo }</td>
-                                    </tr>
-                                )
-                            )}
+                            <tr className="d-none">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>PROYECTO</td>
+                                <td colSpan="5"></td>
+                            </tr>
+                            <tr>
+                                <td>OBRA</td>
+                                <td colSpan="3">{ DataInfoObra.g_meta }</td>
+                                <td>MES</td>
+                                <td>{ DataInfoObra.mes }</td>
+                            </tr>
+                            <tr>
+                                <td>MONTO DE LA OBRA</td>
+                                <td colSpan="3">{ DataInfoObra.presupuesto_general }</td>
+                                <td>REGION</td>
+                                <td>{ DataInfoObra.region }</td>
+                            </tr>
+                            <tr>
+                                <td>FECHA DE INICIO DE OBRA</td>
+                                <td></td>
+                                <td>RESIDENTE DE OBRA</td>
+                                <td>{ DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal }</td>
+                                <td>PROVINCIA</td>
+                                <td>{ DataInfoObra.provincia }</td>
+                            </tr>
+                            <tr>
+                                <td>PLAZO DE EJECUCION</td>
+                                <td>{ DataInfoObra.plazo_de_ejecucion }</td>
+                                <td>SUPERVISOR DE OBRA</td>
+                                <td>WOSS LUIS ARPASI LLANQUI XD....</td>
+                                <td>DISTRITO</td>
+                                <td>{ DataInfoObra.distrito }</td>
+                            </tr>
+                            <tr>
+                                <td>% DE AVANCE FISICO</td>
+                                <td></td>
+                                <td>AVANCE ACUMULADO</td>
+                                <td>S/. { Redondea(DataInfoObra.avance_acumulado_valor) }</td>
+                                <td>LUGAR</td>
+                                <td></td>
+                            </tr>
                         </tbody>
-                   
-                </table>
+                    </table>
+
+                    <table id= "tbl2revalge" className="table table-bordered table-sm small">
+                            <thead>
+                                <tr className="d-none">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <th rowSpan="3">PARTIDA</th>
+                                    <th rowSpan="3">DESCRIPCION</th>
+                                    <th rowSpan="3">UND</th>
+                                    <th colSpan="3" rowSpan="2">PRESUPUESTO PROGRAMADO</th>
+                                    <th colSpan="9">JUNIO DEL 2018</th>
+                                    <th colSpan="3" rowSpan="2">SALDO</th>
+                                </tr>
+                                <tr>
+                                    <th colSpan="3">ANTERIOR</th>
+                                    <th colSpan="3">ACTUAL</th>
+                                    <th colSpan="3">ACUMULADO</th>
+                                </tr>
+                                <tr>
+                                    <th>METRADO</th>
+                                    <th>P. UNIT S/.</th>
+                                    <th>PRESUP. S/.</th>
+                                    <th>METRADO</th>
+                                    <th>VALORIZADO</th>
+                                    <th>%</th>
+                                    <th>METRADO</th>
+                                    <th>VALORIZADO</th>
+                                    <th>%</th>
+                                    <th>METRADO</th>
+                                    <th>VALORIZADO</th>
+                                    <th>%</th>
+                                    <th>METRADO</th>
+                                    <th>VALORIZADO</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody>
+                                { DataValGeneral.map((valG, indexVG)=>
+                                    valG.partidas.map((par,indexpar)=>
+                                        <tr key={ indexpar }>
+                                            <td>{ par.item }</td>
+                                            <td>{ par.descripcion }</td>
+                                            <td>{ par.unidad_medida }</td>
+                                            <td>{ par.metrado }</td>
+                                            <td>{ par.costo_unitario }</td>
+                                            <td>{ par.parcial }</td>
+
+                                            <td>{ par.metrado_anterior }</td>
+                                            <td>{ par.valor_anterior }</td>
+                                            <td>{ par.porcentaje_anterior === "100.00" ? 100 : par.porcentaje_anterior }</td>
+
+                                            <td>{ par.metrado_actual }</td>
+                                            <td>{ par.valor_actual }</td>
+                                            <td>{ par.porcentaje_actual === "100.00" ? 100 : par.porcentaje_actual }</td>
+
+                                            <td>{ par.metrado_total }</td>
+                                            <td>{ par.valor_total }</td>
+                                            <td>{ par.porcentaje_total  === "100.00" ? 100 : par.porcentaje_total}</td>
+
+                                            <td>{ par.metrado_saldo }</td>
+                                            <td>{ par.valor_saldo }</td>
+                                            <td>{ par.porcentaje_saldo === "100.00" ? 100 : par.porcentaje_saldo }</td>
+                                        </tr>
+                                    )
+                                )}
+                            </tbody>
+                    
+                    </table>
+                </div>
             </div>
         );
     }
