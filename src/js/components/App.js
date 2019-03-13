@@ -27,8 +27,9 @@ import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
 
 import Corte from './Pfisicos/Metrados/Diarios/Corte'
 import Actualizacion from './Pfisicos/Metrados/Diarios/Actualizacion'
+import Compatibilidad from './Pfisicos/Metrados/Diarios/Compatibilidad'
 import RecursosObra from './Pfisicos/Metrados/Diarios/RecursosObra'
-import ParalizacionObra  from './Pfisicos/Metrados/Diarios/ParalizacionObra'
+import Paralizacion  from './Pfisicos/Metrados/Diarios/Paralizacion'
 
 import General from '../components/Pfisicos/Valorizaciones/General'
 
@@ -305,7 +306,8 @@ class AppAng extends Component {
 
                                             <Route path="/CorteObra" component={ Corte } />
                                             <Route path="/ActualizacionObra" component={ Actualizacion } />
-                                            <Route path="/ParalizacionObra" component={ ParalizacionObra } />
+                                            <Route path="/CompatibilidadObra" component={ Compatibilidad } />
+                                            <Route path="/ParalizacionObra" component={ Paralizacion } />
                                             <Route path="/RecursosObra" component={ RecursosObra } />
                                             
                                             <Route path="/General" component={ General } />

@@ -4,34 +4,36 @@ import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Spinner } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import classnames from 'classnames';
 
 import ReactTable from "react-table";
 import matchSorter from 'match-sorter'
 import { toast } from "react-toastify";
 
-import LogoSigobras from '../../../../../images/logoSigobras.png'
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
+import LogoSigobras from '../../../../../../images/logoSigobras.png'
+import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 
 class ParalizacionObra extends Component {
 
     constructor(){
-        super();
-    
-        this.state = {
-          DataMDiario:[],
-          activeTab:'0',
-          modal: false,
-          modalMm: false,
-    
-        }
-        this.Tabs = this.Tabs.bind(this)
-        this.ControlAcceso = this.ControlAcceso.bind(this)
-        
+      super();
+  
+      this.state = {
+        DataMDiario:[],
+        activeTab:'0',
+        modal: false,
+        modalMm: false,
+
+
+  
+      }
+      this.Tabs = this.Tabs.bind(this)
+      this.ControlAcceso = this.ControlAcceso.bind(this)
+     
     }
     componentWillMount(){
-        document.title ="OBRA PARALIZADA"
+        document.title ="Metrados Diarios"
         axios.post(`${UrlServer}/listaPartidas`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
@@ -43,7 +45,9 @@ class ParalizacionObra extends Component {
             })
         })
         .catch((error)=>{
-            console.error('algo salio mal verifique el',error);
+          toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
+          
+            // console.error('algo salio mal verifique el',error);
             
         })
     }
@@ -64,18 +68,16 @@ class ParalizacionObra extends Component {
       }
 
     }
-
-
     
     render() {
-      var { DataMDiario} = this.state
+        var { DataMDiario, debounceTimeout, descripcion, smsValidaMetrado } = this.state
+
         return (
             <div>
               
                 <Card>
-
                   <Nav tabs>
-                    {DataMDiario.length === 0 ? <Spinner color="primary" size="sm"/>: DataMDiario.map((comp,indexComp)=>
+                    {DataMDiario.length === 0 ? 'cargando': DataMDiario.map((comp,indexComp)=>
                       <NavItem key={ indexComp }>
                         <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => { this.Tabs(indexComp.toString()); }}>
                           COMP {comp.numero}
@@ -234,7 +236,6 @@ class ParalizacionObra extends Component {
                                     <div className="p-1">
                                       {/* {console.log(row)} */}
                                       <b> <MdReportProblem size={ 20 } className="text-warning" /> {row.original.descripcion }</b><MdFlashOn size={ 20 } className="text-warning" />
-                                      <button className="btn btn-outline-warning btn-xs p-0 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(row.original.id_partida, indexComp, row.index) }> <FaPlus size={10} /> MM</button>
                                       
                                       <table className="table table-bordered">
                                         <thead className="thead-dark">
@@ -249,11 +250,12 @@ class ParalizacionObra extends Component {
                                             <th>P/U </th>
                                             <th>PARCIAL</th>
                                             <th>ACTIVIDADES SALDOS</th>
+                                            <th>OPCIONES</th>
                                           </tr>
                                         </thead>
                                         <tbody>
                                           {row.original.actividades.map((actividades, indexA)=>
-                                            <tr key={ indexA }>
+                                            <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
                                               <td>{ actividades.nombre_actividad }</td>
                                               <td>{ actividades.veces_actividad }</td>
                                               <td>{ actividades.largo_actividad }</td>
@@ -306,7 +308,16 @@ class ParalizacionObra extends Component {
                                                   </div>
                                                 }
                                               </td>
-                                             
+                                              <td>
+                                                {actividades.actividad_tipo === "titulo"? "":
+                                                  
+                                                  <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
+                                                    { actividades.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> : 
+                                                      ''
+                                                    }
+                                                  </div>
+                                                  }
+                                              </td>
                                             </tr>
                                           )}
                                         </tbody>
