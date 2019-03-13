@@ -17,28 +17,30 @@ class SubirImagen extends Component {
     onFormSubmit(e){
         e.preventDefault();
         const formData = new FormData();
-        formData.append('hss',this.state.file);
-        formData.append('inputANG',this.state.inputtext);
+        formData.append('foto',this.state.file);
+        formData.append('id_acceso',11);
+        formData.append('id_actividad',12);
+        formData.append('codigo_obra', 'E002');
         
         const config = {
             headers: {
                 'content-type': 'multipart/form-data'
             }
         };
-
-        axios.post("http://192.168.0.5:9000/photos",
         
-            formData,
-            config
-            )
-            .then((res) => {
-                console.log('res  img', res)
-                alert("archivo enviado con exito ");
-            })
-            .catch((err) => {
-                console.error('ufff envia al api ❌', err);
-                
-            });
+        axios.post("http://190.117.94.80:9000/imagenesActividad",
+        
+        formData,
+        config
+        )
+        .then((res) => {
+            console.log('res  img', res)
+            alert("archivo enviado con exito ");
+        })
+        .catch((err) => {
+            console.error('ufff envia al api ❌', err);
+            
+        });
     }
 
     onChange(e) {
@@ -62,7 +64,7 @@ class SubirImagen extends Component {
                     <input type="input" name="inputANG" onChange= {this.onChange1} />
                     <button type="submit">subir</button>
                 </form> 
-
+                {  this.state.file !== null ? console.log('datos', this.state.file):''}
                 <div className="">
                     <img src={this.state.file} />
                 </div>

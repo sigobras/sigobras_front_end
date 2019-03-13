@@ -59,6 +59,8 @@ class MetradosDiarios extends Component {
         // validacion de al momento de metrar
         smsValidaMetrado:'',
         parcial:'',
+        // cargar imagenes
+        file: null,
 
 
   
@@ -68,6 +70,7 @@ class MetradosDiarios extends Component {
       this.CapturarID = this.CapturarID.bind(this)
       this.modalMetrar = this.modalMetrar.bind(this)
       this.modalMayorMetrado = this.modalMayorMetrado.bind(this)
+      this.onChangeImagen = this.onChangeImagen.bind(this)
       this.EnviarMetrado = this.EnviarMetrado.bind(this)
       this.capturaidMM = this.capturaidMM.bind(this)
       this.EnviarMayorMetrado = this.EnviarMayorMetrado.bind(this)
@@ -142,13 +145,33 @@ class MetradosDiarios extends Component {
           modalMm: !this.state.modalMm
       });
     }
+
+    onChangeImagen(e) {
+      // console.log('subir imagen', e.target.files);
+      
+      this.setState({file:e.target.files[0]});
+    }
+
     EnviarMetrado(e){
 
         e.preventDefault()
         
-        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo } = this.state
+        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo, file } = this.state
         var DataModificado = DataMDiario
         actividad_metrados_saldo = Number(actividad_metrados_saldo)
+
+        // funciones de para cargar las imagenes
+        const formData = new FormData();
+        formData.append('foto',this.state.file);
+        formData.append('id_acceso',sessionStorage.getItem('idacceso'));
+        formData.append('id_actividad',id_actividad);
+        formData.append('codigo_obra', 'estoy viendo');
+
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
 
         if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
             this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
@@ -161,7 +184,7 @@ class MetradosDiarios extends Component {
               this.setState({
                   modal: !this.state.modal
               })
-
+              // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
                   "Actividades_id_actividad":id_actividad,
                   "valor":ValorMetrado,
@@ -182,6 +205,25 @@ class MetradosDiarios extends Component {
                   toast.error('hubo errores al ingresar el metrado');
                   // console.error('algo salio mal al consultar al servidor ', error)
               })
+
+              // ENVIO DE DATOS CON IMAGEN A OTRA API
+                if(file !== null ){
+                  axios.post(`${UrlServer}/imagenesActividad`,
+          
+                  formData,
+                  config
+                  )
+                  .then((res) => {
+                      console.log('res  img', res)
+                      // alert("archivo enviado con exito ");
+                  })
+                  .catch((err) => {
+                      console.error('ufff no envia al api ❌', err);
+                      
+                  });
+                }
+                
+
             }
         }
     }
@@ -582,8 +624,8 @@ class MetradosDiarios extends Component {
                         
 
                         <div className="custom-file">
-                            <input type="file" className="custom-file-input disabled" id="customFile" name="filename" disabled/>
-                            <label className="custom-file-label" htmlFor="customFile">Choose file</label>
+                            <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } name="myImage"/>
+                            <label className="custom-file-label" htmlFor="customFile">FOTO</label>
                         </div>
 
                     </ModalBody>
