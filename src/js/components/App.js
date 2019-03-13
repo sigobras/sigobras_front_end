@@ -26,7 +26,7 @@ import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
 import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
 
 import Corte from './Pfisicos/Metrados/Diarios/Corte'
-import ActualizacionObra from './Pfisicos/Metrados/Diarios/ActualizacionObra'
+import Actualizacion from './Pfisicos/Metrados/Diarios/Actualizacion'
 import RecursosObra from './Pfisicos/Metrados/Diarios/RecursosObra'
 import ParalizacionObra  from './Pfisicos/Metrados/Diarios/ParalizacionObra'
 
@@ -304,7 +304,7 @@ class AppAng extends Component {
                                             <Route path="/MDHistorial" component={ MDHistorial } />
 
                                             <Route path="/CorteObra" component={ Corte } />
-                                            <Route path="/ActualizacionObra" component={ ActualizacionObra } />
+                                            <Route path="/ActualizacionObra" component={ Actualizacion } />
                                             <Route path="/ParalizacionObra" component={ ParalizacionObra } />
                                             <Route path="/RecursosObra" component={ RecursosObra } />
                                             

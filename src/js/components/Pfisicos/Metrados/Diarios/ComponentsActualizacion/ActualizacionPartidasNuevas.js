@@ -12,10 +12,10 @@ import matchSorter from 'match-sorter'
 import { toast } from "react-toastify";
 
 
-import { PrimerDiaDelMesActual, FechaActual } from '../../../Utils/Funciones'
+import { PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
 
-import LogoSigobras from '../../../../../images/logoSigobras.png'
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
+import LogoSigobras from '../../../../../../images/logoSigobras.png'
+import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 
 class ActualizacionObra extends Component {
 
@@ -78,8 +78,8 @@ class ActualizacionObra extends Component {
         this.EnviarMayorMetrado = this.EnviarMayorMetrado.bind(this)
     }
     componentWillMount(){
-        document.title ="Metrados Diarios"
-        axios.post(`${UrlServer}/listaPartidas`,{
+        document.title ="Metrados Diarios actualizacion"
+        axios.post(`${UrlServer}/listaPartidasNuevas`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
@@ -237,7 +237,15 @@ class ActualizacionObra extends Component {
 
             DataModificado[indexComp].partidas[viewIndex] = res.data
             this.setState({
-              DataMDiario:DataModificado
+              DataMDiario:DataModificado,
+              nombre:'',
+              veces:'',
+              largo:'',
+              ancho:'',
+              alto:'',
+              parcial:'',
+              tipo:'',
+              partidas_id_partida:'',
             })
 
             toast.success('Exito! Metrado mayor metrado registrado al sistema');
@@ -562,7 +570,7 @@ class ActualizacionObra extends Component {
                         
                         <div className="form-group"> 
                           <label htmlFor="fehca">FECHA :</label>
-                          <input type="date" min={ PrimerDiaDelMesActual() } max={ FechaActual() } onChange={e=> this.setState({fecha_actualizacion:e.target.value})} className="form-control"/>
+                          <input type="date" min={ PrimerDiaDelMesActual() } max={ FechaActual() } onChange={e=> this.setState({fecha_actualizacion:e.target.value})} className="form-control form-control-sm"/>
                           <div className="texto-rojo mb-0"> <b> { this.state.resMensaje }</b></div>                         
                         </div>
 

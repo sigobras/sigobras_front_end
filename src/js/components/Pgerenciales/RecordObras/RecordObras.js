@@ -175,6 +175,10 @@ class List extends Component{
                 setTimeout(()=>{ window.location.href = '/ParalizacionObra'},50);
             break;
 
+            case 'Compatibilidad':
+            setTimeout(()=>{ window.location.href = '/CompatibilidadObra'},50);
+            break;
+
             default: 'Ejecucion'
                 setTimeout(()=>{ window.location.href = '/MDdiario'},50);
             break;

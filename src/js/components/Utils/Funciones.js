@@ -39,9 +39,6 @@ function PrimerDiaDelMesActual(){
     }
 
     return  ano + '-'+mesAct +'-'+ primerDia
-
-
-    // return ' primer dia > ' +primerDia.getDate() + ' ultimo dia >' + ultimoDia.getDate()
 }
 
 module.exports = {
