@@ -38,7 +38,7 @@ class ResumenValorizacionObra extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            console.log('resumen ', res.data)
+            // console.log('resumen ', res.data)
             this.setState({
                 DataComponentes: res.data
             })
@@ -67,8 +67,8 @@ class ResumenValorizacionObra extends Component {
             
             var res1 = pdf.autoTableHtmlToJson(document.getElementById('tab1'));
             var res2 = pdf.autoTableHtmlToJson(document.getElementById('tab2'));
-            
             var resFirma = pdf.autoTableHtmlToJson(document.getElementById('tabFirma'));
+            
             pdf.autoTable(res1.columns, res1.data, {
                 theme: 'striped',
                 startY: pdf.autoTableEndPosY() + 22,
@@ -157,7 +157,9 @@ class ResumenValorizacionObra extends Component {
                                     <td>MES</td>
                                     <td>{ DataInfoObra.mes }</td>
                                     <td>RESIDENTE DE OBRA</td>
-                                    <td>{ DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal }</td>
+                                    <td>
+                                        SASAJDASDSAKDSKADKHL
+                                    </td>
                                     <td>PROVINCIA</td>
                                     <td>{ DataInfoObra.provincia }</td>
                                 </tr>

@@ -165,7 +165,10 @@ class ReportGeneral extends Component {
                                 <td>FECHA DE INICIO DE OBRA</td>
                                 <td></td>
                                 <td>RESIDENTE DE OBRA</td>
-                                <td>{ DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal }</td>
+                                <td>
+                                    {/* { DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal } */}
+                                    DSADHSAKDHSAKDHASK
+                                </td>
                                 <td>PROVINCIA</td>
                                 <td>{ DataInfoObra.provincia }</td>
                             </tr>

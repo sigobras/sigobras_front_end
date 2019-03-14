@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
+import Report_1 from './Reporte6/Report_1'
 import ReportGeneral from './Reporte6/ReportGeneral'
 import ResumenValorizacionObra  from './Reporte6/ResumenValorizacionObra'
 import AvCompDiagGant  from './Reporte6/AvCompDiagGant'
@@ -25,9 +26,8 @@ class ReportesGenerales extends Component {
                             <legend>6.- INFORMACIÓN DE LAS VALORIZACIONES DE LA OBRA</legend>
                             <ul className="nav flex-column ull">
                                 {/* 6.1 */}
-                                <li className="lii">
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) </a>
-                                </li>
+                                <Report_1 />        
+
 
                                 {/* 6.2 */}
                                 <ReportGeneral />
