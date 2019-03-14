@@ -465,8 +465,8 @@ class MetradosDiarios extends Component {
                                             <th>ALTO</th>
                                             <th>METRADO</th>
                                             <th>SALDO</th>
-                                            <th>P/U </th>
-                                            <th>PARCIAL</th>
+                                            <th>P / U </th>
+                                            <th>P / P</th>
                                             <th>ACTIVIDADES SALDOS</th>
                                             <th>OPCIONES</th>
                                           </tr>
@@ -481,10 +481,11 @@ class MetradosDiarios extends Component {
                                               <td>{ actividades.alto_actividad }</td>
                                               <td>{ actividades.metrado_actividad } { actividades.unidad_medida.replace("/DIA", "") }</td>
                                               <td>{ actividades.actividad_metrados_saldo }</td>
-                                              <td>{ actividades.costo_unitario }</td>
-                                              <td>{ actividades.parcial_actividad }</td>
+                                              <td>S/. { actividades.costo_unitario }</td>
+                                              <td>S/. { actividades.parcial_actividad }</td>
                                               <td>
-                                                {actividades.actividad_tipo === "titulo"?"":
+                                                {Number(actividades.parcial_actividad) <= 0 ?'':
+                                                  actividades.actividad_tipo === "titulo"?"":
                                                   <div style={{
                                                       width: '100%',
                                                       height: '100%',
@@ -525,6 +526,7 @@ class MetradosDiarios extends Component {
                                                     </div>
                                                   </div>
                                                 }
+
                                               </td>
                                               <td>
                                                 {actividades.actividad_tipo === "titulo"? "":

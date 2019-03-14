@@ -132,7 +132,7 @@ class ReportGeneral extends Component {
         return (
             <div> 
                 <li className="lii">
-                    <a href="#"  onClick={this.ValorizacionGeneral} ><FaFilePdf className="text-danger"/> CONSOLIDACION GENERAL DE VALORIZACION DE OBRA N°08 - 2018 ✔</a>
+                    <a href="#"  onClick={this.ValorizacionGeneral} ><FaFilePdf className="text-danger"/> 2.- VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE  ✔</a>
                 </li>
                 <div className="d-none">
                     <table id="tbl1revalge" className="table table-bordered table-sm small">

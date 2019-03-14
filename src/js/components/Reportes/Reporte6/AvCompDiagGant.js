@@ -105,7 +105,7 @@ class AvCompDiagGant extends Component {
       <div>
         <div>
           <li className="lii">
-              <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/> AVANCE COMPARATIVO DIAGRAMA DE GANT ✔</a>
+              <a href="#" onClick={this.printDocument} ><FaFilePdf className="text-danger"/> 9.- AVANCE COMPARATIVO DIAGRAMA DE GANT ✔</a>
           </li>
         </div>
         
