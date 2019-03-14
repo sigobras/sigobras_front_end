@@ -149,17 +149,15 @@ class ResumenValorizacionObra extends Component {
                                 </tr>
                                 <tr>
                                     <td>MONTO DE LA OBRA</td>
-                                    <td colSpan="3">{ DataInfoObra.presupuesto_general }</td>
+                                    <td colSpan="3">S/. { DataInfoObra.presupuesto_general }</td>
                                     <td>REGION</td>
                                     <td>{ DataInfoObra.region }</td>
                                 </tr>
                                 <tr>
                                     <td>MES</td>
-                                    <td>{ DataInfoObra.mes }</td>
+                                    <td>{ DataInfoObra.mes === undefined ?'':DataInfoObra.mes.toUpperCase() }</td>
                                     <td>RESIDENTE DE OBRA</td>
-                                    <td>
-                                        SASAJDASDSAKDSKADKHL
-                                    </td>
+                                    <td>{ DataInfoObra.residente }</td>
                                     <td>PROVINCIA</td>
                                     <td>{ DataInfoObra.provincia }</td>
                                 </tr>
@@ -167,15 +165,15 @@ class ResumenValorizacionObra extends Component {
                                     <td>PLAZO DE EJECUCIÓN</td>
                                     <td>{ DataInfoObra.plazo_de_ejecucion }</td>
                                     <td>SUPERVISOR DE OBRA</td>
-                                    <td>WOSS LUIS ARPASI LLANQUI</td>
+                                    <td>{ DataInfoObra.supervisor }</td>
                                     <td>DISTRITO</td>
                                     <td>{ DataInfoObra.distrito } </td>
                                 </tr>
                                 <tr>
-                                    <td>% AVANCE DE FISICO</td>
-                                    <td>%</td>
+                                    <td>AVANCE DE FISICO</td>
+                                    <td>{ DataInfoObra.porcentaje_avance_fisico } % </td>
                                     <td>AVANCE ACUMULADO</td>
-                                    <td>S/. { Redondea(DataInfoObra.avance_acumulado_valor) }</td>
+                                    <td>{ DataInfoObra.porcentaje_avance_acumuladoo } %</td>
                                     <td>LUGAR</td>
                                     <td></td>
                                 </tr>

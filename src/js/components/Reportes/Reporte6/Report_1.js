@@ -117,7 +117,7 @@ class Report_1 extends Component {
 
         pdf.autoTable(resFirma.columns, resFirma.data, {
           theme: 'plain',
-          startY: pdf.autoTableEndPosY() + 23,
+          startY: pdf.autoTableEndPosY() + 25,
           styles: {
               cellPadding: 0.8,
               overflow: 'linebreak',
@@ -151,56 +151,56 @@ class Report_1 extends Component {
         <div> 
 
           <li className="lii">
-              <a href="#"  onClick={this.ValidoHistorial} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) </a>
+              <a href="#"  onClick={this.ValidoHistorial} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) ✔</a>
           </li>
-        
-          <table id="tblheaderhistorial" className="table table-bordered">
-            <tbody>
-                <tr className="d-none">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>OBRA</td>
-                    <td colSpan="5">{ DataInfoObra.g_meta } </td>
+          <div className="d-none">
+            <table id="tblheaderhistorial" className="table table-bordered">
+              <tbody>
+                  <tr className="d-none">
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  </tr>
+                  <tr>
+                      <td>OBRA</td>
+                      <td colSpan="5">{ DataInfoObra.g_meta } </td>
 
-                </tr>
-                <tr>
-                    <td>MONTO DE LA OBRA</td>
-                    <td colSpan="3">{ DataInfoObra.presupuesto_general }</td>
-                    <td>REGION</td>
-                    <td>{ DataInfoObra.region }</td>
-                </tr>
-                <tr>
-                    <td>MES</td>
-                    <td>{ DataInfoObra.mes }</td>
-                    <td>RESIDENTE DE OBRA</td>
-                    <td>NOMBRE DE RESIDENTE .... }</td>
-                    <td>PROVINCIA</td>
-                    <td>{ DataInfoObra.provincia }</td>
-                </tr>
-                <tr>
-                    <td>PLAZO DE EJECUCIÓN</td>
-                    <td>{ DataInfoObra.plazo_de_ejecucion }</td>
-                    <td>SUPERVISOR DE OBRA</td>
-                    <td>WOSS LUIS ARPASI LLANQUI</td>
-                    <td>DISTRITO</td>
-                    <td>{ DataInfoObra.distrito } </td>
-                </tr>
-                <tr>
-                    <td>% AVANCE DE FISICO</td>
-                    <td>%</td>
-                    <td>AVANCE ACUMULADO</td>
-                    <td>S/. { Redondea(DataInfoObra.avance_acumulado_valor) }</td>
-                    <td>LUGAR</td>
-                    <td></td>
-                </tr>
-            </tbody>
-          </table>
+                  </tr>
+                  <tr>
+                      <td>MONTO DE LA OBRA</td>
+                      <td colSpan="3">S/. { DataInfoObra.presupuesto_general }</td>
+                      <td>REGION</td>
+                      <td>{ DataInfoObra.region }</td>
+                  </tr>
+                  <tr>
+                      <td>MES</td>
+                      <td>{ DataInfoObra.mes === undefined ?'':DataInfoObra.mes.toUpperCase() }</td>
+                      <td>RESIDENTE DE OBRA</td>
+                      <td>{ DataInfoObra.residente }</td>
+                      <td>PROVINCIA</td>
+                      <td>{ DataInfoObra.provincia }</td>
+                  </tr>
+                  <tr>
+                      <td>PLAZO DE EJECUCIÓN</td>
+                      <td>{ DataInfoObra.plazo_de_ejecucion }</td>
+                      <td>SUPERVISOR DE OBRA</td>
+                      <td>{ DataInfoObra.supervisor }</td>
+                      <td>DISTRITO</td>
+                      <td>{ DataInfoObra.distrito } </td>
+                  </tr>
+                  <tr>
+                      <td>AVANCE DE FISICO</td>
+                      <td>{ DataInfoObra.porcentaje_avance_fisico } % </td>
+                      <td>AVANCE ACUMULADO</td>
+                      <td>{ DataInfoObra.porcentaje_avance_acumuladoo } %</td>
+                      <td>LUGAR</td>
+                      <td></td>
+                  </tr>
+              </tbody>
+            </table>
 
             <table id="tblHistorial" className="table table-bordered table-sm small">
 
@@ -220,29 +220,27 @@ class Report_1 extends Component {
                       
                   </tr>
                   <tr>
-                      <td>N° { histComp.numero }</td>
-                      <td colSpan="7">{ histComp.nombre_componente }</td>
+                      <td>COMPONENTE N° { histComp.numero }</td>
+                      <td colSpan="7">NOMBRE DEL COMPONENTE : { histComp.nombre_componente }</td>
                       <td>S/. falta api presupuesto</td>
                   </tr>
                   <tr>
                           <td>FECHA</td>
-                          <td>Item</td>
-                          <td>Descripcion</td>
-                          <td>Nombre de la Actividad</td>
-                          <td>Act. Descrip.</td>
-                          <td>Obs</td>
+                          <td>ITEM</td>
+                          <td>DESCRIPCION</td>
+                          <td>NOMBRE DE LA ACTIVIDAD</td>
+                          <td> DESCRIP. ACT.</td>
+                          <td>OBSERVACION</td>
                           <td>A. FISICO</td>
-                          <td>S/.  Cost. Unitario</td>
-                          <td>S/. Cost. Parcial</td>
+                          <td>S/.  COST. UNITARIO</td>
+                          <td>S/. COSTO. PARCIAL</td>
                       </tr>
                   { histComp.fechas.map((fechas, IndexF)=>
-
-                  
                     
                     fechas.historial.map((Hist, IndexH)=>
                     Hist.descripcion_partida=== ""?<tr key={ IndexH } ><td colSpan="9"></td></tr>:
                       <tr key={ IndexH } >
-                          <td>{ fechas.fecha } </td>
+                          <td>{ fechas.fecha === undefined ?'':fechas.fecha.toUpperCase() } </td>
                           <td>{ Hist.item }</td>
                           <td>{ Hist.descripcion_partida }</td>
                           <td>{ Hist.nombre_actividad }</td>
@@ -277,6 +275,7 @@ class Report_1 extends Component {
                   </tr>
               </thead>
             </table>
+          </div>
         </div>
       );
   }

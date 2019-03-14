@@ -121,7 +121,8 @@ class List extends Component{
             modal: false,
             modalUsuarios: false,
             idObra:'',
-            DataCabeceraReporte:[]
+            DataCabeceraReporte:[],
+            
             
         }
         this.Setobra = this.Setobra.bind(this);
@@ -149,7 +150,7 @@ class List extends Component{
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
-            // console.info('data>',res.data)
+            console.info('data>',res.data)
             this.setState({
                 DataCabeceraReporte:res.data
             })
@@ -157,6 +158,7 @@ class List extends Component{
         .catch((err)=>{
             console.error('algo salio mal ', err);
         })
+
     }
 
     Setobra(idFicha, estado_nombre){

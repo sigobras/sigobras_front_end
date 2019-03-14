@@ -146,45 +146,37 @@ class ReportGeneral extends Component {
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>PROYECTO</td>
-                                <td colSpan="5"></td>
-                            </tr>
-                            <tr>
                                 <td>OBRA</td>
-                                <td colSpan="3">{ DataInfoObra.g_meta }</td>
-                                <td>MES</td>
-                                <td>{ DataInfoObra.mes }</td>
+                                <td colSpan="5">{ DataInfoObra.g_meta } </td>
+
                             </tr>
                             <tr>
                                 <td>MONTO DE LA OBRA</td>
-                                <td colSpan="3">{ DataInfoObra.presupuesto_general }</td>
+                                <td colSpan="3">S/. { DataInfoObra.presupuesto_general }</td>
                                 <td>REGION</td>
                                 <td>{ DataInfoObra.region }</td>
                             </tr>
                             <tr>
-                                <td>FECHA DE INICIO DE OBRA</td>
-                                <td></td>
+                                <td>MES</td>
+                                <td>{ DataInfoObra.mes === undefined ?'':DataInfoObra.mes.toUpperCase() }</td>
                                 <td>RESIDENTE DE OBRA</td>
-                                <td>
-                                    {/* { DataInfoObra.length === 0 ? '': DataInfoObra.personal[0].nombre_personal } */}
-                                    DSADHSAKDHSAKDHASK
-                                </td>
+                                <td>{ DataInfoObra.residente }</td>
                                 <td>PROVINCIA</td>
                                 <td>{ DataInfoObra.provincia }</td>
                             </tr>
                             <tr>
-                                <td>PLAZO DE EJECUCION</td>
+                                <td>PLAZO DE EJECUCIÓN</td>
                                 <td>{ DataInfoObra.plazo_de_ejecucion }</td>
                                 <td>SUPERVISOR DE OBRA</td>
-                                <td>WOSS LUIS ARPASI LLANQUI XD....</td>
+                                <td>{ DataInfoObra.supervisor }</td>
                                 <td>DISTRITO</td>
-                                <td>{ DataInfoObra.distrito }</td>
+                                <td>{ DataInfoObra.distrito } </td>
                             </tr>
                             <tr>
-                                <td>% DE AVANCE FISICO</td>
-                                <td></td>
+                                <td>AVANCE DE FISICO</td>
+                                <td>{ DataInfoObra.porcentaje_avance_fisico } % </td>
                                 <td>AVANCE ACUMULADO</td>
-                                <td>S/. { Redondea(DataInfoObra.avance_acumulado_valor) }</td>
+                                <td>{ DataInfoObra.porcentaje_avance_acumuladoo } %</td>
                                 <td>LUGAR</td>
                                 <td></td>
                             </tr>
