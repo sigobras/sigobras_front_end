@@ -1,6 +1,5 @@
 import React,{ Component } from "react";
-import RecordObras from '../Pgerenciales/RecordObras/RecordObras'
-import { Redirect} from "react-router-dom";
+import Obras from './componetsInicio/Obras'
 
 class Inicio extends Component{
     constructor() {
@@ -11,17 +10,12 @@ class Inicio extends Component{
 
     render() {
         return (
-            <div className="">
-
-                {/* {sessionStorage.getItem("idobra") === null ? <Redirect to='' /> : */}
-                    <div className="card">
-                        <div className="card-body">
-                            <div className="text-center pb-2">BIENVENIDO  AL SISTEMA DE INFORMACION GERENCIAL DE OBRAS  -  SIGOBRAS SAC</div>
-                            <RecordObras />
-                        </div>
-                    </div>
-                {/* } */}
-            </div>         
+            <div className="card">
+                <div className="card-body">
+                    <div className="text-center pb-2">BIENVENIDO  AL SISTEMA DE INFORMACION GERENCIAL DE OBRAS  -  SIGOBRAS SAC</div>
+                    <Obras />
+                </div>
+            </div>
         );
     }
     
