@@ -41,6 +41,8 @@ class Login extends Component {
           password: this.state.pass
       })
       .then((res)=> {
+        // console.log('DATA', res.data);
+        
         if(res.status === 204){
           toast.error('Usuario o contraseña incorrectos');
           this.setState({
@@ -54,12 +56,13 @@ class Login extends Component {
               sessionStorage.setItem("nombre",  res.data.nombre_usuario);
               sessionStorage.setItem("idacceso", res.data.id_acceso);
               sessionStorage.setItem("usuario", res.data.usuario);
-
-              setTimeout(()=>{ 	
+              sessionStorage.setItem("idobra", res.data.id_ficha)
+              
+              // setTimeout(()=>{ 	
                     
                 window.location.href = '/inicio'
               
-              },10);
+              // },10);
             
             }else{
               toast.error('Usuario o contraseña incorrectos');
@@ -107,7 +110,6 @@ class Login extends Component {
                         <div className="img">
                           <img src={ LogoSigobras } className="mx-auto d-block" alt="sigoobras sac" height="75"/>
                         </div>
-                        
                         <h4>Inicie sesión</h4>
                     </div>
                     <div className="modal-body">

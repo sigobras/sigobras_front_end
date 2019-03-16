@@ -150,7 +150,7 @@ class List extends Component{
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
-            console.info('data>',res.data)
+            // console.info('data>',res.data)
             this.setState({
                 DataCabeceraReporte:res.data
             })

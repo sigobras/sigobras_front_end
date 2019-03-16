@@ -18,6 +18,7 @@ class UserNav extends Component {
           sessionStorage.removeItem('idobra');
           sessionStorage.removeItem('nombre');
           sessionStorage.removeItem('estadoObra');
+          sessionStorage.removeItem('usuario');
         }else{
             
         }

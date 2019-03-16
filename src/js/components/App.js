@@ -1,7 +1,7 @@
 // libraris
 import React, { Component } from 'react';
-import { FaBars, FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaPeopleCarry, FaLinode, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
-import { MdFullscreen, MdFullscreenExit, MdDehaze, MdBusiness } from "react-icons/md";
+import {  FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
+import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
 
 import { Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
@@ -36,7 +36,6 @@ import General from '../components/Pfisicos/Valorizaciones/General'
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 
-
 // reportes 
 import ReportesGenerales from './Reportes/ReportesGenerales'
 
@@ -56,51 +55,46 @@ class AppAng extends Component {
         this.collapseRight = this.collapseRight.bind(this)
         this.irFullScreen = this.irFullScreen.bind(this)
         this.CollapseMenu = this.CollapseMenu.bind(this)
-        this.reenviaPeticion = this.reenviaPeticion.bind(this)
         
     }
 
     componentWillMount(){
         localStorage.setItem('thema', 'noche');
-                axios.post(`${UrlServer}/getDatosGenerales`,{
-                    id_ficha: sessionStorage.getItem('idobra')
-                })
-                .then((res)=>{
-                    this.setState({
-                        DataObra:res.data
-                    })
-                })
-                .catch(error=>
-                    console.log(error)
-                )
+
+        axios.post(`${UrlServer}/getDatosGenerales`,{
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        .then((res)=>{
+            this.setState({
+                DataObra:res.data
+            })
+        })
+        .catch(error=>
+            console.log(error)
+        )
            
-
-
-        // if (this.state.DataMenus.length === 0) {
-        //     setTimeout(()=>{
-                axios.post(`${UrlServer}/getMenu`,{
-                    id_ficha: sessionStorage.getItem('idobra'),
-                    id_acceso: sessionStorage.getItem('idacceso')
+        // CARGA DATOS DE MENU
+        axios.post(`${UrlServer}/getMenu`,{
+            id_ficha: sessionStorage.getItem('idobra'),
+            id_acceso: sessionStorage.getItem('idacceso')
+        })
+        .then((res)=>{
+            // console.log('data >>>',res.data)
+            if(res.data === 'null'){
+                this.setState({
+                    DataMenus:[]
                 })
-                .then((res)=>{
-                    // console.log('data >>>',res.data)
-                    if(res.data === 'null'){
-                        this.setState({
-                            DataMenus:[]
-                        })
-                    }else{
-                        this.setState({
-                            DataMenus:res.data
-                        })
-                    }
-                    
+            }else{
+                this.setState({
+                    DataMenus:res.data
                 })
-                .catch(error=>
-                    console.log(error)
-                )
-            // },500)
+            }
             
-        // }
+        })
+        .catch(error=>
+            console.log(error)
+        )
+
     }
 
     ButtonToogle(){
@@ -130,49 +124,6 @@ class AppAng extends Component {
         let event = Number(e.target.dataset.event);
         this.setState({ collapse: this.state.collapse === event ? 900 : event });
     }
-
-    reenviaPeticion(){
-        // para reenviar peticiones a menu
-        setTimeout(()=>{
-        // console.log('reenviaPeticion')
-
-            axios.post(`${UrlServer}/getMenu`,{
-                id_ficha: sessionStorage.getItem('idobra'),
-                id_acceso: sessionStorage.getItem('idacceso')
-            })
-            .then((res)=>{
-                // console.log('data >>>',res.data)
-                if(res.data === 'null'){
-                    this.setState({
-                        DataMenus:[]
-                    })
-                }else{
-                    this.setState({
-                        DataMenus:res.data
-                    })
-                }
-                
-            })
-            .catch(error=>
-                console.log(error)
-            )
-            // reenvia peticion a para los circulos
-            axios.post(`${UrlServer}/getDatosGenerales`,{
-                id_ficha: sessionStorage.getItem('idobra')
-            })
-            .then((res)=>{
-                // console.log('data', res.data)
-                this.setState({
-                    DataObra:res.data
-                })
-            })
-            .catch(error=>
-                console.log(error)
-            )
-        },3000)
-        
-    }
-
 
     render() {
         var { navbarExplandRight, isFull, DataObra, DataMenus, collapse } = this.state
@@ -220,7 +171,7 @@ class AppAng extends Component {
                                                     <NavLink to="/inicio" activeclassname="nav-link active"  onClick={ this.CollapseMenu } data-event={ 100 }> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                                 </li>
                                                 
-                                                { DataMenus.length === 0  ? <label className="text-center text-white"> {this.reenviaPeticion()} <Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, index)=>    
+                                                { DataMenus.length === 0  ? <label className="text-center text-white"> <Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, index)=>    
                                                     <li className="lii" key={ index }>
                                                         <a href="#" className="nav-link" onClick={ this.CollapseMenu } data-event={ index } activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index? <FaChevronUp />:<FaChevronRight /> }</div></a>
                                                         <Collapse isOpen={collapse === index}>
