@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 
 class Componentes extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      DataComponente:this.props.DataComponente
+    }
+  }
+
+
   render() {
     return (
       <div>
+        { console.log('componentes' , this.props.DataComponente) }
         <table className="table table-bordered table-sm bg-dark">
           <thead>
             <tr>
@@ -14,8 +23,10 @@ class Componentes extends Component {
                 <th>BARRRA PORCENTUAL</th>
             </tr>
           </thead>
-          {/* <tbody>
-            {Obras.componentes.map((ObrasComp, IndexObrasComp)=>
+          <tbody>
+            { this.props.DataComponente.length <= 0 ? <tbody><tr><td>cargando</td></tr></tbody> :  
+            
+              this.props.DataComponente.map((ObrasComp, IndexObrasComp)=>
 
               <tr key={ IndexObrasComp } >
                 <td>{ ObrasComp.numero }</td>
@@ -60,7 +71,8 @@ class Componentes extends Component {
               </tr>
 
             )}
-            <tr>
+
+            {/* <tr>
               <td colSpan="2">TOTAL </td>
               <td> S/. { Obras.g_total_presu }</td>
               <td> S/. { Obras.presu_avance }</td>
@@ -100,8 +112,9 @@ class Componentes extends Component {
                     </div> 
                     
                 </td>
-          </tr>
-        </tbody>  */}
+          </tr> */}
+
+        </tbody> 
       </table>
       </div>
     );

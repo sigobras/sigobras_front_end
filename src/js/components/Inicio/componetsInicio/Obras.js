@@ -54,7 +54,7 @@ class Obras extends Component{
             
         })
         .catch(err=>{
-            console.log('errores de conxion',err.request);
+            console.log('errores de conexion',err);
             toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
 
         });
@@ -91,22 +91,19 @@ class Obras extends Component{
                         </div>
                     </div>
                     <div className="card-body">
-                        <div className="table-resposive">
-                            <table className="table table-bordered table-sm ">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>OBRA</th>
-                                        <th>AVANCE </th>
-                                        <th className="text-center">IR</th>
-                                        <th>ESTADO</th>
-                                        <th>OPCIONES</th>
-                                    </tr>
-                                </thead>
-                                {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
-                            </table>
-
-                        </div>
+                        <table className="table table-bordered table-sm " >
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>OBRA</th>
+                                    <th>AVANCE </th>
+                                    <th className="text-center">IR</th>
+                                    <th>ESTADO</th>
+                                    <th>OPCIONES</th>
+                                </tr>
+                            </thead>
+                            {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
+                        </table>
                     </div>
                 </div>
             </div>

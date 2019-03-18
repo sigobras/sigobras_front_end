@@ -13,6 +13,9 @@ import { toast } from "react-toastify";
 // import { Progress } from 'react-sweet-progress';
 // import "react-sweet-progress/lib/style.css";
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
+import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
+
+import Componentes from './Componentes'
 // import CronogramaAvance from '../CronogramaAvance';
 // import Galeria from '../GaleriaImagenes/Galeria';
 // import CtrladminDirecta from '../../Reportes/CtrladminDirecta'
@@ -26,31 +29,16 @@ class ListaObras extends Component{
             modal: false,
             modalUsuarios: false,
             idObra:'',
-            DataCabeceraReporte:[],
-            
+            collapse: 66,
+            DataComponente:[]
             
         }
+
         this.Setobra = this.Setobra.bind(this);
         this.tabs = this.tabs.bind(this)     
-        this.ObtieneIdObra = this.ObtieneIdObra.bind(this)     
+        this.CollapseCard = this.CollapseCard.bind(this)
     }
 
-    componentWillMount(){
-        // CONSOLIDADO DE INFORME MENSUAL DE LA OBRA
-        axios.post(`${UrlServer}/informeControlEjecucionObras`,{
-            "id_ficha":sessionStorage.getItem("idobra")
-        })
-        .then((res)=>{
-            // console.info('data>',res.data)
-            this.setState({
-                DataCabeceraReporte:res.data
-            })
-        })
-        .catch((err)=>{
-            console.error('algo salio mal ', err);
-        })
-
-    }
 
     Setobra(idFicha, estado_nombre){
 
@@ -88,20 +76,40 @@ class ListaObras extends Component{
         }
     }
 
-    ObtieneIdObra(idObra){
-        this.ModalMostrarUsuarios()
-        this.setState({idObra})
+
+
+    CollapseCard(valor, id_ficha){
+        let event = valor
+    
+        this.setState({ 
+            collapse: this.state.collapse === Number(event) ? 66 : Number(event),
+            idObra: this.state.idObra === Number(id_ficha) ? -1 : Number(id_ficha) 
+        });
+
+        axios.post(`${ UrlServer }/getComponentes`,{
+            id_ficha:id_ficha
+          })
+          .then((res)=>{
+            // console.log('DataObraComp', res.data);
+            this.setState({
+              DataComponente: res.data
+            })
+          })
+          .catch((err)=>
+            console.error('error', err)
+          )
     }
 
     render(){
-        // const { DataCabeceraReporte } = this.state
+        var { collapse } = this.state
 
-        const datos = this.props.items.length < 1? <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>: this.props.items.map((Obras, IndexObras)=>{
-                
         return(
-            <tbody  key={ IndexObras }>
-
-                <tr>
+                       
+            this.props.items.length <= 0 ?
+            <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>:
+            this.props.items.map((Obras, IndexObras)=>
+            <tbody key={ IndexObras }> 
+                <tr >
                     <td>{ IndexObras +1 }</td>
                     <td>{ Obras.g_meta }</td>
                     <td style={{width: '15%'}}>
@@ -143,47 +151,35 @@ class ListaObras extends Component{
                     <td className="text-center"> 
                         <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre  )) }>{ Obras.codigo } </button> 
                     </td>
-                    <td  className="text-center"> 
+                    <td className="text-center"> 
                         <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
                     </td>
                     <td style={{width: '20%'}}  className="text-center">
-                        <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" ><FaList /></button>
+                        <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={e=> this.CollapseCard(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" ><FaClock /></button>
                         <button className="btn btn-outline-info btn-sm mr-1" title="Galeria de Imagenes" ><FaRegImages /></button>
                         <button className="btn btn-outline-primary btn-sm" title="Personal"><FaUserFriends /></button>
                     </td>
-                </tr> 
-
-                <tr>
-                    <td colSpan="6">
-                        hola aqui iran algunos datos
-                        
-                    </td>
                 </tr>
-
-                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}  style={{maxWidth: '90%'}}>
-                    <ModalHeader toggle={this.toggle}>GALERIA DE IMAGENES METRADOS</ModalHeader>
-                    <ModalBody>
-                        {/* <Galeria /> */}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="danger" onClick={this.toggle}>Cancelar</Button>
-                    </ModalFooter>
-                </Modal>  
-
-                <Modal isOpen={this.state.modalUsuarios} toggle={this.ModalMostrarUsuarios} className={this.props.className} size="lg" >
-                    <ModalHeader toggle={this.ModalMostrarUsuarios}>Usuarios</ModalHeader>
-                    <ModalBody>
-                        {/* { this.state.idObra === ''? 'no hay datos que cargar en el modal': <PersonalInfo idobraSeleccionada={ this.state.idObra }/>} */}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="danger" onClick={this.ModalMostrarUsuarios}>Cerrar</Button>
-                    </ModalFooter>
-                </Modal>
+            
+                
+                <tr>
+                
+                    <td colSpan="6">
+                        {collapse === IndexObras ?
+                            <Collapse isOpen={collapse === IndexObras}>
+                                <Componentes DataComponente = {this.state.DataComponente  } />
+                            </Collapse>
+                        :''} 
+                    </td>
+                
+                </tr>
+                   
             </tbody>
-        )})
-
-        return datos
+        )
+                
+            
+        )
         
     }
 }
