@@ -4,7 +4,7 @@ import { FaFilePdf } from "react-icons/fa";
 import html2canvas from 'html2canvas';
 import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
-import { logoSigobras, logoGRPuno } from "../imgB64"
+import { logoSigobras, logoGRPuno } from "../Complementos/ImgB64"
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import { Redondea } from '../../Utils/Funciones'
     

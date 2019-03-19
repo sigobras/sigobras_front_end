@@ -1,45 +1,37 @@
 import React, { Component } from 'react';
-import axios from 'axios'
-import { FaFilePdf } from "react-icons/fa";
-import html2canvas from 'html2canvas';
-import * as jsPDF from 'jspdf'
-import 'jspdf-autotable';
-import { logoSigobras, logoGRPuno } from "../imgB64"
-import { UrlServer } from '../../Utils/ServerUrlConfig'
-import { Redondea } from '../../Utils/Funciones'
+import axios from 'axios';
+import * as pdfmake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-    
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { FaFilePdf } from "react-icons/fa";
+
+import { encabezadoInforme } from '../Complementos/HeaderInformes'
+import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
+import { UrlServer } from '../../Utils/ServerUrlConfig'
+
 class Report_1 extends Component {
   constructor(){
-    super();
-    this.state={
-      DataInfoObra:[],
-      DataHistorial:[]
+    super()
+    this.state = {
+      DataHistorial:[],
+      ArFormat:[],
+      modal: false,
+      DataEncabezado:[]
     }
-    this.ValidoHistorial=this.ValidoHistorial.bind(this)
+
+    this.EjecutaSolicitudHistorial = this.EjecutaSolicitudHistorial.bind(this)
+    this.ModalReportes = this.ModalReportes.bind(this)
+    this.makePdf = this.makePdf.bind(this)
+    this.PruebaDatos = this.PruebaDatos.bind(this)
   }
 
-  
-  componentWillMount(){
-    axios.post(`${UrlServer}/getInformeDataGeneral`,{
+  EjecutaSolicitudHistorial(){
+    axios.post(`${UrlServer}/CuadroMetradosEjecutados`,{
       "id_ficha":sessionStorage.getItem("idobra")
     })
     .then((res)=>{
-        //  console.info('data >',res.data)
-        this.setState({
-            DataInfoObra:res.data
-        })
-    })
-    .catch((err)=>{
-        console.error('algo salio mal ', err);
-    })
-
-    // COMPONENTES 
-    axios.post(`${UrlServer}/getHistorial`,{
-      "id_ficha":sessionStorage.getItem("idobra")
-    })
-    .then((res)=>{
-        // console.log('res HISTORIAL', res.data)
+        console.log('res HISTORIAL', res.data)
         this.setState({
             DataHistorial: res.data
         })
@@ -49,233 +41,349 @@ class Report_1 extends Component {
     });
   }
 
-  ValidoHistorial() {
-    //const input = document.getElementById('img');
-    //html2canvas(input)
-      //.then((canvas) => {
-        //const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-            orientation: 'l',
-            // unit: 'mm',
-            format: 'a4',
-            hotfixes: [] 
-        })
-
-        
-
-        var res1 = pdf.autoTableHtmlToJson(document.getElementById('tblheaderhistorial'));
-        var res2 = pdf.autoTableHtmlToJson(document.getElementById('tblHistorial'));
-        var resFirma = pdf.autoTableHtmlToJson(document.getElementById('tabFirma'));
-
-        pdf.autoTable(res1.columns, res1.data, {
-            theme: 'striped',
-            startY: pdf.autoTableEndPosY() + 20,
-            styles: {
-                cellPadding: 0.9,
-                overflow: 'linebreak',
-                valign: 'middle',
-                halign: 'center',
-                lineColor: [0, 0, 0],
-                lineWidth: 0.1,
-                fontSize: 7
-              },
-
-        });
-
-
-        var header = function(data) {
-            pdf.setFontSize(18);
-            pdf.setTextColor(40);
-            pdf.setFontStyle('normal');
-            //pdf.addImage(imgData, 'JPEG', data.settings.margin.left, 20, 50, 50);
-        //    pdf.text("componente de datos", data.settings.margin.left, 20);
-          };
-
-        var options = {
-            columnStyles: { email: { columnWidth: 'wrap' } },
-            theme: "striped",
-            beforePageContent: header,
-            margin: {
-                top: 21,
-                botton:20
-            },
-            
-            startY: pdf.autoTableEndPosY() + 5,
-            styles: {
-                cellPadding: 0.8,
-                overflow: 'linebreak',
-                valign: 'middle',
-                //halign: 'center',
-                lineColor: [0, 0, 0],
-                lineWidth: 0.1,
-                fontSize: 5,
-                textColor: 30,  
-            },
-        };
-
-        pdf.autoTable(res2.columns, res2.data, options)
-
-        pdf.autoTable(resFirma.columns, resFirma.data, {
-          theme: 'plain',
-          startY: pdf.autoTableEndPosY() + 25,
-          styles: {
-              cellPadding: 0.8,
-              overflow: 'linebreak',
-              valign: 'middle',
-              halign: 'center',
-              lineColor: [0, 0, 0],
-              lineWidth: 0,
-              fontSize: 8
-            },
-
-        });
-
-        var pageCount = pdf.internal.getNumberOfPages();
-
-        for(let i = 0; i < pageCount; i++) { 
-            pdf.setPage(i); 
-            pdf.setFontSize(8);
-            pdf.setFontSize(8);
-            pdf.text("CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales)", 100, 19);
-            pdf.addImage(logoGRPuno, 'JPEG',10, 4, 100, 10)
-            pdf.addImage(logoSigobras, 'JPEG', 270, 4, 15, 11)
-            pdf.text(10, 205, pdf.internal.getCurrentPageInfo().pageNumber + "/" + pageCount);
-        }
-        window.open(pdf.output('bloburl'), '_blank');
+  ModalReportes() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
   }
 
+  PruebaDatos(){
 
+    this.EjecutaSolicitudHistorial()
+
+    var DataHist = this.state.DataHistorial
+    // console.log('DH', DataHist)
+
+    var ArFormat = []
+
+    for (let i = 0; i < DataHist.length; i++) {
+      ArFormat.push(
+        {
+          style: 'tableExample',
+          // color: '#ff0707',
+          layout: 'lightHorizontalLines',
+
+          table: {
+            widths: ['*', 230, '*', '*', '*', '*', '*', '*'],
+            body: [[
+              {
+                text: 'COMPONENTE N°: ' + DataHist[i].numero,
+                style: "tableHeader",
+                alignment: "center"
+              },
+              {
+                text: DataHist[i].nombre_componente,
+                style: "tableHeader",
+                alignment: "center",
+                colSpan: 6,
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+                text: "S/. falta api presupuesto",
+                style: "tableHeader",
+                alignment: "center"
+              }
+            ],
+              // ---------------------
+            // contenido
+        
+            [
+              {
+                text: 'ITEM',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'PARTIDA',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'ACTIVIDAD',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'DESCRIPCION',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'OBSERVACION',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'M. EJECUTADO',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'S/. C / U',
+                style: 'tableHeader',
+                alignment: 'center'
+              },
+              {
+                text: 'S/. TOTAL',
+                style: 'tableHeader',
+                alignment: 'center'
+              }
+            ]]
+          },
+          pageBreak: 'after',
+        }
+      )
+      // console.log('ArFormat', ArFormat[0].table.body)
+
+        for (let j = 0; j < DataHist[i].fechas.length; j++) {
+          // console.log(i, 'dhssss', DataHist[i].fechas[j].fecha, 'index j' , j)
+          ArFormat[i].table.body.push(
+            // .........................
+            [
+              {
+                text: "FECHA : "+ DataHist[i].fechas[j].fecha,
+                style: "tableFecha",
+                // alignment: "center",
+                colSpan: 7,
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+          
+              },
+              {
+                text: "Por fecha S/. ",
+                style: "tableFecha",
+              }
+            ]
+          )
+      // console.log('ArFormat2', ArFormat[i].table.body)
+          
+          for (let k = 0; k <  DataHist[i].fechas[j].historial.length; k++) {
+            ArFormat[i].table.body.push(
+              [
+                {
+                  text: DataHist[i].fechas[j].historial[k].item,
+                  style: 'tableBody',
+                  // alignment: 'center'
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].descripcion_partida,
+                  style: 'tableBody',
+                  // alignment: 'center'
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].nombre_actividad,
+                  style: 'tableBody',
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].descripcion_actividad,
+                  style: 'tableBody',
+                  alignment: 'center'
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].observacion,
+                  style: 'tableBody',
+                  alignment: 'center'
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].valor,
+                  style: 'tableBody',
+                  alignment: 'center'
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].costo_unitario,
+                  style: 'tableBody',
+                  alignment: 'center'
+                },
+                {
+                  text: DataHist[i].fechas[j].historial[k].parcial,
+                  style: 'tableBody',
+                  alignment: 'center'
+                }
+              ]
+            )
+          }
+        }
+    }
+
+    var ultimoElemento = ArFormat.length -1
+    delete ArFormat[ultimoElemento].pageBreak
+    // console.log(ArFormat)
+    this.setState({
+      ArFormat,
+      DataEncabezado:encabezadoInforme()
+    })
+    
+  }
+
+  makePdf(){
+    this.PruebaDatos()
+    var { ArFormat, DataEncabezado } = this.state
+
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
+    pdfmake.vfs = pdfFonts.pdfMake.vfs;
+
+    var docDefinition = {
+      header:{
+        
+        columns: [
+          {
+            image: logoGRPuno,
+            fit: [280, 280],
+            margin: [45, 12, 10, 0]
+          },
+          {
+            alignment: 'right',
+            image: logoSigobras,
+            width: 40,
+            height: 30,
+            margin: [20, 10, 10, 0]
+            
+          }
+        ]
+      },
+      
+      footer: function(currentPage, pageCount) { 
+        return {
+          columns: [
+            {
+              text: currentPage.toString() + ' de ' + pageCount,
+              margin: [45, 10, 10, 0],
+              fontSize: 9,
+            },
+            {
+              qr: 'http://sigobras.com',
+              fit: 40,
+              alignment: 'right',
+              margin: [20, 10, 10, 0]
+            }
+          ]
+          
+        }
+      },
+       
+      content: [
+        { 
+          text: 'CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales)',
+          margin: 7,
+          alignment: 'center'
+        },
+
+        DataEncabezado,
+        ArFormat
+      ],
+
+      styles: {
+        header: {
+          fontSize: 7,
+          bold: true,
+          margin: [0, 0, 0, 5]
+        },
+        subheader: {
+          fontSize: 10,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        tableExample: {
+          margin: [0, 5, 0, 10]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 7,
+          color: '#000000',
+          fillColor: '#ffcf96',
+        },
+        tableFecha: {
+          bold: true,
+          fontSize: 7,
+          color: '#000000',
+          fillColor: '#dadada',
+        },
+        tableBody: {
+          // bold: true,
+          fontSize: 6,
+          color: '#000000',
+          // fillColor: '#f6f6ff',
+        },
+        TableHeaderInforme: {
+          bold: true,
+          fontSize: 9,
+          color: '#000000',
+          // fillColor: '#ffcf96',
+        },
+        tableBodyInforme:{
+          fontSize: 9,
+          color: '#000000',
+        }
+        
+
+      },
+      defaultStyle: {
+        // alignment: 'justify'
+      },
+      pageSize: 'A4',
+      pageOrientation: 'landscape',
+
+    };
+    // pdfmake.createPdf(docDefinition)
+    var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+
+    pdfDocGenerator.getDataUrl((dataUrl) => {
+        const targetElement = document.getElementById('iframeContainer');
+        const iframe = document.createElement('iframe');
+        iframe.src = dataUrl;
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.frameBorder = 0;
+
+        targetElement.appendChild(iframe);
+    });
+  
+  }
   render() {
-    const { DataInfoObra, DataHistorial } = this.state
       return (
         <div> 
 
           <li className="lii">
-              <a href="#"  onClick={this.ValidoHistorial} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) ✔</a>
+              <a href="#"  onClick={this.makePdf} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) ✔</a>
           </li>
-          <div className="d-none">
-            <table id="tblheaderhistorial" className="table table-bordered">
-              <tbody>
-                  <tr className="d-none">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                  </tr>
-                  <tr>
-                      <td>OBRA</td>
-                      <td colSpan="5">{ DataInfoObra.g_meta } </td>
 
-                  </tr>
-                  <tr>
-                      <td>MONTO DE LA OBRA</td>
-                      <td colSpan="3">S/. { DataInfoObra.presupuesto_general }</td>
-                      <td>REGION</td>
-                      <td>{ DataInfoObra.region }</td>
-                  </tr>
-                  <tr>
-                      <td>MES</td>
-                      <td>{ DataInfoObra.mes === undefined ?'':DataInfoObra.mes.toUpperCase() }</td>
-                      <td>RESIDENTE DE OBRA</td>
-                      <td>{ DataInfoObra.residente }</td>
-                      <td>PROVINCIA</td>
-                      <td>{ DataInfoObra.provincia }</td>
-                  </tr>
-                  <tr>
-                      <td>PLAZO DE EJECUCIÓN</td>
-                      <td>{ DataInfoObra.plazo_de_ejecucion }</td>
-                      <td>SUPERVISOR DE OBRA</td>
-                      <td>{ DataInfoObra.supervisor }</td>
-                      <td>DISTRITO</td>
-                      <td>{ DataInfoObra.distrito } </td>
-                  </tr>
-                  <tr>
-                      <td>AVANCE DE FISICO</td>
-                      <td>{ DataInfoObra.porcentaje_avance_fisico } % </td>
-                      <td>AVANCE ACUMULADO</td>
-                      <td>{ DataInfoObra.porcentaje_avance_acumuladoo } %</td>
-                      <td>LUGAR</td>
-                      <td></td>
-                  </tr>
-              </tbody>
-            </table>
-
-            <table id="tblHistorial" className="table table-bordered table-sm small">
-
-              { DataHistorial.map((histComp, IndesHC)=>
-
-                <thead key={ IndesHC }>
-                  <tr className="d-none">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      
-                  </tr>
-                  <tr>
-                      <td>COMPONENTE N° { histComp.numero }</td>
-                      <td colSpan="7">NOMBRE DEL COMPONENTE : { histComp.nombre_componente }</td>
-                      <td>S/. falta api presupuesto</td>
-                  </tr>
-                  <tr>
-                          <td>FECHA</td>
-                          <td>ITEM</td>
-                          <td>DESCRIPCION</td>
-                          <td>NOMBRE DE LA ACTIVIDAD</td>
-                          <td> DESCRIP. ACT.</td>
-                          <td>OBSERVACION</td>
-                          <td>A. FISICO</td>
-                          <td>S/.  COST. UNITARIO</td>
-                          <td>S/. COSTO. PARCIAL</td>
-                      </tr>
-                  { histComp.fechas.map((fechas, IndexF)=>
-                    
-                    fechas.historial.map((Hist, IndexH)=>
-                    Hist.descripcion_partida=== ""?<tr key={ IndexH } ><td colSpan="9"></td></tr>:
-                      <tr key={ IndexH } >
-                          <td>{ fechas.fecha === undefined ?'':fechas.fecha.toUpperCase() } </td>
-                          <td>{ Hist.item }</td>
-                          <td>{ Hist.descripcion_partida }</td>
-                          <td>{ Hist.nombre_actividad }</td>
-                          <td>{ Hist.descripcion_actividad }</td>
-                          <td>{ Hist.observacion }</td>
-                          <td>{ Hist.valor }</td>
-                          <td>{ Hist.costo_unitario }</td>
-                          <td>{ Hist.parcial }</td>
-                      </tr>
-
-                    )
-                  )}
-                </thead>
-
-
-              )}
-            </table>
-            
-            <table id="tabFirma" className="table table-bordered">
-              <thead>
-                  <tr className="d-none">
-                      <td></td>
-                      <td></td>
-                  </tr>
-                  <tr>
-                      <td>__________________________________________________</td>
-                      <td>__________________________________________________</td>
-                  </tr>
-                  <tr>
-                      <td>SUPERVISOR </td>
-                      <td>RESIDENTE DE OBRA</td>
-                  </tr>
-              </thead>
-            </table>
-          </div>
+          <Modal isOpen={this.state.modal} fade={false} toggle={this.makePdf} size="xl">
+            <ModalHeader toggle={this.ModalReportes}>1.- CUADRO DE METRADOS EJECUTADOS </ModalHeader>
+            <ModalBody>
+              <div id="iframeContainer" style={{height: 'calc(100vh - 50px)'}}></div>
+            </ModalBody>
+        </Modal>
         </div>
       );
   }

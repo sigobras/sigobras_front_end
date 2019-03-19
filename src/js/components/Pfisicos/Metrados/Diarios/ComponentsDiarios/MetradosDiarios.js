@@ -77,7 +77,7 @@ class MetradosDiarios extends Component {
     }
     componentWillMount(){
         document.title ="Metrados Diarios"
-        axios.post(`${UrlServer}/listaPartidas`,{
+        axios.post(`${UrlServer}/getComponentes`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
@@ -95,11 +95,11 @@ class MetradosDiarios extends Component {
         })
     }
     Tabs(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
+      if (this.state.activeTab !== tab) {
+          this.setState({
             activeTab: tab
-            });
-        }
+          });
+      }
     }
     ControlAcceso(){
       if(sessionStorage.getItem("cargo") === 'GERENTE'){

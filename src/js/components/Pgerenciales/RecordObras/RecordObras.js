@@ -8,7 +8,7 @@ import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
 import { toast } from "react-toastify";
 
-import { logoSigobras, logoGRPuno } from '../../Reportes/imgB64'
+import { logoSigobras, logoGRPuno } from '../../Reportes/Complementos/ImgB64'
 
 
 // import { Progress } from 'react-sweet-progress';
