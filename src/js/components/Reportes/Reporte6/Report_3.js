@@ -164,135 +164,147 @@ class Report_3 extends Component {
                                 {
                                     text: 'ITEM',
                                     style: "tableHeader",
-                                    alignment: "center"
+                                    alignment: "center",
+                                    rowSpan: 3
                                 },
                                 {
                                     text: 'COMPONENTE',
                                     style: "tableHeader",
                                     alignment: "center",
+                                    rowSpan: 3
                                 },
                                 {
-                                    text: 'COMPONENTE',
+                                    text: 'MONTO PPTDO',
                                     style: "tableHeader",
                                     alignment: "center",
+                                    rowSpan: 2
                                 },
                                 {
-                                    text: 'COMPONENTE',
+                                    text: 'DICIEMBRE DEL 2018',
                                     style: "tableHeader",
                                     alignment: "center",
+                                    colSpan:5
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'SALDO',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
+                                    text: 'SALDO',
                                     style: "tableHeader",
                                     alignment: "center",
+                                    colSpan:2
+
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                }
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                               
                             ],
 
                             [
                                 {
-                                    text: 'ITEM',
-                                    style: "tableHeader",
-                                    alignment: "center"
+                                    // text: 'ITEM',
+                                    // style: "tableHeader",
+                                    // alignment: "center"
                                 },
                                 {
-                                    text: 'COMPONENTE',
+                                    // text: 'Presup. S/.',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                                {
+                                    // text: 'Presup. S/.',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                                {
+                                    text: 'ANTERIOR',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2
+                                },
+                                {
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                                {
+                                    text: 'ACTUAL',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2
+                                },
+                                {
+                                    
+                                    // text: 'ACTUAL',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                                {
+                                    text: 'ACUMULADO',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2
+                                },
+                                {
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                                {
+                                    text: 'SALDO',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
                                 {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
                                 },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                }
+                               
                             ],
                             [
                                 {
-                                    text: 'ITEM',
-                                    style: "tableHeader",
-                                    alignment: "center"
+                                    // text: 'ITEM',
+                                    // style: "tableHeader",
+                                    // alignment: "center"
                                 },
                                 {
-                                    text: 'COMPONENTE',
+                                    // text: 'COMPONENTE',
+                                    // style: "tableHeader",
+                                    // alignment: "center",
+                                },
+                                {
+                                    text: 'Presup. S/.',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
@@ -336,77 +348,68 @@ class Report_3 extends Component {
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                }
+                               
                             ],
 
                             [
                                 {
                                     text: '6565',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center"
                                 },
                                 {
                                     text: '565',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '56',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '5S9A898S9',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 }
                             ]
@@ -430,18 +433,46 @@ class Report_3 extends Component {
                                 text: 'rowSpan set to 3\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor'
                             }, 
                             
-                            'Sample value 2',
-                            'Sample value 3'
+                            {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            },
+                            {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            },
                         ],
                         [
-                            '',
-                            'Sample value 2', 
-                            'Sample value 3'
+                            {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            }, {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            }, {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            },
                         ],
                         [
-                            'Sample value 1',
-                            'Sample value 2', 
-                            'Sample value 3'
+                            {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            }, {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            }, {
+                                text: 'ITEM',
+                                style: "tableHeader",
+                                alignment: "center"
+                            },
                         ],
                         
                         
