@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Spinner } from 'reactstrap'
 
 class Componentes extends Component {
   constructor(props){
@@ -8,11 +9,9 @@ class Componentes extends Component {
     }
   }
 
-
   render() {
     return (
       <div>
-        { console.log('componentes' , this.props.DataComponente) }
         <table className="table table-bordered table-sm bg-dark">
           <thead>
             <tr>
@@ -24,7 +23,7 @@ class Componentes extends Component {
             </tr>
           </thead>
           <tbody>
-            { this.props.DataComponente.length <= 0 ? <tbody><tr><td>cargando</td></tr></tbody> :  
+            { this.props.DataComponente.length <= 0 ? <tr><td className="text-center" colSpan="5"><Spinner color="primary" size="sm" /></td></tr>:  
             
               this.props.DataComponente.map((ObrasComp, IndexObrasComp)=>
 

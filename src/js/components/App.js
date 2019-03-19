@@ -4,7 +4,7 @@ import {  FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaSuperscript, FaA
 import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
 
 import { Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
-import { BrowserRouter as Router, Route, NavLink  } from "react-router-dom";
+import { BrowserRouter as Router, Route, NavLink, Switch  } from "react-router-dom";
 import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';
 import { ToastContainer } from "react-toastify";
@@ -251,7 +251,7 @@ class AppAng extends Component {
                                             </div>
                                             )
                                         )} */}
-
+                                        <Switch>
                                             <Route path="/MDdiario" component={ MDdiario } />
                                             <Route path="/MDHistorial" component={ MDHistorial } />
 
@@ -265,7 +265,7 @@ class AppAng extends Component {
 
                                             <Route path="/RecordObras" component={RecordObras} />
                                             <Route path="/ReportesGenerales" component={ ReportesGenerales } />
-
+                                        </Switch>
                                         </div>
 
                                     </main>
