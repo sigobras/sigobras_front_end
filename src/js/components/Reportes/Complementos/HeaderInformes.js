@@ -16,7 +16,7 @@ function encabezadoInforme(){
   var TblHeader = []
     DataHeaderInforme()
     .then((res) => {
-      console.log('res',res.data)
+      // console.log('res',res.data)
       TblHeader.push(
           
             {

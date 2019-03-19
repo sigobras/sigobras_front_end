@@ -65,7 +65,8 @@ class Report_1 extends Component {
 
           table: {
             widths: ['*', 230, '*', '*', '*', '*', '*', '*'],
-            body: [[
+            body: [
+            [
               {
                 text: 'COMPONENTE N°: ' + DataHist[i].numero,
                 style: "tableHeader",
@@ -142,7 +143,8 @@ class Report_1 extends Component {
                 style: 'tableHeader',
                 alignment: 'center'
               }
-            ]]
+            ]
+          ]
           },
           pageBreak: 'after',
         }

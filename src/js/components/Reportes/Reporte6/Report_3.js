@@ -55,6 +55,8 @@ class Report_3 extends Component {
 
     ResEstructarData(){
 
+        var { DataApiResumenVal } = this.state
+
         var DataRestructurado = []
         DataRestructurado.push(
             {
@@ -63,25 +65,678 @@ class Report_3 extends Component {
                 layout: 'lightHorizontalLines',
     
                 table: {
-                    widths: ['*', '*'],
+                    widths: [20, 170, '*', '*', '*', '*', '*', '*', '*', '*', '*'],
                     body: [
                             [
                                 {
-                                    text: 'COMPONENTE N°: ',
-                                    style: "tableHeader",
-                                    alignment: "center"
-                                },
-                                {
-                                    text: 'text',
+                                    text: 'ITEM',
                                     style: "tableHeader",
                                     alignment: "center",
+                                    rowSpan: 3,
+                                    margin: [ 2, 8, 0, 0]
+
+                                },
+                                {
+                                    text: 'COMPONENTE',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    rowSpan: 3
+                                },
+                                {
+                                    text: 'MONTO PPTDO',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    rowSpan: 2
+                                },
+                                {
+                                    text: 'DICIEMBRE DEL 2018',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:6
+                                },
+                                {
+
+                                },
+                                {
+
+                                },
+                                {
+
+                                },
+                                {
+                                   
+                                },
+                                {
+
+                                },
+                                {
+                                    text: 'SALDO',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2,
+                                    rowSpan: 2
+                                },
+                                {
+
                                 }
-                            ]
+                               
+                               
+                            ],
+
+
+                            
+                            [
+                                {
+                                   
+                                },
+                                {
+                                
+                                },
+                                {
+                                
+                                },
+                                {
+                                    text: 'ANTERIOR',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2
+                                },
+                                {
+
+                                },
+                                {
+                                    text: 'ACTUAL',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2
+                                },
+                                {
+                                    
+                                },
+                                {
+                                    text: 'ACUMULADO',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                    colSpan:2
+                                },
+                                {
+
+                                },
+                                {
+                                   
+                                },
+                                {
+
+                                },
+                               
+                            ],
+
+                            
+                            [
+                                {
+                                   
+                                },
+                                {
+
+                                },
+                                {
+                                    text: 'Presup. S/.',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: 'Valorizado S/.',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: '%',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: 'Valorizado S/.',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: '%',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: 'Valorizado S/.',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: '%',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: 'Valorizado S/.',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                                {
+                                    text: '%',
+                                    style: "tableHeader",
+                                    alignment: "center",
+                                },
+                               
+                            ],
+
+
+                            
                     ]
                 }
             }
         )
-        console.log('dat>', DataRestructurado)
+        
+        
+        DataApiResumenVal.componentes.forEach((dato, index)=>{
+            DataRestructurado[0].table.body.push(
+                [
+                    {
+                        text: dato.numero,
+                        style: "tableBody",
+                        alignment: "center",
+                    },
+                    {
+                        text: dato.nombre,
+                        style: "tableBody",
+                        alignment: "left",
+                    },
+                    {
+                        text: dato.presupuesto,
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.anterior,
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.porcentaje_anterior+" %",
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.actual,
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.porcentaje_actual+" %",
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.acumulado,
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.porcentaje_acumuado+" %",
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.saldo,
+                        style: "tableBody",
+                        alignment: "right",
+                    },
+                    {
+                        text: dato.porcentaje_saldo+" %",
+                        style: "tableBody",
+                        alignment: "right",
+                        margin: [ 0, 0, 4, 0]
+
+                    },
+                ]
+            )
+        })
+
+
+        // inclimos un objeto con colspan de toda la fila
+        DataRestructurado[0].table.body.push(
+            [
+                {
+                    text: ' ',
+                    style: "TableHeaderInforme",
+                    alignment: "center",
+                    colSpan:11,
+                    margin: [ 0, 3, 0, 0]
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+            ]
+        )
+
+        // costo costosDirecto---------------------------
+        DataApiResumenVal.costosDirecto.forEach((CDirecto, j)=>{
+            DataRestructurado[0].table.body.push(
+                [
+                    {
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
+                        colSpan:2,
+                        margin: [15, 0, 0, 0]
+                    },
+                    {
+                        // text: CDirecto.nombre,
+                        // style: "tableFecha",
+                        // alignment: "left",
+                    },
+                    {
+                        text: CDirecto.presupuesto,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.anterior,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_anterior+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.actual,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_actual+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.acumulado,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_acumuado+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.saldo,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_saldo+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                        margin: [ 0, 0, 4, 0]
+                    },
+                ]
+            )
+        })
+
+        // inclimos un objeto con colspan de toda la fila
+        DataRestructurado[0].table.body.push(
+            [
+                {
+                    text: ' ',
+                    style: "TableHeaderInforme",
+                    alignment: "center",
+                    colSpan:11,
+                    margin: [ 0, 3, 0, 0]
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+            ]
+        )
+
+        // costos indirectos
+        DataApiResumenVal.costosindirectos.forEach((CDirecto, j)=>{
+            DataRestructurado[0].table.body.push(
+                [
+                    {
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
+                        colSpan:2,
+                        margin: [15, 0, 0, 0]
+                    },
+                    {
+                        // text: CDirecto.nombre,
+                        // style: "tableFecha",
+                        // alignment: "left",
+                    },
+                    {
+                        text: CDirecto.presupuesto,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.anterior,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_anterior+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.actual,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_actual+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.acumulado,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_acumuado+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.saldo,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_saldo+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                        margin: [ 0, 0, 4, 0]
+                    },
+                ]
+            )
+        })
+
+        // inclimos un objeto con colspan de toda la fila
+        DataRestructurado[0].table.body.push(
+            [
+                {
+                    text: ' ',
+                    style: "TableHeaderInforme",
+                    alignment: "center",
+                    colSpan:11,
+                    margin: [ 0, 3, 0, 0]
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+            ]
+        )
+
+        // COSTO costo Indirecto Total
+        DataApiResumenVal.costoIndirectoTotal.forEach((CDirecto, j)=>{
+            DataRestructurado[0].table.body.push(
+                [
+                    {
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
+                        colSpan:2,
+                        margin: [15, 0, 0, 0]
+                    },
+                    {
+                        // text: CDirecto.nombre,
+                        // style: "tableFecha",
+                        // alignment: "left",
+                    },
+                    {
+                        text: CDirecto.presupuesto,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.anterior,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_anterior+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.actual,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_actual+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.acumulado,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_acumuado+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.saldo,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_saldo+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                        margin: [ 0, 0, 4, 0]
+                    },
+                ]
+            )
+        })
+
+        // inclimos un objeto con colspan de toda la fila
+        DataRestructurado[0].table.body.push(
+            [
+                {
+                    text: ' ',
+                    style: "TableHeaderInforme",
+                    alignment: "center",
+                    colSpan:11,
+                    margin: [ 0, 3, 0, 0]
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+                {
+                    
+                },
+            ]
+        )
+
+        // COSTO ejecutadoTotalExpediente
+        DataApiResumenVal.ejecutadoTotalExpediente.forEach((CDirecto, j)=>{
+            DataRestructurado[0].table.body.push(
+                [
+                    {
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
+                        colSpan:2,
+                        margin: [15, 0, 0, 0]
+                    },
+                    {
+                        // text: CDirecto.nombre,
+                        // style: "tableFecha",
+                        // alignment: "left",
+                    },
+                    {
+                        text: CDirecto.presupuesto,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.anterior,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_anterior+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.actual,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_actual+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.acumulado,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_acumuado+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.saldo,
+                        style: "tableFecha",
+                        alignment: "right",
+                    },
+                    {
+                        text: CDirecto.porcentaje_saldo+" %",
+                        style: "tableFecha",
+                        alignment: "right",
+                        margin: [ 0, 0, 4, 0]
+                    },
+                ]
+            )
+        })
+
+        // console.log('dat>', DataRestructurado[0].table)
 
         this.setState({
             DataEstructurado:DataRestructurado,
@@ -151,334 +806,8 @@ class Report_3 extends Component {
             },
 
             DataEncabezado,
-
-            {
-                style: 'tableExample',
-                // color: '#ff0707',
-                layout: 'lightHorizontalLines',
-    
-                table: {
-                    // widths: ['*', '*'],
-                    body: [
-                            [
-                                {
-                                    text: 'ITEM',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    rowSpan: 3
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    rowSpan: 3
-                                },
-                                {
-                                    text: 'MONTO PPTDO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    rowSpan: 2
-                                },
-                                {
-                                    text: 'DICIEMBRE DEL 2018',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:5
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    // text: 'SALDO',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    text: 'SALDO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                               
-                            ],
-
-                            [
-                                {
-                                    // text: 'ITEM',
-                                    // style: "tableHeader",
-                                    // alignment: "center"
-                                },
-                                {
-                                    // text: 'Presup. S/.',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    // text: 'Presup. S/.',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    text: 'ANTERIOR',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    text: 'ACTUAL',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-                                },
-                                {
-                                    
-                                    // text: 'ACTUAL',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    text: 'ACUMULADO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    text: 'SALDO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                               
-                            ],
-                            [
-                                {
-                                    // text: 'ITEM',
-                                    // style: "tableHeader",
-                                    // alignment: "center"
-                                },
-                                {
-                                    // text: 'COMPONENTE',
-                                    // style: "tableHeader",
-                                    // alignment: "center",
-                                },
-                                {
-                                    text: 'Presup. S/.',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                               
-                            ],
-
-                            [
-                                {
-                                    text: '6565',
-                                    style: "tableBody",
-                                    alignment: "center"
-                                },
-                                {
-                                    text: '565',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '56',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '5S9A898S9',
-                                    style: "tableBody",
-                                    alignment: "center",
-                                }
-                            ]
-                    ]
-                }
-            },
-
-            {
-                style: '',
-                color: '#444',
-                table: {
-                    widths: [200, 'auto', 'auto'],
-                    // headerRows: 2,
-                    // keepWithHeaderRows: 1,
-                    body: [
-                       
-                       
-                        [
-                            {
-                                rowSpan: 3,
-                                text: 'rowSpan set to 3\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor'
-                            }, 
-                            
-                            {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            },
-                            {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            },
-                        ],
-                        [
-                            {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            }, {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            }, {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            },
-                        ],
-                        [
-                            {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            }, {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            }, {
-                                text: 'ITEM',
-                                style: "tableHeader",
-                                alignment: "center"
-                            },
-                        ],
-                        
-                        
-                    ]
-                }
-              }
+            DataEstructurado
+            
         ],
 
         styles: {
