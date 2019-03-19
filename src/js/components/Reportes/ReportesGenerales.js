@@ -3,7 +3,7 @@ import { Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, Moda
 import { FaFilePdf } from "react-icons/fa";
 import Report_1 from './Reporte6/Report_1'
 import ReportGeneral from './Reporte6/ReportGeneral'
-import ResumenValorizacionObra  from './Reporte6/ResumenValorizacionObra'
+import Report_3  from './Reporte6/Report_3'
 import AvCompDiagGant  from './Reporte6/AvCompDiagGant'
 
 
@@ -33,7 +33,7 @@ class ReportesGenerales extends Component {
                                 <ReportGeneral />
 
                                 {/* 6.3 */}
-                                <ResumenValorizacionObra />
+                                <Report_3 />
                                 
                                 {/* 6.4 */}
                                 <li className="lii">

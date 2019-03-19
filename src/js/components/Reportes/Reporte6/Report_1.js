@@ -383,7 +383,7 @@ class Report_1 extends Component {
             <ModalBody>
               <div id="iframeContainer" style={{height: 'calc(100vh - 50px)'}}></div>
             </ModalBody>
-        </Modal>
+          </Modal>
         </div>
       );
   }

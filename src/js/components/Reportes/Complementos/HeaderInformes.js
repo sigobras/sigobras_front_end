@@ -60,7 +60,7 @@ function encabezadoInforme(){
                       alignment: 'left',
                     },
                     {
-                      text: ': '+res.data.presupuesto_general,
+                      text: ': S/. '+res.data.presupuesto_general,
                       style: 'tableBodyInforme',
                       alignment: 'left',
                       colSpan:3
@@ -176,8 +176,8 @@ function encabezadoInforme(){
                       alignment: 'left'
                     },
                     {
-                      text: '-',
-                      style: 'TableHeaderInforme',
+                      text: ': ' +res.data.lugar,
+                      style: 'tableBodyInforme',
                       alignment: 'left'
                     }
                   ]

@@ -77,7 +77,7 @@ class MetradosDiarios extends Component {
     }
     componentWillMount(){
         document.title ="Metrados Diarios"
-        axios.post(`${UrlServer}/getComponentes`,{
+        axios.post(`${UrlServer}/getPartidasCompletas`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
@@ -185,7 +185,7 @@ class MetradosDiarios extends Component {
                   modal: !this.state.modal
               })
               // ENVIO DE DATOS NORMAL SIN IMAGEN
-              axios.post(`${UrlServer}/avanceActividad`,{
+              axios.post(`${UrlServer}/avanceActividadOld`,{
                   "Actividades_id_actividad":id_actividad,
                   "valor":ValorMetrado,
                   "descripcion":DescripcionMetrado,
@@ -251,7 +251,7 @@ class MetradosDiarios extends Component {
           modalMm: !this.state.modalMm
         })
 
-        axios.post(`${UrlServer}/postNuevaActividadMayorMetrado`,{
+        axios.post(`${UrlServer}/postActividadMayorMetradoOld`,{
           "nombre":nombre,
           "veces":veces,
           "largo":largo,
@@ -338,7 +338,7 @@ class MetradosDiarios extends Component {
                                         Header: "METRADO",
                                         id: "metrado",
                                         width: 70,
-                                        accessor: d => ( d.metrado === '0.00'? '' : d.unidad_medida === null ? '': d.metrado +' '+ d.unidad_medida.replace("/DIA", "")),
+                                        accessor: d => d.metrado,
                                         filterMethod: (filter, rows) =>
                                             matchSorter(rows, filter.value, { keys: ["metrado"] }),
                                         filterAll: true
@@ -376,7 +376,7 @@ class MetradosDiarios extends Component {
                                             >
 
                                             <div className="clearfix">
-                                              <span className="float-left text-warning">A met. {row.original.avance_metrado}{row.original.unidad_medida === null ? '': row.original.unidad_medida.replace("/DIA", "")}</span>
+                                              <span className="float-left text-warning">A met. { row.original.unidad_medida }</span>
                                               <span className="float-right text-warning">S/. {row.original.avance_costo}</span>
                                             </div>
 
@@ -479,7 +479,7 @@ class MetradosDiarios extends Component {
                                               <td>{ actividades.largo_actividad }</td>
                                               <td>{ actividades.ancho_actividad }</td>
                                               <td>{ actividades.alto_actividad }</td>
-                                              <td>{ actividades.metrado_actividad } { actividades.unidad_medida.replace("/DIA", "") }</td>
+                                              <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
                                               <td>{ actividades.actividad_metrados_saldo }</td>
                                               <td>S/. { actividades.costo_unitario }</td>
                                               <td>S/. { actividades.parcial_actividad }</td>
@@ -492,7 +492,7 @@ class MetradosDiarios extends Component {
                                                     }}
                                                     >
                                                       <div className="clearfix">
-                                                        <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida.replace("/DIA", "")}</span>
+                                                        <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
                                                         <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
                                                       </div>
 
@@ -570,7 +570,7 @@ class MetradosDiarios extends Component {
 
                         <div className="d-flex justify-content-between ">
                           <div className=""><b> {this.state.nombre_actividad} </b></div>
-                          <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida.replace("/DIA", "")}</div>
+                          <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida }</div>
                         </div>
 
                         <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
@@ -579,21 +579,21 @@ class MetradosDiarios extends Component {
                             <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                             
                             <div className="input-group-append">
-                            <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
+                            <span className="input-group-text">{this.state.unidad_medida }</span>
                             </div>
                         </div>
                         <div className="texto-rojo mb-0"> <b> { smsValidaMetrado }</b></div> 
 
                         <div className="d-flex justify-content-center text-center mt-1"> 
                           <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br/>
-                              { this.state.metrado } {this.state.unidad_medida.replace("/DIA", "")}
+                              { this.state.metrado } {this.state.unidad_medida }
                             </div>
 
-                            <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida.replace("/DIA", "")}  <br/>
+                            <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida }  <br/>
                               = S/.  {this.state.parcial} <br/>
                             </div>
                             <div className={ Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white": "bg-success p-1 mr-1 text-white"}>Saldo <br/>
-                                {this.state.actividad_metrados_saldo} {this.state.unidad_medida.replace("/DIA", "")}
+                                {this.state.actividad_metrados_saldo} {this.state.unidad_medida }
                             </div>
                           
                         </div>
