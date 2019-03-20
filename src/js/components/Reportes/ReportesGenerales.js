@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Card, CardHeader, CardBody } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
+import ReporteObras from './ReporteInicio/ReporteObras'
 import Report_1 from './Reporte6/Report_1'
-import ReportGeneral from './Reporte6/ReportGeneral'
+import Report_2 from './Reporte6/Report_2'
 import Report_3  from './Reporte6/Report_3'
 import AvCompDiagGant  from './Reporte6/AvCompDiagGant'
 
@@ -22,6 +23,14 @@ class ReportesGenerales extends Component {
                 <Card>
                     <CardHeader>REPORTES DE LA OBRA </CardHeader>
                     <CardBody>
+
+                        <fieldset className="mb-3">
+                            <legend>INFORME GENERAL DE OBRAS A MI CARGO</legend>
+                            <ul className="nav flex-column ull">
+                                <ReporteObras />
+                            </ul>
+                        </fieldset>
+
                         <fieldset>
                             <legend>6.- INFORMACIÓN DE LAS VALORIZACIONES DE LA OBRA</legend>
                             <ul className="nav flex-column ull">
@@ -30,7 +39,7 @@ class ReportesGenerales extends Component {
 
 
                                 {/* 6.2 */}
-                                <ReportGeneral />
+                                <Report_2 />
 
                                 {/* 6.3 */}
                                 <Report_3 />

@@ -33,7 +33,7 @@ class Report_3 extends Component {
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
-            console.info('data val >',res.data)
+            // console.info('data val >',res.data)
             this.setState({
                 DataApiResumenVal:res.data
             })
