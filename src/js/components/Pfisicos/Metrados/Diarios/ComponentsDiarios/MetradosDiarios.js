@@ -376,7 +376,7 @@ class MetradosDiarios extends Component {
                                             >
 
                                             <div className="clearfix">
-                                              <span className="float-left text-warning">A met. { row.original.unidad_medida }</span>
+                                              <span className="float-left text-warning">A met.{row.original.avance_metrado} { row.original.unidad_medida }</span>
                                               <span className="float-right text-warning">S/. {row.original.avance_costo}</span>
                                             </div>
 
@@ -465,8 +465,8 @@ class MetradosDiarios extends Component {
                                             <th>ALTO</th>
                                             <th>METRADO</th>
                                             <th>SALDO</th>
-                                            <th>P / U </th>
-                                            <th>P / P</th>
+                                            <th>S/. P / U </th>
+                                            <th>S/. P / P</th>
                                             <th>ACTIVIDADES SALDOS</th>
                                             <th>OPCIONES</th>
                                           </tr>
@@ -481,8 +481,8 @@ class MetradosDiarios extends Component {
                                               <td>{ actividades.alto_actividad }</td>
                                               <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
                                               <td>{ actividades.actividad_metrados_saldo }</td>
-                                              <td>S/. { actividades.costo_unitario }</td>
-                                              <td>S/. { actividades.parcial_actividad }</td>
+                                              <td> { actividades.costo_unitario }</td>
+                                              <td> { actividades.parcial_actividad }</td>
                                               <td>
                                                 {Number(actividades.parcial_actividad) <= 0 ?'':
                                                   actividades.actividad_tipo === "titulo"?"":

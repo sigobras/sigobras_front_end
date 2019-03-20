@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
-import ReporteObras from './ReporteInicio/ReporteObras'
+import CtrlEjecDirecta from './ReporteInicio/CtrlEjecDirecta'
 import Report_1 from './Reporte6/Report_1'
 import Report_2 from './Reporte6/Report_2'
 import Report_3  from './Reporte6/Report_3'
@@ -27,7 +27,7 @@ class ReportesGenerales extends Component {
                         <fieldset className="mb-3">
                             <legend>INFORME GENERAL DE OBRAS A MI CARGO</legend>
                             <ul className="nav flex-column ull">
-                                <ReporteObras />
+                                <CtrlEjecDirecta />
                             </ul>
                         </fieldset>
 
