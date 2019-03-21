@@ -47,7 +47,7 @@ class MDdiario extends Component {
               </Collapse>
           </Card>
 
-          <LibrarySigobras />
+          {/* <LibrarySigobras /> */}
         </div>
       );
     }else{
