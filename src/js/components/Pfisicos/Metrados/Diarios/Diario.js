@@ -3,6 +3,7 @@ import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import MetradosDiarios from './ComponentsDiarios/MetradosDiarios'
 import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
 
+import LibrarySigobras from './ComponentsDiarios/LibrarySigobras'
 
 class MDdiario extends Component {
   constructor(){
@@ -28,24 +29,25 @@ class MDdiario extends Component {
     if(sessionStorage.getItem("idacceso") !== null){ 
       return (
         <div className="pb-3">
+          <Card>
+              <a href="#" className="text-white"><CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'}  </CardHeader></a>
+              <Collapse isOpen={collapse === 1}>
+                <CardBody> 
+                    <MetradosDiarios />
+                </CardBody>              
+              </Collapse>
+          </Card>
 
-        <Card>
-            <a href="#" className="text-white"><CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'}  </CardHeader></a>
-            <Collapse isOpen={collapse === 1}>
-              <CardBody> 
-                  <MetradosDiarios />
-              </CardBody>              
-            </Collapse>
-        </Card>
+          <Card className="mt-2">
+            <a href="#" className="text-white"><CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader></a>
+              <Collapse isOpen={collapse === 2}>
+                  <CardBody>
+                    {collapse === 2 ? <PartidasNuevas /> : '' }
+                  </CardBody>                   
+              </Collapse>
+          </Card>
 
-        <Card className="mt-2">
-          <a href="#" className="text-white"><CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader></a>
-            <Collapse isOpen={collapse === 2}>
-                <CardBody>
-                  {collapse === 2 ? <PartidasNuevas /> : '' }
-                </CardBody>                   
-            </Collapse>
-        </Card>
+          <LibrarySigobras />
         </div>
       );
     }else{
