@@ -34,7 +34,7 @@ class CtrlEjecDirecta extends Component {
       }
       
     componentWillMount(){
-        axios.post(`${UrlServer}/resumenValorizacionPrincipal`,{
+        axios.post(`${UrlServer}/getInformeDataGeneral`,{
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
@@ -97,7 +97,7 @@ class CtrlEjecDirecta extends Component {
                         [
                             {
                                 text: 'PROYECTO EN EJECUCION',
-                                style: "tableHeader",
+                                style: "TableHeaderInforme",
                                 alignment: "center",
                                 colSpan:6
     
@@ -127,38 +127,38 @@ class CtrlEjecDirecta extends Component {
                         [
                             {
                                     text: 'ENTIDAD FINANCIERA',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
                                     margin: [ 2, 0, 0, 0]
     
                             },
                             {
                                     text: ': GOBIERNO REGIONAL DE PUNO',
-                                    style: "tableHeader",
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: 'PRESUPUESTO BASE',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
     
                             },
                             {
-                                    text: '-',
-                                    style: "tableHeader",
+                                    text: ': ',
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: 'PLAZO DE EJECUCION INICIAL',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
     
                             },
                             {
-                                    text: '-',
-                                    style: "tableHeader",
+                                    text: ': ',
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             }
@@ -168,38 +168,38 @@ class CtrlEjecDirecta extends Component {
                         [
                             {
                                     text: 'MODALIDAD DE EJECUCION',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
                                     margin: [ 2, 8, 0, 0]
     
                             },
                             {
-                                    text: '-',
-                                    style: "tableHeader",
+                                    text: ': ',
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: 'AMPLIACION PRESUPUESTO N° 1',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
     
                             },
                             {
-                                    text: '-',
-                                    style: "tableHeader",
+                                    text: ': ',
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: 'AMPLIACION DE PLAZO N° 01',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
     
                             },
                             {
-                                    text: '-',
-                                    style: "tableHeader",
+                                    text: ': ',
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             }
@@ -208,38 +208,38 @@ class CtrlEjecDirecta extends Component {
                         [
                             {
                                     text: 'FUENTE DE INFORMACION',
-                                    style: "tableHeader",
+                                    style: "TableHeaderInforme",
                                     alignment: "left",
                                     margin: [ 2, 0, 0, 0]
     
                             },
                             {
-                                    text: '',
-                                    style: "tableHeader",
+                                    text: ':',
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: '',
-                                    style: "tableHeader",
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: '',
-                                    style: "tableHeader",
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: '',
-                                    style: "tableHeader",
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             },
                             {
                                     text: '',
-                                    style: "tableHeader",
+                                    style: "tableBodyInforme",
                                     alignment: "left",
     
                             }
@@ -524,77 +524,77 @@ class CtrlEjecDirecta extends Component {
                             [
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 },
                                 {
                                     text: '-',
-                                    style: "tableHeader",
+                                    style: "tableBody",
                                     alignment: "center",
                                 }
                                 
@@ -716,7 +716,7 @@ class CtrlEjecDirecta extends Component {
                     // fillColor: '#ffcf96',
                 },
                 tableBodyInforme: {
-                    fontSize: 9,
+                    fontSize: 8,
                     color: '#000000',
                 }
                     

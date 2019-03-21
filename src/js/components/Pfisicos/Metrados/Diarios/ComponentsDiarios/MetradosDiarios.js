@@ -251,7 +251,7 @@ class MetradosDiarios extends Component {
           modalMm: !this.state.modalMm
         })
 
-        axios.post(`${UrlServer}/postActividadMayorMetradoOld`,{
+        axios.post(`${UrlServer}/postNuevaActividadMayorMetrado`,{
           "nombre":nombre,
           "veces":veces,
           "largo":largo,
