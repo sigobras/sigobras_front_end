@@ -18,7 +18,7 @@ class MetradosDiarios extends Component {
       super();
   
       this.state = {
-        DataMDiario:[],
+        DataComponentes:[],
         DataPartidas:[],
         DataActividades:[],
         activeTab:'0',
@@ -67,7 +67,8 @@ class MetradosDiarios extends Component {
         dropdownOpen: false,
         splitButtonOpen: false,
         collapse: 2599,
-        id_componente:''
+        id_componente:'',
+        indexPartida:0
 
   
       }
@@ -95,7 +96,7 @@ class MetradosDiarios extends Component {
             console.log('res>>', res.data);
             
             this.setState({
-              DataMDiario:res.data,
+              DataComponentes:res.data,
               DataPartidas:res.data[0].partidas,
               nombreComponente:res.data[0].nombre
             })
@@ -107,8 +108,11 @@ class MetradosDiarios extends Component {
             
         })
     }
+
     Tabs(tab, id_componente,  nombComp) {
-      console.log('id componente', id_componente)
+
+      console.log('id tab', tab)
+
       if (this.state.activeTab !== tab) {
           this.setState({
             activeTab: tab,
@@ -117,6 +121,7 @@ class MetradosDiarios extends Component {
             id_componente
           });
       }
+
       // get partidas -----------------------------------------------------------------
       axios.post(`${ UrlServer}/getPartidas`,{
         id_componente: id_componente
@@ -146,7 +151,10 @@ class MetradosDiarios extends Component {
     }
       
     CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial) {
-        this.modalMetrar();
+        
+      console.log('viewIndex', viewIndex)
+      
+      this.modalMetrar();
         this.setState({
             id_actividad: id_actividad,
             nombre_actividad: nombre_actividad,
@@ -189,11 +197,15 @@ class MetradosDiarios extends Component {
 
         e.preventDefault()
         
-        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataMDiario, indexComp, viewIndex, actividad_metrados_saldo, file } = this.state
-        var DataModificado = DataMDiario
+        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, viewIndex, actividad_metrados_saldo, file, indexPartida } = this.state
+        var DataModificadoPartidas = DataPartidas
+        var DataModificadoActividades = DataActividades
         actividad_metrados_saldo = Number(actividad_metrados_saldo)
 
-        // funciones de para cargar las imagenes
+        console.log('partida ',viewIndex  );
+        
+
+        // funciones  para cargar las imagenes
         const formData = new FormData();
         formData.append('foto',this.state.file);
         formData.append('id_acceso',sessionStorage.getItem('idacceso'));
@@ -217,6 +229,7 @@ class MetradosDiarios extends Component {
               this.setState({
                   modal: !this.state.modal
               })
+
               // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
                   "Actividades_id_actividad":id_actividad,
@@ -226,11 +239,13 @@ class MetradosDiarios extends Component {
                   "id_ficha":sessionStorage.getItem('idobra')
               })
               .then((res)=>{
-                  // console.log(res.data)
-                  DataModificado[indexComp].partidas[viewIndex] = res.data
+                  console.log('res metrar',  res.data)
+                  DataModificadoPartidas[indexPartida] = res.data.partida
+                  DataModificadoActividades[viewIndex] = res.data.actividades
           
                   this.setState({
-                    DataMDiario: DataModificado,
+                    DataPartidas: DataModificadoPartidas,
+                    DataActividades:DataModificadoActividades
                   })
                   toast.success('Exito! Metrado ingresado');
               })
@@ -263,7 +278,7 @@ class MetradosDiarios extends Component {
 
     capturaidMM(partidas_id_partida, indexComp, indexPartida){
       // console.log('id1', indexComp,'id2', indexPartida)
-      // console.log('data', this.state.DataMDiario);
+      // console.log('data', this.state.DataComponentes);
       
       this.modalMayorMetrado()
       this.setState({
@@ -276,8 +291,8 @@ class MetradosDiarios extends Component {
     EnviarMayorMetrado(e){
       e.preventDefault()
 
-      var { DataMDiario, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexComp, viewIndex } = this.state
-      var DataModificado = DataMDiario
+      var { DataComponentes, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexComp, viewIndex } = this.state
+      var DataModificado = DataComponentes
 
       if(confirm('¿Estas seguro de registar el mayor metrado?')){
         this.setState({
@@ -299,7 +314,7 @@ class MetradosDiarios extends Component {
 
             DataModificado[indexComp].partidas[viewIndex] = res.data
             this.setState({
-              DataMDiario:DataModificado,
+              DataComponentes:DataModificado,
               nombre:'',
               veces:'',
               largo:'',
@@ -325,6 +340,7 @@ class MetradosDiarios extends Component {
       let event = valor  
       this.setState({ 
         collapse: this.state.collapse === Number(event) ? 0 : Number(event),
+        indexPartida:valor
       });
       
 
@@ -333,7 +349,7 @@ class MetradosDiarios extends Component {
         id_partida: id_partida
       })
       .then((res)=>{
-          console.log('DataActividades>>', res.data);
+          // console.log('DataActividades>>', res.data);
           
           this.setState({
             DataActividades:res.data,
@@ -392,16 +408,16 @@ class MetradosDiarios extends Component {
 
 
     render() {
-        var { DataMDiario, DataPartidas, DataActividades, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente } = this.state
+        var { DataComponentes, DataPartidas, DataActividades, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente } = this.state
 
         return (
             <div>
               
                 <Card>
                   <Nav tabs>
-                    {DataMDiario.length === 0 ? <Spinner color="primary" size="sm"/>: DataMDiario.map((comp,indexComp)=>
+                    {DataComponentes.length === 0 ? <Spinner color="primary" size="sm"/>: DataComponentes.map((comp,indexComp)=>
                       <NavItem key={ indexComp }>
-                        <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => { this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre) }}>
+                        <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() =>  this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre) }>
                           COMP {comp.numero}
                         </NavLink>
                       </NavItem>
@@ -444,14 +460,14 @@ class MetradosDiarios extends Component {
                             </tr>
                           </thead>
 
-                          { DataPartidas.length <= 0?  <tr><td colSpan="6" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
+                          { DataPartidas.length <= 0?  <tbody><tr><td colSpan="6" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
                             DataPartidas.map((metrados, i) =>
                               <tbody key={ i } >
                           
                                 <tr className={ collapse === i? "resplandPartida": ""  }>
                                   <td className= { collapse === i? "tdData1": "tdData"}  onClick={()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
                                   <td>{ metrados.descripcion }</td>
-                                  <td>{ metrados.metrado }{ metrados.unidad_medida} </td>
+                                  <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                   <td>{ metrados.costo_unitario }</td>
                                   <td>{ metrados.avance_costo }</td>
                                   <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
