@@ -216,6 +216,26 @@ legend {
 }
 
 
+/* tbody cambiar  */
+
+.table tbody+tbody {
+  border-top: 1px solid #1d2029;
+}
+.table td, .table th {
+  padding: 0.4rem;
+  vertical-align: top;
+  border-top: 1px solid #1d2029;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

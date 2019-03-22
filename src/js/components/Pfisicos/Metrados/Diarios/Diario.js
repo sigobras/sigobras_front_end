@@ -10,7 +10,7 @@ class MDdiario extends Component {
     super();
 
     this.state = {
-      collapse: 0,
+      collapse: 1,
 
     }
 
@@ -21,7 +21,7 @@ class MDdiario extends Component {
   CollapseCard(valor){
     let event = valor
     
-    this.setState({ collapse: this.state.collapse === Number(event) ? 0 : Number(event) });
+    this.setState({ collapse: this.state.collapse === Number(event) ? 1 : Number(event) });
   }
 
   render() {

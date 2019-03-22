@@ -216,3 +216,33 @@ body {
 .bg-mm {
   background-color: #ecc30636!important;
 }
+
+.tdData{
+  border-left: #000;
+}
+.tdData1{
+  background-color:#0080ff;
+  /* border-radius: 0px 20px 0px 0px; */
+
+}
+
+.tdData:hover{
+  cursor: pointer;
+  /* border-bottom: 0.2rem solid #0080ff; */
+  /* transition: all 500ms; */
+  /* transform: scale(1.05); */
+  background-color:#0080ff;
+  /* border-radius: 0px 20px 0px 0px; */
+
+}
+.resplandPartida{
+  border-bottom: 2px solid #0080ff;
+}
+
+.resplandPartidabottom{
+  border-bottom: 2px solid #ffd000;
+}
+/* pone posicion fixed a los header de la tabla */
+
+
+/* fin pone posicion fixed a los header de la tabla */
