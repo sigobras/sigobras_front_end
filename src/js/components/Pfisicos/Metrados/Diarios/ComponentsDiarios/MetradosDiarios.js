@@ -125,7 +125,7 @@ class MetradosDiarios extends Component {
         id_componente: id_componente
       })
       .then((res)=>{
-          // console.log('getPartidas>>', res.data);
+          console.log('getPartidas>>', res.data);
           
           this.setState({
             DataPartidas:res.data,
@@ -285,15 +285,17 @@ class MetradosDiarios extends Component {
     EnviarMayorMetrado(e){
       e.preventDefault()
 
-      var { DataComponentes, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexComp, viewIndex } = this.state
-      var DataModificado = DataComponentes
+      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexComp, viewIndex, indexPartida } = this.state
+
+      var DataModificadoPartidas = DataPartidas
+      var DataModificadoActividades = DataActividades
 
       if(confirm('¿Estas seguro de registar el mayor metrado?')){
         this.setState({
           modalMm: !this.state.modalMm
         })
 
-        axios.post(`${UrlServer}/postActividadMayorMetrado`,{
+        axios.post(`${UrlServer}/postNuevaActividadMayorMetrado`,{
           "nombre":nombre,
           "veces":veces,
           "largo":largo,
@@ -304,11 +306,14 @@ class MetradosDiarios extends Component {
           "partidas_id_partida":partidas_id_partida
         })
         .then((res)=>{
-            // console.log(res.data)
+            console.log(res)
 
-            DataModificado[indexComp].partidas[viewIndex] = res.data
+            DataModificadoPartidas[indexPartida] = res.data.partida
+            DataModificadoActividades = res.data.actividades
+
             this.setState({
-              DataComponentes:DataModificado,
+              DataPartidas: DataModificadoPartidas,
+              DataActividades:DataModificadoActividades,
               nombre:'',
               veces:'',
               largo:'',
@@ -488,7 +493,7 @@ class MetradosDiarios extends Component {
                                           background: metrados.porcentaje > 95 ? '#a4fb01'
                                             : metrados.porcentaje > 50 ? '#ffbf00'
                                             :  '#ff2e00',
-                                          transition: 'all 2s linear 0s',
+                                            transition: 'all .9s ease-in',
                                           position: 'absolute'
                                         }}
                                       />
@@ -638,7 +643,7 @@ class MetradosDiarios extends Component {
                                                     <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
                                                       { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
                                                         <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial)} >
-                                                          <FaPlus size={ 20} /> 
+                                                          <FaPlus size={ 20 } /> 
                                                         </button>
                                                       }
                                                     </div>
