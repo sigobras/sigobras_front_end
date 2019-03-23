@@ -21,6 +21,7 @@ class MetradosDiarios extends Component {
         DataComponentes:[],
         DataPartidas:[],
         DataActividades:[],
+        DataMayorMetrado:[],
         activeTab:'0',
         modal: false,
         modalMm: false,
@@ -65,7 +66,6 @@ class MetradosDiarios extends Component {
         
         // funciones de nueva libreria
         dropdownOpen: false,
-        splitButtonOpen: false,
         collapse: 2599,
         id_componente:'',
         indexPartida:0
@@ -84,7 +84,6 @@ class MetradosDiarios extends Component {
 
       this.Filtrador = this.Filtrador.bind(this)
       this.toggleDropDown = this.toggleDropDown.bind(this);
-      this.toggleSplit = this.toggleSplit.bind(this);
       this.CollapseItem = this.CollapseItem.bind(this);
     }
     componentWillMount(){
@@ -93,7 +92,7 @@ class MetradosDiarios extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            console.log('res>>', res.data);
+            // console.log('res>>', res.data);
             
             this.setState({
               DataComponentes:res.data,
@@ -111,7 +110,6 @@ class MetradosDiarios extends Component {
 
     Tabs(tab, id_componente,  nombComp) {
 
-      console.log('id tab', tab)
 
       if (this.state.activeTab !== tab) {
           this.setState({
@@ -151,9 +149,7 @@ class MetradosDiarios extends Component {
     }
       
     CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial) {
-        
-      console.log('viewIndex', viewIndex)
-      
+              
       this.modalMetrar();
         this.setState({
             id_actividad: id_actividad,
@@ -197,12 +193,10 @@ class MetradosDiarios extends Component {
 
         e.preventDefault()
         
-        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, viewIndex, actividad_metrados_saldo, file, indexPartida } = this.state
+        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida } = this.state
         var DataModificadoPartidas = DataPartidas
         var DataModificadoActividades = DataActividades
         actividad_metrados_saldo = Number(actividad_metrados_saldo)
-
-        console.log('partida ',viewIndex  );
         
 
         // funciones  para cargar las imagenes
@@ -239,9 +233,9 @@ class MetradosDiarios extends Component {
                   "id_ficha":sessionStorage.getItem('idobra')
               })
               .then((res)=>{
-                  console.log('res metrar',  res.data)
+                  // console.log('return dattos', res.data.actividades)
                   DataModificadoPartidas[indexPartida] = res.data.partida
-                  DataModificadoActividades[viewIndex] = res.data.actividades
+                  DataModificadoActividades = res.data.actividades
           
                   this.setState({
                     DataPartidas: DataModificadoPartidas,
@@ -339,7 +333,7 @@ class MetradosDiarios extends Component {
     CollapseItem(valor, id_partida){
       let event = valor  
       this.setState({ 
-        collapse: this.state.collapse === Number(event) ? 0 : Number(event),
+        collapse: this.state.collapse === Number(event) ? -1 : Number(event),
         indexPartida:valor
       });
       
@@ -352,7 +346,8 @@ class MetradosDiarios extends Component {
           // console.log('DataActividades>>', res.data);
           
           this.setState({
-            DataActividades:res.data,
+            DataActividades:res.data.actividades,
+            DataMayorMetrado:res.data.mayor_metrado
           })
       })
       .catch((error)=>{
@@ -365,32 +360,31 @@ class MetradosDiarios extends Component {
   
     Filtrador() {
       var input, filter, table, tr, td, i, txtValue;
+
       input = document.getElementById("InputMetradosDiarios");
+
       filter = input.value.toUpperCase();
   
       table = document.getElementById("TblMetradosDiarios");
       tr = table.getElementsByTagName("tr");
   
-      console.log('tr', tr)
-  
-  
       for (i = 0; i < tr.length; i++) {
   
         td = tr[i].getElementsByTagName("td")[1];
-  
-        console.log('td', td)
-  
+
         if (td) {
           txtValue = td.textContent || td.innerText;
           if (txtValue.toUpperCase().indexOf(filter) > -1) {
             tr[i].style.display = "";
+            tr[i+1].style.display = "";
+            i++
+
           } else {
-            tr[i].style.display = "none";
+            tr[i].style.display = "none";            
           }
         }       
       }
     }
-  
   
     toggleDropDown() {
       this.setState({
@@ -398,17 +392,10 @@ class MetradosDiarios extends Component {
       });
     }
   
-    toggleSplit() {
-      this.setState({
-        splitButtonOpen: !this.state.splitButtonOpen
-      });
-    }
+
   
-
-
-
     render() {
-        var { DataComponentes, DataPartidas, DataActividades, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente } = this.state
+        var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente } = this.state
 
         return (
             <div>
@@ -424,7 +411,7 @@ class MetradosDiarios extends Component {
                     )}
                   </Nav>
             
-                  <Card  className="p-1">
+                  <Card className="m-1">
                     <CardHeader>
                       <b>{ nombreComponente }</b>
                         <div className="float-right">
@@ -448,7 +435,7 @@ class MetradosDiarios extends Component {
                     </CardHeader>
                     <CardBody>    
                     
-                        <table id="TblMetradosDiarios" className=" table table-sm">
+                        <table id="TblMetradosDiarios" className="table table-sm">
                           <thead>
                             <tr>
                               <th>ITEM</th>
@@ -465,6 +452,7 @@ class MetradosDiarios extends Component {
                               <tbody key={ i } >
                           
                                 <tr className={ collapse === i? "resplandPartida": ""  }>
+                                
                                   <td className= { collapse === i? "tdData1": "tdData"}  onClick={()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
                                   <td>{ metrados.descripcion }</td>
                                   <td>{ metrados.metrado } { metrados.unidad_medida} </td>
@@ -481,7 +469,7 @@ class MetradosDiarios extends Component {
                                       >
 
                                       <div className="clearfix">
-                                        <span className="float-left text-warning">A met.{metrados.avance_metrado} { metrados.unidad_medida }</span>
+                                        <span className="float-left text-warning">A. met. {metrados.avance_metrado} { metrados.unidad_medida }</span>
                                         <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
                                       </div>
 
@@ -489,7 +477,6 @@ class MetradosDiarios extends Component {
                                         height: '3px',
                                         width: '100%',
                                         background: '#c3bbbb',
-                                        borderRadius: '2px',
                                         position: 'relative'
                                         }}
 
@@ -501,12 +488,8 @@ class MetradosDiarios extends Component {
                                           background: metrados.porcentaje > 95 ? '#a4fb01'
                                             : metrados.porcentaje > 50 ? '#ffbf00'
                                             :  '#ff2e00',
-                                          borderRadius: '2px',
                                           transition: 'all 2s linear 0s',
-                                          position: 'absolute',
-                                          boxShadow: `0 0 6px 1px ${metrados.porcentaje > 95 ? '#a4fb01'
-                                            : metrados.porcentaje > 50 ? '#ffbf00'
-                                            :  '#ff2e00'}`
+                                          position: 'absolute'
                                         }}
                                       />
                                       {/* {console.log('sasa>>',row.row.porcentaje)} */}
@@ -516,21 +499,73 @@ class MetradosDiarios extends Component {
                                         <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
                                       </div>
                                     </div>       
-
+                                    
                                   </td>
                                 </tr>
                             
-                                <tr className={ collapse === i? "resplandPartidabottom": " d-none"  }>
+                                <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
                                   <td colSpan="6">
                                     <Collapse isOpen={collapse === i}>
                                       <div className="p-1">
-                                        <b> <MdReportProblem size={ 20 } className="text-warning" /> 
-                                          {metrados.descripcion }
-                                        </b>
-                                        <MdFlashOn size={ 20 } className="text-warning" />
-                                        <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
+                                          <div className="row">
+                                          
+                                            <div className="col-sm-7">
+                                                <b> <MdReportProblem size={ 20 } className="text-warning" /> 
+                                                  {metrados.descripcion }
+                                                </b>
+                                              <MdFlashOn size={ 20 } className="text-warning" />
+
+                                            </div>
+                                            <div className="col-sm-2">
+                                              MAYOR METRADO
+                                            </div>
+                                            
+                                            <div className="col-sm-2">
+                                              {/* datos de mayor metrado ------------------ */}
+                                              <div className="small">
+
+                                                <div className="clearfix">
+                                                  <span className="float-left text-warning">A. met. 1829 M2</span>
+                                                  <span className="float-right text-warning">S/. 99.22</span>
+                                                </div>
+
+                                                <div style={{
+                                                  height: '3px',
+                                                  width: '100%',
+                                                  background: '#c3bbbb',
+                                                  position: 'relative'
+                                                  }}
+
+                                                >
+                                                <div
+                                                  style={{
+                                                    width: `${100}%`,
+                                                    height: '100%',
+                                                    background: 100 > 95 ? '#00e6ff'
+                                                      : 100 > 50 ? '#ffbf00'
+                                                      :  '#ff2e00',
+                                                    transition: 'all 2s linear 0s',
+                                                    position: 'absolute'
+                                                  }}
+                                                />
+                                                {/* {console.log('sasa>>',row.row.porcentaje)} */}
+                                                </div>
+                                                <div className="clearfix">
+                                                  <span className="float-left text-info">Saldo: 199 M2</span>
+                                                  <span className="float-right text-info">S/. 2222</span>
+                                                </div>
+                                              </div> 
+
+                                            </div>
+
+                                            <div className="col-sm-1">
+                                              <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
+                                            </div>
+                                          </div>
                                         
-                                        <table className="table table-bordered">
+
+                                        
+                                        <table className="table table-bordered table-sm">
                                           <thead className="thead-dark">
                                             <tr>
                                               <th>NOMBRE DE ACTIVIDAD</th>
@@ -539,7 +574,6 @@ class MetradosDiarios extends Component {
                                               <th>ANCHO</th>
                                               <th>ALTO</th>
                                               <th>METRADO</th>
-                                              <th>SALDO</th>
                                               <th>S/. P / U </th>
                                               <th>S/. P / P</th>
                                               <th>ACTIVIDADES SALDOS</th>
@@ -556,7 +590,6 @@ class MetradosDiarios extends Component {
                                                 <td>{ actividades.ancho_actividad }</td>
                                                 <td>{ actividades.alto_actividad }</td>
                                                 <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
-                                                <td>{ actividades.actividad_metrados_saldo }</td>
                                                 <td> { actividades.costo_unitario }</td>
                                                 <td> { actividades.parcial_actividad }</td>
                                                 <td className="small">
@@ -575,7 +608,6 @@ class MetradosDiarios extends Component {
                                                         <div style={{
                                                           height: '2px',
                                                           backgroundColor: '#c3bbbb',
-                                                          borderRadius: '2px',
                                                           position: 'relative'
                                                           }}
 
@@ -587,12 +619,8 @@ class MetradosDiarios extends Component {
                                                             backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
                                                               : actividades.actividad_porcentaje > 50 ? '#ffbf00'
                                                               :  '#ff2e00',
-                                                            borderRadius: '2px',
                                                             transition: 'all .9s ease-in',
-                                                            position: 'absolute',
-                                                            boxShadow: `0 0 6px 1px ${actividades.actividad_porcentaje > 95 ? '#A4FB01'
-                                                            : actividades.actividad_porcentaje > 50 ? '#ffbf00'
-                                                            :  '#ff2e00'}`
+                                                            position: 'absolute'
                                                           }}
                                                       />
                                                       </div>
@@ -604,13 +632,13 @@ class MetradosDiarios extends Component {
                                                   }
 
                                                 </td>
-                                                <td>
+                                                <td className="text-center">
                                                   {actividades.actividad_tipo === "titulo"? "":
                                                     
                                                     <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                                      { actividades.actividad_metrados_saldo === '0.00' ? <FaCheck className="text-success" size={ 18 } /> : 
+                                                      { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
                                                         <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial)} >
-                                                          <FaPlus /> 
+                                                          <FaPlus size={ 20} /> 
                                                         </button>
                                                       }
                                                     </div>
@@ -628,19 +656,7 @@ class MetradosDiarios extends Component {
                               </tbody>
                             ) 
                           }   
-                        </table>
-
-
-
-
-
-
-
-
-
-
-
-                        
+                        </table>  
                     </CardBody>
                   </Card>
               

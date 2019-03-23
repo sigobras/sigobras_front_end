@@ -214,7 +214,7 @@ body {
 /* color de tabla actividades */
 
 .bg-mm {
-  background-color: #ecc30636!important;
+  background-color: #475563b3;
 }
 
 .tdData{
@@ -222,25 +222,27 @@ body {
 }
 .tdData1{
   background-color:#0080ff;
-  /* border-radius: 0px 20px 0px 0px; */
-
 }
 
 .tdData:hover{
   cursor: pointer;
-  /* border-bottom: 0.2rem solid #0080ff; */
-  /* transition: all 500ms; */
-  /* transform: scale(1.05); */
   background-color:#0080ff;
-  /* border-radius: 0px 20px 0px 0px; */
-
 }
+
+.tdData1:hover{
+  cursor: pointer;
+  background-color:#0080ff;
+}
+
+
 .resplandPartida{
   border-bottom: 2px solid #0080ff;
+  background: #314c65
 }
 
+
 .resplandPartidabottom{
-  border-bottom: 2px solid #ffd000;
+  border: 2px solid #0080ff;
 }
 /* pone posicion fixed a los header de la tabla */
 
