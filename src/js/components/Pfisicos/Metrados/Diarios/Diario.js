@@ -3,7 +3,6 @@ import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import MetradosDiarios from './ComponentsDiarios/MetradosDiarios'
 import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
 
-import LibrarySigobras from './ComponentsDiarios/LibrarySigobras'
 
 class MDdiario extends Component {
   constructor(){
@@ -47,7 +46,6 @@ class MDdiario extends Component {
               </Collapse>
           </Card>
 
-          {/* <LibrarySigobras /> */}
         </div>
       );
     }else{

@@ -48,7 +48,7 @@ class NotificacionNav extends Component {
                         
 
                         <div className={ this.state.clik === true ? '' : 'd-none' }>
-                            <img src="http://media.biobiochile.cl/wp-content/uploads/2014/03/tumblr_mec3vbcdFV1r8dy8go1_500.gif"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
+                            <img src="https://source.unsplash.com/random"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
                         </div>
                     </PopoverBody>
                 </Popover>

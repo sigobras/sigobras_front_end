@@ -220,19 +220,19 @@ body {
 .tdData{
   border-left: #000;
 }
-.tdData1{
-  background-color:#0080ff;
-}
-
 .tdData:hover{
   cursor: pointer;
   background-color:#0080ff;
 }
 
+.tdData1{
+  background-color:#0080ff;
+}
 .tdData1:hover{
   cursor: pointer;
   background-color:#0080ff;
 }
+
 
 
 .resplandPartida{

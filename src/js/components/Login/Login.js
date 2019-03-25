@@ -8,6 +8,7 @@ import LogoSigobras from '../../../images/sigobras-neon.jpg'
 import '../../../css/login.css'
 
 import SubirImagen from './SubirImagen'
+import PracticaImg from './PracticaImg'
 
 class Login extends Component {
   constructor(){
@@ -104,6 +105,7 @@ class Login extends Component {
                 pauseOnHover
               />
               {/* <SubirImagen /> */}
+              {/* <PracticaImg /> */}
               <div className="container-dialog modal-login">
                   <div className="modal-content">
                     <div className="modal-headers">

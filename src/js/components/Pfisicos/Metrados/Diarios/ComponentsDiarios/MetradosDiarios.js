@@ -125,7 +125,7 @@ class MetradosDiarios extends Component {
         id_componente: id_componente
       })
       .then((res)=>{
-          console.log('getPartidas>>', res.data);
+          // console.log('getPartidas>>', res.data);
           
           this.setState({
             DataPartidas:res.data,
@@ -306,7 +306,7 @@ class MetradosDiarios extends Component {
           "partidas_id_partida":partidas_id_partida
         })
         .then((res)=>{
-            console.log(res)
+            // console.log(res)
 
             DataModificadoPartidas[indexPartida] = res.data.partida
             DataModificadoActividades = res.data.actividades
@@ -336,31 +336,36 @@ class MetradosDiarios extends Component {
     // mas funciones para metrados
 
     CollapseItem(valor, id_partida){
-      let event = valor  
-      this.setState({ 
-        collapse: this.state.collapse === Number(event) ? -1 : Number(event),
-        indexPartida:valor
-      });
-      
+      if(valor !== -1 && id_partida !== -1){
+        let event = valor  
+        this.setState({ 
+          collapse: this.state.collapse === Number(event) ? -1 : Number(event),
+          indexPartida:valor,
+          DataActividades:[],
+          DataMayorMetrado:[]
+        });
+        
 
-       // getActividades -----------------------------------------------------------------
-       axios.post(`${ UrlServer}/getActividades`,{
-        id_partida: id_partida
-      })
-      .then((res)=>{
-          // console.log('DataActividades>>', res.data);
-          
-          this.setState({
-            DataActividades:res.data.actividades,
-            DataMayorMetrado:res.data.mayor_metrado
+        // getActividades -----------------------------------------------------------------
+        if(event !== this.state.collapse){
+          axios.post(`${ UrlServer}/getActividades`,{
+            id_partida: id_partida
           })
-      })
-      .catch((error)=>{
-        toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
-          // console.error('algo salio mal verifique el',error);
-      })
-
-
+          .then((res)=>{
+              // console.log('DataActividades>>', res.data.mayor_metrado);
+              
+              this.setState({
+                DataActividades:res.data.actividades,
+                DataMayorMetrado:res.data.mayor_metrado
+              })
+          })
+          .catch((error)=>{
+            toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
+              // console.error('algo salio mal verifique el',error);
+          })
+        }
+          
+      }
     }
   
     Filtrador() {
@@ -456,9 +461,9 @@ class MetradosDiarios extends Component {
                             DataPartidas.map((metrados, i) =>
                               <tbody key={ i } >
                           
-                                <tr className={ collapse === i? "resplandPartida": ""  }>
+                                <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":"font-weight-light" }>
                                 
-                                  <td className= { collapse === i? "tdData1": "tdData"}  onClick={()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
+                                  <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
                                   <td>{ metrados.descripcion }</td>
                                   <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                   <td>{ metrados.costo_unitario }</td>
@@ -497,7 +502,6 @@ class MetradosDiarios extends Component {
                                           position: 'absolute'
                                         }}
                                       />
-                                      {/* {console.log('sasa>>',row.row.porcentaje)} */}
                                       </div>
                                       <div className="clearfix">
                                         <span className="float-left text-info">Saldo: {metrados.metrados_saldo}</span>
@@ -515,56 +519,64 @@ class MetradosDiarios extends Component {
                                           <div className="row">
                                           
                                             <div className="col-sm-7">
-                                                <b> <MdReportProblem size={ 20 } className="text-warning" /> 
-                                                  {metrados.descripcion }
-                                                </b>
+                                              <MdReportProblem size={ 20 } className="text-warning" />
+                                              <b className="small">  
+                                                {metrados.descripcion }
+                                              </b>
                                               <MdFlashOn size={ 20 } className="text-warning" />
 
                                             </div>
                                             <div className="col-sm-2">
-                                              MAYOR METRADO
+                                              { 
+                                                Number(DataMayorMetrado.mm_avance_costo) <= 0?'': 'MAYOR METRADO'
+                                              }
                                             </div>
                                             
                                             <div className="col-sm-2">
                                               {/* datos de mayor metrado ------------------ */}
-                                              <div className="small">
+                                              
+                                              { 
+                                                Number(DataMayorMetrado.mm_avance_costo) <= 0?'':
+                                                  <div className="small">
+                                                
+                                                    <div className="clearfix">
+                                                      <span className="float-left text-warning">A. met. { DataMayorMetrado.mm_avance_costo } { metrados.unidad_medida }</span>
+                                                      <span className="float-right text-warning">S/. { DataMayorMetrado.mm_avance_metrado}</span>
+                                                    </div>
 
-                                                <div className="clearfix">
-                                                  <span className="float-left text-warning">A. met. 1829 M2</span>
-                                                  <span className="float-right text-warning">S/. 99.22</span>
-                                                </div>
+                                                    <div style={{
+                                                      height: '3px',
+                                                      width: '100%',
+                                                      background: '#c3bbbb',
+                                                      position: 'relative'
+                                                      }}
 
-                                                <div style={{
-                                                  height: '3px',
-                                                  width: '100%',
-                                                  background: '#c3bbbb',
-                                                  position: 'relative'
-                                                  }}
-
-                                                >
-                                                <div
-                                                  style={{
-                                                    width: `${100}%`,
-                                                    height: '100%',
-                                                    background: 100 > 95 ? '#00e6ff'
-                                                      : 100 > 50 ? '#ffbf00'
-                                                      :  '#ff2e00',
-                                                    transition: 'all 2s linear 0s',
-                                                    position: 'absolute'
-                                                  }}
-                                                />
-                                                {/* {console.log('sasa>>',row.row.porcentaje)} */}
-                                                </div>
-                                                <div className="clearfix">
-                                                  <span className="float-left text-info">Saldo: 199 M2</span>
-                                                  <span className="float-right text-info">S/. 2222</span>
-                                                </div>
-                                              </div> 
+                                                    >
+                                                    <div
+                                                      style={{
+                                                        width: `${DataMayorMetrado.mm_porcentaje}%`,
+                                                        height: '100%',
+                                                        background: DataMayorMetrado.mm_porcentaje > 95 ? '#00e6ff'
+                                                          : DataMayorMetrado.mm_porcentaje > 50 ? '#ffbf00'
+                                                          :  '#ff2e00',
+                                                        transition: 'all 2s linear 0s',
+                                                        position: 'absolute'
+                                                      }}
+                                                    />
+                                                    {/* {console.log('sasa>>',row.row.porcentaje)} */}
+                                                    </div>
+                                                    <div className="clearfix">
+                                                      <span className="float-left text-info">Saldo:  { DataMayorMetrado.mm_metrados_saldo } { metrados.unidad_medida }</span>
+                                                      <span className="float-right text-info">S/. { DataMayorMetrado.mm_metrados_costo_saldo}</span>
+                                                    </div>
+                                                  </div>   
+                                              }
+                                              
 
                                             </div>
 
                                             <div className="col-sm-1">
-                                              <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ e=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
+                                              <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ ()=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
                                             </div>
                                           </div>
                                         
@@ -600,11 +612,7 @@ class MetradosDiarios extends Component {
                                                 <td className="small">
                                                   {Number(actividades.parcial_actividad) <= 0 ?'':
                                                     actividades.actividad_tipo === "titulo"?"":
-                                                    <div style={{
-                                                        width: '100%',
-                                                        height: '100%',
-                                                      }}
-                                                      >
+                                                    <div>
                                                         <div className="clearfix">
                                                           <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
                                                           <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
