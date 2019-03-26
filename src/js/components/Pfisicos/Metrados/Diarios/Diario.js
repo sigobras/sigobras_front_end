@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { MdAdd,MdRemove } from "react-icons/md";
 import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import MetradosDiarios from './ComponentsDiarios/MetradosDiarios'
 import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
@@ -20,7 +21,7 @@ class MDdiario extends Component {
   CollapseCard(valor){
     let event = valor
     
-    this.setState({ collapse: this.state.collapse === Number(event) ? 1 : Number(event) });
+    this.setState({ collapse: this.state.collapse === Number(event) ? 121 : Number(event) });
   }
 
   render() {
@@ -29,8 +30,14 @@ class MDdiario extends Component {
       return (
         <div className="pb-3">
           <Card>
-              <a href="#" className="text-white"><CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 1. METRADOS DIARIOS {collapse === 1?'➖':'➕'}  </CardHeader></a>
-              <Collapse isOpen={collapse === 1}>
+              <a href="#" className="text-white">
+                <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > METRADOS DIARIOS
+                  <div className="float-right">
+                      {collapse === 1 ?<MdRemove size={20} />:<MdAdd size={20} />}  
+                  </div> 
+                </CardHeader>
+              </a>
+              <Collapse isOpen={ collapse === 1 }>
                 <CardBody> 
                     <MetradosDiarios />
                 </CardBody>              
@@ -38,8 +45,13 @@ class MDdiario extends Component {
           </Card>
 
           <Card className="mt-2">
-            <a href="#" className="text-white"><CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader></a>
-              <Collapse isOpen={collapse === 2}>
+            <a href="#" className="text-white">
+            <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} > PARTIDAS NUEVAS
+              <div className="float-right"> 
+                {collapse === 2 ?<MdRemove size={20} />:<MdAdd size={20} />}
+              </div>
+            </CardHeader></a>
+              <Collapse isOpen={ collapse === 2 }>
                   <CardBody>
                     {collapse === 2 ? <PartidasNuevas /> : '' }
                   </CardBody>                   

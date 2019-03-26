@@ -248,3 +248,15 @@ body {
 
 
 /* fin pone posicion fixed a los header de la tabla */
+
+iframe{
+  border:none;
+}
+iframe::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+iframe::-webkit-scrollbar-thumb {
+  background-color:#2d78b9;;
+  outline: 2px solid rgb(255, 0, 0);
+}

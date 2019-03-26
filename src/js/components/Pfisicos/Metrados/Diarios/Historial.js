@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, Collapse } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Spinner, Collapse } from 'reactstrap';
 import classnames from 'classnames';
-import ReactTable from "react-table";
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
 import Cubito from '../../../../../images/loaderXS.gif';
@@ -15,7 +14,8 @@ class MDHistorial extends Component {
         this.state = {
           DataHistorial:[],
           activeTab: '0',
-          collapseDate:0
+          collapseDate:0,
+          SMSDataHistorialApi:false
         };
         this.Tabs = this.Tabs.bind(this)
         this.collapseFechas = this.collapseFechas.bind(this)
@@ -28,12 +28,11 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            console.log(res.data)
-            var DataError = [];
-            if(res.data.code){
-                this.setState({
-                    DataHistorial: DataError
-                })
+            // console.log(res.data)
+            if(res.data === "vacio"){
+               this.setState({
+                SMSDataHistorialApi:true
+               })
             }else{
             // console.log('sasa',res.data);
                 this.setState({
@@ -59,11 +58,11 @@ class MDHistorial extends Component {
         this.setState({ collapseDate: this.state.collapseDate === Number(event) ? 0 : Number(event) });
     }
     render() {
-        const { collapseDate } = this.state
+        const { DataHistorial, SMSDataHistorialApi, collapseDate } = this.state
         return ( 
             
             <div>   
-                {this.state.DataHistorial === '' ? <div className="text-center centraImagen" >  <img src={ Cubito } className="centraImagen" width="30"  alt="logo sigobras" /> <br/>No hay datos</div>:
+                {SMSDataHistorialApi === true ? <div className="text-center text-danger" > No hay datos en el historial</div>: DataHistorial.length <= 0?  <Spinner color="primary" size="sm" />:
                 <Card>
 
                     <Nav tabs>
@@ -80,12 +79,15 @@ class MDHistorial extends Component {
                         {this.state.DataHistorial.map((comp, i)=>
                             <TabPane tabId={i.toString()} className="p-1" key={i}>
                                 <Card >
-                                    <CardHeader>{comp.nombre_componente }</CardHeader>
+                                    <CardHeader>
+                                        {comp.nombre_componente }
+                                        <label className="float-right">S/.{ comp.componente_total_soles } { " " }- { comp.componente_total_porcentaje }%</label>
+                                    </CardHeader>
                                     <CardBody>
                                         
                                         {comp.fechas.map((fecha, indexfecha)=>
                                             <fieldset key={ indexfecha } className="mt-2">
-                                                <legend onClick={this.collapseFechas} data-event={indexfecha} ><b>Fechas: </b>{ fecha.fecha}</legend>
+                                                <legend onClick={this.collapseFechas} data-event={indexfecha} > - <b>FECHA: </b>{ fecha.fecha}  - <b> S/.</b> { fecha.fecha_total_soles }  <b> { fecha.fecha_total_porcentaje} %</b></legend>
                                                 <Collapse isOpen={collapseDate === indexfecha}>   
                                                     <table className="table table-bordered table-sm small">
                                                         <thead>

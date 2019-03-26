@@ -4,7 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
-import { Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
@@ -31,7 +31,7 @@ class MetradosDiarios extends Component {
         DescripcionMetrado:'',
         ObservacionMetrado:'',
         IdMetradoActividad:'',
-        debounceTimeout: 300,
+        debounceTimeout: 500,
   
         // datos para capturar en el modal
         id_actividad:'',
@@ -54,7 +54,7 @@ class MetradosDiarios extends Component {
         largo:'',
         ancho:'',
         alto:'',
-        parcial:'',
+        parcialMM:0,
         tipo:'',
         partidas_id_partida:'',
 
@@ -68,10 +68,10 @@ class MetradosDiarios extends Component {
         dropdownOpen: false,
         collapse: 2599,
         id_componente:'',
-        indexPartida:0
-
-  
+        indexPartida:0,
+        OpcionMostrarMM:''
       }
+
       this.Tabs = this.Tabs.bind(this)
       this.ControlAcceso = this.ControlAcceso.bind(this)
       this.CapturarID = this.CapturarID.bind(this)
@@ -204,7 +204,7 @@ class MetradosDiarios extends Component {
         formData.append('foto',this.state.file);
         formData.append('id_acceso',sessionStorage.getItem('idacceso'));
         formData.append('id_actividad',id_actividad);
-        formData.append('codigo_obra', 'estoy viendo');
+        formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
 
         const config = {
             headers: {
@@ -271,21 +271,19 @@ class MetradosDiarios extends Component {
     }
 
     capturaidMM(partidas_id_partida, indexComp, indexPartida){
-      // console.log('id1', indexComp,'id2', indexPartida)
-      // console.log('data', this.state.DataComponentes);
-      
-      this.modalMayorMetrado()
       this.setState({
+        modalMm: !this.state.modalMm,
         partidas_id_partida: partidas_id_partida,
         indexComp:indexComp,
-        viewIndex:indexPartida
+        viewIndex:indexPartida,
+        OpcionMostrarMM:''
       })
     }
 
     EnviarMayorMetrado(e){
       e.preventDefault()
 
-      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexComp, viewIndex, indexPartida } = this.state
+      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexPartida } = this.state
 
       var DataModificadoPartidas = DataPartidas
       var DataModificadoActividades = DataActividades
@@ -334,7 +332,6 @@ class MetradosDiarios extends Component {
     }
 
     // mas funciones para metrados
-
     CollapseItem(valor, id_partida){
       if(valor !== -1 && id_partida !== -1){
         let event = valor  
@@ -405,7 +402,7 @@ class MetradosDiarios extends Component {
 
   
     render() {
-        var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente } = this.state
+        var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM } = this.state
 
         return (
             <div>
@@ -424,24 +421,24 @@ class MetradosDiarios extends Component {
                   <Card className="m-1">
                     <CardHeader>
                       <b>{ nombreComponente }</b>
-                        <div className="float-right">
-                          {/* <input type="text" id="InputMetradosDiarios" onKeyUp={ this.Filtrador } placeholder="Buscar Partida"  className="form-control form-control-sm"/> */}
-                          <InputGroup >
-                            <Input placeholder="Buscar partida" bsSize="sm" id="InputMetradosDiarios" onKeyUp={ this.Filtrador }/>
-                            <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown} >
-                              <DropdownToggle caret >
-                                % Avance
-                              </DropdownToggle>
-                              <DropdownMenu>
-                                <DropdownItem >Todo</DropdownItem>
-                                <DropdownItem >0%</DropdownItem>
-                                <DropdownItem>100%</DropdownItem>
-                                <DropdownItem>Progreso</DropdownItem>
-                              </DropdownMenu>
-                            </InputGroupButtonDropdown>
-                          </InputGroup>
+                      <div className="float-right">
+                        {/* <input type="text" id="InputMetradosDiarios" onKeyUp={ this.Filtrador } placeholder="Buscar Partida"  className="form-control form-control-sm"/> */}
+                        <InputGroup >
+                          <Input placeholder="Buscar partida" bsSize="sm" id="InputMetradosDiarios" onKeyUp={ this.Filtrador }/>
+                          <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown} >
+                            <DropdownToggle caret >
+                              % Avance
+                            </DropdownToggle>
+                            <DropdownMenu>
+                              <DropdownItem >Todo</DropdownItem>
+                              <DropdownItem >0%</DropdownItem>
+                              <DropdownItem>100%</DropdownItem>
+                              <DropdownItem>Progreso</DropdownItem>
+                            </DropdownMenu>
+                          </InputGroupButtonDropdown>
+                        </InputGroup>
 
-                        </div>
+                      </div>
                     </CardHeader>
                     <CardBody>    
                     
@@ -461,7 +458,7 @@ class MetradosDiarios extends Component {
                             DataPartidas.map((metrados, i) =>
                               <tbody key={ i } >
                           
-                                <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":"font-weight-light" }>
+                                <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
                                 
                                   <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
                                   <td>{ metrados.descripcion }</td>
@@ -470,10 +467,7 @@ class MetradosDiarios extends Component {
                                   <td>{ metrados.avance_costo }</td>
                                   <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
 
-                                    <div style={{
-                                        width: '100%',
-                                        height: '100%',
-                                      }}
+                                    <div
                                       // className={(metrados.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}
                                       className={(metrados.tipo === "titulo" ? 'd-none' :'')}
                                       >
@@ -680,7 +674,7 @@ class MetradosDiarios extends Component {
 
                 {/* <!-- MODAL PARA METRAR --> */}
                   
-                <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false}>
+                <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
                     <form onSubmit={this.EnviarMetrado }>
                     <ModalHeader toggle={this.modalMetrar} className="border-button">
                         <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
@@ -762,63 +756,75 @@ class MetradosDiarios extends Component {
 
                 {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
                   
-                <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} size="sm" fade={false}>
-                    <form onSubmit={this.EnviarMayorMetrado }>
+                <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} size="sm" fade={false} backdrop="static">
+                  <form onSubmit={this.EnviarMayorMetrado }>
                     <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
-                        <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+                      <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
                     </ModalHeader>
                     <ModalBody>
-                        
-                        <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({nombre: e.target.value})}  type="text" className="form-control"/>  
-                        </div>
-                        {/* <label htmlFor="comment">OPCIONES :</label>
-                        <div class="form-check-inline">
-                          <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="optradio" />titulo 
-                          </label>
-                        </div>
-                        <div class="form-check-inline">
-                          <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="optradio" />actividad 
-                          </label>
-                        </div>
-                        <br/> */}
-                        <label htmlFor="comment">N° VECES:</label>
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})}  type="text" className="form-control"/>  
-                        </div>
 
-                        <label htmlFor="comment">LARGO:</label>
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})}  type="text" className="form-control"/>  
-                        </div>
 
-                        <label htmlFor="comment">ANCHO:</label>
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})}  type="text" className="form-control"/>  
+                        <div className="clearfix">
+                          <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="Actividad" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                          <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="Titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
                         </div>
+                          
+                        {OpcionMostrarMM.length <= 0? "":
+                          <div>
+                            {
+                              OpcionMostrarMM === "Titulo"?
+                              <div>
+                                <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
+                                <div className="input-group input-group-sm mb-0">
+                                    <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({nombre: e.target.value})}  type="text" className="form-control"/>  
+                                </div>
+                              </div>
+                              :<div>
+                                <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
+                                <div className="input-group input-group-sm mb-0">
+                                    <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({nombre: e.target.value})}  type="text" className="form-control"/>  
+                                </div>
+                              </div>
+                            }
+                              
+                            <div className={OpcionMostrarMM === "Titulo"? "d-none":''}>
+                              <label htmlFor="comment">N° VECES:</label>
+                              <div className="input-group input-group-sm mb-0">
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})} type="text" className="form-control"/>  
+                              </div>
 
-                        <label htmlFor="comment">ALTO:</label>
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})}  type="text" className="form-control"/>  
-                        </div>
-                        
-                        <label htmlFor="comment">METRADO:</label>
-                        {/* ESTE ES EL METRADO = parcial */}
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({parcial: e.target.value})}  type="text" className="form-control"/>  
-                        </div>
-                        
-                        
+                              <label htmlFor="comment">LARGO:</label>
+                              <div className="input-group input-group-sm mb-0">
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})}  type="text" className="form-control"/>  
+                              </div>
+
+                              <label htmlFor="comment">ANCHO:</label>
+                              <div className="input-group input-group-sm mb-0">
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})}  type="text" className="form-control"/>  
+                              </div>
+
+                              <label htmlFor="comment">ALTO:</label>
+                              <div className="input-group input-group-sm mb-0">
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})}  type="text" className="form-control"/>  
+                              </div>
+                              
+                              <label htmlFor="comment">METRADO:</label>
+                              {/* ESTE ES EL METRADO = parcial */}
+                              <div className="input-group input-group-sm mb-0">
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({parcialMM: e.target.value})} placeholder={Number(this.state.veces) * Number(this.state.largo) * Number(this.state.ancho) * Number(this.state.alto)}  type="text" className="form-control"/>  
+                              </div>
+                            </div>
+                          </div>
+                        }
+                          
+                          
 
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                       <div className="float-left"><Button color="primary" type="submit">Guardar mayor metrado</Button>{' '}</div>
                       <div className="float-right"><Button color="danger" onClick={this.modalMayorMetrado}>Cancelar</Button></div>
                     </ModalFooter>
-                    </form>
+                  </form>
                 </Modal>
                 {/* ///<!-- MODAL PARA modalMM --> */}  
             </div>

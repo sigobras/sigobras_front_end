@@ -19,7 +19,8 @@ class Report_2 extends Component {
       DataValGeneralAPI:[],
       ValPresupuesto:[],
       modal: false,
-      DataEncabezado:[]
+      DataEncabezado:[],
+      UrlPdf:''
     }
 
     this.ModalReportes = this.ModalReportes.bind(this)
@@ -620,14 +621,9 @@ class Report_2 extends Component {
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
 
     pdfDocGenerator.getDataUrl((dataUrl) => {
-        const targetElement = document.getElementById('iframeContainer');
-        const iframe = document.createElement('iframe');
-        iframe.src = dataUrl;
-        iframe.style.width = "100%";
-        iframe.style.height = "100%";
-        iframe.frameBorder = 0;
-
-        targetElement.appendChild(iframe);
+      this.setState({
+        UrlPdf:dataUrl
+      })
     });
   
   }
@@ -661,7 +657,11 @@ class Report_2 extends Component {
                 </Col>
               </Row>
               
-            <div id="iframeContainer" style={{height: 'calc(100vh - 50px)'}}></div>
+            {/* <div id="iframeContainer" style={{height: 'calc(100vh - 50px)'}}></div> */}
+
+            <iframe src={ this.state.UrlPdf} style={{height: 'calc(100vh - 50px)', width:"100%"}}>
+              <p>Your browser does not support iframes.</p>
+            </iframe>
           </ModalBody>
         </Modal>
       </div>

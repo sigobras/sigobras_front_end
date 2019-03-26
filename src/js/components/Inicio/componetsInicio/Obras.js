@@ -48,6 +48,7 @@ class Obras extends Component{
             if( sessionStorage.getItem("idobra") === null){
                 sessionStorage.setItem("idobra", res.data[0].id_ficha);
                 sessionStorage.setItem("estadoObra", res.data[0].estado_nombre);
+                sessionStorage.setItem("codigoObra", res.data[0].codigo);
             //    console.log('no seteado');  
 
             }
