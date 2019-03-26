@@ -248,10 +248,9 @@ class ActualizacionPartidasNuevas extends Component {
                     DataPartidas: DataModificadoPartidas,
                     DataActividades:DataModificadoActividades,
                     
-                    "Actividades_id_actividad":"",
-                    "valor":"",
-                    "descripcion":"",
-                    "observacion":"",
+                    ValorMetrado:"",
+                    DescripcionMetrado:"",
+                    ObservacionMetrado:"",
                   })
                   toast.success('Exito! Metrado ingresado');
               })
@@ -273,6 +272,9 @@ class ActualizacionPartidasNuevas extends Component {
                   .then((res) => {
                       console.log('res  img', res)
                       // alert("archivo enviado con exito ");
+                      this.setState({
+                        file:null
+                      })
                   })
                   .catch((err) => {
                       console.error('ufff no envia al api ❌', err);

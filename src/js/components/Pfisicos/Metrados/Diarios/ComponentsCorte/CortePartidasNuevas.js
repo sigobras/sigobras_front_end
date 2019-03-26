@@ -247,10 +247,9 @@ class CortePartidasNuevas extends Component {
                     DataPartidas: DataModificadoPartidas,
                     DataActividades:DataModificadoActividades,
                     
-                    "Actividades_id_actividad":"",
-                    "valor":"",
-                    "descripcion":"",
-                    "observacion":""
+                    ValorMetrado:"",
+                    DescripcionMetrado:"",
+                    ObservacionMetrado:"",
                   })
                   toast.success('Exito! Metrado ingresado');
               })

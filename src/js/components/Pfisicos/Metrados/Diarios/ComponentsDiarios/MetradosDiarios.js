@@ -241,10 +241,9 @@ class MetradosDiarios extends Component {
                     DataPartidas: DataModificadoPartidas,
                     DataActividades:DataModificadoActividades,
                     
-                    "Actividades_id_actividad":"",
-                    "valor":"",
-                    "descripcion":"",
-                    "observacion":"",
+                   ValorMetrado:"",
+                   DescripcionMetrado:"",
+                   ObservacionMetrado:"",
 
                   })
                   toast.success('Exito! Metrado ingresado');
@@ -450,233 +449,236 @@ class MetradosDiarios extends Component {
                       </div>
                     </CardHeader>
                     <CardBody>    
-                    
-                        <table id="TblMetradosDiarios" className="table table-sm">
-                          <thead>
-                            <tr>
-                              <th>ITEM</th>
-                              <th>DESCRIPCION</th>
-                              <th>METRADO</th>
-                              <th>P / U S/.</th>
-                              <th>P / P S/.</th>
-                              <th width="15%">BARRA DE AVANCE</th>
-                            </tr>
-                          </thead>
+                  
+                      <table id="TblMetradosDiarios" className="table table-sm">
+                        <thead>
+                          <tr>
+                            <th>ITEM</th>
+                            <th>DESCRIPCION</th>
+                            <th>METRADO</th>
+                            <th>P / U S/.</th>
+                            <th>P / P S/.</th>
+                            <th width="15%">BARRA DE AVANCE</th>
+                          </tr>
+                        </thead>
 
-                          { DataPartidas.length <= 0?  <tbody><tr><td colSpan="6" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
-                            DataPartidas.map((metrados, i) =>
-                              <tbody key={ i } >
-                          
-                                <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
-                                
-                                  <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
-                                  <td>{ metrados.descripcion }</td>
-                                  <td>{ metrados.metrado } { metrados.unidad_medida} </td>
-                                  <td>{ metrados.costo_unitario }</td>
-                                  <td>{ metrados.avance_costo }</td>
-                                  <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
+                        { DataPartidas.length <= 0?  <tbody><tr><td colSpan="6" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
+                          DataPartidas.map((metrados, i) =>
+                            <tbody key={ i } >
+                        
+                              <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
+                              
+                                <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
+                                <td>{ metrados.descripcion }</td>
+                                <td>{ metrados.metrado } { metrados.unidad_medida} </td>
+                                <td>{ metrados.costo_unitario }</td>
+                                <td>{ metrados.avance_costo }</td>
+                                <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
 
+                                  <div
+                                    // className={(metrados.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}
+                                    className={(metrados.tipo === "titulo" ? 'd-none' :'')}
+                                    >
+
+                                    <div className="clearfix">
+                                      <span className="float-left text-warning">A. met. {metrados.avance_metrado} { metrados.unidad_medida }</span>
+                                      <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
+                                    </div>
+
+                                    <div style={{
+                                      height: '3px',
+                                      width: '100%',
+                                      background: '#c3bbbb',
+                                      position: 'relative'
+                                      }}
+
+                                    >
                                     <div
-                                      // className={(metrados.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}
-                                      className={(metrados.tipo === "titulo" ? 'd-none' :'')}
-                                      >
+                                      style={{
+                                        width: `${metrados.porcentaje}%`,
+                                        height: '100%',
+                                        background: metrados.porcentaje > 95 ? '#a4fb01'
+                                          : metrados.porcentaje > 50 ? '#ffbf00'
+                                          :  '#ff2e00',
+                                          transition: 'all .9s ease-in',
+                                        position: 'absolute'
+                                      }}
+                                    />
+                                    </div>
+                                    <div className="clearfix">
+                                      <span className="float-left text-info">Saldo: {metrados.metrados_saldo}</span>
+                                      <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
+                                    </div>
+                                  </div>       
+                                  
+                                </td>
+                              </tr>
+                          
+                              <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
+                                <td colSpan="6">
+                                  <Collapse isOpen={collapse === i}>
+                                    <div className="p-1">
+                                        <div className="row">
+                                        
+                                          <div className="col-sm-7">
+                                            <MdReportProblem size={ 20 } className="text-warning" />
+                                            <b className="small">  
+                                              {metrados.descripcion }
+                                            </b>
+                                            <MdFlashOn size={ 20 } className="text-warning" />
 
-                                      <div className="clearfix">
-                                        <span className="float-left text-warning">A. met. {metrados.avance_metrado} { metrados.unidad_medida }</span>
-                                        <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
-                                      </div>
-
-                                      <div style={{
-                                        height: '3px',
-                                        width: '100%',
-                                        background: '#c3bbbb',
-                                        position: 'relative'
-                                        }}
-
-                                      >
-                                      <div
-                                        style={{
-                                          width: `${metrados.porcentaje}%`,
-                                          height: '100%',
-                                          background: metrados.porcentaje > 95 ? '#a4fb01'
-                                            : metrados.porcentaje > 50 ? '#ffbf00'
-                                            :  '#ff2e00',
-                                            transition: 'all .9s ease-in',
-                                          position: 'absolute'
-                                        }}
-                                      />
-                                      </div>
-                                      <div className="clearfix">
-                                        <span className="float-left text-info">Saldo: {metrados.metrados_saldo}</span>
-                                        <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
-                                      </div>
-                                    </div>       
-                                    
-                                  </td>
-                                </tr>
-                            
-                                <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
-                                  <td colSpan="6">
-                                    <Collapse isOpen={collapse === i}>
-                                      <div className="p-1">
-                                          <div className="row">
-                                          
-                                            <div className="col-sm-7">
-                                              <MdReportProblem size={ 20 } className="text-warning" />
-                                              <b className="small">  
-                                                {metrados.descripcion }
-                                              </b>
-                                              <MdFlashOn size={ 20 } className="text-warning" />
-
-                                            </div>
-                                            <div className="col-sm-2">
-                                              { 
-                                                Number(DataMayorMetrado.mm_avance_costo) <= 0?'': 'MAYOR METRADO'
-                                              }
-                                            </div>
-                                            
-                                            <div className="col-sm-2">
-                                              {/* datos de mayor metrado ------------------ */}
-                                              
-                                              { 
-                                                Number(DataMayorMetrado.mm_avance_costo) <= 0?'':
-                                                  <div className="small">
-                                                
-                                                    <div className="clearfix">
-                                                      <span className="float-left text-warning">A. met. { DataMayorMetrado.mm_avance_costo } { metrados.unidad_medida }</span>
-                                                      <span className="float-right text-warning">S/. { DataMayorMetrado.mm_avance_metrado}</span>
-                                                    </div>
-
-                                                    <div style={{
-                                                      height: '3px',
-                                                      width: '100%',
-                                                      background: '#c3bbbb',
-                                                      position: 'relative'
-                                                      }}
-
-                                                    >
-                                                    <div
-                                                      style={{
-                                                        width: `${DataMayorMetrado.mm_porcentaje}%`,
-                                                        height: '100%',
-                                                        background: DataMayorMetrado.mm_porcentaje > 95 ? '#00e6ff'
-                                                          : DataMayorMetrado.mm_porcentaje > 50 ? '#ffbf00'
-                                                          :  '#ff2e00',
-                                                        transition: 'all 2s linear 0s',
-                                                        position: 'absolute'
-                                                      }}
-                                                    />
-                                                    {/* {console.log('sasa>>',row.row.porcentaje)} */}
-                                                    </div>
-                                                    <div className="clearfix">
-                                                      <span className="float-left text-info">Saldo:  { DataMayorMetrado.mm_metrados_saldo } { metrados.unidad_medida }</span>
-                                                      <span className="float-right text-info">S/. { DataMayorMetrado.mm_metrados_costo_saldo}</span>
-                                                    </div>
-                                                  </div>   
-                                              }
-                                              
-
-                                            </div>
-
-                                            <div className="col-sm-1">
-                                              <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ ()=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
-                                            </div>
                                           </div>
-                                        
-
-                                        
-                                        <table className="table table-bordered table-sm">
-                                          <thead className="thead-dark">
-                                            <tr>
-                                              <th>NOMBRE DE ACTIVIDAD</th>
-                                              <th>N° VECES</th>
-                                              <th>LARGO</th>
-                                              <th>ANCHO</th>
-                                              <th>ALTO</th>
-                                              <th>METRADO</th>
-                                              <th>S/. P / U </th>
-                                              <th>S/. P / P</th>
-                                              <th>ACTIVIDADES SALDOS</th>
-                                              <th>OPCIONES</th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
-                                              DataActividades.map((actividades, indexA)=>
-                                              <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
-                                                <td>{ actividades.nombre_actividad }</td>
-                                                <td>{ actividades.veces_actividad }</td>
-                                                <td>{ actividades.largo_actividad }</td>
-                                                <td>{ actividades.ancho_actividad }</td>
-                                                <td>{ actividades.alto_actividad }</td>
-                                                <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
-                                                <td> { actividades.costo_unitario }</td>
-                                                <td> { actividades.parcial_actividad }</td>
-                                                <td className="small">
-                                                  {Number(actividades.parcial_actividad) <= 0 ?'':
-                                                    actividades.actividad_tipo === "titulo"?"":
-                                                    <div>
-                                                        <div className="clearfix">
-                                                          <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
-                                                          <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
-                                                        </div>
-
-                                                        <div style={{
-                                                          height: '2px',
-                                                          backgroundColor: '#c3bbbb',
-                                                          position: 'relative'
-                                                          }}
-
-                                                        >
-                                                        <div
-                                                          style={{
-                                                            width: `${actividades.actividad_porcentaje}%`,
-                                                            height: '100%',
-                                                            backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
-                                                              : actividades.actividad_porcentaje > 50 ? '#ffbf00'
-                                                              :  '#ff2e00',
-                                                            transition: 'all .9s ease-in',
-                                                            position: 'absolute'
-                                                          }}
-                                                      />
-                                                      </div>
-                                                      <div className="clearfix">
-                                                        <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
-                                                        <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
-                                                      </div>
-                                                    </div>
-                                                  }
-
-                                                </td>
-                                                <td className="text-center">
-                                                  {actividades.actividad_tipo === "titulo"? "":
-                                                    
-                                                    <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
-                                                      { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
-                                                        <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial)} >
-                                                          <FaPlus size={ 20 } /> 
-                                                        </button>
-                                                      }
-                                                    </div>
-                                                    }
-                                                </td>
-                                              </tr>
-                                            )
+                                          <div className="col-sm-2">
+                                            { 
+                                              Number(DataMayorMetrado.mm_avance_costo) <= 0?'': 'MAYOR METRADO'
                                             }
-                                          </tbody>
-                                        </table>
-                                      </div>
-                                    </Collapse>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            ) 
-                          }   
-                        </table>  
+                                          </div>
+                                          
+                                          <div className="col-sm-2">
+                                            {/* datos de mayor metrado ------------------ */}
+                                            
+                                            { 
+                                              Number(DataMayorMetrado.mm_avance_costo) <= 0?'':
+                                                <div className="small">
+                                              
+                                                  <div className="clearfix">
+                                                    <span className="float-left text-warning">A. met. { DataMayorMetrado.mm_avance_costo } { metrados.unidad_medida }</span>
+                                                    <span className="float-right text-warning">S/. { DataMayorMetrado.mm_avance_metrado}</span>
+                                                  </div>
+
+                                                  <div style={{
+                                                    height: '3px',
+                                                    width: '100%',
+                                                    background: '#c3bbbb',
+                                                    position: 'relative'
+                                                    }}
+
+                                                  >
+                                                  <div
+                                                    style={{
+                                                      width: `${DataMayorMetrado.mm_porcentaje}%`,
+                                                      height: '100%',
+                                                      background: DataMayorMetrado.mm_porcentaje > 95 ? '#00e6ff'
+                                                        : DataMayorMetrado.mm_porcentaje > 50 ? '#ffbf00'
+                                                        :  '#ff2e00',
+                                                      transition: 'all 2s linear 0s',
+                                                      position: 'absolute'
+                                                    }}
+                                                  />
+                                                  {/* {console.log('sasa>>',row.row.porcentaje)} */}
+                                                  </div>
+                                                  <div className="clearfix">
+                                                    <span className="float-left text-info">Saldo:  { DataMayorMetrado.mm_metrados_saldo } { metrados.unidad_medida }</span>
+                                                    <span className="float-right text-info">S/. { DataMayorMetrado.mm_metrados_costo_saldo}</span>
+                                                  </div>
+                                                </div>   
+                                            }
+                                            
+
+                                          </div>
+
+                                          <div className="col-sm-1">
+                                            <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ ()=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
+                                          </div>
+                                        </div>
+                                      
+
+                                      
+                                      <table className="table table-bordered table-sm">
+                                        <thead className="thead-dark">
+                                          <tr>
+                                            <th>NOMBRE DE ACTIVIDAD</th>
+                                            <th>N° VECES</th>
+                                            <th>LARGO</th>
+                                            <th>ANCHO</th>
+                                            <th>ALTO</th>
+                                            <th>METRADO</th>
+                                            <th>S/. P / U </th>
+                                            <th>S/. P / P</th>
+                                            <th>ACTIVIDADES SALDOS</th>
+                                            <th>OPCIONES</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
+                                            DataActividades.map((actividades, indexA)=>
+                                            <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
+                                              <td>{ actividades.nombre_actividad }</td>
+                                              <td>{ actividades.veces_actividad }</td>
+                                              <td>{ actividades.largo_actividad }</td>
+                                              <td>{ actividades.ancho_actividad }</td>
+                                              <td>{ actividades.alto_actividad }</td>
+                                              <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
+                                              <td> { actividades.costo_unitario }</td>
+                                              <td> { actividades.parcial_actividad }</td>
+                                              <td className="small">
+                                                {Number(actividades.parcial_actividad) <= 0 ?'':
+                                                  actividades.actividad_tipo === "titulo"?"":
+                                                  <div>
+                                                      <div className="clearfix">
+                                                        <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
+                                                        <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
+                                                      </div>
+
+                                                      <div style={{
+                                                        height: '2px',
+                                                        backgroundColor: '#c3bbbb',
+                                                        position: 'relative'
+                                                        }}
+
+                                                      >
+                                                      <div
+                                                        style={{
+                                                          width: `${actividades.actividad_porcentaje}%`,
+                                                          height: '100%',
+                                                          backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
+                                                            : actividades.actividad_porcentaje > 50 ? '#ffbf00'
+                                                            :  '#ff2e00',
+                                                          transition: 'all .9s ease-in',
+                                                          position: 'absolute'
+                                                        }}
+                                                    />
+                                                    </div>
+                                                    <div className="clearfix">
+                                                      <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
+                                                      <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
+                                                    </div>
+                                                  </div>
+                                                }
+
+                                              </td>
+                                              <td className="text-center">
+                                                {actividades.actividad_tipo === "titulo"? "":
+                                                  
+                                                  <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
+                                                    { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
+                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial)} >
+                                                        <FaPlus size={ 20 } /> 
+                                                      </button>
+                                                    }
+                                                  </div>
+                                                  }
+                                              </td>
+                                            </tr>
+                                          )
+                                          }
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </Collapse>
+                                </td>
+                              </tr>
+                            </tbody>
+                          ) 
+                        }   
+                      </table>  
+                  
                     </CardBody>
                   </Card>
               
                 </Card>
+
+
 
 
 
