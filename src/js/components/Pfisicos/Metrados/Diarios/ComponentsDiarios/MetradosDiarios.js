@@ -227,7 +227,7 @@ class MetradosDiarios extends Component {
               // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
                   "Actividades_id_actividad":id_actividad,
-                  "valor":ValorMetrado,
+                  "valor":this.state.ValorMetrado - this.state.actividad_avance_metrado,
                   "descripcion":DescripcionMetrado,
                   "observacion":ObservacionMetrado,
                   "id_ficha":sessionStorage.getItem('idobra')
@@ -283,7 +283,7 @@ class MetradosDiarios extends Component {
     EnviarMayorMetrado(e){
       e.preventDefault()
 
-      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexPartida } = this.state
+      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcialMM, partidas_id_partida, indexPartida, OpcionMostrarMM } = this.state
 
       var DataModificadoPartidas = DataPartidas
       var DataModificadoActividades = DataActividades
@@ -299,8 +299,8 @@ class MetradosDiarios extends Component {
           "largo":largo,
           "ancho":ancho,
           "alto":alto,
-          "parcial":parcial,
-          "tipo":'subtitulo',
+          "parcial":parcialMM,
+          "tipo":OpcionMostrarMM,
           "partidas_id_partida":partidas_id_partida
         })
         .then((res)=>{
@@ -765,14 +765,14 @@ class MetradosDiarios extends Component {
 
 
                         <div className="clearfix">
-                          <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="Actividad" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
-                          <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="Titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                          <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                          <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
                         </div>
                           
                         {OpcionMostrarMM.length <= 0? "":
                           <div>
                             {
-                              OpcionMostrarMM === "Titulo"?
+                              OpcionMostrarMM === "titulo"?
                               <div>
                                 <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
                                 <div className="input-group input-group-sm mb-0">
@@ -787,7 +787,7 @@ class MetradosDiarios extends Component {
                               </div>
                             }
                               
-                            <div className={OpcionMostrarMM === "Titulo"? "d-none":''}>
+                            <div className={OpcionMostrarMM === "titulo"? "d-none":''}>
                               <label htmlFor="comment">N° VECES:</label>
                               <div className="input-group input-group-sm mb-0">
                                   <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})} type="text" className="form-control"/>  
@@ -795,17 +795,17 @@ class MetradosDiarios extends Component {
 
                               <label htmlFor="comment">LARGO:</label>
                               <div className="input-group input-group-sm mb-0">
-                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})}  type="text" className="form-control"/>  
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})} type="text" className="form-control"/>  
                               </div>
 
                               <label htmlFor="comment">ANCHO:</label>
                               <div className="input-group input-group-sm mb-0">
-                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})}  type="text" className="form-control"/>  
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})} type="text" className="form-control"/>  
                               </div>
 
                               <label htmlFor="comment">ALTO:</label>
                               <div className="input-group input-group-sm mb-0">
-                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})}  type="text" className="form-control"/>  
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})} type="text" className="form-control"/>  
                               </div>
                               
                               <label htmlFor="comment">METRADO:</label>

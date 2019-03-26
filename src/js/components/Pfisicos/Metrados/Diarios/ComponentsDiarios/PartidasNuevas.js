@@ -69,10 +69,7 @@ class PartidasNuevas extends Component {
         collapse: 2599,
         id_componente:'',
         indexPartida:0,
-        OpcionMostrarMM:'',
-
-        // mensaje para ver si hay nuevas partidas
-        SMSNPartidas:false
+        OpcionMostrarMM:''
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -90,23 +87,18 @@ class PartidasNuevas extends Component {
       this.CollapseItem = this.CollapseItem.bind(this);
     }
     componentWillMount(){
-        axios.post(`${UrlServer}/getComponentesPNuevas`,{
+        document.title ="Metrados Diarios"
+        axios.post(`${UrlServer}/getComponentes`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
             // console.log('res>>', res.data);
-          if(res.data === "vacio"){
-            this.setState({
-              SMSNPartidas:true
-            })
-          }else{
+            
             this.setState({
               DataComponentes:res.data,
               DataPartidas:res.data[0].partidas,
               nombreComponente:res.data[0].nombre
             })
-          }
-            
         })
         .catch((error)=>{
           toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
@@ -129,7 +121,7 @@ class PartidasNuevas extends Component {
       }
 
       // get partidas -----------------------------------------------------------------
-      axios.post(`${ UrlServer}/getPartidasPNuevas`,{
+      axios.post(`${ UrlServer}/getPartidas`,{
         id_componente: id_componente
       })
       .then((res)=>{
@@ -235,7 +227,7 @@ class PartidasNuevas extends Component {
               // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
                   "Actividades_id_actividad":id_actividad,
-                  "valor":ValorMetrado,
+                  "valor":this.state.ValorMetrado - this.state.actividad_avance_metrado,
                   "descripcion":DescripcionMetrado,
                   "observacion":ObservacionMetrado,
                   "id_ficha":sessionStorage.getItem('idobra')
@@ -291,7 +283,7 @@ class PartidasNuevas extends Component {
     EnviarMayorMetrado(e){
       e.preventDefault()
 
-      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcial, partidas_id_partida, indexPartida } = this.state
+      var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcialMM, partidas_id_partida, indexPartida, OpcionMostrarMM } = this.state
 
       var DataModificadoPartidas = DataPartidas
       var DataModificadoActividades = DataActividades
@@ -307,8 +299,8 @@ class PartidasNuevas extends Component {
           "largo":largo,
           "ancho":ancho,
           "alto":alto,
-          "parcial":parcial,
-          "tipo":'subtitulo',
+          "parcial":parcialMM,
+          "tipo":OpcionMostrarMM,
           "partidas_id_partida":partidas_id_partida
         })
         .then((res)=>{
@@ -353,7 +345,7 @@ class PartidasNuevas extends Component {
 
         // getActividades -----------------------------------------------------------------
         if(event !== this.state.collapse){
-          axios.post(`${ UrlServer}/getActividadesPNuevas`,{
+          axios.post(`${ UrlServer}/getActividades`,{
             id_partida: id_partida
           })
           .then((res)=>{
@@ -414,7 +406,7 @@ class PartidasNuevas extends Component {
 
         return (
             <div>
-              {this.state.SMSNPartidas === true ?<div className="text-center"><label className="text-danger">No hay datos que mostrar</label></div>:
+              
                 <Card>
                   <Nav tabs>
                     {DataComponentes.length === 0 ? <Spinner color="primary" size="sm"/>: DataComponentes.map((comp,indexComp)=>
@@ -678,7 +670,8 @@ class PartidasNuevas extends Component {
                 </Card>
 
 
-              }
+
+
                 {/* <!-- MODAL PARA METRAR --> */}
                   
                 <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
@@ -772,14 +765,14 @@ class PartidasNuevas extends Component {
 
 
                         <div className="clearfix">
-                          <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="Actividad" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
-                          <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="Titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                          <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                          <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
                         </div>
                           
                         {OpcionMostrarMM.length <= 0? "":
                           <div>
                             {
-                              OpcionMostrarMM === "Titulo"?
+                              OpcionMostrarMM === "titulo"?
                               <div>
                                 <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
                                 <div className="input-group input-group-sm mb-0">
@@ -794,7 +787,7 @@ class PartidasNuevas extends Component {
                               </div>
                             }
                               
-                            <div className={OpcionMostrarMM === "Titulo"? "d-none":''}>
+                            <div className={OpcionMostrarMM === "titulo"? "d-none":''}>
                               <label htmlFor="comment">N° VECES:</label>
                               <div className="input-group input-group-sm mb-0">
                                   <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({veces: e.target.value})} type="text" className="form-control"/>  
@@ -802,17 +795,17 @@ class PartidasNuevas extends Component {
 
                               <label htmlFor="comment">LARGO:</label>
                               <div className="input-group input-group-sm mb-0">
-                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})}  type="text" className="form-control"/>  
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({largo: e.target.value})} type="text" className="form-control"/>  
                               </div>
 
                               <label htmlFor="comment">ANCHO:</label>
                               <div className="input-group input-group-sm mb-0">
-                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})}  type="text" className="form-control"/>  
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ancho: e.target.value})} type="text" className="form-control"/>  
                               </div>
 
                               <label htmlFor="comment">ALTO:</label>
                               <div className="input-group input-group-sm mb-0">
-                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})}  type="text" className="form-control"/>  
+                                  <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({alto: e.target.value})} type="text" className="form-control"/>  
                               </div>
                               
                               <label htmlFor="comment">METRADO:</label>
