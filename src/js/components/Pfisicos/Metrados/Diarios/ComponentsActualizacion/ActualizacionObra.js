@@ -244,7 +244,12 @@ class ActualizacionObra extends Component {
           
                   this.setState({
                     DataPartidas: DataModificadoPartidas,
-                    DataActividades:DataModificadoActividades
+                    DataActividades:DataModificadoActividades,
+                    
+                    "Actividades_id_actividad":"",
+                    "valor":"",
+                    "descripcion":"",
+                    "observacion":"",
                   })
                   toast.success('Exito! Metrado ingresado');
               })
@@ -262,6 +267,9 @@ class ActualizacionObra extends Component {
                   )
                   .then((res) => {
                       console.log('res  img', res)
+                      this.setState({
+                        file:null
+                      })
                       // alert("archivo enviado con exito ");
                   })
                   .catch((err) => {

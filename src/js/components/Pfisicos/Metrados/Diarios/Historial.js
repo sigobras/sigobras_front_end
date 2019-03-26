@@ -87,7 +87,7 @@ class MDHistorial extends Component {
                                         
                                         {comp.fechas.map((fecha, indexfecha)=>
                                             <fieldset key={ indexfecha } className="mt-2">
-                                                <legend onClick={this.collapseFechas} data-event={indexfecha} > - <b>FECHA: </b>{ fecha.fecha}  - <b> S/.</b> { fecha.fecha_total_soles }  <b> { fecha.fecha_total_porcentaje} %</b></legend>
+                                                <legend onClick={this.collapseFechas} data-event={indexfecha} >  <b>FECHA: </b>{ fecha.fecha}  - <b> S/.</b> { fecha.fecha_total_soles }  - <b> { fecha.fecha_total_porcentaje} %</b></legend>
                                                 <Collapse isOpen={collapseDate === indexfecha}>   
                                                     <table className="table table-bordered table-sm small">
                                                         <thead>

@@ -227,7 +227,7 @@ class MetradosDiarios extends Component {
               // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
                   "Actividades_id_actividad":id_actividad,
-                  "valor":this.state.ValorMetrado - this.state.actividad_avance_metrado,
+                  "valor":this.state.ValorMetrado,
                   "descripcion":DescripcionMetrado,
                   "observacion":ObservacionMetrado,
                   "id_ficha":sessionStorage.getItem('idobra')
@@ -239,7 +239,13 @@ class MetradosDiarios extends Component {
           
                   this.setState({
                     DataPartidas: DataModificadoPartidas,
-                    DataActividades:DataModificadoActividades
+                    DataActividades:DataModificadoActividades,
+                    
+                    "Actividades_id_actividad":"",
+                    "valor":"",
+                    "descripcion":"",
+                    "observacion":"",
+
                   })
                   toast.success('Exito! Metrado ingresado');
               })
@@ -258,6 +264,9 @@ class MetradosDiarios extends Component {
                   .then((res) => {
                       console.log('res  img', res)
                       // alert("archivo enviado con exito ");
+                      this.setState({
+                        file:null
+                      })
                   })
                   .catch((err) => {
                       console.error('ufff no envia al api ❌', err);

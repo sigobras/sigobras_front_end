@@ -246,13 +246,21 @@ class ActualizacionPartidasNuevas extends Component {
           
                   this.setState({
                     DataPartidas: DataModificadoPartidas,
-                    DataActividades:DataModificadoActividades
+                    DataActividades:DataModificadoActividades,
+                    
+                    "Actividades_id_actividad":"",
+                    "valor":"",
+                    "descripcion":"",
+                    "observacion":"",
                   })
                   toast.success('Exito! Metrado ingresado');
               })
               .catch((errors)=>{
                   toast.error('hubo errores al ingresar el metrado');
                   // console.error('algo salio mal al consultar al servidor ', error)
+                  this.setState({
+                    file:null
+                  })
               })
 
               // ENVIO DE DATOS CON IMAGEN A OTRA API

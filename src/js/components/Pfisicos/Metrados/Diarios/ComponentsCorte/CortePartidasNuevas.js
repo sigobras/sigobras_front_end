@@ -233,7 +233,7 @@ class CortePartidasNuevas extends Component {
               // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
                   "Actividades_id_actividad":id_actividad,
-                  "valor":ValorMetrado,
+                  "valor":ValorMetrado - this.state.actividad_avance_metrado,
                   "descripcion":DescripcionMetrado,
                   "observacion":ObservacionMetrado,
                   "id_ficha":sessionStorage.getItem('idobra')
@@ -245,7 +245,12 @@ class CortePartidasNuevas extends Component {
           
                   this.setState({
                     DataPartidas: DataModificadoPartidas,
-                    DataActividades:DataModificadoActividades
+                    DataActividades:DataModificadoActividades,
+                    
+                    "Actividades_id_actividad":"",
+                    "valor":"",
+                    "descripcion":"",
+                    "observacion":""
                   })
                   toast.success('Exito! Metrado ingresado');
               })
@@ -263,6 +268,9 @@ class CortePartidasNuevas extends Component {
                   )
                   .then((res) => {
                       console.log('res  img', res)
+                      this.setState({
+                        file:null
+                      })
                       // alert("archivo enviado con exito ");
                   })
                   .catch((err) => {
