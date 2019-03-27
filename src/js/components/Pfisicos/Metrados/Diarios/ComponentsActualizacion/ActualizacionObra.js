@@ -476,7 +476,7 @@ class ActualizacionObra extends Component {
                                   <td>{ metrados.descripcion }</td>
                                   <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                   <td>{ metrados.costo_unitario }</td>
-                                  <td>{ metrados.avance_costo }</td>
+                                  <td>{ metrados.parcial }</td>
                                   <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
 
                                     <div
@@ -687,7 +687,7 @@ class ActualizacionObra extends Component {
                 
                 {/* <!-- MODAL PARA METRAR --> */}
                   
-                <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false}>
+                <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
                     <form onSubmit={this.EnviarMetrado }>
                     <ModalHeader toggle={this.modalMetrar} className="border-button">
                         <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.

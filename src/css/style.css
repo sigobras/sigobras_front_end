@@ -166,6 +166,64 @@ body {
   outline: 2px solid rgb(255, 0, 0);
 }
 
+/* TABLE RESPONSIVE SCROLL PERSONALIZADO  */
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow: auto;
+
+}
+
+/* Tamaño del scroll */
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+
+}
+
+ /* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #0080ff;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo cuando esté en active */
+.table-responsive::-webkit-scrollbar-thumb:active {
+  background-color: #5688ff;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #3b9dff;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+.table-responsive::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+.table-responsive::-webkit-scrollbar-track:hover, 
+.table-responsive::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+  cursor: pointer;
+
+}
+
+
+
+
+
+
 /* SCROLL NAV VERTICAL ----------------------------------------------- */
 .sidebar-sticky::-webkit-scrollbar {
   width: 0.5em;

@@ -482,7 +482,7 @@ class ActualizacionPartidasNuevas extends Component {
                                     <td>{ metrados.descripcion }</td>
                                     <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                     <td>{ metrados.costo_unitario }</td>
-                                    <td>{ metrados.avance_costo }</td>
+                                    <td>{ metrados.parcial }</td>
                                     <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
 
                                       <div

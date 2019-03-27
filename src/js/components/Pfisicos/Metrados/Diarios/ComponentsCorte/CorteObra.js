@@ -225,7 +225,7 @@ class CorteObra extends Component {
               })
 
               // ENVIO DE DATOS NORMAL SIN IMAGEN
-              axios.post(`${UrlServer}/avanceActividad`,{
+              axios.post(`${UrlServer}/avanceActividadCorte`,{
                   "Actividades_id_actividad":id_actividad,
                   "valor":this.state.ValorMetrado - this.state.actividad_avance_metrado,
                   "descripcion":DescripcionMetrado,
@@ -471,7 +471,7 @@ class CorteObra extends Component {
                                   <td>{ metrados.descripcion }</td>
                                   <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                   <td>{ metrados.costo_unitario }</td>
-                                  <td>{ metrados.avance_costo }</td>
+                                  <td>{ metrados.parcial }</td>
                                   <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
 
                                     <div

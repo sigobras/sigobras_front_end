@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
+import ModalIngresoCronograma from './FiltraObras/ModalIngresoCronograma'
+
 class CronogramaAvance extends Component{
 	constructor(props){
 		super(props);
@@ -49,7 +51,10 @@ class CronogramaAvance extends Component{
     return(
       <div className="card">
           <div className="card-header">
-              Cronograma de avance                    
+              Cronograma de avance
+              <div className="float-right">
+                <ModalIngresoCronograma />
+              </div>                    
           </div>
           <div className="card-body">
             <HighchartsReact
