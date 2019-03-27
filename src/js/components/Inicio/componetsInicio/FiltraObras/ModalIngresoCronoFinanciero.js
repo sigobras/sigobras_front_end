@@ -58,7 +58,7 @@ class ModalIngresoCronoFinanciero extends Component {
 
     estrucData.push({
       "financieroEjecutado":this.state.InputFinanciero,
-      "id_ficha":sessionStorage.getItem("idobra"),
+      "id_ficha":this.props.ObraId,
       "mes":mes
     })
 

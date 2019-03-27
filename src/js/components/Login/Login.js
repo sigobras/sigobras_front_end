@@ -130,7 +130,7 @@ class Login extends Component {
                       </form>
                     </div>
                     <div className="modal-footer p-1 text-center">
-                        <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> Ⓒ 2018 - 2019</label>
+                        <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> © 2018 - 2019</label>
                     </div>
                   </div>
               </div>

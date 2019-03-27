@@ -1,34 +1,23 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { FaList, FaClock, FaRegImages, FaChartPie, FaUserFriends, FaPrint, FaEye } from "react-icons/fa";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse, Spinner, Nav, NavItem, TabContent, NavLink, TabPane  } from 'reactstrap';
-import html2canvas from 'html2canvas';
-import * as jsPDF from 'jspdf'
+import axios from 'axios'; 
+import { FaList, FaClock, FaUserFriends } from "react-icons/fa";
+
 import 'jspdf-autotable';
-import { toast } from "react-toastify";
 
-// import { logoSigobras, logoGRPuno } from '../../Reportes/imgB64'
-
-
-// import { Progress } from 'react-sweet-progress';
-// import "react-sweet-progress/lib/style.css";
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
-import { Collapse } from 'reactstrap';
+import { Collapse, Spinner } from 'reactstrap';
 
 import Componentes from './Componentes'
 import CronogramaAvance from '../CronogramaAvance';
 // import Galeria from '../GaleriaImagenes/Galeria';
 // import CtrladminDirecta from '../../Reportes/CtrladminDirecta'
 
-// import PersonalInfo from './PersonalInfo'
+import ModalListaPersonal from './ModalListaPersonal'
 
 class ListaObras extends Component{
     constructor(props){
         super(props)
         this.state = {
-            modal: false,
-            modalUsuarios: false,
-            idObra:'',
             collapse: 95,
             collapseCrono: 56,
             DataComponente:[],
@@ -95,10 +84,7 @@ class ListaObras extends Component{
                 console.error('error', err)
             )
              
-        }
-
-
-            
+        } 
     }
 
     CollapseCronograma(index, id_ficha){
@@ -182,8 +168,8 @@ class ListaObras extends Component{
                         <td style={{width: '20%'}}  className="text-center">
                             <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={e=> this.CollapseComponentes(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
                             <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={e=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button>
-                            <button className="btn btn-outline-info btn-sm mr-1" title="Galeria de Imagenes" ><FaRegImages /></button>
-                            <button className="btn btn-outline-primary btn-sm" title="Personal"><FaUserFriends /></button>
+                            <ModalListaPersonal idobraSeleccionada={ Obras.id_ficha }/>
+                            <button className="btn btn-outline-primary btn-sm" title="Personal"><FaUserFriends /> </button>
                         </td>
                     </tr>
                 
@@ -193,13 +179,13 @@ class ListaObras extends Component{
                         <td colSpan="6">
                             {collapse === IndexObras ?
                                 <Collapse isOpen={collapse === IndexObras}>
-                                    <Componentes DataComponente = {this.state.DataComponente  } />
+                                    <Componentes DataComponente = {this.state.DataComponente  }  />
                                 </Collapse>
                             :''} 
                                 
                             {collapseCrono === IndexObras ?
                                 <Collapse isOpen={collapseCrono === IndexObras}>
-                                    <CronogramaAvance dataCrono = { this.state.DataCronograma } />
+                                    <CronogramaAvance dataCrono={ this.state.DataCronograma } fichaId={ Obras.id_ficha} />
                                 </Collapse>
                             :''} 
 

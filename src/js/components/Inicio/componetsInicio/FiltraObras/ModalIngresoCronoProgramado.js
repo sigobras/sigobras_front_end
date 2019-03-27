@@ -109,13 +109,13 @@ class ModalIngresoCronoProgramado extends Component {
 
          EnviarDatos.push(
           [
-            sessionStorage.getItem("idobra"),
+            this.props.ObraId,
             fechaEnviar,
             this.state.ValorInput,
           ]
         )
 
-    console.log('data', EnviarDatos)
+    // console.log('data', EnviarDatos)
   }
 
   enviarDatosApi(){
@@ -124,7 +124,7 @@ class ModalIngresoCronoProgramado extends Component {
       this.state.DataCronoArmadoEnviar
     )
     .then((res)=>{
-      console.log('res', res)
+      // console.log('res', res)
       alert('enviado al sistema')
     })
     .catch((err)=>

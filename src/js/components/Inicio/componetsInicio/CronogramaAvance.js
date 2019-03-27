@@ -51,12 +51,16 @@ class CronogramaAvance extends Component{
     }
     return(
       <div className="card">
+        {console.log('fichaObra', this.props.fichaId)}
           <div className="card-header">
               Cronograma de avance
-              <div className="float-right">
-                <ModalIngresoCronoProgramado />
-                <ModalIngresoCronoFinanciero />
-              </div>                    
+              <div className="clearfix">
+                <div className="float-right">
+                  <ModalIngresoCronoProgramado ObraId={ this.props.fichaId }/>
+                  <ModalIngresoCronoFinanciero ObraId={ this.props.fichaId }/>
+                </div> 
+              </div>
+                                
           </div>
           <div className="card-body">
             <HighchartsReact
