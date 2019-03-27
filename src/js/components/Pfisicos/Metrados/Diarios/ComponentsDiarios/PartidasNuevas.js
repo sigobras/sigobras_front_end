@@ -205,6 +205,7 @@ class PartidasNuevas extends Component {
         formData.append('id_acceso',sessionStorage.getItem('idacceso'));
         formData.append('id_actividad',id_actividad);
         formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
+        formData.append('id_ficha', sessionStorage.getItem('idobra'))
 
         const config = {
             headers: {

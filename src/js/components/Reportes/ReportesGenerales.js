@@ -4,8 +4,12 @@ import { FaFilePdf } from "react-icons/fa";
 import CtrlEjecDirecta from './ReporteInicio/CtrlEjecDirecta'
 import Report_1 from './Reporte6/Report_1'
 import Report_2 from './Reporte6/Report_2'
-import Report_3  from './Reporte6/Report_3'
-import AvCompDiagGant  from './Reporte6/AvCompDiagGant'
+import Report_3 from './Reporte6/Report_3'
+import Report_4 from './Reporte6/Report_4'
+import Report_5 from './Reporte6/Report_5'
+
+// import Report_8 from './Reporte6/Report_8'
+// import Report_9 from './Reporte6/Report_9';
 
 
 class ReportesGenerales extends Component {
@@ -39,20 +43,16 @@ class ReportesGenerales extends Component {
 
 
                                 {/* 6.2 */}
-                                <Report_2 />
+                                <Report_2 /> 
 
                                 {/* 6.3 */}
                                 <Report_3 />
                                 
                                 {/* 6.4 */}
-                                <li className="lii">
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 4.- VALORIZACIÓN POR MAYORES METRADOS (Si se generó)</a>
-                                </li>
+                                <Report_4 />
                                 
                                 {/* 6.5 */}
-                                <li className="lii">    
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 5.- VALORIZACIÓN DE PARTIDAS NUEVAS (Si se generó)  </a>
-                                </li>
+                                <Report_5 />
 
                                 {/* 6.6 */}
                                 <li className="lii">    
@@ -66,12 +66,10 @@ class ReportesGenerales extends Component {
 
                                 
                                 {/* 6.8 */}
-                                <li className="lii">    
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 8.- AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RES</a>
-                                </li>
+                                {/* <Report_8 /> */}
 
                                 {/* 6.9 */}
-                                <AvCompDiagGant />
+                                {/* <Report_9 /> */}
 
                                 {/* 6.10 */}
                                 <li className="lii">    

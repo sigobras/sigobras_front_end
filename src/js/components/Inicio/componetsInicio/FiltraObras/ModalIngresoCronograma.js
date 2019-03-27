@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup,InputGroupAddon } from 'reactstrap';
 
 import { DebounceInput } from 'react-debounce-input';
-
+import axios from 'axios'
+import {UrlServer} from '../../../Utils/ServerUrlConfig'
 
 class ModalIngresoCronograma extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class ModalIngresoCronograma extends Component {
       DataCronoArmadoEnviar:[],
       fecha_desde:'',
       fecha_hasta:'',
+      ValorInput:''
     };
     
     this.ModalIngresoCrono = this.ModalIngresoCrono.bind(this);
@@ -20,6 +22,7 @@ class ModalIngresoCronograma extends Component {
     this.GeneraFechasSegunOrden = this.GeneraFechasSegunOrden.bind(this);
     this.capturaInputsProgramado = this.capturaInputsProgramado.bind(this);
     this.ValidarInput = this.ValidarInput.bind(this);
+    this.enviarDatosApi = this.enviarDatosApi.bind(this);
   }
 
   ModalIngresoCrono() {
@@ -47,8 +50,6 @@ class ModalIngresoCronograma extends Component {
     // console.log('desde',this.state.fecha_desde)
     // console.log('hasta',this.state.fecha_hasta)
 
-
-
     var fechaInicio = new Date(this.state.fecha_desde);
     var fechaFin = new Date(this.state.fecha_hasta);
 
@@ -61,7 +62,7 @@ class ModalIngresoCronograma extends Component {
         ultimoDiaMes =  ultimoDiaMes.getDate()
         // console.log(fechaInicio.getFullYear() + '-' + (fechaInicio.getMonth() + 1) + '-' + fechaInicio.getDate());
 
-        var FechaEnviar =ultimoDiaMes+ ' - '+ (fechaInicio.getMonth() + 1) + ' - ' +  fechaInicio.getFullYear()
+        var FechaEnviar =fechaInicio.getFullYear()+ '-'+ (fechaInicio.getMonth() + 1) + '-' +  ultimoDiaMes
         var FechaMostar = (fechaInicio.getMonth() + 1) + ' - ' +  fechaInicio.getFullYear()
 
         
@@ -91,33 +92,38 @@ class ModalIngresoCronograma extends Component {
 
   }
 
-  capturaInputsProgramado(e, fechaEnviar){
-    console.log('value', e.target.value, 'fechaEnviar', fechaEnviar)
-
+  capturaInputsProgramado(e, ){
+    console.log('value', e.target.value)
+    this.setState({ValorInput: e.target.value})
   }
 
-  ValidarInput(){
+  ValidarInput(fechaEnviar){
 
-    var EnviarDatos = []
+    var EnviarDatos = this.state.DataCronoArmadoEnviar
 
-      EnviarDatos.push(
-        [
-          19,
-          e.target.value,
-          fechaEnviar
-        ]
-      )
-
-    this.setState({
-      DataCronoArmadoEnviar:EnviarDatos
-    })
+         EnviarDatos.push(
+          [
+            sessionStorage.getItem("idobra"),
+            fechaEnviar,
+            this.state.ValorInput,
+          ]
+        )
 
     console.log('data', EnviarDatos)
-
-    
-    console.log('this State', this.state.DataCronoArmadoEnviar)
   }
 
+  enviarDatosApi(){
+    console.log(this.state.DataCronoArmadoEnviar)
+    axios.post(`${UrlServer}/postcronogramamensual`,
+      this.state.DataCronoArmadoEnviar
+    )
+    .then((res)=>
+      console.log('res', res)
+    )
+    .catch((err)=>
+      console.log('err', err)
+    )
+  }
 
   render() {
     const { Column } = this.state
@@ -151,8 +157,8 @@ class ModalIngresoCronograma extends Component {
                     {Column.map((col, i)=>
                       <td key={ i } style={{minWidth: '140px', display: 'inlineBlock'}}>
                       <InputGroup>
-                        <DebounceInput debounceTimeout={500} onChange={e => this.capturaInputsProgramado(e, col.fechaEnviar )}  type="number" className="form-control form-control-sm"/>  
-                        <InputGroupAddon addonType="append" title="validar" color="primary"><Button onClick={this.ValidarInput }>✔</Button></InputGroupAddon>
+                        <DebounceInput debounceTimeout={500} onChange={e => this.capturaInputsProgramado(e, )}  type="number" className="form-control form-control-sm"/>  
+                        <InputGroupAddon addonType="append" title="validar" color="primary"><Button onClick={()=>this.ValidarInput(col.fechaEnviar) }>✔</Button></InputGroupAddon>
                       </InputGroup>
                       </td>                  
 
@@ -185,7 +191,7 @@ class ModalIngresoCronograma extends Component {
             <button onClick={this.GenerarColTable }>mas</button>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.ModalIngresoCrono}>Guardar datos</Button>{' '}
+            <Button color="primary" onClick={this.enviarDatosApi}>Guardar datos</Button>{' '}
             <Button color="secondary" onClick={this.ModalIngresoCrono}>Cancelar</Button>
           </ModalFooter>
         </Modal>

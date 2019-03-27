@@ -12,11 +12,11 @@ import { UrlServer } from '../../Utils/ServerUrlConfig'
 
 
 
-class Report_2 extends Component {
+class Report_5 extends Component {
   constructor(){
     super()
     this.state = {
-      DataValGeneralAPI:[],
+      DataPartNewlAPI:[],
       DataAniosApi:[],
       DataMesesApi:[],
       ValPresupuesto:[],
@@ -43,7 +43,7 @@ class Report_2 extends Component {
       "id_ficha":sessionStorage.getItem("idobra")
     })
     .then((res)=>{
-         console.log('res ANIOS', res.data)
+         //console.log('res ANIOS', res.data)
         this.setState({
           DataAniosApi: res.data
         })
@@ -73,16 +73,16 @@ class Report_2 extends Component {
   
   seleccionaMeses(id_historial, fecha, fecha_inicial){
     // LLAMA AL API DE MESES
-    axios.post(`${UrlServer}/valorizacionPrincipal`,{
+    axios.post(`${UrlServer}/valorizacionPartidasNuevas`,{
       "id_ficha":sessionStorage.getItem("idobra"),
       "historialestados_id_historialestado":id_historial,
       "fecha":fecha,
       "fecha_inicial":fecha_inicial,
     })
     .then((res)=>{
-        //console.log('res valorizacionPrincipal', res.data)
+        console.log('res valorizacionMayoresMetrados', res.data)
         this.setState({
-          DataValGeneralAPI: res.data,
+          DataPartNewlAPI: res.data,
           DataEncabezado:encabezadoInforme()
 
         })
@@ -103,7 +103,7 @@ class Report_2 extends Component {
 
     var {  DataEncabezado } = this.state
 
-    var DataHist = this.state.DataValGeneralAPI
+    var DataHist = this.state.DataPartNewlAPI
     //console.log('DH', DataHist)
 
 
@@ -541,7 +541,7 @@ class Report_2 extends Component {
 
       
     
-    //// console.log('data push' ,ValPresupuesto);
+    // console.log('data push' ,ValPresupuesto);
     
 
     var ultimoElemento = ValPresupuesto.length -1
@@ -594,7 +594,7 @@ class Report_2 extends Component {
        
       content: [
         { 
-          text: 'VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+          text: 'VALORIZACIÓN DE PARTIDAS NUEVAS',
           margin: 7,
           alignment: 'center'
         },
@@ -681,15 +681,15 @@ class Report_2 extends Component {
 
 
   render() {
-    const { DataValGeneralAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
+    const { DataPartNewlAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
     
     return (
       <div>
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/>2.- VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE ✔</a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/>5.- VALORIZACIÓN DE PARTIDAS NUEVAS ✔</a>
         </li>
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
-          <ModalHeader toggle={this.ModalReportes}>2.- VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE</ModalHeader>
+          <ModalHeader toggle={this.ModalReportes}>5.- VALORIZACIÓN DE PARTIDAS NUEVAS</ModalHeader>
           <ModalBody>
               <Row>
               <Col sm="2">
@@ -726,7 +726,7 @@ class Report_2 extends Component {
               
                 <Col sm="1">
                 {
-                  DataValGeneralAPI.length <= 0 ?"":
+                  DataPartNewlAPI.length <= 0 ?"":
                   <button className="btn btn-outline-success" onClick={ this.PruebaDatos }>PDF</button>
                 }
                 </Col>
@@ -740,4 +740,4 @@ class Report_2 extends Component {
   }
 }
 
-export default Report_2;
+export default Report_5;

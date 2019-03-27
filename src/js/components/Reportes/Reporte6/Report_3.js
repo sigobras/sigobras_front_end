@@ -5,7 +5,7 @@ import { FaFilePdf } from "react-icons/fa";
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
@@ -21,220 +21,273 @@ class Report_3 extends Component {
             DataEncabezado:[],
             DataApiResumenVal:[],
             DataEstructurado:[],
-            modal:false
+            modal:false,
+            DataAniosApi:[],
+            DataMesesApi:[],
+            urlPdf: '',
         }
         this.ModalReportes = this.ModalReportes.bind(this)
         this.ResEstructarData = this.ResEstructarData.bind(this)
-        this.resumenVal = this.resumenVal.bind(this)
+        //this.resumenVal = this.resumenVal.bind(this)
+        this.seleccionaAnios = this.seleccionaAnios.bind(this)
+        this.seleccionaMeses = this.seleccionaMeses.bind(this)
       }
       
-    componentWillMount(){
-        axios.post(`${UrlServer}/resumenValorizacionPrincipal`,{
-            "id_ficha":sessionStorage.getItem("idobra")
-        })
-        .then((res)=>{
-            // console.info('data val >',res.data)
-            this.setState({
-                DataApiResumenVal:res.data
-            })
-        })
-        .catch((err)=>{
-            console.error('algo salio mal ', err);
-        })
-
-        
-    }
+    
     
 
     ModalReportes() {
         this.setState(prevState => ({
-          modal: !prevState.modal
+            modal: !prevState.modal
         }));
+        // llama al api de años
+        axios.post(`${UrlServer}/getAnyoReportes`,{
+            "id_ficha":sessionStorage.getItem("idobra")
+        })
+        .then((res)=>{
+            // console.log('res ANIOS', res.data)
+            this.setState({
+                DataAniosApi: res.data
+            })
+        })
+        .catch((err)=>{
+            console.log('ERROR ANG al obtener datos ❌'+ err);
+        });
+    }
+
+    seleccionaAnios(e){   
+    // LLAMA AL API DE MESES
+    
+        axios.post(`${UrlServer}/getPeriodsByAnyo`,{
+        "id_ficha":sessionStorage.getItem("idobra"),
+        "anyo":e.target.value
+        })
+        .then((res)=>{
+            // console.log('res Meses', res.data)
+            this.setState({
+            DataMesesApi: res.data
+            })
+        })
+        .catch((err)=>{
+            console.log('ERROR ANG al obtener datos ❌'+ err);
+        });
+    }
+
+    seleccionaMeses(id_historial, fecha, fecha_inicial){
+        // LLAMA AL API DE MESES
+        axios.post(`${UrlServer}/resumenValorizacionPrincipal`,{
+            "id_ficha":sessionStorage.getItem("idobra"),
+            "historialestados_id_historialestado":id_historial,
+            "fecha":fecha,
+            "fecha_inicial":fecha_inicial,
+        })
+        .then((res)=>{
+            //console.log('res resumenValorizacionPrincipal', res.data)
+            this.setState({
+                DataApiResumenVal: res.data,
+                DataEncabezado:encabezadoInforme()
+
+            })
+        })
+        .catch((err)=>{
+            console.log('ERROR ANG al obtener datos ❌'+ err);
+        });
     }
 
 
     ResEstructarData(){
 
-        var { DataApiResumenVal } = this.state
+        var {  DataEncabezado } = this.state
+
+
+        var DataHist = this.state.DataApiResumenVal
+        console.log('DH', DataHist.componentes)
+
 
         var DataRestructurado = []
-        DataRestructurado.push(
-            {
-                style: 'tableExample',
-                // color: '#ff0707',
-                layout: 'lightHorizontalLines',
+
+        //for (let i = 0; i < DataHist.componentes.length; i++){
+            
+            DataRestructurado.push(
+                {
+                    style: 'tableExample',
+                    // color: '#ff0707',
+                    layout: 'lightHorizontalLines',
+        
+                    table: {
+                        widths: [20, 170, '*', '*', '*', '*', '*', '*', '*', '*', '*'],
+                        body: [
+                                [
+                                    {
+                                        
+                                        text: 'ITEM',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        rowSpan: 3,
+                                        margin: [ 2, 8, 0, 0]
     
-                table: {
-                    widths: [20, 170, '*', '*', '*', '*', '*', '*', '*', '*', '*'],
-                    body: [
-                            [
-                                {
-                                    text: 'ITEM',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    rowSpan: 3,
-                                    margin: [ 2, 8, 0, 0]
-
-                                },
-                                {
-                                    text: 'COMPONENTE',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    rowSpan: 3
-                                },
-                                {
-                                    text: 'MONTO PPTDO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    rowSpan: 2
-                                },
-                                {
-                                    text: 'DICIEMBRE DEL 2018',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:6
-                                },
-                                {
-
-                                },
-                                {
-
-                                },
-                                {
-
-                                },
-                                {
+                                    },
+                                    {
+                                        text: 'COMPONENTE',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        rowSpan: 3
+                                    },
+                                    {
+                                        text: 'MONTO PPTDO',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        rowSpan: 2
+                                    },
+                                    {
+                                        text: 'DICIEMBRE DEL 2018',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        colSpan:6
+                                    },
+                                    {
+    
+                                    },
+                                    {
+    
+                                    },
+                                    {
+    
+                                    },
+                                    {
+                                       
+                                    },
+                                    {
+    
+                                    },
+                                    {
+                                        text: 'SALDO',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        colSpan:2,
+                                        rowSpan: 2
+                                    },
+                                    {
+    
+                                    }
                                    
-                                },
-                                {
-
-                                },
-                                {
-                                    text: 'SALDO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2,
-                                    rowSpan: 2
-                                },
-                                {
-
-                                }
-                               
-                            ],
-
-
-                            
-                            [
-                                {
-                                   
-                                },
-                                {
+                                ],
+    
+    
                                 
-                                },
-                                {
-                                
-                                },
-                                {
-                                    text: 'ANTERIOR',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-                                },
-                                {
-
-                                },
-                                {
-                                    text: 'ACTUAL',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-                                },
-                                {
+                                [
+                                    {
+                                       
+                                    },
+                                    {
                                     
-                                },
-                                {
-                                    text: 'ACUMULADO',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                    colSpan:2
-                                },
-                                {
-
-                                },
-                                {
+                                    },
+                                    {
+                                    
+                                    },
+                                    {
+                                        text: 'ANTERIOR',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        colSpan:2
+                                    },
+                                    {
+    
+                                    },
+                                    {
+                                        text: 'ACTUAL',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        colSpan:2
+                                    },
+                                    {
+                                        
+                                    },
+                                    {
+                                        text: 'ACUMULADO',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                        colSpan:2
+                                    },
+                                    {
+    
+                                    },
+                                    {
+                                       
+                                    },
+                                    {
+    
+                                    },
                                    
-                                },
-                                {
-
-                                },
-                               
-                            ],
-
-                            
-                            [
-                                {
+                                ],
+    
+                                
+                                [
+                                    {
+                                       
+                                    },
+                                    {
+    
+                                    },
+                                    {
+                                        text: 'Presup. S/.',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: 'Valorizado S/.',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: '%',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: 'Valorizado S/.',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: '%',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: 'Valorizado S/.',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: '%',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: 'Valorizado S/.',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
+                                    {
+                                        text: '%',
+                                        style: "tableHeader",
+                                        alignment: "center",
+                                    },
                                    
-                                },
-                                {
-
-                                },
-                                {
-                                    text: 'Presup. S/.',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'Valorizado S/.',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '%',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'Valorizado S/.',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '%',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'Valorizado S/.',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '%',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: 'Valorizado S/.',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                                {
-                                    text: '%',
-                                    style: "tableHeader",
-                                    alignment: "center",
-                                },
-                               
-                            ],
-
-
-                            
-                    ]
+                                ],
+    
+    
+                                
+                        ]
+                    }
                 }
-            }
-        )
+            )
+        //}
         
         
-        DataApiResumenVal.componentes.forEach((dato, index)=>{
+        
+        DataHist.componentes.forEach((dato, index)=>{
             DataRestructurado[0].table.body.push(
                 [
                     {
@@ -299,7 +352,7 @@ class Report_3 extends Component {
         })
 
 
-        // inclimos un objeto con colspan de toda la fila
+         // inclimos un objeto con colspan de toda la fila
         DataRestructurado[0].table.body.push(
             [
                 {
@@ -342,8 +395,8 @@ class Report_3 extends Component {
             ]
         )
 
-        // costo costosDirecto---------------------------
-        DataApiResumenVal.costosDirecto.forEach((CDirecto, j)=>{
+         //costo costosDirecto---------------------------
+        DataHist.costosDirecto.forEach((CDirecto, j)=>{
             DataRestructurado[0].table.body.push(
                 [
                     {
@@ -452,7 +505,7 @@ class Report_3 extends Component {
         )
 
         // costos indirectos
-        DataApiResumenVal.costosindirectos.forEach((CDirecto, j)=>{
+        DataHist.costosindirectos.forEach((CDirecto, j)=>{
             DataRestructurado[0].table.body.push(
                 [
                     {
@@ -517,7 +570,7 @@ class Report_3 extends Component {
             )
         })
 
-        // inclimos un objeto con colspan de toda la fila
+        //inclimos un objeto con colspan de toda la fila
         DataRestructurado[0].table.body.push(
             [
                 {
@@ -561,7 +614,7 @@ class Report_3 extends Component {
         )
 
         // COSTO costo Indirecto Total
-        DataApiResumenVal.costoIndirectoTotal.forEach((CDirecto, j)=>{
+        DataHist.costoIndirectoTotal.forEach((CDirecto, j)=>{
             DataRestructurado[0].table.body.push(
                 [
                     {
@@ -670,7 +723,7 @@ class Report_3 extends Component {
         )
 
         // COSTO ejecutadoTotalExpediente
-        DataApiResumenVal.ejecutadoTotalExpediente.forEach((CDirecto, j)=>{
+        DataHist.ejecutadoTotalExpediente.forEach((CDirecto, j)=>{
             DataRestructurado[0].table.body.push(
                 [
                     {
@@ -735,27 +788,13 @@ class Report_3 extends Component {
             )
         })
 
-        // console.log('dat>', DataRestructurado[0].table)
+        // // console.log('dat>', DataRestructurado[0].table)
 
-        this.setState({
-            DataEstructurado:DataRestructurado,
-            DataEncabezado:encabezadoInforme()
-        })
-        
-    }
-    
-
-    resumenVal(){
-        const { DataEncabezado, DataEstructurado } = this.state
-
-        this.setState(prevState => ({
-            modal: !prevState.modal
-        }));
-
-        // llamamos la funcion
-        this.ResEstructarData()
+        var ultimoElemento = DataRestructurado.length -1
+        delete DataRestructurado[ultimoElemento].pageBreak
 
 
+        // GENERA EL FORMATO PDF
         pdfmake.vfs = pdfFonts.pdfMake.vfs;
 
         var docDefinition = {
@@ -799,65 +838,64 @@ class Report_3 extends Component {
         
         content: [
             { 
-                text: 'RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
-                margin: 7,
-                alignment: 'center'
+            text: 'RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+            margin: 7,
+            alignment: 'center'
             },
 
             DataEncabezado,
-            DataEstructurado
             
+            DataRestructurado
         ],
 
         styles: {
             header: {
-                fontSize: 7,
-                bold: true,
-                margin: [0, 0, 0, 5]
+            fontSize: 7,
+            bold: true,
+            margin: [0, 0, 0, 5]
             },
             subheader: {
-                fontSize: 10,
-                bold: true,
-                margin: [0, 10, 0, 5]
+            fontSize: 10,
+            bold: true,
+            margin: [0, 10, 0, 5]
             },
             tableExample: {
-                margin: [0, 5, 0, 10]
+            margin: [0, 5, 0, 10]
             },
             tableHeader: {
-                bold: true,
-                fontSize: 7,
-                color: '#000000',
-                fillColor: '#ffcf96',
+            bold: true,
+            fontSize: 7,
+            color: '#000000',
+            fillColor: '#ffcf96',
             },
             tableFecha: {
-                bold: true,
-                fontSize: 7,
-                color: '#000000',
-                fillColor: '#dadada',
+            bold: true,
+            fontSize: 7,
+            color: '#000000',
+            fillColor: '#dadada',
             },
             tableBody: {
-                // bold: true,
-                fontSize: 6,
-                color: '#000000',
-                // fillColor: '#f6f6ff',
+            // bold: true,
+            fontSize: 6,
+            color: '#000000',
+            // fillColor: '#f6f6ff',
             },
             TableHeaderInforme: {
-                bold: true,
-                fontSize: 9,
-                color: '#000000',
-                // fillColor: '#ffcf96',
+            bold: true,
+            fontSize: 9,
+            color: '#000000',
+            // fillColor: '#ffcf96',
             },
-            tableBodyInforme: {
-                fontSize: 9,
-                color: '#000000',
+            tableBodyInforme:{
+            fontSize: 9,
+            color: '#000000',
             }
-                
+            
 
         },
         defaultStyle: {
             // alignment: 'justify'
         },
-
         pageSize: 'A4',
         pageOrientation: 'landscape',
 
@@ -866,28 +904,71 @@ class Report_3 extends Component {
         var pdfDocGenerator = pdfmake.createPdf(docDefinition);
 
         pdfDocGenerator.getDataUrl((dataUrl) => {
-            const targetElement = document.getElementById('iframeValResumen');
-            const iframe = document.createElement('iframe');
-            iframe.src = dataUrl;
-            iframe.style.width = "100%";
-            iframe.style.height = "100%";
-            iframe.frameBorder = 0;
-
-            targetElement.appendChild(iframe);
+        this.setState({
+            urlPdf:dataUrl
+        })
+            
+            
         });
+        
     }
     
+
+   
+    
     render() {
+        const { DataApiResumenVal, DataAniosApi, DataMesesApi }= this.state
         return (
             <div>
                 <li className="lii">
-                    <a href="#" onClick={this.resumenVal} ><FaFilePdf className="text-danger"/> 3.- RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE ✔</a>
+                    <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 3.- RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE ✔</a>
                 </li>
 
-                <Modal isOpen={this.state.modal} fade={false} toggle={this.resumenVal} size="xl">
+                <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
                     <ModalHeader toggle={this.ModalReportes}>3.- RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRAPRESUPUESTO BASE</ModalHeader>
                     <ModalBody>
-                        <div id="iframeValResumen" style={{height: 'calc(100vh - 50px)'}}></div>
+                        <Row>
+                        <Col sm="2">
+                            <fieldset>
+                                <legend>Seleccione</legend>
+                                
+                                <select className="form-control form-control-sm"  onChange={ e=>this.seleccionaAnios(e) }  >
+                                    <option value="">Años</option> 
+                                    {
+                                    DataAniosApi.map((anios, iA)=>
+                                        <option key={ iA } value={ anios.anyo }>{anios.anyo }</option>
+                                    )
+                                    }                      
+                                </select>  
+                            </fieldset>
+
+                        </Col>
+
+                        <Col sm="9">
+                        { DataMesesApi.length <= 0? "":
+                            <fieldset>
+                            <legend>Seleccione Mes</legend>
+                            <ButtonGroup size="sm">
+                            {
+                                DataMesesApi.map((Meses, iM)=>
+                                <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                                )
+                            }
+
+                            </ButtonGroup>
+                            </fieldset>
+                        }
+                            </Col>
+                        
+                            <Col sm="1">
+                            {
+                            DataApiResumenVal.length <= 0 ?"":
+                            <button className="btn btn-outline-success" onClick={ this.ResEstructarData }>PDF</button>
+                            }
+                            </Col>
+                        </Row>
+                        
+                        <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
                     </ModalBody>
                 </Modal>
             </div> 

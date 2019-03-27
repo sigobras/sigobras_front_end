@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody,Row,Col,Button,ButtonGroup } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -14,26 +14,37 @@ class Report_1 extends Component {
   constructor(){
     super()
     this.state = {
-      DataHistorial:[],
-      ArFormat:[],
+      DataHistorialApi:[],
+      DataAniosApi:[],
+      DataMesesApi:[],
+      //DataHistorial:[],
       modal: false,
-      DataEncabezado:[]
+      DataEncabezado:[],
+      urlPdf: '',
     }
 
-    this.EjecutaSolicitudHistorial = this.EjecutaSolicitudHistorial.bind(this)
     this.ModalReportes = this.ModalReportes.bind(this)
     this.makePdf = this.makePdf.bind(this)
-    this.PruebaDatos = this.PruebaDatos.bind(this)
+    this.seleccionaAnios = this.seleccionaAnios.bind(this)
+    this.seleccionaMeses = this.seleccionaMeses.bind(this)
+
+    
   }
 
-  EjecutaSolicitudHistorial(){
-    axios.post(`${UrlServer}/CuadroMetradosEjecutados`,{
+  
+
+  ModalReportes() {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
+    // llama al api de años
+    axios.post(`${UrlServer}/getAnyoReportes`,{
       "id_ficha":sessionStorage.getItem("idobra")
     })
     .then((res)=>{
-        console.log('res HISTORIAL', res.data)
+        // console.log('res ANIOS', res.data)
         this.setState({
-            DataHistorial: res.data
+          DataAniosApi: res.data
         })
     })
     .catch((err)=>{
@@ -41,18 +52,62 @@ class Report_1 extends Component {
     });
   }
 
-  ModalReportes() {
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
+  seleccionaAnios(e){   
+  // LLAMA AL API DE MESES
+
+   axios.post(`${UrlServer}/getPeriodsByAnyo`,{
+     "id_ficha":sessionStorage.getItem("idobra"),
+     "anyo":e.target.value
+   })
+   .then((res)=>{
+      //  console.log('res Meses', res.data)
+       this.setState({
+         DataMesesApi: res.data
+       })
+   })
+   .catch((err)=>{
+       console.log('ERROR ANG al obtener datos ❌'+ err);
+   });
   }
 
-  PruebaDatos(){
+  seleccionaMeses(id_historial, fecha){
+    // LLAMA AL API DE MESES
+    axios.post(`${UrlServer}/CuadroMetradosEjecutados`,{
+      "id_ficha":sessionStorage.getItem("idobra"),
+      "historialestados_id_historialestado":id_historial,
+      "fecha":fecha
+    })
+    .then((res)=>{
+        //console.log('res CuadroMetradosEjecutados', res.data)
+        this.setState({
+          DataHistorialApi: res.data,
+          DataEncabezado:encabezadoInforme()
 
-    this.EjecutaSolicitudHistorial()
+        })
+    })
+    .catch((err)=>{
+        console.log('ERROR ANG al obtener datos ❌'+ err);
+    });
 
-    var DataHist = this.state.DataHistorial
-    // console.log('DH', DataHist)
+
+    
+
+
+  }
+
+
+
+  makePdf(){
+
+    
+    var {  DataEncabezado } = this.state
+
+
+
+    //ARMAMOS DATA PARA GENERAR EL PDF DE METRADOS EJECUTADOS
+
+    var DataHist = this.state.DataHistorialApi
+    console.log('DH', DataHist)
 
     var ArFormat = []
 
@@ -238,21 +293,9 @@ class Report_1 extends Component {
 
     var ultimoElemento = ArFormat.length -1
     delete ArFormat[ultimoElemento].pageBreak
-    // console.log(ArFormat)
-    this.setState({
-      ArFormat,
-      DataEncabezado:encabezadoInforme()
-    })
-    
-  }
 
-  makePdf(){
-    this.PruebaDatos()
-    var { ArFormat, DataEncabezado } = this.state
 
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
+    // GENERA EL FORMATO PDF
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
 
     var docDefinition = {
@@ -302,6 +345,7 @@ class Report_1 extends Component {
         },
 
         DataEncabezado,
+        
         ArFormat
       ],
 
@@ -361,33 +405,76 @@ class Report_1 extends Component {
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
 
     pdfDocGenerator.getDataUrl((dataUrl) => {
-        const targetElement = document.getElementById('iframeContainer');
-        const iframe = document.createElement('iframe');
-        iframe.src = dataUrl;
-        iframe.style.width = "100%";
-        iframe.style.height = "100%";
-        iframe.frameBorder = 0;
-
-        targetElement.appendChild(iframe);
+       this.setState({
+        urlPdf:dataUrl
+       })
+        
+        
     });
   
   }
+
   render() {
+    const { DataHistorialApi, DataAniosApi, DataMesesApi } = this.state
       return (
         <div> 
 
           <li className="lii">
-              <a href="#"  onClick={this.makePdf} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) ✔</a>
+              <a href="#"  onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) ✔</a>
           </li>
 
-          <Modal isOpen={this.state.modal} fade={false} toggle={this.makePdf} size="xl">
+          <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
             <ModalHeader toggle={this.ModalReportes}>1.- CUADRO DE METRADOS EJECUTADOS </ModalHeader>
             <ModalBody>
-              <div id="iframeContainer" style={{height: 'calc(100vh - 50px)'}}></div>
-            </ModalBody>
-          </Modal>
-        </div>
-      );
+              
+              <Row>
+                  <Col sm="2">
+                  <fieldset>
+                      <legend>Seleccione</legend>
+                      
+                      <select className="form-control form-control-sm" onChange={ e=>this.seleccionaAnios(e) } >
+                          <option value="">Años</option> 
+                          {
+                            DataAniosApi.map((anios, iA)=>
+                              <option key={ iA } value={ anios.anyo }>{anios.anyo }</option>
+                            )
+                          }                       
+                      </select>  
+                  </fieldset>
+
+                  </Col>
+                  <Col sm="9">
+                  { DataMesesApi.length <= 0? "":
+                    <fieldset>
+                        <legend>Seleccione el Mes</legend>
+                        <ButtonGroup size="sm">
+                          {
+                            DataMesesApi.map((Meses, iM)=>
+                              <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                            )
+                          }
+
+                        </ButtonGroup>
+                        
+                    
+                    </fieldset>
+                  }
+          
+                  </Col>
+                  <Col sm="1">
+                  {
+                    DataHistorialApi.length <= 0 ?"":
+                    <button className="btn btn-outline-success" onClick={ this.makePdf }> PDF </button>
+                  }
+
+                </Col>
+              </Row>
+              
+              <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+          </ModalBody>
+        </Modal>
+      </div>
+    );
   }
 }
 
