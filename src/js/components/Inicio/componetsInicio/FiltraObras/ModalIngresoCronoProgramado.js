@@ -3,9 +3,9 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup,InputGro
 
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios'
-import {UrlServer} from '../../../Utils/ServerUrlConfig'
+import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
-class ModalIngresoCronograma extends Component {
+class ModalIngresoCronoProgramado extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,18 +53,24 @@ class ModalIngresoCronograma extends Component {
     var fechaInicio = new Date(this.state.fecha_desde);
     var fechaFin = new Date(this.state.fecha_hasta);
 
+    const config = { year: 'numeric', month: 'short'};
 
-   var Fechas = []
+    var Fechas = []
 
     while(fechaFin.getTime() >= fechaInicio.getTime()){
         fechaInicio.setDate(fechaInicio.getDate() + 1);
         var ultimoDiaMes = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth() + 1, 0);
         ultimoDiaMes =  ultimoDiaMes.getDate()
         // console.log(fechaInicio.getFullYear() + '-' + (fechaInicio.getMonth() + 1) + '-' + fechaInicio.getDate());
+        var anio = fechaInicio.getFullYear()
+        var mes =  (fechaInicio.getMonth() + 1)
+
+        var formatearFecha =  anio+'-'+mes
 
         var FechaEnviar =fechaInicio.getFullYear()+ '-'+ (fechaInicio.getMonth() + 1) + '-' +  ultimoDiaMes
-        var FechaMostar = (fechaInicio.getMonth() + 1) + ' - ' +  fechaInicio.getFullYear()
+        var FechaMostar = new Date(formatearFecha).toLocaleDateString('ES', config)
 
+        // console.log('fecha date', FechaMostar)
         
         Fechas.push({
           fechaEnviar:FechaEnviar,
@@ -80,20 +86,20 @@ class ModalIngresoCronograma extends Component {
 
     Fechas.forEach(anioMes => {
       if (!DataAgrupado.find(ger => ger.fechaMostrar == anioMes.fechaMostrar )) {
-          const { fechaMostrar,fechaEnviar } = anioMes;
+          const { fechaMostrar, fechaEnviar } = anioMes;
           DataAgrupado.push({ fechaMostrar, fechaEnviar });
       }
     });
     
-    console.log('DataAgrupado', DataAgrupado)
+    // console.log('DataAgrupado', DataAgrupado)
     this.setState({
       Column:DataAgrupado
     })
 
   }
 
-  capturaInputsProgramado(e, ){
-    console.log('value', e.target.value)
+  capturaInputsProgramado(e){
+    // console.log('value', e.target.value)
     this.setState({ValorInput: e.target.value})
   }
 
@@ -113,13 +119,14 @@ class ModalIngresoCronograma extends Component {
   }
 
   enviarDatosApi(){
-    console.log(this.state.DataCronoArmadoEnviar)
+    // console.log(this.state.DataCronoArmadoEnviar)
     axios.post(`${UrlServer}/postcronogramamensual`,
       this.state.DataCronoArmadoEnviar
     )
-    .then((res)=>
+    .then((res)=>{
       console.log('res', res)
-    )
+      alert('enviado al sistema')
+    })
     .catch((err)=>
       console.log('err', err)
     )
@@ -129,15 +136,15 @@ class ModalIngresoCronograma extends Component {
     const { Column } = this.state
     return (
       <div>
-        <Button color="danger" onClick={this.ModalIngresoCrono}>INGRESAR CRONOGRAMA</Button>
+        <Button color="danger" onClick={this.ModalIngresoCrono}>+ PROGRAMADO</Button>
 
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalIngresoCrono} size="xl" backdrop="static">
-          <ModalHeader toggle={this.ModalIngresoCrono}>INGRESO DE CRONOGRAMA</ModalHeader>
+          <ModalHeader toggle={this.ModalIngresoCrono}>INGRESO DE CRONOGRAMA PROGRAMADO</ModalHeader>
           <ModalBody>
-            desde:<input type="month" onChange={e=> this.setState({fecha_desde:e.target.value})}/>
-            hasta:<input type="month" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
+            Desde:<input type="month" onChange={e=> this.setState({fecha_desde:e.target.value})}/>
+            Hasta:<input type="month" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
 
-            <button onClick={this.GeneraFechasSegunOrden}>GENERAR CRONOGRAMA</button>
+            <button onClick={this.GeneraFechasSegunOrden}>GENERAR  PROGRAMADO</button>
 
             <div className="table-responsive">
               <table className="table table-sm">
@@ -146,7 +153,9 @@ class ModalIngresoCronograma extends Component {
                     <th></th>
                     <th>INICIO</th>
                     {Column.map((col, i)=>
-                      <th key={ i }> {col.fechaMostrar}  </th>
+                      <th key={ i }> 
+                        <label className="text-capitalize">{col.fechaMostrar} </label> 
+                      </th>
                     )}
                   </tr>
                 </thead>
@@ -155,40 +164,19 @@ class ModalIngresoCronograma extends Component {
                     <th>PROGRAMADO</th>
                     <td>0</td>
                     {Column.map((col, i)=>
-                      <td key={ i } style={{minWidth: '140px', display: 'inlineBlock'}}>
-                      <InputGroup>
-                        <DebounceInput debounceTimeout={500} onChange={e => this.capturaInputsProgramado(e, )}  type="number" className="form-control form-control-sm"/>  
-                        <InputGroupAddon addonType="append" title="validar" color="primary"><Button onClick={()=>this.ValidarInput(col.fechaEnviar) }>✔</Button></InputGroupAddon>
-                      </InputGroup>
+                      <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
+                        <InputGroup>
+                          <DebounceInput debounceTimeout={500} onChange={e => this.capturaInputsProgramado(e, )} type="number" className="form-control form-control-sm"/>  
+                          <InputGroupAddon addonType="append" title="validar" color="primary"><Button onClick={()=>this.ValidarInput(col.fechaEnviar) }>✔</Button></InputGroupAddon>
+                        </InputGroup>
                       </td>                  
 
-                    )}
-                  </tr>
-
-                  <tr>
-                    <th>FISICO EJECUTADO</th>
-                    <td>0</td>
-                    {Column.map((col, i)=>
-                      <td key={ i }></td>                  
-                    )}
-                  </tr>
-
-                  <tr>
-                    <th>FINANCIERO EJECUTADO</th>
-                    <td>0</td>
-
-                    {Column.map((col, i)=>
-                      <td key={ i }></td>                  
                     )}
                   </tr>
                 </tbody>
               </table>
             </div>
-
-            
-
-
-            <button onClick={this.GenerarColTable }>mas</button>
+            {/* <button onClick={this.GenerarColTable }>mas</button> */}
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={this.enviarDatosApi}>Guardar datos</Button>{' '}
@@ -200,5 +188,4 @@ class ModalIngresoCronograma extends Component {
   }
 }
 
-
-export default ModalIngresoCronograma;
+export default ModalIngresoCronoProgramado;

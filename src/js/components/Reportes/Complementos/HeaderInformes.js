@@ -2,21 +2,23 @@ const axios =  require('axios');
 const { UrlServer } = require('../../Utils/ServerUrlConfig')
 
 
-const DataHeaderInforme = () => {
+const DataHeaderInforme = (fecha_inicial,fecha_final) => {
   try {
     return axios.post(`${UrlServer}/getInformeDataGeneral`,{
-      "id_ficha":sessionStorage.getItem("idobra")
+      "id_ficha":sessionStorage.getItem("idobra"),
+      "fecha_inicial":fecha_inicial,
+      "fecha_final":fecha_final,
     })
   } catch (error) {
     console.error(error)
   }
 }
 
-function encabezadoInforme(){
+function encabezadoInforme(fecha_inicial,fecha_final){
   var TblHeader = []
-    DataHeaderInforme()
+    DataHeaderInforme(fecha_inicial,fecha_final)
     .then((res) => {
-      // console.log('res',res.data)
+       //console.log('res',res.data)
       TblHeader.push(
           
             {
@@ -63,13 +65,17 @@ function encabezadoInforme(){
                       text: ': S/. '+res.data.presupuesto_general,
                       style: 'tableBodyInforme',
                       alignment: 'left',
-                      colSpan:3
+                      //colSpan:3
                     },
                     {
-                      
+                      text: 'COSTO DIRECTO',
+                      style: 'TableHeaderInforme',
+                      alignment: 'left',
                     },
                     {
-                      
+                      text: ': S/. '+res.data.costo_directo,
+                      style: 'tableBodyInforme',
+                      alignment: 'left',
                     },
                     {
                       text: 'REGION',
@@ -90,7 +96,7 @@ function encabezadoInforme(){
                       alignment: 'left'
                     },
                     {
-                      text: ': '+res.data.mes,
+                      text: ': '+ res.data.mes,
                       style: 'tableBodyInforme',
                       alignment: 'left'
                     },

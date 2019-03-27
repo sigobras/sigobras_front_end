@@ -71,19 +71,20 @@ class Report_5 extends Component {
      });
     }
   
-  seleccionaMeses(id_historial, fecha, fecha_inicial){
+  seleccionaMeses(id_historial, fecha_inicial,fecha_final){
     // LLAMA AL API DE MESES
     axios.post(`${UrlServer}/valorizacionPartidasNuevas`,{
       "id_ficha":sessionStorage.getItem("idobra"),
-      "historialestados_id_historialestado":id_historial,
-      "fecha":fecha,
+      "historialestados_id_historialestado":id_historial,      
       "fecha_inicial":fecha_inicial,
+      "fecha_final":fecha_final,
+
     })
     .then((res)=>{
-        console.log('res valorizacionMayoresMetrados', res.data)
+        //console.log('res valorizacionMayoresMetrados', res.data)
         this.setState({
           DataPartNewlAPI: res.data,
-          DataEncabezado:encabezadoInforme()
+          DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
         })
     })
@@ -453,7 +454,7 @@ class Report_5 extends Component {
 
       for (let j = 0; j < DataHist[i].partidas.length; j++) {
 
-         console.log('ddatos', DataHist[i].partidas[j]);
+         //console.log('ddatos', DataHist[i].partidas[j]);
         
 
         ValPresupuesto[i].table.body.push( 
@@ -715,7 +716,7 @@ class Report_5 extends Component {
                   <ButtonGroup size="sm">
                   {
                     DataMesesApi.map((Meses, iM)=>
-                      <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                      <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
                     )
                   }
 

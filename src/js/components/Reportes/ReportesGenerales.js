@@ -8,8 +8,8 @@ import Report_3 from './Reporte6/Report_3'
 import Report_4 from './Reporte6/Report_4'
 import Report_5 from './Reporte6/Report_5'
 
-// import Report_8 from './Reporte6/Report_8'
-// import Report_9 from './Reporte6/Report_9';
+import Report_8 from './Reporte6/Report_8'
+import Report_9 from './Reporte6/Report_9';
 
 
 class ReportesGenerales extends Component {

@@ -73,19 +73,19 @@ class Report_3 extends Component {
         });
     }
 
-    seleccionaMeses(id_historial, fecha, fecha_inicial){
+    seleccionaMeses(id_historial, fecha_inicial,fecha_final){
         // LLAMA AL API DE MESES
         axios.post(`${UrlServer}/resumenValorizacionPrincipal`,{
             "id_ficha":sessionStorage.getItem("idobra"),
             "historialestados_id_historialestado":id_historial,
-            "fecha":fecha,
             "fecha_inicial":fecha_inicial,
+            "fecha_final":fecha_final,
         })
         .then((res)=>{
             //console.log('res resumenValorizacionPrincipal', res.data)
             this.setState({
                 DataApiResumenVal: res.data,
-                DataEncabezado:encabezadoInforme()
+                DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
             })
         })
@@ -951,7 +951,7 @@ class Report_3 extends Component {
                             <ButtonGroup size="sm">
                             {
                                 DataMesesApi.map((Meses, iM)=>
-                                <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                                <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
                                 )
                             }
 
