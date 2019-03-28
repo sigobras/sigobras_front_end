@@ -56,7 +56,7 @@ class CronogramaAvance extends Component{
               Cronograma de avance
               <div className="clearfix">
                 <div className="float-right">
-                  <ModalIngresoCronoProgramado ObraId={ this.props.fichaId }/>
+                  <ModalIngresoCronoProgramado ObraId={ this.props.fichaId } costoDirecto={this.props.costoDirecto }/>
                   <ModalIngresoCronoFinanciero ObraId={ this.props.fichaId }/>
                 </div> 
               </div>
