@@ -8,10 +8,8 @@ import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
 class MDdiario extends Component {
   constructor(){
     super();
-
     this.state = {
       collapse: 1,
-
     }
 
     this.CollapseCard = this.CollapseCard.bind(this)

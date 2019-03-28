@@ -1,6 +1,6 @@
 // libraris
 import React, { Component } from 'react';
-import {  FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
+import { FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
 
 import { Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
@@ -135,8 +135,8 @@ class AppAng extends Component {
                         {/* {sessionStorage.getItem('idobra') === null? window.location.reload(): ''} */}
                         <div>
                             <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
-                                <span className="col-md-2 mr-0 m-0 p-0 text-light h5">
-                                    <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="30" /> SIGOBRAS
+                                <span className="col-md-2 mr-0 m-0 pt-1 text-light h5">
+                                    <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="48" /> SIGOBRAS
                                     <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={ this.ButtonToogle }>
                                         <MdDehaze size={20}/>
                                     </button>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import { Nav, NavItem, TabContent, NavLink, TabPane, ListGroup, Modal, ModalHeader, ModalBody, } from 'reactstrap';
 import classnames from 'classnames';
-import { FaRegImages} from "react-icons/fa";
+import { FaUserFriends } from "react-icons/fa";
 import Usuario from '../../../../../images/usuario.png'
 
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
@@ -60,10 +60,10 @@ class ModalListaPersonal extends Component {
     render() {
         const { DataPersonalObra } = this.state
         return (
-          <button className="btn btn-outline-info btn-sm mr-1" title="Galeria de Imagenes" onClick={this.ModalPersonal} ><FaRegImages />
+          <button className="btn btn-outline-info btn-sm mr-1" title="Galeria de Imagenes" onClick={this.ModalPersonal} ><FaUserFriends />
             
             <Modal isOpen={this.state.modalLisPers} fade={false} toggle={this.ModalPersonal} backdrop="static">
-              <ModalHeader toggle={this.toggleModal}>PERSONALTECNICO DE OBRA</ModalHeader>
+              <ModalHeader toggle={this.toggleModal}>PERSONAL TECNICO DE OBRA</ModalHeader>
               <ModalBody>
                 <div className="card">
                   <Nav tabs>

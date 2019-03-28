@@ -47,6 +47,7 @@ class MetradosDiarios extends Component {
         parcial_actividad:'',
         descripcion:'',
         metrado:'',
+        porcentaje_negatividad:0,
   
         // registrar inputs de mayores metrados
         nombre:'',
@@ -102,9 +103,7 @@ class MetradosDiarios extends Component {
         })
         .catch((error)=>{
           toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
-          
-            // console.error('algo salio mal verifique el',error);
-            
+          // console.error('algo salio mal verifique el',error);
         })
     }
 
@@ -116,7 +115,8 @@ class MetradosDiarios extends Component {
             activeTab: tab,
             nombreComponente: nombComp,
             DataPartidas:[],
-            id_componente
+            id_componente,
+            collapse:-1
           });
       }
 
@@ -148,8 +148,10 @@ class MetradosDiarios extends Component {
 
     }
       
-    CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial) {
+    CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo) {
               
+      console.log('porcentaje_negatividad', porcentaje_negativo)
+
       this.modalMetrar();
         this.setState({
             id_actividad: id_actividad,
@@ -166,7 +168,8 @@ class MetradosDiarios extends Component {
             descripcion:descripcion,
             smsValidaMetrado:'', 
             metrado:metrado,
-            parcial:parcial
+            parcial:parcial,
+            porcentaje_negatividad:porcentaje_negativo
         })
         
     }
@@ -243,9 +246,9 @@ class MetradosDiarios extends Component {
                     DataPartidas: DataModificadoPartidas,
                     DataActividades:DataModificadoActividades,
                     
-                   ValorMetrado:"",
-                   DescripcionMetrado:"",
-                   ObservacionMetrado:"",
+                    ValorMetrado:"",
+                    DescripcionMetrado:"",
+                    ObservacionMetrado:"",
 
                   })
                   toast.success('Exito! Metrado ingresado');
@@ -548,26 +551,9 @@ class MetradosDiarios extends Component {
                                                     <span className="float-right text-warning">S/. { DataMayorMetrado.mm_avance_metrado}</span>
                                                   </div>
 
-                                                  <div style={{
-                                                    height: '3px',
-                                                    width: '100%',
-                                                    background: '#c3bbbb',
-                                                    position: 'relative'
-                                                    }}
-
-                                                  >
-                                                  <div
-                                                    style={{
-                                                      width: `${DataMayorMetrado.mm_porcentaje}%`,
-                                                      height: '100%',
-                                                      background: DataMayorMetrado.mm_porcentaje > 95 ? '#00e6ff'
-                                                        : DataMayorMetrado.mm_porcentaje > 50 ? '#ffbf00'
-                                                        :  '#ff2e00',
-                                                      transition: 'all 2s linear 0s',
-                                                      position: 'absolute'
-                                                    }}
-                                                  />
-                                                  {/* {console.log('sasa>>',row.row.porcentaje)} */}
+                                                  <div>
+                                                  {DataMayorMetrado.mm_porcentaje} %
+                                                  <div/>
                                                   </div>
                                                   <div className="clearfix">
                                                     <span className="float-left text-info">Saldo:  { DataMayorMetrado.mm_metrados_saldo } { metrados.unidad_medida }</span>
@@ -654,7 +640,7 @@ class MetradosDiarios extends Component {
                                                   
                                                   <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
                                                     { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
-                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial)} >
+                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
                                                         <FaPlus size={ 20 } /> 
                                                       </button>
                                                     }
@@ -757,7 +743,7 @@ class MetradosDiarios extends Component {
                             <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } name="myImage"/>
                             <label className="custom-file-label" htmlFor="customFile">FOTO</label>
                         </div>
-
+                        % {this.state.porcentaje_negatividad}
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                       <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>

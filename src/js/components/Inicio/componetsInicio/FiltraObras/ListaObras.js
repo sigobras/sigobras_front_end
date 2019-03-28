@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios'; 
-import { FaList, FaClock, FaUserFriends } from "react-icons/fa";
+import { FaList, FaClock, FaRegImages } from "react-icons/fa";
 
 import 'jspdf-autotable';
 
@@ -169,12 +169,12 @@ class ListaObras extends Component{
                             <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={e=> this.CollapseComponentes(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
                             <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={e=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button>
                             <ModalListaPersonal idobraSeleccionada={ Obras.id_ficha }/>
-                            <button className="btn btn-outline-primary btn-sm" title="Personal"><FaUserFriends /> </button>
+                            <button className="btn btn-outline-primary btn-sm" title="Personal"><FaRegImages /> </button>
                         </td>
                     </tr>
                 
                     
-                    <tr>
+                    <tr className={ collapse === IndexObras ? "":"d-none"}>
                     
                         <td colSpan="6">
                             {collapse === IndexObras ?

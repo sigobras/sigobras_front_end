@@ -47,6 +47,7 @@ class PartidasNuevas extends Component {
         parcial_actividad:'',
         descripcion:'',
         metrado:'',
+        porcentaje_negatividad:0,
   
         // registrar inputs de mayores metrados
         nombre:'',
@@ -88,11 +89,11 @@ class PartidasNuevas extends Component {
     }
     componentWillMount(){
         document.title ="Metrados Diarios"
-        axios.post(`${UrlServer}/getComponentes`,{
+        axios.post(`${UrlServer}/getComponentesPNuevas`,{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log('res>>', res.data);
+            // console.log('res partidas nuevas>>', res.data);
             
             this.setState({
               DataComponentes:res.data,
@@ -116,12 +117,13 @@ class PartidasNuevas extends Component {
             activeTab: tab,
             nombreComponente: nombComp,
             DataPartidas:[],
-            id_componente
+            id_componente,
+            collapse:-1
           });
       }
 
       // get partidas -----------------------------------------------------------------
-      axios.post(`${ UrlServer}/getPartidas`,{
+      axios.post(`${ UrlServer}/getPartidasPNuevas`,{
         id_componente: id_componente
       })
       .then((res)=>{
@@ -148,7 +150,7 @@ class PartidasNuevas extends Component {
 
     }
       
-    CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial) {
+    CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo) {
               
       this.modalMetrar();
         this.setState({
@@ -166,7 +168,9 @@ class PartidasNuevas extends Component {
             descripcion:descripcion,
             smsValidaMetrado:'', 
             metrado:metrado,
-            parcial:parcial
+            parcial:parcial,
+            porcentaje_negatividad:porcentaje_negativo
+
         })
         
     }
@@ -353,7 +357,7 @@ class PartidasNuevas extends Component {
 
         // getActividades -----------------------------------------------------------------
         if(event !== this.state.collapse){
-          axios.post(`${ UrlServer}/getActividades`,{
+          axios.post(`${ UrlServer}/getActividadesPNuevas`,{
             id_partida: id_partida
           })
           .then((res)=>{
@@ -414,6 +418,8 @@ class PartidasNuevas extends Component {
 
         return (
             <div>
+              {
+                DataComponentes.length < 0 ? 'no hay datos':
               
                 <Card>
                   <Nav tabs>
@@ -652,7 +658,7 @@ class PartidasNuevas extends Component {
                                                     
                                                     <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
                                                       { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
-                                                        <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial)} >
+                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
                                                           <FaPlus size={ 20 } /> 
                                                         </button>
                                                       }
@@ -678,7 +684,7 @@ class PartidasNuevas extends Component {
                 </Card>
 
 
-
+              }
 
                 {/* <!-- MODAL PARA METRAR --> */}
                   
@@ -752,6 +758,7 @@ class PartidasNuevas extends Component {
                             <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } name="myImage"/>
                             <label className="custom-file-label" htmlFor="customFile">FOTO</label>
                         </div>
+                        % {this.state.porcentaje_negatividad}
 
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">

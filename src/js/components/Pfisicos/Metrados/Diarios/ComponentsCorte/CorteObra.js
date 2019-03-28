@@ -116,7 +116,8 @@ class CorteObra extends Component {
             activeTab: tab,
             nombreComponente: nombComp,
             DataPartidas:[],
-            id_componente
+            id_componente,
+            collapse:-1
           });
       }
 
