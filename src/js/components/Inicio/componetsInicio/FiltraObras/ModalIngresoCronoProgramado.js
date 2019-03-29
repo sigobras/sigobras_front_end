@@ -138,7 +138,6 @@ class ModalIngresoCronoProgramado extends Component {
     })
 
     // console.log('resultado',this.state.EnviarDatos)
-
   }
 
 

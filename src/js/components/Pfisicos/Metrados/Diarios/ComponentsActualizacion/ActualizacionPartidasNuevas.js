@@ -64,6 +64,8 @@ class ActualizacionPartidasNuevas extends Component {
         parcial:'',
         // cargar imagenes
         file: null,
+        smsValidaFecha:'',
+
         
         // funciones de nueva libreria
         dropdownOpen: false,
@@ -201,7 +203,7 @@ class ActualizacionPartidasNuevas extends Component {
 
         e.preventDefault()
         
-        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida } = this.state
+        var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida, fecha_actualizacion } = this.state
         var DataModificadoPartidas = DataPartidas
         var DataModificadoActividades = DataActividades
         actividad_metrados_saldo = Number(actividad_metrados_saldo)
@@ -221,16 +223,15 @@ class ActualizacionPartidasNuevas extends Component {
         };
 
         if(ValorMetrado === '' || ValorMetrado === '0' || ValorMetrado === NaN ){
-            this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
+          this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
         }else if( Number(ValorMetrado) < 0){
             this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
         }else if(Number(ValorMetrado) > actividad_metrados_saldo){
             this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
+        }else if(fecha_actualizacion ===""){
+            this.setState({smsValidaFecha:"Ingrese una fecha" })
         }else{
             if(confirm('¿Estas seguro de metrar?')){
-              this.setState({
-                  modal: !this.state.modal
-              })
 
               // ENVIO DE DATOS NORMAL SIN IMAGEN
               axios.post(`${UrlServer}/avanceActividad`,{
@@ -242,18 +243,25 @@ class ActualizacionPartidasNuevas extends Component {
               })
               .then((res)=>{
                   // console.log('return dattos', res.data.actividades)
-                  DataModificadoPartidas[indexPartida] = res.data.partida
-                  DataModificadoActividades = res.data.actividades
-          
-                  this.setState({
-                    DataPartidas: DataModificadoPartidas,
-                    DataActividades:DataModificadoActividades,
-                    
-                    ValorMetrado:"",
-                    DescripcionMetrado:"",
-                    ObservacionMetrado:"",
-                  })
-                  toast.success('Exito! Metrado ingresado');
+                  if(res.data === "fecha invalida"){
+                    this.setState({smsValidaFecha:"La fecha de su dispositivo se encuentra desactualizado" })
+
+                  }else{
+                    DataModificadoPartidas[indexPartida] = res.data.partida
+                    DataModificadoActividades = res.data.actividades
+            
+                    this.setState({
+                      DataPartidas: DataModificadoPartidas,
+                      DataActividades:DataModificadoActividades,
+                      modal: !this.state.modal,
+
+                      ValorMetrado:"",
+                      DescripcionMetrado:"",
+                      ObservacionMetrado:"",
+                      smsValidaFecha:""
+                    })
+                    toast.success('Exito! Metrado ingresado');
+                  }
               })
               .catch((errors)=>{
                   toast.error('hubo errores al ingresar el metrado');
@@ -732,13 +740,11 @@ class ActualizacionPartidasNuevas extends Component {
                             </div>
                         </div>
 
-                        
                         <div className="form-group"> 
                           <label htmlFor="fehca">FECHA :</label>
                           <input type="date" min={ PrimerDiaDelMesActual() } max={ FechaActual() } onChange={e=> this.setState({fecha_actualizacion:e.target.value})} className="form-control form-control-sm"/>
-                          <div className="texto-rojo mb-0"> <b> { this.state.resMensaje }</b></div>                         
+                          <div className="texto-rojo mb-0"> <b> { this.state.smsValidaFecha }</b></div>
                         </div>
-
 
                         <div className="form-group">
                             <label htmlFor="comment">DESCRIPCION:</label>
