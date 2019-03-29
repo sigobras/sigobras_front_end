@@ -109,7 +109,7 @@ class Login extends Component {
               <div className="container-dialog modal-login">
                   <div className="modal-content">
                     <div className="modal-headers">
-                        <div className="img">
+                        <div className="img mt-3">
                           <img src={ LogoSigobras } className="mx-auto d-block" alt="sigoobras sac" height="75"/>
                         </div>
                         <h4>Inicie sesión</h4>
@@ -130,7 +130,7 @@ class Login extends Component {
                       </form>
                     </div>
                     <div className="modal-footer p-1 text-center">
-                        <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> © 2018 - 2019</label>
+                        <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br/> © 2017 - 2019</label>
                     </div>
                   </div>
               </div>

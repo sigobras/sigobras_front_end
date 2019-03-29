@@ -1,8 +1,7 @@
 
 import React,{ Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon } from 'reactstrap';
-import { DebounceInput } from 'react-debounce-input';
-
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, Input } from 'reactstrap';
+import { ConvertFormatStringNumber } from '../../../Utils/Funciones'
 import axios from 'axios'
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
@@ -27,16 +26,33 @@ class ModalIngresoCronoFinanciero extends Component {
       modal: !prevState.modal
     }));
     
-    // cuando abrimos el modal se ejecuta el pedido 
+    // cuando abrimos el modal se ejecuta el pedido al api
     if(this.state.modal === false){
       axios.post(`${UrlServer}/getcronogramadinero`,{
         id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
           console.log('res financiero>>', res.data);
+
+          var DataEnviarApiFinan = []
+          res.data.forEach(data => {
+            DataEnviarApiFinan.push(
+              {
+                "financieroEjecutado":0,
+                "id_ficha":data.fichas_id_ficha,
+                "mes":data.Anyo_Mes
+              }
+            )
+          });
+
           this.setState({
-            DataApiFinanciero:res.data
+            DataApiFinanciero:res.data,
+            DataEnviarApiFinan
           })
+          
+         
+
+          console.log('dada', DataEnviarApiFinan)
       })
       .catch((error)=>{      
           console.error('algo salio mal verifique el',error);
@@ -44,13 +60,16 @@ class ModalIngresoCronoFinanciero extends Component {
     }
   }
 
-  capturaInputsFinanciero(e){
+  capturaInputsFinanciero(e, i){
+    var convertString =  e.target.value
+    console.log('input', convertString, 'index', i)
+    
+    var numero = ConvertFormatStringNumber(convertString);
 
-    console.log('fag', e.target.value)
+    this.state.DataEnviarApiFinan[i].financieroEjecutado = numero
+    
+    console.log('DataEnviarApiFinan', this.state.DataEnviarApiFinan)
 
-    this.setState({
-      InputFinanciero:e.target.value
-    })
   }
 
   estructuraData(mes){
@@ -93,9 +112,9 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th></th>
                       {/* <th>INICIO</th> */}
-                      {DataApiFinanciero.mes === undefined? <td></td> :DataApiFinanciero.mes.map((col, i)=>
+                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((col, i)=>
                         <th key={ i }> 
-                          <label className="text-capitalize">{col} </label> 
+                          <label className="text-capitalize">{col.Anyo_Mes} </label> 
                         </th>
                       )}
                     </tr>
@@ -104,9 +123,9 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th>PROGRAMADO</th>
                       {/* <td>0</td> */}
-                      {DataApiFinanciero.programado_dinero === undefined? <td></td> :DataApiFinanciero.programado_dinero.map((col, i)=>
+                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((col, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
-                          {col}
+                          {col.programado_dinero}
                         </td>                  
 
                       )}
@@ -115,9 +134,9 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th>FISICO EJECUTADO</th>
                       {/* <td>0</td> */}
-                      {DataApiFinanciero.fisico_dinero === undefined? <td></td> :DataApiFinanciero.fisico_dinero.map((col, i)=>
+                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((col, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
-                          {col}
+                          {col.fisico_dinero}
                         </td>                  
 
                       )}
@@ -127,11 +146,10 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th>FINANCIERO EJECUTADO</th>
                       {/* <td>0</td> */}
-                      {DataApiFinanciero.mes === undefined? <td></td> :DataApiFinanciero.mes.map((mes, i)=>
+                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((mes, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
-                          <InputGroup>
-                            <DebounceInput debounceTimeout={500} onChange={e => this.capturaInputsFinanciero(e)} type="number" className="form-control form-control-sm"/>  
-                            <InputGroupAddon addonType="append" title="validar" color="primary"><Button onClick={()=>this.estructuraData(mes) }>✔</Button></InputGroupAddon>
+                          <InputGroup size="sm">
+                            <Input onBlur={e => this.capturaInputsFinanciero(e, i)} type="number" />  
                           </InputGroup>
                         </td>                  
                       )}

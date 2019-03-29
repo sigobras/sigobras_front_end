@@ -41,8 +41,21 @@ function PrimerDiaDelMesActual(){
     return  ano + '-'+mesAct +'-'+ primerDia
 }
 
+// convierte formato dinero a numero
+function ConvertFormatStringNumber(datoString){
+    console.log('datoString', datoString)
+
+    if(datoString !== "" && datoString !== -1  && datoString !==  NaN){
+        return Number(datoString.replace(/[^0-9\.-]+/g,""));
+    }else{
+        return datoString
+    }
+    
+}
+
 module.exports = {
     Redondea,
     PrimerDiaDelMesActual,
-    FechaActual
+    FechaActual,
+    ConvertFormatStringNumber
 } 

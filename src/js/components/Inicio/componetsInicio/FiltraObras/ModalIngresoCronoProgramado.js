@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup,InputGroupAddon } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col  } from 'reactstrap';
 
-import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios'
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
+import { ConvertFormatStringNumber } from '../../../Utils/Funciones'
 
 class ModalIngresoCronoProgramado extends Component {
   constructor(props) {
@@ -14,14 +14,13 @@ class ModalIngresoCronoProgramado extends Component {
       DataCronoArmadoEnviar:[],
       fecha_desde:'',
       fecha_hasta:'',
-      ValorInput:''
+      ResultResta:-1
     };
     
     this.ModalIngresoCrono = this.ModalIngresoCrono.bind(this);
     this.GenerarColTable = this.GenerarColTable.bind(this);
     this.GeneraFechasSegunOrden = this.GeneraFechasSegunOrden.bind(this);
     this.capturaInputsProgramado = this.capturaInputsProgramado.bind(this);
-    this.ValidarInput = this.ValidarInput.bind(this);
     this.enviarDatosApi = this.enviarDatosApi.bind(this);
   }
 
@@ -96,37 +95,66 @@ class ModalIngresoCronoProgramado extends Component {
       }
     });
     
-    console.log('DataAgrupado', DataAgrupado)
+    var Inputs = []
+
+    DataAgrupado.forEach((alfo, i)=>
+      Inputs.push(
+        [
+          this.props.ObraId,
+          alfo.FechaEnviar,
+          0
+        ]
+      )
+    )
+
+    // console.log('DataAgrupado', DataAgrupado)
+    // console.log('Inputs', Inputs)
     this.setState({
-      Column:DataAgrupado
+      Column:DataAgrupado,
+      EnviarDatos:Inputs
     })
 
   }
 
-  capturaInputsProgramado(e){
-    // console.log('value', e.target.value)
-    this.setState({ValorInput: e.target.value})
+  capturaInputsProgramado(e,i){
+    console.log('value', e.target.value, "index", i)
+    // console.log('estado valor', this.state.EnviarDatos)
+
+    var convertString =  e.target.value
+    var numero = ConvertFormatStringNumber(convertString);
+
+    // console.log('convertString', numero)
+
+
+
+
+    this.state.EnviarDatos[i].splice(2, 1, numero);
+
+    // console.log('estado valor', this.state.EnviarDatos)
+    var SumaInputs = []
+    this.state.EnviarDatos.forEach((data)=>
+      SumaInputs.push( data[2] )
+    )
+      // console.log('valores para sumas',SumaInputs)
+
+    var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+    
+    // console.log('valores para sumas',total)
+    
+    var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+
+    // console.log('total costo directo',costoDirecto)
+
+    var saldoTotalCostoDirecto = costoDirecto - total
+    
+    this.setState({
+      ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+    })
+
+    // console.log('resultado',this.state.EnviarDatos)
+
   }
 
-  ValidarInput(i, fechaEnviar){
-
-    this.state.Column[i].estado = false
-
-
-    console.log("estado actual de columnas", this.state.Column)
-
-
-    var EnviarDatos = this.state.DataCronoArmadoEnviar
-
-      EnviarDatos.push(
-        [
-          this.props.ObraId,
-          fechaEnviar,
-          this.state.ValorInput
-        ]
-      )
-      console.log('data', EnviarDatos)
-  }
 
   enviarDatosApi(){
     // console.log(this.state.DataCronoArmadoEnviar)
@@ -154,13 +182,34 @@ class ModalIngresoCronoProgramado extends Component {
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalIngresoCrono} size="xl" backdrop="static">
           <ModalHeader toggle={this.ModalIngresoCrono}>INGRESO DE CRONOGRAMA PROGRAMADO</ModalHeader>
           <ModalBody>
-            Desde:<input type="month" onChange={e=> this.setState({fecha_desde:e.target.value})}/>
-            Hasta:<input type="month" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
 
-            <button onClick={this.GeneraFechasSegunOrden}>GENERAR  PROGRAMADO</button>
+          <Row>
+            <Col sm="6">
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
+                <Input type="month" onChange={e=> this.setState({fecha_desde:e.target.value})}/>
 
-            <h6>{ this.state.Column.length } MESES GENERADOS: </h6>
-            <h6>COSTO DIRECTO S/. {this.props.costoDirecto }</h6>
+                <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
+                <Input type="month" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
+                <Button color="info" onClick={this.GeneraFechasSegunOrden} >CREAR MESES</Button>
+              </InputGroup>
+            </Col>
+            <Col sm="1">
+              <label>{ this.state.Column.length } MESES  </label>
+            </Col>
+            <Col sm="3">
+              <label>COSTO DIRECTO S/. {this.props.costoDirecto }</label>
+            </Col>
+            <Col sm="2">
+              <Button color={ConvertFormatStringNumber(this.state.ResultResta) === 0?"success":"danger"}>
+              {ConvertFormatStringNumber(this.state.ResultResta) === 0?"😊":"😒"}<label>SALDO S/. {this.state.ResultResta }</label>
+              </Button>
+              
+            </Col>
+          </Row>
+
+            
+            
             <div className="table-responsive">
               <table className="table table-sm">
                 <thead> 
@@ -179,12 +228,13 @@ class ModalIngresoCronoProgramado extends Component {
                     <th>PROGRAMADO</th>
                     <td>0</td>
                     {Column.map((col, i)=>
-                      <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
-                        <InputGroup>
-                          <DebounceInput debounceTimeout={100} onChange={e => this.capturaInputsProgramado(e, )} type="number" className="form-control form-control-sm"/>  
-                          <InputGroupAddon addonType="append" title="validar" color="primary">
-                            <Button onClick={()=>this.ValidarInput(i, col.FechaEnviar) } disabled={col.estado !== true } >{col.estado === true? "✔":"ok" }</Button>
-                          </InputGroupAddon>
+                      <td key={ i } style={{minWidth: '100px', display: 'inlineBlock'}}>
+                        <InputGroup  size="sm">
+                          {/* <DebounceInput debounceTimeout={50} onChange={this.capturaInputsProgramado} type="number" className="form-control form-control-sm"/>   */}
+                          <Input onBlur={e=>this.capturaInputsProgramado(e, i)} type="text"/>  
+                          {/* <InputGroupAddon addonType="append" title="validar" color="primary">
+                            ✔
+                          </InputGroupAddon> */}
                         </InputGroup>
                       </td>                  
 
@@ -196,8 +246,10 @@ class ModalIngresoCronoProgramado extends Component {
             {/* <button onClick={this.GenerarColTable }>mas</button> */}
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.enviarDatosApi}>Guardar datos</Button>{' '}
-            <Button color="secondary" onClick={this.ModalIngresoCrono}>Cancelar</Button>
+          {ConvertFormatStringNumber(this.state.ResultResta) === 0?
+            <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
+          }
+            {' '}  <Button color="secondary" onClick={this.ModalIngresoCrono}>Cancelar</Button>
           </ModalFooter>
         </Modal>
       </div>
