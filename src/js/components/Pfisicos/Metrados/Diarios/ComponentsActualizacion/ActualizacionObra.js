@@ -277,8 +277,6 @@ class ActualizacionObra extends Component {
                       
                   });
                 }
-                
-
             }
         }
     }

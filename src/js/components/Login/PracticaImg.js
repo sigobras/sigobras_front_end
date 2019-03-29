@@ -9,7 +9,7 @@ class PracticaImg extends Component {
     const item = [
       {
         id: 1,
-        img: 'https://i.pinimg.com/originals/21/62/7c/21627c321f7790ff26f9dd23476a826d.gif',
+        img: 'http://190.117.94.80:9000/static/C001/20_00000026199_29-3-2019_12-13-33.jpg',
         class: 'img-fluid',
         alt: 'cargado de datos de algo',
         title: 'cargado de datos de algo',

@@ -51,18 +51,15 @@ class CronogramaAvance extends Component{
     }
     return(
       <div className="card">
-        {console.log('fichaObra', this.props.fichaId)}
-          <div className="card-header">
-              Cronograma de avance
-              <div className="clearfix">
-                <div className="float-right">
-                  <ModalIngresoCronoProgramado ObraId={ this.props.fichaId } costoDirecto={this.props.costoDirecto }/>
-                  <ModalIngresoCronoFinanciero ObraId={ this.props.fichaId }/>
-                </div> 
-              </div>
-                                
+          <div className="card-header text-center">
+              <h6>Cronograma de avance</h6>        
           </div>
           <div className="card-body">
+            <div className="d-flex">
+              <ModalIngresoCronoProgramado ObraId={ this.props.fichaId } costoDirecto={this.props.costoDirecto }/>
+              <ModalIngresoCronoFinanciero ObraId={ this.props.fichaId }/>
+            </div>
+
             <HighchartsReact
                 highcharts={Highcharts}
                 // constructorType={'stockChart'}

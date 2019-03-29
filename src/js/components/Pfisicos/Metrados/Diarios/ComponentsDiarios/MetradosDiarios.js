@@ -463,7 +463,7 @@ class MetradosDiarios extends Component {
                             <th>METRADO</th>
                             <th>P / U S/.</th>
                             <th>P / P S/.</th>
-                            <th width="15%">BARRA DE AVANCE</th>
+                            <th width="18%">BARRA DE AVANCE</th>
                           </tr>
                         </thead>
 

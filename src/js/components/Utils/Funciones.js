@@ -43,7 +43,7 @@ function PrimerDiaDelMesActual(){
 
 // convierte formato dinero a numero
 function ConvertFormatStringNumber(datoString){
-    console.log('datoString', datoString)
+    // console.log('datoString', datoString)
 
     if(datoString !== "" && datoString !== -1  && datoString !==  NaN){
         return Number(datoString.replace(/[^0-9\.-]+/g,""));

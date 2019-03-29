@@ -17,7 +17,6 @@ class ModalIngresoCronoFinanciero extends Component {
     
     this.ModalIngresoFInanciero = this.ModalIngresoFInanciero.bind(this);
     this.capturaInputsFinanciero = this.capturaInputsFinanciero.bind(this);
-    this.estructuraData = this.estructuraData.bind(this);
     this.EnviaDataFinanciero = this.EnviaDataFinanciero.bind(this);
   }
 
@@ -29,7 +28,7 @@ class ModalIngresoCronoFinanciero extends Component {
     // cuando abrimos el modal se ejecuta el pedido al api
     if(this.state.modal === false){
       axios.post(`${UrlServer}/getcronogramadinero`,{
-        id_ficha: sessionStorage.getItem('idobra')
+        id_ficha: this.props.ObraId
       })
       .then((res)=>{
           console.log('res financiero>>', res.data);
@@ -37,11 +36,11 @@ class ModalIngresoCronoFinanciero extends Component {
           var DataEnviarApiFinan = []
           res.data.forEach(data => {
             DataEnviarApiFinan.push(
-              {
-                "financieroEjecutado":0,
-                "id_ficha":data.fichas_id_ficha,
-                "mes":data.Anyo_Mes
-              }
+              [
+                data.fichas_id_ficha,
+                data.fecha,
+                ConvertFormatStringNumber(data.financiero_dinero)
+              ]
             )
           });
 
@@ -66,30 +65,22 @@ class ModalIngresoCronoFinanciero extends Component {
     
     var numero = ConvertFormatStringNumber(convertString);
 
-    this.state.DataEnviarApiFinan[i].financieroEjecutado = numero
+    this.state.DataEnviarApiFinan[i].splice(2, 1, numero);
+
+    
     
     console.log('DataEnviarApiFinan', this.state.DataEnviarApiFinan)
 
   }
 
-  estructuraData(mes){
-    var estrucData = this.state.DataEnviarApiFinan
 
-    estrucData.push({
-      "financieroEjecutado":this.state.InputFinanciero,
-      "id_ficha":this.props.ObraId,
-      "mes":mes
-    })
-
-    console.log('dta',estrucData )
-  }
 
   EnviaDataFinanciero(){
-    axios.post(`${UrlServer}/postAvanceFinanciero`,
+    axios.put(`${UrlServer}/postAvanceFinanciero`,
       this.state.DataEnviarApiFinan
     )
     .then((res)=>{
-      console.log('res devolucion ingreso financiero>>', res.data);
+      console.log('res devolucion ingreso financiero>>', res);
       
     })
     .catch((error)=>{      
@@ -101,7 +92,7 @@ class ModalIngresoCronoFinanciero extends Component {
     const { DataApiFinanciero } = this.state
     return (
       <div>
-        <Button color="danger" onClick={this.ModalIngresoFInanciero}> + FINANCIERO </Button>
+        <Button color="warning" onClick={this.ModalIngresoFInanciero}> + FINANCIERO </Button>
 
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalIngresoFInanciero} size="xl" backdrop="static" >
           <ModalHeader toggle={this.ModalIngresoFInanciero}>INGRESO DE CRONOGRAMA - FINANCIERO </ModalHeader>
@@ -117,6 +108,9 @@ class ModalIngresoCronoFinanciero extends Component {
                           <label className="text-capitalize">{col.Anyo_Mes} </label> 
                         </th>
                       )}
+                      <th>
+                        TOTAL
+                      </th>
                     </tr>
                   </thead>
                   <tbody> 
@@ -129,6 +123,9 @@ class ModalIngresoCronoFinanciero extends Component {
                         </td>                  
 
                       )}
+                      <td>
+                        -
+                      </td>
                     </tr>
 
                     <tr>
@@ -140,6 +137,9 @@ class ModalIngresoCronoFinanciero extends Component {
                         </td>                  
 
                       )}
+                      <td>
+                        -
+                      </td>
                     </tr>
 
 
@@ -149,10 +149,13 @@ class ModalIngresoCronoFinanciero extends Component {
                       {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((mes, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
                           <InputGroup size="sm">
-                            <Input onBlur={e => this.capturaInputsFinanciero(e, i)} type="number" />  
+                            <Input placeholder={mes.financiero_dinero} onBlur={e => this.capturaInputsFinanciero(e, i)} type="text" />  
                           </InputGroup>
                         </td>                  
                       )}
+                      <td>
+                        -
+                      </td>
                     </tr>
 
                   </tbody>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col  } from 'reactstrap';
-
+import { toast } from "react-toastify";
 import axios from 'axios'
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 import { ConvertFormatStringNumber } from '../../../Utils/Funciones'
@@ -117,36 +117,22 @@ class ModalIngresoCronoProgramado extends Component {
   }
 
   capturaInputsProgramado(e,i){
-    console.log('value', e.target.value, "index", i)
-    // console.log('estado valor', this.state.EnviarDatos)
+    // console.log('value', e.target.value, "index", i)
 
     var convertString =  e.target.value
     var numero = ConvertFormatStringNumber(convertString);
 
-    // console.log('convertString', numero)
-
-
-
-
     this.state.EnviarDatos[i].splice(2, 1, numero);
 
-    // console.log('estado valor', this.state.EnviarDatos)
     var SumaInputs = []
     this.state.EnviarDatos.forEach((data)=>
       SumaInputs.push( data[2] )
     )
-      // console.log('valores para sumas',SumaInputs)
 
     var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
-    
-    // console.log('valores para sumas',total)
-    
     var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-
-    // console.log('total costo directo',costoDirecto)
-
     var saldoTotalCostoDirecto = costoDirecto - total
-    
+  
     this.setState({
       ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
     })
@@ -160,15 +146,23 @@ class ModalIngresoCronoProgramado extends Component {
     // console.log(this.state.DataCronoArmadoEnviar)
     if(confirm('¿Estas seguro de envias los datos del cronograma programado al sistema?')){
       axios.post(`${UrlServer}/postcronogramamensual`,
-        this.state.DataCronoArmadoEnviar
+        this.state.EnviarDatos
       )
       .then((res)=>{
         console.log('res', res)
-        alert('enviado al sistema')
+        if(res.data.length > 0 && res.status === 200 ){
+          toast.success('Tu cronograma Programado se ha ingresado.',{ position: "top-right",autoClose: 1000 });
+        }else{
+          toast.error('El cronograma - programado no no ingresado',{ position: "top-right",autoClose: 2000 });
+        }
+
+        // alert('enviado al sistema')
       })
-      .catch((err)=>
-        console.log('err', err)
-      )
+      .catch((err)=>{
+        // console.log('err', err)
+        toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
+
+      })
     }
     
   }
@@ -177,7 +171,7 @@ class ModalIngresoCronoProgramado extends Component {
     const { Column } = this.state
     return (
       <div>
-        <Button color="danger" onClick={this.ModalIngresoCrono}>+ PROGRAMADO</Button>
+        <Button color="primary" onClick={this.ModalIngresoCrono}>+ PROGRAMADO</Button>
 
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalIngresoCrono} size="xl" backdrop="static">
           <ModalHeader toggle={this.ModalIngresoCrono}>INGRESO DE CRONOGRAMA PROGRAMADO</ModalHeader>
