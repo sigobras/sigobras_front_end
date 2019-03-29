@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 
 import LogoSigobras from '../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
+import { ConvertFormatStringNumber } from '../../../../Utils/Funciones'
 
 class MetradosDiarios extends Component {
 
@@ -109,7 +110,6 @@ class MetradosDiarios extends Component {
 
     Tabs(tab, id_componente,  nombComp) {
 
-
       if (this.state.activeTab !== tab) {
           this.setState({
             activeTab: tab,
@@ -199,7 +199,7 @@ class MetradosDiarios extends Component {
         var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida } = this.state
         var DataModificadoPartidas = DataPartidas
         var DataModificadoActividades = DataActividades
-        actividad_metrados_saldo = Number(actividad_metrados_saldo)
+        actividad_metrados_saldo =  ConvertFormatStringNumber(actividad_metrados_saldo)
         
 
         // funciones  para cargar las imagenes
@@ -221,7 +221,7 @@ class MetradosDiarios extends Component {
             this.setState({smsValidaMetrado:'Ingrese un valor de metrado válido'})
         }else if( Number(ValorMetrado) < 0){
             this.setState({smsValidaMetrado:'El valor del metrado es inferior a cero'})
-        }else if(Number(ValorMetrado) > actividad_metrados_saldo){
+        }else if(Number(ValorMetrado) >actividad_metrados_saldo){
             this.setState({smsValidaMetrado:'El valor del metrado ingresado es mayor al saldo disponible'})
         }else{
             if(confirm('¿Estas seguro de metrar?')){
@@ -411,8 +411,6 @@ class MetradosDiarios extends Component {
         dropdownOpen: !this.state.dropdownOpen
       });
     }
-  
-
   
     render() {
         var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM } = this.state

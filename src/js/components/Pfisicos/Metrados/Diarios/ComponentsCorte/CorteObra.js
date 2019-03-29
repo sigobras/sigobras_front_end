@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 
 import LogoSigobras from '../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
+import { ConvertFormatStringNumber } from '../../../../Utils/Funciones'
 
 class CorteObra extends Component {
 
@@ -197,7 +198,7 @@ class CorteObra extends Component {
         var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida } = this.state
         var DataModificadoPartidas = DataPartidas
         var DataModificadoActividades = DataActividades
-        actividad_metrados_saldo = Number(actividad_metrados_saldo)
+        actividad_metrados_saldo =  ConvertFormatStringNumber(actividad_metrados_saldo)
         
 
         // funciones  para cargar las imagenes
