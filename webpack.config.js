@@ -1,5 +1,5 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const PORT = process.env.PORT || '80';
+const PORT = process.env.PORT || '180';
 var path = require('path');
 
 module.exports = {
@@ -46,17 +46,17 @@ module.exports = {
     publicPath: '',
   },
   devServer: {
-    host: "0.0.0.0",
+    // host: "0.0.0.0",
     contentBase: path.join(__dirname, "public"),
     compress: true,
     port: PORT,
     historyApiFallback: true,
-    public: 'www.sigobras.com',
-    allowedHosts: [
-      'www.sigobras.com',
-      'sigobras.com',
-      '190.117.94.80'
-    ],
+    // public: 'www.sigobras.com',
+    // allowedHosts: [
+    //   'www.sigobras.com',
+    //   'sigobras.com',
+    //   '190.117.94.80'
+    // ],
     filename: 'main.js'
   },
 

@@ -52,7 +52,6 @@ class AppAng extends Component {
         }
 
         this.ButtonToogle = this.ButtonToogle.bind(this);
-        this.YearActual = this.YearActual.bind(this);
         this.collapseRight = this.collapseRight.bind(this)
         this.irFullScreen = this.irFullScreen.bind(this)
         this.CollapseMenu = this.CollapseMenu.bind(this)
@@ -113,14 +112,6 @@ class AppAng extends Component {
         // console.log('>><<',this.state.navbarExpland);
     }
 
-    YearActual(){
-        var fecha = new Date();
-        
-        var ano = fecha.getFullYear();
-        var month = fecha.getMonth()+1;
-        var dt = fecha.getDate();
-        return dt+ '-'+ month +'-'+ ano
-    }
 
     collapseRight(){
         this.setState({
@@ -177,7 +168,7 @@ class AppAng extends Component {
             .catch(error=>
                 console.log(error)
             )
-        },1000)
+        },3000)
         
     }
 
@@ -293,7 +284,6 @@ class AppAng extends Component {
                                         <div className="d-flex mb-0 border-button pt-5 p-1 text-light bg-dark m-0">
                                             <label>
                                                 <b>
-                                                    {/* BIENVENIDO HOY ES : {this.YearActual()} */}
                                                     { DataObra.g_meta === undefined?<div className="text-center text-white"><Spinner color="primary" size="sm" /></div>: DataObra.g_meta.toUpperCase()}
                                                 </b>
                                             </label>

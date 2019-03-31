@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import CorteObra from './ComponentsCorte/CorteObra'
-import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
+import CortePartidasNuevas from './ComponentsCorte/CortePartidasNuevas'
 
 
 class Corte extends Component {
@@ -17,8 +17,8 @@ class Corte extends Component {
 
 
   CollapseCard(valor){
-    let event = valor
-    this.setState({ collapse: this.state.collapse === Number(event) ? 0 : Number(event) });
+    let event = Number(valor)
+    this.setState({ collapse: this.state.collapse === event ? 0 : event });
   }
 
   render() {
@@ -40,7 +40,7 @@ class Corte extends Component {
           <a href="#" className="text-white"><CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >2. PARTIDAS NUEVAS  {collapse === 2?'➖':'➕'}</CardHeader></a>
             <Collapse isOpen={collapse === 2}>
                 <CardBody>
-                  { collapse === 1?  <PartidasNuevas />: '' }
+                  { collapse === 2?  <CortePartidasNuevas />: '' }
                 </CardBody>                   
             </Collapse>
         </Card>
