@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import Gallery from 'react-grid-gallery';
 
 class Galeria extends Component{
-        constructor(){
-                super();
-                this.state={
+constructor(){
+        super();
+        this.state={
 
-                }
         }
+}
 
         render(){
                 const IMAGES = [

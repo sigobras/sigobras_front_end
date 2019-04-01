@@ -163,7 +163,7 @@ class ValorizacionGeneral extends Component {
     render() {
         const { DataAniosApi, DataMesesApi, DataComponentesApi, DataResumenApi, DataPartidasApi, activeTabAnio, activeTabMes, activeTabComponente, NombreComponente} = this.state
         return (
-                <Card>
+            <div>
                     {/* {DataAniosApi.length <= 0 ? <label className="text-center" >  <Spinner color="primary" size="sm" /></label>: */}
                     {/* AÑOS */}
                     <Nav tabs>
@@ -189,170 +189,170 @@ class ValorizacionGeneral extends Component {
                         )}
 
                     </Nav>  
-
-                    {/* COMPONENTES */}
-                    <Nav tabs>
-                        <NavItem >
-                            <NavLink className={classnames({ active: activeTabComponente === "resumen" })} onClick={() => { this.TabsComponentes("resumen","","RESUMEN DE VALORIZACION") }} >
-                                RESUMEN
-                            </NavLink>
-                        </NavItem>
-                        { DataComponentesApi.map((Comp, IComp)=>
-                            <NavItem key= { IComp }>
-                                <NavLink className={classnames({ active: activeTabComponente === IComp.toString() })} onClick={() => { this.TabsComponentes(IComp.toString(),Comp.id_componente, Comp.nombre) }} >
-                                C - {Comp.numero}
+                    <Card className="m-1">
+                        {/* COMPONENTES */}
+                        <Nav tabs>
+                            <NavItem >
+                                <NavLink className={classnames({ active: activeTabComponente === "resumen" })} onClick={() => { this.TabsComponentes("resumen","","RESUMEN DE VALORIZACION") }} >
+                                    RESUMEN
                                 </NavLink>
                             </NavItem>
-                        )}
+                            { DataComponentesApi.map((Comp, IComp)=>
+                                <NavItem key= { IComp }>
+                                    <NavLink className={classnames({ active: activeTabComponente === IComp.toString() })} onClick={() => { this.TabsComponentes(IComp.toString(),Comp.id_componente, Comp.nombre) }} >
+                                    C - {Comp.numero}
+                                    </NavLink>
+                                </NavItem>
+                            )}
 
-                    </Nav>
-                    
-                    <Card className="m-1">
+                        </Nav>
+                        
+                        
                         <CardHeader>{ NombreComponente}</CardHeader>
                         <CardBody>
-                        {
-                            activeTabComponente === "resumen"?
-                            <div className="table-responsive">
-                                <table className="table table-bordered small table-sm">
-                                    <thead>
-                                        <tr className="text-center">
-                                            <th className="align-middle" rowSpan="3">N°</th>
-                                            <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
-                                            <th>S/.resumen.monto_actual</th>
-                                            <th colSpan="2">S/.resumen.avance_anterior</th>
-                                            <th colSpan="2">S/.resumen.avance_actual</th>
-                                            <th colSpan="2">S/.resumen.avance_acumulado</th>
-                                            <th colSpan="2">S/.resumen.saldo</th>
-                                        </tr>
-                                        <tr className="text-center">
-                                            <td>MONTO ACT.</td>
-                                            <td colSpan="2">AVANCE ANTERIOR</td>
-                                            <td colSpan="2">AVANCE ACTUAL</td>
-                                            <td colSpan="2">AVANCE ACUMULADO</td>
-                                            <td colSpan="2">SALDO</td>
-                                        </tr>
-                                        <tr className="text-center">
-                                            <td>PPTO</td>
-                                            <td>MONTO</td>
-                                            <td>%</td>
-                                            <td>MONTO</td>
-                                            <td>%</td>
-                                            <td>MONTO</td>
-                                            <td>%</td>
-                                            <td>MONTO</td>
-                                            <td>%</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            DataResumenApi.map((ResumenC, iC)=>
-                                                <tr key={ iC }>
-                                                    <td>{ ResumenC.numero }</td>
-                                                    <td>{ ResumenC.nombre } </td>
-                                                    <td>{ ResumenC.presupuesto }</td>
+                            {
+                                activeTabComponente === "resumen"?
+                                <div className="table-responsive">
+                                    <table className="table table-bordered small table-sm">
+                                        <thead>
+                                            <tr className="text-center">
+                                                <th className="align-middle" rowSpan="3">N°</th>
+                                                <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
+                                                <th>S/.resumen.monto_actual</th>
+                                                <th colSpan="2">S/.resumen.avance_anterior</th>
+                                                <th colSpan="2">S/.resumen.avance_actual</th>
+                                                <th colSpan="2">S/.resumen.avance_acumulado</th>
+                                                <th colSpan="2">S/.resumen.saldo</th>
+                                            </tr>
+                                            <tr className="text-center">
+                                                <td>MONTO ACT.</td>
+                                                <td colSpan="2">AVANCE ANTERIOR</td>
+                                                <td colSpan="2">AVANCE ACTUAL</td>
+                                                <td colSpan="2">AVANCE ACUMULADO</td>
+                                                <td colSpan="2">SALDO</td>
+                                            </tr>
+                                            <tr className="text-center">
+                                                <td>PPTO</td>
+                                                <td>MONTO</td>
+                                                <td>%</td>
+                                                <td>MONTO</td>
+                                                <td>%</td>
+                                                <td>MONTO</td>
+                                                <td>%</td>
+                                                <td>MONTO</td>
+                                                <td>%</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                DataResumenApi.map((ResumenC, iC)=>
+                                                    <tr key={ iC }>
+                                                        <td>{ ResumenC.numero }</td>
+                                                        <td>{ ResumenC.nombre } </td>
+                                                        <td>{ ResumenC.presupuesto }</td>
 
-                                                    <td>{ ResumenC.valor_anterior }</td>
-                                                    <td>{ ResumenC.porcentaje_anterior }</td>
-                                                    <td>{ ResumenC.valor_actual }</td>
-                                                    <td>{ ResumenC.porcentaje_actual }</td>
-                                                    <td>{ ResumenC.valor_total }</td>
-                                                    <td>{ ResumenC.porcentaje_total }</td>
-                                                    <td>{ ResumenC.valor_saldo}</td>
-                                                    <td>{ ResumenC.porcentaje_saldo }</td>
-                                                </tr>
-                                            )
-                                        }
-                                       
-                                        <tr>
-                                            <td colSpan="2">TOTAL</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            :
-                            <div className="table-responsive">
-                                <table className="table table-bordered table-sm small">
-                                    <thead className="text-center">
-                                        <tr>
-                                            <th colSpan="3" rowSpan="2">DESCRIPCION</th>
-                                            <th colSpan="2" rowSpan="2">PRESUPUESTO</th>
-                                            <th colSpan="3">S/. valor_total_anterior</th>
-                                            <th colSpan="3">S/. valor_total_actual</th>
-                                            <th colSpan="3">S/. valor_suma_acumulado</th>
-                                            <th colSpan="3">S/. valor_total_saldo</th>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan="3">ANTERIOR</td>
-                                            <td colSpan="3">ACTUAL</td>
-                                            <td colSpan="3">ACUMULADO</td>
-                                            <td colSpan="3">SALDO</td>
-                                        </tr>
-                                        <tr>
-                                            <td>ITEM</td>
-                                            <td>DESCRIPCION</td>
-                                            <td>METRADO</td>
-                                            <td>P. U. S/.</td>
-                                            <td>P. P S/.</td>
-                                            <td>MET. </td>
-                                            <td>VAL</td>
-                                            <td>%</td>
-                                            <td>MET.</td>
-                                            <td>VAL</td>
-                                            <td>%</td>
-                                            <td>MET.</td>
-                                            <td>VAL</td>
-                                            <td>%</td>
-                                            <td>MET.</td>
-                                            <td>VAL</td>
-                                            <td>%</td>
-                                        </tr>
-                                    </thead>
+                                                        <td>{ ResumenC.valor_anterior }</td>
+                                                        <td>{ ResumenC.porcentaje_anterior }</td>
+                                                        <td>{ ResumenC.valor_actual }</td>
+                                                        <td>{ ResumenC.porcentaje_actual }</td>
+                                                        <td>{ ResumenC.valor_total }</td>
+                                                        <td>{ ResumenC.porcentaje_total }</td>
+                                                        <td>{ ResumenC.valor_saldo}</td>
+                                                        <td>{ ResumenC.porcentaje_saldo }</td>
+                                                    </tr>
+                                                )
+                                            }
+                                        
+                                            <tr>
+                                                <td colSpan="2">TOTAL</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                :
+                                <div className="table-responsive">
+                                    <table className="table table-bordered table-sm small">
+                                        <thead className="text-center">
+                                            <tr>
+                                                <th colSpan="3" rowSpan="2">DESCRIPCION</th>
+                                                <th colSpan="2" rowSpan="2">PRESUPUESTO</th>
+                                                <th colSpan="3">S/. valor_total_anterior</th>
+                                                <th colSpan="3">S/. valor_total_actual</th>
+                                                <th colSpan="3">S/. valor_suma_acumulado</th>
+                                                <th colSpan="3">S/. valor_total_saldo</th>
+                                            </tr>
+                                            <tr>
+                                                <td colSpan="3">ANTERIOR</td>
+                                                <td colSpan="3">ACTUAL</td>
+                                                <td colSpan="3">ACUMULADO</td>
+                                                <td colSpan="3">SALDO</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ITEM</td>
+                                                <td>DESCRIPCION</td>
+                                                <td>METRADO</td>
+                                                <td>P. U. S/.</td>
+                                                <td>P. P S/.</td>
+                                                <td>MET. </td>
+                                                <td>VAL</td>
+                                                <td>%</td>
+                                                <td>MET.</td>
+                                                <td>VAL</td>
+                                                <td>%</td>
+                                                <td>MET.</td>
+                                                <td>VAL</td>
+                                                <td>%</td>
+                                                <td>MET.</td>
+                                                <td>VAL</td>
+                                                <td>%</td>
+                                            </tr>
+                                        </thead>
 
-                                    <tbody>
-                                        {
-                                            DataPartidasApi.map((partidas, Ipart)=>
-                                                <tr key={ Ipart }>
-                                                    <td>{ partidas.item }</td>
-                                                    <td>{ partidas.descripcion }</td>
-                                                    <td>{ partidas.metrado }</td>
-                                                    <td>{ partidas.costo_unitario }</td>
-                                                    <td>{ partidas.precio_parcial }</td>
+                                        <tbody>
+                                            {
+                                                DataPartidasApi.map((partidas, Ipart)=>
+                                                    <tr key={ Ipart }>
+                                                        <td>{ partidas.item }</td>
+                                                        <td>{ partidas.descripcion }</td>
+                                                        <td>{ partidas.metrado }</td>
+                                                        <td>{ partidas.costo_unitario }</td>
+                                                        <td>{ partidas.precio_parcial }</td>
 
-                                                    <td>{ partidas.metrado_anterior }</td>
-                                                    <td>{ partidas.valor_anterior }</td>
-                                                    <td>{ partidas.porcentaje_anterior }</td>
+                                                        <td>{ partidas.metrado_anterior }</td>
+                                                        <td>{ partidas.valor_anterior }</td>
+                                                        <td>{ partidas.porcentaje_anterior }</td>
 
-                                                    <td>{ partidas.metrado_actual }</td>
-                                                    <td>{ partidas.valor_actual }</td>
-                                                    <td>{ partidas.porcentaje_actual }</td>
+                                                        <td>{ partidas.metrado_actual }</td>
+                                                        <td>{ partidas.valor_actual }</td>
+                                                        <td>{ partidas.porcentaje_actual }</td>
 
-                                                    <td>{ partidas.metrado_total }</td>
-                                                    <td>{ partidas.valor_total }</td>
-                                                    <td>{ partidas.porcentaje_total }</td>
+                                                        <td>{ partidas.metrado_total }</td>
+                                                        <td>{ partidas.valor_total }</td>
+                                                        <td>{ partidas.porcentaje_total }</td>
 
-                                                    <td>{ partidas.metrado_saldo }</td>
-                                                    <td>{ partidas.valor_saldo }</td>
-                                                    <td>{ partidas.porcentaje_saldo }</td>
-                                                </tr>
-                                            )
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        }
-                                                            
-                        </CardBody>
+                                                        <td>{ partidas.metrado_saldo }</td>
+                                                        <td>{ partidas.valor_saldo }</td>
+                                                        <td>{ partidas.porcentaje_saldo }</td>
+                                                    </tr>
+                                                )
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                                                                
+                            </CardBody>
                     </Card>
-                </Card>
+            </div>
         );
     }
 }

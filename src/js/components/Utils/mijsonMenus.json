@@ -2,26 +2,31 @@
   {
       "ruta": "",
       "submenus": [
-          {
-              "nombreMenu": "Paralizado ",
-              "ruta": "/ParalizacionObra",
-              "nombrecomponente": "ParalizacionObra"
-          },
-          {
-              "ruta": "/MDHistorial",
-              "nombreMenu": "Historial de metrados",
-              "nombrecomponente": "MDHistorial"
-          },
-          {
-              "ruta": "/General",
-              "nombreMenu": "Valorizaciones",
-              "nombrecomponente": "General"
-          },
-          {
-              "ruta": "/RecursosObra",
-              "nombreMenu": "Recursos",
-              "nombrecomponente": "RecursosObra"
-          }
+            {
+                "nombreMenu": "Paralizado ",
+                "ruta": "/ParalizacionObra",
+                "nombrecomponente": "ParalizacionObra"
+            },
+            {
+                "ruta": "/MDHistorial",
+                "nombreMenu": "Historial de metrados",
+                "nombrecomponente": "MDHistorial"
+            },
+            {
+                "ruta": "/General",
+                "nombreMenu": "Valorizaciones",
+                "nombrecomponente": "General"
+            },
+            {
+                "ruta": "/RecursosObra",
+                "nombreMenu": "Recursos",
+                "nombrecomponente": "RecursosObra"
+            },
+            {
+                "ruta": "/HistorialImagenesObra",
+                "nombreMenu": "Historial de imágenes",
+                "nombrecomponente": "HistorialImagenesObra"
+            }
       ],
       "nombreMenu": "PROCESOS FISICOS"
   },

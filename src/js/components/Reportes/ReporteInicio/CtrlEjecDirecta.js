@@ -92,7 +92,7 @@ class CtrlEjecDirecta extends Component {
                 style: 'tableExample',
                 layout: 'noBorders',
                 table: {
-                    widths: [ '*','*','*','*','*','*',],
+                    widths: [ '*','*','*','*','*','*'],
                     body: [
                         [
                             {
@@ -100,7 +100,6 @@ class CtrlEjecDirecta extends Component {
                                 style: "TableHeaderInforme",
                                 alignment: "center",
                                 colSpan:6
-    
                             },
                             {
     
@@ -260,7 +259,7 @@ class CtrlEjecDirecta extends Component {
                 layout: 'lightHorizontalLines',
             
                 table: {
-                    widths: ['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'],
+                    widths: ["*","*","*","*","*","*","*","*","*","*","*","*","*","*","*"],
                     body: [
                             [
                                 {
@@ -673,7 +672,13 @@ class CtrlEjecDirecta extends Component {
                 },
 
                 DataEncabezado,
-                DataEstructurado
+                DataEstructurado,
+                {
+                    canvas: [
+                    
+
+                    ]
+                }
                 
             ],
 
@@ -693,7 +698,7 @@ class CtrlEjecDirecta extends Component {
                 },
                 tableHeader: {
                     bold: true,
-                    fontSize: 7,
+                    fontSize: 6,
                     color: '#000000',
                     fillColor: '#ffcf96',
                 },
