@@ -20,6 +20,7 @@ class ValorizacionGeneral extends Component {
             activeTabMes: '0',
             activeTabComponente: 'resumen',
             // capturamos nombre del componentes 
+            IdComponente:'',
             NombreComponente:'',
             // para poder obtener las partidas 
             fecha_inicial:'',
@@ -73,22 +74,67 @@ class ValorizacionGeneral extends Component {
     }
 
     TabsMeses(tab, fechaInicial, fechaFinal ) {
-        console.log('inicio', fechaInicial, 'fin', fechaFinal);
+        console.log('cero', tab,'Id componente', this.state.IdComponente ,'inicio', fechaInicial, 'fin', fechaFinal);
         
         if (this.state.activeTabMes !== tab) {
             this.setState({
                 activeTabMes: tab,
                 fecha_inicial:fechaInicial,
-                fecha_final:fechaFinal
+                fecha_final:fechaFinal,
+                NombreComponente:'RESUMEN DE VALORIZACION'
             });
         }
+
+
+
+        if(this.state.IdComponente !== ""){
+            // llamamos al api de partidas en valarizaciones------------------------------------------------------------------------------------------------------------------------------
+            axios.post(`${UrlServer}/getValGeneralPartidas`,
+                {
+                    "id_componente":this.state.IdComponente,
+                    "fecha_inicial": fechaInicial,
+                    "fecha_final": fechaFinal
+                }
+            )
+            .then((res)=>{
+                console.log('res partidas val desde tab meses>', res.data)
+                this.setState({
+                    DataPartidasApi:res.data
+                })
+            })
+            .catch((err)=>{
+                console.log('hay erres al solicitar la peticion al api, ',err);
+            })    
+
+                
+        }else{
+             // llamamos a resumen--------------------------------------------------------------------------------------------------------------------------------
+             axios.post(`${UrlServer}/getValGeneralResumenPeriodo`,
+                {
+                    "id_ficha":sessionStorage.getItem("idobra"),
+                    "fecha_inicial": fechaInicial,
+                    "fecha_final": fechaFinal	
+                }
+            )
+            .then((res)=>{
+                console.log('rsumen', res.data)
+                this.setState({
+                    DataResumenApi:res.data
+                })
+            })
+            .catch((err)=>{
+                console.log('hay erres al solicitar la peticion al api, ',err);
+            })   
+        }
+        
     }
     
     TabsComponentes(tab, id_componente, nombreComp) {
         if (this.state.activeTabComponente !== tab) {
             this.setState({
                 activeTabComponente: tab,
-                NombreComponente:nombreComp
+                IdComponente:id_componente,
+                NombreComponente:nombreComp,
             });
 
             if(tab !=="resumen"){
@@ -147,7 +193,7 @@ class ValorizacionGeneral extends Component {
                     {/* COMPONENTES */}
                     <Nav tabs>
                         <NavItem >
-                            <NavLink className={classnames({ active: activeTabComponente === "resumen" })} onClick={() => { this.TabsComponentes("resumen","RESUMEN DE VALORIZACION") }} >
+                            <NavLink className={classnames({ active: activeTabComponente === "resumen" })} onClick={() => { this.TabsComponentes("resumen","","RESUMEN DE VALORIZACION") }} >
                                 RESUMEN
                             </NavLink>
                         </NavItem>
