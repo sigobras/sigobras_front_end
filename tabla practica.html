@@ -27,9 +27,9 @@
     }
 
     .uno:hover .primero {
-      display: block;     
+      display: block;
       right: 47px;
-      position: relative; 
+      position: relative;
     }
 
     /* mas datos complementarios */
@@ -42,8 +42,9 @@
     }
 
     th {
-       border: 1px dashed black;
+      border: 1px dashed black;
     }
+
     td {
       border: 1px dashed black;
       padding: 2px;
@@ -68,9 +69,9 @@
       <td> hola
 
         <div class="primero">
-          
+
           <div class="icons" title="agregar ">
-           +
+            +
           </div>
           <div class="icons" title="eliminar ">
             x
@@ -88,7 +89,7 @@
 
         <div class="primero">
           <div class="icons" title="agregar ">
-            +
+            <button onclick="saludar()">+</button>
           </div>
           <div class="icons" title="eliminar ">
             x
@@ -100,6 +101,134 @@
 
   </table>
 
+
+  <style>
+        
+      
+.circle-container {
+  position: relative;
+  width: 0.5em;
+  height: 0.5em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+  box-sizing: content-box;
+  margin: 1em auto 0;
+  border: solid 2px tomato;
+
+}
+
+.circle-container > * {
+  /* 4 */
+  display: block;
+  position: absolute;
+  top: -38%;
+  left: 33%;
+  width: 0.5em;
+  height: 0em;
+  margin: 0em;
+}
+.circle-container > :nth-of-type(1) {
+  transform: rotate(-87deg) translate(1em) rotate(87deg);
+}
+.circle-container > :nth-of-type(2) {
+  transform: rotate(-15deg) translate(1em) rotate(15deg);
+}
+.circle-container > :nth-of-type(3) {
+  transform: rotate(53deg) translate(1em) rotate(-53deg);
+}
+.circle-container > :nth-of-type(4) {
+  transform: rotate(153deg) translate(1em) rotate(-153deg);
+}
+.circle-container > :nth-of-type(5) {
+  transform: rotate(204deg) translate(1em) rotate(-204deg);
+}
+
+
+  </style>
+
+
+
+<ul class='circle-container'>
+  <li>1</li>
+  <li>2</li>
+  <li>3</li>
+  <li>4</li>
+  <li>5</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+
+  <style>
+    .ciclegraph {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      margin: calc(100px / 2 + 0px);
+    }
+
+    .ciclegraph:before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      border: 2px solid teal;
+      width: calc( 100% - 2px * 2);
+      height: calc( 100% - 2px * 2 );
+      border-radius: 50%;
+    }
+
+    .ciclegraph .circle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 100px;
+      height: 100px;
+      margin: calc( -100px / 2 );
+      background: teal;
+      border-radius: 50%;
+    }
+  </style>
+  <div class="ciclegraph">
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+    <div class="circle"></div>
+  </div>
+
+
+
+
+  <script>
+
+
+    document.querySelectorAll( '.ciclegraph' ).forEach( ( ciclegraph )=>{
+      let circles = ciclegraph.querySelectorAll( '.circle' )
+      let angle = 360-90, dangle = 360 / circles.length
+      for( let i = 0; i < circles.length; ++i ){
+        let circle = circles[i]
+        angle += dangle
+        circle.style.transform = `rotate(${angle}deg) translate(${ciclegraph.clientWidth / 2}px) rotate(-${angle}deg)`
+      }
+    })
+
+
+
+    function saludar(){
+      alert('hola como estas estoy dentro de un hover')
+    }
+  </script> -->
 
 </body>
 

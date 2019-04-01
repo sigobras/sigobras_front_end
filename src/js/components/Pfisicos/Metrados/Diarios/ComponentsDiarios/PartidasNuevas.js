@@ -94,7 +94,10 @@ class PartidasNuevas extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log('res partidas nuevas>>', res.data);
+            // console.log('res partidas nuevas>>', res);
+            // if( res.status ){
+
+            // }
             
             this.setState({
               DataComponentes:res.data,

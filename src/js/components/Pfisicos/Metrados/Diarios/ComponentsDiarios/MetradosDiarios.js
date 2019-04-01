@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
-import { FaPlus, FaCheck } from 'react-icons/fa';
+import { FaPlus, FaCheck, FaDotCircle } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
 import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
@@ -471,8 +471,24 @@ class MetradosDiarios extends Component {
                         
                               <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
                               
-                                <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >{ metrados.item }</td>
-                                <td>{ metrados.descripcion }</td>
+                                <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
+                                  { metrados.item }
+                                </td>
+                                <td className="d-flex">
+                                  { metrados.descripcion }
+                                  <div title="prioridad" className="text-danger prioridad">
+                                    { metrados.tipo === "titulo" ?"": <FaDotCircle /> }
+                                    <div className="btnPriory">
+                                      <ul className="circle-container">
+                                        <li>1</li>
+                                        <li>2</li>
+                                        <li>3</li>
+                                        <li>4</li>
+                                        <li>5</li>
+                                      </ul>
+                                    </div>
+                                  </div>                                  
+                                </td>
                                 <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                 <td>{ metrados.costo_unitario }</td>
                                 <td>{ metrados.parcial }</td>
@@ -595,8 +611,8 @@ class MetradosDiarios extends Component {
                                               <td>{ actividades.ancho_actividad }</td>
                                               <td>{ actividades.alto_actividad }</td>
                                               <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
-                                              <td> { actividades.costo_unitario }</td>
-                                              <td> { actividades.parcial_actividad }</td>
+                                              <td>{ actividades.costo_unitario }</td>
+                                              <td>{ actividades.parcial_actividad }</td>
                                               <td className="small">
                                                 {Number(actividades.parcial_actividad) <= 0 ?'':
                                                   actividades.actividad_tipo === "titulo"?"":

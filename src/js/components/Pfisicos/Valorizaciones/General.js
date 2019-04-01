@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {  Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Collapse} from 'reactstrap';
-import ValorizacionGeneral from './ValorizacionGeneral'
-import ValPartidasNuevas from './ValPartidasNuevas'
-import MayoresMetrados from './MayoresMetrados'
+import ValorizacionGeneral from './ComponentsValorizaciones/ValorizacionGeneral'
+import ValPartidasNuevas from './ComponentsValorizaciones/ValPartidasNuevas'
+import ValMayoresMetrados from './ComponentsValorizaciones/ValMayoresMetrados'
 
 class General extends Component {
     constructor(){
@@ -52,7 +52,7 @@ class General extends Component {
                     <CardHeader onClick={e=>this.CollapseCard(3)} data-event={3} > 3. VALORIZACION DE MAYORES METRADOS {collapse === 3?'➖':'➕'}</CardHeader>
                     <Collapse isOpen={collapse === 3}>
                         <CardBody>
-                            { collapse === 3 ? <MayoresMetrados /> : '' }
+                            { collapse === 3 ? <ValMayoresMetrados /> : '' }
                         </CardBody>                   
                     </Collapse>
                 </Card>

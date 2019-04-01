@@ -317,3 +317,69 @@ iframe::-webkit-scrollbar-thumb {
   background-color:#2d78b9;;
   outline: 2px solid rgb(255, 0, 0);
 }
+
+
+
+/* prioridad css */
+
+.prioridad{
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.btnPriory{
+  display: none;
+}
+
+.prioridad:hover .btnPriory {
+  display: block;
+  position: relative;
+}
+
+
+
+/* prioridad cuando de hace hover css */
+   
+.circle-container {
+  position: relative;
+  width: 0.5em;
+  height: 0.5em;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+  box-sizing: content-box;
+  margin: 0px;
+  /* border: solid 2px tomato; */
+
+}
+
+.circle-container > * {
+  display: block;
+
+  position: absolute;
+  
+  top: -251%;
+  
+  left: 34%;
+  
+  width: 0.5em;
+  
+  height: 0em;
+  
+  margin: 0em;
+}
+.circle-container > :nth-of-type(1) {
+  transform: rotate(-87deg) translate(1em) rotate(87deg);
+}
+.circle-container > :nth-of-type(2) {
+  transform: rotate(-15deg) translate(1em) rotate(15deg);
+}
+.circle-container > :nth-of-type(3) {
+  transform: rotate(53deg) translate(1em) rotate(-53deg);
+}
+.circle-container > :nth-of-type(4) {
+  transform: rotate(153deg) translate(1em) rotate(-153deg);
+}
+.circle-container > :nth-of-type(5) {
+  transform: rotate(204deg) translate(1em) rotate(-204deg);
+}

@@ -117,10 +117,10 @@ class Login extends Component {
                     <div className="modal-body">
                       <form>
                           <div className="form-group">
-                              <input type="text" className="form-control" name="user" placeholder="Usuario" required="required"  onChange={this.handleChange} required autoFocus  />
+                              <input type="text" className="form-control" name="user" placeholder="Usuario"  onChange={this.handleChange} required autoFocus  />
                           </div>
                           <div className="form-group">
-                              <input type="password" className="form-control" name="pass" placeholder="Password" required="required" onChange={this.handleChange} />
+                              <input type="password" className="form-control" name="pass" placeholder="Contraseña" required onChange={this.handleChange} />
                           </div>
                           <div className="form-group">
                               <div className={this.state.alert }>{this.state.Loginsms }</div>
