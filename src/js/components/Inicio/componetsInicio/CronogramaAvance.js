@@ -13,7 +13,8 @@ class CronogramaAvance extends Component{
     var { dataCrono } = this.props
     const options = {
         chart: {
-          type: 'line'
+          type: 'line',
+          backgroundColor: '#2e3742',
         },
         title: {
           text: 'CURVA "S"'

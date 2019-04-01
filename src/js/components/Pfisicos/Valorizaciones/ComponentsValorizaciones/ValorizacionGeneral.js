@@ -284,7 +284,7 @@ class ValorizacionGeneral extends Component {
                                     <thead className="text-center">
                                         <tr>
                                             <th colSpan="3" rowSpan="2">DESCRIPCION</th>
-                                            <th colSpan="3" rowSpan="2">PRESUPUESTO</th>
+                                            <th colSpan="2" rowSpan="2">PRESUPUESTO</th>
                                             <th colSpan="3">S/. valor_total_anterior</th>
                                             <th colSpan="3">S/. valor_total_actual</th>
                                             <th colSpan="3">S/. valor_suma_acumulado</th>
