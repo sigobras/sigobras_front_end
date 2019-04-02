@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Card , CardHeader, CardBody, Nav,  NavItem, NavLink, Collapse, CardImg, CardText, CardTitle, CardDeck, CardSubtitle, Button } from 'reactstrap';
 import classnames from 'classnames';
 import axios from 'axios'
+import { MdImage, MdBrokenImage } from "react-icons/md";
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import Gallery from 'react-grid-gallery';
+
 
 
 class HistorialImagenesObra extends Component {
@@ -30,7 +32,7 @@ class HistorialImagenesObra extends Component {
       }
     )
     .then((res)=>{
-      // console.log("res componentes imagenes", res.data)
+      console.log("res componentes imagenes", res.data)
       this.setState({
         DataComponentesApi:res.data,
         DataPartidasApi:res.data[0].partidas,
@@ -122,39 +124,30 @@ class HistorialImagenesObra extends Component {
                   <th>DESCRICION</th>
                   <th>CANT IMG</th>
                   <th>AVANCE</th>
-                  <th>FECHA</th>
-                  <th>ULTIMA IMAGEN</th>
+                  <th></th>
+
                 </tr>
               </thead>
               {
                 DataPartidasApi.map((partida, IP)=>
                   <tbody key={ IP }>
-                    <tr className={ partida.tipo === "titulo" ? "font-weight-bold":  collapse === IP? "font-weight-light resplandPartida": "font-weight-light" }>
+                    <tr className={ partida.tipo === "titulo" ? "font-weight-bold":  collapse === IP? "font-weight-light resplandPartida icoVer": "font-weight-light icoVer" }>
                       <td className={ partida.tipo === "titulo" ? '': collapse === IP? "tdData1": "tdData"} onClick={partida.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(IP, partida.id_partida )} data-event={IP} >{ partida.item }</td>
                       <td>{ partida.descripcion }</td>
-                      <td>{ partida.item.length }</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>-</td>
+                      <td>{ partida.numero_imagenes }</td>
+                      <td>{ partida.porcentaje_avance }</td>
+                      <td>
+                        <div className="aprecerIcon">
+                          <MdImage />
+                          <MdBrokenImage />
+                        </div>
+                      </td>
+                      
                     </tr>
                     <tr className={ collapse === IP? "resplandPartidabottom": "d-none"  }>
-                      <td colSpan="6">
+                      <td colSpan="5">
                         <Collapse isOpen={collapse === IP}>
-                          
-                          {/* <CardDeck>
-                              <Card>
-                                <CardImg top width="100%" src="http://www.conejos.wiki/Imagenes/imagen-de-un-conejo-enano.jpg" alt="Card image cap" />
-                                <CardBody>
-                                  <CardTitle>Card title</CardTitle>
-                                  <CardSubtitle>Card subtitle</CardSubtitle>
-                                  <CardText>This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</CardText>
-                                  <Button>Button</Button>
-                                </CardBody>
-                              </Card>
-                            </CardDeck> */}
-
-                            <Gallery images={DataImagenesApi}/>
-
+                          <Gallery images={DataImagenesApi}/>
                         </Collapse>
                       </td>
                     </tr>

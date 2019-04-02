@@ -290,11 +290,23 @@ body {
   background-color:#0080ff;
 }
 
+.aprecerIcon{
+  display: none;
+}
 
 
 .resplandPartida{
   border-bottom: 2px solid #0080ff;
   background: #314c65
+}
+
+.icoVer{
+  align-self: auto;
+}
+.icoVer:hover .aprecerIcon{
+  display: block;
+  right: 47px;
+  position: relative;
 }
 
 

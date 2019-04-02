@@ -27,6 +27,7 @@ class ValorizacionGeneral extends Component {
             fecha_final:'',
 
             // montos en soles de componentes 
+            soles_parcial:"",
             soles_anterior: "",
             soles_actual: "",
             soles_acumulado:"" ,
@@ -77,7 +78,10 @@ class ValorizacionGeneral extends Component {
                     avance_anterior	:res.data[0].periodos[0].resumen.valor_anterior,
                     avance_actual:res.data[0].periodos[0].resumen.valor_actual,	
                     avance_acumulado:res.data[0].periodos[0].resumen.valor_total,	
-                    saldo:res.data[0].periodos[0].resumen.valor_saldo
+                    saldo:res.data[0].periodos[0].resumen.valor_saldo,
+                    // seteamos las fechas par ala carga por defecto
+                    fecha_inicial:res.data[0].periodos[0].fecha_inicial,
+                    fecha_final:res.data[0].periodos[0].fecha_final,
 
                 })
             }
@@ -176,6 +180,7 @@ class ValorizacionGeneral extends Component {
                 NombreComponente:nombreComp,
 
                 // montos en soles de componentes 
+                soles_parcial:"",
                 soles_anterior: "",
                 soles_actual: "",
                 soles_acumulado:"" ,
@@ -193,11 +198,12 @@ class ValorizacionGeneral extends Component {
                     }
                 )
                 .then((res)=>{
-                    // console.log('res partidas val', res.data)
+                    console.log('res partidas val', res.data)
                     this.setState({
                         DataPartidasApi:res.data.partidas,
 
                         // montos en soles de componentes 
+                        soles_parcial:res.data.precio_parcial,
                         soles_anterior: res.data.valor_anterior,
                         soles_actual: res.data.valor_actual,
                         soles_acumulado:res.data.valor_total ,
@@ -266,20 +272,20 @@ class ValorizacionGeneral extends Component {
                                 activeTabComponente === "resumen"?
                                 <div className="table-responsive">
                                     <table className="table table-bordered small table-sm">
-                                        <thead>
+                                        <thead className="resplandPartida">
                                             <tr className="text-center">
                                                 <th className="align-middle" rowSpan="3">N°</th>
                                                 <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
                                                 <th>S/. { this.state.ppto }</th>
                                                 <th colSpan="2">S/. {this.state.avance_anterior }</th>
-                                                <th colSpan="2">S/. {this.state.avance_actual }</th>
+                                                <th colSpan="2" >S/. {this.state.avance_actual }</th>
                                                 <th colSpan="2">S/. {this.state.avance_acumulado }</th>
                                                 <th colSpan="2">S/. {this.state.saldo }</th>
                                             </tr>
                                             <tr className="text-center">
                                                 <th>MONTO ACT.</th>
                                                 <th colSpan="2">AVANCE ANTERIOR</th>
-                                                <th colSpan="2">AVANCE ACTUAL</th>
+                                                <th colSpan="2" >AVANCE ACTUAL</th>
                                                 <th colSpan="2">AVANCE ACUMULADO</th>
                                                 <th colSpan="2">SALDO</th>
                                             </tr>
@@ -287,8 +293,8 @@ class ValorizacionGeneral extends Component {
                                                 <th>PPTO</th>
                                                 <th>MONTO</th>
                                                 <th>%</th>
-                                                <th>MONTO</th>
-                                                <th>%</th>
+                                                <th >MONTO</th>
+                                                <th >%</th>
                                                 <th>MONTO</th>
                                                 <th>%</th>
                                                 <th>MONTO</th>
@@ -298,16 +304,16 @@ class ValorizacionGeneral extends Component {
                                         <tbody>
                                             { DataResumenApi.length <=0 ?<tr><td colSpan="11"></td></tr>:
                                                 DataResumenApi.componentes.map((ResumenC, iC)=>
-                                                    <tr key={ iC }>
+                                                    <tr key={ iC } >
                                                         <td>{ ResumenC.numero }</td>
                                                         <td>{ ResumenC.nombre } </td>
                                                         <td>{ ResumenC.presupuesto }</td>
 
                                                         <td>{ ResumenC.valor_anterior }</td>
                                                         <td>{ ResumenC.porcentaje_anterior }</td>
-                                                        <td>{ ResumenC.valor_actual }</td>
-                                                        <td>{ ResumenC.porcentaje_actual }</td>
-                                                        <td>{ ResumenC.valor_total }</td>
+                                                        <td className="bg-mm">{ ResumenC.valor_actual }</td>
+                                                        <td className="bg-mm">{ ResumenC.porcentaje_actual }</td>
+                                                        <td >{ ResumenC.valor_total }</td>
                                                         <td>{ ResumenC.porcentaje_total }</td>
                                                         <td>{ ResumenC.valor_saldo}</td>
                                                         <td>{ ResumenC.porcentaje_saldo }</td>
@@ -315,17 +321,13 @@ class ValorizacionGeneral extends Component {
                                                 )
                                             }
                                         
-                                            <tr>
+                                            <tr className="resplandPartida font-weight-bolder">
                                                 <td colSpan="2">TOTAL</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>S/. { this.state.ppto }</td>
+                                                <td colSpan="2">S/. {this.state.avance_anterior }</td>
+                                                <td colSpan="2" >S/. {this.state.avance_actual }</td>
+                                                <td colSpan="2">S/. {this.state.avance_acumulado }</td>
+                                                <td colSpan="2">S/. {this.state.saldo }</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -333,19 +335,20 @@ class ValorizacionGeneral extends Component {
                                 :
                                 <div className="table-responsive">
                                     <table className="table table-bordered table-sm small">
-                                        <thead className="text-center">
+                                        <thead className="text-center resplandPartida">
                                             <tr>
-                                                <th colSpan="3" rowSpan="2">DESCRIPCION</th>
-                                                <th colSpan="2" rowSpan="2">PRESUPUESTO</th>
-                                                <th className="bg-mm" colSpan="3">S/. {this.state.soles_anterior }</th>
-                                                <th colSpan="3">S/. {this.state.soles_actual }</th>
-                                                <th className="bg-mm" colSpan="3">S/. {this.state.avance_acumulado }</th>
+                                                <th colSpan="3" rowSpan="2" className="align-middle">DESCRIPCION</th>
+                                                <th colSpan="2" className="align-middle">S/. { this.state.soles_parcial }</th>
+                                                <th colSpan="3">S/. {this.state.soles_anterior }</th>
+                                                <th colSpan="3" >S/. {this.state.soles_actual }</th>
+                                                <th colSpan="3">S/. {this.state.soles_acumulado }</th>
                                                 <th colSpan="3">S/. {this.state.soles_saldo }</th>
                                             </tr>
                                             <tr>
-                                                <th className="bg-mm" colSpan="3">ANTERIOR</th>
+                                                <th colSpan="2">PRESUPUESTO</th>
+                                                <th colSpan="3">ANTERIOR</th>
                                                 <th colSpan="3">ACTUAL</th>
-                                                <th className="bg-mm" colSpan="3">ACUMULADO</th>
+                                                <th colSpan="3">ACUMULADO</th>
                                                 <th colSpan="3">SALDO</th>
                                             </tr>
                                             <tr>
@@ -355,17 +358,17 @@ class ValorizacionGeneral extends Component {
                                                 <th>P. U. S/.</th>
                                                 <th>P. P S/.</th>
                                                 
-                                                <th className="bg-mm">MET. </th>
-                                                <th className="bg-mm">VAL</th>
-                                                <th className="bg-mm">%</th>
+                                                <th>MET. </th>
+                                                <th>VAL</th>
+                                                <th>%</th>
                                                 
                                                 <th>MET.</th>
                                                 <th>VAL</th>
                                                 <th>%</th>
                                                 
-                                                <th className="bg-mm">MET.</th>
-                                                <th className="bg-mm">VAL</th>
-                                                <th className="bg-mm">%</th>
+                                                <th>MET.</th>
+                                                <th>VAL</th>
+                                                <th>%</th>
                                                 
                                                 <th>MET.</th>
                                                 <th>VAL</th>
@@ -376,31 +379,60 @@ class ValorizacionGeneral extends Component {
                                         <tbody>
                                             {
                                                 DataPartidasApi.map((partidas, Ipart)=>
-                                                    <tr key={ Ipart } className={partidas.tipo === "titulo"?"font-weight-bold":"font-weight-light"}>
+                                                    <tr key={ Ipart } className={partidas.tipo === "titulo"?"font-weight-bold text-warning":"font-weight-light"}>
                                                         <td>{ partidas.item }</td>
                                                         <td>{ partidas.descripcion }</td>
                                                         <td>{ partidas.metrado }</td>
                                                         <td>{ partidas.costo_unitario }</td>
                                                         <td>{ partidas.precio_parcial }</td>
 
-                                                        <td className="bg-mm">{ partidas.metrado_anterior }</td>
-                                                        <td className="bg-mm">{ partidas.valor_anterior }</td>
-                                                        <td className="bg-mm">{ partidas.porcentaje_anterior }</td>
+                                                        <td>{ partidas.metrado_anterior }</td>
+                                                        <td>{ partidas.valor_anterior }</td>
+                                                        <td>{ partidas.porcentaje_anterior }</td>
 
-                                                        <td>{ partidas.metrado_actual }</td>
-                                                        <td>{ partidas.valor_actual }</td>
-                                                        <td>{ partidas.porcentaje_actual }</td>
+                                                        <td className="bg-mm">{ partidas.metrado_actual }</td>
+                                                        <td className="bg-mm">{ partidas.valor_actual }</td>
+                                                        <td className="bg-mm">{ partidas.porcentaje_actual }</td>
 
-                                                        <td className="bg-mm">{ partidas.metrado_total }</td>
-                                                        <td className="bg-mm">{ partidas.valor_total }</td>
-                                                        <td className="bg-mm">{ partidas.porcentaje_total }</td>
+                                                        <td>{ partidas.metrado_total }</td>
+                                                        <td>{ partidas.valor_total }</td>
+                                                        <td>{ partidas.porcentaje_total }</td>
 
-                                                        <td>{ partidas.metrado_saldo }</td>
-                                                        <td>{ partidas.valor_saldo }</td>
-                                                        <td>{ partidas.porcentaje_saldo }</td>
+                                                        <td>
+                                                        { partidas.metrado_saldo=== 0?<div className="text-success text-center"><MdDone size={ 20 }/></div> : 
+                                                            partidas.metrado_saldo 
+                                                        }
+                                                        </td>
+                                                        <td>
+                                                            { partidas.valor_saldo===0 ? "":
+                                                                partidas.valor_saldo
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            { partidas.porcentaje_saldo=== 0? "":
+                                                                partidas.porcentaje_saldo   
+                                                            }
+                                                         </td>
                                                     </tr>
                                                 )
                                             }
+
+                                            <tr className="resplandPartida">
+                                                <td colSpan="3">TOTAL</td>
+                                                <td colSpan="2">S/. { this.state.soles_parcial }</td>
+
+                                                <td colSpan="2">S/. {this.state.soles_anterior }</td>
+                                                <td>%</td>
+                                                <td colSpan="2" >S/. {this.state.soles_actual }</td>
+                                                <td>%</td>
+
+                                                <td colSpan="2">S/. {this.state.soles_acumulado }</td>
+                                                <td>%</td>
+
+                                                <td colSpan="2">S/. {this.state.soles_saldo }</td>
+                                                <td>%</td>
+
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
