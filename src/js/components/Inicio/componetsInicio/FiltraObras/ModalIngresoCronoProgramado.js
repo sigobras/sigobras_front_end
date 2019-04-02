@@ -3,7 +3,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGr
 import { toast } from "react-toastify";
 import axios from 'axios'
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
-import { ConvertFormatStringNumber } from '../../../Utils/Funciones'
+import { ConvertFormatStringNumber, convertirFechaLetra } from '../../../Utils/Funciones'
 
 class ModalIngresoCronoProgramado extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class ModalIngresoCronoProgramado extends Component {
       DataCronoArmadoEnviar:[],
       fecha_desde:'',
       fecha_hasta:'',
-      ResultResta:-1
+      ResultResta:""
     };
     
     this.ModalIngresoCrono = this.ModalIngresoCrono.bind(this);
@@ -28,6 +28,25 @@ class ModalIngresoCronoProgramado extends Component {
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
+    
+    if(this.state.modal=== false){
+      axios.post(`${UrlServer}/getcronogramadinero`,
+        {
+          "id_ficha":this.props.ObraId
+        }
+      )
+      .then((res)=>{
+        console.log("res programado", res.data);
+        this.setState({
+          fecha_desde:res.data.fecha_inicial
+        })
+      })
+      .catch((err)=>{
+        console.error("error al obtener datos del api", err);
+        
+      })
+    }
+    
   }
 
   GenerarColTable(){
@@ -51,7 +70,7 @@ class ModalIngresoCronoProgramado extends Component {
 
     var fechaInicio = new Date(this.state.fecha_desde);
     var fechaFin = new Date(this.state.fecha_hasta);
-    const config = { year: 'numeric', month: 'short'};
+    
 
     var Fechas = []
 
@@ -72,9 +91,9 @@ class ModalIngresoCronoProgramado extends Component {
         // console.log('mes', formatearFecha)
 
         var FechaEnviar = fechaInicio.getFullYear()+ '-'+ (fechaInicio.getMonth() + 1) + '-' +  ultimoDiaMes
-        var FechaMostar = new Date(formatearFecha).toLocaleDateString('ES', config)
+        var FechaMostar = convertirFechaLetra(formatearFecha)
 
-        // console.log('fecha date', FechaMostar)
+        console.log('fecha date >>>>>>>>', FechaMostar)
         
         Fechas.push({
           FechaEnviar,
@@ -149,7 +168,8 @@ class ModalIngresoCronoProgramado extends Component {
       )
       .then((res)=>{
         console.log('res', res)
-        if(res.data.length > 0 && res.status === 200 ){
+        console.log('response', res.data.mes.length)
+        if(res.data.mes.length > 0 && res.status === 200 ){
           toast.success('Tu cronograma Programado se ha ingresado.',{ position: "top-right",autoClose: 1000 });
         }else{
           toast.error('El cronograma - programado no no ingresado',{ position: "top-right",autoClose: 2000 });
@@ -180,7 +200,7 @@ class ModalIngresoCronoProgramado extends Component {
             <Col sm="6">
               <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
-                <Input type="month" onChange={e=> this.setState({fecha_desde:e.target.value})}/>
+                <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
 
                 <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
                 <Input type="month" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
@@ -223,11 +243,7 @@ class ModalIngresoCronoProgramado extends Component {
                     {Column.map((col, i)=>
                       <td key={ i } style={{minWidth: '100px', display: 'inlineBlock'}}>
                         <InputGroup  size="sm">
-                          {/* <DebounceInput debounceTimeout={50} onChange={this.capturaInputsProgramado} type="number" className="form-control form-control-sm"/>   */}
                           <Input onBlur={e=>this.capturaInputsProgramado(e, i)} type="text"/>  
-                          {/* <InputGroupAddon addonType="append" title="validar" color="primary">
-                            ✔
-                          </InputGroupAddon> */}
                         </InputGroup>
                       </td>                  
 

@@ -326,7 +326,12 @@ iframe::-webkit-scrollbar-thumb {
   margin-right: 5px;
   cursor: pointer;
 }
-
+.prioridad:hover{
+  color: #0080ff;
+  font-size: 17px;
+  position: absolute
+}
+/* 
 .btnPriory{
   display: none;
 }
@@ -335,12 +340,12 @@ iframe::-webkit-scrollbar-thumb {
   display: block;
   position: relative;
 }
-
+ */
 
 
 /* prioridad cuando de hace hover css */
    
-.circle-container {
+/* .circle-container {
   position: relative;
   width: 0.5em;
   height: 0.5em;
@@ -349,11 +354,9 @@ iframe::-webkit-scrollbar-thumb {
   list-style: none;
   box-sizing: content-box;
   margin: 0px;
-  /* border: solid 2px tomato; */
+} */
 
-}
-
-.circle-container > * {
+/* .circle-container > * {
   display: block;
 
   position: absolute;
@@ -369,17 +372,17 @@ iframe::-webkit-scrollbar-thumb {
   margin: 0em;
 }
 .circle-container > :nth-of-type(1) {
-  transform: rotate(-87deg) translate(1em) rotate(87deg);
+  transform: rotate(-87deg) translate(2em) rotate(87deg);
 }
 .circle-container > :nth-of-type(2) {
-  transform: rotate(-15deg) translate(1em) rotate(15deg);
+  transform: rotate(-15deg) translate(2em) rotate(15deg);
 }
 .circle-container > :nth-of-type(3) {
-  transform: rotate(53deg) translate(1em) rotate(-53deg);
+  transform: rotate(53deg) translate(2em) rotate(-53deg);
 }
 .circle-container > :nth-of-type(4) {
-  transform: rotate(153deg) translate(1em) rotate(-153deg);
+  transform: rotate(153deg) translate(2em) rotate(-153deg);
 }
 .circle-container > :nth-of-type(5) {
-  transform: rotate(204deg) translate(1em) rotate(-204deg);
-}
+  transform: rotate(204deg) translate(2em) rotate(-204deg);
+} */

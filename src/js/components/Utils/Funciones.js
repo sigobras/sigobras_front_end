@@ -43,12 +43,25 @@ function PrimerDiaDelMesActual(){
 
 // convierte formato dinero a numero
 function ConvertFormatStringNumber(datoString){
-    // console.log('datoString', datoString)
+    console.log('datoString', datoString)
 
-    if(datoString !== "" && datoString !== -1  && datoString !==  NaN){
+    if(datoString !== ""  && datoString !==  NaN){
         return Number(datoString.replace(/[^0-9\.-]+/g,""));
     }else{
         return datoString
+    }
+}
+
+// CAMBIAR FORMATO FECHA QUE VBIENE 2019-02-21 A feb. 2019
+function convertirFechaLetra(fecha){
+    if(fecha !== ""){
+
+       var fechaLlega = new Date( fecha )
+        const config = { year: 'numeric', month: 'short'};
+        var fechaLetra = new Date(fechaLlega).toLocaleDateString('ES', config)
+        console.log('fecha que llega', fechaLetra )
+        console.log("fecha mess letra>>>", fechaLetra)
+        return fechaLetra
     }
     
 }
@@ -57,5 +70,6 @@ module.exports = {
     Redondea,
     PrimerDiaDelMesActual,
     FechaActual,
-    ConvertFormatStringNumber
+    ConvertFormatStringNumber,
+    convertirFechaLetra
 } 

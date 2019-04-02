@@ -71,7 +71,8 @@ class MetradosDiarios extends Component {
         collapse: 2599,
         id_componente:'',
         indexPartida:0,
-        OpcionMostrarMM:''
+        OpcionMostrarMM:'',
+        mostrarIconos:false
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -87,6 +88,7 @@ class MetradosDiarios extends Component {
       this.Filtrador = this.Filtrador.bind(this)
       this.toggleDropDown = this.toggleDropDown.bind(this);
       this.CollapseItem = this.CollapseItem.bind(this);
+      this.hola = this.hola.bind(this);
     }
     componentWillMount(){
         document.title ="Metrados Diarios"
@@ -94,7 +96,7 @@ class MetradosDiarios extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log('res>>', res.data);
+            console.log('res>>', res.data);
             
             this.setState({
               DataComponentes:res.data,
@@ -379,19 +381,29 @@ class MetradosDiarios extends Component {
     }
   
     Filtrador() {
-      var input, filter, table, tr, td, i, txtValue;
+      var input, filter, table, txtValue, tr, td, i, visible, j;
 
       input = document.getElementById("InputMetradosDiarios");
-
       filter = input.value.toUpperCase();
-  
       table = document.getElementById("TblMetradosDiarios");
       tr = table.getElementsByTagName("tr");
   
       for (i = 0; i < tr.length; i++) {
-  
+        visible = false;
+
         td = tr[i].getElementsByTagName("td")[1];
 
+        // for (j = 0; j < td.length; j++) {
+        //   if (td[j] && td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+        //     visible = true;
+        //   }
+        // }
+
+        // if (visible === true) {
+        //   tr[i].style.display = "";
+        // } else {
+        //   tr[i].style.display = "none";
+        // }
         if (td) {
           txtValue = td.textContent || td.innerText;
           if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -412,6 +424,12 @@ class MetradosDiarios extends Component {
       });
     }
   
+    hola(){
+      console.log("cambia")
+      this.setState({
+        mostrarIconos:!this.state.mostrarIconos
+      })
+    }
     render() {
         var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM } = this.state
 
@@ -456,6 +474,7 @@ class MetradosDiarios extends Component {
                       <table id="TblMetradosDiarios" className="table table-sm">
                         <thead>
                           <tr>
+                            <th></th>
                             <th>ITEM</th>
                             <th>DESCRIPCION</th>
                             <th>METRADO</th>
@@ -470,24 +489,37 @@ class MetradosDiarios extends Component {
                             <tbody key={ i } >
                         
                               <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
-                              
+                                <td>
+                                  
+                                    { metrados.tipo === "titulo" ?"":
+                                    <div title="prioridad" className="prioridad" onClick={()=>this.hola()}>
+                                      <FaDotCircle /> 
+                                      {
+                                        this.state.mostrarIconos === false?"":
+                                     
+                                        <div className="bg-danger">
+                                              algo
+                                        </div> }
+                                  </div>  
+
+                                     }
+                                    {/* <div className="btnPriory">
+                                      <ul className="circle-container">
+                                        <li onClick={ ()=> this.hola(i) }>1</li>
+                                        <li onClick={ ()=> this.hola(i) }>2</li>
+                                        <li onClick={ ()=> this.hola(i) }>3</li>
+                                        <li onClick={ ()=> this.hola(i) }>4</li>
+                                        <li onClick={ ()=> this.hola(i) }>5</li>
+                                      </ul>
+                                    </div> 
+                                  </div>  */}
+                                </td>
                                 <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
                                   { metrados.item }
                                 </td>
-                                <td className="d-flex">
+                                <td>
                                   { metrados.descripcion }
-                                  <div title="prioridad" className="text-danger prioridad">
-                                    { metrados.tipo === "titulo" ?"": <FaDotCircle /> }
-                                    <div className="btnPriory">
-                                      <ul className="circle-container">
-                                        <li>1</li>
-                                        <li>2</li>
-                                        <li>3</li>
-                                        <li>4</li>
-                                        <li>5</li>
-                                      </ul>
-                                    </div>
-                                  </div>                                  
+                                                                 
                                 </td>
                                 <td>{ metrados.metrado } { metrados.unidad_medida} </td>
                                 <td>{ metrados.costo_unitario }</td>
@@ -534,7 +566,7 @@ class MetradosDiarios extends Component {
                               </tr>
                           
                               <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
-                                <td colSpan="6">
+                                <td colSpan="7">
                                   <Collapse isOpen={collapse === i}>
                                     <div className="p-1">
                                         <div className="row">
