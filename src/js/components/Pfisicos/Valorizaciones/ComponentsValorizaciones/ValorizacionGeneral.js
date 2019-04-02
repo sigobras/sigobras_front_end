@@ -24,7 +24,21 @@ class ValorizacionGeneral extends Component {
             NombreComponente:'',
             // para poder obtener las partidas 
             fecha_inicial:'',
-            fecha_final:''
+            fecha_final:'',
+
+            // montos en soles de componentes 
+            soles_anterior: "",
+            soles_actual: "",
+            soles_acumulado:"" ,
+            soles_saldo: "",
+
+            // montos de resumen de componentes
+            ppto:"",
+            monto_actual:"",
+            avance_anterior	:"",
+            avance_actual:"",	
+            avance_acumulado:"",	
+            saldo:""
         }; 
 
         this.TabsAnios = this.TabsAnios.bind(this);
@@ -41,10 +55,12 @@ class ValorizacionGeneral extends Component {
             if(res.data === "vacio"){
                 console.log("no hay datos en la base datos")
             }else{
-                console.log('data AÑOS', res.data)
-                console.log('data PERIODOS', res.data[0].periodos)
-                console.log('data COMPONENTES', res.data[0].periodos[0].componentes)
-                console.log('data RESUMEN', res.data[0].periodos[0].resumen)
+                // console.log('data PRIMERA CARGA', res.data)
+                // console.log('data AÑOS', res.data)
+                // console.log('data PERIODOS', res.data[0].periodos)
+                // console.log('data PERIODOS >>>>>>>>>>', res.data[0].periodos[0].resumen)
+                // console.log('data COMPONENTES', res.data[0].periodos[0].componentes)
+                // console.log('data RESUMEN', res.data[0].periodos[0].resumen)
             
                 this.setState({
                     DataAniosApi: res.data,
@@ -53,7 +69,16 @@ class ValorizacionGeneral extends Component {
                     DataResumenApi:res.data[0].periodos[0].resumen,
 
                     // seteamos el nombre del componente
-                    NombreComponente:'RESUMEN DE VALORIZACION'
+                    NombreComponente:'RESUMEN DE VALORIZACION',
+
+                    // capturamos montos de dinero en resumen
+                    ppto:res.data[0].periodos[0].resumen.presupuesto,
+                    monto_actual:res.data[0].periodos[0].resumen.valor_actual,
+                    avance_anterior	:res.data[0].periodos[0].resumen.valor_anterior,
+                    avance_actual:res.data[0].periodos[0].resumen.valor_actual,	
+                    avance_acumulado:res.data[0].periodos[0].resumen.valor_total,	
+                    saldo:res.data[0].periodos[0].resumen.valor_saldo
+
                 })
             }
             
@@ -74,16 +99,22 @@ class ValorizacionGeneral extends Component {
     }
 
     TabsMeses(tab, fechaInicial, fechaFinal ) {
-        console.log('cero', tab,'Id componente', this.state.IdComponente ,'inicio', fechaInicial, 'fin', fechaFinal);
-        
+        // console.log('cero', tab,'Id componente', this.state.IdComponente ,'inicio', fechaInicial, 'fin', fechaFinal);        
         if (this.state.activeTabMes !== tab) {
             this.setState({
                 activeTabMes: tab,
                 fecha_inicial:fechaInicial,
                 fecha_final:fechaFinal,
-                NombreComponente:'RESUMEN DE VALORIZACION'
+                NombreComponente:'RESUMEN DE VALORIZACION',
+                // montos de resumen de componentes
+                // ppto:"",
+                // monto_actual:"",
+                // avance_anterior	:"",
+                // avance_actual:"",	
+                // avance_acumulado:"",	
+                // saldo:""
             });
-        }
+        
 
 
 
@@ -97,9 +128,9 @@ class ValorizacionGeneral extends Component {
                 }
             )
             .then((res)=>{
-                console.log('res partidas val desde tab meses>', res.data)
+                // console.log('res partidas val desde tab meses>', res.data)
                 this.setState({
-                    DataPartidasApi:res.data
+                    DataPartidasApi:res.data.partidas
                 })
             })
             .catch((err)=>{
@@ -113,19 +144,27 @@ class ValorizacionGeneral extends Component {
                 {
                     "id_ficha":sessionStorage.getItem("idobra"),
                     "fecha_inicial": fechaInicial,
-                    "fecha_final": fechaFinal	
+                    "fecha_final": fechaFinal,
                 }
             )
             .then((res)=>{
-                console.log('rsumen', res.data)
+                // console.log('resumen', res.data)
                 this.setState({
-                    DataResumenApi:res.data
+                    DataResumenApi:res.data,
+                    // montos de resumen de componentes
+                    ppto:res.data.presupuesto,
+                    monto_actual:res.data.valor_actual,
+                    avance_anterior	:res.data.valor_anterior,
+                    avance_actual:res.data.valor_actual,	
+                    avance_acumulado:res.data.valor_total,	
+                    saldo:res.data.valor_saldo
                 })
             })
             .catch((err)=>{
                 console.log('hay erres al solicitar la peticion al api, ',err);
             })   
         }
+    }
         
     }
     
@@ -135,6 +174,13 @@ class ValorizacionGeneral extends Component {
                 activeTabComponente: tab,
                 IdComponente:id_componente,
                 NombreComponente:nombreComp,
+
+                // montos en soles de componentes 
+                soles_anterior: "",
+                soles_actual: "",
+                soles_acumulado:"" ,
+                soles_saldo: "",
+                
             });
 
             if(tab !=="resumen"){
@@ -147,9 +193,15 @@ class ValorizacionGeneral extends Component {
                     }
                 )
                 .then((res)=>{
-                    console.log('res partidas val', res)
+                    // console.log('res partidas val', res.data)
                     this.setState({
-                        DataPartidasApi:res.data
+                        DataPartidasApi:res.data.partidas,
+
+                        // montos en soles de componentes 
+                        soles_anterior: res.data.valor_anterior,
+                        soles_actual: res.data.valor_actual,
+                        soles_acumulado:res.data.valor_total ,
+                        soles_saldo: res.data.valor_saldo,
                     })
                 })
                 .catch((err)=>{
@@ -218,34 +270,34 @@ class ValorizacionGeneral extends Component {
                                             <tr className="text-center">
                                                 <th className="align-middle" rowSpan="3">N°</th>
                                                 <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
-                                                <th>S/.resumen.monto_actual</th>
-                                                <th colSpan="2">S/.resumen.avance_anterior</th>
-                                                <th colSpan="2">S/.resumen.avance_actual</th>
-                                                <th colSpan="2">S/.resumen.avance_acumulado</th>
-                                                <th colSpan="2">S/.resumen.saldo</th>
+                                                <th>S/. { this.state.ppto }</th>
+                                                <th colSpan="2">S/. {this.state.avance_anterior }</th>
+                                                <th colSpan="2">S/. {this.state.avance_actual }</th>
+                                                <th colSpan="2">S/. {this.state.avance_acumulado }</th>
+                                                <th colSpan="2">S/. {this.state.saldo }</th>
                                             </tr>
                                             <tr className="text-center">
-                                                <td>MONTO ACT.</td>
-                                                <td colSpan="2">AVANCE ANTERIOR</td>
-                                                <td colSpan="2">AVANCE ACTUAL</td>
-                                                <td colSpan="2">AVANCE ACUMULADO</td>
-                                                <td colSpan="2">SALDO</td>
+                                                <th>MONTO ACT.</th>
+                                                <th colSpan="2">AVANCE ANTERIOR</th>
+                                                <th colSpan="2">AVANCE ACTUAL</th>
+                                                <th colSpan="2">AVANCE ACUMULADO</th>
+                                                <th colSpan="2">SALDO</th>
                                             </tr>
                                             <tr className="text-center">
-                                                <td>PPTO</td>
-                                                <td>MONTO</td>
-                                                <td>%</td>
-                                                <td>MONTO</td>
-                                                <td>%</td>
-                                                <td>MONTO</td>
-                                                <td>%</td>
-                                                <td>MONTO</td>
-                                                <td>%</td>
+                                                <th>PPTO</th>
+                                                <th>MONTO</th>
+                                                <th>%</th>
+                                                <th>MONTO</th>
+                                                <th>%</th>
+                                                <th>MONTO</th>
+                                                <th>%</th>
+                                                <th>MONTO</th>
+                                                <th>%</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {
-                                                DataResumenApi.map((ResumenC, iC)=>
+                                            { DataResumenApi.length <=0 ?<tr><td colSpan="11"></td></tr>:
+                                                DataResumenApi.componentes.map((ResumenC, iC)=>
                                                     <tr key={ iC }>
                                                         <td>{ ResumenC.numero }</td>
                                                         <td>{ ResumenC.nombre } </td>
@@ -285,59 +337,63 @@ class ValorizacionGeneral extends Component {
                                             <tr>
                                                 <th colSpan="3" rowSpan="2">DESCRIPCION</th>
                                                 <th colSpan="2" rowSpan="2">PRESUPUESTO</th>
-                                                <th colSpan="3">S/. valor_total_anterior</th>
-                                                <th colSpan="3">S/. valor_total_actual</th>
-                                                <th colSpan="3">S/. valor_suma_acumulado</th>
-                                                <th colSpan="3">S/. valor_total_saldo</th>
+                                                <th className="bg-mm" colSpan="3">S/. {this.state.soles_anterior }</th>
+                                                <th colSpan="3">S/. {this.state.soles_actual }</th>
+                                                <th className="bg-mm" colSpan="3">S/. {this.state.avance_acumulado }</th>
+                                                <th colSpan="3">S/. {this.state.soles_saldo }</th>
                                             </tr>
                                             <tr>
-                                                <td colSpan="3">ANTERIOR</td>
-                                                <td colSpan="3">ACTUAL</td>
-                                                <td colSpan="3">ACUMULADO</td>
-                                                <td colSpan="3">SALDO</td>
+                                                <th className="bg-mm" colSpan="3">ANTERIOR</th>
+                                                <th colSpan="3">ACTUAL</th>
+                                                <th className="bg-mm" colSpan="3">ACUMULADO</th>
+                                                <th colSpan="3">SALDO</th>
                                             </tr>
                                             <tr>
-                                                <td>ITEM</td>
-                                                <td>DESCRIPCION</td>
-                                                <td>METRADO</td>
-                                                <td>P. U. S/.</td>
-                                                <td>P. P S/.</td>
-                                                <td>MET. </td>
-                                                <td>VAL</td>
-                                                <td>%</td>
-                                                <td>MET.</td>
-                                                <td>VAL</td>
-                                                <td>%</td>
-                                                <td>MET.</td>
-                                                <td>VAL</td>
-                                                <td>%</td>
-                                                <td>MET.</td>
-                                                <td>VAL</td>
-                                                <td>%</td>
+                                                <th>ITEM</th>
+                                                <th>DESCRIPCION</th>
+                                                <th>METRADO</th>
+                                                <th>P. U. S/.</th>
+                                                <th>P. P S/.</th>
+                                                
+                                                <th className="bg-mm">MET. </th>
+                                                <th className="bg-mm">VAL</th>
+                                                <th className="bg-mm">%</th>
+                                                
+                                                <th>MET.</th>
+                                                <th>VAL</th>
+                                                <th>%</th>
+                                                
+                                                <th className="bg-mm">MET.</th>
+                                                <th className="bg-mm">VAL</th>
+                                                <th className="bg-mm">%</th>
+                                                
+                                                <th>MET.</th>
+                                                <th>VAL</th>
+                                                <th>%</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
                                             {
                                                 DataPartidasApi.map((partidas, Ipart)=>
-                                                    <tr key={ Ipart }>
+                                                    <tr key={ Ipart } className={partidas.tipo === "titulo"?"font-weight-bold":"font-weight-light"}>
                                                         <td>{ partidas.item }</td>
                                                         <td>{ partidas.descripcion }</td>
                                                         <td>{ partidas.metrado }</td>
                                                         <td>{ partidas.costo_unitario }</td>
                                                         <td>{ partidas.precio_parcial }</td>
 
-                                                        <td>{ partidas.metrado_anterior }</td>
-                                                        <td>{ partidas.valor_anterior }</td>
-                                                        <td>{ partidas.porcentaje_anterior }</td>
+                                                        <td className="bg-mm">{ partidas.metrado_anterior }</td>
+                                                        <td className="bg-mm">{ partidas.valor_anterior }</td>
+                                                        <td className="bg-mm">{ partidas.porcentaje_anterior }</td>
 
                                                         <td>{ partidas.metrado_actual }</td>
                                                         <td>{ partidas.valor_actual }</td>
                                                         <td>{ partidas.porcentaje_actual }</td>
 
-                                                        <td>{ partidas.metrado_total }</td>
-                                                        <td>{ partidas.valor_total }</td>
-                                                        <td>{ partidas.porcentaje_total }</td>
+                                                        <td className="bg-mm">{ partidas.metrado_total }</td>
+                                                        <td className="bg-mm">{ partidas.valor_total }</td>
+                                                        <td className="bg-mm">{ partidas.porcentaje_total }</td>
 
                                                         <td>{ partidas.metrado_saldo }</td>
                                                         <td>{ partidas.valor_saldo }</td>

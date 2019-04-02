@@ -91,13 +91,13 @@ class ModalIngresoCronoProgramado extends Component {
         // console.log('mes', formatearFecha)
 
         var FechaEnviar = fechaInicio.getFullYear()+ '-'+ (fechaInicio.getMonth() + 1) + '-' +  ultimoDiaMes
-        var FechaMostar = convertirFechaLetra(formatearFecha)
+        var FechaMostrar = convertirFechaLetra(formatearFecha)
 
-        console.log('fecha date >>>>>>>>', FechaMostar)
+        console.log('fecha date >>>>>>>>', FechaMostrar)
         
         Fechas.push({
           FechaEnviar,
-          FechaMostar,
+          FechaMostrar,
           estado:true
         })
     }
@@ -108,9 +108,9 @@ class ModalIngresoCronoProgramado extends Component {
     const DataAgrupado = []
 
     Fechas.forEach(anioMes => {
-      if (!DataAgrupado.find(ger => ger.FechaMostar == anioMes.FechaMostar )) {
-          const { FechaMostar, FechaEnviar, estado } = anioMes;
-          DataAgrupado.push({ FechaMostar, FechaEnviar, estado });
+      if (!DataAgrupado.find(ger => ger.FechaMostrar == anioMes.FechaMostrar )) {
+          const { FechaMostrar, FechaEnviar, estado } = anioMes;
+          DataAgrupado.push({ FechaMostrar, FechaEnviar, estado });
       }
     });
     
@@ -231,7 +231,7 @@ class ModalIngresoCronoProgramado extends Component {
                     <th>INICIO</th>
                     {Column.map((col, i)=>
                       <th key={ i }> 
-                        <label className="text-capitalize">{col.FechaMostar} </label> 
+                        <label className="text-capitalize">{col.FechaMostrar} </label> 
                       </th>
                     )}
                   </tr>

@@ -43,7 +43,7 @@ function PrimerDiaDelMesActual(){
 
 // convierte formato dinero a numero
 function ConvertFormatStringNumber(datoString){
-    console.log('datoString', datoString)
+    // console.log('datoString', datoString)
 
     if(datoString !== ""  && datoString !==  NaN){
         return Number(datoString.replace(/[^0-9\.-]+/g,""));
@@ -56,10 +56,30 @@ function ConvertFormatStringNumber(datoString){
 function convertirFechaLetra(fecha){
     if(fecha !== ""){
 
-       var fechaLlega = new Date( fecha )
+        var fechaLlega = new Date( fecha )
+
+
+        
+        var anio = fechaLlega.getFullYear()
+        var mes =  (fechaLlega.getMonth() + 1)
+        var dia =  fechaLlega.getDate()
+        if(mes <=9){
+          mes = "0"+mes
+        }
+
+        if(dia <=9){
+            dia = "0"+dia
+          }
+
+        var formatearFecha =  anio+'-'+mes+'-'+dia
+
+        console.log("formatearFecha segun quiero", formatearFecha)
+
         const config = { year: 'numeric', month: 'short'};
-        var fechaLetra = new Date(fechaLlega).toLocaleDateString('ES', config)
-        console.log('fecha que llega', fechaLetra )
+
+        var fechaLetra = new Date( fecha ).toLocaleDateString('ES', config)
+
+        console.log('fecha que llega', fecha )
         console.log("fecha mess letra>>>", fechaLetra)
         return fechaLetra
     }
