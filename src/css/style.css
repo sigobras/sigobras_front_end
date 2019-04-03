@@ -303,12 +303,30 @@ body {
 .icoVer{
   align-self: auto;
 }
+
 .icoVer:hover .aprecerIcon{
-  display: block;
-  right: 47px;
-  position: relative;
+  display: inline-flex;
+  right: 334px;
+  position: absolute;
+  border-radius: 8px;
+  margin-top: -2px;
+  background: #2f3944d1;
+  padding-left: 5px;
 }
 
+/* damos clases a los iconos que pararecen en el td de las tablas */
+
+.iconoTr{
+  margin-right: 5px;
+  cursor: pointer;
+}
+.iconoTr:hover{
+  background: #6d757e;
+  margin-right: 5px;
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: -2px;
+}
 
 .resplandPartidabottom{
   border: 2px solid #0080ff;

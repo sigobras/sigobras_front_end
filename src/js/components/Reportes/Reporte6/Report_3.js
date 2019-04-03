@@ -925,7 +925,7 @@ class Report_3 extends Component {
                 </li>
 
                 <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
-                    <ModalHeader toggle={this.ModalReportes}>3.- RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRAPRESUPUESTO BASE</ModalHeader>
+                    <ModalHeader toggle={this.ModalReportes}>3.- RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA PRESUPUESTO BASE</ModalHeader>
                     <ModalBody>
                         <Row>
                         <Col sm="2">
@@ -951,7 +951,7 @@ class Report_3 extends Component {
                             <ButtonGroup size="sm">
                             {
                                 DataMesesApi.map((Meses, iM)=>
-                                <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
+                                <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
                                 )
                             }
 

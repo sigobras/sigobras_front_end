@@ -7,9 +7,11 @@ import Report_2 from './Reporte6/Report_2'
 import Report_3 from './Reporte6/Report_3'
 import Report_4 from './Reporte6/Report_4'
 import Report_5 from './Reporte6/Report_5'
-
+import Report_6 from './Reporte6/Report_6'
+import Report_7 from './Reporte6/Report_7'
 import Report_8 from './Reporte6/Report_8'
-import Report_9 from './Reporte6/Report_9';
+import Report_9 from './Reporte6/Report_9'
+import Report_10 from './Reporte6/Report_10'
 
 
 class ReportesGenerales extends Component {
@@ -55,26 +57,20 @@ class ReportesGenerales extends Component {
                                 <Report_5 />
 
                                 {/* 6.6 */}
-                                <li className="lii">    
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 6.- CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( PPTO. BASE+PAR. ADICIONALES)   </a>
-                                </li>
+                                <Report_6 />
 
                                 {/* 6.7 */}
-                                <li className="lii">    
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 7.- RESUMEN DE AVANCE FISICO DE LAS PARTIDAS DE OBRA POR MES Y % (METRADOS)</a>
-                                </li>
+                                <Report_7 />
 
                                 
                                 {/* 6.8 */}
-                                {/* <Report_8 /> */}
+                                <Report_8 />
 
                                 {/* 6.9 */}
-                                {/* <Report_9 /> */}
+                                <Report_9 />
 
                                 {/* 6.10 */}
-                                <li className="lii">    
-                                    <a href="#" ><FaFilePdf className="text-danger"/> 10.- HISTOGRAMA DEL AVANCE DE OBRAS (Curva "S") </a>
-                                </li>
+                                <Report_10 />
 
                                 {/* 6.11 */}
                                 <li className="lii">    

@@ -19,9 +19,11 @@ class HistorialImagenesObra extends Component {
       activeTab: '0',
       // capturamos el nombre del componete
       nombreComponente:'',
+      collapse:-1
     };
     this.TabsComponentes = this.TabsComponentes.bind(this);
     this.CollapseItem = this.CollapseItem.bind(this);
+    this.primeraImagen = this.primeraImagen.bind(this);
 
   }
 
@@ -32,10 +34,11 @@ class HistorialImagenesObra extends Component {
       }
     )
     .then((res)=>{
-      console.log("res componentes imagenes", res.data)
+      // console.log("res componentes imagenes", res.data)
       this.setState({
         DataComponentesApi:res.data,
         DataPartidasApi:res.data[0].partidas,
+
         nombreComponente:res.data[0].nombre
 
       })
@@ -45,53 +48,84 @@ class HistorialImagenesObra extends Component {
     })
   }
 
-  TabsComponentes(tab, nombreComponente) {
+  TabsComponentes(tab, idComponente, nombreComponente) {
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab,
-        nombreComponente
+        nombreComponente,
+        DataPartidasApi:[],
+        collapse:-1
       });
+
+      // llamamos al api de partidas getImagenesPartidas 
+      axios.post(`${UrlServer}/getImagenesPartidas`,
+        {
+          "id_componente":idComponente
+        }
+      )
+      .then((res)=>{
+        // console.log("res actividades imagenes", res.data)
+        var DataQueLLega = res.data
+        if( DataQueLLega !== "vacio"){
+          this.setState({
+            DataPartidasApi:DataQueLLega
+          })
+        }
+      })
+      .catch((err)=>{
+        console.error("error al tratar de llamar al api" ,err)
+      })
+
     }
   }
 
-  CollapseItem(valor){
+  CollapseItem(valor , idPartidad){
     let event = valor  
     this.setState({ 
       collapse: this.state.collapse === Number(event) ? -1 : Number(event),
     })
 
     // consumir el api de immagenes
+    if(this.state.collapse !== event){
 
-    axios.post(`${UrlServer}/getImagenesPorObra`,
-      {
-        "id_ficha":sessionStorage.getItem("idobra")
-      }
-    )
-    .then((res)=>{
-      // console.log("res actividades imagenes", res.data)
-      var DataQueLLega = res.data
-      var dataAgrupar = []
-      DataQueLLega.forEach(img => {
-        dataAgrupar.push(
-          {
-              src: UrlServer+img.imagen,
-              thumbnail: UrlServer+img.imagen,
-              tags: [{value: "Ocean", title: "Ocean"}, {value: "People", title: "People"}],
-              caption: "sigobras.com"
-          }
-        )
-      });
-      // console.log('data>', dataAgrupar)
-      this.setState({
-        DataImagenesApi:dataAgrupar
-      })
-    })
-    .catch((err)=>{
-      console.error("error al tratar de llamar al api" ,err)
-    })
     
+      axios.post(`${UrlServer}/getImagenesListaPorPartida`,
+        {
+          "id_partida":idPartidad
+        }
+      )
+      .then((res)=>{
+        // console.log("res actividades imagenes", res.data)
+        var DataQueLLega = res.data
+        if( DataQueLLega !== "vacio"){
+          var dataAgrupar = []
+          DataQueLLega.forEach(img => {
+            dataAgrupar.push(
+              {
+                  src: UrlServer+img.imagen,
+                  thumbnail: UrlServer+img.imagen,
+                  thumbnailWidth: 320,
+                  thumbnailHeight: 174,
+                  tags: [{value: "Ocean", title: "Ocean"}, {value: "People", title: "People"}],
+                  caption: img.descripcion
+              }
+            )
+          });
+          // console.log('data>', dataAgrupar)
+          this.setState({
+            DataImagenesApi:dataAgrupar
+          })
+        }
+      })
+      .catch((err)=>{
+        console.error("error al tratar de llamar al api" ,err)
+      })
+    }
   }
 
+  primeraImagen(){
+    alert("hola")
+  }
   render() {
     const { DataComponentesApi, nombreComponente, DataPartidasApi, DataImagenesApi, collapse } = this.state
 
@@ -102,7 +136,7 @@ class HistorialImagenesObra extends Component {
             {
               DataComponentesApi.map((Comp, IC)=>
                 <NavItem key={ IC}>
-                  <NavLink className={classnames({ active: this.state.activeTab === IC.toString() })} onClick={() => { this.TabsComponentes(IC.toString(), Comp.nombre) }}>
+                  <NavLink className={classnames({ active: this.state.activeTab === IC.toString() })} onClick={() => { this.TabsComponentes(IC.toString(), Comp.id_componente, Comp.nombre) }}>
                     C- { Comp.numero }
                   </NavLink>
                 </NavItem>
@@ -124,25 +158,21 @@ class HistorialImagenesObra extends Component {
                   <th>DESCRICION</th>
                   <th>CANT IMG</th>
                   <th>AVANCE</th>
-                  <th></th>
-
                 </tr>
               </thead>
               {
                 DataPartidasApi.map((partida, IP)=>
                   <tbody key={ IP }>
                     <tr className={ partida.tipo === "titulo" ? "font-weight-bold":  collapse === IP? "font-weight-light resplandPartida icoVer": "font-weight-light icoVer" }>
-                      <td className={ partida.tipo === "titulo" ? '': collapse === IP? "tdData1": "tdData"} onClick={partida.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(IP, partida.id_partida )} data-event={IP} >{ partida.item }</td>
+                      <td className={ partida.tipo === "titulo" ? '': collapse === IP? "tdData1": "tdData"} onClick={()=> partida.tipo === "titulo" ?  this.CollapseItem(-1, -1 ): this.CollapseItem(IP, partida.id_partida )} data-event={IP} >{ partida.item }</td>
                       <td>{ partida.descripcion }</td>
                       <td>{ partida.numero_imagenes }</td>
-                      <td>{ partida.porcentaje_avance }</td>
-                      <td>
+                      <td>{ partida.porcentaje_avance }
                         <div className="aprecerIcon">
-                          <MdImage />
-                          <MdBrokenImage />
+                          <div className="iconoTr" onClick={ this.primeraImagen }><MdImage size={ 20 } /></div>
+                          <div className="iconoTr"><MdBrokenImage size={ 20 } /></div>
                         </div>
-                      </td>
-                      
+                      </td>                      
                     </tr>
                     <tr className={ collapse === IP? "resplandPartidabottom": "d-none"  }>
                       <td colSpan="5">

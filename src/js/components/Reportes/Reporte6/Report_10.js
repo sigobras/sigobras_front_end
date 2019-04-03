@@ -12,7 +12,7 @@ import { UrlServer } from '../../Utils/ServerUrlConfig'
 
 
 
-class Report_9 extends Component {
+class Report_10 extends Component {
   constructor(){
     super()
     this.state = {
@@ -468,7 +468,7 @@ class Report_9 extends Component {
        
       content: [
         { 
-          text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
+          text: 'HISTOGRAMA DEL AVANCE DE OBRAS (Curva S)',
           margin: 7,
           alignment: 'center'
         },
@@ -549,10 +549,10 @@ class Report_9 extends Component {
     return (
       <div>
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 9.- AVANCE COMPARATIVO DIAGRAMA DE GANT ✔ FALTA API KAI</a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 10.- HISTOGRAMA DEL AVANCE DE OBRAS (Curva S) ✔ FALTA API KAI</a>
         </li>
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
-          <ModalHeader toggle={this.ModalReportes}>9.- AVANCE COMPARATIVO DIAGRAMA DE GANT</ModalHeader>
+          <ModalHeader toggle={this.ModalReportes}> 10.- HISTOGRAMA DEL AVANCE DE OBRAS (Curva S)</ModalHeader>
           <ModalBody>
               
               <Row>
@@ -606,4 +606,4 @@ class Report_9 extends Component {
   }
 }
 
-export default Report_9;
+export default Report_10;

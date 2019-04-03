@@ -12,11 +12,11 @@ import { UrlServer } from '../../Utils/ServerUrlConfig'
 
 
 
-class Report_4 extends Component {
+class Report_6 extends Component {
   constructor(){
     super()
     this.state = {
-      DataMayMetlAPI:[],
+      DataConGenValAPI:[],      
       DataAniosApi:[],
       DataMesesApi:[],
       ValPresupuesto:[],
@@ -82,7 +82,7 @@ class Report_4 extends Component {
     .then((res)=>{
         console.log('res valorizacionMayoresMetrados', res.data)
         this.setState({
-          DataMayMetlAPI: res.data,
+          DataConGenValAPI: res.data,
           DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
         })
@@ -103,7 +103,7 @@ class Report_4 extends Component {
 
     var {  DataEncabezado } = this.state
 
-    var DataHist = this.state.DataMayMetlAPI
+    var DataHist = this.state.DataConGenValAPI
     //console.log('DH', DataHist)
 
 
@@ -195,7 +195,7 @@ class Report_4 extends Component {
 
                     [
                         {
-                            text: 'PARTIDA: ',
+                            text: 'PARTIDA ',
                             style: "tableHeader",
                             alignment: "center",
                             rowSpan: 3,
@@ -208,7 +208,7 @@ class Report_4 extends Component {
                         
                         },
                         {
-                          text: 'UND: ',
+                          text: 'UND ',
                           style: "tableHeader",
                           alignment: "center",
                           rowSpan: 3,
@@ -273,20 +273,14 @@ class Report_4 extends Component {
 
                     [
                         {
-                          text: 'PARTIDA: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
+                          
                         
                         },
                         {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
                           text: 'PRESUPUESTO PROGRAMADO',
@@ -352,20 +346,14 @@ class Report_4 extends Component {
 
                     [
                         {
-                          text: 'PARTIDA: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
+                          
                         
                         },
                         {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
                           text: 'METRADO',
@@ -681,15 +669,15 @@ class Report_4 extends Component {
 
 
   render() {
-    const { DataMayMetlAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
+    const { DataConGenValAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
     
     return (
       <div>
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/>4.- VALORIZACIÓN POR MAYORES METRADOS ✔</a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 6.- CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( Presupuesto Base + Part. Adicionale ) ✔ FALTA API </a>
         </li>
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
-          <ModalHeader toggle={this.ModalReportes}>4.- VALORIZACIÓN POR MAYORES METRADOS</ModalHeader>
+          <ModalHeader toggle={this.ModalReportes}> 6.- CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( Presupuesto Base + Part. Adicionale ) </ModalHeader>
           <ModalBody>
               <Row>
               <Col sm="2">
@@ -726,7 +714,7 @@ class Report_4 extends Component {
               
                 <Col sm="1">
                 {
-                  DataMayMetlAPI.length <= 0 ?"":
+                  DataConGenValAPI.length <= 0 ?"":
                   <button className="btn btn-outline-success" onClick={ this.PruebaDatos }>PDF</button>
                 }
                 </Col>
@@ -740,4 +728,4 @@ class Report_4 extends Component {
   }
 }
 
-export default Report_4;
+export default Report_6;       

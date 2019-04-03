@@ -716,7 +716,7 @@ class Report_5 extends Component {
                   <ButtonGroup size="sm">
                   {
                     DataMesesApi.map((Meses, iM)=>
-                      <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
+                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
                     )
                   }
 

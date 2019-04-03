@@ -10,7 +10,7 @@ import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
-
+import { Spinner } from 'reactstrap';
 
 class Report_2 extends Component {
   constructor(){
@@ -681,7 +681,7 @@ class Report_2 extends Component {
 
 
   render() {
-    const { DataValGeneralAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
+    const { DataValGeneralAPI,DataAniosApi, DataMesesApi,urlPdf } = this.state
     
     return (
       <div>
@@ -715,7 +715,7 @@ class Report_2 extends Component {
                   <ButtonGroup size="sm">
                   {
                     DataMesesApi.map((Meses, iM)=>
-                      <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final,)}>{ Meses.codigo }</Button>
+                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final,)}>{ Meses.codigo }</Button>
                     )
                   }
 
@@ -731,8 +731,11 @@ class Report_2 extends Component {
                 }
                 </Col>
               </Row>
-              
+                           
+              { 
+                urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              }
           </ModalBody>
         </Modal>
       </div>

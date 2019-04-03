@@ -70,18 +70,19 @@ class Report_8 extends Component {
    });
   }
 
-  seleccionaMeses(id_historial, fecha){
+  seleccionaMeses(id_historial,fecha_inicial,fecha_final){
     // LLAMA AL API DE MESES
     axios.post(`${UrlServer}/avanceMensualComparativoPresupuesto`,{
       "id_ficha":sessionStorage.getItem("idobra"),
       "historialestados_id_historialestado":id_historial,
-      "fecha":fecha
+      "fecha_inicial":fecha_inicial,
+      "fecha_final":fecha_final,
     })
     .then((res)=>{
         //console.log('res avanceMensualComparativoPresupuesto', res.data)
         this.setState({
           DataAvanMensApi: res.data,
-          DataEncabezado:encabezadoInforme()
+          DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
         })
     })
@@ -126,9 +127,9 @@ class Report_8 extends Component {
                             [
                                 {  
                                 text: 'CONSTRUCION DE INFRAESTRUCTURA' ,
-                                style: "tableHeader",
+                                style: "tableFecha",
                                 alignment: "center",
-                                colSpan: 14,
+                                colSpan: 15,
                                 },
                                 {
                                     
@@ -330,10 +331,11 @@ class Report_8 extends Component {
                   pageBreak: 'after',
                 }
               )
-        console.log('ArFormat', ArFormat[0].table.body)
+        //console.log('ArFormat', ArFormat[0].table.body)
+        //console.log('DataHist', DataHist )
         for (let j = 0; j < DataHist[i].partidas.length; j++) {
             //console.log('DH', DataHist[i].partidas[j].item)
-                ArFormat.table.body.push(
+                ArFormat[i].table.body.push(
                     [
                         {
                         text: DataHist[i].partidas[j].item,
@@ -346,8 +348,13 @@ class Report_8 extends Component {
                         //alignment: 'center'
                         },
                         {
+                        text: DataHist[i].partidas[j].unidad_medida,
+                        style: 'tableBody',
+                        },
+                        {
                         text: DataHist[i].partidas[j].metrado,
                         style: 'tableBody',
+                        //alignment: 'center'
                         },
                         {
                         text: DataHist[i].partidas[j].costo_unitario,
@@ -355,58 +362,54 @@ class Report_8 extends Component {
                         //alignment: 'center'
                         },
                         {
-                        text: DataHist[i].partidas[j].precio_parcial,
+                        text: DataHist[i].partidas[j].Metrado_Ejecutado_Anterior,
                         style: 'tableBody',
                         //alignment: 'center'
                         },
                         {
-                        text: DataHist[i].partidas[j].metrado_anterior,
+                        text: DataHist[i].partidas[j].Valorizado_Anterior,
                         style: 'tableBody',
                         //alignment: 'center'
                         },
                         {
-                        text: DataHist[i].partidas[j].porcentaje_anterior,
+                        text: DataHist[i].partidas[j].Metrado_Ejecutado_Actual,
                         style: 'tableBody',
                         //alignment: 'center'
                         },
                         {   
-                        text: DataHist[i].partidas[j].metrado_actual,
+                        text: DataHist[i].partidas[j].Valorizado_actual,
                         style: 'tableBody',
                         //alignment: 'center'
                         },
                         {
-                        text: DataHist[i].partidas[j].valor_actual,
+                        text: DataHist[i].partidas[j].Metrado_Ejecutado_Acumulado,
                         style: 'tableBody',
                         // alignment: 'center'
                         },
                         {
-                            text: 'DataHist[i].partidas.descripcion',
-                            style: 'tableBody',
-                            // alignment: 'center'
+                        text: DataHist[i].partidas[j].Valorizado_Acumulado,
+                        style: 'tableBody',
+                        // alignment: 'center'
+                        },                        
+                        {
+                        text: DataHist[i].partidas[j].Diferencia_Mas,
+                        style: 'tableBody',
+                        //alignment: 'center'
                         },
                         {
-                            text: 'DataHist[i].partidas.descripcion',
-                            style: 'tableBody',
+                        text: DataHist[i].partidas[j].Diferencia_Menos,
+                        style: 'tableBody',
+                        //alignment: 'center'
                         },
                         {
-                            text: 'DataHist[i].partidas.descripcion',
-                            style: 'tableBody',
-                            //alignment: 'center'
+                        text: DataHist[i].partidas[j].Porcentaje_Mas,
+                        style: 'tableBody',
+                        //alignment: 'center'
                         },
                         {
-                            text: 'DataHist[i].partidas.descripcion',
-                            style: 'tableBody',
-                            //alignment: 'center'
-                        },
-                        {
-                            text: 'DataHist[i].partidas.descripcion',
-                            style: 'tableBody',
-                            //alignment: 'center'
-                        },
-                        {
-                            text: 'DataHist[i].partidas.descripcion',
-                            style: 'tableBody',
-                            //alignment: 'center'
+                        text: DataHist[i].partidas[j].Porcentaje_Menos,
+                        style: 'tableBody',
+                        //alignment: 'center'
                         },
                         
                     ]
@@ -465,7 +468,7 @@ class Report_8 extends Component {
        
       content: [
         { 
-          text: 'AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RES',
+          text: 'AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RESUMEN DE LAS VALORIZACIONES',
           margin: 7,
           alignment: 'center'
         },
@@ -546,11 +549,11 @@ class Report_8 extends Component {
         <div> 
 
           <li className="lii">
-              <a href="#"  onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 8.- AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RES ✔</a>
+              <a href="#"  onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 8.- AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RESUMEN DE LAS VALORIZACIONES ✔ </a>
           </li>
 
           <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
-            <ModalHeader toggle={this.ModalReportes}>8.- AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RES </ModalHeader>
+            <ModalHeader toggle={this.ModalReportes}>8.- AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RESUMEN DE LAS VALORIZACIONES </ModalHeader>
             <ModalBody>
               
               <Row>
@@ -576,7 +579,7 @@ class Report_8 extends Component {
                         <ButtonGroup size="sm">
                           {
                             DataMesesApi.map((Meses, iM)=>
-                              <Button key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
                             )
                           }
 

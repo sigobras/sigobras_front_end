@@ -41,7 +41,7 @@ class Obras extends Component{
             id_acceso:sessionStorage.getItem("idacceso")
         })
         .then((res)=>{
-            console.log(res.data);
+            // console.log(res.data);
             this.setState({
                 DataRecorObra: res.data
             })
