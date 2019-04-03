@@ -12,13 +12,13 @@ class ModalIngresoCronoProgramado extends Component {
       modal: false,
       Column:[],
       DataCronoArmadoEnviar:[],
+      DataCronoProgramadoApi:[],
       fecha_desde:'',
       fecha_hasta:'',
       ResultResta:""
     };
     
     this.ModalIngresoCrono = this.ModalIngresoCrono.bind(this);
-    this.GenerarColTable = this.GenerarColTable.bind(this);
     this.GeneraFechasSegunOrden = this.GeneraFechasSegunOrden.bind(this);
     this.capturaInputsProgramado = this.capturaInputsProgramado.bind(this);
     this.enviarDatosApi = this.enviarDatosApi.bind(this);
@@ -37,8 +37,26 @@ class ModalIngresoCronoProgramado extends Component {
       )
       .then((res)=>{
         console.log("res programado", res.data);
+
+
+        var Inputs = []
+
+        res.data.cronogramadinero.forEach((alfo, i)=>
+            Inputs.push(
+              [
+                this.props.ObraId,
+                alfo.fecha,
+                0
+              ]
+            )
+        )
+
+        console.log("Inputs", Inputs)
         this.setState({
-          fecha_desde:res.data.fecha_inicial
+          fecha_desde:res.data.fecha_final,
+          DataCronoProgramadoApi:res.data.cronogramadinero,
+          EnviarDatos:Inputs,
+          
         })
       })
       .catch((err)=>{
@@ -49,31 +67,16 @@ class ModalIngresoCronoProgramado extends Component {
     
   }
 
-  GenerarColTable(){
-    var Column = this.state.Column
-
-    Column.push({
-      fecha:'mas'
-    })
-    
-    console.log('colum', Column);
-    
-    this.setState({
-      Column
-    })
-    console.log('state', this.state.Column)
-  }
 
   GeneraFechasSegunOrden(){
-    // console.log('desde',this.state.fecha_desde)
+    console.log('desde',this.state.fecha_desde)
     // console.log('hasta',this.state.fecha_hasta)
 
     var fechaInicio = new Date(this.state.fecha_desde);
     var fechaFin = new Date(this.state.fecha_hasta);
     
 
-    var Fechas = []
-
+    var Fechas = this.state.DataCronoProgramadoApi
     while(fechaFin.getTime() >= fechaInicio.getTime()){
         fechaInicio.setDate(fechaInicio.getDate() + 1);
 
@@ -92,50 +95,66 @@ class ModalIngresoCronoProgramado extends Component {
 
         var FechaEnviar = fechaInicio.getFullYear()+ '-'+ (fechaInicio.getMonth() + 1) + '-' +  ultimoDiaMes
         var FechaMostrar = convertirFechaLetra(formatearFecha)
-
-        console.log('fecha date >>>>>>>>', FechaMostrar)
         
         Fechas.push({
-          FechaEnviar,
-          FechaMostrar,
-          estado:true
+          // FechaEnviar,
+          // FechaMostrar,
+          // estado:true,
+
+
+
+
+          Anyo_Mes: FechaMostrar,
+          fecha: FechaEnviar,
+          fichas_id_ficha: this.props.ObraId,
+          financiero_dinero: "",
+          fisico_dinero: 0,
+          programado_dinero: 0
+
+
+
+
+
+
+
+
+
         })
     }
 
-    // console.log('fechas', Fechas)
+    console.log('fechas', Fechas)
 
     // agrupo los datos por dia
     const DataAgrupado = []
 
     Fechas.forEach(anioMes => {
-      if (!DataAgrupado.find(ger => ger.FechaMostrar == anioMes.FechaMostrar )) {
-          const { FechaMostrar, FechaEnviar, estado } = anioMes;
-          DataAgrupado.push({ FechaMostrar, FechaEnviar, estado });
+      if (!DataAgrupado.find(ger => ger.Anyo_Mes == anioMes.Anyo_Mes )) {
+          const { Anyo_Mes, fecha, fichas_id_ficha, financiero_dinero, fisico_dinero, programado_dinero } = anioMes;
+          DataAgrupado.push({ Anyo_Mes, fecha, fichas_id_ficha, financiero_dinero, fisico_dinero, programado_dinero});
       }
     });
     
-    var Inputs = []
+    // var Inputs = []
 
-    DataAgrupado.forEach((alfo, i)=>
-      Inputs.push(
-        [
-          this.props.ObraId,
-          alfo.FechaEnviar,
-          0
-        ]
-      )
-    )
+    // DataAgrupado.forEach((alfo, i)=>
+    //   Inputs.push(
+    //     [
+    //       this.props.ObraId,
+    //       alfo.FechaEnviar,
+    //       0
+    //     ]
+    //   )
+    // )
 
     // console.log('DataAgrupado', DataAgrupado)
     // console.log('Inputs', Inputs)
     this.setState({
       Column:DataAgrupado,
-      EnviarDatos:Inputs
+      // EnviarDatos:Inputs
     })
-
   }
 
-  capturaInputsProgramado(e,i){
+  capturaInputsProgramado(e, i){
     // console.log('value', e.target.value, "index", i)
 
     var convertString =  e.target.value
@@ -143,20 +162,20 @@ class ModalIngresoCronoProgramado extends Component {
 
     this.state.EnviarDatos[i].splice(2, 1, numero);
 
-    var SumaInputs = []
-    this.state.EnviarDatos.forEach((data)=>
-      SumaInputs.push( data[2] )
-    )
+    // var SumaInputs = []
+    // this.state.EnviarDatos.forEach((data)=>
+    //   SumaInputs.push( data[2] )
+    // )
 
-    var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
-    var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-    var saldoTotalCostoDirecto = costoDirecto - total
+    // var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+    // var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+    // var saldoTotalCostoDirecto = costoDirecto - total
   
-    this.setState({
-      ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
-    })
+    // this.setState({
+    //   ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+    // })
 
-    // console.log('resultado',this.state.EnviarDatos)
+    console.log('resultado',this.state.EnviarDatos)
   }
 
 
@@ -187,7 +206,7 @@ class ModalIngresoCronoProgramado extends Component {
   }
 
   render() {
-    const { Column } = this.state
+    const { Column, DataCronoProgramadoApi } = this.state
     return (
       <div>
         <Button color="primary" onClick={this.ModalIngresoCrono}>+ PROGRAMADO</Button>
@@ -203,12 +222,12 @@ class ModalIngresoCronoProgramado extends Component {
                 <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
 
                 <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
-                <Input type="month" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
+                <Input type="month" min="2019-12" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
                 <Button color="info" onClick={this.GeneraFechasSegunOrden} >CREAR MESES</Button>
               </InputGroup>
             </Col>
             <Col sm="1">
-              <label>{ this.state.Column.length } MESES  </label>
+              <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
             </Col>
             <Col sm="3">
               <label>COSTO DIRECTO S/. {this.props.costoDirecto }</label>
@@ -229,9 +248,9 @@ class ModalIngresoCronoProgramado extends Component {
                   <tr>
                     <th></th>
                     <th>INICIO</th>
-                    {Column.map((col, i)=>
+                    {DataCronoProgramadoApi.map((col, i)=>
                       <th key={ i }> 
-                        <label className="text-capitalize">{col.FechaMostrar} </label> 
+                        <label className="text-capitalize">{col.Anyo_Mes} </label> 
                       </th>
                     )}
                   </tr>
@@ -240,10 +259,10 @@ class ModalIngresoCronoProgramado extends Component {
                   <tr>
                     <th>PROGRAMADO</th>
                     <td>0</td>
-                    {Column.map((col, i)=>
+                    {DataCronoProgramadoApi.map((col, i)=>
                       <td key={ i } style={{minWidth: '100px', display: 'inlineBlock'}}>
                         <InputGroup  size="sm">
-                          <Input onBlur={e=>this.capturaInputsProgramado(e, i)} type="text"/>  
+                          <Input placeholder={ col.programado_dinero } onBlur={e=>this.capturaInputsProgramado(e, i)} type="text"/>  
                         </InputGroup>
                       </td>                  
 

@@ -73,14 +73,14 @@ function convertirFechaLetra(fecha){
 
         var formatearFecha =  anio+'-'+mes+'-'+dia
 
-        console.log("formatearFecha segun quiero", formatearFecha)
+        // console.log("formatearFecha segun quiero", formatearFecha)
 
         const config = { year: 'numeric', month: 'short'};
 
         var fechaLetra = new Date( fecha ).toLocaleDateString('ES', config)
 
-        console.log('fecha que llega', fecha )
-        console.log("fecha mess letra>>>", fechaLetra)
+        // console.log('fecha que llega', fecha )
+        // console.log("fecha mess letra>>>", fechaLetra)
         return fechaLetra
     }
     

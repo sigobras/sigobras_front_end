@@ -2,13 +2,16 @@ import React, { Component } from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
+import { UrlServer } from '../../Utils/ServerUrlConfig'
+
 import ModalIngresoCronoProgramado from './FiltraObras/ModalIngresoCronoProgramado'
 import ModalIngresoCronoFinanciero from './FiltraObras/ModalIngresoCronoFinanciero'
 
 class CronogramaAvance extends Component{
 	constructor(props){
 		super(props);
-	}
+  }
+  
   render(){
     var { dataCrono } = this.props
     const options = {
@@ -33,9 +36,9 @@ class CronogramaAvance extends Component{
           text: 'CURVA "S"',
           color: '#ffffff'
         },
-        // subtitle: {
-        //   text: 'ing joven' QUI IRA LA OBRA
-        // },
+        subtitle: {
+          text: 'GRAFICO DEL PORCENTAJE DE AVANCE PROGRAMADO VS EJECUTADO ACUMULADO'
+        },
         xAxis: {
           categories: dataCrono.mes
         },
@@ -64,6 +67,7 @@ class CronogramaAvance extends Component{
           data: dataCrono.porcentaje_financiero
         }]
     }
+
     return(
       <div className="card">
           <div className="card-header text-center">

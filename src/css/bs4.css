@@ -64,7 +64,7 @@
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #303030;;
+  background-color: #040910a6;;
   background-clip: padding-box;
   border: 1px solid rgba(0,0,0,.2);
   border-radius: .3rem;
@@ -94,14 +94,14 @@
 
 .card {
   border-radius: 0rem;
-  background-color: #2f3944;
+  background-color: #2f394454;
   border: 1px solid rgb(29, 32, 41);
 }
 /* card heder */
 .card-header {
   padding: .75rem 1.25rem;
   margin-bottom: 0;
-  background-color: rgb(29, 32, 41);
+  background-color: rgba(0, 2, 6, 0.5);
   border-bottom: 1px solid rgb(29, 32, 41);
 }
 .card-body {

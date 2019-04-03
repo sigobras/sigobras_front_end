@@ -164,7 +164,7 @@ class AppAng extends Component {
                                     pauseOnHover
                                 />
                                 <div className="row">
-                                    <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block bg-dark text-light sidebar': "navbarCollapseLeft bg-dark text-light sidebar"}>
+                                    <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block text-light sidebar': "navbarCollapseLeft text-light sidebar"}>
                                         <div className="sidebar-sticky">
                                             <ul className="nav flex-column ull">
                                                 
@@ -232,9 +232,9 @@ class AppAng extends Component {
                                     </nav>
         
 
-                                    <main role="main" className="col ml-sm-auto col-lg px-0" style={{backgroundColor: '#2e3742'}}>
+                                    <main role="main" className="col ml-sm-auto col-lg px-0">
                                         
-                                        <div className="d-flex mb-0 border-button pt-5 p-1 text-light bg-dark m-0">
+                                        <div className="d-flex mb-0 border-button pt-5 p-1 text-light m-0">
                                             <label>
                                                 <b>
                                                     { DataObra.g_meta === undefined?<div className="text-center text-white"><Spinner color="primary" size="sm" /></div>: DataObra.g_meta.toUpperCase()}
