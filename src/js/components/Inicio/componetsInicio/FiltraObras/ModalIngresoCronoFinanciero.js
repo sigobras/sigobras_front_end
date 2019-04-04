@@ -34,12 +34,12 @@ class ModalIngresoCronoFinanciero extends Component {
           console.log('res financiero>>', res.data);
 
           var DataEnviarApiFinan = []
-          res.data.forEach(data => {
+          res.data.cronogramadinero.forEach(data => {
             DataEnviarApiFinan.push(
               [
                 data.fichas_id_ficha,
                 data.fecha,
-                ConvertFormatStringNumber(data.financiero_dinero)
+                ConvertFormatStringNumber(data.financiero_dinero),
               ]
             )
           });
@@ -103,7 +103,7 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th></th>
                       {/* <th>INICIO</th> */}
-                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((col, i)=>
+                      {DataApiFinanciero.cronogramadinero === undefined? <td></td> :DataApiFinanciero.cronogramadinero.map((col, i)=>
                         <th key={ i }> 
                           <label className="text-capitalize">{col.Anyo_Mes} </label> 
                         </th>
@@ -117,7 +117,7 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th>PROGRAMADO</th>
                       {/* <td>0</td> */}
-                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((col, i)=>
+                      {DataApiFinanciero.cronogramadinero === undefined? <td></td> :DataApiFinanciero.cronogramadinero.map((col, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
                           {col.programado_dinero}
                         </td>                  
@@ -131,7 +131,7 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th>FISICO EJECUTADO</th>
                       {/* <td>0</td> */}
-                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((col, i)=>
+                      {DataApiFinanciero.cronogramadinero === undefined? <td></td> :DataApiFinanciero.cronogramadinero.map((col, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
                           {col.fisico_dinero}
                         </td>                  
@@ -146,7 +146,7 @@ class ModalIngresoCronoFinanciero extends Component {
                     <tr>
                       <th>FINANCIERO EJECUTADO</th>
                       {/* <td>0</td> */}
-                      {DataApiFinanciero === undefined? <td></td> :DataApiFinanciero.map((mes, i)=>
+                      {DataApiFinanciero.cronogramadinero === undefined? <td></td> :DataApiFinanciero.cronogramadinero.map((mes, i)=>
                         <td key={ i } style={{minWidth: '130px', display: 'inlineBlock'}}>
                           <InputGroup size="sm">
                             <Input placeholder={mes.financiero_dinero} onBlur={e => this.capturaInputsFinanciero(e, i)} type="text" />  

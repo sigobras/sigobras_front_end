@@ -48,7 +48,8 @@ class ModalIngresoCronoProgramado extends Component {
               [
                 this.props.ObraId,
                 alfo.fecha,
-                ConvertFormatStringNumber(alfo.programado_dinero)
+                ConvertFormatStringNumber(alfo.programado_dinero),
+                0
               ]
             )
         )
@@ -134,6 +135,7 @@ class ModalIngresoCronoProgramado extends Component {
             [
               this.props.ObraId,
               fecha,
+              0,
               0
             ]
           )
