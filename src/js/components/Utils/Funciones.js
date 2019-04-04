@@ -43,9 +43,9 @@ function PrimerDiaDelMesActual(){
 
 // convierte formato dinero a numero
 function ConvertFormatStringNumber(datoString){
-    // console.log('datoString', datoString)
+    // console.log('datoString', typeof datoString)
 
-    if(datoString !== ""  && datoString !==  NaN){
+    if(datoString !== ""  && datoString !==  NaN && datoString !== undefined && typeof datoString !== "number"){
         return Number(datoString.replace(/[^0-9\.-]+/g,""));
     }else{
         return datoString
@@ -77,7 +77,7 @@ function convertirFechaLetra(fecha){
 
         const config = { year: 'numeric', month: 'short'};
 
-        var fechaLetra = new Date( fecha ).toLocaleDateString('ES', config)
+        var fechaLetra = new Date( formatearFecha ).toLocaleDateString('ES', config)
 
         // console.log('fecha que llega', fecha )
         // console.log("fecha mess letra>>>", fechaLetra)

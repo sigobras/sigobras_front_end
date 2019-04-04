@@ -15,7 +15,9 @@ class ModalIngresoCronoProgramado extends Component {
       DataCronoProgramadoApi:[],
       fecha_desde:'',
       fecha_hasta:'',
-      ResultResta:""
+      ResultResta:"",
+      fechaLimiteAnioMes:"",
+      avanceAcumulado:""
     };
     
     this.ModalIngresoCrono = this.ModalIngresoCrono.bind(this);
@@ -36,7 +38,7 @@ class ModalIngresoCronoProgramado extends Component {
         }
       )
       .then((res)=>{
-        console.log("res programado", res.data);
+        // console.log("res programado", res.data);
 
 
         var Inputs = []
@@ -46,16 +48,18 @@ class ModalIngresoCronoProgramado extends Component {
               [
                 this.props.ObraId,
                 alfo.fecha,
-                0
+                ConvertFormatStringNumber(alfo.programado_dinero)
               ]
             )
         )
 
-        console.log("Inputs", Inputs)
+        // console.log("Inputs", Inputs)
         this.setState({
           fecha_desde:res.data.fecha_final,
           DataCronoProgramadoApi:res.data.cronogramadinero,
           EnviarDatos:Inputs,
+          fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
+          avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado)
           
         })
       })
@@ -69,14 +73,17 @@ class ModalIngresoCronoProgramado extends Component {
 
 
   GeneraFechasSegunOrden(){
-    console.log('desde',this.state.fecha_desde)
+    // console.log('desde',this.state.fecha_desde)
     // console.log('hasta',this.state.fecha_hasta)
 
     var fechaInicio = new Date(this.state.fecha_desde);
     var fechaFin = new Date(this.state.fecha_hasta);
     
 
-    var Fechas = this.state.DataCronoProgramadoApi
+    // var Fechas = this.state.DataCronoProgramadoApi
+    
+    var Fechas =[]
+
     while(fechaFin.getTime() >= fechaInicio.getTime()){
         fechaInicio.setDate(fechaInicio.getDate() + 1);
 
@@ -89,68 +96,57 @@ class ModalIngresoCronoProgramado extends Component {
         if(mes <=9){
           mes = "0"+mes
         }
+        if(ultimoDiaMes <= 9){
+          ultimoDiaMes= "0"+ultimoDiaMes
+        }
 
         var formatearFecha =  anio+'-'+mes+'-'+ultimoDiaMes
-        // console.log('mes', formatearFecha)
+        // console.log('fecha formateada', formatearFecha)
 
         var FechaEnviar = fechaInicio.getFullYear()+ '-'+ (fechaInicio.getMonth() + 1) + '-' +  ultimoDiaMes
         var FechaMostrar = convertirFechaLetra(formatearFecha)
         
+        // console.log("imprimimos fecha", FechaMostrar)
         Fechas.push({
-          // FechaEnviar,
-          // FechaMostrar,
-          // estado:true,
-
-
-
-
           Anyo_Mes: FechaMostrar,
           fecha: FechaEnviar,
           fichas_id_ficha: this.props.ObraId,
           financiero_dinero: "",
           fisico_dinero: 0,
           programado_dinero: 0
-
-
-
-
-
-
-
-
-
         })
     }
+    // console.log('Fechas', Fechas)
 
-    console.log('fechas', Fechas)
 
     // agrupo los datos por dia
-    const DataAgrupado = []
+    const DataAgrupado = this.state.DataCronoProgramadoApi
 
+    var EnviarDatosActualizar = this.state.EnviarDatos
     Fechas.forEach(anioMes => {
+
       if (!DataAgrupado.find(ger => ger.Anyo_Mes == anioMes.Anyo_Mes )) {
           const { Anyo_Mes, fecha, fichas_id_ficha, financiero_dinero, fisico_dinero, programado_dinero } = anioMes;
+
           DataAgrupado.push({ Anyo_Mes, fecha, fichas_id_ficha, financiero_dinero, fisico_dinero, programado_dinero});
+          // push a enviar datos para armar los inputs para armar el envio al api
+          EnviarDatosActualizar.push(
+            [
+              this.props.ObraId,
+              fecha,
+              0
+            ]
+          )
       }
+      
+      
     });
     
-    // var Inputs = []
+    console.log('DataAgrupado', DataAgrupado)
+    console.log('EnviarDatosActualizar', EnviarDatosActualizar)
 
-    // DataAgrupado.forEach((alfo, i)=>
-    //   Inputs.push(
-    //     [
-    //       this.props.ObraId,
-    //       alfo.FechaEnviar,
-    //       0
-    //     ]
-    //   )
-    // )
-
-    // console.log('DataAgrupado', DataAgrupado)
-    // console.log('Inputs', Inputs)
     this.setState({
-      Column:DataAgrupado,
-      // EnviarDatos:Inputs
+      EnviarDatos:EnviarDatosActualizar,
     })
   }
 
@@ -159,21 +155,31 @@ class ModalIngresoCronoProgramado extends Component {
 
     var convertString =  e.target.value
     var numero = ConvertFormatStringNumber(convertString);
+    var avanceAcumulado = this.state.avanceAcumulado
 
+    console.log("avanceAcumulado>>>", avanceAcumulado)
     this.state.EnviarDatos[i].splice(2, 1, numero);
 
-    // var SumaInputs = []
-    // this.state.EnviarDatos.forEach((data)=>
-    //   SumaInputs.push( data[2] )
-    // )
+    var SumaInputs = []
+    this.state.EnviarDatos.forEach((data)=>
+      SumaInputs.push( data[2] )
+    )
 
-    // var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
-    // var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-    // var saldoTotalCostoDirecto = costoDirecto - total
+    
+    var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+    var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+    console.log("total", costoDirecto)
+    
+    costoDirecto = costoDirecto - avanceAcumulado
+
+    var saldoTotalCostoDirecto = costoDirecto - total
   
-    // this.setState({
-    //   ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
-    // })
+
+    console.log('ResultResta',this.state.ResultResta)
+
+    this.setState({
+      ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+    })
 
     console.log('resultado',this.state.EnviarDatos)
   }
@@ -187,9 +193,12 @@ class ModalIngresoCronoProgramado extends Component {
       )
       .then((res)=>{
         console.log('res', res)
-        console.log('response', res.data.mes.length)
-        if(res.data.mes.length > 0 && res.status === 200 ){
-          toast.success('Tu cronograma Programado se ha ingresado.',{ position: "top-right",autoClose: 1000 });
+        // console.log('response', res.data.mes.length)
+        if( res.status  === 200 ){
+          toast.success('El cronograma - programado se ha ingresado.',{ position: "top-right",autoClose: 1000 });
+          this.setState(prevState => ({
+            modal: !prevState.modal
+          }));
         }else{
           toast.error('El cronograma - programado no no ingresado',{ position: "top-right",autoClose: 2000 });
         }
@@ -207,6 +216,8 @@ class ModalIngresoCronoProgramado extends Component {
 
   render() {
     const { Column, DataCronoProgramadoApi } = this.state
+
+    var TotalCostoDirecto =  ConvertFormatStringNumber(this.props.costoDirecto) - this.state.avanceAcumulado
     return (
       <div>
         <Button color="primary" onClick={this.ModalIngresoCrono}>+ PROGRAMADO</Button>
@@ -222,15 +233,15 @@ class ModalIngresoCronoProgramado extends Component {
                 <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
 
                 <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
-                <Input type="month" min="2019-12" onChange={e=> this.setState({fecha_hasta:e.target.value})} />
-                <Button color="info" onClick={this.GeneraFechasSegunOrden} >CREAR MESES</Button>
+                <Input type="month" min={this.state.fechaLimiteAnioMes} onChange={e=> this.setState({fecha_hasta:e.target.value})} />
+                <Button color="info" onClick={this.GeneraFechasSegunOrden} >CREAR MESES </Button>
               </InputGroup>
             </Col>
             <Col sm="1">
               <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
             </Col>
             <Col sm="3">
-              <label>COSTO DIRECTO S/. {this.props.costoDirecto }</label>
+              <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
             </Col>
             <Col sm="2">
               <Button color={ConvertFormatStringNumber(this.state.ResultResta) === 0?"success":"danger"}>
