@@ -22,6 +22,7 @@ class CronogramaAvance extends Component{
       ResultResta:"",
       fechaLimiteAnioMes:"",
       avanceAcumulado:"",
+      EstadoBtnEliminar:true
 
     };
     
@@ -30,6 +31,7 @@ class CronogramaAvance extends Component{
     this.enviarDatosApi = this.enviarDatosApi.bind(this);
     this.capturaInputsFinanciero = this.capturaInputsFinanciero.bind(this);
     this.eliminarMes = this.eliminarMes.bind(this);
+    this.eliminarMesNoData = this.eliminarMesNoData.bind(this);
   }
   
   componentWillMount(){
@@ -39,11 +41,9 @@ class CronogramaAvance extends Component{
         }
       )
       .then((res)=>{
-        console.log("res programado", res.data);
-
+        console.log("res programado", res.data.data);
 
         var Inputs = []
-
         res.data.data.forEach((alfo, i)=>
             Inputs.push(
               [
@@ -54,15 +54,29 @@ class CronogramaAvance extends Component{
               ]
             )
         )
+        var SumaInputs = []
+        Inputs.forEach((data)=>
+          SumaInputs.push( data[2] )
+        )
+        var totalSumaInpust = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+
+        var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+        var avanceAcumulado = res.data.avance_Acumulado
+        var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
+        saldoTotalCostoDirecto = saldoTotalCostoDirecto -  totalSumaInpust
 
         // console.log("Inputs", Inputs)
+        // console.log("totalSumaInpust", totalSumaInpust ,"saldoTotalCostoDirecto", saldoTotalCostoDirecto)
+        
+
         this.setState({
           fechaActualApi:res.data.fechaActual,
           fecha_desde:res.data.fecha_final,
           DataCronoProgramadoApi:res.data.data,
           EnviarDatos:Inputs,
           fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
-          avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado)
+          avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado),
+          ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
           
         })
       })
@@ -72,8 +86,6 @@ class CronogramaAvance extends Component{
       })
   }
 
-
-  
   GeneraFechasSegunOrden(){
     // console.log('desde',this.state.fecha_desde)
     // console.log('hasta',this.state.fecha_hasta)
@@ -113,7 +125,7 @@ class CronogramaAvance extends Component{
           periodo: FechaMostrar,
           fecha: FechaEnviar,
           fichas_id_ficha: this.props.fichaId,
-          financiero_monto: "",
+          financiero_monto: "Nuevo",
           fisico_dinero: 0,
           programado_monto: 0
         })
@@ -150,17 +162,18 @@ class CronogramaAvance extends Component{
 
     this.setState({
       EnviarDatos:EnviarDatosActualizar,
+      EstadoBtnEliminar:false
     })
   }
 
   capturaInputsProgramado(e, i){
     // console.log('value', e.target.value, "index", i)
 
-    var convertString =  e.target.value
+    var convertString =  e.target.value||0
     var numero = ConvertFormatStringNumber(convertString);
     var avanceAcumulado = this.state.avanceAcumulado
 
-    console.log("avanceAcumulado>>>", avanceAcumulado)
+    // console.log("avanceAcumulado>>>", avanceAcumulado)
     this.state.EnviarDatos[i].splice(2, 1, numero);
 
     var SumaInputs = []
@@ -171,14 +184,14 @@ class CronogramaAvance extends Component{
     
     var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
     var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-    console.log("total", costoDirecto)
+    // console.log("total", costoDirecto)
     
     costoDirecto = costoDirecto - avanceAcumulado
 
     var saldoTotalCostoDirecto = costoDirecto - total
   
 
-    console.log('ResultResta',this.state.ResultResta)
+    // console.log('ResultResta',this.state.ResultResta)
 
     this.setState({
       ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
@@ -190,7 +203,7 @@ class CronogramaAvance extends Component{
   capturaInputsFinanciero(e, i){
     // console.log('value', e.target.value, "index", i)
 
-    var convertString =  e.target.value
+    var convertString =  e.target.value||0
     var numero = ConvertFormatStringNumber(convertString);
     var avanceAcumulado = this.state.avanceAcumulado
 
@@ -253,34 +266,122 @@ class CronogramaAvance extends Component{
 
 
   eliminarMes(){
+    var tamanioUltimoIndex = this.state.EnviarDatos.length - 1
 
-    var DataEnviarDataCrono = this.state.EnviarDatos
-     DataEnviarDataCrono.pop()
+    var ultimaFecha = this.state.EnviarDatos[tamanioUltimoIndex][1]
 
-    var DataMostrarCrono = this.state.DataCronoProgramadoApi
-    DataMostrarCrono.pop()
+    var MesAnioActual = ultimaFecha.slice(0, 7)
 
+    var fechaActualMes = FechaActual().slice(0, 7)
 
-    console.log( 
-      "DataCronoProgramadoApi",DataEnviarDataCrono,
-      "EnviarDatos",DataMostrarCrono
-    )
+    if(MesAnioActual === fechaActualMes){
+      console.log("nooooooooo SE ELIMINA SON DISTINTOS")
+      console.log("MesAnioActual", MesAnioActual, "fechaActualMes", fechaActualMes)
+      toast.error("no es posible eliminar el mes ya que es actual")
 
-    this.setState({
-      EnviarDatos:DataEnviarDataCrono,
-      DataCronoProgramadoApi:DataMostrarCrono
-    })
+      this.setState({
+        EstadoBtnEliminar:false
+      })
+
+    }else{
+      if(this.state.EstadoBtnEliminar === false ){
+        console.log("SI SE ELIMINA SON DISTINTOS")
+        var DataEnviarDataCrono = this.state.EnviarDatos
+        DataEnviarDataCrono.pop()
+
+        this.setState({
+          EnviarDatos:DataEnviarDataCrono,
+        })
+      }
+      
+
+      if(confirm("¿Esta seguro en eliminar el mes?")){
+        axios.delete(`${UrlServer}/delCronogramaitem`,{
+          data:{
+            id_ficha:this.props.fichaId,
+            fecha: ultimaFecha,
+          }
+        })
+        .then((res)=>{
+          console.log("response de eliminar", res);
+  
+          if( res.data === "eliminado"){
+            var DataEnviarDataCrono = this.state.EnviarDatos
+            DataEnviarDataCrono.pop()
+  
+            var DataMostrarCrono = this.state.DataCronoProgramadoApi
+            DataMostrarCrono.pop()
+  
+  
+            // console.log( 
+            //   "DataCronoProgramadoApi",DataEnviarDataCrono,
+            //   "EnviarDatos",DataMostrarCrono
+            // )
+  
+            this.setState({
+              EnviarDatos:DataEnviarDataCrono,
+              DataCronoProgramadoApi:DataMostrarCrono
+            })
+          toast.success("MES ELIMINADO")
+  
+          }else if(res.data === "notFound"){
+            toast.error("no existe el mes que desea eliminar.")
+          }
+  
+        })
+        .catch((err)=>{
+          console.log("errores en enviar los datos" ,err);
+  
+        })
+  
+  
+      }
+    }
+    
+
+    
+
   }
 
+  eliminarMesNoData(){
+    var DetalleFinanciero = ""
+    this.state.DataCronoProgramadoApi.forEach(dataFinanciero => {
+      console.log("dataaa", dataFinanciero.financiero_monto )
+
+      DetalleFinanciero = dataFinanciero.financiero_monto
+    });
+
+    console.log("DetalleFinanciero", DetalleFinanciero)
+
+    if(DetalleFinanciero === "Nuevo"){
+      var DataEnviarDataCrono = this.state.EnviarDatos
+      DataEnviarDataCrono.pop()
+
+      var DataMostrarCrono = this.state.DataCronoProgramadoApi
+      DataMostrarCrono.pop()
+
+      this.setState({
+        EnviarDatos:DataEnviarDataCrono,
+        DataCronoProgramadoApi:DataMostrarCrono,
+        EstadoBtnEliminar:false
+      })
+    }else{
+      this.setState({
+        EstadoBtnEliminar:true
+      })
+    }
+
+
+
+  }
   render(){
     var TotalCostoDirecto =  ConvertFormatStringNumber(this.props.costoDirecto) - this.state.avanceAcumulado
-    var FechaActualS = FechaActual().slice(0, 7)
-    const { DataCronoProgramadoApi } = this.state
+    const { DataCronoProgramadoApi, EstadoBtnEliminar } = this.state
     var { dataCrono } = this.props
     const options = {
         chart: {
           type: 'line',
-          backgroundColor: '#2e3742',
+          backgroundColor: '#0a1123ad',
         },
 
         legend: {
@@ -334,7 +435,7 @@ class CronogramaAvance extends Component{
     return(
       <div className="card">
           <div className="card-header text-center">
-              <h6>Cronograma de avance</h6>        
+              HISTOGRAMA DEL AVANCE DE OBRA - CONTROL DE CUVA "S"   
           </div>
           <div className="card-body">
             <div className="table-responsive">
@@ -345,7 +446,7 @@ class CronogramaAvance extends Component{
                   options={options}
               />
 
-              <Row>
+              <Row className="mr-1">
                 <Col sm="6">
                   <InputGroup size="sm">
                     <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
@@ -363,42 +464,38 @@ class CronogramaAvance extends Component{
                   <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
                 </Col>
                 <Col sm="2">
-                  <Button color={ConvertFormatStringNumber(this.state.ResultResta) === 0?"success":"danger"}>
-                    {ConvertFormatStringNumber(this.state.ResultResta) === 0?"😊":"😒"}<label>SALDO S/. {this.state.ResultResta }</label>
-                  </Button>
-                  
+                  -
                 </Col>
               </Row>
           
           
 
-                <table className="table table-sm ">
+                <table className="table table-sm mt-2">
                   <thead>
-                    <tr>
-                      <th className="border text-center" colSpan="5">MONTOS VALORIZADOS PROGRAMADOS</th>
-                      <th className="border text-center" colSpan="6">MONTOS VALORIZADOS EJECUTADOS</th>
-                    </tr>
-                  
-                  
-                    <tr>
-                      <th className="border" colSpan="2">Periodo</th>
-                      <th className="border" colSpan="3">Programado</th>
-                      <th className="border" colSpan="3">Fisico Ejecutado</th>
-                      <th className="border" colSpan="3">Financiero Ejecutado</th>
+                    <tr className="text-center" >
+                      <th colSpan="5">MONTOS VALORIZADOS PROGRAMADOS</th>
+                      <th colSpan="6">MONTOS VALORIZADOS EJECUTADOS</th>
                     </tr>
 
-                    <tr>
-                      <th className="border">Nº de informe</th>
-                      <th className="border">Mes del informe</th>
-                      <th className="border">Monto S/.</th>
-                      <th className="border">% Ejecucion programada</th>
-                      <th className="border">% Acumulado</th>
-                      <th className="border">Monto S/.</th>
-                      <th className="border">% Ejecucion programada</th>
-                      <th className="border">% Acumulado</th>
-                      <th className="border">Monto S/.</th>
-                      <th className="border">% Ejecucion programada</th>
-                      <th className="border">% Acumulado</th>
+                    <tr className="text-center" > 
+                      <th colSpan="2">Periodo</th>
+                      <th colSpan="3">Programado</th>
+                      <th colSpan="3">Fisico Ejecutado</th>
+                      <th colSpan="3">Financiero Ejecutado</th>
+                    </tr>
+
+                    <tr className="text-center" >
+                      <th>Nº de informe</th>
+                      <th>Mes del informe</th>
+                      <th>Monto S/.</th>
+                      <th>% Ejecucion programada</th>
+                      <th>% Acumulado</th>
+                      <th>Monto S/.</th>
+                      <th>% Ejecucion programada</th>
+                      <th>% Acumulado</th>
+                      <th>Monto S/.</th>
+                      <th>% Ejecucion programada</th>
+                      <th>% Acumulado</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -406,32 +503,31 @@ class CronogramaAvance extends Component{
                       DataCronoProgramadoApi === undefined? <tr><td colSpan="11">CARGANDO</td></tr>: 
                       DataCronoProgramadoApi.map((crono, IC)=>
                         <tr key={ IC }>
-                          <td className="border">{ IC+1}</td>
-                          <td className="border">{ crono.periodo }</td>
-                          <td className="border">
+                          <td>{ IC+1}</td>
+                          <td className="text-capitalize">{ crono.periodo }</td>
+                          <td>
                             <InputGroup  size="sm">
                               <Input placeholder={ crono.programado_monto } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
                             </InputGroup>
+                            <label className={ConvertFormatStringNumber(this.state.ResultResta) === 0? "text-success small mb-0":"text-warning small mb-0" }>
+                               S/. {this.state.ResultResta }
+                            </label>
                           </td>
-                          <td className="border">{ crono.programado_acumulado }</td>
-                          <td className="border">{ crono.programado_porcentaje }</td>
+                          <td>{ crono.programado_porcentaje }</td>
+                          <td>{ crono.programado_acumulado }</td>
 
-                          <td className="border">{ crono.fisico_monto }</td>
-                          <td className="border">{ crono.fisico_acumulado }</td>
-                          <td className="border">{ crono.fisico_porcentaje }</td>
-                          <td className="border">
-                            {
-                              FechaActualS !== crono.fecha.slice(0, 7) 
-                              ? 
-                              crono.financiero_monto
-                              :
-                              <InputGroup  size="sm">
-                                <Input placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
-                              </InputGroup>
-                            }
+                          <td>{ crono.fisico_monto }</td>
+                          <td>{ crono.fisico_porcentaje }</td>
+                          <td>{ crono.fisico_acumulado }</td>
+                          <td>
+
+                            <InputGroup size="sm"> 
+                              <Input  placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
+                            </InputGroup>
+                            
                           </td>
-                          <td className="border">{ crono.programado_acumulado }</td>
-                          <td className="border">{ crono.programado_porcentaje }</td>
+                          <td>{ crono.programado_porcentaje }</td>
+                          <td>{ crono.programado_acumulado }</td>
                         </tr>
                       )
                     
@@ -439,26 +535,32 @@ class CronogramaAvance extends Component{
                     }
 
 
-                    <tr>
-                      <td className="border" colSpan="2">Total a la Fecha</td>
-                      <td className="border">1235</td>
-                      <td className="border">21313</td>
-                      <td className="border border-bottom-0"></td>
-                      <td className="border">53453453</td>
-                      <td className="border">53543</td>
-                      <td className="border  border-bottom-0"></td>
-                      <td className="border">46456</td>
-                      <td className="border">45654654</td>
+                    {/* <tr>
+                      <td colSpan="2">Total a la Fecha</td>
+                      <td ></td>
+                      <td ></td>
+                      <td className="border-bottom-0"></td>
+                      <td ></td>
+                      <td ></td>
+                      <td className="border-bottom-0"></td>
+                      <td ></td>
+                      <td ></td>
 
-                      <td className="border  border-bottom-0 border-right-0"></td>
-                    </tr>
+                      <td className="border-bottom-0 border-right-0"></td>
+                    </tr> */}
                   </tbody>
                 </table>
+                {
+                  EstadoBtnEliminar === false?
+                  <Button color="danger" onClick={ this.eliminarMesNoData }>Eliminar Ultimo Mes</Button>                  
+                  :
+                  <Button color="danger" onClick={ this.eliminarMes }>Eliminar Ultimo Mes</Button>
+                }
 
-                <Button onClick={ this.eliminarMes }>Eliminar Ultimo Mes</Button>
-              {/* {ConvertFormatStringNumber(this.state.ResultResta) === 0? */}
-              <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
-              {/* } */}
+
+                  {ConvertFormatStringNumber(this.state.ResultResta) === 0?
+                <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
+              }
             </div>
 
           </div>
