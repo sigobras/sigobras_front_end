@@ -3,13 +3,11 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import axios from 'axios'
 import { toast } from "react-toastify";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col  } from 'reactstrap';
+import { Button,  InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col  } from 'reactstrap';
 
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-import { ConvertFormatStringNumber, convertirFechaLetra } from '../../Utils/Funciones'
+import { ConvertFormatStringNumber, convertirFechaLetra, FechaActual } from '../../Utils/Funciones'
 
-import ModalIngresoCronoProgramado from './FiltraObras/ModalIngresoCronoProgramado'
-import ModalIngresoCronoFinanciero from './FiltraObras/ModalIngresoCronoFinanciero'
 
 class CronogramaAvance extends Component{
 	constructor(props){
@@ -18,21 +16,24 @@ class CronogramaAvance extends Component{
       Column:[],
       DataCronoArmadoEnviar:[],
       DataCronoProgramadoApi:[],
+      fechaActualApi:"",
       fecha_desde:'',
       fecha_hasta:'',
       ResultResta:"",
       fechaLimiteAnioMes:"",
-      avanceAcumulado:""
+      avanceAcumulado:"",
+
     };
     
     this.GeneraFechasSegunOrden = this.GeneraFechasSegunOrden.bind(this);
     this.capturaInputsProgramado = this.capturaInputsProgramado.bind(this);
     this.enviarDatosApi = this.enviarDatosApi.bind(this);
     this.capturaInputsFinanciero = this.capturaInputsFinanciero.bind(this);
+    this.eliminarMes = this.eliminarMes.bind(this);
   }
   
   componentWillMount(){
-    axios.post(`${UrlServer}/getcronogramadinero`,
+    axios.post(`${UrlServer}/getcronogramaInicio`,
         {
           "id_ficha":this.props.fichaId
         }
@@ -43,21 +44,22 @@ class CronogramaAvance extends Component{
 
         var Inputs = []
 
-        res.data.cronogramadinero.forEach((alfo, i)=>
+        res.data.data.forEach((alfo, i)=>
             Inputs.push(
               [
                 this.props.fichaId,
                 alfo.fecha,
-                ConvertFormatStringNumber(alfo.programado_dinero),
-                ConvertFormatStringNumber(alfo.financiero_dinero),                
+                ConvertFormatStringNumber(alfo.programado_monto),
+                ConvertFormatStringNumber(alfo.financiero_monto),                
               ]
             )
         )
 
         // console.log("Inputs", Inputs)
         this.setState({
+          fechaActualApi:res.data.fechaActual,
           fecha_desde:res.data.fecha_final,
-          DataCronoProgramadoApi:res.data.cronogramadinero,
+          DataCronoProgramadoApi:res.data.data,
           EnviarDatos:Inputs,
           fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
           avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado)
@@ -108,12 +110,12 @@ class CronogramaAvance extends Component{
         
         // console.log("imprimimos fecha", FechaMostrar)
         Fechas.push({
-          Anyo_Mes: FechaMostrar,
+          periodo: FechaMostrar,
           fecha: FechaEnviar,
           fichas_id_ficha: this.props.fichaId,
-          financiero_dinero: "",
+          financiero_monto: "",
           fisico_dinero: 0,
-          programado_dinero: 0
+          programado_monto: 0
         })
     }
     // console.log('Fechas', Fechas)
@@ -125,10 +127,10 @@ class CronogramaAvance extends Component{
     var EnviarDatosActualizar = this.state.EnviarDatos
     Fechas.forEach(anioMes => {
 
-      if (!DataAgrupado.find(ger => ger.Anyo_Mes == anioMes.Anyo_Mes )) {
-          const { Anyo_Mes, fecha, fichas_id_ficha, financiero_dinero, fisico_dinero, programado_dinero } = anioMes;
+      if (!DataAgrupado.find(ger => ger.periodo == anioMes.periodo )) {
+          const { periodo, fecha, fichas_id_ficha, financiero_monto, fisico_dinero, programado_monto } = anioMes;
 
-          DataAgrupado.push({ Anyo_Mes, fecha, fichas_id_ficha, financiero_dinero, fisico_dinero, programado_dinero});
+          DataAgrupado.push({ periodo, fecha, fichas_id_ficha, financiero_monto, fisico_dinero, programado_monto});
           // push a enviar datos para armar los inputs para armar el envio al api
           EnviarDatosActualizar.push(
             [
@@ -195,26 +197,26 @@ class CronogramaAvance extends Component{
     console.log("avanceAcumulado>>>", avanceAcumulado)
     this.state.EnviarDatos[i].splice(3, 1, numero);
 
-    var SumaInputs = []
-    this.state.EnviarDatos.forEach((data)=>
-      SumaInputs.push( data[2] )
-    )
+    // var SumaInputs = []
+    // this.state.EnviarDatos.forEach((data)=>
+    //   SumaInputs.push( data[2] )
+    // )
 
     
-    var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
-    var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-    console.log("total", costoDirecto)
+    // var total = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+    // var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+    // console.log("total", costoDirecto)
     
-    costoDirecto = costoDirecto - avanceAcumulado
+    // costoDirecto = costoDirecto - avanceAcumulado
 
-    var saldoTotalCostoDirecto = costoDirecto - total
+    // var saldoTotalCostoDirecto = costoDirecto - total
   
 
-    console.log('ResultResta',this.state.ResultResta)
+    // console.log('ResultResta',this.state.ResultResta)
 
-    this.setState({
-      ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
-    })
+    // this.setState({
+    //   ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+    // })
 
     console.log('financiero',this.state.EnviarDatos)
   }
@@ -250,12 +252,29 @@ class CronogramaAvance extends Component{
   }
 
 
+  eliminarMes(){
+
+    var DataEnviarDataCrono = this.state.EnviarDatos
+     DataEnviarDataCrono.pop()
+
+    var DataMostrarCrono = this.state.DataCronoProgramadoApi
+    DataMostrarCrono.pop()
+
+
+    console.log( 
+      "DataCronoProgramadoApi",DataEnviarDataCrono,
+      "EnviarDatos",DataMostrarCrono
+    )
+
+    this.setState({
+      EnviarDatos:DataEnviarDataCrono,
+      DataCronoProgramadoApi:DataMostrarCrono
+    })
+  }
+
   render(){
-
-
-
     var TotalCostoDirecto =  ConvertFormatStringNumber(this.props.costoDirecto) - this.state.avanceAcumulado
-
+    var FechaActualS = FechaActual().slice(0, 7)
     const { DataCronoProgramadoApi } = this.state
     var { dataCrono } = this.props
     const options = {
@@ -318,125 +337,130 @@ class CronogramaAvance extends Component{
               <h6>Cronograma de avance</h6>        
           </div>
           <div className="card-body">
-            <div className="d-flex">
-              {/* <ModalIngresoCronoProgramado ObraId={ this.props.fichaId } costoDirecto={this.props.costoDirecto }/>
-              <ModalIngresoCronoFinanciero ObraId={ this.props.fichaId }/> */}
+            <div className="table-responsive">
+
+              <HighchartsReact
+                  highcharts={Highcharts}
+                  // constructorType={'stockChart'}
+                  options={options}
+              />
+
+              <Row>
+                <Col sm="6">
+                  <InputGroup size="sm">
+                    <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
+                    <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
+
+                    <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
+                    <Input type="month" min={this.state.fechaLimiteAnioMes} onChange={e=> this.setState({fecha_hasta:e.target.value})} />
+                    <Button color="info" onClick={ this.GeneraFechasSegunOrden } >CREAR MESES </Button>
+                  </InputGroup>
+                </Col>
+                <Col sm="1">
+                  <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
+                </Col>
+                <Col sm="3">
+                  <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
+                </Col>
+                <Col sm="2">
+                  <Button color={ConvertFormatStringNumber(this.state.ResultResta) === 0?"success":"danger"}>
+                    {ConvertFormatStringNumber(this.state.ResultResta) === 0?"😊":"😒"}<label>SALDO S/. {this.state.ResultResta }</label>
+                  </Button>
+                  
+                </Col>
+              </Row>
+          
+          
+
+                <table className="table table-sm ">
+                  <thead>
+                    <tr>
+                      <th className="border text-center" colSpan="5">MONTOS VALORIZADOS PROGRAMADOS</th>
+                      <th className="border text-center" colSpan="6">MONTOS VALORIZADOS EJECUTADOS</th>
+                    </tr>
+                  
+                  
+                    <tr>
+                      <th className="border" colSpan="2">Periodo</th>
+                      <th className="border" colSpan="3">Programado</th>
+                      <th className="border" colSpan="3">Fisico Ejecutado</th>
+                      <th className="border" colSpan="3">Financiero Ejecutado</th>
+                    </tr>
+
+                    <tr>
+                      <th className="border">Nº de informe</th>
+                      <th className="border">Mes del informe</th>
+                      <th className="border">Monto S/.</th>
+                      <th className="border">% Ejecucion programada</th>
+                      <th className="border">% Acumulado</th>
+                      <th className="border">Monto S/.</th>
+                      <th className="border">% Ejecucion programada</th>
+                      <th className="border">% Acumulado</th>
+                      <th className="border">Monto S/.</th>
+                      <th className="border">% Ejecucion programada</th>
+                      <th className="border">% Acumulado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      DataCronoProgramadoApi === undefined? <tr><td colSpan="11">CARGANDO</td></tr>: 
+                      DataCronoProgramadoApi.map((crono, IC)=>
+                        <tr key={ IC }>
+                          <td className="border">{ IC+1}</td>
+                          <td className="border">{ crono.periodo }</td>
+                          <td className="border">
+                            <InputGroup  size="sm">
+                              <Input placeholder={ crono.programado_monto } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
+                            </InputGroup>
+                          </td>
+                          <td className="border">{ crono.programado_acumulado }</td>
+                          <td className="border">{ crono.programado_porcentaje }</td>
+
+                          <td className="border">{ crono.fisico_monto }</td>
+                          <td className="border">{ crono.fisico_acumulado }</td>
+                          <td className="border">{ crono.fisico_porcentaje }</td>
+                          <td className="border">
+                            {
+                              FechaActualS !== crono.fecha.slice(0, 7) 
+                              ? 
+                              crono.financiero_monto
+                              :
+                              <InputGroup  size="sm">
+                                <Input placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
+                              </InputGroup>
+                            }
+                          </td>
+                          <td className="border">{ crono.programado_acumulado }</td>
+                          <td className="border">{ crono.programado_porcentaje }</td>
+                        </tr>
+                      )
+                    
+                      
+                    }
+
+
+                    <tr>
+                      <td className="border" colSpan="2">Total a la Fecha</td>
+                      <td className="border">1235</td>
+                      <td className="border">21313</td>
+                      <td className="border border-bottom-0"></td>
+                      <td className="border">53453453</td>
+                      <td className="border">53543</td>
+                      <td className="border  border-bottom-0"></td>
+                      <td className="border">46456</td>
+                      <td className="border">45654654</td>
+
+                      <td className="border  border-bottom-0 border-right-0"></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <Button onClick={ this.eliminarMes }>Eliminar Ultimo Mes</Button>
+              {/* {ConvertFormatStringNumber(this.state.ResultResta) === 0? */}
+              <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
+              {/* } */}
             </div>
 
-            <HighchartsReact
-                highcharts={Highcharts}
-                // constructorType={'stockChart'}
-                options={options}
-            />
-
-            <Row>
-              <Col sm="6">
-                <InputGroup size="sm">
-                  <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
-                  <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
-
-                  <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
-                  <Input type="month" min={this.state.fechaLimiteAnioMes} onChange={e=> this.setState({fecha_hasta:e.target.value})} />
-                  <Button color="info" onClick={this.GeneraFechasSegunOrden} >CREAR MESES </Button>
-                </InputGroup>
-              </Col>
-              <Col sm="1">
-                <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
-              </Col>
-              <Col sm="3">
-                <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
-              </Col>
-              <Col sm="2">
-                <Button color={ConvertFormatStringNumber(this.state.ResultResta) === 0?"success":"danger"}>
-                {ConvertFormatStringNumber(this.state.ResultResta) === 0?"😊":"😒"}<label>SALDO S/. {this.state.ResultResta }</label>
-                </Button>
-                
-              </Col>
-          </Row>
-
-
-            <table className="table table-sm ">
-              <thead>
-                <tr>
-                  <th className="border text-center" colSpan="5">MONTOS VALORIZADOS PROGRAMADOS</th>
-                  <th className="border text-center" colSpan="6">MONTOS VALORIZADOS EJECUTADOS</th>
-                </tr>
-              
-              
-                <tr>
-                  <th className="border" colSpan="2">Periodo</th>
-                  <th className="border" colSpan="3">Programado</th>
-                  <th className="border" colSpan="3">Fisico Ejecutado</th>
-                  <th className="border" colSpan="3">Financiero Ejecutado</th>
-                </tr>
-
-                <tr>
-                  <th className="border">Nº de informe</th>
-                  <th className="border">Mes del informe</th>
-                  <th className="border">Monto S/.</th>
-                  <th className="border">% Ejecucion programada</th>
-                  <th className="border">% Acumulado</th>
-                  <th className="border">Monto S/.</th>
-                  <th className="border">% Ejecucion programada</th>
-                  <th className="border">% Acumulado</th>
-                  <th className="border">Monto S/.</th>
-                  <th className="border">% Ejecucion programada</th>
-                  <th className="border">% Acumulado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  DataCronoProgramadoApi === undefined? <tr><td colSpan="11">CARGANDO</td></tr>: 
-                  DataCronoProgramadoApi.map((crono, IC)=>
-                    <tr key={ IC }>
-                      <td className="border">{ IC+1}</td>
-                      <td className="border">{ crono.Anyo_Mes }</td>
-                      <td className="border">
-                        <InputGroup  size="sm">
-                          <Input placeholder={ this.state.ResultResta } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
-                        </InputGroup>
-                        {/* { crono.programado_dinero } */}
-                      </td>
-                      <td className="border">+</td>
-                      <td className="border">0</td>
-                      <td className="border">
-                        { crono.fisico_dinero }
-                      </td>
-                      <td className="border"></td>
-                      <td className="border">0</td>
-                      <td className="border">
-                        <InputGroup  size="sm">
-                          <Input placeholder={ crono.financiero_dinero } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
-                        </InputGroup>
-                      </td>
-                      <td className="border"></td>
-                      <td className="border">0</td>
-                    </tr>
-                  )
-                 
-                  
-                }
-
-
-                <tr>
-                  <td className="border" colSpan="2">Total a la Fecha</td>
-                  <td className="border">1235</td>
-                  <td className="border">21313</td>
-                  <td className="border  border-bottom-0"></td>
-                  <td className="border">53453453</td>
-                  <td className="border">53543</td>
-                  <td className="border  border-bottom-0"></td>
-                  <td className="border">46456</td>
-                  <td className="border  ">45654654</td>
-
-                  <td className="border  border-bottom-0 border-right-0"></td>
-                </tr>
-              </tbody>
-            </table>
-
-            {/* {ConvertFormatStringNumber(this.state.ResultResta) === 0? */}
-            <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
-          {/* } */}
           </div>
       </div>
     )
