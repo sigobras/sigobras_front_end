@@ -16,10 +16,11 @@ class CronogramaAvance extends Component{
       Column:[],
       DataCronoArmadoEnviar:[],
       DataCronoProgramadoApi:[],
+      EnviarDatos:[],
       fechaActualApi:"",
       fecha_desde:'',
       fecha_hasta:'',
-      ResultResta:"",
+      ResultResta:0,
       fechaLimiteAnioMes:"",
       avanceAcumulado:"",
       EstadoBtnEliminar:true
@@ -41,49 +42,58 @@ class CronogramaAvance extends Component{
         }
       )
       .then((res)=>{
-        console.log("res programado", res.data.data);
-
+        console.log("res programado", res.data.data.length);
         var Inputs = []
-        res.data.data.forEach((alfo, i)=>
-            Inputs.push(
-              [
-                this.props.fichaId,
-                alfo.fecha,
-                ConvertFormatStringNumber(alfo.programado_monto),
-                ConvertFormatStringNumber(alfo.financiero_monto),                
-              ]
+        if(res.data.data.length > 0){
+            
+            res.data.data.forEach((alfo, i)=>
+                Inputs.push(
+                  [
+                    this.props.fichaId,
+                    alfo.fecha,
+                    ConvertFormatStringNumber(alfo.programado_monto),
+                    ConvertFormatStringNumber(alfo.financiero_monto),                
+                  ]
+                )
             )
-        )
-        var SumaInputs = []
-        Inputs.forEach((data)=>
-          SumaInputs.push( data[2] )
-        )
-        var totalSumaInpust = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+            var SumaInputs = []
+            Inputs.forEach((data)=>
+              SumaInputs.push( data[2] )
+            )
+          
+            var totalSumaInpust = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+          }
+            var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+            var avanceAcumulado = res.data.avance_Acumulado
+            var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
+            saldoTotalCostoDirecto = saldoTotalCostoDirecto -  totalSumaInpust
+          
+            if(saldoTotalCostoDirecto !== NaN){
+              saldoTotalCostoDirecto = costoDirecto              
+            }
+          // console.log("Inputs", Inputs)
+          // console.log("ResultResta", saldoTotalCostoDirecto)
+          // console.log("totalSumaInpust", totalSumaInpust ,"saldoTotalCostoDirecto", saldoTotalCostoDirecto)
+          
 
-        var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-        var avanceAcumulado = res.data.avance_Acumulado
-        var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
-        saldoTotalCostoDirecto = saldoTotalCostoDirecto -  totalSumaInpust
-
-        // console.log("Inputs", Inputs)
-        // console.log("totalSumaInpust", totalSumaInpust ,"saldoTotalCostoDirecto", saldoTotalCostoDirecto)
-        
-
-        this.setState({
-          fechaActualApi:res.data.fechaActual,
-          fecha_desde:res.data.fecha_final,
-          DataCronoProgramadoApi:res.data.data,
-          EnviarDatos:Inputs,
-          fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
-          avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado),
-          ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+          this.setState({
+            fechaActualApi:res.data.fechaActual,
+            fecha_desde:res.data.fecha_final,
+            DataCronoProgramadoApi:res.data.data,
+            EnviarDatos:Inputs,
+            fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
+            avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado),
+            ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+            
+          })
           
         })
-      })
-      .catch((err)=>{
-        console.error("error al obtener datos del api", err);
-        
-      })
+        .catch((err)=>{
+          console.error("error al obtener datos del api", err);
+          
+        })
+      
+
   }
 
   GeneraFechasSegunOrden(){
@@ -137,6 +147,9 @@ class CronogramaAvance extends Component{
     const DataAgrupado = this.state.DataCronoProgramadoApi
 
     var EnviarDatosActualizar = this.state.EnviarDatos
+
+    console.log("enviar datos ", EnviarDatosActualizar)
+
     Fechas.forEach(anioMes => {
 
       if (!DataAgrupado.find(ger => ger.periodo == anioMes.periodo )) {
@@ -558,9 +571,9 @@ class CronogramaAvance extends Component{
                 }
 
 
-                  {ConvertFormatStringNumber(this.state.ResultResta) === 0?
-                <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
-              }
+                  {ConvertFormatStringNumber(this.state.ResultResta) === 0 ?
+                    <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
+                  }
             </div>
 
           </div>
