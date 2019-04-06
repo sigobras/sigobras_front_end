@@ -3,7 +3,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import axios from 'axios'
 import { toast } from "react-toastify";
-import { Button,  InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col  } from 'reactstrap';
+import { Button,  InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col, FormGroup, Label, CustomInput  } from 'reactstrap';
 
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import { ConvertFormatStringNumber, convertirFechaLetra, FechaActual } from '../../Utils/Funciones'
@@ -23,7 +23,9 @@ class CronogramaAvance extends Component{
       ResultResta:0,
       fechaLimiteAnioMes:"",
       avanceAcumulado:"",
-      EstadoBtnEliminar:true
+      EstadoBtnEliminar:true,
+      EstadoInputprogramado:false,
+      EstadoInputFinanciero:false,
 
     };
     
@@ -33,6 +35,8 @@ class CronogramaAvance extends Component{
     this.capturaInputsFinanciero = this.capturaInputsFinanciero.bind(this);
     this.eliminarMes = this.eliminarMes.bind(this);
     this.eliminarMesNoData = this.eliminarMesNoData.bind(this);
+    this.EstadoInputprogramado = this.EstadoInputprogramado.bind(this);
+
   }
   
   componentWillMount(){
@@ -42,58 +46,57 @@ class CronogramaAvance extends Component{
         }
       )
       .then((res)=>{
-        console.log("res programado", res.data.data.length);
+        console.log("res programado", res.data);
         var Inputs = []
+        var SumaInputs = []
+        var totalSumaInpust = 0
         if(res.data.data.length > 0){
-            
-            res.data.data.forEach((alfo, i)=>
-                Inputs.push(
-                  [
-                    this.props.fichaId,
-                    alfo.fecha,
-                    ConvertFormatStringNumber(alfo.programado_monto),
-                    ConvertFormatStringNumber(alfo.financiero_monto),                
-                  ]
-                )
-            )
-            var SumaInputs = []
-            Inputs.forEach((data)=>
-              SumaInputs.push( data[2] )
-            )
-          
-            var totalSumaInpust = SumaInputs.reduce(((a, b)=>{ return a + b; }));
-          }
-            var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
-            var avanceAcumulado = res.data.avance_Acumulado
-            var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
-            saldoTotalCostoDirecto = saldoTotalCostoDirecto -  totalSumaInpust
-          
-            if(saldoTotalCostoDirecto !== NaN){
-              saldoTotalCostoDirecto = costoDirecto              
-            }
-          // console.log("Inputs", Inputs)
-          // console.log("ResultResta", saldoTotalCostoDirecto)
-          // console.log("totalSumaInpust", totalSumaInpust ,"saldoTotalCostoDirecto", saldoTotalCostoDirecto)
-          
 
-          this.setState({
-            fechaActualApi:res.data.fechaActual,
-            fecha_desde:res.data.fecha_final,
-            DataCronoProgramadoApi:res.data.data,
-            EnviarDatos:Inputs,
-            fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
-            avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado),
-            ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
-            
-          })
+        
           
-        })
-        .catch((err)=>{
-          console.error("error al obtener datos del api", err);
+          res.data.data.forEach((alfo, i)=>
+              Inputs.push(
+                [
+                  this.props.fichaId,
+                  alfo.fecha,
+                  ConvertFormatStringNumber(alfo.programado_monto),
+                  ConvertFormatStringNumber(alfo.financiero_monto),                
+                ]
+              )
+          )
+
+          Inputs.forEach((data)=>
+            SumaInputs.push( data[2] )
+          )
           
-        })
+          totalSumaInpust = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+        }
+
+        var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+        var avanceAcumulado = res.data.avance_Acumulado
+        var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
+        saldoTotalCostoDirecto = saldoTotalCostoDirecto -  totalSumaInpust
       
+        if(saldoTotalCostoDirecto !== NaN){
+          saldoTotalCostoDirecto = costoDirecto              
+        }
 
+        this.setState({
+          fechaActualApi:res.data.fechaActual,
+          fecha_desde:res.data.fecha_final,
+          DataCronoProgramadoApi:res.data.data,
+          EnviarDatos:Inputs,
+          fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
+          avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado),
+          ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+          
+        })
+          
+      })
+      .catch((err)=>{
+        console.error("error al obtener datos del api", err);
+        
+      })
   }
 
   GeneraFechasSegunOrden(){
@@ -175,7 +178,9 @@ class CronogramaAvance extends Component{
 
     this.setState({
       EnviarDatos:EnviarDatosActualizar,
-      EstadoBtnEliminar:false
+      EstadoBtnEliminar:false,
+      EstadoInputprogramado:true,
+      EstadoInputFinanciero:true
     })
   }
 
@@ -246,7 +251,6 @@ class CronogramaAvance extends Component{
 
     console.log('financiero',this.state.EnviarDatos)
   }
-
 
   enviarDatosApi(){
     // console.log(this.state.DataCronoArmadoEnviar)
@@ -335,7 +339,7 @@ class CronogramaAvance extends Component{
               EnviarDatos:DataEnviarDataCrono,
               DataCronoProgramadoApi:DataMostrarCrono
             })
-          toast.success("MES ELIMINADO")
+            toast.success("MES ELIMINADO")
   
           }else if(res.data === "notFound"){
             toast.error("no existe el mes que desea eliminar.")
@@ -346,14 +350,8 @@ class CronogramaAvance extends Component{
           console.log("errores en enviar los datos" ,err);
   
         })
-  
-  
       }
     }
-    
-
-    
-
   }
 
   eliminarMesNoData(){
@@ -383,8 +381,21 @@ class CronogramaAvance extends Component{
         EstadoBtnEliminar:true
       })
     }
+  }
 
-
+  EstadoInputprogramado(e){
+    var valorInput = e.target.value
+    // console.log("value", valorInput);
+    if(valorInput=== "Programado"){
+      this.setState({
+        EstadoInputprogramado: !this.state.EstadoInputprogramado
+      })
+    }else{
+      this.setState({
+        EstadoInputFinanciero: !this.state.EstadoInputFinanciero
+      })
+    }
+    // console.log("estado 0", this.state.EstadoInputprogramado)
 
   }
   render(){
@@ -467,17 +478,20 @@ class CronogramaAvance extends Component{
 
                     <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
                     <Input type="month" min={this.state.fechaLimiteAnioMes} onChange={e=> this.setState({fecha_hasta:e.target.value})} />
-                    <Button color="info" onClick={ this.GeneraFechasSegunOrden } >CREAR MESES </Button>
+                    <Button color="info" onClick={ this.GeneraFechasSegunOrden } >CREAR </Button>
                   </InputGroup>
                 </Col>
                 <Col sm="1">
                   <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
                 </Col>
-                <Col sm="3">
+                <Col sm="2">
                   <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
                 </Col>
-                <Col sm="2">
-                  -
+                <Col sm="3">
+                  <FormGroup>
+                    <CustomInput type="switch" id="histograma" name="histograma" label="Programado" onChange={ this.EstadoInputprogramado } inline value="Programado" />
+                    <CustomInput type="switch" id="histograma1" name="histograma" label="Financiero" onChange={ this.EstadoInputprogramado } inline  value="Financiero" />
+                  </FormGroup>
                 </Col>
               </Row>
           
@@ -520,7 +534,7 @@ class CronogramaAvance extends Component{
                           <td className="text-capitalize">{ crono.periodo }</td>
                           <td>
                             <InputGroup  size="sm">
-                              <Input placeholder={ crono.programado_monto } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
+                              <Input disabled={ this.state.EstadoInputprogramado !== true } placeholder={ crono.programado_monto } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
                             </InputGroup>
                             <label className={ConvertFormatStringNumber(this.state.ResultResta) === 0? "text-success small mb-0":"text-warning small mb-0" }>
                                S/. {this.state.ResultResta }
@@ -535,7 +549,7 @@ class CronogramaAvance extends Component{
                           <td>
 
                             <InputGroup size="sm"> 
-                              <Input  placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
+                              <Input  disabled={ this.state.EstadoInputFinanciero !== true }  placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
                             </InputGroup>
                             
                           </td>
@@ -543,8 +557,6 @@ class CronogramaAvance extends Component{
                           <td>{ crono.programado_acumulado }</td>
                         </tr>
                       )
-                    
-                      
                     }
 
 
