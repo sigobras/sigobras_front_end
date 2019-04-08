@@ -408,24 +408,37 @@ iframe::-webkit-scrollbar-thumb {
   display: none;
   position: fixed;
   bottom: 0px;
-  right: 220px;
-  height: 285px;
+  right: auto;
+  height: 329px;
   background-color: rgb(237, 239, 244);
-  width: 300px;
+  width: 274px;
   border: 1px solid rgb(142, 142, 142);
+  border-radius: 8px 8px 0px 0px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
 }
 
 .chatHeader{
   background: #2676bb;
-  padding: 6px;
+  padding: 1px;
+  border-radius: 5px 5px 0px 0px;
 }
 .chatBody{
-  height: 78%;
+  height: 80%;
   overflow-y: scroll;
   color: #000;
   padding: 2px;
 }
+.chatBodyMensaje{
+  background: #f1ba92e6;
+  padding: 3px;
+  border-radius: 7px;
+}
 .chatFooter{
-  border-top: 1px solid #b0bad2;
   display: flex;
+}
+
+table.table thead th {
+  position: sticky;
+  top: 0px;
+  background: #314c65;
 }

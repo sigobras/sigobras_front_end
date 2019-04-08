@@ -82,7 +82,7 @@ class Report_3 extends Component {
             "fecha_final":fecha_final,
         })
         .then((res)=>{
-            //console.log('res resumenValorizacionPrincipal', res.data)
+            console.log('res resumenValorizacionPrincipal', res.data)
             this.setState({
                 DataApiResumenVal: res.data,
                 DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
@@ -331,7 +331,7 @@ class Report_3 extends Component {
                         alignment: "right",
                     },
                     {
-                        text: dato.porcentaje_acumuado+" %",
+                        text: dato.porcentaje_acumulado+" %",
                         style: "tableBody",
                         alignment: "right",
                     },
@@ -442,7 +442,7 @@ class Report_3 extends Component {
                         alignment: "right",
                     },
                     {
-                        text: CDirecto.porcentaje_acumuado+" %",
+                        text: CDirecto.porcentaje_acumulado+" %",
                         style: "tableFecha",
                         alignment: "right",
                     },
@@ -551,7 +551,7 @@ class Report_3 extends Component {
                         alignment: "right",
                     },
                     {
-                        text: CDirecto.porcentaje_acumuado+" %",
+                        text: CDirecto.porcentaje_acumulado+" %",
                         style: "tableFecha",
                         alignment: "right",
                     },
@@ -660,7 +660,7 @@ class Report_3 extends Component {
                         alignment: "right",
                     },
                     {
-                        text: CDirecto.porcentaje_acumuado+" %",
+                        text: CDirecto.porcentaje_acumulado+" %",
                         style: "tableFecha",
                         alignment: "right",
                     },
@@ -769,7 +769,7 @@ class Report_3 extends Component {
                         alignment: "right",
                     },
                     {
-                        text: CDirecto.porcentaje_acumuado+" %",
+                        text: CDirecto.porcentaje_acumulado+" %",
                         style: "tableFecha",
                         alignment: "right",
                     },

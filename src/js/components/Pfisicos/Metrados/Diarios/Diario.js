@@ -28,8 +28,9 @@ class MDdiario extends Component {
       return (
         <div className="pb-3">
           <Card>
-              <a href="#" className="text-white">
-                <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > METRADOS DIARIOS
+              <a href="#" className="text-white text-decoration-none">
+                <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 
+                  <b>METRADOS DIARIOS</b>
                   <div className="float-right">
                       {collapse === 1 ?<MdRemove size={20} />:<MdAdd size={20} />}  
                   </div> 
@@ -43,12 +44,14 @@ class MDdiario extends Component {
           </Card>
 
           <Card className="mt-2">
-            <a href="#" className="text-white">
-            <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} > PARTIDAS NUEVAS
-              <div className="float-right"> 
-                {collapse === 2 ?<MdRemove size={20} />:<MdAdd size={20} />}
-              </div>
-            </CardHeader></a>
+            <a href="#" className="text-white text-decoration-none">
+              <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} > 
+                <b>PARTIDAS NUEVAS</b>
+                <div className="float-right"> 
+                  {collapse === 2 ?<MdRemove size={20} />:<MdAdd size={20} />}
+                </div>
+              </CardHeader>
+            </a>
               <Collapse isOpen={ collapse === 2 }>
                   <CardBody>
                     {collapse === 2 ? <PartidasNuevas /> : '' }

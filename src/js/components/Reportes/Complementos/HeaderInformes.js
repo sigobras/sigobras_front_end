@@ -27,7 +27,7 @@ function encabezadoInforme(fecha_inicial,fecha_final){
               layout: 'noBorders',
           
               table: {
-                widths: ['*', '*', '*', '*', '*', '*'],
+                widths: [100, 100, 100, 130, 50, '*'],
                 body: [ 
                   [
                     {

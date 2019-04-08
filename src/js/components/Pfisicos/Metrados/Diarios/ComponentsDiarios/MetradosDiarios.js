@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson } from 'react-icons/md';
 
-import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, Media  } from 'reactstrap';
+import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
@@ -76,7 +76,6 @@ class MetradosDiarios extends Component {
       }
 
       this.Tabs = this.Tabs.bind(this)
-      this.ControlAcceso = this.ControlAcceso.bind(this)
       this.CapturarID = this.CapturarID.bind(this)
       this.modalMetrar = this.modalMetrar.bind(this)
       this.modalMayorMetrado = this.modalMayorMetrado.bind(this)
@@ -140,16 +139,7 @@ class MetradosDiarios extends Component {
       })
     }
 
-    ControlAcceso(){
-      if(sessionStorage.getItem("cargo") === 'GERENTE'){
-          // this.setState({
-          //   none: "d-none"
-          // });
 
-          return ('d-none')
-      }
-
-    }
       
     CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo) {
               
@@ -476,8 +466,8 @@ class MetradosDiarios extends Component {
                   </Nav>
             
                   <Card className="m-1">
-                    <CardHeader>
-                      <b>{ nombreComponente }</b>
+                    <CardHeader className="p-1">
+                      { nombreComponente }
                       <div className="float-right">
                         {/* <input type="text" id="InputMetradosDiarios" onKeyUp={ this.Filtrador } placeholder="Buscar Partida"  className="form-control form-control-sm"/> */}
                         <InputGroup >
@@ -500,7 +490,7 @@ class MetradosDiarios extends Component {
                     <CardBody>    
                   
                       <table id="TblMetradosDiarios" className="table table-sm">
-                        <thead>
+                        <thead className="resplandPartida">
                           <tr>
                             <th></th>
                             <th>ITEM</th>
@@ -508,7 +498,7 @@ class MetradosDiarios extends Component {
                             <th>METRADO</th>
                             <th>P / U S/.</th>
                             <th>P / P S/.</th>
-                            <th width="18%">BARRA DE AVANCE</th>
+                            <th width="18%">BARRA DE PROGRESO</th>
                           </tr>
                         </thead>
 
@@ -546,11 +536,7 @@ class MetradosDiarios extends Component {
                                 <td>{ metrados.parcial }</td>
                                 <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
 
-                                  <div
-                                    // className={(metrados.tipo === "titulo" ? 'd-none' : this.ControlAcceso())}
-                                    className={(metrados.tipo === "titulo" ? 'd-none' :'')}
-                                    >
-
+                                  <div className={(metrados.tipo === "titulo" ? 'd-none' :'')}>
                                     <div className="clearfix">
                                       <span className="float-left text-warning">A. met. {metrados.avance_metrado} { metrados.unidad_medida }</span>
                                       <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
@@ -705,7 +691,7 @@ class MetradosDiarios extends Component {
                                               <td className="text-center">
                                                 {actividades.actividad_tipo === "titulo"? "":
                                                   
-                                                  <div className={(actividades.id_actividad === "" ? 'd-none' : this.ControlAcceso())}>
+                                                  <div>
                                                     { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
                                                       <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
                                                         <FaPlus size={ 20 } /> 
@@ -734,38 +720,36 @@ class MetradosDiarios extends Component {
 
                   {/* chat de partidas y mas */}
                   <div className="chatContainer">
-                    <div className="chatHeader">nombre de la partida</div>
+                    <div className="chatHeader">
+                      <div className="p-2">
+                        NOMBRE DE LA PARTIDA
+                        <div className="float-right">
+                         <a href="#" id="enviarA" className="text-decoration-none text-white"> 
+                          <MdPerson size={ 20 } />
+                          <UncontrolledPopover trigger="focus" placement="bottom" target="enviarA">
+                            <PopoverHeader>Enviar a:</PopoverHeader>
+                            <PopoverBody>
+                              <span>Gerente</span><br />
+                              <span>Supervisor</span><br />
+                              <span>Secretaria</span>
+                            </PopoverBody>
+                          </UncontrolledPopover>
+                         </a>
+                          <MdClose size={ 20 }  />
+                        </div> 
+                      </div>
+                    </div>
                     <div className="chatBody">
-                      <div className="media mt-3">
-                        <img src="http://localhost:180/images/src/images/logoSigobras.png" className="align-self-end mr-3" style={{width:"60px"}} />
+                      <div className="media mt-1">
+                        <img src="http://localhost:180/images/src/images/logoSigobras.png" className="align-self-end rounded-circle mr-2 img-fluid" style={{width:"50px"}} />
                         <div className="media-body">
-                          <h6>SIGOBRAS</h6>
-                          <p>Lorem ipsum dolor sit amet, consectetur .</p>
+                          <div className="chatBodyMensaje">
+                            <span>Lorem ispansum dolor sit met, consectetur .</span>
+                          </div>
                         </div>
                       </div>
+                    </div>
 
-                      {/*  */}
-
-
-                      <div className="media mt-3 bg-light">
-                        <img src="https://wowsciencecamp.org/wp-content/uploads/2018/07/dummy-user-img-1-400x400_x_acf_cropped.png" className="align-self-end mr-3" style={{width:"60px"}} />
-                        <div className="media-body">
-                          <h6>GERENTE</h6>
-
-                          <p>Lorem ipsum dolorabore et dolore magna aliqua.</p>
-                        </div>
-                      </div>
-
-                      <div className="media mt-3">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9iDDCZDOBYauIFPitjcbbxa4E7qBquVmb_Z9XeWu9mbW-ZoXw" className="align-self-end mr-3" style={{width:"60px"}} />
-                        <div className="media-body">
-                          <h6>SECRETARIA</h6>
-
-                          <p>Lorem ipsum dolorabore et dolore magna aliqua.</p>
-                        </div>
-                      </div>
-
-                    </div> 
                     <div className="chatFooter">
                       <input type="text" className="form-control form-control-sm" />
                       <button className="btn btn-sm btn-outline-primary"> Enviar </button>
