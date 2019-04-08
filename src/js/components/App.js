@@ -235,11 +235,13 @@ class AppAng extends Component {
                                     <main role="main" className="col ml-sm-auto col-lg px-0">
                                         
                                         <div className="d-flex mb-0 border-button pt-5 p-1 text-light m-0">
-                                            <label>
+                                            <div>
                                                 <b>
-                                                    { DataObra.g_meta === undefined?<div className="text-center text-white"><Spinner color="primary" size="sm" /></div>: DataObra.g_meta.toUpperCase()}
+                                                    { DataObra.g_meta === undefined?
+                                                        <label className="text-center text-white"><Spinner color="primary" size="sm" /></label>:
+                                                     DataObra.g_meta.toUpperCase()}
                                                 </b>
-                                            </label>
+                                            </div>
                                         </div>
             
                                         <div className="px-1 scroll_contenido mt-2">
@@ -272,40 +274,40 @@ class AppAng extends Component {
 
                                     </main>
 
-                                        <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' :  "navbarCollapseRight  border-left FondoBarra"} >
-                                            <div className="sidebar-sticky">
-                                                <div className="p-1">
-                                                    <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
+                                    <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' :  "navbarCollapseRight  border-left FondoBarra"} >
+                                        <div className="sidebar-sticky">
+                                            <div className="p-1">
+                                                <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
 
-                                                    <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
-                                                        <PopoverHeader>Tiempo de ejecución</PopoverHeader>
-                                                        <PopoverBody>
-                                                            <fieldset>
-                                                                <legend>Dias transcurridos</legend>
-                                                                { DataObra.dias_ejecutados } Dias
-                                                            </fieldset>
-                                                            <div className="divider"></div>
-                                                            <br />
-                                                            <fieldset>
-                                                                <legend>Te quedan</legend>
-                                                                {DataObra.dias_saldo > 0 ? 
-                                                                    <div><b> { DataObra.dias_saldo } </b> Dias </div>
-                                                                : 
-                                                                    <div><b>oh no Te pasaste  </b><br />{ DataObra.dias_saldo } Dias </div> 
-                                                                }
-                                                            </fieldset>
-                                                        </PopoverBody>
-                                                    </UncontrolledPopover>
+                                                <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
+                                                    <PopoverHeader>Tiempo de ejecución</PopoverHeader>
+                                                    <PopoverBody>
+                                                        <fieldset>
+                                                            <legend>Dias transcurridos</legend>
+                                                            { DataObra.dias_ejecutados } Dias
+                                                        </fieldset>
+                                                        <div className="divider"></div>
+                                                        <br />
+                                                        <fieldset>
+                                                            <legend>Te quedan</legend>
+                                                            {DataObra.dias_saldo > 0 ? 
+                                                                <div><b> { DataObra.dias_saldo } </b> Dias </div>
+                                                            : 
+                                                                <div><b>oh no Te pasaste  </b><br />{ DataObra.dias_saldo } Dias </div> 
+                                                            }
+                                                        </fieldset>
+                                                    </PopoverBody>
+                                                </UncontrolledPopover>
 
-                                                    
-                                                </div>
-
+                                                
                                             </div>
-                                        </nav>
 
-                                        <div className="posAbajo">
-                                            <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={ this.collapseRight }> {navbarExplandRight === true ? <FaAngleRight />: <FaAngleLeft /> }</button>
                                         </div>
+                                    </nav>
+
+                                    <div className="posAbajo">
+                                        <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={ this.collapseRight }> {navbarExplandRight === true ? <FaAngleRight />: <FaAngleLeft /> }</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
-import { FaPlus, FaCheck, FaDotCircle } from 'react-icons/fa';
+import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem } from 'react-icons/md';
 
-import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, Media  } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
@@ -88,7 +88,8 @@ class MetradosDiarios extends Component {
       this.Filtrador = this.Filtrador.bind(this)
       this.toggleDropDown = this.toggleDropDown.bind(this);
       this.CollapseItem = this.CollapseItem.bind(this);
-      this.hola = this.hola.bind(this);
+      this.Prioridad = this.Prioridad.bind(this);
+      this.UpdatePrioridad = this.UpdatePrioridad.bind(this);
     }
     componentWillMount(){
         document.title ="Metrados Diarios"
@@ -96,7 +97,7 @@ class MetradosDiarios extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log('res>>', res.data);
+            console.log('res>>', res.data);
             
             this.setState({
               DataComponentes:res.data,
@@ -391,7 +392,7 @@ class MetradosDiarios extends Component {
       for (i = 0; i < tr.length; i++) {
         visible = false;
 
-        td = tr[i].getElementsByTagName("td")[1];
+        td = tr[i].getElementsByTagName("td")[2];
 
         // for (j = 0; j < td.length; j++) {
         //   if (td[j] && td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
@@ -424,12 +425,39 @@ class MetradosDiarios extends Component {
       });
     }
   
-    hola(){
-      console.log("cambia")
+    Prioridad(i){
+      console.log("cambia",i)
       this.setState({
-        mostrarIconos:!this.state.mostrarIconos
+        mostrarIconos:this.state.mostrarIconos === i ? -1 :i
       })
     }
+
+    UpdatePrioridad(idPartida, prioridad, index){
+
+      var partidas = this.state.DataPartidas
+      console.log("partidas", partidas);
+
+      partidas = partidas[index].prioridad = prioridad
+      // console.log("idPrtida", idPartida, "prioridad", prioridad)
+      
+      axios.put(`${UrlServer}/putPrioridad`,
+        {
+          "id_partida":idPartida,
+          "prioridad":prioridad
+        }
+      )
+      .then((res)=>{
+        console.info("response", res)
+        this.setState({
+          DataPartidas:this.state.DataPartidas,
+          mostrarIconos:-1
+        })
+      })
+      .catch((err)=>{
+        console.error("error", err);
+      })
+    }
+
     render() {
         var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM } = this.state
 
@@ -484,35 +512,27 @@ class MetradosDiarios extends Component {
                           </tr>
                         </thead>
 
-                        { DataPartidas.length <= 0?  <tbody><tr><td colSpan="6" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
+                        { DataPartidas.length <= 0?  <tbody><tr><td colSpan="7" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
                           DataPartidas.map((metrados, i) =>
                             <tbody key={ i } >
                         
                               <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
                                 <td>
-                                  
-                                    { metrados.tipo === "titulo" ?"":
-                                    <div title="prioridad" className="prioridad" onClick={()=>this.hola()}>
-                                      <FaDotCircle /> 
-                                      {
-                                        this.state.mostrarIconos === false?"":
-                                     
-                                        <div className="bg-danger">
-                                              algo
-                                        </div> }
-                                  </div>  
+                                  { 
+                                    metrados.tipo === "titulo" ?"":
+                                    <div title="prioridad" className="prioridad" style={{color:metrados.prioridad}} onClick={()=>this.Prioridad(i)}>
+                                      <FaSuperpowers/> 
+                                    </div>  
+                                  }
 
-                                     }
-                                    {/* <div className="btnPriory">
-                                      <ul className="circle-container">
-                                        <li onClick={ ()=> this.hola(i) }>1</li>
-                                        <li onClick={ ()=> this.hola(i) }>2</li>
-                                        <li onClick={ ()=> this.hola(i) }>3</li>
-                                        <li onClick={ ()=> this.hola(i) }>4</li>
-                                        <li onClick={ ()=> this.hola(i) }>5</li>
-                                      </ul>
-                                    </div> 
-                                  </div>  */}
+                                  <div className={ this.state.mostrarIconos !== i?"d-none":"menuCirculo" }>
+                                    <div className="circle" style={{background:"red"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "red", i) }></div>
+                                    <div className="circle" style={{background:"blue"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "blue", i) }></div>
+                                    <div className="circle" style={{background:"yellow"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "yellow", i) }></div>
+                                    <div className="circle" style={{background:"white"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "white", i) }></div>
+                                    <div className="circle" style={{background:"#ff5e00"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "#ff5e00", i) }></div>
+                                  </div> 
+
                                 </td>
                                 <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
                                   { metrados.item }
@@ -646,7 +666,8 @@ class MetradosDiarios extends Component {
                                               <td>{ actividades.costo_unitario }</td>
                                               <td>{ actividades.parcial_actividad }</td>
                                               <td className="small">
-                                                {Number(actividades.parcial_actividad) <= 0 ?'':
+                                                {
+                                                  Number(actividades.parcial_actividad) <= 0 ?'':
                                                   actividades.actividad_tipo === "titulo"?"":
                                                   <div>
                                                       <div className="clearfix">
@@ -710,6 +731,48 @@ class MetradosDiarios extends Component {
                     </CardBody>
                   </Card>
               
+
+                  {/* chat de partidas y mas */}
+                  <div className="chatContainer">
+                    <div className="chatHeader">nombre de la partida</div>
+                    <div className="chatBody">
+                      <div className="media mt-3">
+                        <img src="http://localhost:180/images/src/images/logoSigobras.png" className="align-self-end mr-3" style={{width:"60px"}} />
+                        <div className="media-body">
+                          <h6>SIGOBRAS</h6>
+                          <p>Lorem ipsum dolor sit amet, consectetur .</p>
+                        </div>
+                      </div>
+
+                      {/*  */}
+
+
+                      <div className="media mt-3 bg-light">
+                        <img src="https://wowsciencecamp.org/wp-content/uploads/2018/07/dummy-user-img-1-400x400_x_acf_cropped.png" className="align-self-end mr-3" style={{width:"60px"}} />
+                        <div className="media-body">
+                          <h6>GERENTE</h6>
+
+                          <p>Lorem ipsum dolorabore et dolore magna aliqua.</p>
+                        </div>
+                      </div>
+
+                      <div className="media mt-3">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9iDDCZDOBYauIFPitjcbbxa4E7qBquVmb_Z9XeWu9mbW-ZoXw" className="align-self-end mr-3" style={{width:"60px"}} />
+                        <div className="media-body">
+                          <h6>SECRETARIA</h6>
+
+                          <p>Lorem ipsum dolorabore et dolore magna aliqua.</p>
+                        </div>
+                      </div>
+
+                    </div> 
+                    <div className="chatFooter">
+                      <input type="text" className="form-control form-control-sm" />
+                      <button className="btn btn-sm btn-outline-primary"> Enviar </button>
+                    </div>
+                  </div>
+                  
+
                 </Card>
 
 

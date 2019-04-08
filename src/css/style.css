@@ -150,11 +150,10 @@ body {
 /* SCROLL ANG95 */
 .scroll_contenido{
   position: absolute;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 83px);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
-  
 }
 .scroll_contenido::-webkit-scrollbar {
   width: 0.5em;
@@ -353,66 +352,80 @@ iframe::-webkit-scrollbar-thumb {
 /* prioridad css */
 
 .prioridad{
-  margin-right: 5px;
   cursor: pointer;
 }
-.prioridad:hover{
+/* .prioridad:hover{
   color: #0080ff;
   font-size: 17px;
   position: absolute
-}
-/* 
-.btnPriory{
-  display: none;
-}
-
-.prioridad:hover .btnPriory {
-  display: block;
-  position: relative;
-}
- */
-
-
-/* prioridad cuando de hace hover css */
-   
-/* .circle-container {
-  position: relative;
-  width: 0.5em;
-  height: 0.5em;
-  padding: 0;
-  border-radius: 50%;
-  list-style: none;
-  box-sizing: content-box;
-  margin: 0px;
 } */
+/* clases temporales */
 
-/* .circle-container > * {
-  display: block;
-
+.menuCirculo{
   position: absolute;
-  
-  top: -251%;
-  
-  left: 34%;
-  
-  width: 0.5em;
-  
-  height: 0em;
-  
-  margin: 0em;
+  border-radius: 50%;
+  width: 13px;
+  height: 13px;
+  -webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
+  transition: width 2s;
 }
-.circle-container > :nth-of-type(1) {
-  transform: rotate(-87deg) translate(2em) rotate(87deg);
+
+
+.circle {
+  position: absolute;
+  left: calc(50% - 8px);
+  top: calc(50% - 22px);
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  cursor: pointer;
 }
-.circle-container > :nth-of-type(2) {
-  transform: rotate(-15deg) translate(2em) rotate(15deg);
+
+.circle:nth-child(1) {
+  transform: translateX(18px);
 }
-.circle-container > :nth-of-type(3) {
-  transform: rotate(53deg) translate(2em) rotate(-53deg);
+
+.circle:nth-child(2) {
+  transform: rotate(72deg) translateX(18px);
 }
-.circle-container > :nth-of-type(4) {
-  transform: rotate(153deg) translate(2em) rotate(-153deg);
+
+.circle:nth-child(3) {
+  transform: rotate(144deg) translateX(18px);
 }
-.circle-container > :nth-of-type(5) {
-  transform: rotate(204deg) translate(2em) rotate(-204deg);
-} */
+
+.circle:nth-child(4) {
+  transform: rotate(216deg) translateX(18px);
+}
+
+.circle:nth-child(5) {
+  transform: rotate(288deg) translateX(18px);
+}
+
+
+/* chat partidas  */
+
+.chatContainer{
+  display: none;
+  position: fixed;
+  bottom: 0px;
+  right: 220px;
+  height: 285px;
+  background-color: rgb(237, 239, 244);
+  width: 300px;
+  border: 1px solid rgb(142, 142, 142);
+}
+
+.chatHeader{
+  background: #2676bb;
+  padding: 6px;
+}
+.chatBody{
+  height: 78%;
+  overflow-y: scroll;
+  color: #000;
+  padding: 2px;
+}
+.chatFooter{
+  border-top: 1px solid #b0bad2;
+  display: flex;
+}
