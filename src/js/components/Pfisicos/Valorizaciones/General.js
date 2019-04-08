@@ -30,7 +30,7 @@ class General extends Component {
             <div>
                 {/* LLAMA AL COMPONETE DEVALORIZACION GENERAL */}
                 <Card className="mt-2">
-                    <CardHeader onClick={e=>this.CollapseCard(1)} data-event={1} > 1. VALORIZACION GENERAL {collapse === 1?'➖':'➕'}</CardHeader>
+                    <CardHeader onClick={e=>this.CollapseCard(1)} data-event={1} >VALORIZACION GENERAL {collapse === 1?'➖':'➕'}</CardHeader>
                     <Collapse isOpen={collapse === 1}>
                         { collapse === 1 ? <ValorizacionGeneral /> : '' }
                     </Collapse>
@@ -38,7 +38,7 @@ class General extends Component {
 
                 {/* LLAMA A OTRO COMPONETE DE PARTIDAS NUEVAS */}
                 <Card className="mt-2">
-                    <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} > 2. VALORIZACION DE PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader>
+                    <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} >VALORIZACION DE PARTIDAS NUEVAS {collapse === 2?'➖':'➕'}</CardHeader>
                     <Collapse isOpen={collapse === 2}>
                         <CardBody>
                             { collapse === 2 ? <ValPartidasNuevas />: '' }
@@ -49,7 +49,7 @@ class General extends Component {
 
                 {/* LLAMA AL COMPONENTE DE MAYORES METRADOS EN VALORIZACIONES */}
                 <Card className="mt-2">
-                    <CardHeader onClick={e=>this.CollapseCard(3)} data-event={3} > 3. VALORIZACION DE MAYORES METRADOS {collapse === 3?'➖':'➕'}</CardHeader>
+                    <CardHeader onClick={e=>this.CollapseCard(3)} data-event={3} > VALORIZACION DE MAYORES METRADOS {collapse === 3?'➖':'➕'}</CardHeader>
                     <Collapse isOpen={collapse === 3}>
                         <CardBody>
                             { collapse === 3 ? <ValMayoresMetrados /> : '' }

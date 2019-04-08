@@ -172,7 +172,7 @@ class AppAng extends Component {
                                                     <NavLink to="/inicio" activeclassname="nav-link active"  onClick={ this.CollapseMenu } data-event={ 100 }> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                                 </li>
                                                 
-                                                { DataMenus.length === 0  ? <label className="text-center text-white"> <Spinner color="primary" size="sm" /></label>: DataMenus.map((menus, index)=>    
+                                                { DataMenus.length === 0  ? <label className="text-center text-white"> <Spinner color="primary" type="grow" /></label>: DataMenus.map((menus, index)=>    
                                                     <li className="lii" key={ index }>
                                                         <a href="#" className="nav-link" onClick={ this.CollapseMenu } data-event={ index } activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index? <FaChevronUp />:<FaChevronRight /> }</div></a>
                                                         <Collapse isOpen={collapse === index}>
@@ -238,7 +238,7 @@ class AppAng extends Component {
                                             <div>
                                                 <b>
                                                     { DataObra.g_meta === undefined?
-                                                        <label className="text-center text-white"><Spinner color="primary" size="sm" /></label>:
+                                                        <label className="text-center text-white"><Spinner color="primary" type="grow"/></label>:
                                                      DataObra.g_meta.toUpperCase()}
                                                 </b>
                                             </div>

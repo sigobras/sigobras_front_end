@@ -27,6 +27,7 @@ class ValPartidasNuevas extends Component {
             fecha_final:'',
 
             // montos en soles de componentes 
+            soles_parcial:"",
             soles_anterior: "",
             soles_actual: "",
             soles_acumulado:"" ,
@@ -48,7 +49,7 @@ class ValPartidasNuevas extends Component {
 
     componentWillMount(){
 
-        axios.post(UrlServer+'/getValGeneralAnyos',{
+        axios.post(UrlServer+'/getValGeneraPartidaNuevalAnyos',{
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
@@ -123,7 +124,7 @@ class ValPartidasNuevas extends Component {
 
         if(this.state.IdComponente !== ""){
             // llamamos al api de partidas en valarizaciones------------------------------------------------------------------------------------------------------------------------------
-            axios.post(`${UrlServer}/getValGeneralPartidas`,
+            axios.post(`${UrlServer}/getValGeneralPartidaNuevaPartidas`,
                 {
                     "id_componente":this.state.IdComponente,
                     "fecha_inicial": fechaInicial,
@@ -143,7 +144,7 @@ class ValPartidasNuevas extends Component {
                 
         }else{
              // llamamos a resumen--------------------------------------------------------------------------------------------------------------------------------
-             axios.post(`${UrlServer}/getValGeneralResumenPeriodo`,
+             axios.post(`${UrlServer}/getValGeneralPartidaNuevaResumenPeriodo`,
                 {
                     "id_ficha":sessionStorage.getItem("idobra"),
                     "fecha_inicial": fechaInicial,
@@ -179,6 +180,7 @@ class ValPartidasNuevas extends Component {
                 NombreComponente:nombreComp,
 
                 // montos en soles de componentes 
+                soles_parcial:"",
                 soles_anterior: "",
                 soles_actual: "",
                 soles_acumulado:"" ,
@@ -188,7 +190,7 @@ class ValPartidasNuevas extends Component {
 
             if(tab !=="resumen"){
                 // llamamos al api de partidas en valarizaciones
-                axios.post(`${UrlServer}/getValGeneralPartidas`,
+                axios.post(`${UrlServer}/getValGeneralPartidaNuevaPartidas`,
                     {
                         "id_componente":id_componente,
                         "fecha_inicial": this.state.fecha_inicial,
@@ -201,6 +203,7 @@ class ValPartidasNuevas extends Component {
                         DataPartidasApi:res.data.partidas,
 
                         // montos en soles de componentes 
+                        soles_parcial:res.data.precio_parcial,
                         soles_anterior: res.data.valor_anterior,
                         soles_actual: res.data.valor_actual,
                         soles_acumulado:res.data.valor_total ,
@@ -335,13 +338,14 @@ class ValPartidasNuevas extends Component {
                                         <thead className="text-center resplandPartida">
                                             <tr>
                                                 <th colSpan="3" rowSpan="2" className="align-middle">DESCRIPCION</th>
-                                                <th colSpan="2" rowSpan="2" className="align-middle">PRESUPUESTO</th>
+                                                <th colSpan="2" className="align-middle">S/. { this.state.soles_parcial }</th>
                                                 <th colSpan="3">S/. {this.state.soles_anterior }</th>
                                                 <th colSpan="3" >S/. {this.state.soles_actual }</th>
                                                 <th colSpan="3">S/. {this.state.soles_acumulado }</th>
                                                 <th colSpan="3">S/. {this.state.soles_saldo }</th>
                                             </tr>
                                             <tr>
+                                                <th colSpan="2">PRESUPUESTO</th>
                                                 <th colSpan="3">ANTERIOR</th>
                                                 <th colSpan="3">ACTUAL</th>
                                                 <th colSpan="3">ACUMULADO</th>
@@ -412,6 +416,23 @@ class ValPartidasNuevas extends Component {
                                                     </tr>
                                                 )
                                             }
+
+                                            <tr className="resplandPartida">
+                                                <td colSpan="3">TOTAL</td>
+                                                <td colSpan="2">S/. { this.state.soles_parcial }</td>
+
+                                                <td colSpan="2">S/. {this.state.soles_anterior }</td>
+                                                <td>%</td>
+                                                <td colSpan="2" >S/. {this.state.soles_actual }</td>
+                                                <td>%</td>
+
+                                                <td colSpan="2">S/. {this.state.soles_acumulado }</td>
+                                                <td>%</td>
+
+                                                <td colSpan="2">S/. {this.state.soles_saldo }</td>
+                                                <td>%</td>
+
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -425,3 +446,4 @@ class ValPartidasNuevas extends Component {
 }
 
 export default ValPartidasNuevas;
+

@@ -125,7 +125,7 @@ class Login extends Component {
                           <div className="form-group">
                               <div className={this.state.alert }>{this.state.Loginsms }</div>
 
-                              <button type="submit"  disabled={!enabled} onClick={this.handleSubmit}  className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" /> : 'INGRESAR'}</button>
+                              <button type="submit"  disabled={!enabled} onClick={this.handleSubmit}  className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" type="grow" /> : 'INGRESAR'}</button>
                           </div>
                       </form>
                     </div>
