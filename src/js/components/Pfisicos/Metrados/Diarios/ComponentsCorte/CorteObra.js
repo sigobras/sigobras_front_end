@@ -412,7 +412,7 @@ class CorteObra extends Component {
   
     render() {
         var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM } = this.state
-
+        var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado 
         return (
             <div>
               
@@ -708,7 +708,7 @@ class CorteObra extends Component {
                           <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                           <InputGroupAddon addonType="append">
                               <InputGroupText className="p-1">=</InputGroupText>
-                              <InputGroupText className="p-1">{ this.state.ValorMetrado - this.state.actividad_avance_metrado}</InputGroupText>
+                              <InputGroupText className="p-1">  { restaResultado.toLocaleString("es-PE")}</InputGroupText>
                               <InputGroupText className="p-1">{this.state.unidad_medida}</InputGroupText>
                           </InputGroupAddon>
                       </InputGroup>
