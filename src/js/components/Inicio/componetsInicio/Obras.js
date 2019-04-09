@@ -1,25 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-// import { FaList, FaClock, FaRegImages, FaChartPie, FaUserFriends, FaPrint, FaEye } from "react-icons/fa";
-// import { Button, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledCollapse, Spinner, Nav, NavItem, TabContent, NavLink, TabPane  } from 'reactstrap';
-// import { IoIosInfinite } from "react-icons/io";
-// import html2canvas from 'html2canvas';
-// import * as jsPDF from 'jspdf'
 import 'jspdf-autotable';
 import { toast } from "react-toastify";
 
 import ListaObras from './FiltraObras/ListaObras'
-// import { logoSigobras, logoGRPuno } from '../../Reportes/imgB64'
 
-
-// import { Progress } from 'react-sweet-progress';
-// import "react-sweet-progress/lib/style.css";
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-// import CronogramaAvance from '../CronogramaAvance';
-// import Galeria from '../GaleriaImagenes/Galeria';
-// import CtrladminDirecta from '../../Reportes/CtrladminDirecta'
 
-// import PersonalInfo from './PersonalInfo'
 
 class Obras extends Component{
     constructor(props){

@@ -28,7 +28,7 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            // console.log(res.data)
+            console.log("data historial",res.data)
             if(res.data === "vacio"){
                this.setState({
                 SMSDataHistorialApi:true
@@ -57,6 +57,7 @@ class MDHistorial extends Component {
         let event = e.target.dataset.event;
         this.setState({ collapseDate: this.state.collapseDate === Number(event) ? 0 : Number(event) });
     }
+
     render() {
         const { DataHistorial, SMSDataHistorialApi, collapseDate } = this.state
         return ( 
@@ -81,7 +82,7 @@ class MDHistorial extends Component {
                                 <Card >
                                     <CardHeader>
                                         {comp.nombre_componente }
-                                        <label className="float-right">S/.{ comp.componente_total_soles } { " " }- { comp.componente_total_porcentaje }%</label>
+                                        <label className="float-right">S/.{ comp.componente_total_soles } { " " }- { comp.componente_total_porcentaje } %</label>
                                     </CardHeader>
                                     <CardBody>
                                         
@@ -110,7 +111,7 @@ class MDHistorial extends Component {
                                                                     <td>{ hist.nombre_actividad }</td>
                                                                     <td>{ hist.descripcion_actividad }</td>
                                                                     <td>{ hist.observacion }</td>
-                                                                    <td>{ hist.valor }</td>
+                                                                    <td>{ hist.valor } { hist.unidad_medida}</td>
                                                                     <td>{ hist.costo_unitario }</td>
                                                                     <td>{ hist.parcial }</td>
                                                                 </tr>

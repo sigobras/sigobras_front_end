@@ -21,7 +21,6 @@ class ListaObras extends Component{
             collapse: 95,
             collapseCrono: 56,
             DataComponente:[],
-            DataCronograma:[]
             
         }
 
@@ -95,21 +94,8 @@ class ListaObras extends Component{
             collapseCrono: this.state.collapseCrono === indexCollapse ? 56 : indexCollapse,
             // DataComponente:[]
         });
-        if(this.state.collapseCrono !== index){
-            axios.post(`${UrlServer}/getcronograma`,{
-                "id_ficha":id_ficha
-            })
-            .then((res)=>{
-                this.setState({
-                    DataCronograma:res.data
-                })
-            })
-            .catch((err)=>{
-                console.error('algo salio mal ', err);
-            })
-        }
+       
     }
-
 
     render(){
         var { collapse, collapseCrono } = this.state
@@ -185,7 +171,7 @@ class ListaObras extends Component{
                                 
                             {collapseCrono === IndexObras ?
                                 <Collapse isOpen={collapseCrono === IndexObras}>
-                                    <CronogramaAvance dataCrono={ this.state.DataCronograma } fichaId={ Obras.id_ficha} costoDirecto={ Obras.costo_directo } />
+                                    <CronogramaAvance fichaId={ Obras.id_ficha} costoDirecto={ Obras.costo_directo } />
                                 </Collapse>
                             :''} 
 
