@@ -79,19 +79,21 @@ class Obras extends Component{
                         </div>
                     </div>
                     <div className="card-body">
-                        <table className="table table-bordered table-sm " >
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>OBRA</th>
-                                    <th>AVANCE </th>
-                                    <th className="text-center">IR</th>
-                                    <th>ESTADO</th>
-                                    <th>OPCIONES</th>
-                                </tr>
-                            </thead>
-                            {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
-                        </table>
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-sm " >
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>OBRA</th>
+                                        <th>AVANCE </th>
+                                        <th className="text-center">IR</th>
+                                        <th>ESTADO</th>
+                                        <th>OPCIONES</th>
+                                    </tr>
+                                </thead>
+                                {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

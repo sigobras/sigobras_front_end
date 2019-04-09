@@ -28,7 +28,7 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            console.log("data historial",res.data)
+            // console.log("data historial",res.data)
             if(res.data === "vacio"){
                this.setState({
                 SMSDataHistorialApi:true

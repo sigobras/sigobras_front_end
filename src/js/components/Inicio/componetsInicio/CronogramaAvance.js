@@ -45,23 +45,30 @@ class CronogramaAvance extends Component{
         }
       )
       .then((res)=>{
-        console.log("res programado", res.data);
+        // console.log("res programado", res.data);
         var Inputs = []
         var SumaInputs = []
         var totalSumaInpust = 0
         if(res.data.data.length > 0){
 
-          res.data.data.forEach((alfo, i)=>
+          res.data.data.forEach((alfo, i)=>{
+
+            // console.log("data", alfo)
+            // if(alfo.codigo !== "C"){
               Inputs.push(
                 [
                   this.props.fichaId,
                   alfo.fecha,
                   ConvertFormatStringNumber(alfo.programado_monto),
-                  ConvertFormatStringNumber(alfo.financiero_monto),                
+                  ConvertFormatStringNumber(alfo.financiero_monto), 
+                  alfo.codigo               
                 ]
               )
-          )
-
+            // }
+            
+          })
+          
+          
           Inputs.forEach((data)=>
             SumaInputs.push( data[2] )
           )
@@ -77,6 +84,7 @@ class CronogramaAvance extends Component{
         if(saldoTotalCostoDirecto !== NaN){
           saldoTotalCostoDirecto = costoDirecto              
         }
+        console.log("inputs", Inputs);
 
         this.setState({
           DataCronoGeneralApi:res.data,
@@ -191,7 +199,7 @@ class CronogramaAvance extends Component{
 
     // console.log("avanceAcumulado>>>", avanceAcumulado)
     this.state.EnviarDatos[i].splice(2, 1, numero);
-
+    console.log("EnviarDatos", this.state.EnviarDatos)
     var SumaInputs = []
     this.state.EnviarDatos.forEach((data)=>
       SumaInputs.push( data[2] )
@@ -252,9 +260,27 @@ class CronogramaAvance extends Component{
 
   enviarDatosApi(){
     // console.log(this.state.DataCronoArmadoEnviar)
+    var DataModificar =  this.state.EnviarDatos
+    // console.log("DataModificar ", DataModificar)
+
+    DataModificar.forEach((valor, i) => {
+      if(valor[4] === "C"){
+        DataModificar.splice(i,1)
+        valor.splice(4,1)
+      }
+
+      DataModificar.forEach((sub, isub)=>{
+        sub.splice(4,1)
+      })
+
+      
+    });
+    
+    console.log("DataMODIFICADO", DataModificar);
+    
     if(confirm('¿Estas seguro de envias los datos del cronograma programado al sistema?')){
       axios.post(`${UrlServer}/postcronogramamensual`,
-        this.state.EnviarDatos
+        DataModificar
       )
       .then((res)=>{
         console.log('res', res)
@@ -264,6 +290,61 @@ class CronogramaAvance extends Component{
           this.setState(prevState => ({
             modal: !prevState.modal
           }));
+
+          // .-------------------------------------------------------------------------------------------------------
+
+          var Inputs = []
+        var SumaInputs = []
+        var totalSumaInpust = 0
+        if(res.data.data.length > 0){
+
+          res.data.data.forEach((alfo, i)=>{
+
+            // console.log("data", alfo)
+            // if(alfo.codigo !== "C"){
+              Inputs.push(
+                [
+                  this.props.fichaId,
+                  alfo.fecha,
+                  ConvertFormatStringNumber(alfo.programado_monto),
+                  ConvertFormatStringNumber(alfo.financiero_monto), 
+                  alfo.codigo               
+                ]
+              )
+            // }
+            
+          })
+          
+          
+          Inputs.forEach((data)=>
+            SumaInputs.push( data[2] )
+          )
+          
+          totalSumaInpust = SumaInputs.reduce(((a, b)=>{ return a + b; }));
+        }
+
+        var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+        var avanceAcumulado = res.data.avance_Acumulado
+        var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
+        saldoTotalCostoDirecto = saldoTotalCostoDirecto -  totalSumaInpust
+      
+        if(saldoTotalCostoDirecto !== NaN){
+          saldoTotalCostoDirecto = costoDirecto              
+        }
+        console.log("inputs", Inputs);
+
+        this.setState({
+          DataCronoGeneralApi:res.data,
+          fechaActualApi:res.data.fechaActual,
+          fecha_desde:res.data.fecha_final,
+          DataCronoProgramadoApi:res.data.data,
+          EnviarDatos:Inputs,
+          fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
+          avanceAcumulado:ConvertFormatStringNumber(res.data.avance_Acumulado),
+          ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
+          
+        })
+
         }else{
           toast.error('El cronograma - programado no no ingresado',{ position: "top-right",autoClose: 2000 });
         }
@@ -426,7 +507,7 @@ class CronogramaAvance extends Component{
           text: 'GRAFICO DEL PORCENTAJE DE AVANCE PROGRAMADO VS EJECUTADO ACUMULADO'
         },
         xAxis: {
-          categories: DataCronoGeneralApi.mes
+          categories: DataCronoGeneralApi.grafico_periodos
         },
         yAxis: {
           title: {
@@ -443,150 +524,161 @@ class CronogramaAvance extends Component{
         },
         series: [{
           name: 'Avance programado',
-          data: DataCronoGeneralApi.porcentaje_programado
+          data: DataCronoGeneralApi.grafico_programado
         }, {
           name: 'Avance Fisico',
-          data: DataCronoGeneralApi.porcentaje_fisico
+          data: DataCronoGeneralApi.grafico_fisico
         },
         {
           name: 'Avance Financiero',
-          data: DataCronoGeneralApi.porcentaje_financiero
+          data: DataCronoGeneralApi.grafico_financiero
         }]
     }
 
     return(
       <div className="card">
-          <div className="card-header text-center">
-              HISTOGRAMA DEL AVANCE DE OBRA - CONTROL DE CUVA "S"   
+        <div className="card-header text-center">
+            HISTOGRAMA DEL AVANCE DE OBRA - CONTROL DE CUVA "S"   
+        </div>
+        <div className="card-body">
+          <div className="table-responsive">
+
+            <HighchartsReact
+                highcharts={Highcharts}
+                // constructorType={'stockChart'}
+                options={options}
+            />
+
+            <Row className="mr-1">
+              <Col sm="6">
+                <InputGroup size="sm">
+                  <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
+                  <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
+
+                  <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
+                  <Input type="month" min={this.state.fechaLimiteAnioMes} onChange={e=> this.setState({fecha_hasta:e.target.value})} />
+                  <Button color="info" onClick={ this.GeneraFechasSegunOrden } >CREAR </Button>
+                </InputGroup>
+              </Col>
+              <Col sm="1">
+                <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
+              </Col>
+              <Col sm="2">
+                <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
+              </Col>
+              <Col sm="3">
+                <FormGroup>
+                  <CustomInput type="switch" id="histograma" name="histograma" label="Programado" onChange={ this.EstadoInputprogramado } inline value="Programado" />
+                  <CustomInput type="switch" id="histograma1" name="histograma" label="Financiero" onChange={ this.EstadoInputprogramado } inline  value="Financiero" />
+                </FormGroup>
+              </Col>
+            </Row>
+        
+        
+
+            <table className="table table-sm mt-2">
+              <thead>
+                <tr className="text-center" >
+                  <th colSpan="5">MONTOS VALORIZADOS PROGRAMADOS</th>
+                  <th colSpan="6">MONTOS VALORIZADOS EJECUTADOS</th>
+                </tr>
+
+                <tr className="text-center" > 
+                  <th colSpan="2">Periodo</th>
+                  <th colSpan="3">Programado</th>
+                  <th colSpan="3">Fisico Ejecutado</th>
+                  <th colSpan="3">Financiero Ejecutado</th>
+                </tr>
+
+                <tr className="text-center" >
+                  <th>Nº de informe</th>
+                  <th>Mes del informe</th>
+                  <th>Monto S/.</th>
+                  <th>% Ejecucion programada</th>
+                  <th>% Acumulado</th>
+                  <th>Monto S/.</th>
+                  <th>% Ejecucion programada</th>
+                  <th>% Acumulado</th>
+                  <th>Monto S/.</th>
+                  <th>% Ejecucion programada</th>
+                  <th>% Acumulado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  DataCronoProgramadoApi === undefined? <tr><td colSpan="11">CARGANDO</td></tr>: 
+                  DataCronoProgramadoApi.map((crono, IC)=>
+                    <tr key={ IC } className={ crono.codigo ==="C"?"bg-danger": ""}>
+                      <td>{ IC+1}</td>
+                      <td className="text-capitalize">{ crono.periodo }</td>
+                      <td>
+                        {
+                          crono.codigo ==="C"?crono.programado_monto :
+                            <div>
+                              <InputGroup size="sm">
+                                <Input disabled={ this.state.EstadoInputprogramado !== true } placeholder={ crono.programado_monto } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
+                              </InputGroup>
+
+                              <label className={ConvertFormatStringNumber(this.state.ResultResta) === 0? "text-success small mb-0":"text-warning small mb-0" }>
+                                  S/. {this.state.ResultResta }
+                              </label>
+                            </div>
+                        }
+                      </td>
+                      <td>{ crono.programado_porcentaje }</td>
+                      <td>{ crono.programado_acumulado }</td>
+
+                      <td>{ crono.fisico_monto }</td>
+                      <td>{ crono.fisico_porcentaje }</td>
+                      <td>{ crono.fisico_acumulado }</td>
+                      <td>
+                        {
+                          crono.codigo ==="C"?crono.financiero_monto :
+                            <div>
+                              <InputGroup size="sm"> 
+                                <Input disabled={ this.state.EstadoInputFinanciero !== true }  placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
+                              </InputGroup>
+                            </div>
+                        }
+                      </td>
+                      <td>{ crono.programado_porcentaje }</td>
+                      <td>{ crono.programado_acumulado }</td>
+                    </tr>
+                  )
+                }
+
+
+                {/* <tr>
+                  <td colSpan="2">Total a la Fecha</td>
+                  <td ></td>
+                  <td ></td>
+                  <td className="border-bottom-0"></td>
+                  <td ></td>
+                  <td ></td>
+                  <td className="border-bottom-0"></td>
+                  <td ></td>
+                  <td ></td>
+
+                  <td className="border-bottom-0 border-right-0"></td>
+                </tr> */}
+              </tbody>
+            </table>
+            {
+              EstadoBtnEliminar === false?
+              <Button color="danger" onClick={ this.eliminarMesNoData }>Eliminar Ultimo Mes</Button>                  
+              :
+              <Button color="danger" onClick={ this.eliminarMes }>Eliminar Ultimo Mes</Button>
+            }
+
+
+            {
+              ConvertFormatStringNumber(this.state.ResultResta) === 0 ?
+              <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
+            }
           </div>
-          <div className="card-body">
-            <div className="table-responsive">
 
-              <HighchartsReact
-                  highcharts={Highcharts}
-                  // constructorType={'stockChart'}
-                  options={options}
-              />
-
-              <Row className="mr-1">
-                <Col sm="6">
-                  <InputGroup size="sm">
-                    <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
-                    <label className="form-control form-control-sm text-capitalize">{convertirFechaLetra(this.state.fecha_desde)}</label>
-
-                    <InputGroupAddon addonType="prepend">al:</InputGroupAddon>            
-                    <Input type="month" min={this.state.fechaLimiteAnioMes} onChange={e=> this.setState({fecha_hasta:e.target.value})} />
-                    <Button color="info" onClick={ this.GeneraFechasSegunOrden } >CREAR </Button>
-                  </InputGroup>
-                </Col>
-                <Col sm="1">
-                  <label>{ this.state.DataCronoProgramadoApi.length } MESES  </label>
-                </Col>
-                <Col sm="2">
-                  <label>COSTO DIRECTO S/. { TotalCostoDirecto.toLocaleString("es-PE") }</label>
-                </Col>
-                <Col sm="3">
-                  <FormGroup>
-                    <CustomInput type="switch" id="histograma" name="histograma" label="Programado" onChange={ this.EstadoInputprogramado } inline value="Programado" />
-                    <CustomInput type="switch" id="histograma1" name="histograma" label="Financiero" onChange={ this.EstadoInputprogramado } inline  value="Financiero" />
-                  </FormGroup>
-                </Col>
-              </Row>
-          
-          
-
-              <table className="table table-sm mt-2">
-                <thead>
-                  <tr className="text-center" >
-                    <th colSpan="5">MONTOS VALORIZADOS PROGRAMADOS</th>
-                    <th colSpan="6">MONTOS VALORIZADOS EJECUTADOS</th>
-                  </tr>
-
-                  <tr className="text-center" > 
-                    <th colSpan="2">Periodo</th>
-                    <th colSpan="3">Programado</th>
-                    <th colSpan="3">Fisico Ejecutado</th>
-                    <th colSpan="3">Financiero Ejecutado</th>
-                  </tr>
-
-                  <tr className="text-center" >
-                    <th>Nº de informe</th>
-                    <th>Mes del informe</th>
-                    <th>Monto S/.</th>
-                    <th>% Ejecucion programada</th>
-                    <th>% Acumulado</th>
-                    <th>Monto S/.</th>
-                    <th>% Ejecucion programada</th>
-                    <th>% Acumulado</th>
-                    <th>Monto S/.</th>
-                    <th>% Ejecucion programada</th>
-                    <th>% Acumulado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    DataCronoProgramadoApi === undefined? <tr><td colSpan="11">CARGANDO</td></tr>: 
-                    DataCronoProgramadoApi.map((crono, IC)=>
-                      <tr key={ IC }>
-                        <td>{ IC+1}</td>
-                        <td className="text-capitalize">{ crono.periodo }</td>
-                        <td>
-                          <InputGroup size="sm">
-                            <Input disabled={ this.state.EstadoInputprogramado !== true } placeholder={ crono.programado_monto } onBlur={e=>this.capturaInputsProgramado(e, IC)} type="text"/>  
-                          </InputGroup>
-
-                          <label className={ConvertFormatStringNumber(this.state.ResultResta) === 0? "text-success small mb-0":"text-warning small mb-0" }>
-                              S/. {this.state.ResultResta }
-                          </label>
-                        </td>
-                        <td>{ crono.programado_porcentaje }</td>
-                        <td>{ crono.programado_acumulado }</td>
-
-                        <td>{ crono.fisico_monto }</td>
-                        <td>{ crono.fisico_porcentaje }</td>
-                        <td>{ crono.fisico_acumulado }</td>
-                        <td>
-                          <InputGroup size="sm"> 
-                            <Input disabled={ this.state.EstadoInputFinanciero !== true }  placeholder={ crono.financiero_monto } onBlur={e=>this.capturaInputsFinanciero(e, IC)} type="text"/>  
-                          </InputGroup>
-                        </td>
-                        <td>{ crono.programado_porcentaje }</td>
-                        <td>{ crono.programado_acumulado }</td>
-                      </tr>
-                    )
-                  }
-
-
-                  {/* <tr>
-                    <td colSpan="2">Total a la Fecha</td>
-                    <td ></td>
-                    <td ></td>
-                    <td className="border-bottom-0"></td>
-                    <td ></td>
-                    <td ></td>
-                    <td className="border-bottom-0"></td>
-                    <td ></td>
-                    <td ></td>
-
-                    <td className="border-bottom-0 border-right-0"></td>
-                  </tr> */}
-                </tbody>
-              </table>
-              {
-                EstadoBtnEliminar === false?
-                <Button color="danger" onClick={ this.eliminarMesNoData }>Eliminar Ultimo Mes</Button>                  
-                :
-                <Button color="danger" onClick={ this.eliminarMes }>Eliminar Ultimo Mes</Button>
-              }
-
-
-              {
-                ConvertFormatStringNumber(this.state.ResultResta) === 0 ?
-                <Button color="success" onClick={this.enviarDatosApi} >Guardar datos</Button>  :"😒"   
-              }
-            </div>
-
-          </div>
+        </div>
+    
       </div>
     )
   }

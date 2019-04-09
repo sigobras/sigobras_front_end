@@ -53,6 +53,7 @@ class ValorizacionGeneral extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
+            // console.log('data val princiapl', res.data);
             if(res.data === "vacio"){
                 console.log("no hay datos en la base datos")
             }else{
