@@ -610,7 +610,7 @@ class CronogramaAvance extends Component{
                   DataCronoProgramadoApi.map((crono, IC)=>
                     <tr key={ IC } className={ crono.codigo ==="C"?"bg-danger": ""}>
                       <td>{ IC+1}</td>
-                      <td className="text-capitalize">{ crono.periodo }</td>
+                      <td className="text-capitalize">Corte - { crono.periodo } </td>
                       <td>
                         {
                           crono.codigo ==="C"?crono.programado_monto :
