@@ -151,7 +151,7 @@ class CorteObra extends Component {
     }
       
     CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial) {
-              
+              console.log("hhjhJ",actividad_avance_metrado)
       this.modalMetrar();
         this.setState({
             id_actividad: id_actividad,
@@ -161,7 +161,7 @@ class CorteObra extends Component {
             actividad_metrados_saldo: actividad_metrados_saldo,
             indexComp: indexComp,
             actividad_porcentaje: actividad_porcentaje,
-            actividad_avance_metrado: actividad_avance_metrado,
+            actividad_avance_metrado: ConvertFormatStringNumber(actividad_avance_metrado),
             metrado_actividad: metrado_actividad,
             viewIndex: viewIndex,
             parcial_actividad: parcial_actividad,
@@ -683,7 +683,7 @@ class CorteObra extends Component {
 
                 {/* <!-- MODAL PARA METRAR --> */}
                   
-                <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
+                <Modal isOpen={this.state.modal} toggle={this.modalMetrar} style={{ width: "398px" }} fade={false} backdrop="static">
                     <form onSubmit={this.EnviarMetrado }>
                     <ModalHeader toggle={this.modalMetrar} className="border-button">
                         <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
