@@ -62,6 +62,7 @@ class Obras extends Component{
 
         this.setState({items: DataFiltrado});
         // console.log('>>>>', DataFiltrado);
+        
     };
 
     render(){
@@ -93,6 +94,7 @@ class Obras extends Component{
                                 </thead>
                                 {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
                             </table>
+                            
                         </div>
                     </div>
                 </div>
