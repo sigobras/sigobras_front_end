@@ -60,7 +60,7 @@ class ModalListaPersonal extends Component {
     render() {
         const { DataPersonalObra } = this.state
         return (
-          <button className="btn btn-outline-info btn-sm mr-1" title="Galeria de Imagenes" onClick={this.ModalPersonal} ><FaUserFriends />
+          <button className="btn btn-outline-info btn-sm mr-1" title="Personal" onClick={this.ModalPersonal} ><FaUserFriends />
             
             <Modal isOpen={this.state.modalLisPers} fade={false} toggle={this.ModalPersonal} >
               <ModalHeader toggle={this.toggleModal}>PERSONAL TECNICO DE OBRA</ModalHeader>

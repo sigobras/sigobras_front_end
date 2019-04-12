@@ -219,7 +219,7 @@ class MetradosDiarios extends Component {
         // funciones  para cargar las imagenes
         const formData = new FormData();
         formData.append('foto', this.state.file);
-        formData.append('id_acceso',sessionStorage.getItem('idacceso'));
+        formData.append('accesos_id_acceso',sessionStorage.getItem('idacceso'));
         formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
         formData.append('Actividades_id_actividad',id_actividad);
         formData.append('valor',this.state.ValorMetrado);
@@ -257,7 +257,7 @@ class MetradosDiarios extends Component {
                 config
               )
               .then((res)=>{
-                  // console.log('return dattos', res.data.actividades)
+                  console.log('return dattos', res.data.actividades)
                   DataModificadoPartidas[indexPartida] = res.data.partida
                   DataModificadoActividades = res.data.actividades
           

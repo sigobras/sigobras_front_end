@@ -151,11 +151,11 @@ class ListaObras extends Component{
                         <td className="text-center"> 
                             <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
                         </td>
-                        <td style={{width: '20%'}}  className="text-center">
+                        <td style={{width: '12%'}}  className="text-center">
                             <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={()=> this.CollapseComponentes(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
                             <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={()=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button>
                             <ModalListaPersonal idobraSeleccionada={ Obras.id_ficha }/>
-                            <button className="btn btn-outline-primary btn-sm" title="Personal"><FaRegImages /> </button>
+                            {/* <button className="btn btn-outline-primary btn-sm" title="Galeria de Imagenes"><FaRegImages /> </button> */}
                         </td>
                     </tr>
                 

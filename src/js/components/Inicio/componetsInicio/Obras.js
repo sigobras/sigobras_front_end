@@ -28,16 +28,17 @@ class Obras extends Component{
             id_acceso:sessionStorage.getItem("idacceso")
         })
         .then((res)=>{
-            // console.log(res.data);
+            // console.table(res.data);
             this.setState({
                 DataRecorObra: res.data
             })
             if( sessionStorage.getItem("idobra") === null){
+
                 sessionStorage.setItem("idobra", res.data[0].id_ficha);
                 sessionStorage.setItem("estadoObra", res.data[0].estado_nombre);
                 sessionStorage.setItem("codigoObra", res.data[0].codigo);
             //    console.log('no seteado');  
-
+                return
             }
             
         })

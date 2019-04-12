@@ -7,9 +7,6 @@ import { UrlServer } from '../Utils/ServerUrlConfig'
 import LogoSigobras from '../../../images/sigobras-neon.jpg'
 import '../../../css/login.css'
 
-import SubirImagen from './SubirImagen'
-import PracticaImg from './PracticaImg'
-
 class Login extends Component {
   constructor(){
     super();
@@ -53,11 +50,13 @@ class Login extends Component {
           var resUsuario = res.data.usuario
           if(resUsuario !== undefined){
             if(resUsuario === this.state.user && this.state.pass.length > 0){
+              sessionStorage.setItem("idobra", res.data.id_ficha)
+              // sessionStorage.setItem("codigoObra", "");
+              
               sessionStorage.setItem("cargo", res.data.nombre_cargo);
               sessionStorage.setItem("nombre",  res.data.nombre_usuario);
               sessionStorage.setItem("idacceso", res.data.id_acceso);
               sessionStorage.setItem("usuario", res.data.usuario);
-              sessionStorage.setItem("idobra", res.data.id_ficha)
               
               // setTimeout(()=>{ 	
                     
