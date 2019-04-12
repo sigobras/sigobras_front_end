@@ -13,6 +13,12 @@
   .nav-tabs--left .nav-item + .nav-item {
     margin-top: 0.25rem;
   }
+
+  .nav-link {
+    display: block;
+    padding: .5rem 1rem;
+    cursor: pointer;
+  }
   .nav-tabs--left .nav-link {
     transition: border-color 0.125s ease-in;
     white-space: nowrap;

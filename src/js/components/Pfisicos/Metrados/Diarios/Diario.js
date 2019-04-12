@@ -4,7 +4,6 @@ import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import MetradosDiarios from './ComponentsDiarios/MetradosDiarios'
 import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
 
-
 class MDdiario extends Component {
   constructor(){
     super();
@@ -18,7 +17,6 @@ class MDdiario extends Component {
 
   CollapseCard(valor){
     let event = valor
-    
     this.setState({ collapse: this.state.collapse === Number(event) ? 121 : Number(event) });
   }
 

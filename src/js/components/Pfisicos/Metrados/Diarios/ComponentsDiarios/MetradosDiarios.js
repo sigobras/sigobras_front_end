@@ -14,7 +14,6 @@ import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber } from '../../../../Utils/Funciones'
 
 class MetradosDiarios extends Component {
-
     constructor(){
       super();
   
@@ -65,6 +64,8 @@ class MetradosDiarios extends Component {
         parcial:'',
         // cargar imagenes
         file: null,
+        UrlImagen:"",
+        SMSinputTypeImg: false,
         
         // funciones de nueva libreria
         dropdownOpen: false,
@@ -72,7 +73,9 @@ class MetradosDiarios extends Component {
         id_componente:'',
         indexPartida:0,
         OpcionMostrarMM:'',
-        mostrarIconos:false
+        mostrarIconos:false,
+
+
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -91,23 +94,23 @@ class MetradosDiarios extends Component {
       this.UpdatePrioridad = this.UpdatePrioridad.bind(this);
     }
     componentWillMount(){
-        document.title ="Metrados Diarios"
-        axios.post(`${UrlServer}/getComponentes`,{
-            id_ficha: sessionStorage.getItem('idobra')
-        })
-        .then((res)=>{
-            console.log('res>>', res.data);
-            
-            this.setState({
-              DataComponentes:res.data,
-              DataPartidas:res.data[0].partidas,
-              nombreComponente:res.data[0].nombre
-            })
-        })
-        .catch((error)=>{
-          toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
-          // console.error('algo salio mal verifique el',error);
-        })
+      document.title ="Metrados Diarios"
+      axios.post(`${UrlServer}/getComponentes`,{
+          id_ficha: sessionStorage.getItem('idobra')
+      })
+      .then((res)=>{
+          // console.log('res>>', res.data);
+          
+          this.setState({
+            DataComponentes:res.data,
+            DataPartidas:res.data[0].partidas,
+            nombreComponente:res.data[0].nombre
+          })
+      })
+      .catch((error)=>{
+        toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
+        // console.error('algo salio mal verifique el',error);
+      })
     }
 
     Tabs(tab, id_componente,  nombComp) {
@@ -138,9 +141,7 @@ class MetradosDiarios extends Component {
           // console.error('algo salio mal verifique el',error);
       })
     }
-
-
-      
+ 
     CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo) {
               
       console.log('porcentaje_negatividad', porcentaje_negativo)
@@ -180,10 +181,28 @@ class MetradosDiarios extends Component {
     }
 
     onChangeImagen(e) {
-      // console.log('subir imagen', e.target.files);
-      
-      this.setState({file:e.target.files[0]});
-    }
+       var inputValueImg = e.target.files[0]
+
+      if( inputValueImg.type === "image/jpeg" || inputValueImg.type === "image/png" || inputValueImg.type === "image/jpg"  ){
+          console.log('subir imagen', inputValueImg);
+          var url = URL.createObjectURL(inputValueImg)
+          console.log("url", url);
+          
+          this.setState({ 
+            file: inputValueImg,
+            UrlImagen:url,
+            SMSinputTypeImg:false
+          });
+          return
+        }
+
+        this.setState({
+          SMSinputTypeImg:true,
+          UrlImagen:"",
+          file:null
+        })
+      }
+
 
     EnviarMetrado(e){
 
@@ -449,7 +468,7 @@ class MetradosDiarios extends Component {
     }
 
     render() {
-        var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM } = this.state
+        var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg } = this.state
 
         return (
             <div>
@@ -498,7 +517,7 @@ class MetradosDiarios extends Component {
                             <th>METRADO</th>
                             <th>P / U S/.</th>
                             <th>P / P S/.</th>
-                            <th width="18%">BARRA DE PROGRESO</th>
+                            <th width="20%">BARRA DE PROGRESO</th>
                           </tr>
                         </thead>
 
@@ -640,68 +659,69 @@ class MetradosDiarios extends Component {
                                           </tr>
                                         </thead>
                                         <tbody>
-                                          {DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
-                                            DataActividades.map((actividades, indexA)=>
-                                            <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
-                                              <td>{ actividades.nombre_actividad }</td>
-                                              <td>{ actividades.veces_actividad }</td>
-                                              <td>{ actividades.largo_actividad }</td>
-                                              <td>{ actividades.ancho_actividad }</td>
-                                              <td>{ actividades.alto_actividad }</td>
-                                              <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
-                                              <td>{ actividades.costo_unitario }</td>
-                                              <td>{ actividades.parcial_actividad }</td>
-                                              <td className="small">
-                                                {
-                                                  Number(actividades.parcial_actividad) <= 0 ?'':
-                                                  actividades.actividad_tipo === "titulo"?"":
-                                                  <div>
-                                                      <div className="clearfix">
-                                                        <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
-                                                        <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
+                                          {
+                                            DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
+                                              DataActividades.map((actividades, indexA)=>
+                                              <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
+                                                <td>{ actividades.nombre_actividad }</td>
+                                                <td>{ actividades.veces_actividad }</td>
+                                                <td>{ actividades.largo_actividad }</td>
+                                                <td>{ actividades.ancho_actividad }</td>
+                                                <td>{ actividades.alto_actividad }</td>
+                                                <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
+                                                <td>{ actividades.costo_unitario }</td>
+                                                <td>{ actividades.parcial_actividad }</td>
+                                                <td className="small">
+                                                  {
+                                                    Number(actividades.parcial_actividad) <= 0 ?'':
+                                                    actividades.actividad_tipo === "titulo"?"":
+                                                    <div>
+                                                        <div className="clearfix">
+                                                          <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
+                                                          <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
+                                                        </div>
+
+                                                        <div style={{
+                                                          height: '2px',
+                                                          backgroundColor: '#c3bbbb',
+                                                          position: 'relative'
+                                                          }}
+
+                                                        >
+                                                        <div
+                                                          style={{
+                                                            width: `${actividades.actividad_porcentaje}%`,
+                                                            height: '100%',
+                                                            backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
+                                                              : actividades.actividad_porcentaje > 50 ? '#ffbf00'
+                                                              :  '#ff2e00',
+                                                            transition: 'all .9s ease-in',
+                                                            position: 'absolute'
+                                                          }}
+                                                      />
                                                       </div>
-
-                                                      <div style={{
-                                                        height: '2px',
-                                                        backgroundColor: '#c3bbbb',
-                                                        position: 'relative'
-                                                        }}
-
-                                                      >
-                                                      <div
-                                                        style={{
-                                                          width: `${actividades.actividad_porcentaje}%`,
-                                                          height: '100%',
-                                                          backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
-                                                            : actividades.actividad_porcentaje > 50 ? '#ffbf00'
-                                                            :  '#ff2e00',
-                                                          transition: 'all .9s ease-in',
-                                                          position: 'absolute'
-                                                        }}
-                                                    />
+                                                      <div className="clearfix">
+                                                        <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
+                                                        <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
+                                                      </div>
                                                     </div>
-                                                    <div className="clearfix">
-                                                      <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
-                                                      <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
-                                                    </div>
-                                                  </div>
-                                                }
-
-                                              </td>
-                                              <td className="text-center">
-                                                {actividades.actividad_tipo === "titulo"? "":
-                                                  
-                                                  <div>
-                                                    { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
-                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
-                                                        <FaPlus size={ 20 } /> 
-                                                      </button>
-                                                    }
-                                                  </div>
                                                   }
-                                              </td>
-                                            </tr>
-                                          )
+
+                                                </td>
+                                                <td className="text-center">
+                                                  {actividades.actividad_tipo === "titulo"? "":
+                                                    
+                                                    <div>
+                                                      { actividades.actividad_metrados_saldo <= 0 ? <FaCheck className="text-success" size={ 18 } /> : 
+                                                        <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                          <FaPlus size={ 20 } /> 
+                                                        </button>
+                                                      }
+                                                    </div>
+                                                    }
+                                                </td>
+                                              </tr>
+                                            )
                                           }
                                         </tbody>
                                       </table>
@@ -717,7 +737,6 @@ class MetradosDiarios extends Component {
                     </CardBody>
                   </Card>
               
-
                   {/* chat de partidas y mas */}
                   <div className="chatContainer">
                     <div className="chatHeader">
@@ -739,6 +758,7 @@ class MetradosDiarios extends Component {
                         </div> 
                       </div>
                     </div>
+
                     <div className="chatBody">
                       <div className="media mt-1">
                         <img src="http://localhost:180/images/src/images/logoSigobras.png" className="align-self-end rounded-circle mr-2 img-fluid" style={{width:"50px"}} />
@@ -756,12 +776,7 @@ class MetradosDiarios extends Component {
                     </div>
                   </div>
                   
-
                 </Card>
-
-
-
-
 
 
                 {/* <!-- MODAL PARA METRAR --> */}
@@ -805,38 +820,48 @@ class MetradosDiarios extends Component {
                           
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="comment">DESCRIPCION:</label>
-                            <DebounceInput
-                              cols="40"
-                              rows="1"
-                              element="textarea"
-                              minLength={0}
-                              debounceTimeout={debounceTimeout}
-                              onChange={e => this.setState({DescripcionMetrado: e.target.value})}
-                              className="form-control"
-                            />
+                        <div className="form-group mb-1">
+                          <label htmlFor="comment">DESCRIPCION:</label>
+                          <DebounceInput
+                            cols="40"
+                            rows="1"
+                            element="textarea"
+                            minLength={0}
+                            debounceTimeout={debounceTimeout}
+                            onChange={e => this.setState({DescripcionMetrado: e.target.value})}
+                            className="form-control"
+                          />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="comment">OBSERVACIÓN:</label>
-                            <DebounceInput
-                              cols="40"
-                              rows="1"
-                              element="textarea"
-                              minLength={0}
-                              debounceTimeout={debounceTimeout}
-                              onChange={e => this.setState({ObservacionMetrado: e.target.value})}
-                              className="form-control"
-                            />
+                        <div className="form-group mb-0">
+                          <label htmlFor="comment">OBSERVACIÓN:</label>
+                          <DebounceInput
+                            cols="40"
+                            rows="1"
+                            element="textarea"
+                            minLength={0}
+                            debounceTimeout={debounceTimeout}
+                            onChange={e => this.setState({ObservacionMetrado: e.target.value})}
+                            className="form-control"
+                          />
                         </div>
+                        <span className="small">% {this.state.porcentaje_negatividad}</span>
                         
+                        {
+                          this.state.UrlImagen.length <= 0 
+                          ?"":
+                          <div className="imgDelete">
+                            <button className="imgBtn" onClick={()=>this.setState({UrlImagen:""})}>X</button>
+                            <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
+                          </div>
+                        }
+                        <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
 
                         <div className="custom-file">
-                            <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } name="myImage"/>
-                            <label className="custom-file-label" htmlFor="customFile">FOTO</label>
+                          <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } name="myImage"/>
+                          <label className="custom-file-label" htmlFor="customFile">FOTO</label>
                         </div>
-                        % {this.state.porcentaje_negatividad}
+
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                       <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>

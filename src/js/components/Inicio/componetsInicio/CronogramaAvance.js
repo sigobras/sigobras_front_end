@@ -3,6 +3,8 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import axios from 'axios'
 import { toast } from "react-toastify";
+import { MdSave } from "react-icons/md";
+
 import { Button, InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col, FormGroup, Label, CustomInput } from 'reactstrap';
 
 import { UrlServer } from '../../Utils/ServerUrlConfig'
@@ -27,6 +29,8 @@ class CronogramaAvance extends Component {
       EstadoBtnEliminar: true,
       EstadoInputprogramado: false,
       EstadoInputFinanciero: false,
+      inputCorteFinanciero:"",
+      idInputApi:""
     };
 
     this.GeneraFechasSegunOrden = this.GeneraFechasSegunOrden.bind(this);
@@ -36,6 +40,8 @@ class CronogramaAvance extends Component {
     this.eliminarMes = this.eliminarMes.bind(this);
     this.eliminarMesNoData = this.eliminarMesNoData.bind(this);
     this.EstadoInputprogramado = this.EstadoInputprogramado.bind(this);
+    this.GuardarApiFinanciero = this.GuardarApiFinanciero.bind(this);
+    this.capturaInputCorteFinanciero = this.capturaInputCorteFinanciero.bind(this);
   }
 
   componentWillMount() {
@@ -46,6 +52,9 @@ class CronogramaAvance extends Component {
     )
       .then((res) => {
         console.log("res programado", res.data);
+
+        
+
         var Inputs = []
         var SumaInputs = []
         var totalSumaInpust = 0
@@ -65,7 +74,6 @@ class CronogramaAvance extends Component {
               ]
             )
             // }
-
           })
 
 
@@ -501,11 +509,104 @@ class CronogramaAvance extends Component {
 
   }
 
+  capturaInputCorteFinanciero(e, id_historialEstado){
+
+      this.setState({
+        inputCorteFinanciero:e.target.value,
+        idInputApi:id_historialEstado
+      })
+    // console.log("e", e.target.value, " id_historialEstado ", id_historialEstado)
+  }
+
+  GuardarApiFinanciero(){
+    
+    axios.put(`${UrlServer}/postFinancieroCorte`,
+      {
+        "monto":this.state.inputCorteFinanciero,
+        "id_historialEstado":this.state.idInputApi,
+        "id_ficha":this.props.fichaId
+      }
+    )
+    .then((res)=>{
+      console.log("res envio de financiero", res); 
+
+      var Inputs = []
+      var SumaInputs = []
+      var totalSumaInpust = 0
+      if (res.data.data.length > 0) {
+
+        res.data.data.forEach((alfo, i) => {
+
+          // console.log("data", alfo)
+          // if(alfo.codigo !== "C"){
+          Inputs.push(
+            [
+              this.props.fichaId,
+              alfo.fecha,
+              ConvertFormatStringNumber(alfo.programado_monto),
+              ConvertFormatStringNumber(alfo.financiero_monto),
+              alfo.codigo
+            ]
+          )
+          // }
+        })
+
+
+        Inputs.forEach((data) => {
+          // console.log("data", data[4])
+          if (data[4] !== "C") {
+            SumaInputs.push(data[2])
+          }
+
+        }
+
+        )
+
+        totalSumaInpust = SumaInputs.reduce(((a, b) => { return a + b; }));
+        console.log("totalSumaInpust", totalSumaInpust)
+
+      }
+
+      var costoDirecto = ConvertFormatStringNumber(this.props.costoDirecto)
+      var avanceAcumulado = res.data.avance_Acumulado
+      var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
+      saldoTotalCostoDirecto = saldoTotalCostoDirecto - totalSumaInpust
+
+      saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
+
+      console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
+
+      // if(saldoTotalCostoDirecto !== NaN){
+      //   saldoTotalCostoDirecto = costoDirecto              
+      // }
+      console.log("inputs", Inputs);
+
+      this.setState({
+        DataCronoGeneralApi: res.data,
+        fechaActualApi: res.data.fechaActual,
+        fecha_desde: res.data.fecha_final,
+        DataCronoProgramadoApi: res.data.data,
+        EnviarDatos: Inputs,
+        fechaLimiteAnioMes: res.data.fecha_final.slice(0, 7),
+        avanceAcumulado: ConvertFormatStringNumber(res.data.avance_Acumulado),
+        ResultResta: saldoTotalCostoDirecto.toLocaleString("es-PE")
+
+      })
+
+      toast.success("✔ éxito!!! ")     
+    })
+    .catch((err)=>{
+      console.error("error", err);
+      toast.error("error ❌")
+    })
+  }
+
   render() {
     var TotalCostoDirecto = ConvertFormatStringNumber(this.props.costoDirecto) - ConvertFormatStringNumber(this.state.avanceAcumulado)
     var TotalCostoDirectoSumado = TotalCostoDirecto
     const { DataCronoGeneralApi, DataCronoProgramadoApi, EstadoBtnEliminar } = this.state
 
+    
     const options = {
       chart: {
         type: 'line',
@@ -575,6 +676,7 @@ class CronogramaAvance extends Component {
             />
 
             <Row className="mr-1">
+
               <Col sm="6">
                 <InputGroup size="sm">
                   <InputGroupAddon addonType="prepend">De:</InputGroupAddon>
@@ -585,12 +687,15 @@ class CronogramaAvance extends Component {
                   <Button color="info" onClick={this.GeneraFechasSegunOrden} >CREAR </Button>
                 </InputGroup>
               </Col>
+
               <Col sm="1">
                 <label>{this.state.DataCronoProgramadoApi.length} MESES  </label>
               </Col>
+
               <Col sm="2">
                 <label>COSTO DIRECTO S/. {TotalCostoDirectoSumado.toLocaleString("es-PE")}</label>
               </Col>
+
               <Col sm="3">
                 <FormGroup>
                   <CustomInput type="switch" id="histograma" name="histograma" label="Programado" onChange={this.EstadoInputprogramado} inline value="Programado" />
@@ -631,21 +736,25 @@ class CronogramaAvance extends Component {
               </thead>
               <tbody>
                 {
-                  DataCronoProgramadoApi === undefined ? <tr><td colSpan="11">CARGANDO</td></tr> :
+                  DataCronoProgramadoApi === undefined ? 
+                    <tr>
+                      <td colSpan="11">CARGANDO</td>
+                    </tr> :
                     DataCronoProgramadoApi.map((crono, IC) =>
                       <tr key={IC} className={crono.codigo === "C" ? "bg-danger" : ""}>
                         <td>{IC + 1}</td>
                         <td className="text-capitalize"> {crono.codigo === "C" ? `Corte - ${crono.periodo}` : crono.periodo} </td>
                         <td>
                           {
-                            crono.codigo === "C" ? crono.programado_monto :
+                            crono.codigo === "C" ? 
+                              crono.programado_monto :
                               <div>
                                 <InputGroup size="sm">
                                   <Input disabled={this.state.EstadoInputprogramado !== true} placeholder={crono.programado_monto} onBlur={e => this.capturaInputsProgramado(e, IC)} type="text" />
                                 </InputGroup>
 
                                 <label className={ConvertFormatStringNumber(this.state.ResultResta) === 0 ? "text-success small mb-0" : "text-warning small mb-0"}>
-                                  S/. {this.state.ResultResta}
+                                  S/. { Number(this.state.ResultResta).toLocaleString("es-PE") }
                                 </label>
                               </div>
                           }
@@ -658,12 +767,21 @@ class CronogramaAvance extends Component {
                         <td>{crono.fisico_acumulado}</td>
                         <td>
                           {
-                            crono.codigo === "C" ? crono.financiero_monto :
-                              <div>
+                            crono.codigo === "C" 
+                            ? 
+                            
+                              <InputGroup size="sm">
+                                <Input placeholder={ crono.financiero_monto } disabled={this.state.EstadoInputFinanciero !== true} onChange={ e=> this.capturaInputCorteFinanciero(e, crono.id_historialEstado) } />
+                                <InputGroupAddon addonType="append">
+                                  <Button color="primary" disabled={this.state.EstadoInputFinanciero !== true} onClick={ this.GuardarApiFinanciero }>
+                                    <MdSave />
+                                  </Button>                                
+                                </InputGroupAddon>
+                              </InputGroup>
+                            :
                                 <InputGroup size="sm">
                                   <Input disabled={this.state.EstadoInputFinanciero !== true} placeholder={crono.financiero_monto} onBlur={e => this.capturaInputsFinanciero(e, IC)} type="text" />
                                 </InputGroup>
-                              </div>
                           }
                         </td>
                         <td>{crono.programado_porcentaje}</td>

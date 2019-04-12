@@ -80,7 +80,10 @@ class AppAng extends Component {
             id_acceso: sessionStorage.getItem('idacceso')
         })
         .then((res)=>{
+            
             // console.log('data >>>',res.data)
+
+
             if(res.data === 'null'){
                 this.setState({
                     DataMenus:[]
@@ -128,6 +131,9 @@ class AppAng extends Component {
 
     render() {
         var { navbarExplandRight, isFull, DataObra, DataMenus, collapse } = this.state
+
+
+
         return (
            
             // <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
@@ -174,7 +180,7 @@ class AppAng extends Component {
                                                 
                                                 { DataMenus.length === 0  ? <label className="text-center text-white"> <Spinner color="primary" type="grow" /></label>: DataMenus.map((menus, index)=>    
                                                     <li className="lii" key={ index }>
-                                                        <a href="#" className="nav-link" onClick={ this.CollapseMenu } data-event={ index } activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index? <FaChevronUp />:<FaChevronRight /> }</div></a>
+                                                        <span className="nav-link" onClick={ this.CollapseMenu } data-event={ index } activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index? <FaChevronUp />:<FaChevronRight /> }</div></span>
                                                         <Collapse isOpen={collapse === index}>
                                                             <ul className="nav flex-column ull">
                                                                 {menus.submenus.map((subMenu, IndexSub)=>
@@ -245,16 +251,11 @@ class AppAng extends Component {
                                         </div>
             
                                         <div className="px-1 scroll_contenido mt-2">
+                                            
+
+                                        <Switch>
                                             <Route exact path="/Inicio" component={Inicio} />
 
-                                        {/* {DataMenus.map((menus, indesMenu)=>
-                                            menus.submenus.map((submenus, indexSubmenus)=>
-                                            <div key={ indexSubmenus }>
-                                                <Route key={submenus.ruta} path={submenus.ruta} component={ MDdiario } />
-                                            </div>
-                                            )
-                                        )} */}
-                                        <Switch>
                                             <Route path="/MDdiario" component={ MDdiario } />
                                             <Route path="/MDHistorial" component={ MDHistorial } />
 

@@ -33,7 +33,7 @@ module.exports = {
         use: [{
           loader: "file-loader",
           options: {
-            name: '[path][name].[ext]',
+            // name: '[path][name].[ext]',
             outputPath: 'images'
           }
         }]
@@ -43,7 +43,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "public"),
     filename: 'main.js',
-    publicPath: '/',
+    publicPath: '',
   },
   devServer: {
     host: "0.0.0.0",

@@ -62,7 +62,7 @@ class ModalListaPersonal extends Component {
         return (
           <button className="btn btn-outline-info btn-sm mr-1" title="Galeria de Imagenes" onClick={this.ModalPersonal} ><FaUserFriends />
             
-            <Modal isOpen={this.state.modalLisPers} fade={false} toggle={this.ModalPersonal} backdrop="static">
+            <Modal isOpen={this.state.modalLisPers} fade={false} toggle={this.ModalPersonal} >
               <ModalHeader toggle={this.toggleModal}>PERSONAL TECNICO DE OBRA</ModalHeader>
               <ModalBody>
                 <div className="card">

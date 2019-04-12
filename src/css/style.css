@@ -442,3 +442,22 @@ table.table thead th {
   top: 0px;
   background: #314c65;
 }
+
+
+/* hover imagen btn */
+
+.imgDelete{
+  transition: auto;
+}
+
+.imgBtn {
+  display: none;
+}
+.imgDelete:hover .imgBtn{
+  display: block;
+  background: #1f6eb38c;
+  position: absolute;
+  right: 16px;
+  border-radius: 12px;
+  color: #fffbfb;
+}
