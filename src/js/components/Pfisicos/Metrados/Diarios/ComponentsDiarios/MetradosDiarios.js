@@ -92,6 +92,7 @@ class MetradosDiarios extends Component {
       this.CollapseItem = this.CollapseItem.bind(this);
       this.Prioridad = this.Prioridad.bind(this);
       this.UpdatePrioridad = this.UpdatePrioridad.bind(this);
+      this.clearImg = this.clearImg.bind(this);
     }
     componentWillMount(){
       document.title ="Metrados Diarios"
@@ -181,6 +182,7 @@ class MetradosDiarios extends Component {
     }
 
     onChangeImagen(e) {
+
        var inputValueImg = e.target.files[0]
 
       if( inputValueImg.type === "image/jpeg" || inputValueImg.type === "image/png" || inputValueImg.type === "image/jpg"  ){
@@ -201,7 +203,7 @@ class MetradosDiarios extends Component {
           UrlImagen:"",
           file:null
         })
-      }
+    }
 
 
     EnviarMetrado(e){
@@ -465,6 +467,11 @@ class MetradosDiarios extends Component {
       .catch((err)=>{
         console.error("error", err);
       })
+    }
+
+    clearImg(){
+      this.setState({UrlImagen:""}) 
+      document.getElementById("myImage").value = "";
     }
 
     render() {
@@ -846,19 +853,19 @@ class MetradosDiarios extends Component {
                           />
                         </div>
                         <span className="small">% {this.state.porcentaje_negatividad}</span>
-                        
+
                         {
                           this.state.UrlImagen.length <= 0 
                           ?"":
                           <div className="imgDelete">
-                            <button className="imgBtn" onClick={()=>this.setState({UrlImagen:""})}>X</button>
+                            <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
                             <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
                           </div>
                         }
                         <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
 
                         <div className="custom-file">
-                          <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } name="myImage"/>
+                          <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } id="myImage"/>
                           <label className="custom-file-label" htmlFor="customFile">FOTO</label>
                         </div>
 

@@ -4,7 +4,6 @@ import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody,
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
-import Cubito from '../../../../../images/loaderXS.gif';
 
 class MDHistorial extends Component {
 

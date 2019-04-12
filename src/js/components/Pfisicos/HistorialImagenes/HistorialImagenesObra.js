@@ -19,7 +19,8 @@ class HistorialImagenesObra extends Component {
       activeTab: '0',
       // capturamos el nombre del componete
       nombreComponente:'',
-      collapse:-1
+      collapse:-1,
+      SMSHistImgApi:false
     };
     this.TabsComponentes = this.TabsComponentes.bind(this);
     this.CollapseItem = this.CollapseItem.bind(this);
@@ -35,13 +36,21 @@ class HistorialImagenesObra extends Component {
     )
     .then((res)=>{
       // console.log("res componentes imagenes", res.data)
+      if (res.data !== "vacio") {
+        this.setState({
+          DataComponentesApi:res.data,
+          DataPartidasApi:res.data[0].partidas,
+
+          nombreComponente:res.data[0].nombre
+
+        })
+        return
+      }
+      
       this.setState({
-        DataComponentesApi:res.data,
-        DataPartidasApi:res.data[0].partidas,
-
-        nombreComponente:res.data[0].nombre
-
+        SMSHistImgApi:true
       })
+      
     })
     .catch((err)=>{
       console.error("error al tratar de llamar al api" ,err)
@@ -127,68 +136,72 @@ class HistorialImagenesObra extends Component {
     alert("hola")
   }
   render() {
-    const { DataComponentesApi, nombreComponente, DataPartidasApi, DataImagenesApi, collapse } = this.state
+    const { DataComponentesApi, nombreComponente, DataPartidasApi, DataImagenesApi, collapse, SMSHistImgApi } = this.state
 
     return (
       <div>
-        <Card>
-          <Nav tabs>
-            {
-              DataComponentesApi.map((Comp, IC)=>
-                <NavItem key={ IC}>
-                  <NavLink className={classnames({ active: this.state.activeTab === IC.toString() })} onClick={() => { this.TabsComponentes(IC.toString(), Comp.id_componente, Comp.nombre) }}>
-                    C- { Comp.numero }
-                  </NavLink>
-                </NavItem>
-              )
-              
-            }
-              
-          </Nav>
+        {
+          SMSHistImgApi === true? <div className="text-center text-danger"> NO hay datos que mostar </div>:
+            <Card>
+              <Nav tabs>
+                {
+                  DataComponentesApi.map((Comp, IC)=>
+                    <NavItem key={ IC}>
+                      <NavLink className={classnames({ active: this.state.activeTab === IC.toString() })} onClick={() => { this.TabsComponentes(IC.toString(), Comp.id_componente, Comp.nombre) }}>
+                        C- { Comp.numero }
+                      </NavLink>
+                    </NavItem>
+                  )
+                  
+                }
+                  
+              </Nav>
 
-        <Card className="m-1">
-          <CardHeader>
-            { nombreComponente }
-          </CardHeader>
-          <CardBody>
-            <table className="table table-sm ">
-              <thead >
-                <tr>
-                  <th>ITEM</th>
-                  <th>DESCRICION</th>
-                  <th>CANT IMG</th>
-                  <th>AVANCE</th>
-                </tr>
-              </thead>
-              {
-                DataPartidasApi.map((partida, IP)=>
-                  <tbody key={ IP }>
-                    <tr className={ partida.tipo === "titulo" ? "font-weight-bold":  collapse === IP? "font-weight-light resplandPartida icoVer": "font-weight-light icoVer" }>
-                      <td className={ partida.tipo === "titulo" ? '': collapse === IP? "tdData1": "tdData"} onClick={()=> partida.tipo === "titulo" ?  this.CollapseItem(-1, -1 ): this.CollapseItem(IP, partida.id_partida )} data-event={IP} >{ partida.item }</td>
-                      <td>{ partida.descripcion }</td>
-                      <td>{ partida.numero_imagenes }</td>
-                      <td>{ partida.porcentaje_avance }
-                        <div className="aprecerIcon">
-                          <div className="iconoTr" onClick={ this.primeraImagen }><MdImage size={ 20 } /></div>
-                          <div className="iconoTr"><MdBrokenImage size={ 20 } /></div>
-                        </div>
-                      </td>                      
+            <Card className="m-1">
+              <CardHeader>
+                { nombreComponente }
+              </CardHeader>
+              <CardBody>
+                <table className="table table-sm ">
+                  <thead >
+                    <tr>
+                      <th>ITEM</th>
+                      <th>DESCRICION</th>
+                      <th>CANT IMG</th>
+                      <th>AVANCE</th>
                     </tr>
-                    <tr className={ collapse === IP? "resplandPartidabottom": "d-none"  }>
-                      <td colSpan="5">
-                        <Collapse isOpen={collapse === IP}>
-                          <Gallery images={DataImagenesApi}/>
-                        </Collapse>
-                      </td>
-                    </tr>
-                  </tbody>
-                )
-              }
-                
-            </table>
-          </CardBody>
-        </Card>
-        </Card>
+                  </thead>
+                  {
+                    DataPartidasApi.map((partida, IP)=>
+                      <tbody key={ IP }>
+                        <tr className={ partida.tipo === "titulo" ? "font-weight-bold":  collapse === IP? "font-weight-light resplandPartida icoVer": "font-weight-light icoVer" }>
+                          <td className={ partida.tipo === "titulo" ? '': collapse === IP? "tdData1": "tdData"} onClick={()=> partida.tipo === "titulo" ?  this.CollapseItem(-1, -1 ): this.CollapseItem(IP, partida.id_partida )} data-event={IP} >{ partida.item }</td>
+                          <td>{ partida.descripcion }</td>
+                          <td>{ partida.numero_imagenes }</td>
+                          <td>{ partida.porcentaje_avance }
+                            <div className="aprecerIcon">
+                              <div className="iconoTr" onClick={ this.primeraImagen }><MdImage size={ 20 } /></div>
+                              <div className="iconoTr"><MdBrokenImage size={ 20 } /></div>
+                            </div>
+                          </td>                      
+                        </tr>
+                        <tr className={ collapse === IP? "resplandPartidabottom": "d-none"  }>
+                          <td colSpan="5">
+                            <Collapse isOpen={collapse === IP}>
+                              <Gallery images={DataImagenesApi}/>
+                            </Collapse>
+                          </td>
+                        </tr>
+                      </tbody>
+                    )
+                  }
+                    
+                </table>
+              </CardBody>
+            </Card>
+            </Card>
+          
+        }
       </div>
     );
   }
