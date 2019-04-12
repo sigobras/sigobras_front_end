@@ -82,7 +82,6 @@ class CronogramaAvance extends Component {
             if (data[4] !== "C") {
               SumaInputs.push(data[2])
             }
-
           }
 
           )
@@ -721,7 +720,7 @@ class CronogramaAvance extends Component {
                 </tr>
 
                 <tr className="text-center" >
-                  <th>Nº de informe</th>
+                  <th>Nº</th>
                   <th>Mes del informe</th>
                   <th>Monto S/.</th>
                   <th>% Ejecucion programada</th>
@@ -742,8 +741,8 @@ class CronogramaAvance extends Component {
                     </tr> :
                     DataCronoProgramadoApi.map((crono, IC) =>
                       <tr key={IC} className={crono.codigo === "C" ? "bg-danger" : ""}>
-                        <td>{IC + 1}</td>
-                        <td className="text-capitalize"> {crono.codigo === "C" ? `Corte - ${crono.periodo}` : crono.periodo} </td>
+                        <td>{ IC === 0 ? "": IC }</td>
+                        <td className="text-capitalize"> { crono.periodo } </td>
                         <td>
                           {
                             crono.codigo === "C" ? 
@@ -759,12 +758,12 @@ class CronogramaAvance extends Component {
                               </div>
                           }
                         </td>
-                        <td>{crono.programado_porcentaje}</td>
-                        <td>{crono.programado_acumulado}</td>
+                        <td className="text-right">{crono.programado_porcentaje}</td>
+                        <td className="text-right">{crono.programado_acumulado}</td>
 
-                        <td>{crono.fisico_monto}</td>
-                        <td>{crono.fisico_porcentaje}</td>
-                        <td>{crono.fisico_acumulado}</td>
+                        <td className="text-right">{crono.fisico_monto}</td>
+                        <td className="text-right">{crono.fisico_porcentaje}</td>
+                        <td className="text-right">{crono.fisico_acumulado}</td>
                         <td>
                           {
                             crono.codigo === "C" 
@@ -784,26 +783,28 @@ class CronogramaAvance extends Component {
                                 </InputGroup>
                           }
                         </td>
-                        <td>{crono.programado_porcentaje}</td>
-                        <td>{crono.programado_acumulado}</td>
+                        <td className="text-right">{crono.programado_porcentaje}</td>
+                        <td className="text-right">{crono.programado_acumulado}</td>
                       </tr>
                     )
                 }
 
 
-                {/* <tr>
+                <tr>
                   <td colSpan="2">Total a la Fecha</td>
-                  <td ></td>
-                  <td ></td>
+                  <td className="text-right">S/. { DataCronoGeneralApi.programado_monto_total }</td>
+                  <td className="text-right">{ DataCronoGeneralApi.programado_porcentaje_total} %</td>
                   <td className="border-bottom-0"></td>
-                  <td ></td>
-                  <td ></td>
+                  
+                  <td className="text-right">S/. { DataCronoGeneralApi.fisico_monto_total }</td>
+                  <td className="text-right">{ DataCronoGeneralApi.fisico_porcentaje_total } %</td>
                   <td className="border-bottom-0"></td>
-                  <td ></td>
-                  <td ></td>
 
+                  <td className="text-right">S/. { DataCronoGeneralApi.financiero_monto_total }</td>
+                  <td className="text-right">{ DataCronoGeneralApi.financiero_porcentaje_total }%</td>
                   <td className="border-bottom-0 border-right-0"></td>
-                </tr> */}
+
+                </tr>
               </tbody>
             </table>
             {

@@ -218,12 +218,20 @@ class MetradosDiarios extends Component {
 
         // funciones  para cargar las imagenes
         const formData = new FormData();
-        formData.append('foto',this.state.file);
+        formData.append('foto', this.state.file);
         formData.append('id_acceso',sessionStorage.getItem('idacceso'));
-        formData.append('id_actividad',id_actividad);
         formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
-        formData.append('id_ficha', sessionStorage.getItem('idobra'))
+        formData.append('Actividades_id_actividad',id_actividad);
+        formData.append('valor',this.state.ValorMetrado);
+        formData.append('descripcion',DescripcionMetrado);
+        formData.append('observacion',ObservacionMetrado);
 
+        // formData.append('id_ficha', sessionStorage.getItem('idobra'))
+
+
+
+
+        
 
         const config = {
             headers: {
@@ -244,13 +252,10 @@ class MetradosDiarios extends Component {
               })
 
               // ENVIO DE DATOS NORMAL SIN IMAGEN
-              axios.post(`${UrlServer}/avanceActividad`,{
-                  "Actividades_id_actividad":id_actividad,
-                  "valor":this.state.ValorMetrado,
-                  "descripcion":DescripcionMetrado,
-                  "observacion":ObservacionMetrado,
-                  "id_ficha":sessionStorage.getItem('idobra')
-              })
+              axios.post(`${UrlServer}/avanceActividad`,
+                formData,
+                config
+              )
               .then((res)=>{
                   // console.log('return dattos', res.data.actividades)
                   DataModificadoPartidas[indexPartida] = res.data.partida
@@ -263,6 +268,7 @@ class MetradosDiarios extends Component {
                     ValorMetrado:"",
                     DescripcionMetrado:"",
                     ObservacionMetrado:"",
+                    file:null
 
                   })
                   toast.success('Exito! Metrado ingresado');
@@ -272,27 +278,24 @@ class MetradosDiarios extends Component {
                   // console.error('algo salio mal al consultar al servidor ', error)
               })
 
-              // ENVIO DE DATOS CON IMAGEN A OTRA API
-                if(file !== null ){
-                  axios.post(`${UrlServer}/imagenesActividad`,
-          
-                  formData,
-                  config
-                  )
-                  .then((res) => {
-                      console.log('res  img', res)
-                      // alert("archivo enviado con exito ");
-                      this.setState({
-                        file:null
-                      })
-                  })
-                  .catch((err) => {
-                      console.error('ufff no envia al api ❌', err);
-                      
-                  });
-                }
-                
-
+              // // ENVIO DE DATOS CON IMAGEN A OTRA API
+              // if(file !== null ){
+              //   axios.post(`${UrlServer}/imagenesActividad`,
+        
+              //   formData,
+              //   config
+              //   )
+              //   .then((res) => {
+              //       console.log('res  img', res)
+              //       // alert("archivo enviado con exito ");
+              //       this.setState({
+              //         file:null
+              //       })
+              //   })
+              //   .catch((err) => {
+              //       console.error('ufff no envia al api ❌', err);
+              //   });
+              // }
             }
         }
     }
