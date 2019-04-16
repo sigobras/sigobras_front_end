@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings } from 'react-icons/md';
 
 import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
 import classnames from 'classnames';
@@ -471,8 +471,8 @@ class MetradosDiarios extends Component {
             DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
               if(BuscaPartida === 101){
                 return(filtrado.porcentaje <= 100);
-              }else if(BuscaPartida === 99 && filtrado.tipo !== "titulo" ) {
-                return( filtrado.porcentaje <= 99);
+              }else if(BuscaPartida === 99 && filtrado.tipo !== "titulo" && filtrado.porcentaje !== 0 ) {
+                return( filtrado.porcentaje <= 99 );
               }else{
                 return filtrado.porcentaje === BuscaPartida
               }
@@ -676,7 +676,7 @@ class MetradosDiarios extends Component {
                                             <th>S/. P / U </th>
                                             <th>S/. P / P</th>
                                             <th>ACTIVIDADES SALDOS</th>
-                                            <th>OPCIONES</th>
+                                            <th><MdSettings /></th>
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -800,97 +800,95 @@ class MetradosDiarios extends Component {
                 </Card>
 
 
-                {/* <!-- MODAL PARA METRAR --> */}
-                  
+                {/* <!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
                 <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
-                    <form onSubmit={this.EnviarMetrado }>
+                  <form onSubmit={this.EnviarMetrado }>
                     <ModalHeader toggle={this.modalMetrar} className="border-button">
                         <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
                     </ModalHeader>
                     <ModalBody>
-                        <label className="text-center mt-0">{ descripcion } </label><br/>
+                      <label className="text-center mt-0">{ descripcion } </label><br/>
 
+                      <div className="d-flex justify-content-between ">
+                        <div className=""><b> {this.state.nombre_actividad} </b></div>
+                        <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida }</div>
+                      </div>
 
-                        <div className="d-flex justify-content-between ">
-                          <div className=""><b> {this.state.nombre_actividad} </b></div>
-                          <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida }</div>
-                        </div>
+                      <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
-                        <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
-
-                        <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
-                            
-                            <div className="input-group-append">
-                            <span className="input-group-text">{this.state.unidad_medida }</span>
-                            </div>
-                        </div>
-                        <div className="texto-rojo mb-0"> <b> { smsValidaMetrado }</b></div> 
-
-                        <div className="d-flex justify-content-center text-center mt-1"> 
-                          <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br/>
-                              { this.state.metrado } {this.state.unidad_medida }
-                            </div>
-
-                            <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida }  <br/>
-                              = S/.  {this.state.parcial} <br/>
-                            </div>
-                            <div className={ Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white": "bg-success p-1 mr-1 text-white"}>Saldo <br/>
-                                {this.state.actividad_metrados_saldo} {this.state.unidad_medida }
-                            </div>
+                      <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                           
-                        </div>
-
-                        <div className="form-group mb-1">
-                          <label htmlFor="comment">DESCRIPCION:</label>
-                          <DebounceInput
-                            cols="40"
-                            rows="1"
-                            element="textarea"
-                            minLength={0}
-                            debounceTimeout={debounceTimeout}
-                            onChange={e => this.setState({DescripcionMetrado: e.target.value})}
-                            className="form-control"
-                          />
-                        </div>
-
-                        <div className="form-group mb-0">
-                          <label htmlFor="comment">OBSERVACIÓN:</label>
-                          <DebounceInput
-                            cols="40"
-                            rows="1"
-                            element="textarea"
-                            minLength={0}
-                            debounceTimeout={debounceTimeout}
-                            onChange={e => this.setState({ObservacionMetrado: e.target.value})}
-                            className="form-control"
-                          />
-                        </div>
-                        <span className="small">% {this.state.porcentaje_negatividad}</span>
-
-                        {
-                          this.state.UrlImagen.length <= 0 
-                          ?"":
-                          <div className="imgDelete">
-                            <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                            <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
+                          <div className="input-group-append">
+                          <span className="input-group-text">{this.state.unidad_medida }</span>
                           </div>
-                        }
-                        <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
+                      </div>
+                      <div className="texto-rojo mb-0"> <b> { smsValidaMetrado }</b></div> 
 
-                        <div className="custom-file">
-                          <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } id="myImage"/>
-                          <label className="custom-file-label" htmlFor="customFile">FOTO</label>
+                      <div className="d-flex justify-content-center text-center mt-1"> 
+                        <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br/>
+                            { this.state.metrado } {this.state.unidad_medida }
+                          </div>
+
+                          <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida }  <br/>
+                            = S/.  {this.state.parcial} <br/>
+                          </div>
+                          <div className={ Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white": "bg-success p-1 mr-1 text-white"}>Saldo <br/>
+                              {this.state.actividad_metrados_saldo} {this.state.unidad_medida }
+                          </div>
+                        
+                      </div>
+
+                      <div className="form-group mb-1">
+                        <label htmlFor="comment">DESCRIPCION:</label>
+                        <DebounceInput
+                          cols="40"
+                          rows="1"
+                          element="textarea"
+                          minLength={0}
+                          debounceTimeout={debounceTimeout}
+                          onChange={e => this.setState({DescripcionMetrado: e.target.value})}
+                          className="form-control"
+                        />
+                      </div>
+
+                      <div className="form-group mb-0">
+                        <label htmlFor="comment">OBSERVACIÓN:</label>
+                        <DebounceInput
+                          cols="40"
+                          rows="1"
+                          element="textarea"
+                          minLength={0}
+                          debounceTimeout={debounceTimeout}
+                          onChange={e => this.setState({ObservacionMetrado: e.target.value})}
+                          className="form-control"
+                        />
+                      </div>
+                      <span className="small">% {this.state.porcentaje_negatividad}</span>
+
+                      {
+                        this.state.UrlImagen.length <= 0 
+                        ?"":
+                        <div className="imgDelete">
+                          <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
+                          <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
                         </div>
+                      }
+                      <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
+
+                      <div className="custom-file">
+                        <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } id="myImage"/>
+                        <label className="custom-file-label" htmlFor="customFile">FOTO</label>
+                      </div>
 
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                       <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
                       <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
                     </ModalFooter>
-                    </form>
+                  </form>
                 </Modal>
-                {/* ///<!-- MODAL PARA METRAR --> */} 
+                {/* ///<!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */} 
 
                 {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
                   
@@ -955,8 +953,6 @@ class MetradosDiarios extends Component {
                           </div>
                         }
                           
-                          
-
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
                       <div className="float-left"><Button color="primary" type="submit">Guardar mayor metrado</Button>{' '}</div>
