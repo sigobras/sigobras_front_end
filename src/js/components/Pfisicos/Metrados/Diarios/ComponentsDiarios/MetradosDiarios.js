@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift } from 'react-icons/md';
 
 import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
 import classnames from 'classnames';
@@ -76,6 +76,7 @@ class MetradosDiarios extends Component {
         mostrarIconos:false,
         // filtrador
         BuscaPartida:null,
+        FilterSelected:"% Avance",
 
         // captura de la fecha
         fecha_actualizacion:''
@@ -107,7 +108,7 @@ class MetradosDiarios extends Component {
         id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
-          // console.log('res>>', res.data[0].partidas);
+          console.log('res>>', res.data[0].partidas);
           
           this.setState({
             DataComponentes:res.data,
@@ -551,8 +552,33 @@ class MetradosDiarios extends Component {
        var valorRecibido = e
       if( typeof valorRecibido === "number"){
         this.setState({ 
-          BuscaPartida: valorRecibido
+          BuscaPartida: valorRecibido,
         })
+        switch (e) {
+          case 101:
+            this.setState({
+              FilterSelected:"% Avance"
+            })
+            break;
+
+          case 0:
+            this.setState({
+              FilterSelected:"0%"
+            })
+            break;
+        
+          case 100:
+            this.setState({
+              FilterSelected:"100%"
+            })
+            break;
+
+          default:
+            this.setState({
+              FilterSelected:"Progreso"
+            })
+            break;
+        }
       // console.log("valorRecibido ",valorRecibido)
 
       }else{
@@ -574,7 +600,8 @@ class MetradosDiarios extends Component {
       console.log("cambia",i)
       this.setState({
         mostrarIconos:this.state.mostrarIconos === i ? -1 :i
-      })
+      })  
+    
     }
 
     UpdatePrioridad(idPartida, prioridad, index){
@@ -614,6 +641,10 @@ class MetradosDiarios extends Component {
         
         var DatosPartidasFiltrado = DataPartidas
         var BuscaPartida = this.state.BuscaPartida
+
+        console.log("BuscaPartida", BuscaPartida);
+        
+
         if (BuscaPartida !== null) {
 
           if(typeof BuscaPartida === "number"){
@@ -622,6 +653,11 @@ class MetradosDiarios extends Component {
                 return(filtrado.porcentaje <= 100);
               }else if(BuscaPartida === 99 && filtrado.tipo !== "titulo" && filtrado.porcentaje !== 0 ) {
                 return( filtrado.porcentaje <= 99 );
+
+                // filtramos las prioridades 
+              }else if(BuscaPartida === 1  ) {
+                return( filtrado.prioridad === "#ff5e00" );
+
               }else{
                 return filtrado.porcentaje === BuscaPartida
               }
@@ -630,7 +666,6 @@ class MetradosDiarios extends Component {
           }else{
           
             BuscaPartida = this.state.BuscaPartida.trim().toLowerCase();
-
             DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
               return filtrado.descripcion.toLowerCase().match(BuscaPartida);
             });
@@ -659,14 +694,14 @@ class MetradosDiarios extends Component {
                     <InputGroup size="sm">
                       <InputGroupAddon addonType="prepend"><InputGroupText><MdSearch size={20} /> </InputGroupText> </InputGroupAddon>
 
-                      <Input placeholder="Buscar partida" bsSize="sm" onKeyUp={ e => this.Filtrador(e) }/>
+                      <Input placeholder="Buscar por descripción" onKeyUp={ e => this.Filtrador(e) }/>
 
-                      <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown} >
-                        <DropdownToggle caret >
-                          % Avance
+                      <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
+                        <DropdownToggle caret  className="bg-warning">
+                          { this.state.FilterSelected }
                         </DropdownToggle>
-                        <DropdownMenu>
-                          <DropdownItem  onClick={()=>this.Filtrador(101) }>Todo</DropdownItem>
+                        <DropdownMenu >
+                          <DropdownItem onClick={()=>this.Filtrador(101) }>Todo</DropdownItem>
                           <DropdownItem onClick={()=>this.Filtrador(0)} >0%</DropdownItem>
                           <DropdownItem onClick={()=>this.Filtrador(100)} >100%</DropdownItem>
                           <DropdownItem onClick={()=>this.Filtrador(99) }>Progreso</DropdownItem>
@@ -681,7 +716,24 @@ class MetradosDiarios extends Component {
                   <table className="table table-sm">
                     <thead className="resplandPartida">
                       <tr>
-                        <th></th>
+                        <th style={{width: "37px"}}>
+                          <div title="FILTRO POR PRIORIDAD" className="prioridad" onClick={()=>this.Prioridad("filtro") }>
+                            <MdFilterTiltShift size={ 15}/>
+                          </div>
+
+                          { 
+                            this.state.mostrarIconos === "filtro"?
+                              <div className="menuCirculo">
+                                <div className="circle" style={{background:"red"}} onClick={()=>this.Filtrador(1) }></div>
+                                <div className="circle" style={{background:"blue"}} onClick={()=>this.Filtrador(2) }></div>
+                                <div className="circle" style={{background:"yellow"}} onClick={()=>this.Filtrador(3) }></div>
+                                <div className="circle" style={{background:"white"}}  onClick={()=>this.Filtrador(4) }></div>
+                                <div className="circle" style={{background:"#ff5e00"}} onClick={()=>this.Filtrador(5) }></div>
+                              </div>
+                              :""
+                          }
+
+                        </th>
                         <th>ITEM</th>
                         <th>DESCRIPCION</th>
                         <th>METRADO</th>
@@ -691,7 +743,7 @@ class MetradosDiarios extends Component {
                       </tr>
                     </thead>
 
-                    { DatosPartidasFiltrado.length <= 0?  <tbody><tr><td colSpan="7" className="text-center text-info">No hay datos</td></tr></tbody>:
+                    { DatosPartidasFiltrado.length <= 0?  <tbody><tr><td colSpan="7" className="text-center text-warning">No hay datos</td></tr></tbody>:
                       DatosPartidasFiltrado.map((metrados, i) =>
                         <tbody key={ i } >
                     
@@ -963,11 +1015,11 @@ class MetradosDiarios extends Component {
             <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
               
               {
-                
                 sessionStorage.getItem("estadoObra") === "Ejecucion"
                 ?
                   <div>
                     {/* codigo de EJECUCION =============================================================================================================== */}
+                    
                     <form onSubmit={this.EnviarMetrado_EJECUCION }>
                       <ModalHeader toggle={this.modalMetrar} className="border-button">
                           <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
@@ -1060,6 +1112,7 @@ class MetradosDiarios extends Component {
                 ?
                   <div>
                     {/* codigo de CORTE =============================================================================================================== */}
+                    
                     <form onSubmit={this.EnviarMetrado_CORTE }>
                       <ModalHeader toggle={this.modalMetrar} className="border-button">
                           <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
@@ -1253,12 +1306,7 @@ class MetradosDiarios extends Component {
                     </ModalFooter>
                   </form>
                 </div>
-               
-
               }
-
-              
-            
             </Modal>
             {/* ///<!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */} 
 
