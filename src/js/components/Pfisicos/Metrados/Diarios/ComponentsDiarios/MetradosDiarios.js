@@ -123,7 +123,9 @@ class MetradosDiarios extends Component {
             nombreComponente: nombComp,
             DataPartidas:[],
             id_componente,
-            collapse:-1
+            collapse:-1,
+            BuscaPartida:null,
+
           });
       }
 
@@ -462,24 +464,20 @@ class MetradosDiarios extends Component {
         var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg } = this.state
         
         var DatosPartidasFiltrado = DataPartidas
-        // var BuscaPartida = this.state.BuscaPartida.trim().toLowerCase();
         var BuscaPartida = this.state.BuscaPartida
-    
-        // console.log("BuscaPartida", typeof BuscaPartida)
-        console.log("BuscaPartida", BuscaPartida)
-        // console.log("DATAAAAAAAAAAAA",BuscaPartida);
-
         if (BuscaPartida !== null) {
 
           if(typeof BuscaPartida === "number"){
             DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
-              // if(BuscaPartida){
-                return filtrado.porcentaje === BuscaPartida;
-              // }else{
-              //   return filtrado.porcentaje < BuscaPartida;
-              // }
+              if(BuscaPartida === 101){
+                return(filtrado.porcentaje <= 100);
+              }else if(BuscaPartida === 99 && filtrado.tipo !== "titulo" ) {
+                return( filtrado.porcentaje <= 99);
+              }else{
+                return filtrado.porcentaje === BuscaPartida
+              }
+             
             });
-                console.log("NUMERO >>" , DatosPartidasFiltrado);
           }else{
           
             BuscaPartida = this.state.BuscaPartida.trim().toLowerCase();
@@ -487,16 +485,9 @@ class MetradosDiarios extends Component {
             DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
               return filtrado.descripcion.toLowerCase().match(BuscaPartida);
             });
-            console.log("LETRA >>>" , DatosPartidasFiltrado);
           }
-
         }
-        // }else{
-        //   DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
-        //     return filtrado.porcentaje === BuscaPartida;
-        //   });
-        //   console.log("NUMERO >>" , DatosPartidasFiltrado);
-        // } 
+
         
         return (
             <div>
@@ -526,7 +517,7 @@ class MetradosDiarios extends Component {
                               % Avance
                             </DropdownToggle>
                             <DropdownMenu>
-                              <DropdownItem  onClick={()=>this.Filtrador(1) }>Todo</DropdownItem>
+                              <DropdownItem  onClick={()=>this.Filtrador(101) }>Todo</DropdownItem>
                               <DropdownItem onClick={()=>this.Filtrador(0)} >0%</DropdownItem>
                               <DropdownItem onClick={()=>this.Filtrador(100)} >100%</DropdownItem>
                               <DropdownItem onClick={()=>this.Filtrador(99) }>Progreso</DropdownItem>
@@ -551,7 +542,7 @@ class MetradosDiarios extends Component {
                           </tr>
                         </thead>
 
-                        { DatosPartidasFiltrado.length <= 0?  <tbody><tr><td colSpan="7" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
+                        { DatosPartidasFiltrado.length <= 0?  <tbody><tr><td colSpan="7" className="text-center text-info">No hay datos</td></tr></tbody>:
                           DatosPartidasFiltrado.map((metrados, i) =>
                             <tbody key={ i } >
                         
