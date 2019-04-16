@@ -704,7 +704,7 @@ class CorteObra extends Component {
                               <InputGroupText className="p-1">{ this.state.actividad_avance_metrado }</InputGroupText>
                               <InputGroupText className="p-1">-</InputGroupText>
                           </InputGroupAddon>
-                          {/* <Input placeholder="valor" /> */}
+
                           <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ValorMetrado: e.target.value})}  type="number" className="form-control" autoFocus/>  
                           <InputGroupAddon addonType="append">
                               <InputGroupText className="p-1">=</InputGroupText>

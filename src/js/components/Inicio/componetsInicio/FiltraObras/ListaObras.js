@@ -38,10 +38,10 @@ class ListaObras extends Component{
 
         switch(estado_nombre) {
             case 'Corte':
-                setTimeout(()=>{ window.location.href = '/CorteObra'},50);            
+                setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
             break;
             case 'Actualizacion':
-                setTimeout(()=>{ window.location.href = '/ActualizacionObra'},50);            
+                setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
             break;
             case 'Paralizado':
                 setTimeout(()=>{ window.location.href = '/ParalizacionObra'},50);
