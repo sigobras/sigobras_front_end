@@ -249,7 +249,7 @@ class ValMayoresMetrados extends Component {
                         )}
 
                     </Nav>  
-                    <Card className="m-1">
+                    <Card className="m-1 p-1">
                         {/* COMPONENTES */}
                         <Nav tabs>
                             <NavItem >
@@ -304,7 +304,8 @@ class ValMayoresMetrados extends Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            { DataResumenApi.length <=0 ?<tr><td colSpan="11"></td></tr>:
+                                            { 
+                                                DataResumenApi.length <=0 ?<tr><td colSpan="11"></td></tr>:
                                                 DataResumenApi.componentes.map((ResumenC, iC)=>
                                                     <tr key={ iC } >
                                                         <td>{ ResumenC.numero }</td>
@@ -440,7 +441,7 @@ class ValMayoresMetrados extends Component {
                                 </div>
                             }
                                                                 
-                            </CardBody>
+                        </CardBody>
                     </Card>
             </div>
         );

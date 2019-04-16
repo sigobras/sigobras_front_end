@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch } from 'react-icons/md';
 
-import { CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
+import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
@@ -74,7 +74,8 @@ class MetradosDiarios extends Component {
         indexPartida:0,
         OpcionMostrarMM:'',
         mostrarIconos:false,
-
+        // filtrador
+        BuscaPartida:null,
 
       }
 
@@ -97,10 +98,10 @@ class MetradosDiarios extends Component {
     componentWillMount(){
       document.title ="Metrados Diarios"
       axios.post(`${UrlServer}/getComponentes`,{
-          id_ficha: sessionStorage.getItem('idobra')
+        id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
-          // console.log('res>>', res.data);
+          console.log('res>>', res.data[0].partidas);
           
           this.setState({
             DataComponentes:res.data,
@@ -395,41 +396,21 @@ class MetradosDiarios extends Component {
       }
     }
   
-    Filtrador() {
-      var input, filter, table, txtValue, tr, td, i, visible, j;
+    Filtrador(e) {
+      // console.log("datos ", typeof e)
+       var valorRecibido = e
+      if( typeof valorRecibido === "number"){
+        this.setState({ 
+          BuscaPartida: valorRecibido
+        })
+      // console.log("valorRecibido ",valorRecibido)
 
-      input = document.getElementById("InputMetradosDiarios");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("TblMetradosDiarios");
-      tr = table.getElementsByTagName("tr");
-  
-      for (i = 0; i < tr.length; i++) {
-        visible = false;
+      }else{
+        this.setState({ 
+          BuscaPartida: e.target.value,
+        })
+      // console.log("valorRecibido ",e.target.value)
 
-        td = tr[i].getElementsByTagName("td")[2];
-
-        // for (j = 0; j < td.length; j++) {
-        //   if (td[j] && td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
-        //     visible = true;
-        //   }
-        // }
-
-        // if (visible === true) {
-        //   tr[i].style.display = "";
-        // } else {
-        //   tr[i].style.display = "none";
-        // }
-        if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-            tr[i+1].style.display = "";
-            i++
-
-          } else {
-            tr[i].style.display = "none";            
-          }
-        }       
       }
     }
   
@@ -479,7 +460,44 @@ class MetradosDiarios extends Component {
 
     render() {
         var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg } = this.state
+        
+        var DatosPartidasFiltrado = DataPartidas
+        // var BuscaPartida = this.state.BuscaPartida.trim().toLowerCase();
+        var BuscaPartida = this.state.BuscaPartida
+    
+        // console.log("BuscaPartida", typeof BuscaPartida)
+        console.log("BuscaPartida", BuscaPartida)
+        // console.log("DATAAAAAAAAAAAA",BuscaPartida);
 
+        if (BuscaPartida !== null) {
+
+          if(typeof BuscaPartida === "number"){
+            DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
+              // if(BuscaPartida){
+                return filtrado.porcentaje === BuscaPartida;
+              // }else{
+              //   return filtrado.porcentaje < BuscaPartida;
+              // }
+            });
+                console.log("NUMERO >>" , DatosPartidasFiltrado);
+          }else{
+          
+            BuscaPartida = this.state.BuscaPartida.trim().toLowerCase();
+
+            DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
+              return filtrado.descripcion.toLowerCase().match(BuscaPartida);
+            });
+            console.log("LETRA >>>" , DatosPartidasFiltrado);
+          }
+
+        }
+        // }else{
+        //   DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
+        //     return filtrado.porcentaje === BuscaPartida;
+        //   });
+        //   console.log("NUMERO >>" , DatosPartidasFiltrado);
+        // } 
+        
         return (
             <div>
               
@@ -498,18 +516,20 @@ class MetradosDiarios extends Component {
                     <CardHeader className="p-1">
                       { nombreComponente }
                       <div className="float-right">
-                        {/* <input type="text" id="InputMetradosDiarios" onKeyUp={ this.Filtrador } placeholder="Buscar Partida"  className="form-control form-control-sm"/> */}
-                        <InputGroup >
-                          <Input placeholder="Buscar partida" bsSize="sm" id="InputMetradosDiarios" onKeyUp={ this.Filtrador }/>
+                        <InputGroup size="sm">
+                          <InputGroupAddon addonType="prepend"><InputGroupText><MdSearch size={20} /> </InputGroupText> </InputGroupAddon>
+
+                          <Input placeholder="Buscar partida" bsSize="sm" onKeyUp={ e => this.Filtrador(e) }/>
+
                           <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown} >
                             <DropdownToggle caret >
                               % Avance
                             </DropdownToggle>
                             <DropdownMenu>
-                              <DropdownItem >Todo</DropdownItem>
-                              <DropdownItem >0%</DropdownItem>
-                              <DropdownItem>100%</DropdownItem>
-                              <DropdownItem>Progreso</DropdownItem>
+                              <DropdownItem  onClick={()=>this.Filtrador(1) }>Todo</DropdownItem>
+                              <DropdownItem onClick={()=>this.Filtrador(0)} >0%</DropdownItem>
+                              <DropdownItem onClick={()=>this.Filtrador(100)} >100%</DropdownItem>
+                              <DropdownItem onClick={()=>this.Filtrador(99) }>Progreso</DropdownItem>
                             </DropdownMenu>
                           </InputGroupButtonDropdown>
                         </InputGroup>
@@ -518,7 +538,7 @@ class MetradosDiarios extends Component {
                     </CardHeader>
                     <CardBody>    
                   
-                      <table id="TblMetradosDiarios" className="table table-sm">
+                      <table className="table table-sm">
                         <thead className="resplandPartida">
                           <tr>
                             <th></th>
@@ -531,8 +551,8 @@ class MetradosDiarios extends Component {
                           </tr>
                         </thead>
 
-                        { DataPartidas.length <= 0?  <tbody><tr><td colSpan="7" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
-                          DataPartidas.map((metrados, i) =>
+                        { DatosPartidasFiltrado.length <= 0?  <tbody><tr><td colSpan="7" className="text-center"><Spinner color="primary" size="sm"/></td></tr></tbody>:
+                          DatosPartidasFiltrado.map((metrados, i) =>
                             <tbody key={ i } >
                         
                               <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
