@@ -117,6 +117,7 @@ class MetradosDiarios extends Component {
       })
       .then((res)=>{
           // console.log(res.data[0].partidas);
+          console.time("tiempo");
 
 
           var partidas = res.data[0].partidas
@@ -140,8 +141,9 @@ class MetradosDiarios extends Component {
             }
           }
 
-          // console.log(partidas)
-          
+          console.log(partidas)
+          console.timeEnd("tiempo");
+
           this.setState({
             DataComponentes:res.data,
             DataPartidas:res.data[0].partidas,
@@ -156,7 +158,7 @@ class MetradosDiarios extends Component {
       // axios consulta al api de  prioridades ====================================
       axios.get(`${UrlServer}/getPrioridades`)
       .then((res)=>{
-        console.log("datos", res.data);
+        // console.log("datos", res.data);
         this.setState({
           DataPrioridadesApi:res.data
         })
@@ -225,8 +227,30 @@ class MetradosDiarios extends Component {
       .then((res)=>{
           // console.log('getPartidas>>', res.data);
           
+          var partidas = res.data
+          // seteando la data que se me envia del api- agrega un icono
+          for (let i = 0; i < partidas.length; i++) {
+            // console.log("partida",  partidas[i].iconocategoria_nombre)
+            if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
+              partidas[i].iconocategoria_nombre = <FaSuperpowers />
+            }else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
+              partidas[i].iconocategoria_nombre = <MdLibraryBooks />              
+            }else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
+              partidas[i].iconocategoria_nombre = <TiWarning />              
+            }else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
+              partidas[i].iconocategoria_nombre = <MdWatch />              
+            }else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
+              partidas[i].iconocategoria_nombre = <MdVisibility />              
+            }else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
+              partidas[i].iconocategoria_nombre = <MdMonetizationOn />                         
+            }else{
+              partidas[i].iconocategoria_nombre = null
+            }
+          }
+          // console.log("dsds", partidas);
+          
           this.setState({
-            DataPartidas:res.data,
+            DataPartidas:partidas,
           })
       })
       .catch((error)=>{
@@ -757,9 +781,7 @@ class MetradosDiarios extends Component {
         console.error("error", err);
       })
     }
-
     
-
     clearImg(){
       this.setState({UrlImagen:""}) 
       document.getElementById("myImage").value = "";
@@ -892,7 +914,7 @@ class MetradosDiarios extends Component {
                       DatosPartidasFiltrado.map((metrados, i) =>
                         <tbody key={ i } >
                     
-                          <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light" }>
+                          <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light"}>
                             <td>
                               { 
                                 metrados.tipo === "titulo" ?"":
@@ -926,7 +948,7 @@ class MetradosDiarios extends Component {
                                
 
                             </td>
-                            <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
+                            <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1":   metrados.mayorMetrado === 0 ? "tdData" : "FondMM tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
                               { metrados.item }
                             </td>
                             <td>
@@ -1046,7 +1068,7 @@ class MetradosDiarios extends Component {
                                       {
                                         DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
                                           DataActividades.map((actividades, indexA)=>
-                                          <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'bg-mm':''}>
+                                          <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'FondMM':''}>
                                             <td>{ actividades.nombre_actividad }</td>
                                             <td>{ actividades.veces_actividad }</td>
                                             <td>{ actividades.largo_actividad }</td>
@@ -1102,8 +1124,8 @@ class MetradosDiarios extends Component {
                                                     sessionStorage.getItem("estadoObra") === "Corte"
                                                     ?
                                                       <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
-                                                          <FaPlus size={ 20 } /> 
-                                                        </button>
+                                                        <FaPlus size={ 20 } /> 
+                                                      </button>
                                                     :
                                                      <FaCheck className="text-success" size={ 18 } />
                                                     : 

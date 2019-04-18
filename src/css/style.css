@@ -280,9 +280,6 @@ body {
 
 /* color de tabla actividades */
 
-.bg-mm {
-  background-color: #475563b3;
-}
 
 .tdData {
   border-left: #000;
@@ -534,4 +531,9 @@ table.table thead th {
   right: 16px;
   border-radius: 12px;
   color: #fffbfb;
+}
+
+/* color de fondo para mayor metrado en partidas  */
+.FondMM{
+  background: #fffdfc1c;
 }
