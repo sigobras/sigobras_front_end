@@ -43,6 +43,7 @@ body {
   margin-right: 0px;
   color: rgb(255, 255, 255);
 }
+
 /* 
 .sidebar .nav-link .active {
   color: #0080ff;
@@ -69,25 +70,28 @@ body {
 
 /* nav izquierda  angerman  */
 
-.navbarExplandLeft  {
+.navbarExplandLeft {
   -webkit-transition: width 3s;
   transition: width 3s;
   border-right: 1px solid #000;
 }
 
-.navbarCollapseLeft{
+.navbarCollapseLeft {
   width: 0px;
-  position: inherit;   
+  position: inherit;
 }
+
 /*fin nav izquierda  angerman  */
 
 /* nav derecha  */
-.navbarExplandRight{
+.navbarExplandRight {
   width: 50px;
 }
-.navbarCollapseRight{
+
+.navbarCollapseRight {
   display: none
 }
+
 /* fin nav derecha  */
 
 
@@ -100,11 +104,10 @@ body {
     border-right: 1px solid #000;
   }
 
-  .navbarCollapseLeft  {
+  .navbarCollapseLeft {
     display: none
-
   }
-  
+
   .navbarExplandRight {
     display: none
   }
@@ -137,7 +140,8 @@ body {
 }
 
 .lii a.active {
-  background-color:#0080ff;;
+  background-color: #0080ff;
+  ;
   color: white !important;
 }
 
@@ -148,19 +152,21 @@ body {
 
 
 /* SCROLL ANG95 */
-.scroll_contenido{
+.scroll_contenido {
   position: absolute;
   height: calc(100vh - 83px);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
 }
+
 .scroll_contenido::-webkit-scrollbar {
   width: 0.5em;
 }
 
 .scroll_contenido::-webkit-scrollbar-thumb {
-  background-color:#2d78b9;;
+  background-color: #2d78b9;
+  ;
   outline: 2px solid rgb(255, 0, 0);
 }
 
@@ -181,7 +187,7 @@ body {
 
 }
 
- /* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
 .table-responsive::-webkit-scrollbar-thumb {
   background: #0080ff;
   border-radius: 4px;
@@ -210,7 +216,7 @@ body {
 }
 
 /* Cambiamos el fondo cuando esté en active o hover */
-.table-responsive::-webkit-scrollbar-track:hover, 
+.table-responsive::-webkit-scrollbar-track:hover,
 .table-responsive::-webkit-scrollbar-track:active {
   background: #d4d4d4;
   cursor: pointer;
@@ -226,44 +232,49 @@ body {
 .sidebar-sticky::-webkit-scrollbar {
   width: 0.5em;
 }
+
 .sidebar-sticky::-webkit-scrollbar-thumb {
   background-color: rgb(195, 202, 190);
   outline: 5px solid rgb(255, 0, 0);
 }
 
-.posAbajo{
+.posAbajo {
   bottom: 3px;
   position: absolute;
   left: 97%;
 }
 
 /* FondoBarraSuperior */
-.FondoBarra{
+.FondoBarra {
   background: #1d2029;
 }
 
 /* bordes propios */
-.border-button{
+.border-button {
   border-bottom: 1px solid #000000
 }
-.border-left{
-  border-left: 1px solid #000000!important;
+
+.border-left {
+  border-left: 1px solid #000000 !important;
 }
-.border-top{
-  border-top: 1px solid #000000!important;
+
+.border-top {
+  border-top: 1px solid #000000 !important;
 }
-.texto-rojo{
+
+.texto-rojo {
   color: #ff5959;
 }
-.abajoCirculos{
+
+.abajoCirculos {
   /* /* bottom: 0px;
   position: absolute; */
-  width: 100%; 
+  width: 100%;
   padding-top: 45%;
 }
 
 /* tamaño de fuente pequeño */
-.fsize{
+.fsize {
   font-size: 0.5rem
 }
 
@@ -273,37 +284,39 @@ body {
   background-color: #475563b3;
 }
 
-.tdData{
+.tdData {
   border-left: #000;
 }
-.tdData:hover{
+
+.tdData:hover {
   cursor: pointer;
-  background-color:#0080ff;
+  background-color: #0080ff;
 }
 
-.tdData1{
-  background-color:#0080ff;
-}
-.tdData1:hover{
-  cursor: pointer;
-  background-color:#0080ff;
+.tdData1 {
+  background-color: #0080ff;
 }
 
-.aprecerIcon{
+.tdData1:hover {
+  cursor: pointer;
+  background-color: #0080ff;
+}
+
+.aprecerIcon {
   display: none;
 }
 
 
-.resplandPartida{
+.resplandPartida {
   border-bottom: 2px solid #0080ff;
   background: #314c65
 }
 
-.icoVer{
+.icoVer {
   align-self: auto;
 }
 
-.icoVer:hover .aprecerIcon{
+.icoVer:hover .aprecerIcon {
   display: inline-flex;
   right: 334px;
   position: absolute;
@@ -315,11 +328,12 @@ body {
 
 /* damos clases a los iconos que pararecen en el td de las tablas */
 
-.iconoTr{
+.iconoTr {
   margin-right: 5px;
   cursor: pointer;
 }
-.iconoTr:hover{
+
+.iconoTr:hover {
   background: #6d757e;
   margin-right: 5px;
   border-radius: 8px;
@@ -327,23 +341,26 @@ body {
   margin-top: -2px;
 }
 
-.resplandPartidabottom{
+.resplandPartidabottom {
   border: 2px solid #0080ff;
 }
+
 /* pone posicion fixed a los header de la tabla */
 
 
 /* fin pone posicion fixed a los header de la tabla */
 
-iframe{
-  border:none;
+iframe {
+  border: none;
 }
+
 iframe::-webkit-scrollbar {
   width: 0.5em;
 }
 
 iframe::-webkit-scrollbar-thumb {
-  background-color:#2d78b9;;
+  background-color: #2d78b9;
+  ;
   outline: 2px solid rgb(255, 0, 0);
 }
 
@@ -351,9 +368,10 @@ iframe::-webkit-scrollbar-thumb {
 
 /* prioridad css */
 
-.prioridad{
+.prioridad {
   cursor: pointer;
 }
+
 /* .prioridad:hover{
   color: #0080ff;
   font-size: 17px;
@@ -361,17 +379,18 @@ iframe::-webkit-scrollbar-thumb {
 } */
 /* clases temporales */
 
-.menuCirculo{
+.menuCirculo {
   position: absolute;
   border-radius: 50%;
   width: 13px;
   height: 13px;
-  -webkit-transition: width 2s; /* For Safari 3.1 to 6.0 */
+  -webkit-transition: width 2s;
+  /* For Safari 3.1 to 6.0 */
   transition: width 2s;
 }
 
-
-.circle {
+/* CIRCULO GIRATORIO CON PALETA DE COLORES EN PARTIDAS PARA ELEGIR LA PRIORIDAD  ===========================*/
+.circleColor {
   position: absolute;
   left: calc(50% - 8px);
   top: calc(50% - 22px);
@@ -381,30 +400,81 @@ iframe::-webkit-scrollbar-thumb {
   cursor: pointer;
 }
 
-.circle:nth-child(1) {
+.circleColor:nth-child(1) {
   transform: translateX(18px);
 }
 
-.circle:nth-child(2) {
+.circleColor:nth-child(2) {
   transform: rotate(72deg) translateX(18px);
 }
 
-.circle:nth-child(3) {
+.circleColor:nth-child(3) {
   transform: rotate(144deg) translateX(18px);
 }
 
-.circle:nth-child(4) {
+.circleColor:nth-child(4) {
   transform: rotate(216deg) translateX(18px);
 }
 
-.circle:nth-child(5) {
+.circleColor:nth-child(5) {
   transform: rotate(288deg) translateX(18px);
 }
 
 
+/* CIRCULO GIRATORIO CON PALETA DE COLORES EN PARTIDAS PARA ELEGIR LA ICONOS  ===========================ZZZZZZZZZ*/
+.circleIcono {
+  position: absolute;
+  left: calc(50% - 8px);
+  top: calc(50% - 22px);
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+.circleIcono:nth-child(1) {
+  transform: translateX(18px);
+}
+
+.circleIcono:nth-child(2) {
+  transform: rotate(60deg) translateX(18px);
+}
+
+.circleIcono:nth-child(3) {
+  transform: rotate(120deg) translateX(18px);
+}
+
+.circleIcono:nth-child(4) {
+  transform: rotate(180deg) translateX(18px);
+}
+
+.circleIcono:nth-child(5) {
+  transform: rotate(240deg) translateX(18px);
+}
+
+.circleIcono:nth-child(6) {
+  transform: rotate(300deg) translateX(18px);
+}
+
+/* ubicacion del span  */
+
+.spanUbi {
+  -ms-transform: rotate(20deg);
+  -webkit-transform: rotate(20deg);
+  transform: rotate(118deg);
+  position: absolute;
+  font-size: 0.9rem;
+}
+
+.spanUbi:hover{
+  color: #ffc107;
+  font-size: 1.2rem;
+
+}
 /* chat partidas  */
 
-.chatContainer{
+.chatContainer {
   display: none;
   position: fixed;
   bottom: 0px;
@@ -417,23 +487,26 @@ iframe::-webkit-scrollbar-thumb {
   box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
 }
 
-.chatHeader{
+.chatHeader {
   background: #2676bb;
   padding: 1px;
   border-radius: 5px 5px 0px 0px;
 }
-.chatBody{
+
+.chatBody {
   height: 80%;
   overflow-y: scroll;
   color: #000;
   padding: 2px;
 }
-.chatBodyMensaje{
+
+.chatBodyMensaje {
   background: #f1ba92e6;
   padding: 3px;
   border-radius: 7px;
 }
-.chatFooter{
+
+.chatFooter {
   display: flex;
 }
 
@@ -446,14 +519,15 @@ table.table thead th {
 
 /* hover imagen btn */
 
-.imgDelete{
+.imgDelete {
   transition: auto;
 }
 
 .imgBtn {
   display: none;
 }
-.imgDelete:hover .imgBtn{
+
+.imgDelete:hover .imgBtn {
   display: block;
   background: #1f6eb38c;
   position: absolute;

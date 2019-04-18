@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks } from 'react-icons/md';
+import { TiWarning } from "react-icons/ti";
 
 import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
 import classnames from 'classnames';
@@ -22,6 +23,8 @@ class MetradosDiarios extends Component {
         DataPartidas:[],
         DataActividades:[],
         DataMayorMetrado:[],
+        DataPrioridadesApi:[],
+        DataIconosCategoriaApi:[],
         activeTab:'0',
         modal: false,
         modalMm: false,
@@ -73,13 +76,16 @@ class MetradosDiarios extends Component {
         id_componente:'',
         indexPartida:0,
         OpcionMostrarMM:'',
-        mostrarIconos:false,
+        mostrarIconos:null,
+        mostrarColores: null,
         // filtrador
         BuscaPartida:null,
         FilterSelected:"% Avance",
 
         // captura de la fecha
-        fecha_actualizacion:''
+        fecha_actualizacion:'',
+        // demos  iconos-----------------
+        iconos: [<MdMonetizationOn />, <MdVisibility />, <MdWatch />, <TiWarning />, <MdLibraryBooks />, <FaSuperpowers />]
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -99,16 +105,42 @@ class MetradosDiarios extends Component {
       this.toggleDropDown = this.toggleDropDown.bind(this);
       this.CollapseItem = this.CollapseItem.bind(this);
       this.Prioridad = this.Prioridad.bind(this);
-      this.UpdatePrioridad = this.UpdatePrioridad.bind(this);
+      this.UpdatePrioridadIcono = this.UpdatePrioridadIcono.bind(this);
+      this.UpdatePrioridadColor = this.UpdatePrioridadColor.bind(this);
       this.clearImg = this.clearImg.bind(this);
     }
+
     componentWillMount(){
       document.title ="Metrados Diarios"
       axios.post(`${UrlServer}/getComponentes`,{
         id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
-          console.log('res>>', res.data[0].partidas);
+          // console.log(res.data[0].partidas);
+
+
+          var partidas = res.data[0].partidas
+          // seteando la data que se me envia del api- agrega un icono
+          for (let i = 0; i < partidas.length; i++) {
+            // console.log("partida",  partidas[i].iconocategoria_nombre)
+            if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
+              partidas[i].iconocategoria_nombre = <FaSuperpowers />
+            }else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
+              partidas[i].iconocategoria_nombre = <MdLibraryBooks />              
+            }else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
+              partidas[i].iconocategoria_nombre = <TiWarning />              
+            }else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
+              partidas[i].iconocategoria_nombre = <MdWatch />              
+            }else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
+              partidas[i].iconocategoria_nombre = <MdVisibility />              
+            }else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
+              partidas[i].iconocategoria_nombre = <MdMonetizationOn />                         
+            }else{
+              partidas[i].iconocategoria_nombre = null
+            }
+          }
+
+          // console.log(partidas)
           
           this.setState({
             DataComponentes:res.data,
@@ -120,6 +152,56 @@ class MetradosDiarios extends Component {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.',{ position: "top-right",autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
       })
+
+      // axios consulta al api de  prioridades ====================================
+      axios.get(`${UrlServer}/getPrioridades`)
+      .then((res)=>{
+        console.log("datos", res.data);
+        this.setState({
+          DataPrioridadesApi:res.data
+        })
+      })
+      .catch((err)=>{
+        console.log("errores al realizar la peticion de prioridades", err);
+        
+      })
+      // axios consulta al api de  prioridades ====================================
+
+      axios.get(`${UrlServer}/getIconoscategorias`)
+      .then((res)=>{
+        // console.log("datos", res.data);
+
+        var CategoriasIconos = res.data
+
+        CategoriasIconos.forEach(ico => {
+          if (ico.nombre === "<FaSuperpowers/>") {
+            ico.nombre = <FaSuperpowers />
+          }else if (ico.nombre === "<MdLibraryBooks/>") {
+            ico.nombre = <MdLibraryBooks />              
+          }else if (ico.nombre === "<TiWarning/>") {
+            ico.nombre = <TiWarning />              
+          }else if (ico.nombre === "<MdWatch/>") {
+            ico.nombre = <MdWatch />              
+          }else if (ico.nombre === "<MdVisibility/>") {
+            ico.nombre = <MdVisibility />              
+          }else if (ico.nombre === "<MdMonetizationOn/>") {
+            ico.nombre = <MdMonetizationOn />                         
+          }else{
+            ico.nombre = null
+          }
+        });
+
+        // console.log("CategoriasIconos", CategoriasIconos);
+
+        this.setState({
+          DataIconosCategoriaApi:CategoriasIconos
+        })
+      })
+      .catch((err)=>{
+        console.log("errores al realizar la peticion de iconos", err);
+        
+      })
+      
     }
 
     Tabs(tab, id_componente,  nombComp) {
@@ -548,13 +630,14 @@ class MetradosDiarios extends Component {
     }
   
     Filtrador(e) {
-      // console.log("datos ", typeof e)
+      console.log("datos ", e)
        var valorRecibido = e
       if( typeof valorRecibido === "number"){
         this.setState({ 
           BuscaPartida: valorRecibido,
         })
-        switch (e) {
+
+        switch (valorRecibido) {
           case 101:
             this.setState({
               FilterSelected:"% Avance"
@@ -604,25 +687,45 @@ class MetradosDiarios extends Component {
     
     }
 
-    UpdatePrioridad(idPartida, prioridad, index){
-
-      var partidas = this.state.DataPartidas
-      console.log("partidas", partidas);
-
-      partidas = partidas[index].prioridad = prioridad
-      // console.log("idPrtida", idPartida, "prioridad", prioridad)
+    UpdatePrioridadIcono(idPartida, id_icono, index){
+      // var partidas = this.state.DataPartidas
       
-      axios.put(`${UrlServer}/putPrioridad`,
+      axios.put(`${UrlServer}/putIconocategoria`,
         {
           "id_partida":idPartida,
-          "prioridad":prioridad
+          "id_iconoCategoria":id_icono
         }
       )
       .then((res)=>{
-        console.info("response", res)
+        // partidas[index].iconocategoria_nombre = res.data.color
+        // console.info("response", res.data)
+        var partidas = this.state.DataPartidas
+        var CategoriasIconos = res.data.nombre 
+
+        // CategoriasIconos.forEach(ico => {
+          if (CategoriasIconos === "<FaSuperpowers/>") {
+            CategoriasIconos = <FaSuperpowers />
+          }else if (CategoriasIconos === "<MdLibraryBooks/>") {
+            CategoriasIconos = <MdLibraryBooks />              
+          }else if (CategoriasIconos === "<TiWarning/>") {
+            CategoriasIconos = <TiWarning />              
+          }else if (CategoriasIconos === "<MdWatch/>") {
+            CategoriasIconos = <MdWatch />              
+          }else if (CategoriasIconos === "<MdVisibility/>") {
+            CategoriasIconos = <MdVisibility />              
+          }else if (CategoriasIconos === "<MdMonetizationOn/>") {
+            CategoriasIconos = <MdMonetizationOn />                         
+          }else{
+            CategoriasIconos = null
+          }
+        // });
+        partidas[index].iconocategoria_nombre = CategoriasIconos
+
+        // console.log("CategoriasIconos", CategoriasIconos)
         this.setState({
-          DataPartidas:this.state.DataPartidas,
-          mostrarIconos:-1
+          DataPartidas:partidas,
+          mostrarIconos:-1,
+          mostrarColores: index
         })
       })
       .catch((err)=>{
@@ -630,20 +733,47 @@ class MetradosDiarios extends Component {
       })
     }
 
+    UpdatePrioridadColor(idPartida, prioridad, index){
+
+      var partidas = this.state.DataPartidas
+      // console.log("partidas", idPartida, prioridad, index);
+
+      axios.put(`${UrlServer}/putPrioridad`,
+        {
+          "id_partida":idPartida,
+          "id_prioridad":prioridad
+        }
+      )
+      .then((res)=>{
+        partidas[index].prioridad_color = res.data.color
+        // console.info("response", res)
+        this.setState({
+          DataPartidas:partidas,
+          mostrarIconos:-1,
+          mostrarColores:null
+        })
+      })
+      .catch((err)=>{
+        console.error("error", err);
+      })
+    }
+
+    
+
     clearImg(){
       this.setState({UrlImagen:""}) 
       document.getElementById("myImage").value = "";
     }
 
     render() {
-        var { DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg } = this.state
+        var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores } = this.state
         var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado 
         
         var DatosPartidasFiltrado = DataPartidas
         var BuscaPartida = this.state.BuscaPartida
 
-        console.log("BuscaPartida", BuscaPartida);
-        
+        // console.log("BuscaPartida", BuscaPartida);
+
 
         if (BuscaPartida !== null) {
 
@@ -654,9 +784,21 @@ class MetradosDiarios extends Component {
               }else if(BuscaPartida === 99 && filtrado.tipo !== "titulo" && filtrado.porcentaje !== 0 ) {
                 return( filtrado.porcentaje <= 99 );
 
-                // filtramos las prioridades 
-              }else if(BuscaPartida === 1  ) {
-                return( filtrado.prioridad === "#ff5e00" );
+                // filtramos las prioridades color
+              }else if( BuscaPartida === 1 ) {
+                return( filtrado.prioridad_color === "#f00" );
+
+              }else if( BuscaPartida === 2 ) {
+                return( filtrado.prioridad_color === "#ffff00" );
+
+              }else if( BuscaPartida === 3 ) {
+                return( filtrado.prioridad_color === "#00b050" );
+
+              }else if( BuscaPartida === 4 ) {
+                return( filtrado.prioridad_color === "#305496" );
+                
+              }else if( BuscaPartida === 5 && filtrado.tipo !== "titulo") {
+                return( filtrado.prioridad_color === "#ffffff" );
 
               }else{
                 return filtrado.porcentaje === BuscaPartida
@@ -712,7 +854,7 @@ class MetradosDiarios extends Component {
                   </div>
                 </CardHeader>
                 <CardBody>    
-              
+
                   <table className="table table-sm">
                     <thead className="resplandPartida">
                       <tr>
@@ -722,13 +864,14 @@ class MetradosDiarios extends Component {
                           </div>
 
                           { 
+                            //selecciona circulo para filtrar
                             this.state.mostrarIconos === "filtro"?
                               <div className="menuCirculo">
-                                <div className="circle" style={{background:"red"}} onClick={()=>this.Filtrador(1) }></div>
-                                <div className="circle" style={{background:"blue"}} onClick={()=>this.Filtrador(2) }></div>
-                                <div className="circle" style={{background:"yellow"}} onClick={()=>this.Filtrador(3) }></div>
-                                <div className="circle" style={{background:"white"}}  onClick={()=>this.Filtrador(4) }></div>
-                                <div className="circle" style={{background:"#ff5e00"}} onClick={()=>this.Filtrador(5) }></div>
+                                {
+                                  DataPrioridadesApi.map((priori, IPriori)=>
+                                    <div className="circleColor" style={{background: priori.color }} onClick={()=>this.Filtrador( priori.valor) } key= { IPriori } />
+                                  )
+                                }
                               </div>
                               :""
                           }
@@ -740,10 +883,12 @@ class MetradosDiarios extends Component {
                         <th>P / U S/.</th>
                         <th>P / P S/.</th>
                         <th width="20%">BARRA DE PROGRESO</th>
+                        <th> DURACIÓN </th>
                       </tr>
                     </thead>
 
-                    { DatosPartidasFiltrado.length <= 0?  <tbody><tr><td colSpan="7" className="text-center text-warning">No hay datos</td></tr></tbody>:
+                    { DatosPartidasFiltrado.length <= 0 ?  
+                      <tbody><tr><td colSpan="7" className="text-center text-warning">No hay datos</td></tr></tbody> :
                       DatosPartidasFiltrado.map((metrados, i) =>
                         <tbody key={ i } >
                     
@@ -751,18 +896,34 @@ class MetradosDiarios extends Component {
                             <td>
                               { 
                                 metrados.tipo === "titulo" ?"":
-                                <div title="prioridad" className="prioridad" style={{color:metrados.prioridad}} onClick={()=>this.Prioridad(i)}>
-                                  <FaSuperpowers/> 
+                                <div title="prioridad" className="prioridad" style={{color:metrados.prioridad_color }} onClick={()=>this.Prioridad(i)}>
+                                  <span className="h6"> { metrados.iconocategoria_nombre }</span>
                                 </div>  
                               }
+                              {/* map de de colores prioridades */}
+                              
+                              <div className={ this.state.mostrarIconos !== i ?"d-none":"menuCirculo" }>
+                                
+                                {/* DIV DE CIRCULOS CON ICONO   */}
+                                {
+                                  DataIconosCategoriaApi.map((Icono, IIcono)=>
+                                    <div className="circleIcono" onClick={()=> this.UpdatePrioridadIcono(metrados.id_partida, Icono.id_iconoCategoria, i) } key= { IIcono }>
+                                      <span className="spanUbi"> { Icono.nombre } </span>
+                                    </div>                                   
+                                  )
+                                }
+                              </div>
 
-                              <div className={ this.state.mostrarIconos !== i?"d-none":"menuCirculo" }>
-                                <div className="circle" style={{background:"red"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "red", i) }></div>
-                                <div className="circle" style={{background:"blue"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "blue", i) }></div>
-                                <div className="circle" style={{background:"yellow"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "yellow", i) }></div>
-                                <div className="circle" style={{background:"white"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "white", i) }></div>
-                                <div className="circle" style={{background:"#ff5e00"}} onClick={()=> this.UpdatePrioridad(metrados.id_partida, "#ff5e00", i) }></div>
-                              </div> 
+                              <div className={ this.state.mostrarColores !== i ?"d-none":"menuCirculo" }>
+
+                                {/* DIV DE CIRCULOS CON COLOR   */}
+                                {
+                                  DataPrioridadesApi.map((priori, IPriori)=>
+                                    <div className="circleColor" style={{background: priori.color }} onClick={()=> this.UpdatePrioridadColor(metrados.id_partida, priori.id_prioridad, i) } key= { IPriori }></div>                                   
+                                  )
+                                }
+                              </div>
+                               
 
                             </td>
                             <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1": "tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
@@ -810,10 +971,11 @@ class MetradosDiarios extends Component {
                               </div>       
                               
                             </td>
+                            <td>{ metrados.partida_duracion }</td>
                           </tr>
                       
                           <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
-                            <td colSpan="7">
+                            <td colSpan="8">
                               <Collapse isOpen={collapse === i}>
                                 <div className="p-1">
                                     <div className="row">
