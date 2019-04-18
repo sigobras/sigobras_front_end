@@ -26,21 +26,6 @@
     color: #999;
 }
 
-/* .modal-login .avatar {
-    position: absolute;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    top: -79px;
-    width: 128px;
-    height: 118px;
-    border-radius: 50%;
-    z-index: 9;
-    background: #3a4856;
-    padding: 15px;
-    box-shadow: 0 0 6px 3px #60c7c1;
-} */
-
 .modal-login .avatar img {
     width: 100%;
 }

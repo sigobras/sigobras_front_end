@@ -6,8 +6,8 @@ import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
 class ValorizacionGeneral extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             DataAniosApi: [],
@@ -63,55 +63,55 @@ class ValorizacionGeneral extends Component {
 
     componentWillMount() {
 
-        axios.post(UrlServer + '/getValGeneralAnyos', {
+        // axios.post(`${UrlServer}/getValGeneralAnyos`, {
+        axios.post(`${UrlServer}${this.props.Ruta.Anios}`, {
             id_ficha: sessionStorage.getItem('idobra')
         })
-            .then((res) => {
-                // console.table('data val princiapl', res.data);
-                if (res.data === "vacio") {
-                    console.log("no hay datos en la base datos")
-                } else {
-                    // console.log('data PRIMERA CARGA', res.data)
-                    // console.log('data AÑOS', res.data)
-                    // console.log('data PERIODOS', res.data[0].periodos)
-                    // console.log('data PERIODOS >>>>>>>>>>', res.data[0].periodos[0].resumen)
-                    // console.log('data COMPONENTES', res.data[0].periodos[0].componentes)
-                    // console.log('data RESUMEN', res.data[0].periodos[0].resumen)
+        .then((res) => {
+            console.table('data val princiapl', res);
+            if (res.data !== "vacio") {
+           
+                // console.log('data PRIMERA CARGA', res.data)
+                // console.log('data AÑOS', res.data)
+                // console.log('data PERIODOS', res.data[0].periodos)
+                // console.log('data PERIODOS >>>>>>>>>>', res.data[0].periodos[0].resumen)
+                // console.log('data COMPONENTES', res.data[0].periodos[0].componentes)
+                // console.log('data RESUMEN', res.data[0].periodos[0].resumen)
 
-                    this.setState({
-                        DataAniosApi: res.data,
-                        DataMesesApi: res.data[0].periodos,
-                        DataComponentesApi: res.data[0].periodos[0].componentes,
-                        DataResumenApi: res.data[0].periodos[0].resumen,
+                this.setState({
+                    DataAniosApi: res.data,
+                    DataMesesApi: res.data[0].periodos,
+                    DataComponentesApi: res.data[0].periodos[0].componentes,
+                    DataResumenApi: res.data[0].periodos[0].resumen,
 
-                        // seteamos el nombre del componente
-                        NombreComponente: 'RESUMEN DE VALORIZACION',
+                    // seteamos el nombre del componente
+                    NombreComponente: 'RESUMEN DE VALORIZACION',
 
-                        // capturamos montos de dinero en resumen
-                        ppto: res.data[0].periodos[0].resumen.presupuesto,
-                        monto_actual: res.data[0].periodos[0].resumen.valor_actual,
+                    // capturamos montos de dinero en resumen
+                    ppto: res.data[0].periodos[0].resumen.presupuesto,
+                    monto_actual: res.data[0].periodos[0].resumen.valor_actual,
 
-                        avance_anterior: res.data[0].periodos[0].resumen.valor_anterior,
-                        porcentaje_anterior: res.data[0].periodos[0].resumen.porcentaje_anterior,
+                    avance_anterior: res.data[0].periodos[0].resumen.valor_anterior,
+                    porcentaje_anterior: res.data[0].periodos[0].resumen.porcentaje_anterior,
 
-                        avance_actual: res.data[0].periodos[0].resumen.valor_actual,
-                        porcentaje_actual: res.data[0].periodos[0].resumen.porcentaje_actual,
+                    avance_actual: res.data[0].periodos[0].resumen.valor_actual,
+                    porcentaje_actual: res.data[0].periodos[0].resumen.porcentaje_actual,
 
-                        avance_acumulado: res.data[0].periodos[0].resumen.valor_total,
-                        porcentaje_acumulado: res.data[0].periodos[0].resumen.porcentaje_total,
+                    avance_acumulado: res.data[0].periodos[0].resumen.valor_total,
+                    porcentaje_acumulado: res.data[0].periodos[0].resumen.porcentaje_total,
 
-                        saldo: res.data[0].periodos[0].resumen.valor_saldo,
-                        porcentaje_saldo: res.data[0].periodos[0].resumen.porcentaje_saldo,
-                        // seteamos las fechas par ala carga por defecto
-                        fecha_inicial: res.data[0].periodos[0].fecha_inicial,
-                        fecha_final: res.data[0].periodos[0].fecha_final,
+                    saldo: res.data[0].periodos[0].resumen.valor_saldo,
+                    porcentaje_saldo: res.data[0].periodos[0].resumen.porcentaje_saldo,
+                    // seteamos las fechas par ala carga por defecto
+                    fecha_inicial: res.data[0].periodos[0].fecha_inicial,
+                    fecha_final: res.data[0].periodos[0].fecha_final,
 
-                    })
-                }
-            })
-            .catch(err => {
-                console.log('ERROR ANG' + err);
-            });
+                })
+            }
+        })
+        .catch(err => {
+            console.log('ERROR ANG algo salió mal' + err);
+        });
     }
 
     TabsAnios(tab) {
@@ -144,7 +144,7 @@ class ValorizacionGeneral extends Component {
 
             if (this.state.IdComponente !== "") {
                 // llamamos al api de partidas en valarizaciones------------------------------------------------------------------------------------------------------------------------------
-                axios.post(`${UrlServer}/getValGeneralPartidas`,
+                axios.post(`${UrlServer}${this.props.Ruta.Partidas}`,
                     {
                         "id_componente": this.state.IdComponente,
                         "fecha_inicial": fechaInicial,
@@ -164,7 +164,7 @@ class ValorizacionGeneral extends Component {
 
             } else {
                 // llamamos a resumen--------------------------------------------------------------------------------------------------------------------------------
-                axios.post(`${UrlServer}/getValGeneralResumenPeriodo`,
+                axios.post(`${UrlServer}${this.props.Ruta.ResumenComp}`,
                     {
                         "id_ficha": sessionStorage.getItem("idobra"),
                         "fecha_inicial": fechaInicial,
@@ -218,7 +218,7 @@ class ValorizacionGeneral extends Component {
 
             if (tab !== "resumen") {
                 // llamamos al api de partidas en valarizaciones
-                axios.post(`${UrlServer}/getValGeneralPartidas`,
+                axios.post(`${UrlServer}${this.props.Ruta.Partidas}`,
                     {
                         "id_componente": id_componente,
                         "fecha_inicial": this.state.fecha_inicial,
@@ -368,7 +368,25 @@ class ValorizacionGeneral extends Component {
                                                 }
 
                                                 <tr className="resplandPartida font-weight-bolder">
-                                                    <td colSpan="2">TOTAL</td>
+                                                    <td colSpan="2">TOTAL COSTO DIRECTO</td>
+                                                    <td>S/. {this.state.ppto}</td>
+
+                                                    <td>S/. {this.state.avance_anterior}</td>
+                                                    <td>{this.state.porcentaje_anterior} %</td>
+
+                                                    <td>S/. {this.state.avance_actual}</td>
+                                                    <td>{this.state.porcentaje_actual} %</td>
+
+                                                    <td>S/. {this.state.avance_acumulado}</td>
+                                                    <td>{this.state.porcentaje_acumulado} %</td>
+
+                                                    <td>S/. {this.state.saldo}</td>
+                                                    <td>{this.state.porcentaje_saldo} %</td>
+
+                                                </tr>
+
+                                                <tr className="resplandPartida font-weight-bolder">
+                                                    <td colSpan="2">TOTAL COSTO INDIRECTO</td>
                                                     <td>S/. {this.state.ppto}</td>
 
                                                     <td>S/. {this.state.avance_anterior}</td>

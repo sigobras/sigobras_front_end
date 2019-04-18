@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import ValorizacionGeneral from './ComponentsValorizaciones/ValorizacionGeneral'
-import ValPartidasNuevas from './ComponentsValorizaciones/ValPartidasNuevas'
-import ValMayoresMetrados from './ComponentsValorizaciones/ValMayoresMetrados'
 
 class General extends Component {
     constructor(){
@@ -11,31 +9,29 @@ class General extends Component {
         this.state = {
             // COLLAPSE DE BOTONES
             collapse: 1,
-            ValRutaGeneral:[
-                {
-                    Anios:"/",
+            ValRutaGeneral:{
+                    Anios:"/getValGeneralAnyos",
                     Mes:"/",
-                    Resumen:"",
-                    Componentes:"/"
-                }
-            ],
+                    ResumenComp:"/getValGeneralResumenPeriodo",
+                    Componentes:"/",
+                    Partidas:"/getValGeneralPartidas"
+            },
 
-            ValRutaPartidaNeva:[
-                {
-                    Anios:"/",
+            ValRutaPartidaNeva:{
+                    Anios:"/getValGeneraPartidaNuevalAnyos",
                     Mes:"/",
-                    Resumen:"",
-                    Componentes:"/"
-                }
-            ],
-            ValRutaPartidaNeva:[
-                {
-                    Anios:"/",
+                    ResumenComp:"",
+                    Componentes:"/getValGeneralPartidaNuevaResumenPeriodo",
+                    Partidas:"/getValGeneralPartidaNuevaPartidas"
+            },
+
+            ValRutaMayorMetrado:{
+                    Anios:"/getValGeneraMayoresMetradoslAnyos",
                     Mes:"/",
-                    Resumen:"",
-                    Componentes:"/"
-                }
-            ],
+                    ResumenComp:"",
+                    Componentes:"/",
+                    Partidas:"/getValGeneralMayoresMetradosPartidas"
+            },
         }; 
 
         this.CollapseCard = this.CollapseCard.bind(this)
@@ -59,7 +55,7 @@ class General extends Component {
                         VALORIZACION GENERAL {collapse === 1?'➖':'➕'}
                     </CardHeader>
                     <Collapse isOpen={collapse === 1}>
-                        { collapse === 1 ? <ValorizacionGeneral /> : '' }
+                        { collapse === 1 ? <ValorizacionGeneral Ruta = { this.state.ValRutaGeneral }/> : '' }
                     </Collapse>
                 </Card>
 
@@ -70,7 +66,7 @@ class General extends Component {
                     </CardHeader>
                     <Collapse isOpen={collapse === 2}>
                         <CardBody>
-                            { collapse === 2 ? <ValPartidasNuevas />: '' }
+                            { collapse === 2 ? <ValorizacionGeneral Ruta = { this.state.ValRutaPartidaNeva } />: '' }
                         </CardBody>                   
                     </Collapse>
                 </Card>
@@ -82,7 +78,7 @@ class General extends Component {
                     </CardHeader>
                     <Collapse isOpen={collapse === 3}>
                         <CardBody>
-                            { collapse === 3 ? <ValMayoresMetrados /> : '' }
+                            { collapse === 3 ? <ValorizacionGeneral Ruta = { this.state.ValRutaMayorMetrado } /> : '' }
                         </CardBody>                   
                     </Collapse>
                 </Card>

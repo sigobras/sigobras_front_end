@@ -12,7 +12,7 @@ class Componentes extends Component {
   render() {
     return (
       <div>
-        <table className="table table-bordered table-sm bg-dark">
+        <table className="table table-bordered table-sm">
           <thead>
             <tr>
                 <th>#</th>

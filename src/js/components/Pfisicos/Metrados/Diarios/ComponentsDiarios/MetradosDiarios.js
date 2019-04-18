@@ -855,7 +855,7 @@ class MetradosDiarios extends Component {
         
         return (
           <div>
-            
+            {/* { this.state.iconos} */}
             <Card>
               <Nav tabs>
                 {DataComponentes.length === 0 ? <Spinner color="primary" size="sm"/>: DataComponentes.map((comp,indexComp)=>
@@ -898,8 +898,8 @@ class MetradosDiarios extends Component {
                     <thead className="resplandPartida">
                       <tr>
                         <th style={{width: "39px"}}>
-                          <div title="FILTRO POR PRIORIDAD" className="prioridad" onClick={()=>this.Prioridad("filtro") }>
-                            <MdFilterTiltShift size={ 15}/>
+                          <div title="Busqueda por prioridad" className="prioridad" onClick={()=>this.Prioridad("filtro") }>
+                            <FaSuperpowers size={ 15}/>
                           </div>
 
                           { 

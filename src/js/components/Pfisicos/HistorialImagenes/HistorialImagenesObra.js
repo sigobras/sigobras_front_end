@@ -105,7 +105,7 @@ class HistorialImagenesObra extends Component {
         "id_partida": idPartidad
       })
       .then((res) => {
-        // console.log("res actividades imagenes", res.data)
+        console.log("res actividades imagenes", res.data)
         var DataQueLLega = res.data
         if (DataQueLLega !== "vacio") {
           var dataAgrupar = []
@@ -114,10 +114,10 @@ class HistorialImagenesObra extends Component {
               {
                 src: UrlServer + img.imagen,
                 thumbnail: UrlServer + img.imagen,
-                thumbnailWidth: 320,
-                thumbnailHeight: 174,
-                tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-                caption: img.descripcion
+                thumbnailWidth: "10%",
+                thumbnailHeight: "5%",
+                // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
+                caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion}` 
               }
             )
           });
