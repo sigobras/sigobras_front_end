@@ -34,7 +34,7 @@ class UserNav extends Component {
     render() {
         return (
             <div>
-                <span id="userLogin"  className="FondoBarra mr-1 nav-link text-white" >
+                <span id="userLogin"  className="mr-1 nav-link text-white" >
                     Bienvenido:  {sessionStorage.getItem('nombre')}
                 </span>
                 

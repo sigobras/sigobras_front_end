@@ -1,7 +1,10 @@
 body {
   font-size: .7rem !important;
-  color: #fff !important;
-  background-image: url(http://akveo.com/blur-admin/assets/img/blur-bg.jpg);
+  color: #dcd7d7 !important;
+  background: #F3904F;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #3B4371, #F3904F);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #3B4371, #F3904F); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
 }
 
 
@@ -41,7 +44,7 @@ body {
 /* texto barra navegacion izquierda */
 .sidebar .nav-link {
   margin-right: 0px;
-  color: rgb(255, 255, 255);
+  /* color: #dcd7d7; */
 }
 
 /* 
@@ -133,7 +136,7 @@ body {
 
 .lii a {
   display: block;
-  color: rgb(255, 255, 255);
+  color:#e6e6e6;
   padding: 8px 16px;
   text-decoration: none;
   border-bottom: 1px solid #1d2029;
@@ -141,8 +144,7 @@ body {
 
 .lii a.active {
   background-color: #0080ff;
-  ;
-  color: white !important;
+  color: #fffefe!important;
 }
 
 .lii a:hover:not(.active) {
@@ -246,7 +248,7 @@ body {
 
 /* FondoBarraSuperior */
 .FondoBarra {
-  background: #1d2029;
+  background: #1d2029d9;
 }
 
 /* bordes propios */
@@ -306,7 +308,7 @@ body {
 
 .resplandPartida {
   border-bottom: 2px solid #0080ff;
-  background: #314c65
+  background: #394c65
 }
 
 .icoVer {
@@ -510,7 +512,7 @@ iframe::-webkit-scrollbar-thumb {
 table.table thead th {
   position: sticky;
   top: 0px;
-  background: #314c65;
+  background: #394c65;
 }
 
 

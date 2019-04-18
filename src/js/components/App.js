@@ -4,7 +4,7 @@ import { FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaSuperscript, FaAn
 import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
 
 import { Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
-import { BrowserRouter as Router, Route, NavLink, Switch  } from "react-router-dom";
+import { BrowserRouter as Router, Route, NavLink, Switch } from "react-router-dom";
 import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';
 import { ToastContainer } from "react-toastify";
@@ -12,7 +12,7 @@ import { ToastContainer } from "react-toastify";
 import axios from 'axios';
 // app assets
 import LogoSigobras from '../../images/logoSigobras.png';
-import {UrlServer} from './Utils/ServerUrlConfig'
+import { UrlServer } from './Utils/ServerUrlConfig'
 
 // app components
 import UserNav from './Otros/UserNav';
@@ -25,12 +25,12 @@ import Inicio from './Inicio/Inicio'
 import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
 import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
 
-import Corte from './Pfisicos/Metrados/Diarios/Corte'
-import Actualizacion from './Pfisicos/Metrados/Diarios/Actualizacion'
-import Compatibilidad from './Pfisicos/Metrados/Diarios/Compatibilidad'
+// import Corte from './Pfisicos/Metrados/Diarios/Corte'
+// import Actualizacion from './Pfisicos/Metrados/Diarios/Actualizacion'
+// import Compatibilidad from './Pfisicos/Metrados/Diarios/Compatibilidad'
 import RecursosObra from './Pfisicos/Metrados/Diarios/RecursosObra'
 import HistorialImagenesObra from './Pfisicos/HistorialImagenes/HistorialImagenesObra'
-import Paralizacion  from './Pfisicos/Metrados/Diarios/Paralizacion'
+import Paralizacion from './Pfisicos/Metrados/Diarios/Paralizacion'
 
 import General from '../components/Pfisicos/Valorizaciones/General'
 
@@ -41,14 +41,14 @@ import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 import ReportesGenerales from './Reportes/ReportesGenerales'
 
 class AppAng extends Component {
-    constructor(){
+    constructor() {
         super();
         this.state = {
             navbarExpland: true,
             navbarExplandRight: false,
             isFull: false,
             collapse: 900,
-            DataObra:[],
+            DataObra: [],
             DataMenus: []
         }
 
@@ -56,52 +56,52 @@ class AppAng extends Component {
         this.collapseRight = this.collapseRight.bind(this)
         this.irFullScreen = this.irFullScreen.bind(this)
         this.CollapseMenu = this.CollapseMenu.bind(this)
-        
+
     }
 
-    componentWillMount(){
+    componentWillMount() {
         localStorage.setItem('thema', 'noche');
 
-        axios.post(`${UrlServer}/getDatosGenerales`,{
+        axios.post(`${UrlServer}/getDatosGenerales`, {
             id_ficha: sessionStorage.getItem('idobra')
         })
-        .then((res)=>{
-            this.setState({
-                DataObra:res.data
+            .then((res) => {
+                this.setState({
+                    DataObra: res.data
+                })
             })
-        })
-        .catch(error=>
-            console.log(error)
-        )
-           
+            .catch(error =>
+                console.log(error)
+            )
+
         // CARGA DATOS DE MENU
-        axios.post(`${UrlServer}/getMenu`,{
+        axios.post(`${UrlServer}/getMenu`, {
             id_ficha: sessionStorage.getItem('idobra'),
             id_acceso: sessionStorage.getItem('idacceso')
         })
-        .then((res)=>{
-            
+        .then((res) => {
+
             // console.log('data >>>',res.data)
 
 
-            if(res.data === 'null'){
+            if (res.data === 'null') {
                 this.setState({
-                    DataMenus:[]
+                    DataMenus: []
                 })
-            }else{
+            } else {
                 this.setState({
-                    DataMenus:res.data
+                    DataMenus: res.data
                 })
             }
-            
+
         })
-        .catch(error=>
+        .catch(error =>
             console.log(error)
         )
 
     }
 
-    ButtonToogle(){
+    ButtonToogle() {
         this.setState({
             navbarExpland: !this.state.navbarExpland
         });
@@ -112,16 +112,16 @@ class AppAng extends Component {
     }
 
 
-    collapseRight(){
+    collapseRight() {
         this.setState({
             navbarExplandRight: !this.state.navbarExplandRight
         });
     }
 
-    irFullScreen(){
-        this.setState({ 
-            isFull: !this.state.isFull 
-        });        
+    irFullScreen() {
+        this.setState({
+            isFull: !this.state.isFull
+        });
     }
 
     CollapseMenu(e) {
@@ -132,188 +132,184 @@ class AppAng extends Component {
     render() {
         var { navbarExplandRight, isFull, DataObra, DataMenus, collapse } = this.state
 
-
-
         return (
-           
+
             // <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
-                <Router>
+            <Router>
+
                     <div>
-                        {/* {sessionStorage.getItem('idobra') === null? window.location.reload(): ''} */}
-                        <div>
-                            <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
-                                <span className="col-md-2 mr-0 m-0 pt-1 text-light h5">
-                                    <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="48" /> SIGOBRAS
-                                    <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={ this.ButtonToogle }>
-                                        <MdDehaze size={20}/>
-                                    </button>
-                                </span>
-                                <div className="clearfix d-none d-sm-block p-0 m-0">
-                                    <div className="float-right"><UserNav/></div>
-                                    <div className="float-right"><MensajeNav /></div>
-                                    <div className="float-right"><NotificacionNav /></div>
-                                    <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ?<MdFullscreen size={20}/> : <MdFullscreenExit size={20}/> }</a></div>
-                                    <div className="float-right"> {sessionStorage.getItem('estadoObra') === null?'':<Btns />} </div>
-                                </div>
-                            </nav>
+                        <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
+                            <span className="col-md-2 mr-0 m-0 pt-1 text-light h5">
+                                <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="48" /> SIGOBRAS
+                                    <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={this.ButtonToogle}>
+                                    <MdDehaze size={20} />
+                                </button>
+                            </span>
+                            <div className="clearfix d-none d-sm-block p-0 m-0">
+                                <div className="float-right"><UserNav /></div>
+                                <div className="float-right"><MensajeNav /></div>
+                                <div className="float-right"><NotificacionNav /></div>
+                                <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ? <MdFullscreen size={20} /> : <MdFullscreenExit size={20} />}</a></div>
+                                <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
+                            </div>
+                        </nav>
 
-                            <div className="container-fluid ">
-                                <ToastContainer
-                                    position="bottom-right"
-                                    autoClose={1000}
-                                    hideProgressBar={false}
-                                    newestOnTop={false}
-                                    closeOnClick
-                                    rtl={false}
-                                    pauseOnVisibilityChange
-                                    draggable
-                                    pauseOnHover
-                                />
-                                <div className="row">
-                                    <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block text-light sidebar': "navbarCollapseLeft text-light sidebar"}>
-                                        <div className="sidebar-sticky">
-                                            <ul className="nav flex-column ull">
-                                                
-                                                <li className="lii">
-                                                    <NavLink to="/inicio" activeclassname="nav-link active"  onClick={ this.CollapseMenu } data-event={ 100 }> <FaHouseDamage /><span> INICIO</span> </NavLink>
-                                                </li>
-                                                
-                                                { DataMenus.length === 0  ? <label className="text-center text-white"> <Spinner color="primary" type="grow" /></label>: DataMenus.map((menus, index)=>    
-                                                    <li className="lii" key={ index }>
-                                                        <span className="nav-link" onClick={ this.CollapseMenu } data-event={ index } activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index? <FaChevronUp />:<FaChevronRight /> }</div></span>
-                                                        <Collapse isOpen={collapse === index}>
-                                                            <ul className="nav flex-column ull">
-                                                                {menus.submenus.map((subMenu, IndexSub)=>
-                                                                    <li className="lii pl-3" key={ IndexSub }>
-                                                                        <NavLink to={subMenu.ruta} activeclassname="nav-link active">{ subMenu.nombreMenu }</NavLink>
-                                                                    </li>
-                                                                )}
-                                                            </ul>
-                                                        </Collapse>
-                                                    </li> 
-                                                )}
+                        <div className="container-fluid ">
+                            <ToastContainer
+                                position="bottom-right"
+                                autoClose={1000}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnVisibilityChange
+                                draggable
+                                pauseOnHover
+                            />
+                            <div className="row">
+                                <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block sidebar' : "navbarCollapseLeft sidebar"}>
+                                    <div className="sidebar-sticky">
+                                        <ul className="nav flex-column ull">
 
-                                                <li className="lii">
-                                                    <NavLink to="/ReportesGenerales" activeclassname="nav-link active"  onClick={ this.CollapseMenu } data-event={ 101 }> <FaFile /><span> REPORTES </span> </NavLink>
+                                            <li className="lii">
+                                                <NavLink to="/inicio" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={100}> <FaHouseDamage /><span> INICIO</span> </NavLink>
+                                            </li>
+
+                                            {DataMenus.length === 0 ? <label className="text-center text-white"> <Spinner color="primary" type="grow" /></label> : DataMenus.map((menus, index) =>
+                                                <li className="lii" key={index}>
+                                                    <span className="nav-link" onClick={this.CollapseMenu} data-event={index} activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                                    <Collapse isOpen={collapse === index}>
+                                                        <ul className="nav flex-column ull">
+                                                            {menus.submenus.map((subMenu, IndexSub) =>
+                                                                <li className="lii pl-3" key={IndexSub}>
+                                                                    <NavLink to={subMenu.ruta} activeclassname="nav-link active">{subMenu.nombreMenu}</NavLink>
+                                                                </li>
+                                                            )}
+                                                        </ul>
+                                                    </Collapse>
                                                 </li>
-                                                
-                                            </ul>
-                                            <div className="abajoCirculos pl-2 pr-2">
-                                                <div className="row">
-                                                    <div className="col-6">
-                                                        <Circle
-                                                            animate={true} 
-                                                            animationDuration="1s"
-                                                            responsive={true} 
-                                                            progress={DataObra.porcentaje_acumulado}
-                                                            progressColor="orange"
-                                                            bgColor="whitesmoke"
-                                                            textColor="orange"
-                                                        />   
-                                                        <label className="text-center">Acumulado S/.{ DataObra.avance_acumulado }</label>
-                                                    </div>
-                                                    <div className="col-6">
-                                                        <Circle
-                                                            animate={true} 
-                                                            animationDuration="1s"
-                                                            responsive={true} 
-                                                            progress={ DataObra.porcentaje_actual }
-                                                            progressColor="##f5f5f5"
-                                                            bgColor="whitesmoke"
-                                                            textColor="##f5f5f5"
-                                                        />
-                                                        <label className="text-center">Actual S/. {DataObra.avance_actual}</label>                                                               
-                                                    </div>
-                                                    
+                                            )}
+
+                                            <li className="lii">
+                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={101}> <FaFile /><span> REPORTES </span> </NavLink>
+                                            </li>
+
+                                        </ul>
+                                        <div className="abajoCirculos pl-2 pr-2">
+                                            <div className="row">
+                                                <div className="col-6">
+                                                    <Circle
+                                                        animate={true}
+                                                        animationDuration="1s"
+                                                        responsive={true}
+                                                        progress={DataObra.porcentaje_acumulado}
+                                                        progressColor="orange"
+                                                        bgColor="whitesmoke"
+                                                        textColor="orange"
+                                                    />
+                                                    <label className="text-center">Acumulado S/.{DataObra.avance_acumulado}</label>
                                                 </div>
-                                                <br />
-                                                <br />
-                                                
-                                                <div className="text-center">
-                                                    Ayer S/. {DataObra.avance_ayer}
+                                                <div className="col-6">
+                                                    <Circle
+                                                        animate={true}
+                                                        animationDuration="1s"
+                                                        responsive={true}
+                                                        progress={DataObra.porcentaje_actual}
+                                                        progressColor="##f5f5f5"
+                                                        bgColor="whitesmoke"
+                                                        textColor="##f5f5f5"
+                                                    />
+                                                    <label className="text-center">Actual S/. {DataObra.avance_actual}</label>
                                                 </div>
+
+                                            </div>
+                                            <br />
+                                            <br />
+
+                                            <div className="text-center">
+                                                Ayer S/. {DataObra.avance_ayer}
                                             </div>
                                         </div>
-                                        
-                                    </nav>
-        
+                                    </div>
 
-                                    <main role="main" className="col ml-sm-auto col-lg px-0">
-                                        
-                                        <div className="d-flex mb-0 border-button pt-5 p-1 text-light m-0">
-                                            <div>
-                                                <b>
-                                                    { DataObra.g_meta === undefined?
-                                                        <label className="text-center text-white"><Spinner color="primary" type="grow"/></label>:
-                                                     DataObra.g_meta.toUpperCase()}
-                                                </b>
-                                            </div>
+                                </nav>
+
+
+                                <main role="main" className="col ml-sm-auto col-lg px-0">
+
+                                    <div className="d-flex mb-0 border-button pt-5 p-1 m-0">
+                                        <div>
+                                            <b>
+                                                {DataObra.g_meta === undefined ?
+                                                    <label className="text-center "><Spinner color="primary" type="grow" /></label> :
+                                                    DataObra.g_meta.toUpperCase()}
+                                            </b>
                                         </div>
-            
-                                        <div className="px-1 scroll_contenido mt-2">
-                                            
+                                    </div>
+
+                                    <div className="px-1 scroll_contenido mt-2">
+
 
                                         <Switch>
                                             <Route exact path="/Inicio" component={Inicio} />
 
-                                            <Route path="/MDdiario" component={ MDdiario } />
-                                            <Route path="/MDHistorial" component={ MDHistorial } />
+                                            <Route path="/MDdiario" component={MDdiario} />
+                                            <Route path="/MDHistorial" component={MDHistorial} />
 
-                                            <Route path="/CorteObra" component={ Corte } />
-                                            <Route path="/ActualizacionObra" component={ Actualizacion } />
-                                            <Route path="/CompatibilidadObra" component={ Compatibilidad } />
-                                            <Route path="/ParalizacionObra" component={ Paralizacion } />
-                                            <Route path="/RecursosObra" component={ RecursosObra } />
-                                            <Route path="/HistorialImagenesObra" component={ HistorialImagenesObra } />
-                                            
-                                            <Route path="/General" component={ General } />
+                                            {/* <Route path="/CorteObra" component={Corte} />
+                                            <Route path="/ActualizacionObra" component={Actualizacion} /> */}
+                                            {/* <Route path="/CompatibilidadObra" component={Compatibilidad} /> */}
+                                            <Route path="/ParalizacionObra" component={Paralizacion} />
+                                            <Route path="/RecursosObra" component={RecursosObra} />
+                                            <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
+
+                                            <Route path="/General" component={General} />
 
                                             <Route path="/RecordObras" component={RecordObras} />
-                                            <Route path="/ReportesGenerales" component={ ReportesGenerales } />
+                                            <Route path="/ReportesGenerales" component={ReportesGenerales} />
                                         </Switch>
-                                        </div>
-
-                                    </main>
-
-                                    <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' :  "navbarCollapseRight  border-left FondoBarra"} >
-                                        <div className="sidebar-sticky">
-                                            <div className="p-1">
-                                                <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
-
-                                                <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
-                                                    <PopoverHeader>Tiempo de ejecución</PopoverHeader>
-                                                    <PopoverBody>
-                                                        <fieldset>
-                                                            <legend>Dias transcurridos</legend>
-                                                            { DataObra.dias_ejecutados } Dias
-                                                        </fieldset>
-                                                        <div className="divider"></div>
-                                                        <br />
-                                                        <fieldset>
-                                                            <legend>Te quedan</legend>
-                                                            {DataObra.dias_saldo > 0 ? 
-                                                                <div><b> { DataObra.dias_saldo } </b> Dias </div>
-                                                            : 
-                                                                <div><b>oh no Te pasaste  </b><br />{ DataObra.dias_saldo } Dias </div> 
-                                                            }
-                                                        </fieldset>
-                                                    </PopoverBody>
-                                                </UncontrolledPopover>
-
-                                                
-                                            </div>
-
-                                        </div>
-                                    </nav>
-
-                                    <div className="posAbajo">
-                                        <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={ this.collapseRight }> {navbarExplandRight === true ? <FaAngleRight />: <FaAngleLeft /> }</button>
                                     </div>
+
+                                </main>
+
+                                <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' : "navbarCollapseRight  border-left FondoBarra"} >
+                                    <div className="sidebar-sticky">
+                                        <div className="p-1">
+                                            <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
+
+                                            <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
+                                                <PopoverHeader>Tiempo de ejecución</PopoverHeader>
+                                                <PopoverBody>
+                                                    <fieldset>
+                                                        <legend>Dias transcurridos</legend>
+                                                        {DataObra.dias_ejecutados} Dias
+                                                        </fieldset>
+                                                    <div className="divider"></div>
+                                                    <br />
+                                                    <fieldset>
+                                                        <legend>Te quedan</legend>
+                                                        {DataObra.dias_saldo > 0 ?
+                                                            <div><b> {DataObra.dias_saldo} </b> Dias </div>
+                                                            :
+                                                            <div><b>oh no Te pasaste  </b><br />{DataObra.dias_saldo} Dias </div>
+                                                        }
+                                                    </fieldset>
+                                                </PopoverBody>
+                                            </UncontrolledPopover>
+
+
+                                        </div>
+
+                                    </div>
+                                </nav>
+
+                                <div className="posAbajo">
+                                    <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={this.collapseRight}> {navbarExplandRight === true ? <FaAngleRight /> : <FaAngleLeft />}</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </Router>
+            </Router>
             // </Fullscreen>
         );
     }

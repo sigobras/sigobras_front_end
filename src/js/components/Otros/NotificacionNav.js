@@ -30,7 +30,7 @@ class NotificacionNav extends Component {
     render() {
         return (
             <div>
-                <a href="#" id="notification" onClick={this.toggle} className="FondoBarra nav-link text-white">
+                <a href="#" id="notification" onClick={this.toggle} className="nav-link text-white">
                     <FaBell />
                 </a>
                 <Popover placement="bottom" isOpen={this.state.popoverOpen} target="notification" toggle={this.toggle}  >

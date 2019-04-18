@@ -29,7 +29,8 @@ class MetradosDiarios extends Component {
         modal: false,
         modalMm: false,
         nombreComponente:'',
-  
+        
+        // creo que son data de imputs
         ValorMetrado:'',
         DescripcionMetrado:'',
         ObservacionMetrado:'',
@@ -85,7 +86,9 @@ class MetradosDiarios extends Component {
         // captura de la fecha
         fecha_actualizacion:'',
         // demos  iconos-----------------
-        iconos: [<MdMonetizationOn />, <MdVisibility />, <MdWatch />, <TiWarning />, <MdLibraryBooks />, <FaSuperpowers />]
+        iconos: [<MdMonetizationOn />, <MdVisibility />, <MdWatch />, <TiWarning />, <MdLibraryBooks />, <FaSuperpowers />],
+
+        dataFiltrada:[]
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -116,8 +119,8 @@ class MetradosDiarios extends Component {
         id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
-          // console.log(res.data[0].partidas);
-          console.time("tiempo");
+          console.log(res.data);
+          // console.time("tiempo");
 
 
           var partidas = res.data[0].partidas
@@ -141,13 +144,13 @@ class MetradosDiarios extends Component {
             }
           }
 
-          console.log(partidas)
-          console.timeEnd("tiempo");
-
+          // console.log(partidas)
+          // console.timeEnd("tiempo");
+          
           this.setState({
             DataComponentes:res.data,
             DataPartidas:res.data[0].partidas,
-            nombreComponente:res.data[0].nombre
+            nombreComponente:res.data[0].nombre,
           })
       })
       .catch((error)=>{
@@ -558,10 +561,11 @@ class MetradosDiarios extends Component {
       }
     }
 
-    capturaidMM(partidas_id_partida, indexComp, indexPartida){
+    capturaidMM(partidas_id_partida, indexComp, indexPartida ,descripcion){
       this.setState({
         modalMm: !this.state.modalMm,
         partidas_id_partida: partidas_id_partida,
+        descripcion:descripcion,
         indexComp:indexComp,
         viewIndex:indexPartida,
         OpcionMostrarMM:''
@@ -654,11 +658,12 @@ class MetradosDiarios extends Component {
     }
   
     Filtrador(e) {
-      console.log("datos ", e)
+      // console.log("datos ", e)
        var valorRecibido = e
       if( typeof valorRecibido === "number"){
         this.setState({ 
           BuscaPartida: valorRecibido,
+          mostrarIconos:-1
         })
 
         switch (valorRecibido) {
@@ -680,6 +685,11 @@ class MetradosDiarios extends Component {
             })
             break;
 
+          case 104:
+            this.setState({
+              FilterSelected:"MM"
+            })
+            break;
           default:
             this.setState({
               FilterSelected:"Progreso"
@@ -708,11 +718,11 @@ class MetradosDiarios extends Component {
       this.setState({
         mostrarIconos:this.state.mostrarIconos === i ? -1 :i
       })  
-    
     }
 
     UpdatePrioridadIcono(idPartida, id_icono, index){
-      // var partidas = this.state.DataPartidas
+      console.log("index", index);
+      
       
       axios.put(`${UrlServer}/putIconocategoria`,
         {
@@ -806,6 +816,10 @@ class MetradosDiarios extends Component {
               }else if(BuscaPartida === 99 && filtrado.tipo !== "titulo" && filtrado.porcentaje !== 0 ) {
                 return( filtrado.porcentaje <= 99 );
 
+
+              }else if(BuscaPartida === 104 && filtrado.tipo !== "titulo" ) {
+              return( filtrado.mayorMetrado === 1 );
+
                 // filtramos las prioridades color
               }else if( BuscaPartida === 1 ) {
                 return( filtrado.prioridad_color === "#f00" );
@@ -817,7 +831,7 @@ class MetradosDiarios extends Component {
                 return( filtrado.prioridad_color === "#00b050" );
 
               }else if( BuscaPartida === 4 ) {
-                return( filtrado.prioridad_color === "#305496" );
+                return( filtrado.prioridad_color === "#0080ff" );
                 
               }else if( BuscaPartida === 5 && filtrado.tipo !== "titulo") {
                 return( filtrado.prioridad_color === "#ffffff" );
@@ -834,8 +848,10 @@ class MetradosDiarios extends Component {
               return filtrado.descripcion.toLowerCase().match(BuscaPartida);
             });
           }
+          
         }
 
+        
         
         return (
           <div>
@@ -861,7 +877,7 @@ class MetradosDiarios extends Component {
                       <Input placeholder="Buscar por descripción" onKeyUp={ e => this.Filtrador(e) }/>
 
                       <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
-                        <DropdownToggle caret  className="bg-warning">
+                        <DropdownToggle caret  className="bg-primary">
                           { this.state.FilterSelected }
                         </DropdownToggle>
                         <DropdownMenu >
@@ -869,6 +885,7 @@ class MetradosDiarios extends Component {
                           <DropdownItem onClick={()=>this.Filtrador(0)} >0%</DropdownItem>
                           <DropdownItem onClick={()=>this.Filtrador(100)} >100%</DropdownItem>
                           <DropdownItem onClick={()=>this.Filtrador(99) }>Progreso</DropdownItem>
+                          <DropdownItem onClick={()=>this.Filtrador(104) }>MM</DropdownItem>
                         </DropdownMenu>
                       </InputGroupButtonDropdown>
                     </InputGroup>
@@ -880,7 +897,7 @@ class MetradosDiarios extends Component {
                   <table className="table table-sm">
                     <thead className="resplandPartida">
                       <tr>
-                        <th style={{width: "37px"}}>
+                        <th style={{width: "39px"}}>
                           <div title="FILTRO POR PRIORIDAD" className="prioridad" onClick={()=>this.Prioridad("filtro") }>
                             <MdFilterTiltShift size={ 15}/>
                           </div>
@@ -900,10 +917,10 @@ class MetradosDiarios extends Component {
 
                         </th>
                         <th>ITEM</th>
-                        <th>DESCRIPCION</th>
+                        <th>DESCRIPCIÓN</th>
                         <th>METRADO</th>
-                        <th>P / U S/.</th>
-                        <th>P / P S/.</th>
+                        <th>P/U </th>
+                        <th>P/P </th>
                         <th width="20%">BARRA DE PROGRESO</th>
                         <th> DURACIÓN </th>
                       </tr>
@@ -914,7 +931,7 @@ class MetradosDiarios extends Component {
                       DatosPartidasFiltrado.map((metrados, i) =>
                         <tbody key={ i } >
                     
-                          <tr className={ metrados.tipo === "titulo" ? "font-weight-bold":  collapse === i? "font-weight-light resplandPartida": "font-weight-light"}>
+                          <tr className={ metrados.tipo === "titulo" ? "font-weight-bold text-warning":  collapse === i? "font-weight-light resplandPartida": "font-weight-light"}>
                             <td>
                               { 
                                 metrados.tipo === "titulo" ?"":
@@ -970,7 +987,6 @@ class MetradosDiarios extends Component {
                                   height: '3px',
                                   width: '100%',
                                   background: '#c3bbbb',
-                                  position: 'relative'
                                   }}
 
                                 >
@@ -982,7 +998,6 @@ class MetradosDiarios extends Component {
                                       : metrados.porcentaje > 50 ? '#ffbf00'
                                       :  '#ff2e00',
                                       transition: 'all .9s ease-in',
-                                    position: 'absolute'
                                   }}
                                 />
                                 </div>
@@ -1020,7 +1035,7 @@ class MetradosDiarios extends Component {
                                         {/* datos de mayor metrado ------------------ */}
                                         
                                         { 
-                                          Number(DataMayorMetrado.mm_avance_costo) <= 0?'':
+                                          Number(DataMayorMetrado.mm_avance_costo) > 0?
                                             <div className="small">
                                           
                                               <div className="clearfix">
@@ -1036,14 +1051,14 @@ class MetradosDiarios extends Component {
                                                 <span className="float-left text-info">Saldo:  { DataMayorMetrado.mm_metrados_saldo } { metrados.unidad_medida }</span>
                                                 <span className="float-right text-info">S/. { DataMayorMetrado.mm_metrados_costo_saldo}</span>
                                               </div>
-                                            </div>   
+                                            </div> : '' 
                                         }
                                         
 
                                       </div>
 
                                       <div className="col-sm-1">
-                                        <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ ()=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i) }> <FaPlus size={10} /> MM</button>
+                                        <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={ ()=>this.capturaidMM(metrados.id_partida, this.state.id_componente, i, metrados.descripcion) }> <FaPlus size={10} /> MM</button>
                                       </div>
                                     </div>
                                   
@@ -1197,7 +1212,9 @@ class MetradosDiarios extends Component {
 
             {/* <!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
             <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
-              
+              <ModalHeader toggle={this.modalMetrar} className="border-button">
+                        <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+              </ModalHeader>
               {
                 sessionStorage.getItem("estadoObra") === "Ejecucion"
                 ?
@@ -1205,9 +1222,6 @@ class MetradosDiarios extends Component {
                     {/* codigo de EJECUCION =============================================================================================================== */}
                     
                     <form onSubmit={this.EnviarMetrado_EJECUCION }>
-                      <ModalHeader toggle={this.modalMetrar} className="border-button">
-                          <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
-                      </ModalHeader>
                       <ModalBody>
                         <label className="text-center mt-0">{ descripcion } </label><br/>
 
@@ -1298,9 +1312,6 @@ class MetradosDiarios extends Component {
                     {/* codigo de CORTE =============================================================================================================== */}
                     
                     <form onSubmit={this.EnviarMetrado_CORTE }>
-                      <ModalHeader toggle={this.modalMetrar} className="border-button">
-                          <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
-                      </ModalHeader>
                       <ModalBody>
                           <label className="text-center mt-0">{ descripcion } </label><br/>
 
@@ -1396,9 +1407,7 @@ class MetradosDiarios extends Component {
                   {/* codigo de ACTUALIZACION =============================================================================================================== */}
                   
                   <form onSubmit={this.EnviarMetrado_ACTUALIZACION }>
-                    <ModalHeader toggle={this.modalMetrar} className="border-button">
-                        <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
-                    </ModalHeader>
+
                     <ModalBody>
                         <label className="text-center mt-0">{ descripcion } </label><br/>
 
@@ -1503,6 +1512,7 @@ class MetradosDiarios extends Component {
                 </ModalHeader>
                 <ModalBody>
 
+                <label className="text-center mt-0">{ descripcion } </label><br/>
 
                     <div className="clearfix">
                       <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>

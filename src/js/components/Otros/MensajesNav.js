@@ -8,7 +8,7 @@ class MensajeNav extends Component {
     render() {
         return (
             <div>
-                <a href="#" id="mensajes" className="FondoBarra nav-link text-white">
+                <a href="#" id="mensajes" className=" nav-link text-white">
                     <FaEnvelope />
                 </a>
                 <UncontrolledPopover trigger="focus" placement="bottom" target="mensajes">
