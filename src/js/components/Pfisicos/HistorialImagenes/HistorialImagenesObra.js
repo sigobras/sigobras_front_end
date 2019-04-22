@@ -36,27 +36,27 @@ class HistorialImagenesObra extends Component {
         "id_ficha": sessionStorage.getItem("idobra")
       }
     )
-      .then((res) => {
-        // console.log("res componentes imagenes", res.data)
-        if (res.data !== "vacio") {
-          this.setState({
-            DataComponentesApi: res.data,
-            DataPartidasApi: res.data[0].partidas,
-
-            nombreComponente: res.data[0].nombre
-
-          })
-          return
-        }
-
+    .then((res) => {
+      // console.log("res componentes imagenes", res.data)
+      if (res.data !== "vacio") {
         this.setState({
-          SMSHistImgApi: true
-        })
+          DataComponentesApi: res.data,
+          DataPartidasApi: res.data[0].partidas,
 
+          nombreComponente: res.data[0].nombre
+
+        })
+        return
+      }
+
+      this.setState({
+        SMSHistImgApi: true
       })
-      .catch((err) => {
-        console.error("error al tratar de llamar al api", err)
-      })
+
+    })
+    .catch((err) => {
+      console.error("error al tratar de llamar al api", err)
+    })
   }
 
   TabsComponentes(tab, idComponente, nombreComponente) {

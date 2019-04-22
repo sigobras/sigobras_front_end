@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
 import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
@@ -88,14 +88,16 @@ class MetradosDiarios extends Component {
         // demos  iconos-----------------
         iconos: [<MdMonetizationOn />, <MdVisibility />, <MdWatch />, <TiWarning />, <MdLibraryBooks />, <FaSuperpowers />],
 
-        dataFiltrada:[]
+        dataFiltrada:[],
+
+        modalImgPartida: false
       }
 
       this.Tabs = this.Tabs.bind(this)
       this.CapturarID = this.CapturarID.bind(this)
       this.modalMetrar = this.modalMetrar.bind(this)
       this.modalMayorMetrado = this.modalMayorMetrado.bind(this)
-      this.onChangeImagen = this.onChangeImagen.bind(this)
+      this.onChangeImgMetrado = this.onChangeImgMetrado.bind(this)
       
       this.EnviarMetrado_EJECUCION = this.EnviarMetrado_EJECUCION.bind(this)
       this.EnviarMetrado_CORTE = this.EnviarMetrado_CORTE.bind(this)
@@ -111,6 +113,9 @@ class MetradosDiarios extends Component {
       this.UpdatePrioridadIcono = this.UpdatePrioridadIcono.bind(this);
       this.UpdatePrioridadColor = this.UpdatePrioridadColor.bind(this);
       this.clearImg = this.clearImg.bind(this);
+      this.modalImgPartida = this.modalImgPartida.bind(this);
+      this.capturaDatosCrearImgPartida = this.capturaDatosCrearImgPartida.bind(this);
+      this.EnviaImgPartida = this.EnviaImgPartida.bind(this);
     }
 
     componentWillMount(){
@@ -119,7 +124,7 @@ class MetradosDiarios extends Component {
         id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
-          console.log(res.data);
+          // console.log(res.data);
           // console.time("tiempo");
 
 
@@ -284,7 +289,11 @@ class MetradosDiarios extends Component {
             smsValidaMetrado:'', 
             metrado:metrado,
             parcial:parcial,
-            porcentaje_negatividad:porcentaje_negativo
+            porcentaje_negatividad:porcentaje_negativo,
+
+            // limpia valores por si los tiene
+            UrlImagen:"",
+            file:null,
         })
         
     }
@@ -301,7 +310,7 @@ class MetradosDiarios extends Component {
       });
     }
 
-    onChangeImagen(e) {
+    onChangeImgMetrado(e) {
 
        var inputValueImg = e.target.files[0]
 
@@ -347,6 +356,8 @@ class MetradosDiarios extends Component {
 
         // formData.append('id_ficha', sessionStorage.getItem('idobra'))
 
+        // console.log("formData", formData);
+        
         const config = {
             headers: {
                 'content-type': 'multipart/form-data'
@@ -371,8 +382,36 @@ class MetradosDiarios extends Component {
                 config
               )
               .then((res)=>{
-                  // console.log('return dattos', res.data.actividades)
-                  DataModificadoPartidas[indexPartida] = res.data.partida
+                  console.log('return datos', res)
+
+                  var partidaSetIcon = res.data.partida
+                  
+
+                  var CategoriasIconos = res.data.partida.iconocategoria_nombre 
+
+                // CategoriasIconos.forEach(ico => {
+                  if (CategoriasIconos === "<FaSuperpowers/>") {
+                    CategoriasIconos = <FaSuperpowers />
+                  }else if (CategoriasIconos === "<MdLibraryBooks/>") {
+                    CategoriasIconos = <MdLibraryBooks />              
+                  }else if (CategoriasIconos === "<TiWarning/>") {
+                    CategoriasIconos = <TiWarning />              
+                  }else if (CategoriasIconos === "<MdWatch/>") {
+                    CategoriasIconos = <MdWatch />              
+                  }else if (CategoriasIconos === "<MdVisibility/>") {
+                    CategoriasIconos = <MdVisibility />              
+                  }else if (CategoriasIconos === "<MdMonetizationOn/>") {
+                    CategoriasIconos = <MdMonetizationOn />                         
+                  }else{
+                    CategoriasIconos = null
+                  }
+
+                  partidaSetIcon.iconocategoria_nombre = CategoriasIconos
+
+                  // console.log("CategoriasIconos" , CategoriasIconos);
+                  
+
+                  DataModificadoPartidas[indexPartida] = partidaSetIcon
                   DataModificadoActividades = res.data.actividades
           
                   this.setState({
@@ -439,8 +478,35 @@ class MetradosDiarios extends Component {
               config
             )
             .then((res)=>{
-                // console.log('return dattos', res.data.actividades)
-                DataModificadoPartidas[indexPartida] = res.data.partida
+                // console.log('return dattos', res)
+                var partidaSetIcon = res.data.partida
+                  
+
+                var CategoriasIconos = res.data.partida.iconocategoria_nombre 
+
+              // CategoriasIconos.forEach(ico => {
+                if (CategoriasIconos === "<FaSuperpowers/>") {
+                  CategoriasIconos = <FaSuperpowers />
+                }else if (CategoriasIconos === "<MdLibraryBooks/>") {
+                  CategoriasIconos = <MdLibraryBooks />              
+                }else if (CategoriasIconos === "<TiWarning/>") {
+                  CategoriasIconos = <TiWarning />              
+                }else if (CategoriasIconos === "<MdWatch/>") {
+                  CategoriasIconos = <MdWatch />              
+                }else if (CategoriasIconos === "<MdVisibility/>") {
+                  CategoriasIconos = <MdVisibility />              
+                }else if (CategoriasIconos === "<MdMonetizationOn/>") {
+                  CategoriasIconos = <MdMonetizationOn />                         
+                }else{
+                  CategoriasIconos = null
+                }
+
+                partidaSetIcon.iconocategoria_nombre = CategoriasIconos
+
+                console.log("CategoriasIconos" , CategoriasIconos);
+                
+
+                DataModificadoPartidas[indexPartida] = partidaSetIcon
                 DataModificadoActividades = res.data.actividades
         
                 this.setState({
@@ -450,7 +516,8 @@ class MetradosDiarios extends Component {
                   ValorMetrado:"",
                   DescripcionMetrado:"",
                   ObservacionMetrado:"",
-                  file:null
+                  file:null,
+                  UrlImagen:""
                 })
                 toast.success('Exito! Metrado ingresado');
             })
@@ -459,28 +526,6 @@ class MetradosDiarios extends Component {
                 // console.error('algo salio mal al consultar al servidor ', error)
             })
 
-            // ENVIO DE DATOS CON IMAGEN A OTRA API
-              if(file !== null ){
-                axios.post(`${UrlServer}/imagenesActividad`,
-        
-                formData,
-                config
-                )
-                .then((res) => {
-                    console.log('res  img', res)
-                    this.setState({
-                      file:null
-                    })
-                    // alert("archivo enviado con exito ");
-                })
-                .catch((err) => {
-                    console.error('ufff no envia al api ❌', err);
-                    
-                });
-              }
-              
-
-          // }
       }
     }
 
@@ -528,13 +573,42 @@ class MetradosDiarios extends Component {
               config
             )
             .then((res)=>{
-                // console.log('return dattos', res.data)
+                console.log('return dattos', res.data.partida)
 
                 if(res.data === "fecha invalida"){
                   this.setState({smsValidaFecha:"La fecha de su dispositivo se encuentra desactualizado" })
 
                 }else{
-                  DataModificadoPartidas[indexPartida] = res.data.partida
+                  
+                
+                  var partidaSetIcon = res.data.partida
+                  
+
+                  var CategoriasIconos = res.data.partida.iconocategoria_nombre 
+
+                // CategoriasIconos.forEach(ico => {
+                  if (CategoriasIconos === "<FaSuperpowers/>") {
+                    CategoriasIconos = <FaSuperpowers />
+                  }else if (CategoriasIconos === "<MdLibraryBooks/>") {
+                    CategoriasIconos = <MdLibraryBooks />              
+                  }else if (CategoriasIconos === "<TiWarning/>") {
+                    CategoriasIconos = <TiWarning />              
+                  }else if (CategoriasIconos === "<MdWatch/>") {
+                    CategoriasIconos = <MdWatch />              
+                  }else if (CategoriasIconos === "<MdVisibility/>") {
+                    CategoriasIconos = <MdVisibility />              
+                  }else if (CategoriasIconos === "<MdMonetizationOn/>") {
+                    CategoriasIconos = <MdMonetizationOn />                         
+                  }else{
+                    CategoriasIconos = null
+                  }
+
+                  partidaSetIcon.iconocategoria_nombre = CategoriasIconos
+
+                  // console.log("CategoriasIconos" , CategoriasIconos);
+                  
+
+                  DataModificadoPartidas[indexPartida] = partidaSetIcon
                   DataModificadoActividades = res.data.actividades
           
                   this.setState({
@@ -598,7 +672,34 @@ class MetradosDiarios extends Component {
         .then((res)=>{
             // console.log(res)
 
-            DataModificadoPartidas[indexPartida] = res.data.partida
+            var partidaSetIcon = res.data.partida
+                  
+
+            var CategoriasIconos = res.data.partida.iconocategoria_nombre 
+
+          // CategoriasIconos.forEach(ico => {
+            if (CategoriasIconos === "<FaSuperpowers/>") {
+              CategoriasIconos = <FaSuperpowers />
+            }else if (CategoriasIconos === "<MdLibraryBooks/>") {
+              CategoriasIconos = <MdLibraryBooks />              
+            }else if (CategoriasIconos === "<TiWarning/>") {
+              CategoriasIconos = <TiWarning />              
+            }else if (CategoriasIconos === "<MdWatch/>") {
+              CategoriasIconos = <MdWatch />              
+            }else if (CategoriasIconos === "<MdVisibility/>") {
+              CategoriasIconos = <MdVisibility />              
+            }else if (CategoriasIconos === "<MdMonetizationOn/>") {
+              CategoriasIconos = <MdMonetizationOn />                         
+            }else{
+              CategoriasIconos = null
+            }
+
+            partidaSetIcon.iconocategoria_nombre = CategoriasIconos
+
+            // console.log("CategoriasIconos" , CategoriasIconos);
+            
+
+            DataModificadoPartidas[indexPartida] = partidaSetIcon
             DataModificadoActividades = res.data.actividades
 
             this.setState({
@@ -721,7 +822,7 @@ class MetradosDiarios extends Component {
     }
 
     UpdatePrioridadIcono(idPartida, id_icono, index){
-      console.log("index", index);
+      // console.log("index", index);
       
       
       axios.put(`${UrlServer}/putIconocategoria`,
@@ -793,10 +894,69 @@ class MetradosDiarios extends Component {
     }
     
     clearImg(){
-      this.setState({UrlImagen:""}) 
+      this.setState({
+        UrlImagen:"",
+        // limpia valores por si los tiene
+        file:null,
+      }) 
       document.getElementById("myImage").value = "";
     }
 
+    modalImgPartida(){
+      this.setState(prevState => ({
+        modalImgPartida: !prevState.modalImgPartida,
+      }));
+    }
+
+    capturaDatosCrearImgPartida(id_partida){
+      console.log("accesos_id_acceso", sessionStorage.getItem('idacceso') , "codObra", sessionStorage.getItem("codigoObra"), "Partidas_id_partida", id_partida );
+      
+      this.setState({
+         // limpia valores por si los tiene
+         modalImgPartida: !this.state.modalImgPartida,
+         partidas_id_partida:id_partida,
+         UrlImagen:"",
+         file:null,
+      })
+    }
+
+    EnviaImgPartida(e){ 
+      e.preventDefault();
+      var { partidas_id_partida, file, ObservacionMetrado } = this.state
+
+      // console.log(partidas_id_partida, file, ObservacionMetrado);
+      
+
+      const formData = new FormData();
+      formData.append('accesos_id_acceso',sessionStorage.getItem('idacceso'));
+      formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
+      formData.append('Partidas_id_partida',partidas_id_partida);
+      formData.append('descripcionObservacion',ObservacionMetrado);
+      formData.append('foto', file);
+
+
+      const config = {
+          headers: {
+              'content-type': 'multipart/form-data'
+          }
+      };
+
+      console.log("formData", formData);
+      
+
+      axios.post(`${UrlServer}/avancePartidaImagen`,
+        formData,
+        config
+      )
+      .then((res)=>{
+        console.log("envio de imagen ",res);
+        toast.success("Éxito imagen guardada")
+        
+      })
+      .catch((err)=>{
+        console.error("no es bien ", err);
+      })
+    }
     render() {
         var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores } = this.state
         var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado 
@@ -923,11 +1083,12 @@ class MetradosDiarios extends Component {
                         <th>P/P </th>
                         <th width="20%">BARRA DE PROGRESO</th>
                         <th> DURACIÓN </th>
+                        <th><MdInsertPhoto size={ 18 } /> </th>
                       </tr>
                     </thead>
 
                     { DatosPartidasFiltrado.length <= 0 ?  
-                      <tbody><tr><td colSpan="7" className="text-center text-warning">No hay datos</td></tr></tbody> :
+                      <tbody><tr><td colSpan="9" className="text-center text-warning">No hay datos</td></tr></tbody> :
                       DatosPartidasFiltrado.map((metrados, i) =>
                         <tbody key={ i } >
                     
@@ -965,7 +1126,7 @@ class MetradosDiarios extends Component {
                                
 
                             </td>
-                            <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1":   metrados.mayorMetrado === 0 ? "tdData" : "FondMM tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
+                            <td className={ metrados.tipo === "titulo" ? '': collapse === i? "tdData1":  metrados.mayorMetrado === 0 ? "tdData" : "FondMM tdData"} onClick={metrados.tipo === "titulo" ? ()=> this.CollapseItem(-1, -1 ): ()=> this.CollapseItem(i, metrados.id_partida )} data-event={i} >
                               { metrados.item }
                             </td>
                             <td>
@@ -1009,10 +1170,18 @@ class MetradosDiarios extends Component {
                               
                             </td>
                             <td>{ metrados.partida_duracion }</td>
+                            <td>
+                              { 
+                                metrados.tipo !== "titulo" 
+                                ? 
+                                <span className="prioridad" onClick={()=>this.capturaDatosCrearImgPartida(metrados.id_partida)}><MdAddAPhoto size={ 15 } /></span>
+                                :""
+                              } 
+                            </td>
                           </tr>
                       
                           <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
-                            <td colSpan="8">
+                            <td colSpan="9">
                               <Collapse isOpen={collapse === i}>
                                 <div className="p-1">
                                     <div className="row">
@@ -1027,7 +1196,7 @@ class MetradosDiarios extends Component {
                                       </div>
                                       <div className="col-sm-2">
                                         { 
-                                          Number(DataMayorMetrado.mm_avance_costo) <= 0?'': 'MAYOR METRADO'
+                                          Number(DataMayorMetrado.mm_avance_costo) > 0?'MAYOR METRADO': ''
                                         }
                                       </div>
                                       
@@ -1213,7 +1382,7 @@ class MetradosDiarios extends Component {
             {/* <!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
             <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
               <ModalHeader toggle={this.modalMetrar} className="border-button">
-                        <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+                <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
               </ModalHeader>
               {
                 sessionStorage.getItem("estadoObra") === "Ejecucion"
@@ -1293,8 +1462,9 @@ class MetradosDiarios extends Component {
                         <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
 
                         <div className="custom-file">
-                          <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } id="myImage"/>
-                          <label className="custom-file-label" htmlFor="customFile">FOTO</label>
+                          <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                          <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
+                        
                         </div>
 
                       </ModalBody>
@@ -1391,8 +1561,9 @@ class MetradosDiarios extends Component {
                           <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
 
                           <div className="custom-file">
-                            <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } id="myImage"/>
-                            <label className="custom-file-label" htmlFor="customFile">FOTO</label>
+                            <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                          <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
+                          
                           </div>
 
                       </ModalBody>
@@ -1488,8 +1659,8 @@ class MetradosDiarios extends Component {
                         <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
 
                         <div className="custom-file">
-                          <input type="file" className="custom-file-input" onChange={ this.onChangeImagen } id="myImage"/>
-                          <label className="custom-file-label" htmlFor="customFile">FOTO</label>
+                          <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                          <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
                         </div>
 
                     </ModalBody>
@@ -1506,20 +1677,22 @@ class MetradosDiarios extends Component {
             {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
               
             <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} size="sm" fade={false} backdrop="static">
+              <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
+                <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+              </ModalHeader>
               <form onSubmit={this.EnviarMayorMetrado }>
-                <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
-                  <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
-                </ModalHeader>
+               
                 <ModalBody>
 
-                <label className="text-center mt-0">{ descripcion } </label><br/>
+                  <label className="text-center mt-0">{ descripcion } </label><br/>
 
-                    <div className="clearfix">
-                      <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
-                      <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
-                    </div>
+                  <div className="clearfix">
+                    <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                    <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="titulo" onChange={e=> this.setState({OpcionMostrarMM:e.target.value})}/>
+                  </div>
                       
-                    {OpcionMostrarMM.length <= 0? "":
+                    {
+                      OpcionMostrarMM.length <= 0? "":
                       <div>
                         {
                           OpcionMostrarMM === "titulo"?
@@ -1575,6 +1748,50 @@ class MetradosDiarios extends Component {
               </form>
             </Modal>
             {/* ///<!-- MODAL PARA modalMM --> */}  
+
+            {/* MODAL INSERTA IMAGEN DE PARTIDA */}
+            <Modal isOpen={this.state.modalImgPartida} fade={false} toggle={this.modalImgPartida} size="sm" >
+              <ModalHeader toggle={this.modalImgPartida}>
+                <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+              </ModalHeader>
+              <form onSubmit={this.EnviaImgPartida}>
+                <ModalBody>
+                  <div className="form-group">
+                    <label htmlFor="comment">DESCRIPCIÓN / OBSERVACIÓN:</label>
+                    <DebounceInput
+                      cols="40"
+                      rows="2"
+                      element="textarea"
+                      minLength={0}
+                      debounceTimeout={debounceTimeout}
+                      onChange={e => this.setState({ObservacionMetrado: e.target.value})}
+                      className="form-control"
+                    />
+
+                  </div>
+
+                  {
+                    this.state.UrlImagen.length <= 0 
+                    ?"":
+                    <div className="imgDelete">
+                      <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
+                      <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
+                    </div>
+                  }
+                  <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
+
+                  <div className="custom-file">
+                    <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                      <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>{' '}
+                  <Button color="danger" onClick={this.modalImgPartida}>Cancelar</Button>
+                </ModalFooter>
+              </form>
+            </Modal>
+            {/* //MODAL INSERTA IMAGEN DE PARTIDA */}
           </div>
         );
     }
