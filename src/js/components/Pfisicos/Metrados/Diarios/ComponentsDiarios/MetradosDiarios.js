@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import LogoSigobras from '../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
+import { inflateRaw } from 'zlib';
 
 class MetradosDiarios extends Component {
     constructor(){
@@ -90,7 +91,11 @@ class MetradosDiarios extends Component {
 
         dataFiltrada:[],
 
-        modalImgPartida: false
+        modalImgPartida: false,
+        // ENVIO DE FORMULARIO DE IMAGEN DINAMICO
+        Id_Partida_O_Actividad:null,
+        EnvioImgObsApiRuta:null,        
+
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -908,8 +913,8 @@ class MetradosDiarios extends Component {
       }));
     }
 
-    capturaDatosCrearImgPartida(id_partida){
-      console.log("accesos_id_acceso", sessionStorage.getItem('idacceso') , "codObra", sessionStorage.getItem("codigoObra"), "Partidas_id_partida", id_partida );
+    capturaDatosCrearImgPartida(id_partida, Ruta, variable){
+      console.log("id_partida", id_partida, "Ruta", Ruta, "variable", variable);
       
       this.setState({
          // limpia valores por si los tiene
@@ -917,20 +922,19 @@ class MetradosDiarios extends Component {
          partidas_id_partida:id_partida,
          UrlImagen:"",
          file:null,
+         Id_Partida_O_Actividad:variable,
+         EnvioImgObsApiRuta:Ruta
       })
     }
 
     EnviaImgPartida(e){ 
       e.preventDefault();
-      var { partidas_id_partida, file, ObservacionMetrado } = this.state
-
-      // console.log(partidas_id_partida, file, ObservacionMetrado);
-      
+      var { partidas_id_partida, file, ObservacionMetrado, Id_Partida_O_Actividad, EnvioImgObsApiRuta } = this.state
 
       const formData = new FormData();
       formData.append('accesos_id_acceso',sessionStorage.getItem('idacceso'));
       formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
-      formData.append('Partidas_id_partida',partidas_id_partida);
+      formData.append(Id_Partida_O_Actividad, partidas_id_partida);
       formData.append('descripcionObservacion',ObservacionMetrado);
       formData.append('foto', file);
 
@@ -941,24 +945,33 @@ class MetradosDiarios extends Component {
           }
       };
 
-      console.log("formData", formData);
-      
-
-      axios.post(`${UrlServer}/avancePartidaImagen`,
-        formData,
-        config
-      )
-      .then((res)=>{
-        console.log("envio de imagen ",res);
-        toast.success("Éxito imagen guardada")
+      if (confirm("¿Esta seguro de guardar la imagen al sistema?")) {
+        axios.post(`${UrlServer}${EnvioImgObsApiRuta}`,
+          formData,
+          config
+        )
+        .then((res)=>{
+          console.log("envio de imagen ",res);
+          if (res.data === "exito") {
+              this.setState({
+                modalImgPartida:false
+              })
+              toast.success("Éxito imagen guardada")
+              return
+          }
         
-      })
-      .catch((err)=>{
-        console.error("no es bien ", err);
-      })
+          
+        })
+        .catch((err)=>{
+          console.error("no es bien ", err);
+          toast.error("Error al tratar de guardar la imagen")
+
+        })
+        return
+      }
     }
     render() {
-        var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores } = this.state
+        var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores, file } = this.state
         var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado 
         
         var DatosPartidasFiltrado = DataPartidas
@@ -1083,16 +1096,16 @@ class MetradosDiarios extends Component {
                         <th>P/P </th>
                         <th width="20%">BARRA DE PROGRESO</th>
                         <th> DURACIÓN </th>
-                        <th><MdInsertPhoto size={ 18 } /> </th>
+                        {/* <th><MdInsertPhoto size={ 18 } /> </th> */}
                       </tr>
                     </thead>
 
                     { DatosPartidasFiltrado.length <= 0 ?  
-                      <tbody><tr><td colSpan="9" className="text-center text-warning">No hay datos</td></tr></tbody> :
+                      <tbody><tr><td colSpan="8" className="text-center text-warning">No hay datos</td></tr></tbody> :
                       DatosPartidasFiltrado.map((metrados, i) =>
                         <tbody key={ i } >
                     
-                          <tr className={ metrados.tipo === "titulo" ? "font-weight-bold text-warning":  collapse === i? "font-weight-light resplandPartida": "font-weight-light"}>
+                          <tr className={ metrados.tipo === "titulo" ? "font-weight-bold text-warning icoVer":  collapse === i? "font-weight-light resplandPartida icoVer": "font-weight-light icoVer"}>
                             <td>
                               { 
                                 metrados.tipo === "titulo" ?"":
@@ -1169,19 +1182,25 @@ class MetradosDiarios extends Component {
                               </div>       
                               
                             </td>
-                            <td>{ metrados.partida_duracion }</td>
                             <td>
+                            
+                            { metrados.partida_duracion }
                               { 
-                                metrados.tipo !== "titulo" 
-                                ? 
-                                <span className="prioridad" onClick={()=>this.capturaDatosCrearImgPartida(metrados.id_partida)}><MdAddAPhoto size={ 15 } /></span>
-                                :""
-                              } 
+                                  metrados.tipo !== "titulo" 
+                                  ? 
+                                  <div className="aprecerIcon">
+                                    <span className="prioridad iconoTr" onClick={()=>this.capturaDatosCrearImgPartida(metrados.id_partida, "/avancePartidaImagen", "Partidas_id_partida")}><MdAddAPhoto size={ 20 } /></span>
+                                  </div>
+                                  :""
+                                } 
                             </td>
+                            {/* <td>
+                              
+                            </td> */}
                           </tr>
                       
                           <tr className={ collapse === i? "resplandPartidabottom": "d-none"  }>
-                            <td colSpan="9">
+                            <td colSpan="8">
                               <Collapse isOpen={collapse === i}>
                                 <div className="p-1">
                                     <div className="row">
@@ -1231,100 +1250,119 @@ class MetradosDiarios extends Component {
                                       </div>
                                     </div>
                                   
+                                    <table className="table table-bordered table-sm">
+                                      <thead className="thead-dark">
+                                        <tr>
+                                          <th>NOMBRE DE ACTIVIDAD</th>
+                                          <th>N° VECES</th>
+                                          <th>LARGO</th>
+                                          <th>ANCHO</th>
+                                          <th>ALTO</th>
+                                          <th>METRADO</th>
+                                          <th>S/. P / U </th>
+                                          <th>S/. P / P</th>
+                                          <th>ACTIVIDADES SALDOS</th>
+                                          <th><MdSettings /></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {
+                                          DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
+                                            DataActividades.map((actividades, indexA)=>
+                                            <tr key={ indexA } className={ actividades.actividad_estado === "Mayor Metrado" ?'FondMM icoVer':'icoVer'}>
+                                              <td>{ actividades.nombre_actividad }</td>
+                                              <td>{ actividades.veces_actividad }</td>
+                                              <td>{ actividades.largo_actividad }</td>
+                                              <td>{ actividades.ancho_actividad }</td>
+                                              <td>{ actividades.alto_actividad }</td>
+                                              <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
+                                              <td>{ actividades.costo_unitario }</td>
+                                              <td>{ actividades.parcial_actividad }</td>
+                                              <td className="small">
+                                                {
+                                                  Number(actividades.parcial_actividad) <= 0 ?'':
+                                                  actividades.actividad_tipo === "titulo"?"":
+                                                  <div>
+                                                      <div className="clearfix">
+                                                        <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
+                                                        <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
+                                                      </div>
 
-                                  
-                                  <table className="table table-bordered table-sm">
-                                    <thead className="thead-dark">
-                                      <tr>
-                                        <th>NOMBRE DE ACTIVIDAD</th>
-                                        <th>N° VECES</th>
-                                        <th>LARGO</th>
-                                        <th>ANCHO</th>
-                                        <th>ALTO</th>
-                                        <th>METRADO</th>
-                                        <th>S/. P / U </th>
-                                        <th>S/. P / P</th>
-                                        <th>ACTIVIDADES SALDOS</th>
-                                        <th><MdSettings /></th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {
-                                        DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm"/></td></tr>:
-                                          DataActividades.map((actividades, indexA)=>
-                                          <tr key={ indexA } className={ actividades.actividad_estado ==="Mayor Metrado" ?'FondMM':''}>
-                                            <td>{ actividades.nombre_actividad }</td>
-                                            <td>{ actividades.veces_actividad }</td>
-                                            <td>{ actividades.largo_actividad }</td>
-                                            <td>{ actividades.ancho_actividad }</td>
-                                            <td>{ actividades.alto_actividad }</td>
-                                            <td>{ actividades.metrado_actividad } { actividades.unidad_medida }</td>
-                                            <td>{ actividades.costo_unitario }</td>
-                                            <td>{ actividades.parcial_actividad }</td>
-                                            <td className="small">
-                                              {
-                                                Number(actividades.parcial_actividad) <= 0 ?'':
-                                                actividades.actividad_tipo === "titulo"?"":
-                                                <div>
-                                                    <div className="clearfix">
-                                                      <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
-                                                      <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
+                                                      <div style={{
+                                                        height: '2px',
+                                                        backgroundColor: '#c3bbbb',
+                                                        position: 'relative'
+                                                        }}
+
+                                                      >
+                                                      <div
+                                                        style={{
+                                                          width: `${actividades.actividad_porcentaje}%`,
+                                                          height: '100%',
+                                                          backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
+                                                            : actividades.actividad_porcentaje > 50 ? '#ffbf00'
+                                                            :  '#ff2e00',
+                                                          transition: 'all .9s ease-in',
+                                                          position: 'absolute'
+                                                        }}
+                                                    />
                                                     </div>
-
-                                                    <div style={{
-                                                      height: '2px',
-                                                      backgroundColor: '#c3bbbb',
-                                                      position: 'relative'
-                                                      }}
-
-                                                    >
-                                                    <div
-                                                      style={{
-                                                        width: `${actividades.actividad_porcentaje}%`,
-                                                        height: '100%',
-                                                        backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
-                                                          : actividades.actividad_porcentaje > 50 ? '#ffbf00'
-                                                          :  '#ff2e00',
-                                                        transition: 'all .9s ease-in',
-                                                        position: 'absolute'
-                                                      }}
-                                                  />
+                                                    <div className="clearfix">
+                                                      <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
+                                                      <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
+                                                    </div>
                                                   </div>
-                                                  <div className="clearfix">
-                                                    <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
-                                                    <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
-                                                  </div>
-                                                </div>
-                                              }
-
-                                            </td>
-                                            <td className="text-center">
-                                              {actividades.actividad_tipo === "titulo"? "":
-                                                
-                                                <div>
-                                                  { 
-                                                    actividades.actividad_metrados_saldo <= 0 
-                                                    ?
-                                                    sessionStorage.getItem("estadoObra") === "Corte"
-                                                    ?
-                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
-                                                        <FaPlus size={ 20 } /> 
-                                                      </button>
-                                                    :
-                                                     <FaCheck className="text-success" size={ 18 } />
-                                                    : 
-                                                      <button className="btn btn-sm btn-outline-dark text-primary" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
-                                                        <FaPlus size={ 20 } /> 
-                                                      </button>
-                                                  }
-                                                </div>
                                                 }
-                                            </td>
-                                          </tr>
-                                        )
-                                      }
-                                    </tbody>
-                                  </table>
+
+                                              </td>
+                                              <td className="text-center">
+                                                {
+                                                  actividades.actividad_tipo === "titulo"? "":
+                                                  
+                                                  <div>
+                                                    { 
+                                                      actividades.actividad_metrados_saldo <= 0 
+                                                      ?
+                                                      sessionStorage.getItem("estadoObra") === "Corte"
+                                                      ?
+                                                        <div>
+                                                          <span className="text-primary prioridad aprecerIcon" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                            <FaPlus size={ 15 } /> 
+                                                          </span>
+                                                          { " " }
+                                                          <span className="prioridad" onClick={(e)=>this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                            <MdAddAPhoto size={ 15 } /> 
+                                                          </span>
+                                                        </div>
+                                                      :
+                                                        <div>
+                                                          <FaCheck className="text-success" size={ 15 } />
+                                                          { " " }
+                                                          <span className="prioridad" onClick={(e)=>this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                            <MdAddAPhoto size={ 15 } /> 
+                                                          </span>
+                                                        </div>
+                                                      : 
+                                                        <div>
+                                                          <span className="text-primary prioridad" onClick={(e)=>this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                            <FaPlus size={ 15 } /> 
+                                                          </span>
+                                                          { " " }
+                                                          <span className="prioridad" onClick={(e)=>this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                            <MdAddAPhoto size={ 15 } /> 
+                                                          </span>
+                                                        </div>
+                                                    }
+                                                  </div>
+                                                }
+                                              </td>
+                                              
+                                            </tr>
+                                          )
+                                        }
+                                      </tbody>
+                                    </table>
+                                  
                                 </div>
                               </Collapse>
                             </td>
@@ -1456,7 +1494,7 @@ class MetradosDiarios extends Component {
                           ?"":
                           <div className="imgDelete">
                             <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                            <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
+                            <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
                           </div>
                         }
                         <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
@@ -1555,7 +1593,7 @@ class MetradosDiarios extends Component {
                             ?"":
                             <div className="imgDelete">
                               <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                              <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
+                              <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
                             </div>
                           }
                           <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
@@ -1653,7 +1691,7 @@ class MetradosDiarios extends Component {
                           ?"":
                           <div className="imgDelete">
                             <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                            <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
+                            <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
                           </div>
                         }
                         <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
@@ -1674,8 +1712,8 @@ class MetradosDiarios extends Component {
             </Modal>
             {/* ///<!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */} 
 
+
             {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
-              
             <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} size="sm" fade={false} backdrop="static">
               <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
                 <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
@@ -1749,14 +1787,31 @@ class MetradosDiarios extends Component {
             </Modal>
             {/* ///<!-- MODAL PARA modalMM --> */}  
 
-            {/* MODAL INSERTA IMAGEN DE PARTIDA */}
+
+            {/* MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
             <Modal isOpen={this.state.modalImgPartida} fade={false} toggle={this.modalImgPartida} size="sm" >
               <ModalHeader toggle={this.modalImgPartida}>
                 <img src= { LogoSigobras } width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
               </ModalHeader>
               <form onSubmit={this.EnviaImgPartida}>
                 <ModalBody>
-                  <div className="form-group">
+
+                  {
+                    this.state.UrlImagen.length <= 0 
+                    ?"":
+                    <div className="imgDelete">
+                      <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
+                      <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
+                    </div>
+                  }
+                  <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
+
+                  <div className="custom-file">
+                    <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                      <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
+                  </div>
+
+                  <div className="form-group mt-2">
                     <label htmlFor="comment">DESCRIPCIÓN / OBSERVACIÓN:</label>
                     <DebounceInput
                       cols="40"
@@ -1769,29 +1824,19 @@ class MetradosDiarios extends Component {
                     />
 
                   </div>
-
-                  {
-                    this.state.UrlImagen.length <= 0 
-                    ?"":
-                    <div className="imgDelete">
-                      <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                      <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid" />
-                    </div>
-                  }
-                  <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
-
-                  <div className="custom-file">
-                    <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
-                      <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
-                  </div>
                 </ModalBody>
                 <ModalFooter>
-                  <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>{' '}
+                  {
+                    file !== null ?
+                    <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>
+                    :""
+                  }
+                  {' '}
                   <Button color="danger" onClick={this.modalImgPartida}>Cancelar</Button>
                 </ModalFooter>
               </form>
             </Modal>
-            {/* //MODAL INSERTA IMAGEN DE PARTIDA */}
+            {/* //MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
           </div>
         );
     }
