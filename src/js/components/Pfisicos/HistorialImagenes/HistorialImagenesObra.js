@@ -23,7 +23,7 @@ class HistorialImagenesObra extends Component {
       // busqueda input
       searchString: "",
       // TABS IMAGENES
-      activeTabImagen:"0"
+      activeTabImagen:"getImagenesHistorialPartidas"
     };
     this.TabsComponentes = this.TabsComponentes.bind(this);
     this.CollapseItem = this.CollapseItem.bind(this);
@@ -31,6 +31,7 @@ class HistorialImagenesObra extends Component {
     this.primeraImagen = this.primeraImagen.bind(this);
     this.TabImg = this.TabImg.bind(this);
     this.getImgSize = this.getImgSize.bind(this);
+    this.SeteaStateResponse = this.SeteaStateResponse.bind(this);
 
   }
 
@@ -60,6 +61,30 @@ class HistorialImagenesObra extends Component {
     })
     .catch((err) => {
       console.error("error al tratar de llamar al api", err)
+    })
+  }
+
+  SeteaStateResponse(DataQueLLega){
+      var dataAgrupar = []
+
+      DataQueLLega.forEach(img => {
+        dataAgrupar.push(
+          {
+            src: `${UrlServer}${img.imagen}`,
+            thumbnail: `${UrlServer}${img.imagen}`,
+            thumbnailWidth: "10%",
+            thumbnailHeight: "5%",
+            // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
+            caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcionObservacion}` 
+          }
+        )
+
+      });
+
+    console.log("dataAgrupar", dataAgrupar)
+
+    this.setState({
+      DataImagenesApi: dataAgrupar
     })
   }
 
@@ -101,55 +126,19 @@ class HistorialImagenesObra extends Component {
       DataImagenesApi:[]
     })
 
-    // consumir el api de immagenes
+    // consumir el api de immagenes historial de imagenes
     if (this.state.collapse !== event) {
 
 
-      axios.post(`${UrlServer}/getImagenesListaPorPartida`, {
+      axios.post(`${UrlServer}/getImagenesHistorialPartidas`, {
         "id_partida": idPartidad
       })
       .then((res) => {
         console.log("res actividades imagenes", res.data)
         var DataQueLLega = res.data
         
-
         if (DataQueLLega !== "vacio") {
-          var dataAgrupar = []
-          // var newImg = new Image();
-
-            DataQueLLega.forEach(img => {
-
-              
-              // newImg.onload = function() {
-                  // var height = newImg.height;
-                  // var width = newImg.width;
-
-                  // console.log( 'tamaño de la imagen '+width+ '*' +height);
-
-                  dataAgrupar.push(
-                    {
-                      src: `${UrlServer}${img.imagen}`,
-                      thumbnail: `${UrlServer}${img.imagen}`,
-                      thumbnailWidth: "10%",
-                      thumbnailHeight: "5%",
-                      // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-                      caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion}` 
-                    }
-                  )
-              // }
-              // newImg.src = `${UrlServer}${img.imagen}`
-            });
-            
-          
-
-              // newImg.src = `${UrlServer}${imagen}`
-
-          console.log("dataAgrupar", dataAgrupar)
-
-
-          this.setState({
-            DataImagenesApi: dataAgrupar
-          })
+          this.SeteaStateResponse(DataQueLLega)
         }
       })
       .catch((err) => {
@@ -169,11 +158,33 @@ class HistorialImagenesObra extends Component {
     alert("hola")
   }
 
-  TabImg(tab) {
+  TabImg(tab, idPartida) {
     if (this.state.activeTabImagen !== tab) {
       this.setState({
-        activeTabImagen: tab
+        activeTabImagen: tab,
+        DataImagenesApi:[]
       });
+
+      // llama al api de imagenes actividades
+
+        axios.post(`${UrlServer}/${tab}`, {
+          "id_partida": idPartida
+        })
+        .then((res) => {
+          console.log("res actividades imagenes", res.data)
+          var DataQueLLega = res.data
+          
+          if (DataQueLLega !== "vacio") {
+            this.SeteaStateResponse(DataQueLLega)
+            return
+          }
+          // this.setState({
+
+          // })
+        })
+        .catch((err) => {
+          console.error("error al tratar de llamar al api", err)
+        })
     }
   }
 
@@ -272,24 +283,24 @@ class HistorialImagenesObra extends Component {
                           <tr className={collapse === IP ? "resplandPartidabottom" : "d-none"}>
                             <td colSpan="5">
                               <Collapse isOpen={collapse === IP}>
-                                <Card>
                                   <Nav tabs>
                                     <NavItem>
-                                      <NavLink className={classnames({ active: this.state.activeTabImagen === '0' })} onClick={() =>  this.TabImg('0') } >
+                                      <NavLink className={classnames({ active: this.state.activeTabImagen === 'getImagenesHistorialPartidas' })} onClick={() =>  this.TabImg('getImagenesHistorialPartidas',  partida.id_partida,) } >
                                         PARTIDAS
                                       </NavLink>
                                     </NavItem>
                                     <NavItem>
-                                      <NavLink className={classnames({ active: this.state.activeTabImagen === '1' })} onClick={() =>  this.TabImg('1') }>
+                                      <NavLink className={classnames({ active: this.state.activeTabImagen === 'getImagenesHistorialActividades' })} onClick={() =>  this.TabImg('getImagenesHistorialActividades',  partida.id_partida) }>
                                         ACTIVIDADES
                                       </NavLink>
                                     </NavItem>
                                       
                                   </Nav>
-
-                                  <Gallery images={DataImagenesApi} />
-
-                                </Card>
+                                    {
+                                      DataImagenesApi.length !== 0 ? 
+                                      <Gallery images={DataImagenesApi} />
+                                      :"No hay imagenes que mostrar"
+                                    }
 
                               </Collapse>
                             </td>
