@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import LogoSigobras from '../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
-import { inflateRaw } from 'zlib';
+// import { inflateRaw } from 'zlib';
 
 class MetradosDiarios extends Component {
     constructor(){

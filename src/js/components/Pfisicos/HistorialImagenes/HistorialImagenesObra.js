@@ -21,12 +21,16 @@ class HistorialImagenesObra extends Component {
       collapse: -1,
       SMSHistImgApi: false,
       // busqueda input
-      searchString: ""
+      searchString: "",
+      // TABS IMAGENES
+      activeTabImagen:"0"
     };
     this.TabsComponentes = this.TabsComponentes.bind(this);
     this.CollapseItem = this.CollapseItem.bind(this);
     this.ChangeInputFilter = this.ChangeInputFilter.bind(this);
     this.primeraImagen = this.primeraImagen.bind(this);
+    this.TabImg = this.TabImg.bind(this);
+    this.getImgSize = this.getImgSize.bind(this);
 
   }
 
@@ -107,21 +111,42 @@ class HistorialImagenesObra extends Component {
       .then((res) => {
         console.log("res actividades imagenes", res.data)
         var DataQueLLega = res.data
+        
+
         if (DataQueLLega !== "vacio") {
           var dataAgrupar = []
-          DataQueLLega.forEach(img => {
-            dataAgrupar.push(
-              {
-                src: UrlServer + img.imagen,
-                thumbnail: UrlServer + img.imagen,
-                thumbnailWidth: "10%",
-                thumbnailHeight: "5%",
-                // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-                caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion}` 
-              }
-            )
-          });
-          // console.log('data>', dataAgrupar)
+          // var newImg = new Image();
+
+            DataQueLLega.forEach(img => {
+
+              
+              // newImg.onload = function() {
+                  // var height = newImg.height;
+                  // var width = newImg.width;
+
+                  // console.log( 'tamaño de la imagen '+width+ '*' +height);
+
+                  dataAgrupar.push(
+                    {
+                      src: `${UrlServer}${img.imagen}`,
+                      thumbnail: `${UrlServer}${img.imagen}`,
+                      thumbnailWidth: "10%",
+                      thumbnailHeight: "5%",
+                      // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
+                      caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion}` 
+                    }
+                  )
+              // }
+              // newImg.src = `${UrlServer}${img.imagen}`
+            });
+            
+          
+
+              // newImg.src = `${UrlServer}${imagen}`
+
+          console.log("dataAgrupar", dataAgrupar)
+
+
           this.setState({
             DataImagenesApi: dataAgrupar
           })
@@ -144,6 +169,30 @@ class HistorialImagenesObra extends Component {
     alert("hola")
   }
 
+  TabImg(tab) {
+    if (this.state.activeTabImagen !== tab) {
+      this.setState({
+        activeTabImagen: tab
+      });
+    }
+  }
+
+
+  getImgSize(imgSrc) {
+    // console.log("ejecutanado", imgSrc)
+    var newImg = new Image();
+
+    newImg.onload = function() {
+      var height = newImg.height;
+      var width = newImg.width;
+       
+      console.log( 'tamaños de la imagen '+width+'*'+height);
+      return
+    }
+
+    newImg.src = imgSrc;  //this must be done AFTER setting onload
+    // console.log(newImg.src)
+  }
 
   render() {
     const { DataComponentesApi, nombreComponente, DataPartidasApi, DataImagenesApi, collapse, SMSHistImgApi } = this.state
@@ -161,7 +210,7 @@ class HistorialImagenesObra extends Component {
     return (
       <div>
         {
-          SMSHistImgApi === true ? <div className="text-center text-danger"> NO hay datos que mostar </div> :
+          SMSHistImgApi === true ? <div className="text-center text-danger"> No hay datos que mostar </div> :
             <Card>
               <Nav tabs>
                 {
@@ -223,7 +272,25 @@ class HistorialImagenesObra extends Component {
                           <tr className={collapse === IP ? "resplandPartidabottom" : "d-none"}>
                             <td colSpan="5">
                               <Collapse isOpen={collapse === IP}>
-                                <Gallery images={DataImagenesApi} />
+                                <Card>
+                                  <Nav tabs>
+                                    <NavItem>
+                                      <NavLink className={classnames({ active: this.state.activeTabImagen === '0' })} onClick={() =>  this.TabImg('0') } >
+                                        PARTIDAS
+                                      </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                      <NavLink className={classnames({ active: this.state.activeTabImagen === '1' })} onClick={() =>  this.TabImg('1') }>
+                                        ACTIVIDADES
+                                      </NavLink>
+                                    </NavItem>
+                                      
+                                  </Nav>
+
+                                  <Gallery images={DataImagenesApi} />
+
+                                </Card>
+
                               </Collapse>
                             </td>
                           </tr>

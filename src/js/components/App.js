@@ -40,6 +40,9 @@ import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 // reportes 
 import ReportesGenerales from './Reportes/ReportesGenerales'
 
+// GESTION DE TAREAS
+import GestionTareas from "./GestiónTareas/GestionTareas"
+
 class AppAng extends Component {
     constructor() {
         super();
@@ -189,9 +192,13 @@ class AppAng extends Component {
                                                     </Collapse>
                                                 </li>
                                             )}
-
+                                            
                                             <li className="lii">
                                                 <NavLink to="/ReportesGenerales" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={101}> <FaFile /><span> REPORTES </span> </NavLink>
+                                            </li>
+
+                                            <li className="lii">
+                                                <NavLink to="/GestionTareas" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={102}> <FaFile /><span> GESTIÓN DE TAREAS </span> </NavLink>
                                             </li>
 
                                         </ul>
@@ -267,6 +274,11 @@ class AppAng extends Component {
 
                                             <Route path="/RecordObras" component={RecordObras} />
                                             <Route path="/ReportesGenerales" component={ReportesGenerales} />
+
+                                            {/* Gestion de Tareas */}
+                                            <Route path="/GestionTareas" component={ GestionTareas } />
+
+                                            
                                         </Switch>
                                     </div>
 
