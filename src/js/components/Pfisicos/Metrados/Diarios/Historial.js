@@ -374,7 +374,7 @@ class MDHistorial extends Component {
                                     <CardHeader> {nombreComponente}</CardHeader>
                                     <CardBody className="p-2">
                                         <Row>
-                                            <Col>
+                                            <Col sm="5">
                                             <HighchartsReact
                                                 highcharts={Highcharts}
                                                 // constructorType={'stockChart'}
@@ -382,7 +382,7 @@ class MDHistorial extends Component {
                                             />
                                             
                                             </Col>
-                                            <Col>
+                                            <Col  sm="7">
                                             {
                                                 DataFechasApi.map((fecha, indexF)=>
                                                     <fieldset key={ indexF } className="mt-2">
