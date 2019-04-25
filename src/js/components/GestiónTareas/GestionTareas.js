@@ -1,21 +1,28 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col,  Form, FormGroup, Label, Input, FormText, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
+import { CustomInput , TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col,  Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import classnames from 'classnames';
-import { MdSend, MdSystemUpdateAlt } from "react-icons/md";
+import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { DebounceInput } from 'react-debounce-input';
+import "../../../css/GTareas.css"
 
+import { GeraColoresRandom } from "../Utils/Funciones"
 
 class GestionTareas extends Component {
   constructor(props) {
     super(props);
     
-    this.toggle = this.toggle.bind(this);
+    this.toggleTabPosit = this.toggleTabPosit.bind(this);
+    this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
     this.AgregaTarea = this.AgregaTarea.bind(this);
     this.porcentCollapse = this.porcentCollapse.bind(this);
     this.incremetaBarraPorcent = this.incremetaBarraPorcent.bind(this);
+    this.CierraModalVerTareas = this.CierraModalVerTareas.bind(this);
+    this.ModalVerTareas = this.ModalVerTareas.bind(this);
+    this.subtareaAdd = this.subtareaAdd.bind(this);
 
     this.state = {
       Posits:[],
+      PositsFiltrado:[],
       // captura inputs de envio de datos del formulario
       Para:"",
       proyecto:"",
@@ -31,33 +38,56 @@ class GestionTareas extends Component {
 
 
       activeTab: '1',
+      activeTabModalTarea:"1",
+      
+      modalVerTareas: false,
 
+      // sub tareas
+      inputSubtarea:"",
+
+      CollapseInputAddTarea:false
     };
   }
 
   componentDidMount(){
-    var Posit =[]
+    var Posit = []
     for (let i = 1; i < 20; i++) {
      Posit.push(
        {
-         "proyecto":"jbdnkm " + i,
-         "asunto":"hjksdasfdsbj,",
-         "tarea":"hfsgfdfsk",
+         "id":i,
+         "proyecto":"INFORME OCTUBRE " + i,
+         "asunto":"VALORIZACIONES,",
+         "tarea":"coregir valorizaciones desde el informe 1 ",
          "fechaInicio":"12/01/2019",
+         "prioridad":"urgente",
          "duracion":5,
-         "porcentajeAvance":(i+ 3) * 4  
+         "porcentajeAvance":(i+ 3) * 4 ,
+         "SubTareas":[
+
+         ]
        }
      ) 
     }
+
+    console.log(Posit)
+
     this.setState({
       Posits:Posit
     })
   }
 
-  toggle(tab) {
+  toggleTabPosit(tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab
+      });
+    }
+  }
+
+  toggleTabDetalleTarea(tab) {
+    if (this.state.activeTabModalTarea !== tab) {
+      this.setState({
+        activeTabModalTarea: tab
       });
     }
   }
@@ -99,11 +129,6 @@ class GestionTareas extends Component {
     var { Posits, barraPorcentaje } = this.state
     var PositTareas = Posits
 
-    // var valor1 = PositTareas[key].porcentajeAvance
-    // var valor2  = Number(barraPorcentaje)
-
-    // var Resultado = valor1 + valor2
-
     PositTareas[key].porcentajeAvance = Number(barraPorcentaje)
 
     console.log( PositTareas )
@@ -114,8 +139,50 @@ class GestionTareas extends Component {
 
   }
 
+  CierraModalVerTareas() {
+    this.setState(prevState => ({
+      modalVerTareas: !prevState.modalVerTareas
+    }));
+
+
+  }
+
+  ModalVerTareas(id){
+  var Tareas = this.state.Posits
+    Tareas = Tareas.filter((tarea)=>{
+      return tarea.id === id
+    })
+
+    console.log("tareaaa0", Tareas[0  ])
+
+    this.setState({
+      PositsFiltrado:Tareas[0],
+      modalVerTareas: !this.state.modalVerTareas
+    })
+  }
+
+  subtareaAdd(){
+
+    var tareaPrincipal = this.state.Posits 
+
+    tareaPrincipal[0].SubTareas.push(
+      {
+        subtarea: this.state.inputSubtarea,
+        color: GeraColoresRandom()
+      }
+    )
+    
+    console.log("tarea ", tareaPrincipal);
+
+    this.setState({
+      Posits:tareaPrincipal
+    })
+    
+  }
+
   render() {
-    const { Posits } = this.state
+    const { Posits, PositsFiltrado } = this.state
+    
     return (
       <div>
         <Row>
@@ -162,12 +229,12 @@ class GestionTareas extends Component {
           <Col sm="10">
             <Nav tabs>
               <NavItem>
-                <NavLink className={classnames({ active: this.state.activeTab === '1' })} onClick={() => { this.toggle('1'); }} >
+                <NavLink className={classnames({ active: this.state.activeTab === '1' })} onClick={() => { this.toggleTabPosit('1'); }} >
                   <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ Posits.length } </span>
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.toggle('2'); }}>
+                <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.toggleTabPosit('2'); }}>
                   <MdSend /> Enviados
                 </NavLink>
               </NavItem>
@@ -183,6 +250,9 @@ class GestionTareas extends Component {
                       </div>
                       <div>
                         { posit.asunto }
+                        
+                        <Button onClick={()=>this.ModalVerTareas(posit.id) }>Mas</Button>
+
                       </div>
                       <div onClick={ ()=> this.porcentCollapse(ipos) } className="prioridad">
                         <Progress value={ posit.porcentajeAvance}>{ posit.porcentajeAvance} %</Progress>
@@ -205,13 +275,80 @@ class GestionTareas extends Component {
                   </Col>
                 )
               }
-                
             </Row>
-              
-            
+
           </Col>
         </Row>
           
+        <Modal isOpen={this.state.modalVerTareas} fade={false} toggle={this.CierraModalVerTareas} size="sm" >
+
+              <div className="p-2">
+                <div className="text-center">
+                  <label className="proyecto">{ PositsFiltrado.proyecto }</label>
+                  <br />
+                  <label className="asunto"> { PositsFiltrado.asunto }</label>
+
+                </div>
+                <div className="tarea pb-1">
+                  <label>{ PositsFiltrado.tarea }</label>
+                </div>
+                
+                {/* <label className="fecha">{ PositsFiltrado.fechaInicio }</label> */}
+                <Progress value={50} className="mt-2"> 10 de  20  </Progress>
+              </div>
+
+
+            <Nav tabs>
+              <NavItem>
+                <NavLink className={classnames({ active: this.state.activeTabModalTarea === '1' })} onClick={() => { this.toggleTabDetalleTarea('1'); }} >
+                  Pendiente
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className={classnames({ active: this.state.activeTabModalTarea === '2' })} onClick={() => { this.toggleTabDetalleTarea('2'); }} >
+                 Conluido 
+                </NavLink>
+              </NavItem>
+              <div className="prioridad verInput" onClick={()=> this.setState({CollapseInputAddTarea:!this.state.CollapseInputAddTarea})}>{ this.state.CollapseInputAddTarea === true?<MdKeyboardArrowDown /> : <MdKeyboardArrowUp />}</div>
+            </Nav>
+              
+            <TabContent activeTab={this.state.activeTabModalTarea}>
+              <TabPane tabId="1">
+                <div className="subtareas">
+                <Collapse isOpen={this.state.CollapseInputAddTarea === true}>
+                  <InputGroup size="sm" className="mb-2">
+                    <Input type="text" onBlur={e => this.setState({inputSubtarea: e.target.value})}/>                
+
+                    <InputGroupAddon addonType="prepend" color="success">
+                      <InputGroupText className="prioridad" onClick={ ()=> this.subtareaAdd(1)}>
+                        <MdSend />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </Collapse>
+
+                
+                  {
+                    PositsFiltrado.SubTareas !== undefined ?
+                      PositsFiltrado.SubTareas.map((subtarea, iS)=>
+                      <div key={ iS } className="actividadSubtarea" style={{background:subtarea.color}}>{ subtarea.subtarea}
+                        
+                        <div className="checkTarea">
+                          <CustomInput type="checkbox" id={`confirmTarea${iS}` }  />
+                        </div>
+                       </div>
+                      )
+                    :"no hay tares que mostrar"
+                  }
+                </div>
+              </TabPane>
+
+              <TabPane tabId="2">
+
+              </TabPane>
+           </TabContent>
+        </Modal>
+
       </div>
     );
   }

@@ -1,0 +1,34 @@
+.proyecto{
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.asunto{
+  font-size: 1rem;
+}
+.tarea{
+  border: 1px dashed #fff7f7;
+  padding: 0.5em;
+}
+
+.subtareas{
+  padding: 1em;
+}
+
+.actividadSubtarea{
+  padding: 0.9em;
+  border-radius: 6px;
+  word-break: break-all;
+  margin-bottom: 1em;
+}
+.checkTarea{
+  right: 1px;
+  position: absolute;
+}
+
+.verInput{
+  right: 12px;
+  position: absolute;
+}
+.verInput:hover{
+  color: blue;
+}
