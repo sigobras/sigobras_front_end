@@ -75,7 +75,7 @@ class HistorialImagenesObra extends Component {
             thumbnailWidth: "10%",
             thumbnailHeight: "5%",
             // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-            caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcionObservacion}` 
+            caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion}` 
           }
         )
 

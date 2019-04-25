@@ -50,7 +50,7 @@ class AppAng extends Component {
             navbarExpland: true,
             navbarExplandRight: false,
             isFull: false,
-            collapse: 900,
+            collapse: null,
             DataObra: [],
             DataMenus: []
         }
@@ -128,8 +128,8 @@ class AppAng extends Component {
     }
 
     CollapseMenu(e) {
-        let event = Number(e.target.dataset.event);
-        this.setState({ collapse: this.state.collapse === event ? 900 : event });
+        let event = Number(e);
+        this.setState({ collapse: this.state.collapse !== event ? event : null });
     }
 
     render() {
@@ -175,30 +175,34 @@ class AppAng extends Component {
                                         <ul className="nav flex-column ull">
 
                                             <li className="lii">
-                                                <NavLink to="/inicio" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={100}> <FaHouseDamage /><span> INICIO</span> </NavLink>
+                                                <NavLink to="/inicio" activeclassname="nav-link"> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                             </li>
 
-                                            {DataMenus.length === 0 ? <label className="text-center text-white"> <Spinner color="primary" type="grow" /></label> : DataMenus.map((menus, index) =>
-                                                <li className="lii" key={index}>
-                                                    <span className="nav-link" onClick={this.CollapseMenu} data-event={index} activeclassname="nav-link active" ><FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
-                                                    <Collapse isOpen={collapse === index}>
-                                                        <ul className="nav flex-column ull">
-                                                            {menus.submenus.map((subMenu, IndexSub) =>
-                                                                <li className="lii pl-3" key={IndexSub}>
-                                                                    <NavLink to={subMenu.ruta} activeclassname="nav-link active">{subMenu.nombreMenu}</NavLink>
-                                                                </li>
-                                                            )}
-                                                        </ul>
-                                                    </Collapse>
-                                                </li>
-                                            )}
+                                            {
+                                                DataMenus.length === 0 ? <div className="text-center text-white"> <Spinner color="primary" type="grow" /></div> : 
+                                                   
+                                                    DataMenus.map((menus, index) =>
+                                                        <li className="lii ml-2" key={index}>
+                                                            <span className="nav-link" onClick={()=>this.CollapseMenu(index)} activeclassname="active" > <FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                                            <Collapse isOpen={collapse === index}>
+                                                                <ul className="nav flex-column ull ">
+                                                                    {menus.submenus.map((subMenu, IndexSub) =>
+                                                                        <li className="lii pl-3" key={IndexSub}>
+                                                                            <NavLink to={subMenu.ruta} activeclassname="nav-link">{subMenu.nombreMenu}</NavLink>
+                                                                        </li>
+                                                                    )}
+                                                                </ul>
+                                                            </Collapse>
+                                                        </li>
+                                                )
+                                            }
                                             
                                             <li className="lii">
-                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={101}> <FaFile /><span> REPORTES </span> </NavLink>
+                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <FaFile /><span> REPORTES </span> </NavLink>
                                             </li>
 
                                             <li className="lii">
-                                                <NavLink to="/GestionTareas" activeclassname="nav-link" onClick={this.CollapseMenu} data-event={102}> <FaFile /><span> GESTIÓN DE TAREAS </span> </NavLink>
+                                                <NavLink to="/GestionTareas" activeclassname="nav-link" > <FaFile /><span> GESTIÓN DE TAREAS </span> </NavLink>
                                             </li>
 
                                         </ul>
