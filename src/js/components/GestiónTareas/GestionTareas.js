@@ -204,12 +204,12 @@ class GestionTareas extends Component {
                 <DebounceInput type="text" debounceTimeout={300} onChange={e => this.setState({Para: e.target.value})} className="form-control" />
               </FormGroup>
               <FormGroup>
-                <Label for="asunto">ASUNTO :</Label>
+                <Label for="asunto">TAREA :</Label>
                 <DebounceInput cols="40" rows="1" element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
               </FormGroup>
 
               <FormGroup>
-                <Label for="tarea">TAREA: </Label>
+                <Label for="tarea">DESCRIPCIÓN : </Label>
                 <DebounceInput cols="40" rows="1" element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({tarea: e.target.value})} className="form-control" />                
               </FormGroup>
 

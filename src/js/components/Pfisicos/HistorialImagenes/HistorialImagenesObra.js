@@ -42,7 +42,7 @@ class HistorialImagenesObra extends Component {
       }
     )
     .then((res) => {
-      // console.log("res componentes imagenes", res.data)
+      console.log("res componentes imagenes", res.data)
       if (res.data !== "vacio") {
         this.setState({
           DataComponentesApi: res.data,

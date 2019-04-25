@@ -84,7 +84,7 @@ class AppAng extends Component {
         })
         .then((res) => {
 
-            // console.log('data >>>',res.data)
+            // console.log('data >>>',res)
 
 
             if (res.data === 'null') {
@@ -177,9 +177,11 @@ class AppAng extends Component {
                                             <li className="lii">
                                                 <NavLink to="/inicio" activeclassname="nav-link"> <FaHouseDamage /><span> INICIO</span> </NavLink>
                                             </li>
-
+                                            {/* {
+                                                console.log("DataMenus", DataMenus.length)
+                                            } */}
                                             {
-                                                DataMenus.length === 0 ? <div className="text-center text-white"> <Spinner color="primary" type="grow" /></div> : 
+                                                DataMenus.length === undefined ? <div className="text-center text-white"> <Spinner color="primary" type="grow" /></div> : 
                                                    
                                                     DataMenus.map((menus, index) =>
                                                         <li className="lii ml-2" key={index}>

@@ -32,7 +32,13 @@ class MDHistorial extends Component {
         this.TabMeses = this.TabMeses.bind(this);
         this.SeleccionaAnio = this.SeleccionaAnio.bind(this);
         this.TabComponentes = this.TabComponentes.bind(this)
-        this.collapseFechas = this.collapseFechas.bind(this)
+        this.collapseFechas = this.collapseFechas.bind(this);
+        this.AniosRequest = this.AniosRequest.bind(this)
+        this.MesesRequest = this.MesesRequest.bind(this)
+        this.ResumenRequest = this.ResumenRequest.bind(this)
+        this.ComponentesRequest = this.ComponentesRequest.bind(this)
+        this.FechaAvancePartidas = this.FechaAvancePartidas.bind(this)
+
     }
     
     componentWillMount(){
@@ -40,20 +46,23 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res)=>{
-            console.log("response data ", res.data)
+            // console.log("response data ANIO GENERAL ", res.data)
+            var tamanioAnios = res.data.length  -1
+
+            var tamanioMeses = res.data[tamanioAnios].meses.length -1 
+            // console.log("calculando", res.data[tamanioAnios].meses)
             
-            var tamanioMeses = res.data[0].meses.length -1 
-            
-            // console.log("resumen", res.data[0].meses[tamanioMeses].componentes)
+            // console.log("tamanioAnios", tamanioAnios)
+            // console.log("tamanioMeses", tamanioMeses)
 
             this.setState({
                 DataAniosApi:res.data,
-                DataMesesApi:res.data[0].meses,
-                DataResumenApi:res.data[0].meses[tamanioMeses].resumen,
-                DataComponentesApi:res.data[0].meses[tamanioMeses].componentes,
+                DataMesesApi:res.data[tamanioAnios].meses,
+                DataResumenApi:res.data[tamanioAnios].meses[tamanioMeses].resumen,
+                DataComponentesApi:res.data[tamanioAnios].meses[tamanioMeses].componentes,
                 activeTabMes: tamanioMeses.toString(),
-                inputAnio:res.data[0].anyo,
-                fecha:res.data[0].meses[tamanioMeses].fecha
+                inputAnio:res.data[tamanioAnios].anyo,
+                fecha:res.data[tamanioAnios].meses[tamanioMeses].fecha
             })
         })
         .catch((err)=>{
@@ -62,123 +71,68 @@ class MDHistorial extends Component {
     }
 
     SeleccionaAnio(e){
-        //   llamamos el api de meses5
+        // console.log("data", e.target.value )
 
-        axios.post(`${UrlServer}/getHistorialMeses`,{
-            id_ficha: sessionStorage.getItem('idobra'),
-            anyo: e.target.value
+        this.setState({
+            inputAnio:e.target.value
         })
-        .then((res)=>{
-            console.log("response data meses ", res.data)
-            
-        })
-        .catch((err)=>{
-            console.log("errores al conectar el api", err)
-        })
-
+        this.MesesRequest( e.target.value )
+        
     }
 
     TabMeses(tab, fecha) {
+
+        // console.log("ejecutando", fecha)
         if (this.state.activeTabMes !== tab) {
           this.setState({
             activeTabMes: tab,
-            fecha:fecha
+            fecha:fecha,
+            collapseDate:null
+
           });
 
            
             if(this.state.activeTabComp === "resumen"){
                 //   carga resumen de componentes
 
-                axios.post(`${UrlServer}/getHistorialResumen`,{
-                    id_ficha: sessionStorage.getItem('idobra'),
-                    fecha: fecha
-                })
-                .then((res)=>{
-                    console.log("response data Componentes ", res.data)
-                    this.setState({
-                        DataResumenApi:res.data,
-                        fecha:fecha
-                    })
-                    
-                })
-                .catch((err)=>{
-                    console.log("errores al conectar el api", err)
-                })
+                this.ResumenRequest(fecha)
 
                 return
             }
             
             //   cargamos datos de componentes
-            axios.post(`${UrlServer}/getHistorialComponentes`,{
-                id_ficha: sessionStorage.getItem('idobra'),
-                fecha: fecha
-            })
-            .then((res)=>{
-                console.log("response data Componentes ", res.data)
-                this.setState({
-                    DataComponentesApi:res.data
-                })
-                
-            })
-            .catch((err)=>{
-                console.log("errores al conectar el api", err)
-            })
+            this.ComponentesRequest(fecha)
+            this.FechaAvancePartidas(fecha, this.state.idComponete )
         }
 
     }
 
     TabComponentes(tab , idComp, nombreComp){
-        console.log("fecha", this.state.fecha)
+        // console.log("idComp",idComp)
 
         if (this.state.activeTabComp !== tab) {
             this.setState({
-              activeTabComp: tab
+              activeTabComp: tab,
+              idComponete:idComp,
+              nombreComponente:nombreComp,
+              collapseDate:null
             });
 
             if(tab === "resumen"){
-                axios.post(`${UrlServer}/getHistorialResumen`,{
-                    id_ficha: sessionStorage.getItem('idobra'),
-                    fecha: this.state.fecha
-                })
-                .then((res)=>{
-                    console.log("response data resumen ", res.data)
-                    this.setState({
-                        DataResumenApi:res.data
-                    })
-                    
-                })
-                .catch((err)=>{
-                    console.log("errores al conectar el api", err)
-                })
-
+                
+                this.ResumenRequest()
                 return
             }
 
-
-            axios.post(`${UrlServer}/getHistorialFechas`,{
-                id_componente: idComp,
-                fecha: this.state.fecha
-            })
-            .then((res)=>{
-                console.log("response data Componentes ", res.data)
-                this.setState({
-                    DataFechasApi:res.data,
-                    idComponete:idComp,
-                    nombreComponente:nombreComp
-                })
-                
-            })
-            .catch((err)=>{
-                console.log("errores al conectar el api", err)
-            })
-
+            // FECHA  DE ( PARTIDAS EJECUTADAS )
+            this.FechaAvancePartidas( this.state.fecha, idComp )
             // HISTORIAL DE DIAS PARTIDAS CHART----------------------------
             axios.post(`${UrlServer}/getHistorialComponenteChart`,{
                 id_componente: idComp,
                 fecha: this.state.fecha
             })
             .then((res)=>{
-                console.log("response data DIAS CHART ", res.data)
+                // console.log("response data DIAS CHART ", res.data)
                 this.setState({
                     DataChartDiasComponente:res.data,
                     // nombreComponente:nombreComp
@@ -195,14 +149,15 @@ class MDHistorial extends Component {
     collapseFechas(e, fecha){
         let event = Number(e);
         if (event !== this.state.collapseDate) {
-            this.setState({ collapseDate:  event });
+            this.setState({ collapseDate: event });
+
             // HISTORIAL DE DIAS PARTIDAS-------------------------------
             axios.post(`${UrlServer}/getHistorialDias`,{
                 id_componente: this.state.idComponete,
                 fecha: fecha
             })
             .then((res)=>{
-                console.log("response data PARTIDAS ", res.data)
+                // console.log("response data PARTIDAS ", res.data)
                 this.setState({
                     DataPartidas:res.data,
                     // nombreComponente:nombreComp
@@ -212,11 +167,95 @@ class MDHistorial extends Component {
             .catch((err)=>{
                 console.log("errores al conectar el api", err)
             })
-
-
-           
+            return           
         }
+        this.setState({ collapseDate: null })
+    }
+    //------------------------------ peticiones tipo http con axios ---------------------------------------------------
+    AniosRequest(){
+
+    }
+
+    MesesRequest(value){
+        //   llamamos el api de meses5
+        axios.post(`${UrlServer}/getHistorialMeses`,{
+            id_ficha: sessionStorage.getItem('idobra'),
+            anyo: value
+        })
+        .then((res)=>{
+            // console.log("response data meses ", res.data)
+
+            var ultimoMes = res.data.length -1
+
+            this.setState({
+                DataMesesApi: res.data,
+                activeTabMes:ultimoMes.toString(),
+                activeTabComp:"resumen",
+                fecha:res.data[ultimoMes].fecha
+            })
+
+            // console.log("ultima fecha", res.data[ultimoMes])
+            this.ResumenRequest(res.data[ultimoMes].fecha)
+        })
+        .catch((err)=>{
+            console.log("errores al conectar el api", err)
+        })
+    }
+
+    ResumenRequest(ultimafecha){
+        // console.log("fecha", ultimafecha)
+
+        axios.post(`${UrlServer}/getHistorialResumen`,{
+            id_ficha: sessionStorage.getItem('idobra'),
+            fecha: ultimafecha
+        })
+        .then((res)=>{
+            // console.log("response data resumen ", res.data)
+            this.setState({
+                DataResumenApi:res.data
+            })
+            
+        })
+        .catch((err)=>{
+            console.log("errores al conectar el api", err)
+        })
+    }
+
+    ComponentesRequest(fecha){
+        axios.post(`${UrlServer}/getHistorialComponentes`,{
+            id_ficha: sessionStorage.getItem('idobra'),
+            fecha: fecha
+        })
+        .then((res)=>{
+            // console.log("response data Componentes ", res.data)
+            this.setState({
+                DataComponentesApi:res.data
+            })
+            
+        })
+        .catch((err)=>{
+            console.log("errores al conectar el api", err)
+        })
+    }
+
+    FechaAvancePartidas( fecha, idComp ){
+        // console.log("partidas fecha", fecha);
         
+        axios.post(`${UrlServer}/getHistorialFechas`,{
+            id_componente: idComp,
+            fecha: fecha
+        })
+        .then((res)=>{
+            // console.log("response data Componentes ", res.data)
+            this.setState({
+                DataFechasApi:res.data,
+            })
+            
+        })
+        .catch((err)=>{
+            console.log("errores al conectar el api", err)
+        })
+
     }
 
     render() {
@@ -315,7 +354,8 @@ class MDHistorial extends Component {
             <div>
                 <Nav tabs>
                     <NavItem>
-                        <select className="form-control form-control-sm" onChange={ this.SeleccionaAnio}>
+                    
+                        <select className="form-control form-control-sm" onChange={ this.SeleccionaAnio } value={ inputAnio }>
                             {
                                 DataAniosApi.map((anio, indexA)=>
                                     <option key={ indexA } value={ anio.anyo } >{ anio.anyo }</option>
@@ -333,9 +373,6 @@ class MDHistorial extends Component {
                             </NavItem>
                         )
                     }
-                    
-
-
                 </Nav>
 
 
@@ -358,80 +395,78 @@ class MDHistorial extends Component {
 
                 </Nav>
 
-
-                
-                    <CardBody className="p-2">
-                        {
-                            this.state.activeTabComp === "resumen"
-                            ?
-                                <HighchartsReact
-                                    highcharts={Highcharts}
-                                    // constructorType={'stockChart'}
-                                    options={options}
-                                />
-                            :   
-                                <Card>
-                                    <CardHeader> {nombreComponente}</CardHeader>
-                                    <CardBody className="p-2">
-                                        <Row>
-                                            <Col sm="5">
-                                            <HighchartsReact
-                                                highcharts={Highcharts}
-                                                // constructorType={'stockChart'}
-                                                options={Partidas}
-                                            />
-                                            
-                                            </Col>
-                                            <Col  sm="7">
-                                            {
-                                                DataFechasApi.map((fecha, indexF)=>
-                                                    <fieldset key={ indexF } className="mt-2">
-                                                        <legend className="prioridad" onClick={()=> this.collapseFechas(indexF, fecha.fecha)} >  <b>FECHA: </b>{ fecha.fecha_larga}  - <b> S/.</b> { fecha.fecha_total_soles }  - <b> { fecha.fecha_total_porcentaje} %</b></legend>
-                                                        <Collapse isOpen={collapseDate === indexF}>
-                                                            <div className="table-responsive"> 
-                                                                <table className="table table-sm small">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>ITEM</th>
-                                                                            <th>DESCRIPCIÓN</th>
-                                                                            <th>ACTIVIDAD </th>
-                                                                            <th>DESCRIPCIÓN</th>
-                                                                            <th>OBSERVACIÓN</th>
-                                                                            <th>A. FISICO</th>
-                                                                            <th>C. U.</th>
-                                                                            <th>C. P.</th>
+                <CardBody className="p-2">
+                    {
+                        this.state.activeTabComp === "resumen"
+                        ?
+                            <HighchartsReact
+                                highcharts={Highcharts}
+                                // constructorType={'stockChart'}
+                                options={options}
+                            />
+                        :   
+                            <Card>
+                                <CardHeader> {nombreComponente}</CardHeader>
+                                <CardBody className="p-2">
+                                    <Row>
+                                        <Col sm="5">
+                                        <HighchartsReact
+                                            highcharts={Highcharts}
+                                            // constructorType={'stockChart'}
+                                            options={Partidas}
+                                        />
+                                        
+                                        </Col>
+                                        <Col sm="7">
+                                        {
+                                            DataFechasApi.map((fecha, indexF)=>
+                                                <fieldset key={ indexF } className="mt-2">
+                                                    <legend className="prioridad" onClick={()=> this.collapseFechas(indexF, fecha.fecha)} >  <b>FECHA: </b>{ fecha.fecha_larga}  - <b> S/.</b> { fecha.fecha_total_soles }  - <b> { fecha.fecha_total_porcentaje} %</b></legend>
+                                                    <Collapse isOpen={collapseDate === indexF}>
+                                                        <div className="table-responsive"> 
+                                                            <table className="table table-sm small">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>ITEM</th>
+                                                                        <th>DESCRIPCIÓN</th>
+                                                                        <th>ACTIVIDAD </th>
+                                                                        <th>DESCRIPCIÓN</th>
+                                                                        <th>OBSERVACIÓN</th>
+                                                                        <th>A. FISICO</th>
+                                                                        <th>C. U.</th>
+                                                                        <th>C. P.</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {DataPartidas.map((hist, indexHist)=>
+                                                                        <tr key={ indexHist }>
+                                                                            <td>{ hist.item }</td>
+                                                                            <td>{ hist.descripcion_partida }</td>
+                                                                            <td>{ hist.nombre_actividad }</td>
+                                                                            <td>{ hist.descripcion_actividad }</td>
+                                                                            <td>{ hist.observacion }</td>
+                                                                            <td>{ hist.valor } { hist.unidad_medida}</td>
+                                                                            <td>{ hist.costo_unitario }</td>
+                                                                            <td>{ hist.parcial }</td>
                                                                         </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        {DataPartidas.map((hist, indexHist)=>
-                                                                            <tr key={ indexHist }>
-                                                                                <td>{ hist.item }</td>
-                                                                                <td>{ hist.descripcion_partida }</td>
-                                                                                <td>{ hist.nombre_actividad }</td>
-                                                                                <td>{ hist.descripcion_actividad }</td>
-                                                                                <td>{ hist.observacion }</td>
-                                                                                <td>{ hist.valor } { hist.unidad_medida}</td>
-                                                                                <td>{ hist.costo_unitario }</td>
-                                                                                <td>{ hist.parcial }</td>
-                                                                            </tr>
-                                                                        )}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>  
-                                                        </Collapse> 
-                                                    </fieldset>
-                                                )
-                                            }
-                                                
+                                                                    )}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>  
+                                                    </Collapse> 
+                                                </fieldset>
+                                            )
+                                        }
+                                            
 
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                </Card>   
-                        }
-                      
-                    </CardBody>
-               
+                                        </Col>
+                                    </Row>
+                                </CardBody>
+                            </Card>   
+                    }
+                    
+                </CardBody>
+            
             </div>
         )
   }
