@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { MdMoreVert, MdDone } from "react-icons/md";
-import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner } from 'reactstrap';
+import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
@@ -54,9 +54,14 @@ class ValorizacionGeneral extends Component {
 
             saldo: "",
             porcentaje_saldo: "",
+
+            // select  dropdown
+
+            dropdownOpen: false
         };
 
         this.TabsAnios = this.TabsAnios.bind(this);
+        this.SelectAnios = this.SelectAnios.bind(this);
         this.TabsMeses = this.TabsMeses.bind(this);
         this.TabsComponentes = this.TabsComponentes.bind(this);
     }
@@ -113,6 +118,12 @@ class ValorizacionGeneral extends Component {
             console.log('ERROR ANG algo salió mal' + err);
         });
     }
+
+    SelectAnios() {
+        this.setState({
+          dropdownOpen: !this.state.dropdownOpen
+        });
+      }
 
     TabsAnios(tab) {
         if (this.state.activeTabAnio !== tab) {
@@ -260,6 +271,48 @@ class ValorizacionGeneral extends Component {
         return (
             <div>
                 {/* {DataAniosApi.length <= 0 ? <label className="text-center" >  <Spinner color="primary" size="sm" /></label>: */}
+                
+                
+                <Nav tabs>
+                    <Dropdown nav isOpen={ this.state.dropdownOpen } toggle={ this.SelectAnios }>
+                        <DropdownToggle nav caret>
+                            Dropdown
+                        </DropdownToggle>
+                        <DropdownMenu>
+                            {/* <DropdownItem header>Header</DropdownItem>
+                            <DropdownItem disabled>Action</DropdownItem> */}
+                            <DropdownItem>Another Action</DropdownItem>
+                            <DropdownItem divider />
+                            <DropdownItem>Another Action</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                    <NavItem>
+                        <NavLink >Link</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink >Another Link</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink >Disabled Link</NavLink>
+                    </NavItem>
+                </Nav>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 {/* AÑOS */}
                 <Nav tabs>
                     {DataAniosApi.map((anio, IA) =>
@@ -302,7 +355,7 @@ class ValorizacionGeneral extends Component {
 
                     </Nav>
 
-                    <Card className="m-1">
+                    {/* <Card className="m-1">
                         <CardHeader>{NombreComponente}</CardHeader>
                         <CardBody>
                             {
@@ -514,6 +567,7 @@ class ValorizacionGeneral extends Component {
 
                         </CardBody>
                     </Card>
+                 */}
                 </Card>
             </div>
         );

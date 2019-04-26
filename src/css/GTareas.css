@@ -32,3 +32,148 @@
 .verInput:hover{
   color: blue;
 }
+/* dddddddddddddddddddddddddd dddddddddddddddddddddddddddddddddddd--------------dddd--------------------------*/
+
+.post_it {
+  max-width: 100%;
+  /* background-color:#666; */
+}
+
+.post_it h2,p {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+.post_it ul,li {
+  list-style: none;
+}
+
+.post_it ul {
+  overflow: hidden;
+  padding: 3em;
+}
+
+.post_it ul li a {
+  text-decoration: none;
+  color: #000;
+  background: #ffc;
+  display: block;
+  height: 15em;
+  width: 12em;
+  padding: 1em;
+  -moz-box-shadow: 5px 5px 7px rgba(33, 33, 33, 1);
+  -webkit-box-shadow: 5px 5px 7px rgba(33, 33, 33, .7);
+  box-shadow: 5px 5px 7px rgba(33, 33, 33, .7);
+  -webkit-transform: rotate(-6deg);
+  -o-transform: rotate(-6deg);
+  -moz-transform: rotate(-6deg);
+  -moz-transition: -moz-transform .15s linear;
+  -o-transition: -o-transform .15s linear;
+  -webkit-transition: -webkit-transform .15s linear;
+}
+
+.post_it ul li:nth-child(even) a {
+  -o-transform: rotate(4deg);
+  -webkit-transform: rotate(4deg);
+  -moz-transform: rotate(4deg);
+  position: relative;
+  top: 5px;
+  background: #cfc;
+}
+
+.post_it ul li:nth-child(3n) a {
+  -o-transform: rotate(-3deg);
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  position: relative;
+  top: -5px;
+  background: #ccf;
+}
+
+.post_it ul li:nth-child(5n) a {
+  -o-transform: rotate(5deg);
+  -webkit-transform: rotate(5deg);
+  -moz-transform: rotate(5deg);
+  position: relative;
+  top: -10px;
+  background: #fcf;
+}
+
+.post_it ul li a:hover, ul li a:focus {
+  -moz-box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
+  -webkit-box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
+  box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
+  -webkit-transform: scale(1.25);
+  -moz-transform: scale(1.25);
+  -o-transform: scale(1.25);
+  position: relative;
+  z-index: 5;
+}
+
+.post_it ul li {
+  margin: 1em;
+  float: left;
+}
+
+.post_it ul li h2 {
+  font-size: 102%;
+  padding-bottom: 0px;
+  text-align: center;
+  color: #000;
+  font-family: "Reenie Beanie",arial,sans-serif;
+  font-weight: bold;
+  margin: 0px;
+}
+
+.post_it ul li p {
+  font-family:'Waiting for the Sunrise', cursive;;
+  font-size: 109%;
+  color: #000;
+}
+
+
+/* barra de progreso */
+
+.contentBarraProgreso{
+  border: 1px solid #0080ff;
+  border-radius: 8px;
+  height: 5px;
+  width: 100%;
+  margin-bottom: 3px;
+}
+
+.widthBarraProgreso{
+  background: #0080ff;
+  border-radius: 8px;
+  /* width: 59%; */
+  height: 100%;
+}
+
+.cantidadPorcentaje{
+  position: relative;
+  border-radius: 6px;
+  padding: 2px;
+  font-size: 0.7rem;
+  bottom: 21px;
+  color: black;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+
+/*  */
+hr{
+  margin-top: 0.1rem!important;
+  margin-bottom: 0.2rem!important;
+  border: 0;
+  border-top: 1px solid #2d3540 !important;
+}
+
+.pin{
+  vertical-align: middle;
+  border-style: none;
+  position: absolute;
+  right: 3px;
+  top: 3px;
+}

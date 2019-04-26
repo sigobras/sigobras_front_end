@@ -41,7 +41,7 @@ import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 import ReportesGenerales from './Reportes/ReportesGenerales'
 
 // GESTION DE TAREAS
-import GestionTareas from "./GestiónTareas/GestionTareas"
+import GestionTareas from "./GestionTareas/GestionTareas"
 
 class AppAng extends Component {
     constructor() {
