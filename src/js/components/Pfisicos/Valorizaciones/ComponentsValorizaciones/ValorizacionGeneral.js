@@ -31,7 +31,8 @@ class ValorizacionGeneral extends Component {
             NombreComponente:"",
             IdComponente:"",
             FechaInicio:"",
-            FechaFinal:""
+            FechaFinal:"",
+            SMSValorizacion:false
         };
         
         this.OpenSelectAnios = this.OpenSelectAnios.bind(this);
@@ -56,17 +57,20 @@ class ValorizacionGeneral extends Component {
     }
 
     SelectAnio(anio){
-        console.log("año ", anio)
+        // console.log("año parametro ", anio, "state ", this.state.InputAnio)
 
         this.setState({
-            InputAnio:anio
+            InputAnio:anio,
+            activeTabComponente:"resumen",
         })
         // llama al api de meses
-        this.reqMeses(anio)
+        if(this.state.InputAnio !== anio){
+            this.reqMeses(anio)
+        }
     }
 
     TabMeses(tab, FechaInicio, FechaFinal){
-        console.log( FechaInicio, " -- ",  FechaFinal, "id componente",  this.state.IdComponente)
+        // console.log( "TAB MESES ", FechaInicio, " -- ",  FechaFinal, "id componente",  this.state.IdComponente)
         if (this.state.activeTabMes !== tab) {
             this.setState({
                 activeTabMes: tab,
@@ -76,12 +80,16 @@ class ValorizacionGeneral extends Component {
 
             // llamamos a componentes
             this.reqComponentes( FechaInicio, FechaFinal )
+            if(this.state.activeTabComponente === "resumen"){
+                this.reqResumen(FechaInicio, FechaFinal)
+                return
+            }
             this.reqPartidas(this.state.IdComponente, FechaInicio, FechaFinal )
         }
     }
 
     TabComponentes(tab, id_componente, nombreComp) {
-        console.log("id componente ",id_componente )
+        // console.log("id componente ",id_componente , "tipo", tab )
         if (this.state.activeTabComponente !== tab) {
             this.setState({
                 activeTabComponente: tab,
@@ -90,7 +98,10 @@ class ValorizacionGeneral extends Component {
             })
 
             // llama api de partidas
-
+            if(tab === "resumen"){
+                this.reqResumen(this.state.FechaInicio, this.state.FechaFinal)
+                return
+            }
             this.reqPartidas(id_componente, this.state.FechaInicio, this.state.FechaFinal)
 
         }
@@ -104,13 +115,13 @@ class ValorizacionGeneral extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res) => {
-            console.table('data val princiapl', res.data);
+            // console.table('data val princiapl', res.data);
             if (res.data !== "vacio") {
                 var ResData = res.data
                 var UltimoAnio = res.data.length -1 
                 var UltimoMes = res.data[UltimoAnio].periodos.length -1 
 
-                console.log("Ultimo mes  ",  UltimoMes )
+                // console.log("Ultimo mes  ",  UltimoMes )
 
                 this.setState({
                     DataAniosApi: ResData,
@@ -121,34 +132,22 @@ class ValorizacionGeneral extends Component {
                     // // seteamos el nombre del componente
                     NombreComponente: 'RESUMEN DE VALORIZACION',
 
-                    // // capturamos montos de dinero en resumen
-                    // ppto: res.data[0].periodos[0].resumen.presupuesto,
-                    // monto_actual: res.data[0].periodos[0].resumen.valor_actual,
-
-                    // avance_anterior: res.data[0].periodos[0].resumen.valor_anterior,
-                    // porcentaje_anterior: res.data[0].periodos[0].resumen.porcentaje_anterior,
-
-                    // avance_actual: res.data[0].periodos[0].resumen.valor_actual,
-                    // porcentaje_actual: res.data[0].periodos[0].resumen.porcentaje_actual,
-
-                    // avance_acumulado: res.data[0].periodos[0].resumen.valor_total,
-                    // porcentaje_acumulado: res.data[0].periodos[0].resumen.porcentaje_total,
-
-                    // saldo: res.data[0].periodos[0].resumen.valor_saldo,
-                    // porcentaje_saldo: res.data[0].periodos[0].resumen.porcentaje_saldo,
-                    // // seteamos las fechas par ala carga por defecto
-                    // fecha_inicial: res.data[0].periodos[0].fecha_inicial,
-                    // fecha_final: res.data[0].periodos[0].fecha_final,
-
                     // CARGAS POR DEFAULT 
                     InputAnio:ResData[UltimoAnio].anyo,
                     
                     // tab activos
                     activeTabMes:UltimoMes.toString(),
                     activeTabComponente:"resumen",
-
+                    FechaInicio:res.data[UltimoAnio].periodos[UltimoMes].fecha_inicial,
+                    FechaFinal:res.data[UltimoAnio].periodos[UltimoMes].fecha_final,
+                })
+                return
+            }else{
+                this.setState({
+                    SMSValorizacion:true
                 })
             }
+            
         })
         .catch(err => {
             console.log('ERROR ANG algo salió mal' + err);
@@ -165,21 +164,23 @@ class ValorizacionGeneral extends Component {
         .then((res) => {
             var UltimoMes = res.data.length -1  
 
-            console.log('res meses> ', res.data)
+            // console.log('res meses> ', res.data)
             this.setState({
                 DataMesesApi: res.data,
                 activeTabMes:UltimoMes.toString()
             })
-
-            this.reqResumen( res.data.fecha_inicial ,  res.data.fecha_final )
+            //  console.log("inicio ", res.data[UltimoMes].fecha_inicial , "final ",  res.data[UltimoMes].fecha_final)
+            this.reqResumen( res.data[UltimoMes].fecha_inicial ,  res.data[UltimoMes].fecha_final )
 
         })
-        .catch((err) => {
+        .catch((err) => {-
             console.log('hay erres al solicitar la peticion al api, ', err);
         })
     }
 
     reqResumen(FechaInicial, FechaFinal){
+
+        // console.log("fecha en resumen ", FechaInicial, FechaFinal)
         axios.post(`${UrlServer}${this.props.Ruta.ResumenComp}`,
             {
                 "id_ficha": sessionStorage.getItem("idobra"),
@@ -189,7 +190,7 @@ class ValorizacionGeneral extends Component {
             }
         )
         .then((res) => {
-            console.log('res  ressumen > ', res.data)
+            // console.log('res  ressumen > ', res.data)
             this.setState({
                 DataResumenApi: res.data
             })
@@ -208,7 +209,7 @@ class ValorizacionGeneral extends Component {
             }
         )
         .then((res) => {
-            console.log('res COMPONENTES> ', res.data)
+            // console.log('res COMPONENTES> ', res.data)
             this.setState({
                 DataComponentesApi: res.data,
             })
@@ -221,6 +222,7 @@ class ValorizacionGeneral extends Component {
     }
 
     reqPartidas(IdComponente, FechaInicio, FechaFinal){
+        // console.log("data parametros partidas ", IdComponente, "f inicio ", FechaInicio,  "f final", FechaFinal)
         axios.post(`${UrlServer}${this.props.Ruta.Partidas}`,
             {
                 "id_componente": IdComponente,
@@ -229,7 +231,7 @@ class ValorizacionGeneral extends Component {
             }
         )
         .then((res) => {
-            console.log('res PARTIDAS > ', res.data)
+            // console.log('res PARTIDAS > ', res.data)
             this.setState({
                 DataPartidasApi: res.data,
             })
@@ -240,11 +242,11 @@ class ValorizacionGeneral extends Component {
     }
 
     render() {
-        const { DataAniosApi, DataMesesApi,  DataResumenApi, DataComponentesApi, DataPartidasApi, activeTabMes, activeTabComponente, NombreComponente, InputAnio } = this.state
+        const { DataAniosApi, DataMesesApi,  DataResumenApi, DataComponentesApi, DataPartidasApi, activeTabMes, activeTabComponente, NombreComponente, InputAnio, SMSValorizacion } = this.state
         return (
-            <div>
-                {/* {DataAniosApi.length <= 0 ? <label className="text-center" >  <Spinner color="primary" size="sm" /></label>: */}
-                
+            
+            SMSValorizacion === true ? <div className="text-center" >  No hay datos</div>:
+            <div> 
                 
                 <Nav tabs>
                     {/* AÑOS */}
@@ -276,22 +278,22 @@ class ValorizacionGeneral extends Component {
 
                 {/* RESUMEN Y COMPONENTES ===================================================== */}
 
-                 {/* COMPONENTES */}
-                 <Nav tabs>
-                    <NavItem >
-                        <NavLink className={classnames({ active: activeTabComponente === "resumen" })} onClick={() => { this.TabComponentes("resumen", "", "RESUMEN DE VALORIZACION") }} >
-                            RESUMEN
-                            </NavLink>
+                {/* COMPONENTES */}
+                <Nav tabs>
+                <NavItem >
+                    <NavLink className={classnames({ active: activeTabComponente === "resumen" })} onClick={() => { this.TabComponentes("resumen", "", "RESUMEN DE VALORIZACIÓN") }} >
+                        RESUMEN
+                        </NavLink>
+                </NavItem>
+                { DataComponentesApi.map((Comp, IComp) =>
+                    <NavItem key={IComp}>
+                        <NavLink className={classnames({ active: activeTabComponente === IComp.toString() })} onClick={() => { this.TabComponentes(IComp.toString(), Comp.id_componente, Comp.nombre) }} >
+                            C-{Comp.numero}
+                        </NavLink>
                     </NavItem>
-                    { DataComponentesApi.map((Comp, IComp) =>
-                        <NavItem key={IComp}>
-                            <NavLink className={classnames({ active: activeTabComponente === IComp.toString() })} onClick={() => { this.TabComponentes(IComp.toString(), Comp.id_componente, Comp.nombre) }} >
-                                C-{Comp.numero}
-                            </NavLink>
-                        </NavItem>
-                    )}
+                )}
 
-                </Nav>
+            </Nav>
 
                 <Card className="m-1">
                     <CardHeader>{NombreComponente}</CardHeader>
@@ -305,19 +307,19 @@ class ValorizacionGeneral extends Component {
                                             <tr className="text-center">
                                                 <th className="align-middle" rowSpan="3">N°</th>
                                                 <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
-                                                <th>S/. {this.state.ppto}</th>
+                                                <th>S/. { DataResumenApi.presupuesto}</th>
 
-                                                <th>S/. {this.state.avance_anterior}</th>
-                                                <th>{this.state.porcentaje_anterior} %</th>
+                                                <th>S/. { DataResumenApi.valor_anterior }</th>
+                                                <th>{ DataResumenApi.porcentaje_anterior} %</th>
 
-                                                <th>S/. {this.state.avance_actual}</th>
-                                                <th>{this.state.porcentaje_actual} %</th>
+                                                <th>S/. { DataResumenApi.valor_actual }</th>
+                                                <th>{ DataResumenApi.porcentaje_actual} %</th>
 
-                                                <th>S/. {this.state.avance_acumulado}</th>
-                                                <th>{this.state.porcentaje_acumulado} %</th>
+                                                <th>S/. { DataResumenApi.valor_total }</th>
+                                                <th>{ DataResumenApi.porcentaje_total} %</th>
 
-                                                <th>S/. {this.state.saldo}</th>
-                                                <th>{this.state.porcentaje_saldo} %</th>
+                                                <th>S/. { DataResumenApi.valor_saldo }</th>
+                                                <th>{ DataResumenApi.porcentaje_saldo} %</th>
                                             </tr>
                                             <tr className="text-center">
                                                 <th>MONTO ACT.</th>
