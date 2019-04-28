@@ -177,3 +177,26 @@ hr{
   right: 3px;
   top: 3px;
 }
+
+.widthFormPositContent{
+  width: 290px;
+}
+
+.formPositContainer{
+  padding: 8px;
+  position: sticky;
+  top: 0px;
+  margin-left: 13px;
+  height: calc(100% - 84%);
+}
+
+.widthFormPositContentCierra{
+  /* width: -1px */
+  display: none;
+}
+.collapseIconFromPosit{
+  position: absolute;
+  top: calc(100% - 84%);
+  font-size: 53px;
+  right: -24px;
+}

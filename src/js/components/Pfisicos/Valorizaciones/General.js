@@ -11,25 +11,25 @@ class General extends Component {
             collapse: 1,
             ValRutaGeneral:{
                     Anios:"/getValGeneralAnyos",
-                    Mes:"/",
+                    Mes:"/getValGeneralPeriodos",
                     ResumenComp:"/getValGeneralResumenPeriodo",
-                    Componentes:"/",
+                    Componentes:"/getValGeneralComponentes",
                     Partidas:"/getValGeneralPartidas"
             },
 
             ValRutaPartidaNeva:{
                     Anios:"/getValGeneraPartidaNuevalAnyos",
-                    Mes:"/",
-                    ResumenComp:"",
-                    Componentes:"/getValGeneralPartidaNuevaResumenPeriodo",
+                    Mes:"/getValGeneralPartidaNuevaPeriodos",
+                    ResumenComp:"/getValGeneralPartidaNuevaResumenPeriodo",
+                    Componentes:"/getValGeneralPartidaNuevaComponentes",
                     Partidas:"/getValGeneralPartidaNuevaPartidas"
             },
 
             ValRutaMayorMetrado:{
                     Anios:"/getValGeneraMayoresMetradoslAnyos",
-                    Mes:"/",
-                    ResumenComp:"",
-                    Componentes:"/",
+                    Mes:"/getValGeneralMayoresMetradosPeriodos",
+                    ResumenComp:"/getValGeneralMayoresMetradosResumenPeriodo",
+                    Componentes:"/getValGeneralMayoresMetradosComponentes",
                     Partidas:"/getValGeneralMayoresMetradosPartidas"
             },
         }; 

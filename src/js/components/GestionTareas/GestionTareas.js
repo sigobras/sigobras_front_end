@@ -29,6 +29,8 @@ class GestionTareas extends Component {
     this.onChangePersonal = this.onChangePersonal.bind(this);
     this.onChangeImgMetrado = this.onChangeImgMetrado.bind(this);
     this.clearImg = this.clearImg.bind(this);
+    this.SeteaTareasRecibidas = this.SeteaTareasRecibidas.bind(this);
+    this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
 
     this.state = {
       Posits:[],
@@ -66,7 +68,9 @@ class GestionTareas extends Component {
 
       file: null,
       UrlImagen:"",
-      SMSinputTypeImg:false
+      SMSinputTypeImg:false,
+
+      CollapseFormContainerAddTarea:false
     };
   }
 
@@ -176,35 +180,17 @@ class GestionTareas extends Component {
     //formato de salida para la fecha
     var resultado = TuFecha.getFullYear()+ '-' + (TuFecha.getMonth() + 1) + '-' + TuFecha.getDate() ;
     console.log("resultado ",  resultado, "fechaInicio", fechaInicio)
-    // var PositTareas = Posits
 
-    // PositTareas.push(
-    //   {
-    //     Para,
-    //     proyecto,
-    //     asunto,
-    //     tarea,
-    //     fechaInicio,
-    //     duracion,
-    //     porcentajeAvance,
-    //   }
-    // )
-
-    // console.log("PositTareas ", PositTareas)
-    // this.setState({
-    //   Posits:PositTareas
-    // })
-      // ssssssssssss
       const formData = new FormData();
       formData.append('asunto', asunto);
       formData.append('descripcion', descripcion);
       formData.append('fecha_inicial', fechaInicio);
       formData.append('fecha_final', resultado);
-      formData.append('proyectos_id_proyecto', sessionStorage.getItem("idobra"));
+      formData.append('proyectos_id_proyecto', proyecto);
       formData.append('emisor', sessionStorage.getItem("idacceso"));
       formData.append('receptor', InputPersonal );
       formData.append('archivo', file);
-      formData.append('extension', file.type);
+      formData.append('extension', "");
       formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
 
       const config = {
@@ -229,7 +215,7 @@ class GestionTareas extends Component {
   porcentCollapse(index){
     this.setState(
         { 
-          collapseInputPorcentaje: this.state.collapseInputPorcentaje === index ? null : index
+          collapseInputPorcentaje: this.state.collapseInputPorcentaje === index ? null : index,
         }
     );
   }
@@ -245,7 +231,8 @@ class GestionTareas extends Component {
     console.log( PositTareas )
 
     this.setState({
-      Posits: PositTareas
+      Posits: PositTareas,
+      collapseInputPorcentaje:null,
     })
 
   }
@@ -292,14 +279,15 @@ class GestionTareas extends Component {
     tareaPrincipal[0].SubTareas.push(
       {
         subtarea: this.state.inputSubtarea,
-        color: GeraColoresRandom()
+        color: GeraColoresRandom(),
+
       }
     )
     
     console.log("tarea ", tareaPrincipal);
 
     this.setState({
-      Posits:tareaPrincipal
+      Posits:tareaPrincipal,
     })
     
   }
@@ -380,70 +368,87 @@ class GestionTareas extends Component {
     }) 
     document.getElementById("myImage").value = "";
   }
+
+  SeteaTareasRecibidas(){
+
+  }
+
+  CollapseFormContainerAddTarea(){
+    // this.setState({})
+  }
+
   render() {
-    const { DataProyectoApi, DataCargosApi, DataPersonalApi, Posits, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg  } = this.state
+    const { DataProyectoApi, DataCargosApi, DataPersonalApi, Posits, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea } = this.state
     
     return (
       <div>
+      { console.log("dghjkl", CollapseFormContainerAddTarea )}
         <Row>
-          <Col sm="3">
-            <Form onSubmit={ this.AgregaTarea }>
-              <FormGroup>
-                <Label >PROYECTO: { proyecto } </Label>
-                <Select
-                  // value={ proyecto }
-                  onChange={ this.onChangeProyecto }
-                  options={ DataProyectoApi }
-                  placeholder="Seleccione"
-                />
-             
-                <Label for="A">PARA: { Para }</Label>
-                <Select
-                  onChange={ this.onChangePara }
-                  options={ DataCargosApi }
-                  placeholder="Seleccione"
-                />
+            <div className="formPositContainer">
+              <div className="collapseIconFromPosit prioridad" onClick={()=> this.setState({CollapseFormContainerAddTarea: !this.state.CollapseFormContainerAddTarea})}>
+                <span >d</span>
+              </div>
+              <div className={ CollapseFormContainerAddTarea === true ? "widthFormPositContent": "widthFormPositContentCierra" }>
+                <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
+                <Form onSubmit={ this.AgregaTarea }>
+                  <FormGroup>
+                    <Label >PROYECTO: { proyecto } </Label>
+                    <Select
+                      // value={ proyecto }
+                      onChange={ this.onChangeProyecto }
+                      options={ DataProyectoApi }
+                      placeholder="Seleccione"
+                    />
+                
+                    <Label for="A">PARA: { Para }</Label>
+                    <Select
+                      onChange={ this.onChangePara }
+                      options={ DataCargosApi }
+                      placeholder="Seleccione"
+                    />
 
 
-                <Label for="A">PERSONAL: { InputPersonal }</Label>
-                <Select
-                  onChange={ this.onChangePersonal }
-                  options={ DataPersonalApi }
-                  placeholder="Seleccione"
-                />
-              
-                <Label for="asunto">TAREA / ASUNTO :</Label>
-                <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
-
-                <Label for="tarea">DESCRIPCIÓN : </Label>
-                <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({descripcion: e.target.value})} className="form-control" />                
-
-                <Label for="fechaInicio">INICIO : </Label>
-                <Input type="date" id="fechaInicio" required onChange={ e => this.setState({fechaInicio: e.target.value})}/>
-
-                <Label for="duracion">DURACIÓN: </Label>
-                <Input type="number" onChange={ e => this.setState({duracion: e.target.value})} required />
-
-                {
-                    this.state.UrlImagen.length <= 0 
-                    ?"":
-                    <div className="imgDelete">
-                      <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                      <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
-                    </div>
-                  }
-                  <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
-
-                  <div className="custom-file">
-                    <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
-                    <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
+                    <Label for="A">PERSONAL: { InputPersonal }</Label>
+                    <Select
+                      onChange={ this.onChangePersonal }
+                      options={ DataPersonalApi }
+                      placeholder="Seleccione"
+                    />
                   
-                  </div>
-              </FormGroup>
+                    <Label for="asunto">TAREA / ASUNTO :</Label>
+                    <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
 
-              <Button type="submit"> GUARDAR </Button>
-            </Form>
-          </Col>
+                    <Label for="tarea">DESCRIPCIÓN : </Label>
+                    <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({descripcion: e.target.value})} className="form-control" />                
+
+                    <Label for="fechaInicio">INICIO : </Label>
+                    <Input type="date" id="fechaInicio" required onChange={ e => this.setState({fechaInicio: e.target.value})}/>
+
+                    <Label for="duracion">DURACIÓN: </Label>
+                    <Input type="number" onChange={ e => this.setState({duracion: e.target.value})} required />
+
+                    {
+                        this.state.UrlImagen.length <= 0 
+                        ?"":
+                        <div className="imgDelete">
+                          <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
+                          <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
+                        </div>
+                      }
+                      <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
+
+                      <div className="custom-file">
+                        <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                        <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
+                      
+                      </div>
+                  </FormGroup>
+
+                  <Button type="submit"> GUARDAR </Button>
+                </Form>
+              </div>
+            </div>
+
           <Col>
             <Nav tabs>
               <NavItem>
