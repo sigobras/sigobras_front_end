@@ -10,7 +10,7 @@ import { DebounceInput } from 'react-debounce-input';
 import "../../../css/GTareas.css"
 
 import { GeraColoresRandom } from "../Utils/Funciones"
-import { UrlServer } from "../Utils/ServerUrlConfig"
+import { UrlServer, Id_Acceso } from "../Utils/ServerUrlConfig"
 
 class GestionTareas extends Component {
   constructor(props) {
@@ -33,8 +33,10 @@ class GestionTareas extends Component {
     this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
     this.dropdownRecibidos = this.dropdownRecibidos.bind(this);
 
+    this.reqTareas = this.reqTareas.bind(this);
+
     this.state = {
-      Posits:[],
+      DataTareasApi:[],
       PositsFiltrado:[],
 
       DataProyectoApi: [],
@@ -53,8 +55,6 @@ class GestionTareas extends Component {
 
       barraPorcentaje:null,
       collapseInputPorcentaje:null,
-
-
 
       // activeTab: '1',
       activeTabModalTarea:"1",
@@ -79,29 +79,10 @@ class GestionTareas extends Component {
   }
 
   componentDidMount(){
-    var Posit = []
-    for (let i = 1; i < 20; i++) {
-     Posit.push(
-       {
-         "id":i,
-         "proyecto":"INFORME OCTUBRE " + i,
-         "asunto":"Valorizaciones entregar urgente, Valorizaciones entregar urgente,",
-         "tarea":"coregir valorizaciones desde el informe 1 ",
-         "fechaInicio":"12/01/2019",
-         "prioridad":"urgente",
-         "duracion":5,
-         "porcentajeAvance":(i+ 3) * 4 ,
-         "SubTareas":[
 
-         ]
-       }
-     ) 
-    }
+    // llama api de tareas pendientes
 
-    this.setState({
-      Posits:Posit,
-    })
-    // console.log(Posit)
+    this.reqTareas(Id_Acceso, "/getTareaReceptorPendientes" )
 
     // API PROYECTOS---------------------------------------------
     axios.get(`${UrlServer}/getTareaProyectos`)
@@ -129,7 +110,7 @@ class GestionTareas extends Component {
     
     // CARGOS API---------------------------------------------
     axios.post(`${UrlServer}/getTareaCargos`, {
-        id_acceso:sessionStorage.getItem("idacceso")
+        id_acceso:Id_Acceso
     })
     .then((res)=>{
       // console.log("datos de cargos ", res)
@@ -153,14 +134,6 @@ class GestionTareas extends Component {
       console.log("error al conectar al api", err)
     })
   }
-
-  // toggleTabPosit(tab) {
-  //   if (this.state.activeTab !== tab) {
-  //     this.setState({
-  //       activeTab: tab
-  //     });
-  //   }
-  // }
 
   toggleTabDetalleTarea(tab) {
     if (this.state.activeTabModalTarea !== tab) {
@@ -191,7 +164,7 @@ class GestionTareas extends Component {
       formData.append('fecha_inicial', fechaInicio);
       formData.append('fecha_final', resultado);
       formData.append('proyectos_id_proyecto', proyecto);
-      formData.append('emisor', sessionStorage.getItem("idacceso"));
+      formData.append('emisor', Id_Acceso);
       formData.append('receptor', InputPersonal );
       formData.append('archivo', file);
       formData.append('extension', "");
@@ -255,9 +228,6 @@ class GestionTareas extends Component {
       return tarea.id === id
     })
 
-    // console.log("tareaaa0", Tareas[0])
-    
-
     console.log("collapseInputPorcentaje" , this.state.collapseInputPorcentaje, "dvfgssdfsdkfgsdkfgdsk", this.state.modalVerTareas)
 
     
@@ -266,19 +236,12 @@ class GestionTareas extends Component {
       PositsFiltrado:Tareas[0],
       modalVerTareas: !this.state.modalVerTareas
     })
-    
-    // if( this.state.collapseInputPorcentaje !== null ){
-    //   this.setState({
-    //     // PositsFiltrado:Tareas[0],
-    //     modalVerTareas: !this.state.modalVerTareas
-    //   })
-    
-    // }
+
   }
 
   subtareaAdd(){
 
-    var tareaPrincipal = this.state.Posits 
+    var tareaPrincipal = this.state.DataTareasApi 
 
     tareaPrincipal[0].SubTareas.push(
       {
@@ -291,7 +254,7 @@ class GestionTareas extends Component {
     console.log("tarea ", tareaPrincipal);
 
     this.setState({
-      Posits:tareaPrincipal,
+      DataTareasApi:tareaPrincipal,
     })
     
   }
@@ -310,7 +273,7 @@ class GestionTareas extends Component {
 
     axios.post(`${UrlServer}/getTareaUsuariosPorCargo`,
     {
-      "id_acceso":sessionStorage.getItem("idacceso"),
+      "id_acceso":Id_Acceso,
       "id_Cargo":value.valor
     })
     .then((res)=>{
@@ -388,17 +351,36 @@ class GestionTareas extends Component {
         dropdownOpenRecibidos:num
       });
     }
-    
   }
 
+  
+  // REQUESTS AL API ---------------------------------------------
+
+  reqTareas( id_acceso, ruta ){
+    axios.post(`${UrlServer}${ruta}`,
+      {
+        "id_acceso":id_acceso
+      }
+    )
+    .then((res)=>{
+      console.log("response tareas pendientes ", res.data)
+      this.setState({
+        DataTareasApi: res.data
+      })
+    })
+
+    .catch((err)=>{
+      console.log("error al consultar api ", err )
+    })
+  }
+
+
+
   render() {
-    const { DataProyectoApi, DataCargosApi, DataPersonalApi, Posits, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, dropdownOpenRecibidos } = this.state
+    const { DataProyectoApi, DataCargosApi, DataPersonalApi, DataTareasApi, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, dropdownOpenRecibidos } = this.state
     
     return (
       <div>
-      {
-        console.log("dropdownOpenRecibidos ", dropdownOpenRecibidos)
-      }
         <Row>
           <div className={ CollapseFormContainerAddTarea === true ? "formPositContainer": "widthFormPositContentCierra" }>
             <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
@@ -470,49 +452,30 @@ class GestionTareas extends Component {
                 </NavLink>
               </NavItem>
 
-              {/* <Dropdown nav isOpen={ dropdownOpenRecibidos === "3"} toggle={()=>this.dropdownRecibidos("3")} className={ dropdownOpenRecibidos ==="3"?"bg-primary":"" } >
-                <DropdownToggle nav caret>
-                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ Posits.length } </span>{ " " } 
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem active={ true } >Pendientes <div className="float-right"><span className="badge badge-warning">{ Posits.length } </span></div> </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem>Progreso <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem>Concluido <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
-                </DropdownMenu>
-              </Dropdown> */}
-
-              {/* <NavItem>
-                <NavLink className={classnames({ active:  activeTab === '2' })} onClick={() => { this.toggleTabPosit('2'); }}>
-                  <MdSend /> 
-                </NavLink>
-              </NavItem> */}
-
               <UncontrolledButtonDropdown  onClick={()=>this.dropdownRecibidos("3")} className={ dropdownOpenRecibidos ==="3"?"bg-primary":"" }>
                 <DropdownToggle nav caret>
-                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ Posits.length } </span>{ " " } 
+                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ DataTareasApi.length } </span>{ " " } 
                 </DropdownToggle>
                 <DropdownMenu>
-                  <DropdownItem active={ true } >Pendientes <div className="float-right"><span className="badge badge-warning">{ Posits.length } </span></div> </DropdownItem>
+                  <DropdownItem active={ true } onClick={ ()=>this.reqTareas( Id_Acceso, "/getTareaReceptorPendientes") } >Pendientes <div className="float-right"><span className="badge badge-warning">{ DataTareasApi.length } </span></div> </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem>Progreso <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem onClick={ ()=>this.reqTareas( Id_Acceso, "/getTareaReceptorProgreso") }>Progreso <div className="float-right"><span className="badge badge-light">{ DataTareasApi.length } </span></div></DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem>Concluido <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem onClick={ ()=>this.reqTareas( Id_Acceso, "/getTareaReceptorTerminadas") }>Concluido <div className="float-right"><span className="badge badge-light">{ DataTareasApi.length } </span></div></DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
 
 
               <UncontrolledButtonDropdown  onClick={()=>this.dropdownRecibidos("4")} className={ dropdownOpenRecibidos ==="4"?"bg-primary":"" } >
                 <DropdownToggle nav caret>
-                  <MdSend /> Enviados <span className="badge badge-light">{ Posits.length } </span>{ " " } 
+                  <MdSend /> Enviados <span className="badge badge-light">{ DataTareasApi.length } </span>{ " " } 
                 </DropdownToggle>
                 <DropdownMenu>
-                  <DropdownItem active={ true } >Pendientes <div className="float-right"><span className="badge badge-warning">{ Posits.length } </span></div> </DropdownItem>
+                 <DropdownItem onClick={ ()=>this.reqTareas( Id_Acceso, "/getTareaEmisorPendientes") }>Pendientes <div className="float-right"><span className="badge badge-light">{ DataTareasApi.length } </span></div></DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem>Progreso <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem onClick={ ()=>this.reqTareas( Id_Acceso, "/getTareaEmisorProgreso") }>Progreso <div className="float-right"><span className="badge badge-light">{ DataTareasApi.length } </span></div></DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem>Concluido <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem onClick={ ()=>this.reqTareas( Id_Acceso, "/getTareaEmisorTerminadas") }>Concluido <div className="float-right"><span className="badge badge-light">{ DataTareasApi.length } </span></div></DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             </Nav>
@@ -520,22 +483,22 @@ class GestionTareas extends Component {
               <div className="post_it">
                 <ul className="ulP">
                   {
-                    Posits.map((posit, ipos)=>
+                    DataTareasApi.map((posit, ipos)=>
 
                       <li key={ ipos }>
-                        <a  >
+                        <a>
                           <div className="pin">
                             <img src={ Pin } alt="pin" className="img-responsive" width="37px" />
                           </div>
-                          <h2 onClick={()=>this.ModalVerTareas(posit.id) } className="prioridad">{ posit.proyecto }</h2>
+                          <h2 onClick={()=>this.ModalVerTareas(posit.id) } className="prioridad">{ posit.proyecto_nombre }</h2>
                             <hr />
                           <p>{ posit.asunto }</p>
                           
                           <div onClick={ ()=> this.porcentCollapse(ipos) } className="prioridad">
                           
                             <div className="contentBarraProgreso">
-                                <div className="widthBarraProgreso" style={{ width: `${posit.porcentajeAvance}%`,  transition: 'all .9s ease-in',  }} />
-                                <div className="cantidadPorcentaje"  >{ posit.porcentajeAvance} %</div>
+                                <div className="widthBarraProgreso" style={{ width: `${posit.porcentaje_avance}%`,  transition: 'all .9s ease-in',  }} />
+                                <div className="cantidadPorcentaje"  >{ posit.porcentaje_avance} %</div>
                             </div>
 
                           </div>

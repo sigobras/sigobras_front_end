@@ -1,7 +1,7 @@
 // const axios = require('axios')
 
 const UrlServer = "http://190.117.94.80:9000";
-// const UrlServer = "http://192.168.0.5:9000";
+const Id_Acceso = sessionStorage.getItem("idacceso")
 
 
 // const Token = axios.defaults.headers.common['Authorization'] = `bearer ${sessionStorage.getItem('TuToken')}`;
@@ -9,6 +9,7 @@ const UrlServer = "http://190.117.94.80:9000";
 
 module.exports = {
     UrlServer,
+    Id_Acceso
     // Token
 } 
 
