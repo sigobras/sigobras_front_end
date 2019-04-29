@@ -36,30 +36,24 @@
 
 .post_it {
   max-width: 100%;
-  /* background-color:#666; */
 }
 
-.post_it h2,p {
-  font-size: 100%;
-  font-weight: normal;
-}
-
-.post_it ul,li {
+.post_it .ulP, li {
   list-style: none;
 }
 
-.post_it ul {
+/* .post_it .ulP {
   overflow: hidden;
   padding: 3em;
-}
+} */
 
-.post_it ul li a {
+.post_it .ulP li a {
   text-decoration: none;
   color: #000;
   background: #ffc;
   display: block;
-  height: 15em;
-  width: 12em;
+  height:12em;
+  width: 11em;
   padding: 1em;
   -moz-box-shadow: 5px 5px 7px rgba(33, 33, 33, 1);
   -webkit-box-shadow: 5px 5px 7px rgba(33, 33, 33, .7);
@@ -72,7 +66,7 @@
   -webkit-transition: -webkit-transform .15s linear;
 }
 
-.post_it ul li:nth-child(even) a {
+.post_it .ulP li:nth-child(even) a {
   -o-transform: rotate(4deg);
   -webkit-transform: rotate(4deg);
   -moz-transform: rotate(4deg);
@@ -81,7 +75,7 @@
   background: #cfc;
 }
 
-.post_it ul li:nth-child(3n) a {
+.post_it .ulP li:nth-child(3n) a {
   -o-transform: rotate(-3deg);
   -webkit-transform: rotate(-3deg);
   -moz-transform: rotate(-3deg);
@@ -90,7 +84,7 @@
   background: #ccf;
 }
 
-.post_it ul li:nth-child(5n) a {
+.post_it .ulP li:nth-child(5n) a {
   -o-transform: rotate(5deg);
   -webkit-transform: rotate(5deg);
   -moz-transform: rotate(5deg);
@@ -99,7 +93,7 @@
   background: #fcf;
 }
 
-.post_it ul li a:hover, ul li a:focus {
+.post_it .ulP li a:hover, .ulP li a:focus {
   -moz-box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
   -webkit-box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
   box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
@@ -110,12 +104,12 @@
   z-index: 5;
 }
 
-.post_it ul li {
+.post_it .ulP li {
   margin: 1em;
   float: left;
 }
 
-.post_it ul li h2 {
+.post_it .ulP li h2 {
   font-size: 102%;
   padding-bottom: 0px;
   text-align: center;
@@ -125,10 +119,17 @@
   margin: 0px;
 }
 
-.post_it ul li p {
+.post_it .ulP li p {
   font-family:'Waiting for the Sunrise', cursive;;
   font-size: 109%;
   color: #000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-height: 16px;     /* fallback */
+  max-height: 32px;      /* fallback */
+  -webkit-line-clamp: 2; /* number of lines to show */
+  -webkit-box-orient: vertical;
 }
 
 
@@ -178,9 +179,7 @@ hr{
   top: 3px;
 }
 
-.widthFormPositContent{
-  width: 290px;
-}
+
 
 .formPositContainer{
   padding: 8px;
@@ -188,15 +187,14 @@ hr{
   top: 0px;
   margin-left: 13px;
   height: calc(100% - 84%);
+  width: 290px;
+  transition: all 0.9s;
+
 }
 
 .widthFormPositContentCierra{
-  /* width: -1px */
-  display: none;
-}
-.collapseIconFromPosit{
-  position: absolute;
-  top: calc(100% - 84%);
-  font-size: 53px;
-  right: -24px;
+  width: 0%;
+  transition: all 0.9s;
+  opacity: 0;
+  visibility: hidden;
 }

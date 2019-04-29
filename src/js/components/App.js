@@ -43,6 +43,10 @@ import ReportesGenerales from './Reportes/ReportesGenerales'
 // GESTION DE TAREAS
 import GestionTareas from "./GestionTareas/GestionTareas"
 
+
+// PROCESOS DOCUMENTOS 
+import Index from "./Pdocumentarios/Index"
+
 class AppAng extends Component {
     constructor() {
         super();
@@ -207,6 +211,17 @@ class AppAng extends Component {
                                                 <NavLink to="/GestionTareas" activeclassname="nav-link" > <FaFile /><span> GESTIÓN DE TAREAS </span> </NavLink>
                                             </li>
 
+                                            <li className="lii ml-2">
+                                                <span className="nav-link" onClick={()=>this.CollapseMenu(100)} activeclassname="active" > <FaSuperscript /> PROCESOS DOCUMENTARIOS <div className="float-right"> {collapse === 100 ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                                <Collapse isOpen={collapse === 100}>
+                                                    <ul className="nav flex-column ull ">
+                                                        <li className="lii pl-3">
+                                                            <NavLink to="/DOCUEMENTOS" activeclassname="nav-link"> DOCUEMENTOS </NavLink>
+                                                        </li>
+                                                    </ul>
+                                                </Collapse>
+                                            </li>
+
                                         </ul>
                                         <div className="abajoCirculos pl-2 pr-2">
                                             <div className="row">
@@ -283,7 +298,9 @@ class AppAng extends Component {
 
                                             {/* Gestion de Tareas */}
                                             <Route path="/GestionTareas" component={ GestionTareas } />
-
+                                            
+                                            {/* PROCESOS DOCUMENTARIOS */}
+                                            <Route path="/DOCUEMENTOS" component={ Index } />
                                             
                                         </Switch>
                                     </div>

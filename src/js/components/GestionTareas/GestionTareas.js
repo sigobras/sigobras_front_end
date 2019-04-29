@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import {  TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col,  Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput, ModalBody, ModalFooter } from 'reactstrap';
+import {  TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col,  Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput, UncontrolledButtonDropdown, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
 import Select from 'react-select';
 import axios from 'axios';
 import classnames from 'classnames';
 import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-
+import { GoSignIn, GoSignOut } from "react-icons/go";
 import Pin from "../../../images/pin.png"
 import { DebounceInput } from 'react-debounce-input';
 import "../../../css/GTareas.css"
@@ -16,7 +16,7 @@ class GestionTareas extends Component {
   constructor(props) {
     super(props);
     
-    this.toggleTabPosit = this.toggleTabPosit.bind(this);
+    // this.toggleTabPosit = this.toggleTabPosit.bind(this);
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
     this.AgregaTarea = this.AgregaTarea.bind(this);
     this.porcentCollapse = this.porcentCollapse.bind(this);
@@ -31,6 +31,7 @@ class GestionTareas extends Component {
     this.clearImg = this.clearImg.bind(this);
     this.SeteaTareasRecibidas = this.SeteaTareasRecibidas.bind(this);
     this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
+    this.dropdownRecibidos = this.dropdownRecibidos.bind(this);
 
     this.state = {
       Posits:[],
@@ -55,7 +56,7 @@ class GestionTareas extends Component {
 
 
 
-      activeTab: '1',
+      // activeTab: '1',
       activeTabModalTarea:"1",
       
       modalVerTareas: false,
@@ -70,7 +71,10 @@ class GestionTareas extends Component {
       UrlImagen:"",
       SMSinputTypeImg:false,
 
-      CollapseFormContainerAddTarea:false
+      CollapseFormContainerAddTarea:false,
+
+      // recibidos
+      dropdownOpenRecibidos: "3",
     };
   }
 
@@ -81,7 +85,7 @@ class GestionTareas extends Component {
        {
          "id":i,
          "proyecto":"INFORME OCTUBRE " + i,
-         "asunto":"Valorizaciones entregar urgente,",
+         "asunto":"Valorizaciones entregar urgente, Valorizaciones entregar urgente,",
          "tarea":"coregir valorizaciones desde el informe 1 ",
          "fechaInicio":"12/01/2019",
          "prioridad":"urgente",
@@ -150,13 +154,13 @@ class GestionTareas extends Component {
     })
   }
 
-  toggleTabPosit(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      });
-    }
-  }
+  // toggleTabPosit(tab) {
+  //   if (this.state.activeTab !== tab) {
+  //     this.setState({
+  //       activeTab: tab
+  //     });
+  //   }
+  // }
 
   toggleTabDetalleTarea(tab) {
     if (this.state.activeTabModalTarea !== tab) {
@@ -377,94 +381,144 @@ class GestionTareas extends Component {
     // this.setState({})
   }
 
+  dropdownRecibidos( num ){
+    console.log("numero ", num)
+    if ( this.state.dropdownOpenRecibidos !== num) {
+      this.setState({
+        dropdownOpenRecibidos:num
+      });
+    }
+    
+  }
+
   render() {
-    const { DataProyectoApi, DataCargosApi, DataPersonalApi, Posits, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea } = this.state
+    const { DataProyectoApi, DataCargosApi, DataPersonalApi, Posits, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, dropdownOpenRecibidos } = this.state
     
     return (
       <div>
-      { console.log("dghjkl", CollapseFormContainerAddTarea )}
+      {
+        console.log("dropdownOpenRecibidos ", dropdownOpenRecibidos)
+      }
         <Row>
-            <div className="formPositContainer">
-              <div className="collapseIconFromPosit prioridad" onClick={()=> this.setState({CollapseFormContainerAddTarea: !this.state.CollapseFormContainerAddTarea})}>
-                <span >d</span>
-              </div>
-              <div className={ CollapseFormContainerAddTarea === true ? "widthFormPositContent": "widthFormPositContentCierra" }>
-                <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
-                <Form onSubmit={ this.AgregaTarea }>
-                  <FormGroup>
-                    <Label >PROYECTO: { proyecto } </Label>
-                    <Select
-                      // value={ proyecto }
-                      onChange={ this.onChangeProyecto }
-                      options={ DataProyectoApi }
-                      placeholder="Seleccione"
-                    />
-                
-                    <Label for="A">PARA: { Para }</Label>
-                    <Select
-                      onChange={ this.onChangePara }
-                      options={ DataCargosApi }
-                      placeholder="Seleccione"
-                    />
+          <div className={ CollapseFormContainerAddTarea === true ? "formPositContainer": "widthFormPositContentCierra" }>
+            <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
+            <Form onSubmit={ this.AgregaTarea }>
+              <FormGroup>
+                <Label >PROYECTO: { proyecto } </Label>
+                <Select
+                  // value={ proyecto }
+                  onChange={ this.onChangeProyecto }
+                  options={ DataProyectoApi }
+                  placeholder="Seleccione"
+                />
+            
+                <Label for="A">PARA: { Para }</Label>
+                <Select
+                  onChange={ this.onChangePara }
+                  options={ DataCargosApi }
+                  placeholder="Seleccione"
+                />
 
 
-                    <Label for="A">PERSONAL: { InputPersonal }</Label>
-                    <Select
-                      onChange={ this.onChangePersonal }
-                      options={ DataPersonalApi }
-                      placeholder="Seleccione"
-                    />
+                <Label for="A">PERSONAL: { InputPersonal }</Label>
+                <Select
+                  onChange={ this.onChangePersonal }
+                  options={ DataPersonalApi }
+                  placeholder="Seleccione"
+                />
+              
+                <Label for="asunto">TAREA / ASUNTO :</Label>
+                <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
+
+                <Label for="tarea">DESCRIPCIÓN : </Label>
+                <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({descripcion: e.target.value})} className="form-control" />                
+
+                <Label for="fechaInicio">INICIO : </Label>
+                <Input type="date" id="fechaInicio" required onChange={ e => this.setState({fechaInicio: e.target.value})}/>
+
+                <Label for="duracion">DURACIÓN: </Label>
+                <Input type="number" onChange={ e => this.setState({duracion: e.target.value})} required />
+
+                {
+                    this.state.UrlImagen.length <= 0 
+                    ?"":
+                    <div className="imgDelete">
+                      <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
+                      <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
+                    </div>
+                  }
+                  <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
+
+                  <div className="custom-file">
+                    <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
+                    <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
                   
-                    <Label for="asunto">TAREA / ASUNTO :</Label>
-                    <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
+                  </div>
+              </FormGroup>
 
-                    <Label for="tarea">DESCRIPCIÓN : </Label>
-                    <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({descripcion: e.target.value})} className="form-control" />                
+              <Button type="submit"> GUARDAR </Button>
+            </Form>
+          </div>
 
-                    <Label for="fechaInicio">INICIO : </Label>
-                    <Input type="date" id="fechaInicio" required onChange={ e => this.setState({fechaInicio: e.target.value})}/>
-
-                    <Label for="duracion">DURACIÓN: </Label>
-                    <Input type="number" onChange={ e => this.setState({duracion: e.target.value})} required />
-
-                    {
-                        this.state.UrlImagen.length <= 0 
-                        ?"":
-                        <div className="imgDelete">
-                          <button className="imgBtn" onClick={()=>this.clearImg()}>X</button>
-                          <img src={ this.state.UrlImagen } alt="imagen " className="img-fluid mb-2" />
-                        </div>
-                      }
-                      <div className="texto-rojo mb-0"> <b> { SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG":"" }</b></div> 
-
-                      <div className="custom-file">
-                        <input type="file" className="custom-file-input" onChange={ this.onChangeImgMetrado } id="myImage"/>
-                        <label className="custom-file-label" htmlFor="customFile"> { this.state.file !== null? this.state.file.name: "SELECCIONE"}</label>
-                      
-                      </div>
-                  </FormGroup>
-
-                  <Button type="submit"> GUARDAR </Button>
-                </Form>
-              </div>
-            </div>
-
-          <Col>
+          <Col className="pr-0">
             <Nav tabs>
+              
+
               <NavItem>
-                <NavLink className={classnames({ active: this.state.activeTab === '1' })} onClick={() => { this.toggleTabPosit('1'); }} >
-                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ Posits.length } </span>
+                <NavLink className={classnames( "bg-warning" )} onClick={()=> this.setState({CollapseFormContainerAddTarea: !CollapseFormContainerAddTarea})}>
+                  {CollapseFormContainerAddTarea === true? <GoSignIn />: <GoSignOut />}
                 </NavLink>
               </NavItem>
-              <NavItem>
-                <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.toggleTabPosit('2'); }}>
-                  <MdSend /> Enviados
+
+              {/* <Dropdown nav isOpen={ dropdownOpenRecibidos === "3"} toggle={()=>this.dropdownRecibidos("3")} className={ dropdownOpenRecibidos ==="3"?"bg-primary":"" } >
+                <DropdownToggle nav caret>
+                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ Posits.length } </span>{ " " } 
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem active={ true } >Pendientes <div className="float-right"><span className="badge badge-warning">{ Posits.length } </span></div> </DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>Progreso <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>Concluido <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                </DropdownMenu>
+              </Dropdown> */}
+
+              {/* <NavItem>
+                <NavLink className={classnames({ active:  activeTab === '2' })} onClick={() => { this.toggleTabPosit('2'); }}>
+                  <MdSend /> 
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
+
+              <UncontrolledButtonDropdown  onClick={()=>this.dropdownRecibidos("3")} className={ dropdownOpenRecibidos ==="3"?"bg-primary":"" }>
+                <DropdownToggle nav caret>
+                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{ Posits.length } </span>{ " " } 
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem active={ true } >Pendientes <div className="float-right"><span className="badge badge-warning">{ Posits.length } </span></div> </DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>Progreso <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>Concluido <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
+
+
+              <UncontrolledButtonDropdown  onClick={()=>this.dropdownRecibidos("4")} className={ dropdownOpenRecibidos ==="4"?"bg-primary":"" } >
+                <DropdownToggle nav caret>
+                  <MdSend /> Enviados <span className="badge badge-light">{ Posits.length } </span>{ " " } 
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem active={ true } >Pendientes <div className="float-right"><span className="badge badge-warning">{ Posits.length } </span></div> </DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>Progreso <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>Concluido <div className="float-right"><span className="badge badge-light">{ Posits.length } </span></div></DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
             </Nav>
 
               <div className="post_it">
-                <ul>
+                <ul className="ulP">
                   {
                     Posits.map((posit, ipos)=>
 
