@@ -35,7 +35,7 @@ class UserNav extends Component {
         return (
             <div>
                 <span id="userLogin"  className="mr-1 nav-link text-white" >
-                    Bienvenido:  {sessionStorage.getItem('nombre')}
+                    <label className="text-capitalize font-weight-bold" >{sessionStorage.getItem('cargo')}</label>:  {sessionStorage.getItem('nombre')}
                 </span>
                 
                 <UncontrolledPopover trigger="legacy" placement="bottom" target="userLogin">

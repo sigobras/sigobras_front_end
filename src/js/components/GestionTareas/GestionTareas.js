@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import {  TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col,  Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput, UncontrolledButtonDropdown, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
-import Select from 'react-select';
 import axios from 'axios';
 import classnames from 'classnames';
-import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
-import { GoSignIn, GoSignOut } from "react-icons/go";
+import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd,  } from "react-icons/md";
+import { GoSignIn, GoSignOut, GoOrganization } from "react-icons/go";
 import Pin from "../../../images/pin.png"
 import { DebounceInput } from 'react-debounce-input';
 import "../../../css/GTareas.css"
 
-import { GeraColoresRandom } from "../Utils/Funciones"
+import { GeraColoresRandom, Extension } from "../Utils/Funciones"
 import { UrlServer, Id_Acceso } from "../Utils/ServerUrlConfig"
 
+import Picky from "react-picky";
+import "react-picky/dist/picky.css";
+
+// import App from "./demo";
 class GestionTareas extends Component {
   constructor(props) {
     super(props);
@@ -25,13 +28,13 @@ class GestionTareas extends Component {
     this.ModalVerTareas = this.ModalVerTareas.bind(this);
     this.subtareaAdd = this.subtareaAdd.bind(this);
     this.onChangeProyecto = this.onChangeProyecto.bind(this);
-    this.onChangePara = this.onChangePara.bind(this);
     this.onChangePersonal = this.onChangePersonal.bind(this);
     this.onChangeImgMetrado = this.onChangeImgMetrado.bind(this);
     this.clearImg = this.clearImg.bind(this);
-    this.SeteaTareasRecibidas = this.SeteaTareasRecibidas.bind(this);
-    this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
+    // this.SeteaTareasRecibidas = this.SeteaTareasRecibidas.bind(this);
+    // this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
     this.dropdownRecibidos = this.dropdownRecibidos.bind(this);
+    this.CreaProyecto = this.CreaProyecto.bind(this);
 
     this.reqTareas = this.reqTareas.bind(this);
 
@@ -42,12 +45,13 @@ class GestionTareas extends Component {
       DataProyectoApi: [],
       DataCargosApi:[],
       DataPersonalApi:[],
+      DatSubtareaApi:[],
 
       // captura inputs de envio de datos del formulario
-      Para:"",
-      proyecto:null,
+      Para:[],
+      proyecto:[],
       asunto:"",
-      InputPersonal:null,
+      InputPersonal:[],
       descripcion:"",
       fechaInicio:"",
       duracion:null,
@@ -75,6 +79,10 @@ class GestionTareas extends Component {
 
       // recibidos
       dropdownOpenRecibidos: "3",
+      inputNombreProyecto:"",
+
+      nombreProyectoValidacion:"",
+      condicionInputCollapse:false
     };
   }
 
@@ -87,20 +95,12 @@ class GestionTareas extends Component {
     // API PROYECTOS---------------------------------------------
     axios.get(`${UrlServer}/getTareaProyectos`)
     .then((res) => {
-      // console.log("proyectos", res.data)
+      console.log("proyectos", res.data)
 
       var data = res.data 
-      var DataProyectos = []
-      data.map((proyecto)=>{
-        DataProyectos.push(
-          {  
-            valor : proyecto.id_proyecto,
-            label : proyecto.nombre 
-          } 
-        )
-      })
+     
       this.setState({
-        DataProyectoApi:DataProyectos
+        DataProyectoApi:data
       })
     })
     .catch((err) => {
@@ -113,21 +113,9 @@ class GestionTareas extends Component {
         id_acceso:Id_Acceso
     })
     .then((res)=>{
-      // console.log("datos de cargos ", res)
-
-      var DataCargos = res.data
-      var Cargo = []
-      DataCargos.map((cargo)=>{
-        Cargo.push(
-          {  
-            valor : cargo.id_Cargo,
-            label : cargo.nombre 
-          } 
-        )
-      })
-
+      console.log("datos de cargos ", res.data)
       this.setState({
-        DataCargosApi:Cargo
+        DataCargosApi:res.data
       })
     })
     .catch((err)=>{
@@ -147,41 +135,61 @@ class GestionTareas extends Component {
     e.preventDefault()
     var { Posits, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, porcentajeAvance, InputPersonal } = this.state
 
-    var TuFecha = new Date(fechaInicio);
-  
+    var funcionMap = (data) => ( [data.id_acceso])
+    var Personal = InputPersonal.map(funcionMap);
+
+    // console.log("Personal ->", Personal)
     //dias a sumar
+    var TuFecha = new Date(fechaInicio);
     var dias = Number(duracion) +1 ;
     
     //nueva fecha sumada
     TuFecha.setDate(TuFecha.getDate() + dias);
     //formato de salida para la fecha
     var resultado = TuFecha.getFullYear()+ '-' + (TuFecha.getMonth() + 1) + '-' + TuFecha.getDate() ;
-    console.log("resultado ",  resultado, "fechaInicio", fechaInicio)
+    // console.log("resultado ",  resultado, "fechaInicio", fechaInicio , "nombre archivo ", file.name)
+    var tamanioImagenUrl = file
+    if( tamanioImagenUrl !== null ){
+      tamanioImagenUrl = Extension(file.name)
+    }
 
-      const formData = new FormData();
-      formData.append('asunto', asunto);
-      formData.append('descripcion', descripcion);
-      formData.append('fecha_inicial', fechaInicio);
-      formData.append('fecha_final', resultado);
-      formData.append('proyectos_id_proyecto', proyecto);
-      formData.append('emisor', Id_Acceso);
-      formData.append('receptor', InputPersonal );
-      formData.append('archivo', file);
-      formData.append('extension', "");
-      formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
+    const formData = new FormData();
+    formData.append('asunto', asunto);
+    formData.append('descripcion', descripcion);
+    formData.append('fecha_inicial', fechaInicio);
+    formData.append('fecha_final', resultado);
+    formData.append('proyectos_id_proyecto', proyecto.id_proyecto);
+    formData.append('emisor', Id_Acceso);
+    formData.append('receptor', Personal );
+    formData.append('archivo', file);
+    formData.append('extension', tamanioImagenUrl );
+    formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
 
-      const config = {
-        headers: {
-            'content-type': 'multipart/form-data'
-        }
+    const config = {
+      headers: {
+          'content-type': 'multipart/form-data'
       }
+    }
 
     axios.post(`${UrlServer}/postTarea`,
       formData,
       config
     )
     .then((res)=>{
-      console.log("Post tareas", res)
+      console.log("Post tareas", res.data)
+      this.setState({
+        dropdownOpenRecibidos:"4",
+        Para:[],
+        proyecto:[],
+        asunto:"",
+        InputPersonal:[],
+        descripcion:"",
+        fechaInicio:"",
+      })
+      // document.getElementById("descripcion").value = "";
+      document.getElementById("formAgregarTarea").reset();
+
+      this.reqTareas( Id_Acceso, "/getTareaEmisorPendientes")
     })
     .catch((err)=>{
       console.error("datos de tarea", err);
@@ -223,38 +231,78 @@ class GestionTareas extends Component {
   }
 
   ModalVerTareas(id){
-  var Tareas = this.state.Posits
+    console.log("id ", id)
+
+    var Tareas = this.state.DataTareasApi
+
     Tareas = Tareas.filter((tarea)=>{
-      return tarea.id === id
+      return tarea.id_tarea === id
     })
 
-    console.log("collapseInputPorcentaje" , this.state.collapseInputPorcentaje, "dvfgssdfsdkfgsdkfgdsk", this.state.modalVerTareas)
+    // console.log("Tareas ", Tareas[0])
 
-    
 
     this.setState({
-      PositsFiltrado:Tareas[0],
+      // PositsFiltrado:Tareas[0],
       modalVerTareas: !this.state.modalVerTareas
     })
+    // consoluto a api de tareas 
 
-  }
-
-  subtareaAdd(){
-
-    var tareaPrincipal = this.state.DataTareasApi 
-
-    tareaPrincipal[0].SubTareas.push(
+    axios.post(`${UrlServer}/getTareaIdTarea`,
       {
-        subtarea: this.state.inputSubtarea,
-        color: GeraColoresRandom(),
-
+        "id_tarea":id
       }
     )
-    
-    console.log("tarea ", tareaPrincipal);
+    .then((res)=>{
+      // console.log("response de tareas full", res.data)
+      var dataArmar = Object.assign(  Tareas[0], res.data );
+      console.log("dataArmar  ", dataArmar )
+      this.setState({
+        PositsFiltrado:dataArmar,
+      })
 
-    this.setState({
-      DataTareasApi:tareaPrincipal,
+    })
+    .catch((err)=>{
+      console.error("errorr al obterner datos", err)
+    })
+    // getTareaIdTarea
+    
+
+
+    axios.post(`${UrlServer}/getSubTareasPendientes`,{
+      "id_tarea":id
+    })
+    .then((res)=>{
+      console.log("response de SUBtareas full", res.data)
+      this.setState({
+        DatSubtareaApi:res.data,
+      })
+    })
+    .catch((err)=>{
+      console.error("errorr al obterner datos", err)
+    })
+  }
+
+  subtareaAdd(idTarea){
+    console.log("id tarea", idTarea)
+
+    axios.post(`${UrlServer}/postSubTarea`,{
+      "asunto": this.state.inputSubtarea,
+      "tareas_id_tarea":idTarea
+    })
+    .then((res)=>{
+      console.log("data de subtarea ", res)
+      var dataRes = this.state.DatSubtareaApi
+      dataRes.unshift(
+        res.data
+      )
+      this.setState({
+        DatSubtareaApi:dataRes,
+        inputSubtarea:""
+      })
+    })
+    .catch((err)=>{
+      console.error("error al consultar el api de subtareas", err)
     })
     
   }
@@ -263,34 +311,24 @@ class GestionTareas extends Component {
   onChangeProyecto(value){
     console.log("value", value);
 
-    this.setState({ proyecto: value.valor})
+    this.setState({ proyecto: value})
   }
 
   onChangePara(value){
-    this.setState({
-      Para:value.valor
-    })
 
+    console.log("valor id cargo ", value)
+
+    this.setState({Para:value})
     axios.post(`${UrlServer}/getTareaUsuariosPorCargo`,
-    {
-      "id_acceso":Id_Acceso,
-      "id_Cargo":value.valor
-    })
+      {
+        "id_acceso":Id_Acceso,
+        "id_Cargo":value.id_Cargo
+      }
+    )
     .then((res)=>{
-      console.log("data Usuarios", res)
+      console.log("data Usuarios", res.data)
 
-      var data = res.data 
-      var Personal = []
-      data.map((personal)=>{
-        Personal.push(
-          {  
-            valor : personal.id_acceso,
-            label : `${personal.nombre } - DNI ${ personal.dni }` 
-          } 
-        )
-      })
-
-      this.setState({ DataPersonalApi:Personal})
+      this.setState({ DataPersonalApi:res.data })
 
     })
     .catch((err)=>{
@@ -299,15 +337,20 @@ class GestionTareas extends Component {
   }
 
   onChangePersonal(valor){
-    this.setState({ InputPersonal: valor.valor})
+
+    console.log("data valor ", valor)
+    this.setState({ InputPersonal: valor})
   }
 
   onChangeImgMetrado(e) {
 
+
     var inputValueImg = e.target.files[0]
     console.log('archivo', inputValueImg);
 
-   if( inputValueImg.type === "image/jpeg" || inputValueImg.type === "image/png" || inputValueImg.type === "image/jpg" || inputValueImg.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"  ){
+    Extension( inputValueImg.name )
+
+   if( Extension( inputValueImg.name ) === ".jpeg" || Extension( inputValueImg.name ) === ".png" || Extension( inputValueImg.name ) === ".jpg" || Extension( inputValueImg.name ) === ".dwg" || Extension( inputValueImg.name ) === ".xls" || Extension( inputValueImg.name ) === ".xlsx" ){
        var url = URL.createObjectURL(inputValueImg)
        console.log("url", url);
        
@@ -336,14 +379,6 @@ class GestionTareas extends Component {
     document.getElementById("myImage").value = "";
   }
 
-  SeteaTareasRecibidas(){
-
-  }
-
-  CollapseFormContainerAddTarea(){
-    // this.setState({})
-  }
-
   dropdownRecibidos( num ){
     console.log("numero ", num)
     if ( this.state.dropdownOpenRecibidos !== num) {
@@ -353,6 +388,33 @@ class GestionTareas extends Component {
     }
   }
 
+  CreaProyecto(){
+
+    if( this.state.inputNombreProyecto.length <= 0 ){
+      this.setState({
+        nombreProyectoValidacion:"Ingrese un nombre de proyecto"
+      })
+      return
+    }  
+      if(confirm("¿ Esta seguro de añadir un nuevo proyecto al sistema ?")){
+        axios.post(`${UrlServer}/postProyecto`,
+          {
+            "nombre":  this.state.inputNombreProyecto
+          }
+        )
+        .then((res)=>{
+          console.log("respopnse guarda proyecto", res.data)
+          this.setState({
+            condicionInputCollapse:false
+          })
+        })
+
+        .catch((err)=>{
+          console.log("algo salio mal al guardar el proyecto ", err)
+        }) 
+      }
+  }
+  
   
   // REQUESTS AL API ---------------------------------------------
 
@@ -375,45 +437,123 @@ class GestionTareas extends Component {
   }
 
 
-
   render() {
-    const { DataProyectoApi, DataCargosApi, DataPersonalApi, DataTareasApi, PositsFiltrado, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, dropdownOpenRecibidos } = this.state
+    const { DataProyectoApi, DataCargosApi, DataPersonalApi, DataTareasApi, PositsFiltrado, DatSubtareaApi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, dropdownOpenRecibidos, condicionInputCollapse  } = this.state
     
     return (
       <div>
         <Row>
           <div className={ CollapseFormContainerAddTarea === true ? "formPositContainer": "widthFormPositContentCierra" }>
             <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
-            <Form onSubmit={ this.AgregaTarea }>
+
+            {/* <App /> */}
+
+            <Form onSubmit={ this.AgregaTarea } id="formAgregarTarea">
               <FormGroup>
-                <Label >PROYECTO: { proyecto } </Label>
-                <Select
-                  // value={ proyecto }
-                  onChange={ this.onChangeProyecto }
-                  options={ DataProyectoApi }
-                  placeholder="Seleccione"
-                />
-            
-                <Label for="A">PARA: { Para }</Label>
-                <Select
-                  onChange={ this.onChangePara }
-                  options={ DataCargosApi }
-                  placeholder="Seleccione"
-                />
+                <Label >PROYECTO: </Label>
 
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText className="p-2 prioridad" onClick={ ()=> this.setState({condicionInputCollapse: !condicionInputCollapse , nombreProyectoValidacion:"" }) }>
+                      <MdAddCircle />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                    <Picky
+                      value={ proyecto }
+                      options={ DataProyectoApi }
+                      onChange={this.onChangeProyecto}
+                      open={false}
+                      valueKey="id_proyecto"
+                      labelKey="nombre"
+                      multiple={false}
+                      includeSelectAll={false}
+                      includeFilter={true}
+                      dropdownHeight={200}
+                      placeholder={"No hay datos seleccionados"}
+                      allSelectedPlaceholder={"seleccionaste todo"}
+                      manySelectedPlaceholder={"tienes %s seleccionados"}
+                      className="text-dark form-group-sm"
+                    />
+                </InputGroup>
 
-                <Label for="A">PERSONAL: { InputPersonal }</Label>
-                <Select
-                  onChange={ this.onChangePersonal }
+                {/* crea proyecto input */}
+               {
+                condicionInputCollapse === true?
+                  <InputGroup className="mt-2">
+                    <DebounceInput debounceTimeout={300} onChange={e => this.setState({inputNombreProyecto: e.target.value})} className="form-control" />                
+                    
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText className="prioridad" onClick={ this.CreaProyecto }>
+                        <MdSend />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+                :""
+               }
+                
+
+                <label className="texto-rojo"><b>{ this.state.nombreProyectoValidacion }</b></label><br />
+               
+
+                <Label for="A">PARA: </Label>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText className="p-2">
+                      <MdGroupAdd />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <Picky
+                    value={ Para }
+                    options={ DataCargosApi }
+                    onChange={this.async }
+                    open={false}
+                    valueKey="id_Cargo"
+                    labelKey="nombre"
+                    multiple={false}
+                    includeSelectAll={false}
+                    includeFilter={true}
+                    dropdownHeight={200}
+                    placeholder={"No hay datos seleccionados"}
+                    allSelectedPlaceholder={"seleccionaste todo"}
+                    manySelectedPlaceholder={"tienes %s seleccionados"}
+                    className="text-dark"
+
+                  />
+                </InputGroup>
+
+                <Label for="A">PERSONAL:</Label>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText className="p-2">
+                      <GoOrganization />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                <Picky
+                  value={ InputPersonal }
                   options={ DataPersonalApi }
-                  placeholder="Seleccione"
+                  onChange={this.onChangePersonal}
+                  open={false}
+                  valueKey="id_acceso"
+                  labelKey="nombre"
+                  multiple={true}
+                  includeSelectAll={true}
+                  includeFilter={true}
+                  dropdownHeight={200}
+                  placeholder={"No hay datos seleccionados"}
+                  allSelectedPlaceholder={"seleccionaste todo"}
+                  manySelectedPlaceholder={"tienes %s seleccionados"}
+                  className="text-dark"
+                  selectAllText="Todos"
                 />
-              
+                </InputGroup>
+
                 <Label for="asunto">TAREA / ASUNTO :</Label>
-                <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
+                <DebounceInput cols="40" rows="1" required element="textarea" value={this.state.asunto} minLength={0} debounceTimeout={300} onChange={e => this.setState({asunto: e.target.value})} className="form-control" />                
+                <li className="text-right"> {this.state.asunto.length} / 50</li>
 
                 <Label for="tarea">DESCRIPCIÓN : </Label>
-                <DebounceInput cols="40" rows="1" required element="textarea" minLength={0} debounceTimeout={300} onChange={e => this.setState({descripcion: e.target.value})} className="form-control" />                
+                <DebounceInput cols="40" rows="1" required element="textarea"  value={this.state.descripcion} minLength={0} debounceTimeout={300} onChange={e => this.setState({descripcion: e.target.value})} className="form-control" />                
+                <li className="text-right">  {this.state.descripcion.length} /  500</li>
 
                 <Label for="fechaInicio">INICIO : </Label>
                 <Input type="date" id="fechaInicio" required onChange={ e => this.setState({fechaInicio: e.target.value})}/>
@@ -444,8 +584,7 @@ class GestionTareas extends Component {
 
           <Col className="pr-0">
             <Nav tabs>
-              
-
+            
               <NavItem>
                 <NavLink className={classnames( "bg-warning" )} onClick={()=> this.setState({CollapseFormContainerAddTarea: !CollapseFormContainerAddTarea})}>
                   {CollapseFormContainerAddTarea === true? <GoSignIn />: <GoSignOut />}
@@ -490,8 +629,8 @@ class GestionTareas extends Component {
                           <div className="pin">
                             <img src={ Pin } alt="pin" className="img-responsive" width="37px" />
                           </div>
-                          <h2 onClick={()=>this.ModalVerTareas(posit.id) } className="prioridad">{ posit.proyecto_nombre }</h2>
-                            <hr />
+                          <h2 onClick={()=>this.ModalVerTareas(posit.id_tarea) } className="prioridad">{ posit.proyecto_nombre }</h2>
+                          <hr />
                           <p>{ posit.asunto }</p>
                           
                           <div onClick={ ()=> this.porcentCollapse(ipos) } className="prioridad">
@@ -531,20 +670,20 @@ class GestionTareas extends Component {
           
         <Modal isOpen={this.state.modalVerTareas} fade={false} toggle={this.CierraModalVerTareas} size="sm" >
 
-              <div className="p-2">
-                <div className="text-center">
-                  <label className="proyecto">{ PositsFiltrado.proyecto }</label>
-                  <br />
-                  <label className="asunto"> { PositsFiltrado.asunto }</label>
+          <div className="p-2">
+            <div className="text-center">
+              <label className="proyecto">{ PositsFiltrado.proyecto_nombre }</label>
+              <br />
+              <label className="asunto"> { PositsFiltrado.asunto }</label>
 
-                </div>
-                <div className="tarea pb-1">
-                  <label>{ PositsFiltrado.tarea }</label>
-                </div>
-                
-                {/* <label className="fecha">{ PositsFiltrado.fechaInicio }</label> */}
-                <Progress value={50} className="mt-2"> 10 de  20  </Progress>
-              </div>
+            </div>
+            <div className="tarea pb-1">
+              <label>{ PositsFiltrado.descripcion }</label>
+            </div>
+            
+            {/* <label className="fecha">{ PositsFiltrado.fechaInicio }</label> */}
+            <Progress value={50} className="mt-2"> {`${ PositsFiltrado.diasTranscurridos} de ${ PositsFiltrado.diasTotal}` } </Progress>
+          </div>
 
 
             <Nav tabs>
@@ -564,12 +703,14 @@ class GestionTareas extends Component {
             <TabContent activeTab={this.state.activeTabModalTarea}>
               <TabPane tabId="1">
                 <div className="subtareas">
+
                 <Collapse isOpen={this.state.CollapseInputAddTarea === true}>
                   <InputGroup size="sm" className="mb-2">
-                    <Input type="text" onBlur={e => this.setState({inputSubtarea: e.target.value})}/>                
+                    {/* <Input type="text" value={ this.state.inputSubtarea } onBlur={e => this.setState({inputSubtarea: e.target.value})}/>                 */}
+                    <DebounceInput value={ this.state.inputSubtarea } debounceTimeout={ 50 } onChange={e => this.setState({inputSubtarea: e.target.value})} className="form-control" />                
 
                     <InputGroupAddon addonType="prepend" color="success">
-                      <InputGroupText className="prioridad" onClick={ ()=> this.subtareaAdd(1)}>
+                      <InputGroupText className="prioridad" onClick={ ()=> this.subtareaAdd( PositsFiltrado.id_tarea )}>
                         <MdSend />
                       </InputGroupText>
                     </InputGroupAddon>
@@ -578,16 +719,16 @@ class GestionTareas extends Component {
 
                 
                   {
-                    PositsFiltrado.SubTareas !== undefined ?
-                      PositsFiltrado.SubTareas.map((subtarea, iS)=>
-                      <div key={ iS } className="actividadSubtarea" style={{background:subtarea.color}}>{ subtarea.subtarea}
+                    DatSubtareaApi !== undefined ?
+                    DatSubtareaApi.map((subtarea, iS)=>
+                      <div key={ iS } className="actividadSubtarea" style={{background:subtarea.color}}>{ subtarea.asunto}
                         
                         <div className="checkTarea">
                           <CustomInput type="checkbox" id={`confirmTarea${iS}` }  />
                         </div>
                        </div>
                       )
-                    :"no hay tares que mostrar"
+                    :"no hay tareas que mostrar"
                   }
                 </div>
               </TabPane>

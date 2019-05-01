@@ -216,7 +216,7 @@ class AppAng extends Component {
                                                 <Collapse isOpen={collapse === 100}>
                                                     <ul className="nav flex-column ull ">
                                                         <li className="lii pl-3">
-                                                            <NavLink to="/DOCUEMENTOS" activeclassname="nav-link"> DOCUEMENTOS </NavLink>
+                                                            <NavLink to="/DOCUEMENTOS" activeclassname="nav-link"> DOCUMENTOS </NavLink>
                                                         </li>
                                                     </ul>
                                                 </Collapse>

@@ -108,8 +108,20 @@ function GeraColoresRandom() {
     
     return "linear-gradient(" + angle + "deg, " + newColor1 + ", " + newColor2 + ")";
     
-  }
+}
   
+// encuentrar la extension de un archivo
+
+function Extension(nombreArchivo) {
+    console.log("archivo", nombreArchivo)   
+    if(nombreArchivo){
+        var resultado = nombreArchivo.slice((nombreArchivo.lastIndexOf(".") - 1 >>> 0) + 2);
+        console.log("result>>>>>>>>>> ", `.${resultado}`)
+        return `.${resultado}`
+    }
+     return ""
+   
+}
 
 module.exports = {
     Redondea,
@@ -118,5 +130,7 @@ module.exports = {
     ConvertFormatStringNumber,
     convertirFechaLetra,
 
-    GeraColoresRandom
+    GeraColoresRandom,
+
+    Extension
 } 

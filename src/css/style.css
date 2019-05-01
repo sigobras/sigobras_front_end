@@ -541,3 +541,11 @@ table.table thead th {
 .bg-mm{
   background: #556e92;
 }
+
+
+
+/* piky selected ---------------------- ediciones */
+.picky {
+  width: 86%!important;
+  /* position: initial!important; */
+}
