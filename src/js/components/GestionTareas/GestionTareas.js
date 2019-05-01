@@ -28,6 +28,7 @@ class GestionTareas extends Component {
     this.ModalVerTareas = this.ModalVerTareas.bind(this);
     this.subtareaAdd = this.subtareaAdd.bind(this);
     this.onChangeProyecto = this.onChangeProyecto.bind(this);
+    this.onChangePara = this.onChangePara.bind(this);
     this.onChangePersonal = this.onChangePersonal.bind(this);
     this.onChangeImgMetrado = this.onChangeImgMetrado.bind(this);
     this.clearImg = this.clearImg.bind(this);
@@ -319,6 +320,7 @@ class GestionTareas extends Component {
     console.log("valor id cargo ", value)
 
     this.setState({Para:value})
+
     axios.post(`${UrlServer}/getTareaUsuariosPorCargo`,
       {
         "id_acceso":Id_Acceso,
@@ -502,11 +504,12 @@ class GestionTareas extends Component {
                       <MdGroupAdd />
                     </InputGroupText>
                   </InputGroupAddon>
+
                   <Picky
                     value={ Para }
                     options={ DataCargosApi }
-                    onChange={this.async }
-                    open={false}
+                    onChange={ this.onChangePara }
+                    open={ false }
                     valueKey="id_Cargo"
                     labelKey="nombre"
                     multiple={false}
