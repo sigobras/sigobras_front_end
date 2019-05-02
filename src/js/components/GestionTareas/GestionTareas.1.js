@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col,  Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput, UncontrolledButtonDropdown, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
+import {  TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col,  Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput, UncontrolledButtonDropdown, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
 import axios from 'axios';
 import classnames from 'classnames';
 import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd,  } from "react-icons/md";
@@ -621,53 +621,53 @@ class GestionTareas extends Component {
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             </Nav>
-              
-              <div className="p-2">
-                <Container className="pr-4">
-                  <Row>
-                    <Col sm="3">
-                      <div className="containerTarea">
-                        <div className="headerTarea">
-                          <div className="contentImgHeader">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Elon_Musk_Royal_Society.jpg/225px-Elon_Musk_Royal_Society.jpg" alt="sigobras" className="imgHeader" align="left" />
+
+              <div className="post_it">
+                <ul className="ulP">
+                  {
+                    DataTareasApi.map((posit, ipos)=>
+
+                      <li key={ ipos }>
+                        <a>
+                          <div className="pin">
+                            <img src={ Pin } alt="pin" className="img-responsive" width="37px" />
                           </div>
-                          <span>TG-1</span>
-                          <div style={{ background: "#ff9509", width: "5px", borderRadius: "50%", padding: "8px", float: "right"}} />
-                        </div>
-                        <div className="bodyTarea">
-                          <p>Verificar algo de algo</p></div>
-                      </div>
+                          <h2 onClick={()=>this.ModalVerTareas(posit.id_tarea) } className="prioridad">{ posit.proyecto_nombre }</h2>
+                          <hr />
+                          <p>{ posit.asunto }</p>
+                          
+                          <div onClick={ ()=> this.porcentCollapse(ipos) } className="prioridad">
+                          
+                            <div className="contentBarraProgreso">
+                                <div className="widthBarraProgreso" style={{ width: `${posit.porcentaje_avance}%`,  transition: 'all .9s ease-in',  }} />
+                                <div className="cantidadPorcentaje"  >{ posit.porcentaje_avance} %</div>
+                            </div>
 
-                    </Col>
-                    <Col sm="3" className="border-left border-right" >
-
-                      <div className="containerTarea">
-                        <div className="headerTarea">
-                          <div className="contentImgHeader">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Elon_Musk_Royal_Society.jpg/225px-Elon_Musk_Royal_Society.jpg" alt="sigobras" className="imgHeader" />
                           </div>
-                          <span>TG-1</span>
-                          <div style={{    background: "#ff9509", width: "5px", borderRadius: "50%", padding: "8px"}} />
-                        </div>
-                        <div className="bodyTarea">
-                          <img src="https://www.thewrap.com/wp-content/uploads/2017/07/Robert-Downey-Jr-Iron-Man-Pepper-Potts-Tony-Stark.jpg"  alt="sigobras" width="80%" />
 
-                          <p>90%</p>
-                          <p>Tony Stark</p>
-                          </div>
-                      </div>
+                          <Collapse isOpen={this.state.collapseInputPorcentaje === ipos}>
+                            <InputGroup size="sm">
+                              
+                              {/* <Input type="number" /> */}
+                              <DebounceInput type="number" debounceTimeout={100} onChange={e => this.setState({barraPorcentaje: e.target.value})} className="form-control" />                
 
-                    </Col>
-                    <Col sm="6">
-                      .col
-                    </Col>
-                  </Row>
-                </Container>
+                              <InputGroupAddon addonType="prepend" color="success">
+                                <InputGroupText className="prioridad" onClick={ ()=> this.incremetaBarraPorcent(ipos)}>
+                                  <MdSend />
+                                </InputGroupText>
+                              </InputGroupAddon>
+                            </InputGroup>
+                          </Collapse>
+
+                        </a>
+                      </li>
+  
+                    )
+                  }
+                </ul>
+
               </div>
-              
-            {/* <div className="bg-danger">
-              <label className="h6">TG-1</label>
-            </div> */}
+
           </Col>
         </Row>
           

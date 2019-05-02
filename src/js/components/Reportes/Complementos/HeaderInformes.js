@@ -25,7 +25,8 @@ function encabezadoInforme(fecha_inicial,fecha_final){
               style: 'tableExample',
               // color: '#ff0707',
               layout: 'noBorders',
-          
+              
+              
               table: {
                 widths: [100, 100, 100, 130, 50, '*'],
                 body: [ 

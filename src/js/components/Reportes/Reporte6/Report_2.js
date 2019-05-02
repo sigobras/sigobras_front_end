@@ -16,13 +16,16 @@ class Report_2 extends Component {
   constructor(){
     super()
     this.state = {
+      DataEncabezado:[],
       DataValGeneralAPI:[],
       DataAniosApi:[],
       DataMesesApi:[],
-      ValPresupuesto:[],
+      
       modal: false,
-      DataEncabezado:[],
+      
       urlPdf: '',
+      anioSeleccionado:'',
+      mesActual: '',
 
     }
 
@@ -43,7 +46,7 @@ class Report_2 extends Component {
       "id_ficha":sessionStorage.getItem("idobra")
     })
     .then((res)=>{
-         //console.log('res ANIOS', res.data)
+         console.log('res ANIOS', res.data)
         this.setState({
           DataAniosApi: res.data
         })
@@ -55,13 +58,17 @@ class Report_2 extends Component {
 
   seleccionaAnios(e){   
     // LLAMA AL API DE MESES
-  
+    
+    this.setState({
+      anioSeleccionado:e.target.value
+    })
+
      axios.post(`${UrlServer}/getPeriodsByAnyo`,{
        "id_ficha":sessionStorage.getItem("idobra"),
        "anyo":e.target.value
      })
      .then((res)=>{
-        //  console.log('res Meses', res.data)
+         console.log('res Meses', res.data)
          this.setState({
            DataMesesApi: res.data
          })
@@ -71,8 +78,13 @@ class Report_2 extends Component {
      });
     }
   
-  seleccionaMeses(id_historial,fecha_inicial,fecha_final){
+  seleccionaMeses(id_historial,fecha_inicial,fecha_final,mes_act){
     // LLAMA AL API DE MESES
+    this.setState({
+      mesActual:mes_act,
+    })
+    //console.log('Fecha',Mes);
+    
     axios.post(`${UrlServer}/valorizacionPrincipal`,{
       "id_ficha":sessionStorage.getItem("idobra"),
       "historialestados_id_historialestado":id_historial,
@@ -104,14 +116,8 @@ class Report_2 extends Component {
     var {  DataEncabezado } = this.state
 
     var DataHist = this.state.DataValGeneralAPI
-    //console.log('DH', DataHist)
-
-
-    // DataHist = DataHist.filter((item)=>{
-    //   return item.numero_periodo.toLowerCase().search(
-    //     mes.toLowerCase()) !== -1;
-    // });  
-
+    console.log('DH', DataHist)
+   
 
     var ValPresupuesto = []
 
@@ -123,24 +129,27 @@ class Report_2 extends Component {
             style: 'tableExample',
             // color: '#ff0707',
             layout: 'lightHorizontalLines',
+            
 
             table: {
-              widths: [20, 80,10,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],
+              widths: [25,90,10,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],
                 body: [
                       [
                         {
-                          text: 'COMP. N° : '+ DataHist[i].numero,
-                          style: "tableHeader",
+                          text: 'C-'+ DataHist[i].numero,
+                          style: "TableMontosInforme",
                           alignment: "center",
+                          
                         },
                         {
                           text: DataHist[i].nombre,
-                          style: "tableHeader",
+                          style: "TableMontosInforme",
                           alignment: "center",
+                          
                           colSpan: 15
                         },
                         {
-                         
+                        
                         },
                         {
                           
@@ -152,7 +161,7 @@ class Report_2 extends Component {
                         
                         },                            
                         {
-                         
+                        
                         },
                         {
                         
@@ -182,15 +191,17 @@ class Report_2 extends Component {
                           
                         },
                         {
-                          text: 'Presupuesto : S/. ' + DataHist[i].presupuesto,
-                          style: "tableHeader",
+                          text: ' S/. ' + DataHist[i].presupuesto,
+                          style: "TableMontosInforme",
                           alignment: "center",
                           colSpan: 2,
+                          
                         },
                         {
                         
                         }
                     ],
+
 
 
                     [
@@ -199,16 +210,18 @@ class Report_2 extends Component {
                             style: "tableHeader",
                             alignment: "center",
                             rowSpan: 3,
+                            margin: [ 2, 10, 0, 0],
                         },
                         {
                           rowSpan: 3,
                           text: 'DESCRIPCION',
                           style: "tableHeader",
                           alignment: "center",
+                          margin: [ 2, 10, 0, 0],
                         
                         },
                         {
-                          text: 'UND: ',
+                          text: 'UND ',
                           style: "tableHeader",
                           alignment: "center",
                           rowSpan: 3,
@@ -227,8 +240,9 @@ class Report_2 extends Component {
                         
                         },                            
                         {
-                          text: 'NOVIEMBRE DEL 2018',
-                          style: "tableHeader",
+                          
+                          text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
+                          style: "TableValInforme",
                           alignment: "center",
                           colSpan: 9,
                         },
@@ -260,6 +274,7 @@ class Report_2 extends Component {
                           text: 'SALDO',
                           style: "tableHeader",
                           alignment: "center",
+                          margin: [ 2, 8, 0, 0],
                           colSpan: 3,
                           rowSpan: 2,
                       },
@@ -273,20 +288,14 @@ class Report_2 extends Component {
 
                     [
                         {
-                          text: 'PARTIDA: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
+                          
                         
                         },
                         {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
                           text: 'PRESUPUESTO PROGRAMADO',
@@ -305,6 +314,7 @@ class Report_2 extends Component {
                           style: "tableHeader",
                           alignment: "center",
                           colSpan: 3,
+                          //border: [true, false, false, false],
                         },
                         {
                         
@@ -314,7 +324,7 @@ class Report_2 extends Component {
                         },
                         {
                           text: 'ACTUAL',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                           colSpan: 3,
                         },
@@ -352,25 +362,20 @@ class Report_2 extends Component {
 
                     [
                         {
-                          text: 'PARTIDA: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                         
                         },
                         {
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
+                         
                         
                         },
                         {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center"
+                          
                         },
                         {
                           text: 'METRADO',
                           style: "tableHeader",
-                          alignment: "center",                            
+                          alignment: "center",
+                          //border: undefined,                            
                         },
                         {
                           text: 'P. UNIT. S/.',
@@ -401,17 +406,17 @@ class Report_2 extends Component {
                         },
                         {
                           text: 'METRADO',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                         },
                         {
                           text: 'P. UNIT. S/.',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                         },
                         {
                           text: 'PRESUP. S/.',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                         },
                         {
@@ -450,6 +455,7 @@ class Report_2 extends Component {
             pageBreak: 'after',
         }
       )
+    
 
       for (let j = 0; j < DataHist[i].partidas.length; j++) {
 
@@ -483,11 +489,13 @@ class Report_2 extends Component {
             {
               text:  DataHist[i].partidas[j].valor_total,
               style:"tablaValorizacion",
+              //border: [true, false, false, false],
             
             },                            
             {
               text:  DataHist[i].partidas[j].metrado_anterior,
               style:"tablaValorizacion",
+              
             },
             {
               text:  DataHist[i].partidas[j].valor_anterior,
@@ -498,16 +506,16 @@ class Report_2 extends Component {
               style:"tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].valor_anterior,
-              style:"tablaValorizacion",
-            },
-            {
               text:  DataHist[i].partidas[j].metrado_actual,
-              style:"tablaValorizacion",
+              style:"tablaValorizacionActual",
             },
             {
               text:  DataHist[i].partidas[j].valor_actual,
-              style:"tablaValorizacion",
+              style:"tablaValorizacionActual",
+            },
+            {
+              text:  DataHist[i].partidas[j].porcentaje_actual,
+              style:"tablaValorizacionActual",
             },
             {
               text:  DataHist[i].partidas[j].metrado_total,
@@ -535,13 +543,14 @@ class Report_2 extends Component {
             }
           ]
         )
+        
       }
 
     }
 
       
     
-    //// console.log('data push' ,ValPresupuesto);
+    console.log('data push' ,ValPresupuesto);
     
 
     var ultimoElemento = ValPresupuesto.length -1
@@ -565,7 +574,7 @@ class Report_2 extends Component {
           {
             alignment: 'right',
             image: logoSigobras,
-            width: 40,
+            width: 48,
             height: 30,
             margin: [20, 10, 10, 0]
             
@@ -642,14 +651,32 @@ class Report_2 extends Component {
         },
         TableHeaderInforme: {
           bold: true,
-          fontSize: 9,
+          fontSize: 7,
           color: '#000000',
           // fillColor: '#ffcf96',
         },
-        tableBodyInforme:{
+        TableMontosInforme: {
+          bold: true,
           fontSize: 9,
           color: '#000000',
-        }
+          fillColor: '#ffcf96',
+        },
+        tableBodyInforme:{
+          fontSize: 7,
+          color: '#000000',
+        },
+        TableValInforme: {
+          bold: true,
+          fontSize: 6,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tablaValorizacionActual: {
+          fontSize: 4.5,
+          bold: false,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
         
 
       },
@@ -667,14 +694,7 @@ class Report_2 extends Component {
       this.setState({
         urlPdf:dataUrl
        })
-        // const targetElement = document.getElementById('iframeContainer');
-        // const iframe = document.createElement('iframe');
-        // iframe.src = dataUrl;
-        // iframe.style.width = "100%";
-        // iframe.style.height = "100%";
-        // iframe.frameBorder = 0;
-
-        // targetElement.appendChild(iframe);
+        
     });
     
   }
@@ -715,7 +735,7 @@ class Report_2 extends Component {
                   <ButtonGroup size="sm">
                   {
                     DataMesesApi.map((Meses, iM)=>
-                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final,)}>{ Meses.codigo }</Button>
+                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final,Meses.mes,)}>{ Meses.codigo }</Button>
                     )
                   }
 

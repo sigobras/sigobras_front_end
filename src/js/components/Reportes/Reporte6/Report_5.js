@@ -23,6 +23,8 @@ class Report_5 extends Component {
       modal: false,
       DataEncabezado:[],
       urlPdf: '',
+      anioSeleccionado:'',
+      mesActual: '',
 
     }
 
@@ -55,6 +57,10 @@ class Report_5 extends Component {
 
   seleccionaAnios(e){   
     // LLAMA AL API DE MESES
+
+    this.setState({
+      anioSeleccionado:e.target.value
+    })
   
      axios.post(`${UrlServer}/getPeriodsByAnyo`,{
        "id_ficha":sessionStorage.getItem("idobra"),
@@ -71,8 +77,13 @@ class Report_5 extends Component {
      });
     }
   
-  seleccionaMeses(id_historial, fecha_inicial,fecha_final){
+  seleccionaMeses(id_historial, fecha_inicial,fecha_final,mes_act){
     // LLAMA AL API DE MESES
+
+    this.setState({
+      mesActual:mes_act,
+    })
+
     axios.post(`${UrlServer}/valorizacionPartidasNuevas`,{
       "id_ficha":sessionStorage.getItem("idobra"),
       "historialestados_id_historialestado":id_historial,      
@@ -228,7 +239,7 @@ class Report_5 extends Component {
                         
                         },                            
                         {
-                          text: 'NOVIEMBRE DEL 2018',
+                          text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
                           style: "tableHeader",
                           alignment: "center",
                           colSpan: 9,
@@ -566,7 +577,7 @@ class Report_5 extends Component {
           {
             alignment: 'right',
             image: logoSigobras,
-            width: 40,
+            width: 48,
             height: 30,
             margin: [20, 10, 10, 0]
             
@@ -716,7 +727,7 @@ class Report_5 extends Component {
                   <ButtonGroup size="sm">
                   {
                     DataMesesApi.map((Meses, iM)=>
-                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
+                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final,Meses.mes,)}>{ Meses.codigo }</Button>
                     )
                   }
 

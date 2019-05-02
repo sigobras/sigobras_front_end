@@ -1,186 +1,31 @@
-.proyecto{
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-.asunto{
-  font-size: 1rem;
-}
-.tarea{
-  border: 1px dashed #fff7f7;
-  padding: 0.5em;
-}
 
-.subtareas{
-  padding: 1em;
+.containerTarea{
+  width: 41%;
 }
-
-.actividadSubtarea{
-  padding: 0.9em;
-  border-radius: 6px;
-  word-break: break-all;
-  margin-bottom: 1em;
-}
-.checkTarea{
-  right: 1px;
-  position: absolute;
-}
-
-.verInput{
-  right: 12px;
-  position: absolute;
-}
-.verInput:hover{
-  color: blue;
-}
-/* dddddddddddddddddddddddddd dddddddddddddddddddddddddddddddddddd--------------dddd--------------------------*/
-
-.post_it {
-  max-width: 100%;
-}
-
-.post_it .ulP, li {
-  list-style: none;
-}
-
-/* .post_it .ulP {
-  overflow: hidden;
-  padding: 3em;
-} */
-
-.post_it .ulP li a {
-  text-decoration: none;
-  color: #000;
-  background: #ffc;
-  display: block;
-  height:12em;
-  width: 11em;
-  padding: 1em;
-  -moz-box-shadow: 5px 5px 7px rgba(33, 33, 33, 1);
-  -webkit-box-shadow: 5px 5px 7px rgba(33, 33, 33, .7);
-  box-shadow: 5px 5px 7px rgba(33, 33, 33, .7);
-  -webkit-transform: rotate(-6deg);
-  -o-transform: rotate(-6deg);
-  -moz-transform: rotate(-6deg);
-  -moz-transition: -moz-transform .15s linear;
-  -o-transition: -o-transform .15s linear;
-  -webkit-transition: -webkit-transform .15s linear;
-}
-
-.post_it .ulP li:nth-child(even) a {
-  -o-transform: rotate(4deg);
-  -webkit-transform: rotate(4deg);
-  -moz-transform: rotate(4deg);
-  position: relative;
-  top: 5px;
-  background: #cfc;
-}
-
-.post_it .ulP li:nth-child(3n) a {
-  -o-transform: rotate(-3deg);
-  -webkit-transform: rotate(-3deg);
-  -moz-transform: rotate(-3deg);
-  position: relative;
-  top: -5px;
-  background: #ccf;
-}
-
-.post_it .ulP li:nth-child(5n) a {
-  -o-transform: rotate(5deg);
-  -webkit-transform: rotate(5deg);
-  -moz-transform: rotate(5deg);
-  position: relative;
-  top: -10px;
-  background: #fcf;
-}
-
-.post_it .ulP li a:hover, .ulP li a:focus {
-  -moz-box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
-  -webkit-box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
-  box-shadow: 10px 10px 7px rgba(0, 0, 0, .7);
-  -webkit-transform: scale(1.25);
-  -moz-transform: scale(1.25);
-  -o-transform: scale(1.25);
-  position: relative;
-  z-index: 5;
-}
-
-.post_it .ulP li {
-  margin: 1em;
-  float: left;
-}
-
-.post_it .ulP li h2 {
-  font-size: 102%;
-  padding-bottom: 0px;
-  text-align: center;
-  color: #000;
-  font-family: "Reenie Beanie",arial,sans-serif;
-  font-weight: bold;
-  margin: 0px;
-}
-
-.post_it .ulP li p {
-  font-family:'Waiting for the Sunrise', cursive;;
-  font-size: 109%;
-  color: #000;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  line-height: 16px;     /* fallback */
-  max-height: 32px;      /* fallback */
-  -webkit-line-clamp: 2; /* number of lines to show */
-  -webkit-box-orient: vertical;
-}
-
-
-/* barra de progreso */
-
-.contentBarraProgreso{
-  border: 1px solid #0080ff;
-  border-radius: 8px;
-  height: 5px;
-  width: 100%;
-  margin-bottom: 3px;
-}
-
-.widthBarraProgreso{
-  background: #0080ff;
-  border-radius: 8px;
-  /* width: 59%; */
-  height: 100%;
-}
-
-.cantidadPorcentaje{
-  position: relative;
-  border-radius: 6px;
-  padding: 2px;
-  font-size: 0.7rem;
-  bottom: 21px;
+.headerTarea{
+  background: aliceblue;
   color: black;
+  font-weight: bold;
   text-align: center;
+  /* display: inline-flex; */
+}
+
+.contentImgHeader{
+
+}
+.imgHeader{
+  border-radius: 50%;
+  width: 20%;
+  height: 50%;
+}
+
+.bodyTarea{
+  background: #f78a07;
+  color: black;
+  padding: 4px;
   font-weight: bold;
 }
-
-
-
-/*  */
-hr{
-  margin-top: 0.1rem!important;
-  margin-bottom: 0.2rem!important;
-  border: 0;
-  border-top: 1px solid #2d3540 !important;
-}
-
-.pin{
-  vertical-align: middle;
-  border-style: none;
-  position: absolute;
-  right: 3px;
-  top: 3px;
-}
-
-
-
+/* formmm */
 .formPositContainer{
   padding: 8px;
   position: sticky;

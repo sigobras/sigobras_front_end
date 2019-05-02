@@ -12,6 +12,7 @@ import Report_7 from './Reporte6/Report_7'
 import Report_8 from './Reporte6/Report_8'
 import Report_9 from './Reporte6/Report_9'
 import Report_10 from './Reporte6/Report_10'
+import Example from './Reporte6/Example';
 
 
 class ReportesGenerales extends Component {
@@ -76,6 +77,8 @@ class ReportesGenerales extends Component {
                                 <li className="lii">    
                                     <a href="#" ><FaFilePdf className="text-danger"/> 11.- PROYECCIÓN DE LOS TRABAJOS PRÓXIMOS MES CRONOGRAMA </a>
                                 </li>
+                                {/* Example */}
+                                <Example />
                             </ul>
 
                             

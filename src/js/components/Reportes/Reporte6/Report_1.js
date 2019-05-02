@@ -19,20 +19,37 @@ class Report_1 extends Component {
       DataHistorialApi:[],
       DataAniosApi:[],
       DataMesesApi:[],
-      //DataHistorial:[],
+      
       modal: false,
       DataEncabezado:[],
       urlPdf: '',
+      anioSeleccionado:'',
+      cSelected: '',
     }
 
     this.ModalReportes = this.ModalReportes.bind(this)
     this.makePdf = this.makePdf.bind(this)
     this.seleccionaAnios = this.seleccionaAnios.bind(this)
     this.seleccionaMeses = this.seleccionaMeses.bind(this)
+    //this.onRadioBtnClick = this.onRadioBtnClick.bind(this)
+    this.onCheckboxBtnClick = this.onCheckboxBtnClick.bind(this)
 
     
   }
 
+  // onRadioBtnClick(rSelected) {
+  //   this.setState({ rSelected });
+  // }
+
+  onCheckboxBtnClick(selected) {
+    const index = this.state.cSelected.indexOf(selected);
+    if (index < 0) {
+      this.state.cSelected.push(selected);
+    } else {
+      this.state.cSelected.splice(index, 1);
+    }
+    this.setState({ cSelected: [...this.state.cSelected] });
+  }
   
 
   ModalReportes() {
@@ -44,7 +61,7 @@ class Report_1 extends Component {
       "id_ficha":sessionStorage.getItem("idobra")
     })
     .then((res)=>{
-        // console.log('res ANIOS', res.data)
+         //console.log('res ANIOS', res.data)
         this.setState({
           DataAniosApi: res.data
         })
@@ -57,12 +74,16 @@ class Report_1 extends Component {
   seleccionaAnios(e){   
   // LLAMA AL API DE MESES
 
+  this.setState({
+    anioSeleccionado:e.target.value
+  })
+
    axios.post(`${UrlServer}/getPeriodsByAnyo`,{
      "id_ficha":sessionStorage.getItem("idobra"),
      "anyo":e.target.value
    })
    .then((res)=>{
-      //  console.log('res Meses', res.data)
+        //console.log('res Meses', res.data)
        this.setState({
          DataMesesApi: res.data
        })
@@ -72,16 +93,22 @@ class Report_1 extends Component {
    });
   }
 
-  seleccionaMeses(id_historial,fecha_inicial,fecha_final){
+  seleccionaMeses(fecha_inicial,fecha_final,mes_act,rSelected){
+    
+    this.setState({ rSelected });
+    this.setState({
+      mesActual:mes_act,
+    })
     // LLAMA AL API DE MESES
     axios.post(`${UrlServer}/CuadroMetradosEjecutados`,{
       "id_ficha":sessionStorage.getItem("idobra"),
-      "historialestados_id_historialestado":id_historial,
+      
       "fecha_inicial":fecha_inicial,
       "fecha_final":fecha_final,
     })
     .then((res)=>{
-        //console.log('res CuadroMetradosEjecutados', res.data)
+        console.log('res CuadroMetradosEjecutados', res.data)
+        
         this.setState({
           DataHistorialApi: res.data,
           DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
@@ -104,14 +131,11 @@ class Report_1 extends Component {
 
     
     var {  DataEncabezado } = this.state
-
-
-
+    
     //ARMAMOS DATA PARA GENERAR EL PDF DE METRADOS EJECUTADOS
 
     var DataHist = this.state.DataHistorialApi
     console.log('DH', DataHist)
-
     var ArFormat = []
 
     for (let i = 0; i < DataHist.length; i++) {
@@ -119,22 +143,25 @@ class Report_1 extends Component {
         {
           style: 'tableExample',
           // color: '#ff0707',
-          layout: 'lightHorizontalLines',
-
-          table: {
-            widths: ['*', 230, '*', '*', '*', '*', '*', '*'],
+          layout: 'lightHorizontalLines',           
+          table: {            
+            headerRows: 2,
+            widths: [40, 200, 200, 60, 40, 30, 90],
+            //pageBreak: 'before',
+            
             body: [
             [
               {
-                text: 'COMPONENTE N°: ' + DataHist[i].numero,
-                style: "tableHeader",
-                alignment: "center"
+                text: 'C-' + DataHist[i].numero,
+                style: "TableMontosInforme",
+                alignment: "center",
+                margin:[5,0,0,0]
               },
               {
                 text: DataHist[i].nombre_componente,
-                style: "tableHeader",
+                style: "TableMontosInforme",
                 alignment: "center",
-                colSpan: 6,
+                colSpan: 5,
               },
               {
           
@@ -148,15 +175,18 @@ class Report_1 extends Component {
               {
           
               },
-              {
+              // {
           
-              },
+              // },
               {
                 text: 'S/.'  + DataHist[i].componente_total_soles,
-                style: "tableHeader",
-                alignment: "center"
+                style: "TableMontosInforme",
+                alignment: "center",
+                margin:[0,0,5,0]
               }
+
             ],
+
               // ---------------------
             // contenido
         
@@ -164,7 +194,8 @@ class Report_1 extends Component {
               {
                 text: 'ITEM',
                 style: 'tableHeader',
-                alignment: 'center'
+                alignment: 'center',
+                margin:[5,0,0,0]
               },
               {
                 text: 'PARTIDA',
@@ -176,11 +207,11 @@ class Report_1 extends Component {
                 style: 'tableHeader',
                 alignment: 'center'
               },
-              {
-                text: 'DESCRIPCION',
-                style: 'tableHeader',
-                alignment: 'center'
-              },
+              // {
+              //   text: 'DESCRIPCION',
+              //   style: 'tableHeader',
+              //   alignment: 'center'
+              // },
               {
                 text: 'OBSERVACION',
                 style: 'tableHeader',
@@ -199,7 +230,8 @@ class Report_1 extends Component {
               {
                 text: 'S/. TOTAL',
                 style: 'tableHeader',
-                alignment: 'center'
+                alignment: 'center',
+                margin:[0,0,5,0]
               }
             ]
           ]
@@ -211,14 +243,19 @@ class Report_1 extends Component {
 
         for (let j = 0; j < DataHist[i].fechas.length; j++) {
           // console.log(i, 'dhssss', DataHist[i].fechas[j].fecha, 'index j' , j)
+          
           ArFormat[i].table.body.push(
+
             // .........................
             [
+
               {
-                text: "FECHA : "+ DataHist[i].fechas[j].fecha,
+                text: DataHist[i].fechas[j].fecha,
                 style: "tableFecha",
-                // alignment: "center",
-                colSpan: 7,
+                alignment: "center",
+                colSpan: 6,
+                margin:[5,0,0,0],
+
               },
               {
           
@@ -235,24 +272,31 @@ class Report_1 extends Component {
               {
           
               },
-              {
+              // {
           
-              },
+              // },
               {
-                text: "Por fecha S/. " + DataHist[i].fechas[j].fecha_total_soles,
+                text: "S/. " + DataHist[i].fechas[j].fecha_total_soles,
                 style: "tableFecha",
+                margin:[0,0,5,0],
               }
             ]
+
           )
+
       // console.log('ArFormat2', ArFormat[i].table.body)
           
           for (let k = 0; k <  DataHist[i].fechas[j].historial.length; k++) {
+            
             ArFormat[i].table.body.push(
+              
               [
+                
                 {
                   text: DataHist[i].fechas[j].historial[k].item,
                   style: 'tableBody',
                   // alignment: 'center'
+                  margin:[5,0,0,0],
                 },
                 {
                   text: DataHist[i].fechas[j].historial[k].descripcion_partida,
@@ -263,11 +307,11 @@ class Report_1 extends Component {
                   text: DataHist[i].fechas[j].historial[k].nombre_actividad,
                   style: 'tableBody',
                 },
-                {
-                  text: DataHist[i].fechas[j].historial[k].descripcion_actividad,
-                  style: 'tableBody',
-                  alignment: 'center'
-                },
+                // {
+                //   text: DataHist[i].fechas[j].historial[k].descripcion_actividad,
+                //   style: 'tableBody',
+                //   alignment: 'center'
+                // },
                 {
                   text: DataHist[i].fechas[j].historial[k].observacion,
                   style: 'tableBody',
@@ -286,18 +330,24 @@ class Report_1 extends Component {
                 {
                   text: DataHist[i].fechas[j].historial[k].parcial,
                   style: 'tableBody',
-                  alignment: 'center'
+                  alignment: 'center',
+                  margin:[0,0,5,0]
                 }
               ]
             )
+            
           }
+          
         }
+
     }
 
-    var ultimoElemento = ArFormat.length -1
-    delete ArFormat[ultimoElemento].pageBreak
+    
+    
+     var ultimoElemento = ArFormat.length -1
+     delete ArFormat[ultimoElemento].pageBreak
 
-    console.log("ArFormat", ArFormat);
+    //console.log("ArFormat", ArFormat);
     
     // GENERA EL FORMATO PDF
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
@@ -314,7 +364,7 @@ class Report_1 extends Component {
           {
             alignment: 'right',
             image: logoSigobras,
-            width: 40,
+            width: 48,
             height: 30,
             margin: [20, 10, 10, 0]
             
@@ -332,9 +382,9 @@ class Report_1 extends Component {
             },
             {
               qr: 'http://sigobras.com',
-              fit: 40,
+              fit: 30,
               alignment: 'right',
-              margin: [20, 10, 10, 0]
+              margin: [20, 0, 10, 0]
             }
           ]
           
@@ -343,13 +393,33 @@ class Report_1 extends Component {
        
       content: [
         { 
-          text: 'CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales)',
+          
+          layout: 'noBorders',
           margin: 7,
-          alignment: 'center'
+          table: {
+            widths: ['*'],
+            body: [              
+              [
+                {
+                  text: 'CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales)',
+                  style: "tableFecha",
+                  alignment: "center",
+                  margin:[10,0,5,0],
+                }
+              ]
+              
+            ]
+          },
+          
+          // text: 'CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales)',
+          // margin: 7,
+          // alignment: 'center',         
+          //strokeColor: '#babfc7',
+          //color:'#ff0000',
+         
         },
-
+       
         DataEncabezado,
-        
         ArFormat
       ],
 
@@ -375,7 +445,7 @@ class Report_1 extends Component {
         },
         tableFecha: {
           bold: true,
-          fontSize: 7,
+          fontSize: 9.5,
           color: '#000000',
           fillColor: '#dadada',
         },
@@ -387,12 +457,18 @@ class Report_1 extends Component {
         },
         TableHeaderInforme: {
           bold: true,
-          fontSize: 9,
+          fontSize: 7,
           color: '#000000',
           // fillColor: '#ffcf96',
         },
-        tableBodyInforme:{
+        TableMontosInforme: {
+          bold: true,
           fontSize: 9,
+          color: '#000000',
+          fillColor: '#ffcf96',
+        },
+        tableBodyInforme:{
+          fontSize: 7,
           color: '#000000',
         }
         
@@ -454,9 +530,10 @@ class Report_1 extends Component {
                         <ButtonGroup size="sm">
                           {
                             DataMesesApi.map((Meses, iM)=>
-                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
+                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses( Meses.fecha_inicial, Meses.fecha_final)}  >{ Meses.codigo }</Button>                              
                             )
                           }
+                            <p>Selected: {this.state.rSelected}</p>
 
                         </ButtonGroup>
                         
@@ -468,13 +545,13 @@ class Report_1 extends Component {
                   <Col sm="1">
                   {
                     DataHistorialApi.length <= 0 ?"":
-                    <button className="btn btn-outline-success" onClick={ this.makePdf }> PDF </button>
+                    <button className="btn btn-outline-success" onClick={ this.makePdf } > PDF </button>
                   }
 
                 </Col>
               </Row>
               { urlPdf.length <= 0 && DataHistorialApi.length <= 0?<Spinner color="primary" />:
-              <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%" ></iframe>
               }
           </ModalBody>
         </Modal>

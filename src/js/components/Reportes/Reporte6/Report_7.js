@@ -200,7 +200,7 @@ class Report_7 extends Component {
           {
             alignment: 'right',
             image: logoSigobras,
-            width: 40,
+            width: 48,
             height: 30,
             margin: [20, 10, 10, 0]
             
