@@ -4,15 +4,16 @@ import axios from 'axios';
 import classnames from 'classnames';
 import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd, } from "react-icons/md";
 import { GoSignIn, GoSignOut, GoOrganization } from "react-icons/go";
-import Pin from "../../../images/pin.png"
 import { DebounceInput } from 'react-debounce-input';
+
+import Picky from "react-picky";
+import "react-picky/dist/picky.css";
 import "../../../css/GTareas.css"
 
 import { GeraColoresRandom, Extension } from "../Utils/Funciones"
 import { UrlServer, Id_Acceso } from "../Utils/ServerUrlConfig"
 
-import Picky from "react-picky";
-import "react-picky/dist/picky.css";
+import DragDrop from "./DragDrop"
 
 // import App from "./demo";
 class GestionTareas extends Component {
@@ -34,10 +35,15 @@ class GestionTareas extends Component {
     this.clearImg = this.clearImg.bind(this);
     // this.SeteaTareasRecibidas = this.SeteaTareasRecibidas.bind(this);
     // this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
-    this.dropdownRecibidos = this.dropdownRecibidos.bind(this);
+    // this.dropdownRecibidos = this.dropdownRecibidos.bind(this);
     this.CreaProyecto = this.CreaProyecto.bind(this);
-
+    
+    
     this.reqTareas = this.reqTareas.bind(this);
+    // DRAG DROP
+    this.onDragStart = this.onDragStart.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDrop = this.onDrop.bind(this);
 
     this.state = {
       DataTareasApi: [],
@@ -79,7 +85,7 @@ class GestionTareas extends Component {
       CollapseFormContainerAddTarea: false,
 
       // recibidos
-      dropdownOpenRecibidos: "3",
+      ActiveTab: "0",
       inputNombreProyecto: "",
 
       nombreProyectoValidacion: "",
@@ -179,7 +185,7 @@ class GestionTareas extends Component {
       .then((res) => {
         console.log("Post tareas", res.data)
         this.setState({
-          dropdownOpenRecibidos: "4",
+          // ActiveTab: "4",
           Para: [],
           proyecto: [],
           asunto: "",
@@ -243,9 +249,9 @@ class GestionTareas extends Component {
     // console.log("Tareas ", Tareas[0])
 
 
-    // this.setState({
-    //   modalVerTareas: !this.state.modalVerTareas
-    // })
+    this.setState({
+      modalVerTareas: !this.state.modalVerTareas
+    })
     // consoluto a api de tareas 
 
     axios.post(`${UrlServer}/getTareaIdTarea`,
@@ -380,14 +386,14 @@ class GestionTareas extends Component {
     document.getElementById("myImage").value = "";
   }
 
-  dropdownRecibidos(num) {
-    console.log("numero ", num)
-    if (this.state.dropdownOpenRecibidos !== num) {
-      this.setState({
-        dropdownOpenRecibidos: num
-      });
-    }
-  }
+  // dropdownRecibidos(num) {
+  //   console.log("numero ", num)
+  //   if (this.state.ActiveTab !== num) {
+  //     this.setState({
+  //       ActiveTab: num
+  //     });
+  //   }
+  // }
 
   CreaProyecto() {
 
@@ -419,7 +425,8 @@ class GestionTareas extends Component {
 
   // REQUESTS AL API ---------------------------------------------
 
-  reqTareas(id_acceso, ruta) {
+  reqTareas(id_acceso, ruta, index) {
+    this.setState({ActiveTab: index})
     axios.post(`${UrlServer}${ruta}`,
       {
         "id_acceso": id_acceso
@@ -438,11 +445,44 @@ class GestionTareas extends Component {
   }
 
 
+
+  // drag funciones________________---0========================0000
+
+  onDragStart(ev, id) {
+    console.log('moviendo :', id);
+    ev.dataTransfer.setData("id", id);
+  }
+  onDragOver(ev) {
+    ev.preventDefault();
+
+    // console.log("mover over ", ev)
+  }
+
+  onDrop(ev, cat) {
+    console.log("onDrop ", cat)
+    let id = ev.dataTransfer.getData("id");
+
+    console.log("id ondrop ", id)
+    // let tasks = this.state.tasks.filter((task)=> {
+    //     if (task.name == id) {
+    //       task.category = cat;
+    //     }
+    //     return task;
+    //   });
+
+    // this.setState({
+    //   ...this.state,
+    //   tasks
+    // });
+  }
+
   render() {
-    const { DataProyectoApi, DataCargosApi, DataPersonalApi, DataTareasApi, PositsFiltrado, DatSubtareaApi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, dropdownOpenRecibidos, condicionInputCollapse } = this.state
+    const { DataProyectoApi, DataCargosApi, DataPersonalApi, DataTareasApi, PositsFiltrado, DatSubtareaApi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse } = this.state
 
     return (
       <div>
+
+      {/* <DragDrop /> */}
         <Row>
           <div className={CollapseFormContainerAddTarea === true ? "formPositContainer" : "widthFormPositContentCierra"}>
             <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
@@ -591,7 +631,26 @@ class GestionTareas extends Component {
                 </NavLink>
               </NavItem>
 
-              <UncontrolledButtonDropdown onClick={() => this.dropdownRecibidos("3")} className={dropdownOpenRecibidos === "3" ? "bg-primary" : ""}>
+              <NavItem>
+                <NavLink className={classnames({ active: ActiveTab === "0" })} onClick={() => this.reqTareas(Id_Acceso, "/getTareaEmisorPendientes", "0")}>
+                {/* <NavLink className={classnames({ active: ActiveTab === "0" })} onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorPendientes", "0")}> */}
+                  PENDIENTES
+                </NavLink>
+              </NavItem>
+
+              <NavItem>
+                <NavLink className={classnames({ active: ActiveTab === "1" })} onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorProgreso","1")}>
+                  PROGRESO
+                </NavLink>
+              </NavItem>
+
+              <NavItem>
+                <NavLink className={classnames({ active: ActiveTab === "2" })} onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorTerminadas","2")}>
+                  CONCLUIDOS
+                </NavLink>
+              </NavItem>
+
+              {/* <UncontrolledButtonDropdown onClick={() => this.dropdownRecibidos("3")} className={ActiveTab === "3" ? "bg-primary" : ""}>
                 <DropdownToggle nav caret>
                   <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{DataTareasApi.length} </span>{" "}
                 </DropdownToggle>
@@ -605,7 +664,7 @@ class GestionTareas extends Component {
               </UncontrolledButtonDropdown>
 
 
-              <UncontrolledButtonDropdown onClick={() => this.dropdownRecibidos("4")} className={dropdownOpenRecibidos === "4" ? "bg-primary" : ""} >
+              <UncontrolledButtonDropdown onClick={() => this.dropdownRecibidos("4")} className={ActiveTab === "4" ? "bg-primary" : ""} >
                 <DropdownToggle nav caret>
                   <MdSend /> Enviados <span className="badge badge-light">{DataTareasApi.length} </span>{" "}
                 </DropdownToggle>
@@ -616,36 +675,39 @@ class GestionTareas extends Component {
                   <DropdownItem divider />
                   <DropdownItem onClick={() => this.reqTareas(Id_Acceso, "/getTareaEmisorTerminadas")}>Concluido <div className="float-right"><span className="badge badge-light">{DataTareasApi.length} </span></div></DropdownItem>
                 </DropdownMenu>
-              </UncontrolledButtonDropdown>
+              </UncontrolledButtonDropdown> */}
             </Nav>
 
             <div className="p-2">
               <Container className="pr-4">
                 <Row>
                   <Col md="3">
+                    <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion") }}>
+                      <Row>
+                     
+                        {
+                          DatSubtareaApi !== undefined ?
+                          DatSubtareaApi.map((subtarea, iS) =>
+                          <Col md="6 mb-2" key={ iS }>
+                            <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, subtarea.id_subTarea )} draggable>
+                              <div className="d-flex justify-content-between headerTarea p-1">
+                                <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgHeader" />
 
-                    <Row>
-                      {
-                        DatSubtareaApi !== undefined ?
-                        DatSubtareaApi.map((subtarea, iS) =>
-                        <Col md="6 mb-2" key={ iS }>
-                          <div className="containerTarea">
-                            <div className="d-flex justify-content-between headerTarea p-1">
-                              <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgHeader" />
+                                <label className="m-0 h5">{`T-${iS+1}` }</label>
 
-                              <label className="m-0 h5">{`T- ${iS+1}` }</label>
-
-                              <div style={{ background: "#ff9509", width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
+                                <div style={{ background: "#ff9509", width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
+                              </div>
+                              <div className="bodyTarea text-capitalize">
+                                { subtarea.asunto }
+                              </div>
                             </div>
-                            <div className="bodyTarea text-capitalize">
-                              { subtarea.asunto }
-                            </div>
-                          </div>
-                        </Col>
-                        ):""
-                      }
 
-                    </Row>
+                          </Col>
+                          ):""
+                        }
+                      
+                      </Row>
+                    </div>
 
                   </Col>
                   <Col md="3" className="brLeft brRight" >
@@ -692,19 +754,22 @@ class GestionTareas extends Component {
                       </div>
                       <div className="media-body">
                         <Container>
-                          <Row>
-                            {
-                              DatSubtareaApi !== undefined ?
-                              DatSubtareaApi.map((subtarea, iS) =>
-                                <Col md="2" className="m-1 p-0 bg-info" key={  iS }>
-                                  <div className="text-center flex-column ">
-                                    <div>T-{ iS+1 }</div>
-                                  </div>
-                                </Col>
-                              ):""
-                            }
-                           
-                          </Row>
+                          <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion") }}>
+
+                            <Row>
+                              {
+                                DatSubtareaApi !== undefined ?
+                                DatSubtareaApi.map((subtarea, iS) =>
+                                  <Col md="2" className="m-1 p-0 bg-info" key={  iS }>
+                                    <div className="text-center flex-column ">
+                                      <div>T-{ iS+1 }</div>
+                                    </div>
+                                  </Col>
+                                ):""
+                              }
+                            
+                            </Row>
+                          </div>
                         </Container>
                       </div>
                     </div>
