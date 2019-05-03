@@ -1,18 +1,24 @@
-
+.tareas{
+  display: flex;
+}
 .containerTarea{
-  width: 41%;
+  width: 100%;
 }
 .headerTarea{
   background: aliceblue;
   color: black;
   font-weight: bold;
-  text-align: center;
-  /* display: inline-flex; */
+  display: flex;
 }
 
-.contentImgHeader{
-
+.nombreProyectoP{
+  top: 29px;
+  position: absolute;
+  color: #000;
+  font-weight: bold;
+  right: 42px;
 }
+
 .imgHeader{
   border-radius: 50%;
   width: 20%;
@@ -24,7 +30,49 @@
   color: black;
   padding: 4px;
   font-weight: bold;
+  height: 100px;
+  vertical-align: middle;
 }
+
+
+.bodyTareaProyecto{
+  background: #f78a07;
+  color: black;
+  padding: 4px;
+  font-weight: bold;
+  /* height: 100px; */
+  vertical-align: middle;
+}
+
+/* proyectos P1  */
+
+.proyectoBorder{
+  width: 100%;
+  border-bottom: 2px solid #0080ff;
+  display: flex;
+}
+.numeroProyecto{
+  background: #f78a07;
+  color: black;
+  font-weight: bold;
+  padding: 4px;
+  margin-bottom: -2px;
+}
+.nombreProyecto{
+  background: #0080ff;
+  color: black;
+  font-weight: bold;
+  padding: 4px;
+}
+
+.brLeft{
+  border-left: 2px solid #0080ff
+}
+.brRight{
+  border-right: 2px solid #0080ff
+
+}
+
 /* formmm */
 .formPositContainer{
   padding: 8px;
