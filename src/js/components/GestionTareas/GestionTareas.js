@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col, Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput, UncontrolledButtonDropdown, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
 import axios from 'axios';
 import classnames from 'classnames';
-import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd, } from "react-icons/md";
+import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd, MdAlarmAdd, MdSave, MdClose } from "react-icons/md";
 import { GoSignIn, GoSignOut, GoOrganization } from "react-icons/go";
 import { DebounceInput } from 'react-debounce-input';
 
@@ -20,7 +20,6 @@ class GestionTareas extends Component {
   constructor(props) {
     super(props);
 
-    // this.toggleTabPosit = this.toggleTabPosit.bind(this);
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
     this.AgregaTarea = this.AgregaTarea.bind(this);
     this.porcentCollapse = this.porcentCollapse.bind(this);
@@ -67,7 +66,6 @@ class GestionTareas extends Component {
       barraPorcentaje: null,
       collapseInputPorcentaje: null,
 
-      // activeTab: '1',
       activeTabModalTarea: "1",
 
       modalVerTareas: false,
@@ -89,7 +87,8 @@ class GestionTareas extends Component {
       inputNombreProyecto: "",
 
       nombreProyectoValidacion: "",
-      condicionInputCollapse: false
+      condicionInputCollapse: false,
+      
     };
   }
 
@@ -97,7 +96,7 @@ class GestionTareas extends Component {
 
     // llama api de tareas pendientes
 
-    this.reqTareas(Id_Acceso, "/getTareaReceptorPendientes")
+    this.reqTareas(Id_Acceso, "/getTareaReceptorPendientes","0")
 
     // API PROYECTOS---------------------------------------------
     axios.get(`${UrlServer}/getTareaProyectos`)
@@ -140,8 +139,15 @@ class GestionTareas extends Component {
 
   AgregaTarea(e) {
     e.preventDefault()
+
+   
     var { Posits, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, porcentajeAvance, InputPersonal } = this.state
 
+    
+    if( Para.length <=0 && InputPersonal.length <=0  ){
+        console.log(" no es proyecto")
+        return
+    }
     var funcionMap = (data) => ([data.id_acceso])
     var Personal = InputPersonal.map(funcionMap);
 
@@ -296,20 +302,20 @@ class GestionTareas extends Component {
       "asunto": this.state.inputSubtarea,
       "tareas_id_tarea": idTarea
     })
-      .then((res) => {
-        console.log("data de subtarea ", res)
-        var dataRes = this.state.DatSubtareaApi
-        dataRes.unshift(
-          res.data
-        )
-        this.setState({
-          DatSubtareaApi: dataRes,
-          inputSubtarea: ""
-        })
+    .then((res) => {
+      console.log("data de subtarea ", res)
+      var dataRes = this.state.DatSubtareaApi
+      dataRes.unshift(
+        res.data
+      )
+      this.setState({
+        DatSubtareaApi: dataRes,
+        inputSubtarea: ""
       })
-      .catch((err) => {
-        console.error("error al consultar el api de subtareas", err)
-      })
+    })
+    .catch((err) => {
+      console.error("error al consultar el api de subtareas", err)
+    })
 
   }
 
@@ -386,15 +392,6 @@ class GestionTareas extends Component {
     document.getElementById("myImage").value = "";
   }
 
-  // dropdownRecibidos(num) {
-  //   console.log("numero ", num)
-  //   if (this.state.ActiveTab !== num) {
-  //     this.setState({
-  //       ActiveTab: num
-  //     });
-  //   }
-  // }
-
   CreaProyecto() {
 
     if (this.state.inputNombreProyecto.length <= 0) {
@@ -422,7 +419,6 @@ class GestionTareas extends Component {
     }
   }
 
-
   // REQUESTS AL API ---------------------------------------------
 
   reqTareas(id_acceso, ruta, index) {
@@ -444,9 +440,7 @@ class GestionTareas extends Component {
       })
   }
 
-
-
-  // drag funciones________________---0========================0000
+  // drag funciones==============================================================================
 
   onDragStart(ev, id) {
     console.log('moviendo :', id);
@@ -532,68 +526,71 @@ class GestionTareas extends Component {
 
 
                 <label className="texto-rojo"><b>{this.state.nombreProyectoValidacion}</b></label><br />
+                
+                { 
+                  proyecto.nombre === "RECORDATORIO" || proyecto.nombre ==="SUB-TAREA"?"":
+                  <div>
+                    <Label for="A">PARA: </Label>
+                    <InputGroup>
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="p-2">
+                          <MdGroupAdd />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Picky
+                        value={Para}
+                        options={DataCargosApi}
+                        onChange={this.onChangePara}
+                        open={false}
+                        valueKey="id_Cargo"
+                        labelKey="nombre"
+                        multiple={false}
+                        includeSelectAll={false}
+                        includeFilter={true}
+                        dropdownHeight={200}
+                        placeholder={"No hay datos seleccionados"}
+                        allSelectedPlaceholder={"seleccionaste todo"}
+                        manySelectedPlaceholder={"tienes %s seleccionados"}
+                        className="text-dark"
 
+                      />
+                    </InputGroup>
 
-                <Label for="A">PARA: </Label>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText className="p-2">
-                      <MdGroupAdd />
-                    </InputGroupText>
-                  </InputGroupAddon>
-
-                  <Picky
-                    value={Para}
-                    options={DataCargosApi}
-                    onChange={this.onChangePara}
-                    open={false}
-                    valueKey="id_Cargo"
-                    labelKey="nombre"
-                    multiple={false}
-                    includeSelectAll={false}
-                    includeFilter={true}
-                    dropdownHeight={200}
-                    placeholder={"No hay datos seleccionados"}
-                    allSelectedPlaceholder={"seleccionaste todo"}
-                    manySelectedPlaceholder={"tienes %s seleccionados"}
-                    className="text-dark"
-
-                  />
-                </InputGroup>
-
-                <Label for="A">PERSONAL:</Label>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText className="p-2">
-                      <GoOrganization />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Picky
-                    value={InputPersonal}
-                    options={DataPersonalApi}
-                    onChange={this.onChangePersonal}
-                    open={false}
-                    valueKey="id_acceso"
-                    labelKey="nombre"
-                    multiple={true}
-                    includeSelectAll={true}
-                    includeFilter={true}
-                    dropdownHeight={200}
-                    placeholder={"No hay datos seleccionados"}
-                    allSelectedPlaceholder={"seleccionaste todo"}
-                    manySelectedPlaceholder={"tienes %s seleccionados"}
-                    className="text-dark"
-                    selectAllText="Todos"
-                  />
-                </InputGroup>
-
+                    
+                    <Label for="A">PERSONAL:</Label>
+                    <InputGroup>
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="p-2">
+                          <GoOrganization />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Picky
+                        value={InputPersonal}
+                        options={DataPersonalApi}
+                        onChange={this.onChangePersonal}
+                        open={false}
+                        valueKey="id_acceso"
+                        labelKey="nombre"
+                        multiple={true}
+                        includeSelectAll={true}
+                        includeFilter={true}
+                        dropdownHeight={200}
+                        placeholder={"No hay datos seleccionados"}
+                        allSelectedPlaceholder={"seleccionaste todo"}
+                        manySelectedPlaceholder={"tienes %s seleccionados"}
+                        className="text-dark"
+                        selectAllText="Todos"
+                      />
+                    </InputGroup>
+                  </div>
+                }
                 <Label for="asunto">TAREA / ASUNTO :</Label>
                 <DebounceInput cols="40" rows="1" required element="textarea" value={this.state.asunto} minLength={0} debounceTimeout={300} onChange={e => this.setState({ asunto: e.target.value })} className="form-control" />
-                <li className="text-right"> {this.state.asunto.length} / 50</li>
+                <div className="text-right"> {this.state.asunto.length} / 50</div>
 
                 <Label for="tarea">DESCRIPCIÓN : </Label>
                 <DebounceInput cols="40" rows="1" required element="textarea" value={this.state.descripcion} minLength={0} debounceTimeout={300} onChange={e => this.setState({ descripcion: e.target.value })} className="form-control" />
-                <li className="text-right">  {this.state.descripcion.length} /  500</li>
+                <div className="text-right">  {this.state.descripcion.length} /  500</div>
 
                 <Label for="fechaInicio">INICIO : </Label>
                 <Input type="date" id="fechaInicio" required onChange={e => this.setState({ fechaInicio: e.target.value })} />
@@ -602,23 +599,25 @@ class GestionTareas extends Component {
                 <Input type="number" onChange={e => this.setState({ duracion: e.target.value })} required />
 
                 {
-                  this.state.UrlImagen.length <= 0
-                    ? "" :
+                  this.state.UrlImagen.length > 0
+                    ? 
                     <div className="imgDelete">
                       <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
                       <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
                     </div>
+                    : ""
                 }
+
                 <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
 
-                <div className="custom-file">
+                <div className="custom-file mt-2">
                   <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
                   <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
 
                 </div>
               </FormGroup>
 
-              <Button type="submit"> GUARDAR </Button>
+              <Button type="submit" color="primary"> <MdSave /> GUARDAR </Button>
             </Form>
           </div>
 
@@ -650,32 +649,19 @@ class GestionTareas extends Component {
                 </NavLink>
               </NavItem>
 
-              {/* <UncontrolledButtonDropdown onClick={() => this.dropdownRecibidos("3")} className={ActiveTab === "3" ? "bg-primary" : ""}>
-                <DropdownToggle nav caret>
-                  <MdSystemUpdateAlt /> Recibidos <span className="badge badge-light">{DataTareasApi.length} </span>{" "}
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem active={true} onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorPendientes")} >Pendientes <div className="float-right"><span className="badge badge-warning">{DataTareasApi.length} </span></div> </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorProgreso")}>Progreso <div className="float-right"><span className="badge badge-light">{DataTareasApi.length} </span></div></DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorTerminadas")}>Concluido <div className="float-right"><span className="badge badge-light">{DataTareasApi.length} </span></div></DropdownItem>
-                </DropdownMenu>
-              </UncontrolledButtonDropdown>
+              <NavItem>
+                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorTerminadas","3")}>
+                  VENCIDOS
+                </NavLink>
+              </NavItem>
 
 
-              <UncontrolledButtonDropdown onClick={() => this.dropdownRecibidos("4")} className={ActiveTab === "4" ? "bg-primary" : ""} >
-                <DropdownToggle nav caret>
-                  <MdSend /> Enviados <span className="badge badge-light">{DataTareasApi.length} </span>{" "}
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem onClick={() => this.reqTareas(Id_Acceso, "/getTareaEmisorPendientes")}>Pendientes <div className="float-right"><span className="badge badge-light">{DataTareasApi.length} </span></div></DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={() => this.reqTareas(Id_Acceso, "/getTareaEmisorProgreso")}>Progreso <div className="float-right"><span className="badge badge-light">{DataTareasApi.length} </span></div></DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={() => this.reqTareas(Id_Acceso, "/getTareaEmisorTerminadas")}>Concluido <div className="float-right"><span className="badge badge-light">{DataTareasApi.length} </span></div></DropdownItem>
-                </DropdownMenu>
-              </UncontrolledButtonDropdown> */}
+              <NavItem>
+                <NavLink className={classnames({ "bg-info": ActiveTab === "4" })} onClick={() => this.reqTareas(Id_Acceso, "/getTareaReceptorTerminadas","4")} style={{ marginTop: "-3px"}}>
+                  <MdAlarmAdd size={ 15 } />
+                </NavLink>
+              </NavItem>
+
             </Nav>
 
             <div className="p-2">
@@ -703,9 +689,10 @@ class GestionTareas extends Component {
                             </div>
 
                           </Col>
-                          ):""
+                          ): ""
                         }
-                      
+
+
                       </Row>
                     </div>
 
