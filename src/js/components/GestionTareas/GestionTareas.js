@@ -95,7 +95,10 @@ class GestionTareas extends Component {
 
       nombreProyectoValidacion: "",
       condicionInputCollapse: false,
-      collapseProyecto:"0"
+      collapseProyecto:"0",
+      // datos desde hasta para pendientes progreso .....
+      Inicio:"",
+      Fin:""
     };
   }
 
@@ -186,8 +189,8 @@ class GestionTareas extends Component {
     formData.append('receptor', Personal);
     formData.append('archivo', file);
     formData.append('extension', tamanioImagenUrl);
-    formData.append('codigo_obra', sessionStorage.getItem("codigoObra"));
-    formData.append('tareas_id_tarea', 35);
+    formData.append('codigo_obra', Id_Obra );
+    formData.append('tareas_id_tarea', "");
 
     const config = {
       headers: {
@@ -245,7 +248,6 @@ class GestionTareas extends Component {
     })
 
   }
-
 
   subtareaAdd(idTarea) {
     console.log("id tarea", idTarea)
@@ -370,23 +372,29 @@ class GestionTareas extends Component {
     }
   }
 
-  CollapseProyecto( index ){
+  CollapseProyecto( index, IdProyecto ){
     console.log("index ", index)
     this.setState(({ collapseProyecto: this.state.collapseProyecto === index ? null: index }));
+    if (this.state.collapseProyecto !== index) {
+      this.reqTareasRecibidas(Id_Acceso, this.state.Inicio, this.state.Fin, IdProyecto)
+      return
+    }
+    this.setState({PositsFiltrado:[] })
   }
 
-  MostrasMasTarea(idTarea){
+  MostrasMasTarea( idTarea ){
     
     console.log("id", idTarea)
 
 
-    var Tareas = this.state.DataTareasApi
+    // var Tareas = this.state.DataTareasApi
+    // console.log("DataTareasApi_______ ", Tareas)
 
-    Tareas = Tareas.filter((tarea) => {
-      return tarea.id_tarea === idTarea
-    })
+    // Tareas = Tareas.filter((tarea) => {
+    //   return tarea.id_tarea === idTarea
+    // })
     
-    
+    // console.log("Tareas>>>>>>>_______ ", Tareas)
 
     axios.post(`${UrlServer}/getTareaIdTarea`,
       {
@@ -394,12 +402,13 @@ class GestionTareas extends Component {
       }
     )
     .then((res)=>{
-      console.log("data mas ver mas tarea ", res)
-      var dataArmar = Object.assign(Tareas[0], res.data);
-      console.log("dataArmar  ", dataArmar)
+      console.log("data mas ver mas tarea ", res.data)
+      // var dataArmar = Object.assign(Tareas[0], res.data);
+
+      // console.log("dataArmar  ", dataArmar)
 
       this.setState({
-        PositsFiltrado:dataArmar
+        PositsFiltrado: res.data
       })
 
     })
@@ -411,8 +420,12 @@ class GestionTareas extends Component {
 
   reqProyectos(id_acceso, inicio, fin, index) {
 
-    this.setState({ ActiveTab: index })
-    this.reqTareasEmitidos(Id_Acceso, inicio, fin)
+    this.setState({ 
+      ActiveTab: index,
+      Inicio:inicio,
+      Fin:fin
+    })
+    this.reqTareasEmitidos(id_acceso, inicio, fin)
 
     axios.post(`${UrlServer}/getTareasReceptorProyectos`,
       {
@@ -434,10 +447,10 @@ class GestionTareas extends Component {
       })
   }
 
-  reqTareasRecibidas(Id_Acceso, inicio, fin, IdProyecto){
+  reqTareasRecibidas(id_acceso, inicio, fin, IdProyecto){
     axios.post(`${UrlServer}/getTareasReceptor`,
       {
-        "id_acceso":Id_Acceso,
+        "id_acceso":id_acceso,
         "inicio":inicio,
         "fin":fin,
         "id_proyecto":IdProyecto
@@ -483,42 +496,26 @@ class GestionTareas extends Component {
       }
     )
     .then((res) => {
-      console.log("response de subordinados", res.data)
+      // console.log("response de subordinados", res.data)
       var dataRes = res.data
-       var NewData = []
-      for (let i = 0; i < dataRes.length; i++) {
-        NewData.push(
-          {
-            apellido_paterno:dataRes[i].apellido_paterno ,
-            cargo_nivel:dataRes[i].cargo_nivel, 
-            cargo_nombre:dataRes[i].cargo_nombre,
-            id_acceso:dataRes[i].id_acceso,
-            usuario_nombre:dataRes[i].usuario_nombre,
-            subordinadosTareas:[]
-          }
-        )
+      for (let j = 0; j < dataRes.length; j++) {
+        var tamanioSubor = dataRes[j].subordinadosTareas.length
+        var AnadirElementos = 8 - tamanioSubor
+        
+        for (let k = 0; k < AnadirElementos; k++) {
 
-        for (let j = 0; j < 8 ; j++) {
-
-          NewData[i].subordinadosTareas.push(
+          dataRes[j].subordinadosTareas.push(
             {
               id_proyecto: null,
-              prioridad_color: ""
+              prioridad_color: "",
+              tareas_id_tarea: ""
             }
           )
         }
-
-        for (let j = 0; j < dataRes[i].subordinadosTareas.length; j++) {
-          NewData[i].subordinadosTareas[j].id_proyecto = dataRes[i].subordinadosTareas[j].id_proyecto
-          NewData[i].subordinadosTareas[j].prioridad_color = dataRes[i].subordinadosTareas[j].prioridad_color
-        }
-
-      }
-
-      console.log("data subordiados >===========> ", NewData )
-      
+          // Object.defineProperty( NewData[j].subordinadosTareas[k], "id_proyecto", { value:" dataRes[j].subordinadosTareas[k].id_proyecto" })
+      }      
       this.setState({
-        DatSubordinadospi: NewData,
+        DatSubordinadospi: dataRes,
       })
 
     })
@@ -560,17 +557,13 @@ class GestionTareas extends Component {
     }
      
 
-    // let tasks = this.state.tasks.filter((task)=> {
-    //     if (task.name == id) {
-    //       task.category = cat;
-    //     }
-    //     return task;
-    //   });
+    let tasks = this.state.tasks.filter((task)=> {
+        if (task.name == id) {
+          task.category = cat;
+        }
+        return task;
+      });
 
-    // this.setState({
-    //   ...this.state,
-    //   tasks
-    // });
   }
 
   render() {
@@ -777,7 +770,7 @@ class GestionTareas extends Component {
                           <Col md="6 mb-2" key={ iS }>
                             <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea )} draggable>
                               <div className="d-flex justify-content-between headerTarea p-1">
-                                <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgHeader" />
+                                <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="20%" height="20%" />
 
                                 <label className="m-0 h5">{`T-${iS+1}` }</label>
 
@@ -806,7 +799,7 @@ class GestionTareas extends Component {
                         <div>
                           <div className="containerTarea">
                             <div className="d-flex justify-content-between headerTarea p-1">
-                              <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgHeader" />
+                              <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="18%" height="18%" />
 
                               <label className="m-0 h6 text-center"> { PositsFiltrado.asunto }</label>
 
@@ -836,56 +829,64 @@ class GestionTareas extends Component {
                           </div>
                         </div>
                     }
-                          <div className="text-center text-primary">
-                            <b> JEFES DE AREA  </b>
-                          </div>
-                          {
-                            DatSubordinadospi !== undefined ?
-                            DatSubordinadospi.map((subtarea, iS) =>
-                              <div className="media" key={  iS }>
-                                <div className="" style={{width: "18%"}}>
-                                  <img className="img-fluid " src="https://www.scripturaengage.com/wp-content/uploads/2017/05/Profile-Picture-Pauline-Suy-circle-ScripturaEngage.png" alt="perfil" width="45" /><br />
-                                  {/* <label className="text-center" style={{ fontSize: "0.5rem" }}><b>Sub Gerente</b></label><br/>
-                                  <label className="text-center" style={{ fontSize: "0.5rem" }}><b>Sub Gerente</b></label> */}
-                                  <div className="d-flex flex-column text-center" style={{ fontSize: "0.5rem" }}>
-                                    <div>{ subtarea.usuario_nombre }</div>
-                                    <div className="text-primary ">{ subtarea.cargo_nombre }</div>
-                                  </div>
-                                </div>
-
-                                <div className="media-body">
-                                  <Container>
-                                    <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", subtarea.id_acceso ) }}>
-
-                                      <Row>
-                                        {
-                                          subtarea.subordinadosTareas.map((subTares, IndexS)=>
-                                            <Col md="1" className="m-1 p-0" style={{background: subTares.prioridad_color}} key={ IndexS }>
-                                              <div className="text-center flex-column " style={{ fontSize: "0.6rem" }}>
-                                                { subTares.id_proyecto === null ? <div style={{ border:"1px dashed #ffffff", padding: "6px" }}/>: <div>T-{ IndexS+1 }</div>}
-                                              </div>
-                                            </Col>
-                                          )
-                                        }
-                                      
-                                      </Row>
-                                    </div>
-                                  </Container>
+                      <div className="fondoSubord">
+                        <div className="text-center text-primary">
+                          <b> JEFES DE AREA  </b>
+                        </div>
+                        {
+                          DatSubordinadospi !== undefined ?
+                          DatSubordinadospi.map((subtarea, iS) =>
+                            <div className="media mb-2" key={  iS }>
+                              <div className="" style={{width: "12%"}}>
+                                <img className="imgCircular" src={`${UrlServer}${subtarea.subordinado_imagen }`} alt={ subtarea.subordinado_imagenAlt } width="30px" height="30px"/><br />
+                                <div className="d-flex flex-column text-center" style={{ fontSize: "0.5rem" }}>
+                                  <div>{ subtarea.usuario_nombre }</div>
+                                  
                                 </div>
                               </div>
-                              ):""
-                          }
-                        
+
+                              <div className="media-body">
+
+
+                              <div className="text-warning  ml-2 text-capitalize">{ subtarea.cargo_nombre }</div>
+                                <Container fluid>
+                                  <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", subtarea.id_acceso ) }}>
+
+                                    <Row>
+                                      {
+                                        subtarea.subordinadosTareas.map((subTares, IndexS)=>
+                                          <Col md="1" className="m-1 p-0" style={{ background: subTares.prioridad_color}} key={ IndexS } >
+                                            <div className="text-center flex-column " style={{ fontSize: "0.6rem" }}>
+                                              { subTares.id_proyecto === null ? 
+                                                <div style={{ border:"1px dashed #ffffff", padding: "6px" }}/>: 
+                                                <div  onClick={()=>this.MostrasMasTarea( subTares.tareas_id_tarea ) } className="prioridad" >T-{ IndexS+1 }</div>}
+                                            </div>
+                                          </Col>
+                                        )
+                                      }
+                                    
+                                    </Row>
+                                  </div>
+                                </Container>
+                              </div>
+                              
+                            </div>
+                            
+                            ):"" 
+                        }
+                      </div>
+                      
                   </Col>
                   <Col md="6">
                     {
                       DataProyectoMostrarApi.map((proyectoMostrar , IndexPM)=>
                     
                         <div key={ IndexPM }>
-                          <div className="proyectoBorder prioridad" onClick={ ()=> this.CollapseProyecto( IndexPM.toString() ) }>
+                          <div className="proyectoBorder prioridad" onClick={ ()=> this.CollapseProyecto( IndexPM.toString(),  proyectoMostrar.id_proyecto ) }>
                             <div className="numeroProyecto" style={{background: proyectoMostrar.color }}>P-{ proyectoMostrar.id_proyecto }</div>
                             <div className="nombreProyecto">{ proyectoMostrar.nombre }</div>
                           </div>
+
                           <Collapse isOpen={this.state.collapseProyecto === IndexPM.toString()}>
                             <Row>
                               {
@@ -893,12 +894,12 @@ class GestionTareas extends Component {
                                   <Col md="4" key={ indexT }>
                                     <div className="containerTarea m-2">
                                       <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={()=>this.MostrasMasTarea(tarea.id_tarea) }>
-                                        <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgHeader" />
-                                        <label className="m-0 text-center">{ tarea.asunto }</label>
+                                        <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular"  width="18%" height="18%"  />
+                                        <div className="m-0 text-center">{ tarea.asunto }</div>
                                         <div style={{ background: tarea.prioridad_color , width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
                                       </div>
                                       <div className="bodyTareaProyecto">
-                                        <img src={ `${UrlServer}${tarea.imagen_subordinado[0].imagen}`  } alt="sigobras" className=" mx-auto d-block rounded-circle" width="50%" />
+                                        <img src={ `${UrlServer}${tarea.imagen_subordinado[0].imagen}`  } alt="sigobras" className=" mx-auto d-block imgCircular" width="70%" height="70%" />
                                         <div className="text-center flex-column ">
                                           <div>{ tarea.porcentaje_avance }%</div>
                                           <div>ANGERMAN</div>

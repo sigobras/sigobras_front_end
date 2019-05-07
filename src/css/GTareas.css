@@ -19,11 +19,6 @@
   right: 42px;
 }
 
-.imgHeader{
-  border-radius: 50%;
-  width: 20%;
-  height: 50%;
-}
 
 .bodyTarea{
   background: #f78a07;
@@ -73,6 +68,23 @@
 
 }
 
+
+.imgCircular{
+  /* width: 150px;
+  height: 150px; */
+  border-radius: 50%;
+  /* margin: 20px; */
+  -o-object-fit: cover;
+      object-fit: cover;
+  /* -o-object-position: center right;
+      object-position: center right; */
+}
+
+.fondoSubord{
+  background: #0080ff3b;
+  padding: 4px;
+  border-radius: 2%;
+}
 /* formmm */
 .formPositContainer{
   padding: 8px;
