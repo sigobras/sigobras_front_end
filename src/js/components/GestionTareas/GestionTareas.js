@@ -23,7 +23,6 @@ class GestionTareas extends Component {
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
     this.AgregaTarea = this.AgregaTarea.bind(this);
     this.porcentCollapse = this.porcentCollapse.bind(this);
-    this.incremetaBarraPorcent = this.incremetaBarraPorcent.bind(this);
     this.MostrasMasTarea = this.MostrasMasTarea.bind(this);
     this.subtareaAdd = this.subtareaAdd.bind(this);
     this.onChangeProyecto = this.onChangeProyecto.bind(this);
@@ -68,7 +67,6 @@ class GestionTareas extends Component {
       descripcion: "",
       fechaInicio: "",
       duracion: null,
-      porcentajeAvance: 0,
 
       barraPorcentaje: null,
       collapseInputPorcentaje: null,
@@ -98,7 +96,9 @@ class GestionTareas extends Component {
       collapseProyecto:"0",
       // datos desde hasta para pendientes progreso .....
       Inicio:"",
-      Fin:""
+      Fin:"",
+      // index para eliminar la data 
+      indexSubTarea:null
     };
   }
 
@@ -154,8 +154,9 @@ class GestionTareas extends Component {
   AgregaTarea(e) {
     e.preventDefault()
 
-   
-    var { Posits, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, porcentajeAvance, InputPersonal } = this.state
+    
+    console.log("ejecutando")
+    var { Posits, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
 
     // if( Para.length <=0 && InputPersonal.length <=0  ){
     //     console.log(" no es proyecto")
@@ -211,7 +212,7 @@ class GestionTareas extends Component {
           asunto: "",
           InputPersonal: [],
           descripcion: "",
-          fechaInicio: "",
+          // fechaInicio: "",
         })
         // document.getElementById("descripcion").value = "";
         document.getElementById("formAgregarTarea").reset();
@@ -230,23 +231,6 @@ class GestionTareas extends Component {
         collapseInputPorcentaje: this.state.collapseInputPorcentaje === index ? null : index,
       }
     );
-  }
-
-  incremetaBarraPorcent(key) {
-    console.log("object", key)
-
-    var { Posits, barraPorcentaje } = this.state
-    var PositTareas = Posits
-
-    PositTareas[key].porcentajeAvance = Number(barraPorcentaje)
-
-    console.log(PositTareas)
-
-    this.setState({
-      Posits: PositTareas,
-      collapseInputPorcentaje: null,
-    })
-
   }
 
   subtareaAdd(idTarea) {
@@ -525,22 +509,28 @@ class GestionTareas extends Component {
   }
   // drag funciones==============================================================================
 
-  onDragStart(ev, id) {
-    console.log('moviendo :', id);
+  onDragStart(ev, id, index) {
+    console.log('moviendo :', id, "index ", index);
     ev.dataTransfer.setData("id", id);
+    this.setState({indexSubTarea: Number(index) })
   }
 
   onDragOver(ev) {
     ev.preventDefault();
-
     // console.log("mover over ", ev)
   }
 
   onDrop(ev, cat, idAccesso ) {
     console.log("onDrop ", cat, "idAccesso ", idAccesso)
-    let id = ev.dataTransfer.getData("id");
 
-    console.log("id ondrop ", id)
+    var { indexSubTarea } = this.state
+    let id = ev.dataTransfer.getData("id");
+    var DataSubordinados = this.state.DatSubordinadospi
+    var DataEmitidos = this.state.DataTareasEmitidosApi
+    
+
+    var fiterIdacceso = DataSubordinados.map(((e) =>{ return e.id_acceso; })).indexOf(idAccesso);
+    console.log("DataEmitidos ", DataEmitidos)
 
     if (cat === "completado") {
        axios.post(`${UrlServer}/postTareaReceptores`,
@@ -550,19 +540,21 @@ class GestionTareas extends Component {
       )
       .then((res)=>{
         console.log("response asigna tarea", res.data )
+        DataEmitidos.splice(indexSubTarea, 1)
+
+        DataSubordinados[fiterIdacceso].subordinadosTareas = res.data
+
+        this.setState({
+          DatSubordinadospi: DataSubordinados,
+          // DataTareasEmitidosApi:""
+        })
+
       })
       .catch((err)=>{
         console.log("error al enviar datos ", err)
       })
     }
-     
 
-    let tasks = this.state.tasks.filter((task)=> {
-        if (task.name == id) {
-          task.category = cat;
-        }
-        return task;
-      });
 
   }
 
@@ -768,7 +760,7 @@ class GestionTareas extends Component {
                         {
                           DataTareasEmitidosApi.map((TareasEmit, iS) =>
                           <Col md="6 mb-2" key={ iS }>
-                            <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea )} draggable>
+                            <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS )} draggable>
                               <div className="d-flex justify-content-between headerTarea p-1">
                                 <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="20%" height="20%" />
 
