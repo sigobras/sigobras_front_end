@@ -162,9 +162,6 @@ class GestionTareas extends Component {
 
   AgregaTarea(e) {
     e.preventDefault()
-
-    
-    
     var { PositsFiltrado, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
     console.log("ejecutando", PositsFiltrado.id_tarea )
 
@@ -452,6 +449,7 @@ class GestionTareas extends Component {
   textPorcentEdit( e, indexT, id_tarea ){
     var valorInput = e.target.value
 
+    valorInput = Number(valorInput)
     console.log("valor del inoutt", valorInput)
 
     axios.post(`${UrlServer}/postTareaAvance`,{

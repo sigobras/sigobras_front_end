@@ -30,32 +30,35 @@ class ListaObras extends Component{
     }
 
 
-    Setobra(idFicha, estado_nombre,codigoObra){
+    Setobra(idFicha, estado_nombre, codigoObra){
 
         sessionStorage.setItem("idobra", idFicha);
         sessionStorage.setItem("estadoObra", estado_nombre);
         sessionStorage.setItem("codigoObra", codigoObra);
+        setTimeout(()=>{ window.location.href = '/inicio'},50);            
 
-        switch(estado_nombre) {
-            case 'Corte':
-                setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
-            break;
-            case 'Actualizacion':
-                setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
-            break;
-            case 'Paralizado':
-                setTimeout(()=>{ window.location.href = '/ParalizacionObra'},50);
-            break;
+        // switch(estado_nombre) {
+        //     case 'Corte':
+        //         setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
+        //     break;
 
-            case 'Compatibilidad':
-            setTimeout(()=>{ window.location.href = '/CompatibilidadObra'},50);
-            break;
+        //     case 'Actualizacion':
+        //         setTimeout(()=>{ window.location.href = '/MDdiario'},50);            
+        //     break;
 
-            default: 'Ejecucion'
-                setTimeout(()=>{ window.location.href = '/MDdiario'},50);
-            break;
+        //     case 'Paralizado':
+        //         setTimeout(()=>{ window.location.href = '/ParalizacionObra'},50);
+        //     break;
+
+        //     case 'Compatibilidad':
+        //         setTimeout(()=>{ window.location.href = '/CompatibilidadObra'},50);
+        //     break;
+
+        //     default: 'Ejecucion'
+        //         setTimeout(()=>{ window.location.href = '/MDdiario'},50);
+        //     break;
             
-        }
+        // }
     } 
 
 
@@ -146,7 +149,7 @@ class ListaObras extends Component{
 
                         </td>
                         <td className="text-center"> 
-                            <button className="btn btn-outline-dark btn-sm text-white" onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre, Obras.codigo  )) }>{ Obras.codigo } </button> 
+                            <button className={ sessionStorage.getItem("codigoObra") === Obras.codigo?" btn btn-primary btn-sm text-white ":  "btn btn-outline-dark btn-sm text-white"} onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre, Obras.codigo  )) }>{ Obras.codigo } </button> 
                         </td>
                         <td className="text-center"> 
                             <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>

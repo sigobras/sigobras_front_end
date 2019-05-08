@@ -119,7 +119,7 @@ class MDHistorial extends Component {
 
             if(tab === "resumen"){
                 
-                this.ResumenRequest()
+                this.ResumenRequest( this.state.fecha )
                 return
             }
 
@@ -190,7 +190,7 @@ class MDHistorial extends Component {
     }
 
     ResumenRequest(ultimafecha){
-        // console.log("fecha", ultimafecha)
+        console.log("fecha", ultimafecha)
 
         axios.post(`${UrlServer}/getHistorialResumen`,{
             id_ficha: sessionStorage.getItem('idobra'),
@@ -485,8 +485,6 @@ class MDHistorial extends Component {
                                                     </fieldset>
                                                 )
                                             }
-                                                
-
                                             </Col>
                                         </Row>
                                     }

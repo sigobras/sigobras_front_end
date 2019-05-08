@@ -90,8 +90,7 @@ class AppAng extends Component {
 
             // console.log('data >>>',res)
 
-
-            if (res.data === 'null') {
+            if (res.data === "") {
                 this.setState({
                     DataMenus: []
                 })
