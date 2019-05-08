@@ -3,8 +3,10 @@ import { Container, TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col
 import axios from 'axios';
 import classnames from 'classnames';
 import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd, MdAlarmAdd, MdSave, MdClose } from "react-icons/md";
+import { FaFileDownload } from "react-icons/fa";
 import { GoSignIn, GoSignOut, GoOrganization } from "react-icons/go";
 import { DebounceInput } from 'react-debounce-input';
+import { toast } from "react-toastify";
 
 import Picky from "react-picky";
 import "react-picky/dist/picky.css";
@@ -24,13 +26,15 @@ class GestionTareas extends Component {
     this.AgregaTarea = this.AgregaTarea.bind(this);
     this.porcentCollapse = this.porcentCollapse.bind(this);
     this.MostrasMasTarea = this.MostrasMasTarea.bind(this);
+    this.EditPorcentaje = this.EditPorcentaje.bind(this);
+    this.textPorcentEdit = this.textPorcentEdit.bind(this);
     this.subtareaAdd = this.subtareaAdd.bind(this);
     this.onChangeProyecto = this.onChangeProyecto.bind(this);
     this.onChangePara = this.onChangePara.bind(this);
     this.onChangePersonal = this.onChangePersonal.bind(this);
     this.onChangeImgMetrado = this.onChangeImgMetrado.bind(this);
     this.clearImg = this.clearImg.bind(this);
-    // this.SeteaTareasRecibidas = this.SeteaTareasRecibidas.bind(this);
+    this.DescargarArchivo = this.DescargarArchivo.bind(this);
     // this.CollapseFormContainerAddTarea = this.CollapseFormContainerAddTarea.bind(this);
     // this.dropdownRecibidos = this.dropdownRecibidos.bind(this);
     this.CreaProyecto = this.CreaProyecto.bind(this);
@@ -98,7 +102,11 @@ class GestionTareas extends Component {
       Inicio:"",
       Fin:"",
       // index para eliminar la data 
-      indexSubTarea:null
+      indexSubTarea:null,
+      // editar valor porcentaje
+
+      InputEditablePorcent: null
+
     };
   }
 
@@ -109,6 +117,7 @@ class GestionTareas extends Component {
 
     this.reqProyectos(Id_Acceso, "0", "0", "0")
     this.reqTareasEmitidos(Id_Acceso, "0", "0")
+    // this.reqTareasEmitidos(id_acceso, inicio, fin)
 
     // API DE SUBORDINADOS
     this.reqSubordinados( Id_Acceso )
@@ -155,8 +164,9 @@ class GestionTareas extends Component {
     e.preventDefault()
 
     
-    console.log("ejecutando")
-    var { Posits, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
+    
+    var { PositsFiltrado, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
+    console.log("ejecutando", PositsFiltrado.id_tarea )
 
     // if( Para.length <=0 && InputPersonal.length <=0  ){
     //     console.log(" no es proyecto")
@@ -164,7 +174,11 @@ class GestionTareas extends Component {
     // }
     var funcionMap = (data) => ([data.id_acceso])
     var Personal = InputPersonal.map(funcionMap);
+    var idTarea  = PositsFiltrado.id_tarea
 
+    if (typeof idTarea === "undefined" ) {
+      idTarea = ""
+    }
     // console.log("Personal ->", Personal)
     //dias a sumar
     var TuFecha = new Date(fechaInicio);
@@ -191,7 +205,7 @@ class GestionTareas extends Component {
     formData.append('archivo', file);
     formData.append('extension', tamanioImagenUrl);
     formData.append('codigo_obra', Id_Obra );
-    formData.append('tareas_id_tarea', "");
+    formData.append('tareas_id_tarea', idTarea);
 
     const config = {
       headers: {
@@ -204,20 +218,26 @@ class GestionTareas extends Component {
       config
     )
       .then((res) => {
-        console.log("Post tareas", res.data)
-        this.setState({
-          // ActiveTab: "4",
-          Para: [],
-          proyecto: [],
-          asunto: "",
-          InputPersonal: [],
-          descripcion: "",
-          // fechaInicio: "",
-        })
-        // document.getElementById("descripcion").value = "";
-        document.getElementById("formAgregarTarea").reset();
+        console.log("Post tareas", res)
+        if (res.data !== "") {
+          this.setState({
+            // ActiveTab: "4",
+            Para: [],
+            proyecto: [],
+            asunto: "",
+            InputPersonal: [],
+            descripcion: "",
+            // fechaInicio: "",
+          })
+          // document.getElementById("descripcion").value = "";
+          document.getElementById("formAgregarTarea").reset();
 
-        this.reqProyectos(Id_Acceso,"0","0","0","0")
+          this.reqProyectos(Id_Acceso,"0","0","0","0")  
+          toast.success("✔ Tarea Agregada al sistema ")
+          return
+        }
+        toast.error("❌ complete todos los campos requeridos ")
+
       })
       .catch((err) => {
         console.error("datos de tarea", err);
@@ -329,6 +349,29 @@ class GestionTareas extends Component {
     document.getElementById("myImage").value = "";
   }
 
+  DescargarArchivo(data){
+      var tipoArchivo = Extension(data)
+      console.log("ulr ", data, "tipo archivo ", tipoArchivo)
+
+
+      // const url = window.URL.createObjectURL(data);
+      const url = data
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', data, "target", "_blank");
+
+      // if( tipoArchivo == ".jpg" ||  tipoArchivo == ".jpeg",  tipoArchivo == ".png"){
+        console.log("es una imagen")
+        link.setAttribute("target", "_blank");
+
+      // }
+      document.body.appendChild(link);
+      link.click();
+
+      console.log("link.click() ", link)
+  }
+
   CreaProyecto() {
 
     if (this.state.inputNombreProyecto.length <= 0) {
@@ -390,7 +433,7 @@ class GestionTareas extends Component {
       // var dataArmar = Object.assign(Tareas[0], res.data);
 
       // console.log("dataArmar  ", dataArmar)
-
+      
       this.setState({
         PositsFiltrado: res.data
       })
@@ -398,6 +441,35 @@ class GestionTareas extends Component {
     })
     .catch((err)=>{
       console.error("algo salió mal al enviar los datos ", err)
+    })
+  }
+
+  EditPorcentaje( index ){
+    console.log("ejecutando EditPorcentaje")
+    this.setState({ InputEditablePorcent: this.state.InputEditablePorcent === index ? null : index})
+  }
+
+  textPorcentEdit( e, indexT, id_tarea ){
+    var valorInput = e.target.value
+
+    console.log("valor del inoutt", valorInput)
+
+    axios.post(`${UrlServer}/postTareaAvance`,{
+      "avance":valorInput,
+      "id_tarea":id_tarea,
+    })
+    .then((res)=>{
+      console.log("retorno de porcent ", res.data)
+      var tareasRecibidas = this.state.DataTareasApi
+        tareasRecibidas[indexT].porcentaje_avance = res.data.avance
+      this.setState({ 
+        InputEditablePorcent: false,
+        DataTareasApi: tareasRecibidas
+      })
+
+    })
+    .catch((err)=>{
+      console.error("erro al enviar el porcentaje del api ", err)
     })
   }
   // REQUESTS AL API ---------------------------------------------
@@ -409,7 +481,6 @@ class GestionTareas extends Component {
       Inicio:inicio,
       Fin:fin
     })
-    this.reqTareasEmitidos(id_acceso, inicio, fin)
 
     axios.post(`${UrlServer}/getTareasReceptorProyectos`,
       {
@@ -480,28 +551,15 @@ class GestionTareas extends Component {
       }
     )
     .then((res) => {
-      // console.log("response de subordinados", res.data)
+      console.log("response de subordinados", res.data)
       var dataRes = res.data
-      for (let j = 0; j < dataRes.length; j++) {
-        var tamanioSubor = dataRes[j].subordinadosTareas.length
-        var AnadirElementos = 8 - tamanioSubor
-        
-        for (let k = 0; k < AnadirElementos; k++) {
-
-          dataRes[j].subordinadosTareas.push(
-            {
-              id_proyecto: null,
-              prioridad_color: "",
-              tareas_id_tarea: ""
-            }
-          )
-        }
+      if(dataRes !== "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD"){
           // Object.defineProperty( NewData[j].subordinadosTareas[k], "id_proyecto", { value:" dataRes[j].subordinadosTareas[k].id_proyecto" })
-      }      
-      this.setState({
-        DatSubordinadospi: dataRes,
-      })
-
+        
+        this.setState({
+          DatSubordinadospi: dataRes,
+        })
+      }
     })
     .catch((err) => {
       console.error("errorr al obterner datos", err)
@@ -523,10 +581,10 @@ class GestionTareas extends Component {
   onDrop(ev, cat, idAccesso ) {
     console.log("onDrop ", cat, "idAccesso ", idAccesso)
 
-    var { indexSubTarea } = this.state
+    var { indexSubTarea, DatSubordinadospi, DataTareasEmitidosApi } = this.state
     let id = ev.dataTransfer.getData("id");
-    var DataSubordinados = this.state.DatSubordinadospi
-    var DataEmitidos = this.state.DataTareasEmitidosApi
+    var DataSubordinados = DatSubordinadospi
+    var DataEmitidos = DataTareasEmitidosApi
     
 
     var fiterIdacceso = DataSubordinados.map(((e) =>{ return e.id_acceso; })).indexOf(idAccesso);
@@ -540,14 +598,17 @@ class GestionTareas extends Component {
       )
       .then((res)=>{
         console.log("response asigna tarea", res.data )
-        DataEmitidos.splice(indexSubTarea, 1)
+        if(res.data !== "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD"){
 
-        DataSubordinados[fiterIdacceso].subordinadosTareas = res.data
+          DataEmitidos.splice(indexSubTarea, 1)
 
-        this.setState({
-          DatSubordinadospi: DataSubordinados,
-          // DataTareasEmitidosApi:""
-        })
+          DataSubordinados[fiterIdacceso].subordinadosTareas = res.data
+
+          this.setState({
+            DatSubordinadospi: DataSubordinados,
+            // DataTareasEmitidosApi:""
+          })
+        }
 
       })
       .catch((err)=>{
@@ -559,7 +620,7 @@ class GestionTareas extends Component {
   }
 
   render() {
-    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse } = this.state
+    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent } = this.state
 
     return (
       <div>
@@ -711,26 +772,26 @@ class GestionTareas extends Component {
             <Nav tabs>
 
               <NavItem>
-                <NavLink className={classnames("bg-warning")} onClick={() => this.setState({ CollapseFormContainerAddTarea: !CollapseFormContainerAddTarea })}>
+                <NavLink className={ classnames("bg-warning")} onClick={() => this.setState({ CollapseFormContainerAddTarea: !CollapseFormContainerAddTarea })}>
                   {CollapseFormContainerAddTarea === true ? <GoSignIn /> : <GoSignOut />}
                 </NavLink>
               </NavItem>
 
               <NavItem>
-                {/* <NavLink className={classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "/getTareaEmisorPendientes", "0")}> */}
-                <NavLink className={classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "0", "0")}>
+                {/* <NavLink className={ classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "/getTareaEmisorPendientes", "0")}> */}
+                <NavLink className={ classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "0", "0")}>
                   PENDIENTES
                 </NavLink>
               </NavItem>
 
               <NavItem>
-                <NavLink className={classnames({ active: ActiveTab === "1" })} onClick={() => this.reqProyectos(Id_Acceso, "1", "99","1")}>
+                <NavLink className={ classnames({ active: ActiveTab === "1" })} onClick={() => this.reqProyectos(Id_Acceso, "1", "99","1")}>
                   PROGRESO
                 </NavLink>
               </NavItem>
 
               <NavItem>
-                <NavLink className={classnames({ active: ActiveTab === "2" })} onClick={() => this.reqProyectos(Id_Acceso, "100", "100", "2")}>
+                <NavLink className={ classnames({ active: ActiveTab === "2" })} onClick={() => this.reqProyectos(Id_Acceso, "100", "100", "2")}>
                   CONCLUIDOS
                 </NavLink>
               </NavItem>
@@ -799,16 +860,31 @@ class GestionTareas extends Component {
 
                             </div>
                             
-                            <div className="bodyTareaProyecto">
+                            <div className="bodyTareaProyecto" style={{ background: PositsFiltrado.proyecto_color }}>
                               <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className=" mx-auto d-block" width="65%" />
                               <div className="text-center flex-column ">
                                 <div>{ `${ PositsFiltrado.porcentaje_avance} %` }</div>
-                                <div>ANGERMAN</div>
+                                <div>{ PositsFiltrado.emisor_nombre}</div>
                               </div>
 
                             </div>
-                            <div className="headerTarea">
-                              Por: GERENTE
+                            <div className="headerTarea text-uppercase px-2 clearfix">
+                              <div className="float-left">
+                                Por: { PositsFiltrado.emisor_cargo} 
+                              </div>
+                              <div className="float-right prioridad" style={{ marginTop: "-2px"}}>
+                                {
+                                  PositsFiltrado.tipo_archivo !== null ?
+                                    <div className="text-primary" title="descargar archivo" onClick={()=> this.DescargarArchivo(`${UrlServer}${PositsFiltrado.tipo_archivo}`) } ><FaFileDownload /></div>
+                                  :""
+                                }
+                                {/* {
+                                  PositsFiltrado.tipo_archivo !== null ?
+                                    <a href={ `${UrlServer}${PositsFiltrado.tipo_archivo}`  } download target="_blank" className="text-primary" title="descargar archivo"> <FaFileDownload /></a>
+                                  :""
+                                }
+                                 */}
+                              </div>
                             </div>
                           </div>
                           <div className="text-center">
@@ -874,9 +950,10 @@ class GestionTareas extends Component {
                       DataProyectoMostrarApi.map((proyectoMostrar , IndexPM)=>
                     
                         <div key={ IndexPM }>
-                          <div className="proyectoBorder prioridad" onClick={ ()=> this.CollapseProyecto( IndexPM.toString(),  proyectoMostrar.id_proyecto ) }>
-                            <div className="numeroProyecto" style={{background: proyectoMostrar.color }}>P-{ proyectoMostrar.id_proyecto }</div>
-                            <div className="nombreProyecto">{ proyectoMostrar.nombre }</div>
+
+                          <div className="proyectoBorder prioridad mb-2" style={{borderBottom: `2px solid ${proyectoMostrar.color}` }} onClick={ ()=> this.CollapseProyecto( IndexPM.toString(),  proyectoMostrar.id_proyecto ) }>
+                            <div className="numeroProyecto">P-{ proyectoMostrar.id_proyecto }</div>
+                            <div className="nombreProyecto" style={{background: proyectoMostrar.color }}>{ proyectoMostrar.nombre }</div>
                           </div>
 
                           <Collapse isOpen={this.state.collapseProyecto === IndexPM.toString()}>
@@ -890,11 +967,17 @@ class GestionTareas extends Component {
                                         <div className="m-0 text-center">{ tarea.asunto }</div>
                                         <div style={{ background: tarea.prioridad_color , width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
                                       </div>
-                                      <div className="bodyTareaProyecto">
+                                      <div className="bodyTareaProyecto" style={{background: proyectoMostrar.color }}>
                                         <img src={ `${UrlServer}${tarea.imagen_subordinado[0].imagen}`  } alt="sigobras" className=" mx-auto d-block imgCircular" width="70%" height="70%" />
                                         <div className="text-center flex-column ">
-                                          <div>{ tarea.porcentaje_avance }%</div>
-                                          <div>ANGERMAN</div>
+                                            { 
+                                              InputEditablePorcent === indexT ?
+                                              <input type="number" onBlur={ e=> this.textPorcentEdit( e, indexT, tarea.id_tarea) } className="inputEditPorcent" autoFocus /> : 
+                                              <label className="inputCursorText" onClick={ ()=> this.EditPorcentaje( indexT ) } >
+                                              { tarea.porcentaje_avance }%</label>
+                                            } 
+
+                                          <div className="text-uppercase">{ tarea.emisor_nombre }</div>
                                         </div>
 
                                       </div>

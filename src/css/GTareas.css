@@ -4,11 +4,12 @@
 .containerTarea{
   width: 100%;
 }
+
 .headerTarea{
   background: aliceblue;
   color: black;
   font-weight: bold;
-  display: flex;
+  /* display: flex; */
 }
 
 .nombreProyectoP{
@@ -31,7 +32,7 @@
 
 
 .bodyTareaProyecto{
-  background: #f78a07;
+  /* background: #f78a07; */
   color: black;
   padding: 4px;
   font-weight: bold;
@@ -43,21 +44,22 @@
 
 .proyectoBorder{
   width: 100%;
-  border-bottom: 2px solid #0080ff;
   display: flex;
 }
+
 .numeroProyecto{
-  
+  background: #d7ebf8;  
   color: black;
   font-weight: bold;
   padding: 4px;
   margin-bottom: -2px;
+  margin-right: 3px;
 }
 .nombreProyecto{
-  background: #0080ff;
   color: black;
   font-weight: bold;
   padding: 4px;
+  width: 50%;
 }
 
 .brLeft{
@@ -85,6 +87,33 @@
   padding: 4px;
   border-radius: 2%;
 }
+
+
+/* input edit cursor  */
+
+.inputCursorText{
+  cursor:text;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
+/* input type number personalizar */
+.inputEditPorcent{
+  background: #f78a0700;
+  border: #33a0a0;
+  text-align: center;
+}
+
+
 /* formmm */
 .formPositContainer{
   padding: 8px;
