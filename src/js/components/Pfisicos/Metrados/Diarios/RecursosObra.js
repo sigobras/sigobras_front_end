@@ -10,7 +10,7 @@ class RecursosObra extends Component {
         super()
         this.TabRecursos = this.TabRecursos.bind(this);
         this.state = {
-            activeTab: '1'
+            activeTab: '2'
         };
     }
 

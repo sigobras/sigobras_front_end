@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -131,17 +131,18 @@ class Report_4 extends Component {
             layout: 'lightHorizontalLines',
 
             table: {
-              widths: [20, 80,10,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],
+              headerRows:4 ,
+              widths: [30, 80,10,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],
                 body: [
                       [
                         {
-                          text: 'COMP. N° : '+ DataHist[i].numero,
-                          style: "tableHeader",
+                          text: 'C -'+ DataHist[i].numero,
+                          style: "TableMontosInforme",
                           alignment: "center",
                         },
                         {
                           text: DataHist[i].nombre,
-                          style: "tableHeader",
+                          style: "TableMontosInforme",
                           alignment: "center",
                           colSpan: 15
                         },
@@ -188,8 +189,8 @@ class Report_4 extends Component {
                           
                         },
                         {
-                          text: 'Presupuesto : S/. ' + DataHist[i].presupuesto,
-                          style: "tableHeader",
+                          text: 'S/. ' + DataHist[i].presupuesto,
+                          style: "TableMontosInforme",
                           alignment: "center",
                           colSpan: 2,
                         },
@@ -234,7 +235,7 @@ class Report_4 extends Component {
                         },                            
                         {
                           text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                           colSpan: 9,
                         },
@@ -320,7 +321,7 @@ class Report_4 extends Component {
                         },
                         {
                           text: 'ACTUAL',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                           colSpan: 3,
                         },
@@ -407,17 +408,17 @@ class Report_4 extends Component {
                         },
                         {
                           text: 'METRADO',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                         },
                         {
                           text: 'P. UNIT. S/.',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                         },
                         {
                           text: 'PRESUP. S/.',
-                          style: "tableHeader",
+                          style: "TableValInforme",
                           alignment: "center",
                         },
                         {
@@ -459,7 +460,7 @@ class Report_4 extends Component {
 
       for (let j = 0; j < DataHist[i].partidas.length; j++) {
 
-         //console.log('ddatos', DataHist[i].partidas[j]);
+         console.log('ddatos', DataHist[i].partidas[j]);
         
 
         ValPresupuesto[i].table.body.push( 
@@ -504,16 +505,16 @@ class Report_4 extends Component {
               style:"tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].valor_anterior,
-              style:"tablaValorizacion",
-            },
-            {
               text:  DataHist[i].partidas[j].metrado_actual,
-              style:"tablaValorizacion",
+              style:"TableValInforme",
             },
             {
               text:  DataHist[i].partidas[j].valor_actual,
-              style:"tablaValorizacion",
+              style:"TableValInforme",
+            },
+            {
+              text:  DataHist[i].partidas[j].porcentaje_actual,
+              style:"TableValInforme",
             },
             {
               text:  DataHist[i].partidas[j].metrado_total,
@@ -568,14 +569,14 @@ class Report_4 extends Component {
             fit: [280, 280],
             margin: [45, 12, 10, 0]
           },
-          {
-            alignment: 'right',
-            image: logoSigobras,
-            width: 48,
-            height: 30,
-            margin: [20, 10, 10, 0]
+          // {
+          //   alignment: 'right',
+          //   image: logoSigobras,
+          //   width: 48,
+          //   height: 30,
+          //   margin: [20, 10, 10, 0]
             
-          }
+          // }
         ]
       },
       
@@ -600,9 +601,25 @@ class Report_4 extends Component {
        
       content: [
         { 
-          text: 'VALORIZACIÓN POR MAYORES METRADOS',
-          margin: 7,
-          alignment: 'center'
+          layout: 'noBorders',
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'VALORIZACIÓN POR MAYORES METRADOS',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
+                }
+          // text: 'VALORIZACIÓN POR MAYORES METRADOS',
+          // margin: 7,
+          // alignment: 'center'
         },
 
         DataEncabezado,
@@ -655,8 +672,25 @@ class Report_4 extends Component {
         tableBodyInforme:{
           fontSize: 9,
           color: '#000000',
-        }
-        
+        },
+        tableFechaContent: {
+          bold: true,
+          fontSize: 9,
+          color: '#000000',
+          fillColor: '#dadada',
+        },
+        TableMontosInforme: {
+          bold: true,
+          fontSize: 9,
+          color: '#000000',
+          fillColor: '#ffcf96',
+        },
+        TableValInforme: {
+          bold: true,
+          fontSize: 6,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },        
 
       },
       defaultStyle: {
@@ -664,6 +698,8 @@ class Report_4 extends Component {
       },
       pageSize: 'A4',
       pageOrientation: 'landscape',
+      pageMargins: [40, 38, 0, 0],
+
 
     };
     // pdfmake.createPdf(docDefinition)
@@ -687,7 +723,7 @@ class Report_4 extends Component {
 
 
   render() {
-    const { DataMayMetlAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
+    const { DataMayMetlAPI,DataAniosApi, DataMesesApi,urlPdf } = this.state
     
     return (
       <div>
@@ -737,8 +773,11 @@ class Report_4 extends Component {
                 }
                 </Col>
               </Row>
+              {
+              urlPdf.length <= 0 ?<Spinner color="primary" />:
               
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              }
           </ModalBody>
         </Modal>
       </div>

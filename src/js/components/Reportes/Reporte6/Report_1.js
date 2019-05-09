@@ -3,14 +3,13 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody,Row,Col,Button,ButtonGroup } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody,Row,Col,Button,ButtonGroup,Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
-import { Spinner } from 'reactstrap';
 
 class Report_1 extends Component {
   constructor(){
@@ -128,7 +127,6 @@ class Report_1 extends Component {
 
 
   makePdf(){
-
     
     var {  DataEncabezado } = this.state
     
@@ -146,13 +144,13 @@ class Report_1 extends Component {
           layout: 'lightHorizontalLines',           
           table: {            
             headerRows: 2,
-            widths: [40, 200, 200, 60, 40, 30, 90],
+            widths: [40, '*', 'auto', 60, 50, 40, 100],
             //pageBreak: 'before',
             
             body: [
             [
               {
-                text: 'C-' + DataHist[i].numero,
+                text: 'C -' + DataHist[i].numero,
                 style: "TableMontosInforme",
                 alignment: "center",
                 margin:[5,0,0,0]
@@ -218,7 +216,7 @@ class Report_1 extends Component {
                 alignment: 'center'
               },
               {
-                text: 'M. EJECUTADO',
+                text: 'EJECUTADO',
                 style: 'tableHeader',
                 alignment: 'center'
               },
@@ -250,7 +248,7 @@ class Report_1 extends Component {
             [
 
               {
-                text: DataHist[i].fechas[j].fecha,
+                text: DataHist[i].fechas[j].fecha_larga,
                 style: "tableFecha",
                 alignment: "center",
                 colSpan: 6,
@@ -278,11 +276,14 @@ class Report_1 extends Component {
               {
                 text: "S/. " + DataHist[i].fechas[j].fecha_total_soles,
                 style: "tableFecha",
-                margin:[0,0,5,0],
+                alignment: "right",
+                //margin:[0,0,5,0],
               }
+
             ]
 
           )
+
 
       // console.log('ArFormat2', ArFormat[i].table.body)
           
@@ -339,10 +340,8 @@ class Report_1 extends Component {
           }
           
         }
-
     }
-
-    
+      
     
      var ultimoElemento = ArFormat.length -1
      delete ArFormat[ultimoElemento].pageBreak
@@ -359,14 +358,14 @@ class Report_1 extends Component {
           {
             image: logoGRPuno,
             fit: [280, 280],
-            margin: [45, 12, 10, 0]
+            margin: [45, 4, 10, 0]
           },
           {
             alignment: 'right',
-            image: logoSigobras,
+            image: logoSigobras,            
             width: 48,
             height: 30,
-            margin: [20, 10, 10, 0]
+            margin: [20, 4, 10, 0]
             
           }
         ]
@@ -377,8 +376,8 @@ class Report_1 extends Component {
           columns: [
             {
               text: currentPage.toString() + ' de ' + pageCount,
-              margin: [45, 10, 10, 0],
-              fontSize: 9,
+              margin: [45, 4, 10, 0],
+              fontSize: 7,
             },
             {
               qr: 'http://sigobras.com',
@@ -402,7 +401,7 @@ class Report_1 extends Component {
               [
                 {
                   text: 'CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales)',
-                  style: "tableFecha",
+                  style: "tableFechaContent",
                   alignment: "center",
                   margin:[10,0,5,0],
                 }
@@ -439,15 +438,15 @@ class Report_1 extends Component {
         },
         tableHeader: {
           bold: true,
-          fontSize: 7,
+          fontSize: 8.5,
           color: '#000000',
-          fillColor: '#ffcf96',
+          fillColor: '#8baedb',
         },
         tableFecha: {
           bold: true,
-          fontSize: 9.5,
+          fontSize: 9,
           color: '#000000',
-          fillColor: '#dadada',
+          fillColor: '#edf1f4',
         },
         tableBody: {
           // bold: true,
@@ -464,13 +463,19 @@ class Report_1 extends Component {
         TableMontosInforme: {
           bold: true,
           fontSize: 9,
-          color: '#000000',
-          fillColor: '#ffcf96',
+          color: '#FFFFFF',
+          fillColor: '#3a68af',
         },
         tableBodyInforme:{
           fontSize: 7,
           color: '#000000',
-        }
+        },
+        tableFechaContent: {
+          bold: true,
+          fontSize: 10,
+          color: '#000000',
+          fillColor: '#8baedb',
+        },
         
 
       },
@@ -481,16 +486,25 @@ class Report_1 extends Component {
       pageOrientation: 'landscape',
 
     };
-    // pdfmake.createPdf(docDefinition)
+    //pdfmake.createPdf(docDefinition)
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+    pdfDocGenerator.open()
 
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-       this.setState({
-        urlPdf:dataUrl
-       })
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    //    this.setState({
+    //     urlPdf:dataUrl
+    //    })
         
         
-    });
+    // });
+    // const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    // const targetElement = document.querySelector('#iframeContainer');
+    // const iframe = document.createElement('iframe');
+    // iframe.src = dataUrl;
+    // targetElement.appendChild(iframe);
+//});
+
   
   }
 

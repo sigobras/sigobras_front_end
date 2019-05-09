@@ -229,7 +229,8 @@ class GestionTareas extends Component {
           // document.getElementById("descripcion").value = "";
           document.getElementById("formAgregarTarea").reset();
 
-          this.reqProyectos(Id_Acceso,"0","0","0","0")  
+          this.reqProyectos(Id_Acceso,"0","0","0","0")
+          this.reqTareasEmitidos(Id_Acceso, "0", "0")  
           toast.success("✔ Tarea Agregada al sistema ")
           return
         }
@@ -488,7 +489,7 @@ class GestionTareas extends Component {
       }
     )
       .then((res) => {
-        console.log("response proyectos ", res.data )
+        // console.log("response proyectos ", res.data )
         this.setState({
           DataProyectoMostrarApi: res.data
         })
@@ -859,7 +860,7 @@ class GestionTareas extends Component {
                             </div>
                             
                             <div className="bodyTareaProyecto" style={{ background: PositsFiltrado.proyecto_color }}>
-                              <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className=" mx-auto d-block" width="65%" />
+                              <img src={ `${UrlServer}${ PositsFiltrado.usuario_imagen }` } alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
                               <div className="text-center flex-column ">
                                 <div>{ `${ PositsFiltrado.porcentaje_avance} %` }</div>
                                 <div>{ PositsFiltrado.emisor_nombre}</div>

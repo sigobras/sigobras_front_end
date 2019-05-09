@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col,Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -16,7 +16,7 @@ class Report_10 extends Component {
   constructor(){
     super()
     this.state = {
-      DataValGantAPI:[],
+      DataCurvaSAPI:[],      
       DataAniosApi:[],
       DataMesesApi:[],
       modal: false,
@@ -71,18 +71,20 @@ class Report_10 extends Component {
     });
   }
 
-  seleccionaMeses(id_historial, fecha){
+  seleccionaMeses(id_historial,fecha_inicial,fecha_final){
     // LLAMA AL API DE MESES
-    axios.post(`${UrlServer}/CuadroMetradosEjecutados`,{
+    axios.post(`${UrlServer}/avanceMensualComparativoPresupuesto`,{
       "id_ficha":sessionStorage.getItem("idobra"),
       "historialestados_id_historialestado":id_historial,
-      "fecha":fecha
+      "fecha_inicial":fecha_inicial,
+      "fecha_final":fecha_final,
     })
     .then((res)=>{
-        //console.log('res CuadroMetradosEjecutados', res.data)
+        //console.log('res avanceMensualComparativoPresupuesto', res.data)
         this.setState({
-          DataValGantAPI: res.data,
-          DataEncabezado:encabezadoInforme()
+          DataCurvaSAPI: res.data,
+          DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
+
 
         })
     })
@@ -101,8 +103,7 @@ class Report_10 extends Component {
 
     var {  DataEncabezado } = this.state
 
-    var DataHist = this.state.DataValGantAPI
-    
+    var DataHist = this.state.DataCurvaSAPI
 
 
     // DataHist = DataHist.filter((item)=>{
@@ -468,9 +469,25 @@ class Report_10 extends Component {
        
       content: [
         { 
-          text: 'HISTOGRAMA DEL AVANCE DE OBRAS (Curva S)',
-          margin: 7,
-          alignment: 'center'
+          layout: 'noBorders',
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'HISTOGRAMA DEL AVANCE DE OBRAS (Curva S)',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
+                }
+          // text: 'HISTOGRAMA DEL AVANCE DE OBRAS (Curva S)',
+          // margin: 7,
+          // alignment: 'center'
         },
 
         DataEncabezado,
@@ -519,7 +536,25 @@ class Report_10 extends Component {
         tableBodyInforme:{
           fontSize: 9,
           color: '#000000',
-        }
+        },
+        TableValInforme: {
+          bold: true,
+          fontSize: 6,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tablaValorizacionActual: {
+          fontSize: 4.5,
+          bold: false,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tableFechaContent: {
+          bold: true,
+          fontSize: 9,
+          color: '#000000',
+          fillColor: '#dadada',
+        },
         
 
       },
@@ -545,8 +580,8 @@ class Report_10 extends Component {
 
 
   render() {
-    const { DataValGantAPI, DataAniosApi, DataMesesApi } = this.state
-    return (
+    const { DataCurvaSAPI, DataAniosApi, DataMesesApi,urlPdf } = this.state
+    return (    
       <div>
         <li className="lii">
           <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 10.- HISTOGRAMA DEL AVANCE DE OBRAS (Curva S) ✔ FALTA API KAI</a>
@@ -578,12 +613,11 @@ class Report_10 extends Component {
                         <ButtonGroup size="sm">
                           {
                             DataMesesApi.map((Meses, iM)=>
-                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final)}>{ Meses.codigo }</Button>
                             )
                           }
 
-                        </ButtonGroup>
-                        
+                        </ButtonGroup>                      
                     
                     </fieldset>
                   }
@@ -591,14 +625,17 @@ class Report_10 extends Component {
                   </Col>
                   <Col sm="1">
                   {
-                    DataValGantAPI.length <= 0 ?"":
-                    <button className="btn btn-outline-success" onClick={ this.PruebaDatos }> PDF </button>
+                    DataCurvaSAPI.length <= 0 ?"":
+                    <button className="btn btn-outline-success" onClick={ this.PruebaDatos }> PDF </button>                    
                   }
 
                 </Col>
               </Row>
               
+              {
+              urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              }
           </ModalBody>
         </Modal>
       </div>

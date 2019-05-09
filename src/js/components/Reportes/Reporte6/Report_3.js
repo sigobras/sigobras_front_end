@@ -5,7 +5,7 @@ import { FaFilePdf } from "react-icons/fa";
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner } from 'reactstrap';
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
@@ -154,7 +154,7 @@ class Report_3 extends Component {
                                     },
                                     {
                                         text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
-                                        style: "tableHeader",
+                                        style: "TableValInforme",
                                         alignment: "center",
                                         colSpan:6
                                     },
@@ -209,7 +209,7 @@ class Report_3 extends Component {
                                     },
                                     {
                                         text: 'ACTUAL',
-                                        style: "tableHeader",
+                                        style: "TableValInforme",
                                         alignment: "center",
                                         colSpan:2
                                     },
@@ -259,12 +259,12 @@ class Report_3 extends Component {
                                     },
                                     {
                                         text: 'Valorizado S/.',
-                                        style: "tableHeader",
+                                        style: "TableValInforme",
                                         alignment: "center",
                                     },
                                     {
                                         text: '%',
-                                        style: "tableHeader",
+                                        style: "TableValInforme",
                                         alignment: "center",
                                     },
                                     {
@@ -330,12 +330,12 @@ class Report_3 extends Component {
                     },
                     {
                         text: dato.actual,
-                        style: "tableBody",
+                        style: "TableValInforme",
                         alignment: "right",
                     },
                     {
                         text: dato.porcentaje_actual+" %",
-                        style: "tableBody",
+                        style: "TableValInforme",
                         alignment: "right",
                     },
                     {
@@ -851,9 +851,25 @@ class Report_3 extends Component {
         
         content: [
             { 
-            text: 'RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
-            margin: 7,
-            alignment: 'center'
+                layout: 'noBorders',
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
+                }
+            // text: 'RESUMEN DE LA VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+            // margin: 7,
+            // alignment: 'center'
             },
 
             DataEncabezado,
@@ -902,7 +918,19 @@ class Report_3 extends Component {
             tableBodyInforme:{
             fontSize: 9,
             color: '#000000',
-            }
+            },
+            tableFechaContent: {
+            bold: true,
+            fontSize: 9,
+            color: '#000000',
+            fillColor: '#dadada',
+            },
+            TableValInforme: {
+            bold: true,
+            fontSize: 6,
+            color: '#000000',
+            fillColor: '#A4C4EA',
+            },
             
 
         },
@@ -930,7 +958,7 @@ class Report_3 extends Component {
    
     
     render() {
-        const { DataApiResumenVal, DataAniosApi, DataMesesApi }= this.state
+        const { DataApiResumenVal, DataAniosApi, DataMesesApi,urlPdf }= this.state
         return (
             <div>
                 <li className="lii">
@@ -980,8 +1008,10 @@ class Report_3 extends Component {
                             }
                             </Col>
                         </Row>
-                        
+                        {
+                        urlPdf.length <= 0 ?<Spinner color="primary" />:
                         <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+                        }
                     </ModalBody>
                 </Modal>
             </div> 

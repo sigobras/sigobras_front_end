@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -71,18 +71,19 @@ class Report_9 extends Component {
     });
   }
 
-  seleccionaMeses(id_historial, fecha){
+  seleccionaMeses(id_historial,fecha_inicial,fecha_final){
     // LLAMA AL API DE MESES
-    axios.post(`${UrlServer}/CuadroMetradosEjecutados`,{
+    axios.post(`${UrlServer}/avanceMensualComparativoPresupuesto`,{
       "id_ficha":sessionStorage.getItem("idobra"),
       "historialestados_id_historialestado":id_historial,
-      "fecha":fecha
+      "fecha_inicial":fecha_inicial,
+      "fecha_final":fecha_final,
     })
     .then((res)=>{
-        //console.log('res CuadroMetradosEjecutados', res.data)
+        //console.log('res avanceMensualComparativoPresupuesto', res.data)
         this.setState({
           DataValGantAPI: res.data,
-          DataEncabezado:encabezadoInforme()
+          DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
         })
     })
@@ -468,9 +469,25 @@ class Report_9 extends Component {
        
       content: [
         { 
-          text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
-          margin: 7,
-          alignment: 'center'
+          layout: 'noBorders',
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
+                }
+          // text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
+          // margin: 7,
+          // alignment: 'center'
         },
 
         DataEncabezado,
@@ -519,7 +536,25 @@ class Report_9 extends Component {
         tableBodyInforme:{
           fontSize: 9,
           color: '#000000',
-        }
+        },
+        TableValInforme: {
+          bold: true,
+          fontSize: 6,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tablaValorizacionActual: {
+          fontSize: 4.5,
+          bold: false,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tableFechaContent: {
+          bold: true,
+          fontSize: 9,
+          color: '#000000',
+          fillColor: '#dadada',
+        },
         
 
       },
@@ -545,7 +580,7 @@ class Report_9 extends Component {
 
 
   render() {
-    const { DataValGantAPI, DataAniosApi, DataMesesApi } = this.state
+    const { DataValGantAPI, DataAniosApi, DataMesesApi,urlPdf } = this.state
     return (
       <div>
         <li className="lii">
@@ -578,7 +613,7 @@ class Report_9 extends Component {
                         <ButtonGroup size="sm">
                           {
                             DataMesesApi.map((Meses, iM)=>
-                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha)}>{ Meses.codigo }</Button>
+                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_fina)}>{ Meses.codigo }</Button>
                             )
                           }
 
@@ -598,7 +633,10 @@ class Report_9 extends Component {
                 </Col>
               </Row>
               
+              {
+              urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              }
           </ModalBody>
         </Modal>
       </div>

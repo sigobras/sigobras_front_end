@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -129,7 +129,7 @@ class Report_6 extends Component {
                 body: [
                       [
                         {
-                          text: 'COMP. N° : '+ DataHist[i].numero,
+                          text: 'C - '+ DataHist[i].numero,
                           style: "tableHeader",
                           alignment: "center",
                         },
@@ -182,7 +182,7 @@ class Report_6 extends Component {
                           
                         },
                         {
-                          text: 'Presupuesto : S/. ' + DataHist[i].presupuesto,
+                          text: 'S/. ' + DataHist[i].presupuesto,
                           style: "tableHeader",
                           alignment: "center",
                           colSpan: 2,
@@ -550,14 +550,14 @@ class Report_6 extends Component {
             fit: [280, 280],
             margin: [45, 12, 10, 0]
           },
-          {
-            alignment: 'right',
-            image: logoSigobras,
-            width: 48,
-            height: 30,
-            margin: [20, 10, 10, 0]
+          // {
+          //   alignment: 'right',
+          //   image: logoSigobras,
+          //   width: 48,
+          //   height: 30,
+          //   margin: [20, 10, 10, 0]
             
-          }
+          // }
         ]
       },
       
@@ -582,9 +582,25 @@ class Report_6 extends Component {
        
       content: [
         { 
-          text: 'VALORIZACIÓN POR MAYORES METRADOS',
-          margin: 7,
-          alignment: 'center'
+          layout: 'noBorders',
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'VALORIZACIÓN POR MAYORES METRADOS',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
+                }
+          // text: 'VALORIZACIÓN POR MAYORES METRADOS',
+          // margin: 7,
+          // alignment: 'center'
         },
 
         DataEncabezado,
@@ -669,7 +685,7 @@ class Report_6 extends Component {
 
 
   render() {
-    const { DataConGenValAPI,DataAniosApi, DataMesesApi,ValPresupuesto } = this.state
+    const { DataConGenValAPI,DataAniosApi, DataMesesApi,urlPdf } = this.state
     
     return (
       <div>
@@ -720,7 +736,10 @@ class Report_6 extends Component {
                 </Col>
               </Row>
               
+              {
+              urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              }
           </ModalBody>
         </Modal>
       </div>

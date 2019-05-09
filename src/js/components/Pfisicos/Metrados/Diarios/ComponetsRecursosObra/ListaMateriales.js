@@ -129,7 +129,7 @@ class ListaMateriales extends Component {
 
     componentWillMount(){
       document.title ="Metrados Diarios"
-      axios.post(`${UrlServer}/getComponentes`,{
+      axios.post(`${UrlServer}/getmaterialescomponentes`,{
         id_ficha: sessionStorage.getItem('idobra')
       })
       .then((res)=>{
@@ -238,7 +238,7 @@ class ListaMateriales extends Component {
       }
 
       // get partidas -----------------------------------------------------------------
-      axios.post(`${ UrlServer}/getPartidas`,{
+      axios.post(`${ UrlServer}/getmaterialespartidacomponente`,{
         id_componente: id_componente
       })
       .then((res)=>{

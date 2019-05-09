@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody,Row,Col,Button,ButtonGroup } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody,Row,Col,Button,ButtonGroup, Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -122,6 +122,7 @@ class Report_8 extends Component {
                   layout: 'lightHorizontalLines',
         
                   table: {
+                    headerRows: 3,
                     widths: [20, 200, 15, 27, 27, 27, 27, 27,27, 27, 27, 27, 27, 27, 27],
                     body: [
                             [
@@ -208,37 +209,37 @@ class Report_8 extends Component {
                                 },
                                 {
                                     rowSpan: 2,
-                                    text: 'METRADO EJECUTADO ANTERIOR',
+                                    text: 'M. E. ANTERIOR',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
                                 {
                                     rowSpan: 2,
-                                    text: 'VALORIZACION ANT S/.',
+                                    text: 'VAL. ANT. S/.',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
                                 {
                                     rowSpan: 2,
-                                    text: 'METRADO EJECUTADO ACTUAL',
+                                    text: 'M. E. ACTUAL',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
                                 {
                                     rowSpan: 2,
-                                    text: 'VALORIZADO ACT. S/.',
+                                    text: 'VAL. ACT. S/.',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
                                 {
                                     rowSpan: 2,
-                                    text: 'METRADO EJECUTADO ACUNULADO ',
+                                    text: 'M. E. ACUNULADO ',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
                                 {
                                     rowSpan: 2,
-                                    text: 'VALORIZADO ACUM. S/.',
+                                    text: 'VAL. ACUM. S/.',
                                     style: "tableHeader",
                                     alignment: "center",
                                 },
@@ -436,14 +437,14 @@ class Report_8 extends Component {
             fit: [280, 280],
             margin: [45, 12, 10, 0]
           },
-          {
-            alignment: 'right',
-            image: logoSigobras,
-            width: 48,
-            height: 30,
-            margin: [20, 10, 10, 0]
+          // {
+          //   alignment: 'right',
+          //   image: logoSigobras,
+          //   width: 48,
+          //   height: 30,
+          //   margin: [20, 10, 10, 0]
             
-          }
+          // }
         ]
       },
       
@@ -468,9 +469,25 @@ class Report_8 extends Component {
        
       content: [
         { 
-          text: 'AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RESUMEN DE LAS VALORIZACIONES',
-          margin: 7,
-          alignment: 'center'
+          layout: 'noBorders',
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RESUMEN DE LAS VALORIZACIONES',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
+                }
+          // text: 'AVANCES MENSUALES COMPARATIVOS DE ACUERDO AL PRESUPUESTO DE LA OBRA Y RESUMEN DE LAS VALORIZACIONES',
+          // margin: 7,
+          // alignment: 'center'
         },
 
         DataEncabezado,
@@ -519,7 +536,25 @@ class Report_8 extends Component {
         tableBodyInforme:{
           fontSize: 9,
           color: '#000000',
-        }
+        },
+        TableValInforme: {
+          bold: true,
+          fontSize: 6,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tablaValorizacionActual: {
+          fontSize: 4.5,
+          bold: false,
+          color: '#000000',
+          fillColor: '#A4C4EA',
+        },
+        tableFechaContent: {
+          bold: true,
+          fontSize: 9,
+          color: '#000000',
+          fillColor: '#dadada',
+        },
         
 
       },
@@ -528,6 +563,8 @@ class Report_8 extends Component {
       },
       pageSize: 'A4',
       pageOrientation: 'landscape',
+      pageMargins: [40, 40, 0, 0],
+
 
     };
     // pdfmake.createPdf(docDefinition)
@@ -544,7 +581,7 @@ class Report_8 extends Component {
   }
 
   render() {
-    const { DataAvanMensApi, DataAniosApi, DataMesesApi } = this.state
+    const { DataAvanMensApi, DataAniosApi, DataMesesApi,urlPdf } = this.state
       return (
         <div> 
 
@@ -599,7 +636,10 @@ class Report_8 extends Component {
                 </Col>
               </Row>
               
+              {
+              urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              }
           </ModalBody>
         </Modal>
       </div>

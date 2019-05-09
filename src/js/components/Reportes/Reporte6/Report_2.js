@@ -3,14 +3,13 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col,Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
-import { Spinner } from 'reactstrap';
 
 class Report_2 extends Component {
   constructor(){
@@ -128,18 +127,38 @@ class Report_2 extends Component {
         {
             style: 'tableExample',
             // color: '#ff0707',
-            layout: 'lightHorizontalLines',
+            layout: {
+              hLineWidth: function (i, node) {
+                return (i === 0 || i === node.table.body.length) ? 2 : 1;
+              },
+              vLineWidth: function (i, node) {
+                return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+              },
+              hLineColor: function (i, node) {
+                return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
+              },
+              vLineColor: function (i, node) {
+                return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+              },
+              //hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
+              //vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
+              //paddingLeft: function(i, node) { return 4; },
+              //paddingRight: function(i, node) { return 4; },
+              //paddingTop: function(i, node) { return 2; },
+              //paddingBottom: function(i, node) { return 2; },
+              //fillColor: function (rowIndex, node, columnIndex) { return null; }
+            },                 
             
 
             table: {
-              widths: [25,90,10,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],
+              headerRows: 5,
+              widths: [30,180,13,27,27,27,27,27,27,27,27,27,27,27,27,27,27,27],
                 body: [
                       [
                         {
                           text: 'C-'+ DataHist[i].numero,
                           style: "TableMontosInforme",
                           alignment: "center",
-                          
                         },
                         {
                           text: DataHist[i].nombre,
@@ -149,7 +168,7 @@ class Report_2 extends Component {
                           colSpan: 15
                         },
                         {
-                        
+                         
                         },
                         {
                           
@@ -161,7 +180,7 @@ class Report_2 extends Component {
                         
                         },                            
                         {
-                        
+                         
                         },
                         {
                         
@@ -201,37 +220,117 @@ class Report_2 extends Component {
                         
                         }
                     ],
+                    
+                    [
+                      {
+                        text: 'PARTIDA: ',
+                        style: "tableHeader",
+                        alignment: "center",
+                        rowSpan:4 ,
+                        margin: [ 2, 15, 0, 0],
+                        
+                      },
+                      {
+                        rowSpan: 4,
+                        text: 'DESCRIPCION',
+                        style: "tableHeader",
+                        alignment: "center",
+                        margin: [ 2, 15, 0, 0],
+                      },
+                      {
+                        text: 'UND ',
+                        style: "tableHeader",
+                        alignment: "center",
+                        rowSpan: 4,
+                        margin: [ 2, 15, 0, 0],
+                      },
+                      {
+                        text: 'PRESUPUESTO PROGRAMADO',
+                        style: "tableHeader",
+                        alignment: "center",
+                        rowSpan: 3,
+                        colSpan: 3,
+                        margin: [ 2, 15, 0, 0],
+                      },
+                      {
+                        
+                      },
+                      {
+                        
+                      },                            
+                      {
+                        text: 'S/. '+ DataHist[i].valor_anterior,
+                        style:"tableHeader",
+                        alignment: "center",
+                        colSpan:2,
+                      },
+                      {
+                        
+                      },
+                      {
+                        text:DataHist[i].porcentaje_anterior + ' %',
+                        style:"tableHeader",
+                        alignment: "center",
+                      },
+                      {
+                        text: 'S/. '+ DataHist[i].valor_actual,
+                        style:"tableHeader",
+                        alignment: "center",
+                        colSpan:2,
+                      },
+                      {
+                        
+                      },
+                      {
+                        text:DataHist[i].porcentaje_actual + ' %',
+                        style:"tableHeader",
+                        alignment: "center",
+                      },
+                      {
+                        text: 'S/. '+ DataHist[i].valor_total,
+                        style:"tableHeader",
+                        alignment: "center",
+                        colSpan:2,
+                      },
+                      {
+                        
+                      },
+                      {
+                        text:DataHist[i].porcentaje_total + ' %',
+                        style:"tableHeader",
+                        alignment: "center",
+                      },                            
+                      {
+                        text: ' S/. ' + DataHist[i].valor_saldo,
+                        style:"tableHeader",
+                        alignment: "center",
+                        colSpan:2,
+                      },
+                      {
+                                                                        
+                      },
+                      {
+                        text:DataHist[i].porcentaje_saldo + ' %',
+                        style:"tableHeader",
+                        alignment: "center",
+                      }
+                  ],
 
 
 
                     [
                         {
-                            text: 'PARTIDA: ',
-                            style: "tableHeader",
-                            alignment: "center",
-                            rowSpan: 3,
-                            margin: [ 2, 10, 0, 0],
+                            
                         },
                         {
-                          rowSpan: 3,
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
-                          margin: [ 2, 10, 0, 0],
+                          
                         
                         },
                         {
-                          text: 'UND ',
-                          style: "tableHeader",
-                          alignment: "center",
-                          rowSpan: 3,
+                          
                         },
                         {
-                          text: 'PRESUPUESTO PROGRAMADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                          rowSpan: 2,
-                          colSpan: 3,
+                          
                         },
                         {
                         
@@ -274,7 +373,7 @@ class Report_2 extends Component {
                           text: 'SALDO',
                           style: "tableHeader",
                           alignment: "center",
-                          margin: [ 2, 8, 0, 0],
+                          margin: [ 2, 7, 0, 0],
                           colSpan: 3,
                           rowSpan: 2,
                       },
@@ -384,7 +483,7 @@ class Report_2 extends Component {
                         
                         },
                         {
-                          text: 'PRESUP. S/.',
+                          text: 'PARCIAL. S/.',
                           style: "tableHeader",
                           alignment: "center",
                         
@@ -395,12 +494,12 @@ class Report_2 extends Component {
                           alignment: "center",
                         },
                         {
-                          text: 'P. UNIT. S/.',
+                          text: 'VALORIZADO S/.',
                           style: "tableHeader",
                           alignment: "center",
                         },
                         {
-                          text: 'PRESUP. S/.',
+                          text: '%',
                           style: "tableHeader",
                           alignment: "center",
                         },
@@ -410,12 +509,12 @@ class Report_2 extends Component {
                           alignment: "center",
                         },
                         {
-                          text: 'P. UNIT. S/.',
+                          text: 'VALORIZADO S/.',
                           style: "TableValInforme",
                           alignment: "center",
                         },
                         {
-                          text: 'PRESUP. S/.',
+                          text: '%',
                           style: "TableValInforme",
                           alignment: "center",
                         },
@@ -425,12 +524,12 @@ class Report_2 extends Component {
                           alignment: "center",
                         },
                         {
-                          text: 'P. UNIT. S/.',
+                          text: 'VALORIZADO S/.',
                           style: "tableHeader",
                           alignment: "center",
                         },
                         {
-                          text: 'PRESUP. S/.',
+                          text: '%',
                           style: "tableHeader",
                           alignment: "center",
                         },                            
@@ -467,90 +566,125 @@ class Report_2 extends Component {
             {
               text:DataHist[i].partidas[j].item,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text: DataHist[i].partidas[j].descripcion,
               style:"tablaValorizacion",
-            
+              border: [false, false, false, true],
+              
             },
             {
               text: DataHist[i].partidas[j].unidad_medida,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text: DataHist[i].partidas[j].metrado,
-              style:"tablaValorizacion",                           
+              style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].costo_unitario,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             
             },
             {
               text:  DataHist[i].partidas[j].valor_total,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
               //border: [true, false, false, false],
             
             },                            
             {
               text:  DataHist[i].partidas[j].metrado_anterior,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
               
             },
             {
               text:  DataHist[i].partidas[j].valor_anterior,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].porcentaje_anterior,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].metrado_actual,
               style:"tablaValorizacionActual",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].valor_actual,
               style:"tablaValorizacionActual",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].porcentaje_actual,
               style:"tablaValorizacionActual",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].metrado_total,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].valor_total,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].porcentaje_total,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },                            
             {
               text:  DataHist[i].partidas[j].metrado_saldo,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].valor_saldo,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             },
             {
               text:  DataHist[i].partidas[j].porcentaje_saldo,
               style:"tablaValorizacion",
+              border: [false, false, false, true],
+
             }
           ]
         )
         
-      }
+     }
 
     }
 
       
     
-    console.log('data push' ,ValPresupuesto);
+    //// console.log('data push' ,ValPresupuesto);
     
 
     var ultimoElemento = ValPresupuesto.length -1
@@ -603,9 +737,25 @@ class Report_2 extends Component {
        
       content: [
         { 
-          text: 'VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+          layout: 'noBorders',
           margin: 7,
-          alignment: 'center'
+          table: {
+            widths: ['*'],
+            body: [              
+              [
+                {
+                  text: 'VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+                  style: "tableFechaContent",
+                  alignment: "center",
+                  margin:[10,0,5,0],
+                }
+              ]
+              
+            ]
+          },
+          // text: 'VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+          // margin: 7,
+          // alignment: 'center'
         },
 
         DataEncabezado,
@@ -677,6 +827,12 @@ class Report_2 extends Component {
           color: '#000000',
           fillColor: '#A4C4EA',
         },
+        tableFechaContent: {
+          bold: true,
+          fontSize: 10,
+          color: '#000000',
+          fillColor: '#8baedb',
+        },
         
 
       },
@@ -685,6 +841,7 @@ class Report_2 extends Component {
       },
       pageSize: 'A4',
       pageOrientation: 'landscape',
+      pageMargins: [30, 38, 0, 0],
 
     };
     // pdfmake.createPdf(docDefinition)
