@@ -81,13 +81,236 @@
   /* -o-object-position: center right;
       object-position: center right; */
 }
+/* =================================================================fondoMostrarMas=============================================================================*/
+
+.fondoMostrarMas{
+  background: #9b9ea03b;
+  padding: 4px;
+  border-radius: 2%;
+  height: calc(100vh - 61%);
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.fondoMostrarMas::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+.fondoMostrarMas::-webkit-scrollbar-thumb {
+  background: #0080ff;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo cuando esté en active */
+.fondoMostrarMas::-webkit-scrollbar-thumb:active {
+  background-color: #5688ff;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.fondoMostrarMas::-webkit-scrollbar-thumb:hover {
+  background: #3b9dff;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+.fondoMostrarMas::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+.fondoMostrarMas::-webkit-scrollbar-track:hover,
+.fondoMostrarMas::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+  cursor: pointer;
+
+}
+
+/* ==============================================================================================================================================*/
 
 .fondoSubord{
   background: #0080ff3b;
   padding: 4px;
   border-radius: 2%;
+  height: calc(100vh - 493px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
 }
 
+.fondoSubord::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+.fondoSubord::-webkit-scrollbar-thumb {
+  background: #0080ff;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo cuando esté en active */
+.fondoSubord::-webkit-scrollbar-thumb:active {
+  background-color: #5688ff;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.fondoSubord::-webkit-scrollbar-thumb:hover {
+  background: #3b9dff;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+.fondoSubord::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+.fondoSubord::-webkit-scrollbar-track:hover,
+.fondoSubord::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+  cursor: pointer;
+
+}
+
+
+/* ==============================================================================================================================================*/
+
+
+
+.contanierProyectoAsignados{
+  background: #9b9ea03b;
+  padding: 4px;
+  border-radius: 2%;
+  height: calc(100vh - 61%);
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.contanierProyectoAsignados::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+.contanierProyectoAsignados::-webkit-scrollbar-thumb {
+  background: #0080ff;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo cuando esté en active */
+.contanierProyectoAsignados::-webkit-scrollbar-thumb:active {
+  background-color: #5688ff;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.contanierProyectoAsignados::-webkit-scrollbar-thumb:hover {
+  background: #3b9dff;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+.contanierProyectoAsignados::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+.contanierProyectoAsignados::-webkit-scrollbar-track:hover,
+.contanierProyectoAsignados::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+  cursor: pointer;
+
+}
+/* ======================================================================contanierProyectoAsignados========================================================================*/
+/* =============ContainerComentarios=================================================================================================================================*/
+
+.ContainerComentarios{
+  background: #0080ff3b;
+  padding: 4px;
+  border-radius: 2%;
+  height: calc(100vh - 493px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.ContainerComentarios::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+.ContainerComentarios::-webkit-scrollbar-thumb {
+  background: #0080ff;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo cuando esté en active */
+.ContainerComentarios::-webkit-scrollbar-thumb:active {
+  background-color: #5688ff;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.ContainerComentarios::-webkit-scrollbar-thumb:hover {
+  background: #3b9dff;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+.ContainerComentarios::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+.ContainerComentarios::-webkit-scrollbar-track:hover,
+.ContainerComentarios::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+  cursor: pointer;
+
+}
+.bodyComentarios{
+  background: #38c7ff7d;
+  padding: 5px;
+  border-radius: 10px;
+}
+/* ==============================================================================================================================================*/
 
 /* input edit cursor  */
 
@@ -120,15 +343,23 @@ input[type=number] {
   position: sticky;
   top: 0px;
   margin-left: 13px;
-  height: calc(100% - 84%);
   width: 290px;
   transition: all 0.4s;
-
+  background: #9b9ea03b;
+  border-radius: 2%;
+  height: calc(100vh - 90px);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .widthFormPositContentCierra{
-  width: 0%;
-  transition: all 0.4s;
+  position: absolute;
+  list-style: none;
+  display: none;
   opacity: 0;
   visibility: hidden;
+  padding: 10px;
+  background-color: rgba(92, 91, 87, 0.9);
+  -webkit-transition: opacity 600ms, visibility 600ms;
+          transition: opacity 600ms, visibility 600ms;
 }

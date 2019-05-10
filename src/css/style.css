@@ -3,7 +3,9 @@ body {
   color: #dcd7d7 !important;
 
 }
-
+html, body {
+  height: 100%;
+}
 
 /*  Sidebar */
 .sidebar {
@@ -346,7 +348,7 @@ body {
 
 
 /* fin pone posicion fixed a los header de la tabla */
-
+/* 
 iframe {
   border: none;
 }
@@ -359,7 +361,7 @@ iframe::-webkit-scrollbar-thumb {
   background-color: #2d78b9;
   ;
   outline: 2px solid rgb(255, 0, 0);
-}
+} */
 
 
 

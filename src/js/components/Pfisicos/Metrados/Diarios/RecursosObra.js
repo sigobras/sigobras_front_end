@@ -28,12 +28,12 @@ class RecursosObra extends Component {
                 <Nav tabs>
                     <NavItem>
                         <NavLink className={classnames({ active: this.state.activeTab === '1' })} onClick={() => { this.TabRecursos('1'); }} >
-                        ACTIVIDADES POR TIEMPO
+                            RECURSOS POR TIEMPO
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.TabRecursos('2'); }} >
-                            MATERIALES
+                            RECURSOS A COSTO DIRECTO
                         </NavLink>
                     </NavItem>
                 </Nav>

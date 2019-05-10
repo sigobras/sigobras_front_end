@@ -105,8 +105,8 @@ class GestionTareas extends Component {
       indexSubTarea:null,
       // editar valor porcentaje
 
-      InputEditablePorcent: null
-
+      InputEditablePorcent: null,
+      IdProyecto:""
     };
   }
 
@@ -162,8 +162,8 @@ class GestionTareas extends Component {
 
   AgregaTarea(e) {
     e.preventDefault()
-    var { PositsFiltrado, Para, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
-    console.log("ejecutando", PositsFiltrado.id_tarea )
+    var { PositsFiltrado, IdProyecto, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
+    console.log("ejecutando", PositsFiltrado.id_tarea, "IdProyecto ", IdProyecto )
 
     // if( Para.length <=0 && InputPersonal.length <=0  ){
     //     console.log(" no es proyecto")
@@ -175,6 +175,13 @@ class GestionTareas extends Component {
 
     if (typeof idTarea === "undefined" ) {
       idTarea = ""
+    }
+
+    var ProyectoId = IdProyecto
+
+    if (IdProyecto === "") {
+      console.log("id proyecto vacio ")
+      ProyectoId = proyecto.id_proyecto
     }
     // console.log("Personal ->", Personal)
     //dias a sumar
@@ -196,7 +203,7 @@ class GestionTareas extends Component {
     formData.append('descripcion', descripcion);
     formData.append('fecha_inicial', fechaInicio);
     formData.append('fecha_final', resultado);
-    formData.append('proyectos_id_proyecto', proyecto.id_proyecto);
+    formData.append('proyectos_id_proyecto', ProyectoId);
     formData.append('emisor', Id_Acceso);
     formData.append('receptor', Personal);
     formData.append('archivo', file);
@@ -398,8 +405,11 @@ class GestionTareas extends Component {
   }
 
   CollapseProyecto( index, IdProyecto ){
-    console.log("index ", index)
-    this.setState(({ collapseProyecto: this.state.collapseProyecto === index ? null: index }));
+    console.log("index ", index, "IdProyecto ", IdProyecto)
+    this.setState({ 
+      collapseProyecto: this.state.collapseProyecto === index ? null: index,
+      IdProyecto
+    });
     if (this.state.collapseProyecto !== index) {
       this.reqTareasRecibidas(Id_Acceso, this.state.Inicio, this.state.Fin, IdProyecto)
       return
@@ -816,7 +826,6 @@ class GestionTareas extends Component {
                   <Col md="3">
                     <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "nada") }}>
                       <Row>
-                     
                         {
                           DataTareasEmitidosApi.map((TareasEmit, iS) =>
                           <Col md="6 mb-2" key={ iS }>
@@ -824,7 +833,7 @@ class GestionTareas extends Component {
                               <div className="d-flex justify-content-between headerTarea p-1">
                                 <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="20%" height="20%" />
 
-                                <label className="m-0 h5">{`T-${iS+1}` }</label>
+                                <div className="m-0 h5" onClick={()=>this.MostrasMasTarea(TareasEmit.id_tarea) }>{`T-${iS+1}` }</div>
 
                                 <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
                               </div>
@@ -848,7 +857,7 @@ class GestionTareas extends Component {
 
                     {
                       PositsFiltrado.length === 0 ? "":
-                        <div>
+                        <div className="fondoMostrarMas">
                           <div className="containerTarea">
                             <div className="d-flex justify-content-between headerTarea p-1">
                               <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="18%" height="18%" />
@@ -945,50 +954,87 @@ class GestionTareas extends Component {
                       
                   </Col>
                   <Col md="6">
-                    {
-                      DataProyectoMostrarApi.map((proyectoMostrar , IndexPM)=>
-                    
-                        <div key={ IndexPM }>
+                    <div className="contanierProyectoAsignados">
+                      {
+                        DataProyectoMostrarApi.map((proyectoMostrar , IndexPM)=>
+                      
+                          <div key={ IndexPM }>
 
-                          <div className="proyectoBorder prioridad mb-2" style={{borderBottom: `2px solid ${proyectoMostrar.color}` }} onClick={ ()=> this.CollapseProyecto( IndexPM.toString(),  proyectoMostrar.id_proyecto ) }>
-                            <div className="numeroProyecto">P-{ proyectoMostrar.id_proyecto }</div>
-                            <div className="nombreProyecto" style={{background: proyectoMostrar.color }}>{ proyectoMostrar.nombre }</div>
-                          </div>
+                            <div className="proyectoBorder prioridad mb-2" style={{borderBottom: `2px solid ${proyectoMostrar.color}` }} onClick={ ()=> this.CollapseProyecto( IndexPM.toString(),  proyectoMostrar.id_proyecto ) }>
+                              <div className="numeroProyecto">P-{ proyectoMostrar.id_proyecto }</div>
+                              <div className="nombreProyecto" style={{background: proyectoMostrar.color }}>{ proyectoMostrar.nombre }</div>
+                            </div>
 
-                          <Collapse isOpen={this.state.collapseProyecto === IndexPM.toString()}>
-                            <Row>
-                              {
-                                DataTareasApi.map((tarea, indexT)=>
-                                  <Col md="4" key={ indexT }>
-                                    <div className="containerTarea m-2">
-                                      <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={()=>this.MostrasMasTarea(tarea.id_tarea) }>
-                                        <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular"  width="18%" height="18%"  />
-                                        <div className="m-0 text-center">{ tarea.asunto }</div>
-                                        <div style={{ background: tarea.prioridad_color , width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
-                                      </div>
-                                      <div className="bodyTareaProyecto" style={{background: proyectoMostrar.color }}>
-                                        <img src={ `${UrlServer}${tarea.imagen_subordinado[0].imagen}`  } alt="sigobras" className=" mx-auto d-block imgCircular" width="70%" height="70%" />
-                                        <div className="text-center flex-column ">
-                                            { 
-                                              InputEditablePorcent === indexT ?
-                                              <input type="number" onBlur={ e=> this.textPorcentEdit( e, indexT, tarea.id_tarea) } className="inputEditPorcent" autoFocus /> : 
-                                              <label className="inputCursorText" onClick={ ()=> this.EditPorcentaje( indexT ) } >
-                                              { tarea.porcentaje_avance }%</label>
-                                            } 
-
-                                          <div className="text-uppercase">{ tarea.emisor_nombre }</div>
+                            <Collapse isOpen={this.state.collapseProyecto === IndexPM.toString()}>
+                              <Row>
+                                {
+                                  DataTareasApi.map((tarea, indexT)=>
+                                    <Col md="4" key={ indexT }>
+                                      <div className="containerTarea m-2">
+                                        <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={()=>this.MostrasMasTarea(tarea.id_tarea) }>
+                                          <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular"  width="18%" height="18%"  />
+                                          <div className="m-0 text-center">{ tarea.asunto }</div>
+                                          <div style={{ background: tarea.prioridad_color , width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
                                         </div>
+                                        <div className="bodyTareaProyecto" style={{background: proyectoMostrar.color }}>
+                                          <img src={ `${UrlServer}${tarea.imagen_subordinado[0].imagen}`  } alt="sigobras" className=" mx-auto d-block imgCircular" width="70%" height="70%" />
+                                          <div className="text-center flex-column ">
+                                              { 
+                                                InputEditablePorcent === indexT ?
+                                                <input type="number" onBlur={ e=> this.textPorcentEdit( e, indexT, tarea.id_tarea) } className="inputEditPorcent" autoFocus /> : 
+                                                <label className="inputCursorText" onClick={ ()=> this.EditPorcentaje( indexT ) } >
+                                                { tarea.porcentaje_avance }%</label>
+                                              } 
 
+                                            <div className="text-uppercase">{ tarea.emisor_nombre }</div>
+                                          </div>
+
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Col>
-                                )
-                              }
-                            </Row>
-                          </Collapse>
+                                    </Col>
+                                  )
+                                }
+                              </Row>
+                            </Collapse>
+                          </div>
+                          
+                        )
+                      }
+                    </div>
+                    <div className="ContainerComentarios">
+                      <div className="media mb-2">
+                        <img className="align-self-end mr-2 imgCircular" src="http://190.117.94.80:9000/static/Sistema/user_image_default.jpg" alt="Generi" width="5%" height="5%" />
+                        <div className="media-body bodyComentarios">
+                          <label>
+                            hola como estas que haces
+                            hola como estas que haces
+                            hola como estas que haces
+                            hola como estas que haces
+                            hola como estas que haces
+                            hola como estas que haces
+                            hola como estas que haces
+                            hola como estas que haces
+                          </label>
+                          <div className="float-right">
+                             02:06 pm  12/03/2019
+                          </div>
                         </div>
-                      )
-                    }
+                      </div>
+
+                      <div className="media mb-2">
+                        <img className="align-self-end mr-2 imgCircular" src="http://los40ar00.epimg.net/los40/imagenes/2019/05/08/cine/1557330970_923170_1557331170_noticia_normal.jpg" alt="Generi" width="5%" height="5%" />
+                        <div className="media-body bodyComentarios">
+                          <label>
+                            hola como estas que haces
+                            hola como estas que haces
+                          </label>
+                          <div className="float-right">
+                             03:20 pm  12/03/2019
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
                   </Col>
                 </Row>
               </Container>
