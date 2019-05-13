@@ -839,8 +839,8 @@ class GestionTareas extends Component {
                               </div>
                               <div className="bodyTarea text-capitalize">
                                 { TareasEmit.asunto }
-                                <br />
-                                { TareasEmit.proyecto_nombre}
+                                {/* <br />
+                                { TareasEmit.proyecto_nombre} */}
                               </div>
                             </div>
 

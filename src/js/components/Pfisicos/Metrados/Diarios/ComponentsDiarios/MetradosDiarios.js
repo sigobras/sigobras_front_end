@@ -5,7 +5,7 @@ import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
-import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody  } from 'reactstrap';
+import { InputGroupAddon, InputGroupText, CustomInput,  InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink   } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
@@ -94,8 +94,11 @@ class MetradosDiarios extends Component {
         modalImgPartida: false,
         // ENVIO DE FORMULARIO DE IMAGEN DINAMICO
         Id_Partida_O_Actividad:null,
-        EnvioImgObsApiRuta:null,        
+        EnvioImgObsApiRuta:null,  
 
+        // DATA PARA PAGINACION 
+        PaginaActual: 1,
+        CantidadRows: 10
       }
 
       this.Tabs = this.Tabs.bind(this)
@@ -121,6 +124,10 @@ class MetradosDiarios extends Component {
       this.modalImgPartida = this.modalImgPartida.bind(this);
       this.capturaDatosCrearImgPartida = this.capturaDatosCrearImgPartida.bind(this);
       this.EnviaImgPartida = this.EnviaImgPartida.bind(this);
+
+      // metrados diarios
+      this.PaginaActual = this.PaginaActual.bind(this);
+      this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
     }
 
     componentWillMount(){
@@ -970,14 +977,28 @@ class MetradosDiarios extends Component {
         return
       }
     }
+
+    PaginaActual(event) {
+      console.log("PaginaActual ", Number(event))
+      this.setState({
+        PaginaActual: Number(event)
+      });
+    }
+  
+    SelectCantidadRows(e){
+      console.log("SelectCantidadRows ", e.target.value)
+      this.setState({CantidadRows: Number(e.target.value) })
+    }
+
     render() {
-        var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores, file } = this.state
+        var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,  nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, mostrarColores, file } = this.state
         var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado 
         
         var DatosPartidasFiltrado = DataPartidas
         var BuscaPartida = this.state.BuscaPartida
 
         // console.log("BuscaPartida", BuscaPartida);
+
 
 
         if (BuscaPartida !== null) {
@@ -1026,6 +1047,24 @@ class MetradosDiarios extends Component {
 
         
         
+        // paginacion 
+        // const { todos,  } = this.state;
+
+        // obtener indices para paginar 
+        const indexOfUltimo = PaginaActual * CantidadRows;
+        console.log("INDEX OF ULTIMO ", indexOfUltimo)
+        const indexOfPrimero = indexOfUltimo - CantidadRows;
+        console.log("INDEX OF PRIMERO ", indexOfPrimero)
+        const DataPartidasPaginada = DatosPartidasFiltrado.slice(indexOfPrimero, indexOfUltimo);
+    
+        // numero de paginas hasta ahora
+        const NumeroPaginas = [];
+        for (let i = 1; i <= Math.ceil(DatosPartidasFiltrado.length / CantidadRows); i++) {
+          NumeroPaginas.push(i);
+        }
+    
+        console.log("NumeroPaginas ", NumeroPaginas)
+
         return (
           <div>
             {/* { this.state.iconos} */}
@@ -1066,6 +1105,20 @@ class MetradosDiarios extends Component {
                   </div>
                 </CardHeader>
                 <CardBody>    
+                <div className="clearfix">
+          <div className="float-left">
+            <select onChange={ this.SelectCantidadRows } value={CantidadRows} className="form-control form-control-sm" >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={40}>40</option>
+            </select>
+          </div>
+          {/* <div className="float-right">
+            <input placeholder="Buscar" className="form-control form-control-sm" />
+          </div> */}
+        </div>
+
 
                   <table className="table table-sm">
                     <thead className="resplandPartida">
@@ -1100,9 +1153,9 @@ class MetradosDiarios extends Component {
                       </tr>
                     </thead>
 
-                    { DatosPartidasFiltrado.length <= 0 ?  
+                    { DataPartidasPaginada.length <= 0 ?  
                       <tbody><tr><td colSpan="8" className="text-center text-warning">No hay datos</td></tr></tbody> :
-                      DatosPartidasFiltrado.map((metrados, i) =>
+                      DataPartidasPaginada.map((metrados, i) =>
                         <tbody key={ i } >
                     
                           <tr className={ metrados.tipo === "titulo" ? "font-weight-bold text-warning icoVer":  collapse === i? "font-weight-light resplandPartida icoVer": "font-weight-light icoVer"}>
@@ -1371,7 +1424,25 @@ class MetradosDiarios extends Component {
                       ) 
                     }   
                   </table>  
-              
+                  <Pagination size="sm">
+          <PaginationItem>
+            <PaginationLink first href="#" className="bg-dark"  onClick={()=>this.PaginaActual(1)}> PRIMERO </PaginationLink>
+          </PaginationItem>
+
+          {
+            NumeroPaginas.map((number) =>
+              <PaginationItem key={number} active={number === PaginaActual }>
+                <PaginationLink href="#" onClick={()=> this.PaginaActual(number)} className="bg-dark"  >
+                  {number}
+                </PaginationLink>
+              </PaginationItem>
+            )
+          }
+
+          <PaginationItem>
+            <PaginationLink last href="#" className="bg-dark" onClick={()=>this.PaginaActual(NumeroPaginas.pop())}> ÚLTIMO</PaginationLink>
+          </PaginationItem>
+        </Pagination>
                 </CardBody>
               </Card>
           
