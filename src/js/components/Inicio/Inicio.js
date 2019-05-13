@@ -2,12 +2,6 @@ import React,{ Component } from "react";
 import Obras from './componetsInicio/Obras'
 
 class Inicio extends Component{
-    constructor() {
-        super();
-        this.state = {
-        };
-      }
-
     render() {
         return (
             <div className="card">

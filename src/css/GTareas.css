@@ -9,6 +9,7 @@
   background: aliceblue;
   color: black;
   font-weight: bold;
+  cursor: pointer;
   /* display: flex; */
 }
 
@@ -22,7 +23,7 @@
 
 
 .bodyTarea{
-  background: #f78a07;
+  /* background: #f78a07; */
   color: black;
   padding: 4px;
   height: 100px;

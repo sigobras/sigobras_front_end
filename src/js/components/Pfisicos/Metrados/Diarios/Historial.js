@@ -74,6 +74,7 @@ class MDHistorial extends Component {
     }
 
     SeleccionaAnio(e){
+        console.log("año ", e.target.value)
         this.setState({
             inputAnio:e.target.value
         })
@@ -161,16 +162,18 @@ class MDHistorial extends Component {
     //------------------------------ peticiones tipo http con axios ---------------------------------------------------
 
 
-    MesesRequest(value){
+    MesesRequest(anio){
+
+        console.log("anio que llega ", anio)
         //   llamamos el api de meses5
         axios.post(`${UrlServer}/getHistorialMeses`,{
             id_ficha: sessionStorage.getItem('idobra'),
-            anyo: value
+            anyo: anio
         })
         .then((res)=>{
-            // console.log("response data meses ", res.data)
+            console.log("response data meses ", res)
 
-            var ultimoMes = res.data.length -1
+            // var ultimoMes = res.data.length -1
 
             this.setState({
                 DataMesesApi: res.data,

@@ -837,7 +837,7 @@ class GestionTareas extends Component {
 
                                 <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
                               </div>
-                              <div className="bodyTarea text-capitalize">
+                              <div className="bodyTarea text-capitalize" style={{ background: TareasEmit.proyecto_color }}>
                                 { TareasEmit.asunto }
                                 {/* <br />
                                 { TareasEmit.proyecto_nombre} */}

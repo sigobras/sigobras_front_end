@@ -2,13 +2,23 @@ import React, { Component } from 'react';
 import { MdAdd,MdRemove } from "react-icons/md";
 import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import MetradosDiarios from './ComponentsDiarios/MetradosDiarios'
-import PartidasNuevas from './ComponentsDiarios/PartidasNuevas'
 
 class MDdiario extends Component {
   constructor(){
     super();
     this.state = {
       collapse: 1,
+      Md:{
+        Componentes:"/getComponentes",
+        Partidas:"/getPartidas",
+        Actividades:"/getActividades"
+      },
+
+      Pn:{
+        Componentes:"/getComponentesPNuevas",
+        Partidas:"/getPartidasPNuevas",
+        Actividades:"/getActividadesPNuevas"
+      },
     }
 
     this.CollapseCard = this.CollapseCard.bind(this)
@@ -21,13 +31,13 @@ class MDdiario extends Component {
   }
 
   render() {
-    var { collapse } = this.state
+    var { collapse, Md , Pn } = this.state
     if(sessionStorage.getItem("idacceso") !== null){ 
       return (
         <div className="pb-3">
           <Card>
               <a href="#" className="text-white text-decoration-none">
-                <CardHeader onClick={e=> this.CollapseCard(1)} data-event={1} > 
+                <CardHeader onClick={()=> this.CollapseCard(1)} > 
                   <b>METRADOS DIARIOS</b>
                   <div className="float-right">
                       {collapse === 1 ?<MdRemove size={20} />:<MdAdd size={20} />}  
@@ -36,14 +46,14 @@ class MDdiario extends Component {
               </a>
               <Collapse isOpen={ collapse === 1 }>
                 <CardBody> 
-                    <MetradosDiarios />
+                    <MetradosDiarios rutas={Md} />
                 </CardBody>              
               </Collapse>
           </Card>
 
           <Card className="mt-2">
             <a href="#" className="text-white text-decoration-none">
-              <CardHeader onClick={e=>this.CollapseCard(2)} data-event={2} > 
+              <CardHeader onClick={()=>this.CollapseCard(2)} > 
                 <b>PARTIDAS NUEVAS</b>
                 <div className="float-right"> 
                   {collapse === 2 ?<MdRemove size={20} />:<MdAdd size={20} />}
@@ -52,7 +62,7 @@ class MDdiario extends Component {
             </a>
               <Collapse isOpen={ collapse === 2 }>
                   <CardBody>
-                    {collapse === 2 ? <PartidasNuevas /> : '' }
+                    {collapse === 2 ? <MetradosDiarios  rutas={ Pn } /> : '' }
                   </CardBody>                   
               </Collapse>
           </Card>
