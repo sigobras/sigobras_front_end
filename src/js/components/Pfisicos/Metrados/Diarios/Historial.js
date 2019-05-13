@@ -171,9 +171,9 @@ class MDHistorial extends Component {
             anyo: anio
         })
         .then((res)=>{
-            console.log("response data meses ", res)
+            console.log("response data meses ", res.data)
 
-            // var ultimoMes = res.data.length -1
+            var ultimoMes = res.data.length -1
 
             this.setState({
                 DataMesesApi: res.data,
