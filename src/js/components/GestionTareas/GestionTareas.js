@@ -13,10 +13,10 @@ import "react-picky/dist/picky.css";
 import "../../../css/GTareas.css"
 
 import { GeraColoresRandom, Extension } from "../Utils/Funciones"
-import { UrlServer, Id_Acceso, Id_Obra } from "../Utils/ServerUrlConfig"
+import { UrlServer, Id_Acceso, ImgAccesoSS,  Id_Obra } from "../Utils/ServerUrlConfig"
 
 import DragDrop from "./DragDrop"
-
+import Comentarios from "./Comentarios"
 // import App from "./demo";
 class GestionTareas extends Component {
   constructor(props) {
@@ -28,6 +28,7 @@ class GestionTareas extends Component {
     this.MostrasMasTarea = this.MostrasMasTarea.bind(this);
     this.EditPorcentaje = this.EditPorcentaje.bind(this);
     this.textPorcentEdit = this.textPorcentEdit.bind(this);
+    this.GuardaComentario = this.GuardaComentario.bind(this);
     this.subtareaAdd = this.subtareaAdd.bind(this);
     this.onChangeProyecto = this.onChangeProyecto.bind(this);
     this.onChangePara = this.onChangePara.bind(this);
@@ -321,13 +322,13 @@ class GestionTareas extends Component {
   onChangeImgMetrado(e) {
 
     var inputValueImg = e.target.files[0]
-    console.log('archivo', inputValueImg);
+    // console.log('archivo', inputValueImg);
 
-    Extension(inputValueImg.name)
+    // Extension(inputValueImg.name)
 
     if (Extension(inputValueImg.name) === ".jpeg" || Extension(inputValueImg.name) === ".png" || Extension(inputValueImg.name) === ".jpg" || Extension(inputValueImg.name) === ".dwg" || Extension(inputValueImg.name) === ".xls" || Extension(inputValueImg.name) === ".xlsx") {
       var url = URL.createObjectURL(inputValueImg)
-      console.log("url", url);
+      // console.log("url", url);
 
       this.setState({
         file: inputValueImg,
@@ -479,6 +480,22 @@ class GestionTareas extends Component {
     })
     .catch((err)=>{
       console.error("erro al enviar el porcentaje del api ", err)
+    })
+  }
+
+  GuardaComentario(e){
+    e.preventDefault()
+    console.log("ejecuntando data ", e.target[0].value )
+    axios.post(`${UrlServer}/postTareaComentario`,{
+      "mensaje": e.target[0].value,
+      "tareas_id_tarea":this.state.PositsFiltrado.id_tarea,
+      "accesos_id_acceso":Id_Acceso
+    })
+    .then((res)=>{
+      console.log("data enviado ", res)
+    })
+    .catch((err)=>{
+      console.error("error al guardar los datos ", err )
     })
   }
   // REQUESTS AL API ---------------------------------------------
@@ -831,9 +848,9 @@ class GestionTareas extends Component {
                           <Col md="6 mb-2" key={ iS }>
                             <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS )} draggable>
                               <div className="d-flex justify-content-between headerTarea p-1">
-                                <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="20%" height="20%" />
+                                <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="20%" height="20%" />
 
-                                <div className="m-0 h5" onClick={()=>this.MostrasMasTarea(TareasEmit.id_tarea) }>{`T-${iS+1}` }</div>
+                                <div className="m-0 h5" onClick={()=>this.MostrasMasTarea(TareasEmit.id_tarea) }>{`${TareasEmit.tipo_tarea}-${iS+1}` }</div>
 
                                 <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
                               </div>
@@ -860,7 +877,7 @@ class GestionTareas extends Component {
                         <div className="fondoMostrarMas">
                           <div className="containerTarea">
                             <div className="d-flex justify-content-between headerTarea p-1">
-                              <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular" width="18%" height="18%" />
+                              <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
 
                               <label className="m-0 h6 text-center"> { PositsFiltrado.asunto }</label>
 
@@ -972,7 +989,7 @@ class GestionTareas extends Component {
                                     <Col md="4" key={ indexT }>
                                       <div className="containerTarea m-2">
                                         <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={()=>this.MostrasMasTarea(tarea.id_tarea) }>
-                                          <img src="https://www.skylightsearch.co.uk/wp-content/uploads/2017/01/Hadie-profile-pic-circle-1.png" alt="sigobras" className="imgCircular"  width="18%" height="18%"  />
+                                          <img src={ImgAccesoSS} alt="sigobras" className="imgCircular"  width="18%" height="18%"  />
                                           <div className="m-0 text-center">{ tarea.asunto }</div>
                                           <div style={{ background: tarea.prioridad_color , width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
                                         </div>
@@ -1001,40 +1018,33 @@ class GestionTareas extends Component {
                         )
                       }
                     </div>
-                    <div className="ContainerComentarios">
-                      <div className="media mb-2">
-                        <img className="align-self-end mr-2 imgCircular" src="http://190.117.94.80:9000/static/Sistema/user_image_default.jpg" alt="Generi" width="5%" height="5%" />
-                        <div className="media-body bodyComentarios">
-                          <label>
-                            hola como estas que haces
-                            hola como estas que haces
-                            hola como estas que haces
-                            hola como estas que haces
-                            hola como estas que haces
-                            hola como estas que haces
-                            hola como estas que haces
-                            hola como estas que haces
-                          </label>
-                          <div className="float-right">
-                             02:06 pm  12/03/2019
-                          </div>
+                    {
+                      PositsFiltrado.comentarios === undefined? "":
+                    
+                      <div className="ContainerComentarios">
+                        {
+                          PositsFiltrado.comentarios !== undefined?
+                          PositsFiltrado.comentarios.map((comentario, indexC)=>
+                            <div className="media mb-2" key={ indexC }>
+                              <img className="align-self-end mr-2 imgCircular" src={`${UrlServer}${comentario.imagen}`} alt={ comentario.usuario } width="5%" height="5%" />
+                              <div className="media-body bodyComentarios">
+                                <label> <b className="text-capitalize">{ comentario.usuario } </b>{ ` ${ comentario.mensaje }`}</label>
+                                <div className="float-right small">
+                                  {`${comentario.hora} ${comentario.fecha}`}
+                                </div>
+                              </div>
+                            </div>
+                          ):"no hay data"
+                        }
+                        <div className="inputComnentario">
+                          <form onSubmit={ this.GuardaComentario}>
+                            <input type="text" className="form-control form-control-sm"/>
+                          </form>
                         </div>
+                        
                       </div>
-
-                      <div className="media mb-2">
-                        <img className="align-self-end mr-2 imgCircular" src="http://los40ar00.epimg.net/los40/imagenes/2019/05/08/cine/1557330970_923170_1557331170_noticia_normal.jpg" alt="Generi" width="5%" height="5%" />
-                        <div className="media-body bodyComentarios">
-                          <label>
-                            hola como estas que haces
-                            hola como estas que haces
-                          </label>
-                          <div className="float-right">
-                             03:20 pm  12/03/2019
-                          </div>
-                        </div>
-                      </div>
-                      
-                    </div>
+                    }
+                    
                   </Col>
                 </Row>
               </Container>

@@ -113,11 +113,11 @@ function GeraColoresRandom() {
 // encuentrar la extension de un archivo
 
 function Extension(nombreArchivo) {
-    console.log("archivo", nombreArchivo)   
+    // console.log("archivo", nombreArchivo)   
     if(nombreArchivo){
         var resultado = nombreArchivo.slice((nombreArchivo.lastIndexOf(".") - 1 >>> 0) + 2);
-        console.log("result>>>>>>>>>> ", `.${resultado}`)
-        return `.${resultado}`
+        // console.log("result>>>>>>>>>> ", `.${resultado}`)
+        return `.${resultado.toLowerCase()}`
     }
      return ""
    

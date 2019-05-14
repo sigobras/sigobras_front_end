@@ -306,7 +306,7 @@
 
 }
 .bodyComentarios{
-  background: #38c7ff7d;
+  background: #4646467d;
   padding: 5px;
   border-radius: 10px;
 }
@@ -328,6 +328,12 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance:textfield;
 }
+/* input comentarios */
+.inputComnentario{
+  bottom: -35px;
+  position: relative;
+}
+
 
 /* input type number personalizar */
 .inputEditPorcent{

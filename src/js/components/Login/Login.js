@@ -57,6 +57,7 @@ class Login extends Component {
               sessionStorage.setItem("nombre",  res.data.nombre_usuario);
               sessionStorage.setItem("idacceso", res.data.id_acceso);
               sessionStorage.setItem("usuario", res.data.usuario);
+              sessionStorage.setItem("imgUsuario", `${UrlServer}${ res.data.imagen}`);
               
               // setTimeout(()=>{ 	
                     

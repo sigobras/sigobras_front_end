@@ -1788,7 +1788,7 @@ class MetradosDiarios extends Component {
 
 
         {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
-        <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} size="sm" fade={false} backdrop="static">
+        <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} fade={false} backdrop="static" style={{width: "900px"}}>
           <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
             <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
               </ModalHeader>
