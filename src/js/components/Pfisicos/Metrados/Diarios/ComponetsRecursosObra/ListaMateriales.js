@@ -929,7 +929,7 @@ class ListaMateriales extends Component {
                       <Col md="6">
 
                         <Card>
-                          <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY 09/05/2019 )</CardHeader>
+                          <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } )</CardHeader>
                           <CardBody>
                             <table className="table table-sm">
                               <thead>

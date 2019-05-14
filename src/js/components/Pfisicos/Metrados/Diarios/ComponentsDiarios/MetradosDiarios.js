@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFirstPage, MdLastPage, MdChevronLeft , MdChevronRight , MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
 import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
@@ -1113,20 +1113,6 @@ class MetradosDiarios extends Component {
                 </div>
               </CardHeader>
               <CardBody>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <select onChange={this.SelectCantidadRows} value={CantidadRows} className="form-control form-control-sm" >
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={30}>30</option>
-                      <option value={40}>40</option>
-                    </select>
-                  </div>
-                  {/* <div className="float-right">
-                      <input placeholder="Buscar" className="form-control form-control-sm" />
-                    </div> */}
-                </div>
-
 
                 <table className="table table-sm">
                   <thead className="resplandPartida">
@@ -1430,25 +1416,36 @@ class MetradosDiarios extends Component {
                     )
                   }
                 </table>
-                <Pagination size="sm">
-                  <PaginationItem>
-                    <PaginationLink first href="#" className="bg-dark" onClick={() => this.PaginaActual(1)}> PRIMERO </PaginationLink>
-                  </PaginationItem>
+                <div className="clearfix">
+                  <div className="float-left">
+                    <select onChange={ this.SelectCantidadRows } value={CantidadRows} className="form-control form-control-sm" >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={30}>30</option>
+                      <option value={40}>40</option>
+                    </select>
+                  </div>
+                  <div className="float-right mr-2 ">
+                    <div className="d-flex text-dark">
 
-                  {
-                    NumeroPaginas.map((number) =>
-                      <PaginationItem key={number} active={number === PaginaActual}>
-                        <PaginationLink href="#" onClick={() => this.PaginaActual(number)} className="bg-dark"  >
-                          {number}
-                        </PaginationLink>
-                      </PaginationItem>
-                    )
-                  }
+                      <InputGroup size="sm">
+                        <InputGroupAddon addonType="prepend">
+                            <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual(1)} disabled={ PaginaActual === 1 }><MdFirstPage /></Button>
+                            <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual( PaginaActual-1 ) }  disabled={ PaginaActual === 1 }><MdChevronLeft /></Button>
+                            <input type="text" style={{ width: "30px"}} value={ PaginaActual } onChange={ e=> this.setState({ PaginaActual: e.target.value }) }/>
+                            <InputGroupText>{`de  ${NumeroPaginas.length}`} </InputGroupText>
+                        </InputGroupAddon>
+                        
+                        <InputGroupAddon addonType="append">
+                          <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual( PaginaActual+1 ) } disabled={ PaginaActual === NumeroPaginas.length }><MdChevronRight /></Button>
+                          <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual(NumeroPaginas.pop())}  disabled={ PaginaActual === NumeroPaginas.length }><MdLastPage /></Button>
+                        </InputGroupAddon>
+                      </InputGroup>
 
-                  <PaginationItem>
-                    <PaginationLink last href="#" className="bg-dark" onClick={() => this.PaginaActual(NumeroPaginas.pop())}> ÚLTIMO</PaginationLink>
-                  </PaginationItem>
-                </Pagination>
+                    </div>
+                  </div>
+                  
+                </div>
               </CardBody>
             </Card>
 

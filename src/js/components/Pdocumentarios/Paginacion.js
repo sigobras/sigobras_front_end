@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import { InputGroup, InputGroupAddon, InputGroupText, Button } from 'reactstrap';
 import axios from "axios"
 import { UrlServer, Id_Obra } from "../Utils/ServerUrlConfig"
-
+import { MdFirstPage, MdLastPage, MdChevronLeft , MdChevronRight } from "react-icons/md";
 class Paginacion extends Component {
   constructor() {
     super();
@@ -61,56 +61,9 @@ class Paginacion extends Component {
       NumeroPaginas.push(i);
     }
 
-    var tamanioDataPaginas = NumeroPaginas.length
-    
-    var ultimo =  PaginaActual + 5
-
-    console.log(" resultado totalMostrar >> ", ultimo , ">>>>> ")
-
-    const demo = NumeroPaginas.slice(PaginaActual-1, ultimo )
-    console.log("demo>>>>>>>>>>>>>> ", demo)
     return (
       <div>
-        <div className="clearfix">
-          <div className="float-left">
-            <select onChange={ this.SelectCantidadRows } value={CantidadRows} className="form-control form-control-sm" >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-              <option value={40}>40</option>
-            </select>
-          </div>
-          <div className="float-right">
-            {/* <input placeholder="Buscar" className="form-control form-control-sm" /> */}
-            <Pagination size="sm">
-              <PaginationItem>
-                <PaginationLink first href="#" className="bg-dark"  onClick={()=>this.PaginaActual(1)}/>
-              </PaginationItem>
 
-              <PaginationItem>
-                <PaginationLink previous href="#" className="bg-dark" />
-              </PaginationItem>
-              {
-                demo.map((number) =>
-                  <PaginationItem key={number} active={number === PaginaActual }>
-                    <PaginationLink href="#" onClick={()=> this.PaginaActual(number)} className="bg-dark">
-                      {number}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              }
-
-              <PaginationItem>
-                <PaginationLink className="bg-dark"  next href="#" />
-              </PaginationItem>
-
-              <PaginationItem>
-                <PaginationLink last href="#" className="bg-dark" onClick={()=>this.PaginaActual(NumeroPaginas.pop())} />
-              </PaginationItem>
-            </Pagination>
-          </div>
-        </div>
-        
         <table className="table table-sm">
           <thead>
             <tr>
@@ -131,35 +84,31 @@ class Paginacion extends Component {
         </table>
         <div className="clearfix">
           <div className="float-left">
-             { `Mostrando ${ PaginaActual } de  ${NumeroPaginas.length} Páginas`}
+            <select onChange={ this.SelectCantidadRows } value={CantidadRows} className="form-control form-control-sm" >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={40}>40</option>
+            </select>
           </div>
-          <div className="float-right">
-            <Pagination size="sm">
-              <PaginationItem>
-                <PaginationLink first href="#" className="bg-dark"  onClick={()=>this.PaginaActual(1)}/>
-              </PaginationItem>
+          <div className="float-right mr-2 ">
+            <div className="d-flex text-dark">
 
-              <PaginationItem>
-                <PaginationLink previous href="#" className="bg-dark" />
-              </PaginationItem>
-              {
-                NumeroPaginas.map((number) =>
-                  <PaginationItem key={number} active={number === PaginaActual }>
-                    <PaginationLink href="#" onClick={()=> this.PaginaActual(number)} className="bg-dark">
-                      {number}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              }
+              <InputGroup size="sm">
+                <InputGroupAddon addonType="prepend">
+                    <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual(1)} disabled={ PaginaActual === 1 }><MdFirstPage /></Button>
+                    <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual( PaginaActual-1 ) }  disabled={ PaginaActual === 1 }><MdChevronLeft /></Button>
+                    <input type="text" style={{ width: "30px"}} value={ PaginaActual } onChange={ e=> this.setState({ PaginaActual: e.target.value }) }/>
+                    <InputGroupText>{`de  ${NumeroPaginas.length}`} </InputGroupText>
 
-              <PaginationItem>
-                <PaginationLink className="bg-dark"  next href="#" />
-              </PaginationItem>
+                </InputGroupAddon>
+                <InputGroupAddon addonType="append">
+                  <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual( PaginaActual+1 ) } disabled={ PaginaActual === NumeroPaginas.length }><MdChevronRight /></Button>
+                  <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual(NumeroPaginas.pop())}  disabled={ PaginaActual === NumeroPaginas.length }><MdLastPage /></Button>
+                </InputGroupAddon>
+              </InputGroup>
 
-              <PaginationItem>
-                <PaginationLink last href="#" className="bg-dark" onClick={()=>this.PaginaActual(NumeroPaginas.pop())} />
-              </PaginationItem>
-            </Pagination>
+            </div>
           </div>
           
         </div>
