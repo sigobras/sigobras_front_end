@@ -283,24 +283,24 @@ class HistorialImagenesObra extends Component {
                           <tr className={collapse === IP ? "resplandPartidabottom" : "d-none"}>
                             <td colSpan="5">
                               <Collapse isOpen={collapse === IP}>
-                                  <Nav tabs>
-                                    <NavItem>
-                                      <NavLink className={classnames({ active: this.state.activeTabImagen === 'getImagenesHistorialPartidas' })} onClick={() =>  this.TabImg('getImagenesHistorialPartidas',  partida.id_partida,) } >
-                                        PARTIDAS
-                                      </NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                      <NavLink className={classnames({ active: this.state.activeTabImagen === 'getImagenesHistorialActividades' })} onClick={() =>  this.TabImg('getImagenesHistorialActividades',  partida.id_partida) }>
-                                        ACTIVIDADES
-                                      </NavLink>
-                                    </NavItem>
-                                      
-                                  </Nav>
-                                    {
-                                      DataImagenesApi.length !== 0 ? 
-                                      <Gallery images={DataImagenesApi} />
-                                      :"No hay imagenes que mostrar"
-                                    }
+                                <Nav tabs>
+                                  <NavItem>
+                                    <NavLink className={classnames({ active: this.state.activeTabImagen === 'getImagenesHistorialPartidas' })} onClick={() =>  this.TabImg('getImagenesHistorialPartidas',  partida.id_partida,) } >
+                                      PARTIDAS
+                                    </NavLink>
+                                  </NavItem>
+                                  <NavItem>
+                                    <NavLink className={classnames({ active: this.state.activeTabImagen === 'getImagenesHistorialActividades' })} onClick={() =>  this.TabImg('getImagenesHistorialActividades',  partida.id_partida) }>
+                                      ACTIVIDADES
+                                    </NavLink>
+                                  </NavItem>
+                                    
+                                </Nav>
+                                  {
+                                    DataImagenesApi.length !== 0 ? 
+                                    <Gallery images={DataImagenesApi} />
+                                    :"No hay imagenes que mostrar"
+                                  }
 
                               </Collapse>
                             </td>

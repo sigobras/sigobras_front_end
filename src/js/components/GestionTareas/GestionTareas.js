@@ -61,10 +61,7 @@ class GestionTareas extends Component {
     this.demoFuncion = this.demoFuncion.bind(this);
 
     this.state = {
-      users: [],
       online: 0,
-
-
 
       DataTareasApi: [],
       PositsFiltrado: [],
@@ -534,11 +531,8 @@ class GestionTareas extends Component {
     .then((res)=>{
       console.log("data enviado ", res)
 
-      // this.demoFuncion(res.data);
-      var optionsHora = {hour: "numeric", hour12:"false", minute:"2-digit"};
-
       // this.socket.emit('tareas_comentarios', res.data);
-
+      document.getElementById("inputComentario").value = "";
       this.socket.emit("tareas_comentarios", 
           {
             id_tarea:this.state.PositsFiltrado.id_tarea,
@@ -569,15 +563,20 @@ class GestionTareas extends Component {
       }
     )
       .then((res) => {
-        // console.log("response proyectos ", res.data )
+        console.log("response proyectos ", res )
         this.setState({
           DataProyectoMostrarApi: res.data
         })
-        this.reqTareasRecibidas( id_acceso, inicio, fin , res.data[0].id_proyecto )
+        // this.reqTareasRecibidas( id_acceso, inicio, fin , res.data[0].id_proyecto )
       })
 
       .catch((err) => {
-        console.log("error al consultar api ", err)
+        console.log("error al consultar api ", err.response)
+        if (err.response.data === "vacio") {
+          this.setState({
+            DataProyectoMostrarApi:[]
+          })
+        }
       })
   }
 
@@ -703,8 +702,6 @@ class GestionTareas extends Component {
 
     return (
       <div>
-      {/* {()=> this.demoFuncion} */}
-      {/* { console.log("online ", this.state.online,  ">>>>>>>>", this.state.users)} */}
         <Row>
           <div className={CollapseFormContainerAddTarea === true ? "formPositContainer" : "widthFormPositContentCierra"}>
             <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
@@ -878,17 +875,17 @@ class GestionTareas extends Component {
               </NavItem>
 
               <NavItem>
-                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqProyectos(Id_Acceso, "/getTareaReceptorTerminadas","3")}>
+                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "100","3")}>
                   VENCIDOS
                 </NavLink>
               </NavItem>
 
 
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className={classnames({ "bg-info": ActiveTab === "4" })} onClick={() => this.reqProyectos(Id_Acceso, "/getTareaReceptorTerminadas","4")} style={{ marginTop: "-3px"}}>
                   <MdAlarmAdd size={ 15 } />
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
 
             </Nav>
 
@@ -925,7 +922,7 @@ class GestionTareas extends Component {
                     </div>
 
                   </Col>
-                  <Col md="3" className="brLeft brRight">
+                  <Col md="3">
 
                     {
                       PositsFiltrado.length === 0 ? "":
@@ -1075,28 +1072,29 @@ class GestionTareas extends Component {
                     </div>
                     {
                       PositsFiltrado.comentarios === undefined? "":
-                    
-                      <div className="ContainerComentarios">
-                        {
-                          PositsFiltrado.comentarios !== undefined?
-                          PositsFiltrado.comentarios.map((comentario, indexC)=>
-                            <div className="media mb-2" key={ indexC }>
-                              <img className="align-self-end mr-2 imgCircular" src={`${UrlServer}${comentario.imagen}`} alt={ comentario.usuario } width="5%" height="5%" />
-                              <div className="media-body bodyComentarios">
-                                <label> <b className="text-capitalize">{ comentario.usuario } </b>{ ` ${ comentario.mensaje }`}</label>
-                                <div className="float-right small">
-                                  {`${comentario.hora} ${comentario.fecha}`}
+                      <div  className="ContainerComentarios">
+                        <div className="SmsComentarios">
+                          {
+                            PositsFiltrado.comentarios !== undefined?
+                            PositsFiltrado.comentarios.map((comentario, indexC)=>
+                              <div className="media mb-2" key={ indexC }>
+                                <img className="align-self-end mr-2 imgCircular" src={`${UrlServer}${comentario.imagen}`} alt={ comentario.usuario } width="5%" height="5%" />
+                                <div className="media-body bodyComentarios">
+                                  <label> <b className="text-capitalize">{ comentario.usuario } </b>{ ` ${ comentario.mensaje }`}</label>
+                                  <div className="float-right small">
+                                    {`${comentario.hora} ${comentario.fecha}`}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ):"no hay data"
-                        }
+                            ):"no hay data"
+                          }
+                          
+                        </div>
                         <div className="inputComnentario">
                           <form onSubmit={ this.GuardaComentario}>
-                            <input type="text" className="form-control form-control-sm"/>
+                            <input type="text" className="form-control form-control-sm" id="inputComentario"/>
                           </form>
                         </div>
-                        
                       </div>
                     }
                     

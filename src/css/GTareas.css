@@ -62,13 +62,6 @@
   width: 50%;
 }
 
-.brLeft{
-  border-left: 2px solid #0080ff
-}
-.brRight{
-  border-right: 2px solid #0080ff
-
-}
 
 
 .imgCircular{
@@ -251,19 +244,21 @@
 
 }
 /* ======================================================================contanierProyectoAsignados========================================================================*/
-/* =============ContainerComentarios=================================================================================================================================*/
-
 .ContainerComentarios{
   background: #0080ff3b;
   padding: 4px;
   border-radius: 2%;
-  height: calc(100vh - 493px);
+}
+/* =============SmsComentarios=================================================================================================================================*/
+
+.SmsComentarios{
+  height: calc(100vh - 530px);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
 }
 
-.ContainerComentarios::-webkit-scrollbar {
+.SmsComentarios::-webkit-scrollbar {
   width: 8px;
   height: 8px;
   cursor: pointer;
@@ -271,7 +266,7 @@
 }
 
 /* Ponemos un color de fondo y redondeamos las esquinas del thumb */
-.ContainerComentarios::-webkit-scrollbar-thumb {
+.SmsComentarios::-webkit-scrollbar-thumb {
   background: #0080ff;
   border-radius: 4px;
   cursor: pointer;
@@ -279,28 +274,28 @@
 }
 
 /* Cambiamos el fondo cuando esté en active */
-.ContainerComentarios::-webkit-scrollbar-thumb:active {
+.SmsComentarios::-webkit-scrollbar-thumb:active {
   background-color: #5688ff;
   cursor: pointer;
 
 }
 
 /* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
-.ContainerComentarios::-webkit-scrollbar-thumb:hover {
+.SmsComentarios::-webkit-scrollbar-thumb:hover {
   background: #3b9dff;
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 
 /* Ponemos un color de fondo y redondeamos las esquinas del track */
-.ContainerComentarios::-webkit-scrollbar-track {
+.SmsComentarios::-webkit-scrollbar-track {
   background: #e1e1e1;
   border-radius: 4px;
 }
 
 /* Cambiamos el fondo cuando esté en active o hover */
-.ContainerComentarios::-webkit-scrollbar-track:hover,
-.ContainerComentarios::-webkit-scrollbar-track:active {
+.SmsComentarios::-webkit-scrollbar-track:hover,
+.SmsComentarios::-webkit-scrollbar-track:active {
   background: #d4d4d4;
   cursor: pointer;
 
@@ -330,7 +325,7 @@ input[type=number] {
 }
 /* input comentarios */
 .inputComnentario{
-  bottom: -35px;
+  bottom: 0px;
   position: relative;
 }
 
