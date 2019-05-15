@@ -300,6 +300,7 @@
   cursor: pointer;
 
 }
+
 .bodyComentarios{
   background: #4646467d;
   padding: 5px;
@@ -352,6 +353,52 @@ input[type=number] {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+
+
+.formPositContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: pointer;
+
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del thumb */
+.formPositContainer::-webkit-scrollbar-thumb {
+  background: #0080ff;
+  border-radius: 4px;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo cuando esté en active */
+.formPositContainer::-webkit-scrollbar-thumb:active {
+  background-color: #5688ff;
+  cursor: pointer;
+
+}
+
+/* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
+.formPositContainer::-webkit-scrollbar-thumb:hover {
+  background: #3b9dff;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Ponemos un color de fondo y redondeamos las esquinas del track */
+.formPositContainer::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+/* Cambiamos el fondo cuando esté en active o hover */
+.formPositContainer::-webkit-scrollbar-track:hover,
+.formPositContainer::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+  cursor: pointer;
+
+}
+
 
 .widthFormPositContentCierra{
   position: absolute;

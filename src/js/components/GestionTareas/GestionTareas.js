@@ -14,7 +14,7 @@ import Picky from "react-picky";
 import "react-picky/dist/picky.css";
 import "../../../css/GTareas.css"
 
-import { GeraColoresRandom, Extension } from "../Utils/Funciones"
+import { FechaActual, Extension } from "../Utils/Funciones"
 import { UrlServer, Id_Acceso, ImgAccesoSS,  Id_Obra, NombUsuarioSS } from "../Utils/ServerUrlConfig"
 
 import DragDrop from "./DragDrop"
@@ -200,6 +200,7 @@ class GestionTareas extends Component {
     var { PositsFiltrado, IdProyecto, proyecto, file, asunto, descripcion, fechaInicio, duracion, InputPersonal } = this.state
     console.log("ejecutando", PositsFiltrado.id_tarea, "IdProyecto ", IdProyecto )
 
+
     // if( Para.length <=0 && InputPersonal.length <=0  ){
     //     console.log(" no es proyecto")
     //     return
@@ -273,6 +274,8 @@ class GestionTareas extends Component {
 
           this.reqProyectos(Id_Acceso,"0","0","0","0")
           this.reqTareasEmitidos(Id_Acceso, "0", "0")  
+          this.reqSubordinados( Id_Acceso )
+
           toast.success("✔ Tarea Agregada al sistema ")
           return
         }
@@ -818,7 +821,7 @@ class GestionTareas extends Component {
                 <div className="text-right">  {this.state.descripcion.length} /  500</div>
 
                 <Label for="fechaInicio">INICIO : </Label>
-                <Input type="date" id="fechaInicio" required onChange={e => this.setState({ fechaInicio: e.target.value })} />
+                <Input type="date" min={FechaActual()}  required onChange={e => this.setState({ fechaInicio: e.target.value })} />
 
                 <Label for="duracion">DURACIÓN: </Label>
                 <Input type="number" onChange={e => this.setState({ duracion: e.target.value })} required />
