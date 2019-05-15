@@ -24,7 +24,8 @@ class GestionTareas extends Component {
   constructor(props) {
     super(props);
 
-    this.server = process.env.REACT_APP_API_URL || UrlServer;
+    // this.server = process.env.REACT_APP_API_URL || UrlServer;
+    this.server = process.env.REACT_APP_API_URL || "192.168.0.5:9000";
     this.socket = io.connect(this.server);
 
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
@@ -180,11 +181,13 @@ class GestionTareas extends Component {
 
   demoFuncion(user){
     console.log("dataaaaaaa>>>>>>>>", user)
-
+    console.log("dataaaa------------------->", this.state.PositsFiltrado.comentarios)
+    
     // let users = this.state.PositsFiltrado.comentarios.slice();
-    let users = this.state.PositsFiltrado.comentarios
-    users.push(user);
-    this.setState({ users: users });
+    let users = this.state.PositsFiltrado
+    users.comentarios.push(user);
+    console.log("************************** ",users)
+    this.setState({ PositsFiltrado: users });
   }
 
   toggleTabDetalleTarea(tab) {
@@ -456,7 +459,7 @@ class GestionTareas extends Component {
     
     console.log("id", idTarea)
 
-    this.socket.on("tareas_comentarios", data => this.demoFuncion(data));
+    this.socket.on(idTarea, data => this.demoFuncion(data));
 
     // var Tareas = this.state.DataTareasApi
     // console.log("DataTareasApi_______ ", Tareas)
@@ -531,23 +534,17 @@ class GestionTareas extends Component {
     .then((res)=>{
       console.log("data enviado ", res)
 
-      this.demoFuncion(res.data);
+      // this.demoFuncion(res.data);
       var optionsHora = {hour: "numeric", hour12:"false", minute:"2-digit"};
 
-      this.socket.emit('tareas_comentarios', res.data);
+      // this.socket.emit('tareas_comentarios', res.data);
 
-      // this.socket.emit("tareas_comentarios", 
-      //     {
-      //       id_tarea:this.state.PositsFiltrado.id_tarea,
-      //       data:{
-      //         mensaje: e.target[0].value,
-      //         hora: new Date().toLocaleTimeString('es', optionsHora),
-      //         fecha: new Date().toLocaleDateString('es'),
-      //         usuario: NombUsuarioSS,
-      //         imagen: ImgAccesoSS
-      //       }     
-      //     }
-      // )
+      this.socket.emit("tareas_comentarios", 
+          {
+            id_tarea:this.state.PositsFiltrado.id_tarea,
+            data: res.data   
+          }
+      )
 
     })
     .catch((err)=>{
@@ -707,7 +704,7 @@ class GestionTareas extends Component {
     return (
       <div>
       {/* {()=> this.demoFuncion} */}
-      { console.log("online ", this.state.online,  ">>>>>>>>", this.state.users)}
+      {/* { console.log("online ", this.state.online,  ">>>>>>>>", this.state.users)} */}
         <Row>
           <div className={CollapseFormContainerAddTarea === true ? "formPositContainer" : "widthFormPositContentCierra"}>
             <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
