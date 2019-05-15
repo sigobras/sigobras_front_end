@@ -973,7 +973,14 @@ class GestionTareas extends Component {
                             </div>
 
                           <div className="text-center text-warning">
-                            <b> Se tiene { `${ PositsFiltrado.diasTotal }` } dias para cumplir con la meta y te <i> quedan {`${ PositsFiltrado.diasTotal - PositsFiltrado.diasTranscurridos  }`}</i>  </b>
+                            {
+                              PositsFiltrado.diasTranscurridos < 0 ?
+                              <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "") } dias para empezar la tarea asignada.</b>
+                              :
+                              <b> Tiene { `${ PositsFiltrado.diasTotal }` } dias para cumplir con la meta y te <i> quedan {`${ PositsFiltrado.diasTranscurridos  }`}</i>  </b>
+                              
+                            }
+                            
                           </div>
                         </div>
                     }
