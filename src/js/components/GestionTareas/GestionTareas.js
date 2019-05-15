@@ -24,7 +24,7 @@ class GestionTareas extends Component {
   constructor(props) {
     super(props);
 
-    this.server = process.env.REACT_APP_API_URL || '192.168.0.5:9000';
+    this.server = process.env.REACT_APP_API_URL || UrlServer;
     this.socket = io.connect(this.server);
 
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
