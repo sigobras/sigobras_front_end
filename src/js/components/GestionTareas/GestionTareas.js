@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Container, TabContent, TabPane, Nav, NavItem, NavLink, Button, Row, Col, Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, CustomInput } from 'reactstrap';
 import axios from 'axios';
+import io from 'socket.io-client';
+
 import classnames from 'classnames';
 import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd, MdAlarmAdd, MdSave, MdClose } from "react-icons/md";
 import { FaFileDownload } from "react-icons/fa";
@@ -13,14 +15,17 @@ import "react-picky/dist/picky.css";
 import "../../../css/GTareas.css"
 
 import { GeraColoresRandom, Extension } from "../Utils/Funciones"
-import { UrlServer, Id_Acceso, ImgAccesoSS,  Id_Obra } from "../Utils/ServerUrlConfig"
+import { UrlServer, Id_Acceso, ImgAccesoSS,  Id_Obra, NombUsuarioSS } from "../Utils/ServerUrlConfig"
 
 import DragDrop from "./DragDrop"
-import Comentarios from "./Comentarios"
-// import App from "./demo";
+
+
 class GestionTareas extends Component {
   constructor(props) {
     super(props);
+
+    this.server = process.env.REACT_APP_API_URL || '192.168.0.5:9000';
+    this.socket = io.connect(this.server);
 
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
     this.AgregaTarea = this.AgregaTarea.bind(this);
@@ -52,8 +57,14 @@ class GestionTareas extends Component {
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.onDrop = this.onDrop.bind(this);
+    this.demoFuncion = this.demoFuncion.bind(this);
 
     this.state = {
+      users: [],
+      online: 0,
+
+
+
       DataTareasApi: [],
       PositsFiltrado: [],
       DataTareasEmitidosApi: [],
@@ -113,6 +124,20 @@ class GestionTareas extends Component {
 
   componentDidMount() {
 
+    this.socket.on('visitors', data => this.setState({ online: data }));
+    // this.socket.on('visitor exits', data => this.setState({ online: data }));
+    // this.socket.on('add', data => this.handleUserAdded(data));
+    // this.socket.on('update', data => this.handleUserUpdated(data));
+    // this.socket.on('delete', data => this.handleUserDeleted(data));
+
+
+
+
+
+
+
+
+
     document.title="GESTIÓN DE TAREAS 🎁"
     // llama api de tareas pendientes
 
@@ -151,6 +176,15 @@ class GestionTareas extends Component {
       .catch((err) => {
         console.log("error al conectar al api", err)
       })
+  }
+
+  demoFuncion(user){
+    console.log("dataaaaaaa>>>>>>>>", user)
+
+    // let users = this.state.PositsFiltrado.comentarios.slice();
+    let users = this.state.PositsFiltrado.comentarios
+    users.push(user);
+    this.setState({ users: users });
   }
 
   toggleTabDetalleTarea(tab) {
@@ -422,6 +456,7 @@ class GestionTareas extends Component {
     
     console.log("id", idTarea)
 
+    this.socket.on("tareas_comentarios", data => this.demoFuncion(data));
 
     // var Tareas = this.state.DataTareasApi
     // console.log("DataTareasApi_______ ", Tareas)
@@ -484,8 +519,10 @@ class GestionTareas extends Component {
   }
 
   GuardaComentario(e){
-    e.preventDefault()
+    e.preventDefault();
+
     console.log("ejecuntando data ", e.target[0].value )
+
     axios.post(`${UrlServer}/postTareaComentario`,{
       "mensaje": e.target[0].value,
       "tareas_id_tarea":this.state.PositsFiltrado.id_tarea,
@@ -493,6 +530,25 @@ class GestionTareas extends Component {
     })
     .then((res)=>{
       console.log("data enviado ", res)
+
+      this.demoFuncion(res.data);
+      var optionsHora = {hour: "numeric", hour12:"false", minute:"2-digit"};
+
+      this.socket.emit('tareas_comentarios', res.data);
+
+      // this.socket.emit("tareas_comentarios", 
+      //     {
+      //       id_tarea:this.state.PositsFiltrado.id_tarea,
+      //       data:{
+      //         mensaje: e.target[0].value,
+      //         hora: new Date().toLocaleTimeString('es', optionsHora),
+      //         fecha: new Date().toLocaleDateString('es'),
+      //         usuario: NombUsuarioSS,
+      //         imagen: ImgAccesoSS
+      //       }     
+      //     }
+      // )
+
     })
     .catch((err)=>{
       console.error("error al guardar los datos ", err )
@@ -650,6 +706,8 @@ class GestionTareas extends Component {
 
     return (
       <div>
+      {/* {()=> this.demoFuncion} */}
+      { console.log("online ", this.state.online,  ">>>>>>>>", this.state.users)}
         <Row>
           <div className={CollapseFormContainerAddTarea === true ? "formPositContainer" : "widthFormPositContentCierra"}>
             <div className="h6 text-center">ASIGNAR NUEVA TAREA </div>
