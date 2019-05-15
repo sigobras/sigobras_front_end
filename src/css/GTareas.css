@@ -411,3 +411,14 @@ input[type=number] {
   -webkit-transition: opacity 600ms, visibility 600ms;
           transition: opacity 600ms, visibility 600ms;
 }
+
+
+.contTRecodatorios{
+  height: calc(100vh - 132px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+  background: #0080ff3b;
+  padding: 8px;
+  border-radius: 8px;
+}

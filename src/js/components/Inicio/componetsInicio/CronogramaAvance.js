@@ -51,10 +51,7 @@ class CronogramaAvance extends Component {
       }
     )
       .then((res) => {
-        console.log("res programado", res.data);
-
-        
-
+        // console.log("res programado", res.data);
         var Inputs = []
         var SumaInputs = []
         var totalSumaInpust = 0
@@ -87,7 +84,7 @@ class CronogramaAvance extends Component {
           )
 
           totalSumaInpust = SumaInputs.reduce(((a, b) => { return a + b; }));
-          console.log("totalSumaInpust", totalSumaInpust)
+          // console.log("totalSumaInpust", totalSumaInpust)
 
         }
 
@@ -98,12 +95,12 @@ class CronogramaAvance extends Component {
 
         saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
 
-        console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
+        // console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
 
         // if(saldoTotalCostoDirecto !== NaN){
         //   saldoTotalCostoDirecto = costoDirecto              
         // }
-        console.log("inputs", Inputs);
+        // console.log("inputs", Inputs);
 
         this.setState({
           DataCronoGeneralApi: res.data,
@@ -176,7 +173,7 @@ class CronogramaAvance extends Component {
 
     var EnviarDatosActualizar = this.state.EnviarDatos
 
-    console.log("enviar datos ", EnviarDatosActualizar)
+    // console.log("enviar datos ", EnviarDatosActualizar)
 
     Fechas.forEach(anioMes => {
 
@@ -198,8 +195,8 @@ class CronogramaAvance extends Component {
 
     });
 
-    console.log('DataAgrupado', DataAgrupado)
-    console.log('EnviarDatosActualizar', EnviarDatosActualizar)
+    // console.log('DataAgrupado', DataAgrupado)
+    // console.log('EnviarDatosActualizar', EnviarDatosActualizar)
 
     this.setState({
       EnviarDatos: EnviarDatosActualizar,
@@ -219,7 +216,7 @@ class CronogramaAvance extends Component {
     // console.log("avanceAcumulado>>>", avanceAcumulado)
     this.state.EnviarDatos[i].splice(2, 1, numero);
 
-    console.log("EnviarDatos", this.state.EnviarDatos)
+    // console.log("EnviarDatos", this.state.EnviarDatos)
 
     var SumaInputs = []
     this.state.EnviarDatos.forEach((data) => {
@@ -244,7 +241,7 @@ class CronogramaAvance extends Component {
       ResultResta: saldoTotalCostoDirecto.toLocaleString("es-PE")
     })
 
-    console.log('resultado', this.state.EnviarDatos)
+    // console.log('resultado', this.state.EnviarDatos)
   }
 
   capturaInputsFinanciero(e, i) {
@@ -254,7 +251,7 @@ class CronogramaAvance extends Component {
     var numero = ConvertFormatStringNumber(convertString);
     var avanceAcumulado = this.state.avanceAcumulado
 
-    console.log("avanceAcumulado>>>", avanceAcumulado)
+    // console.log("avanceAcumulado>>>", avanceAcumulado)
     this.state.EnviarDatos[i].splice(3, 1, numero);
 
     // var SumaInputs = []
@@ -278,7 +275,7 @@ class CronogramaAvance extends Component {
     //   ResultResta:saldoTotalCostoDirecto.toLocaleString("es-PE")
     // })
 
-    console.log('financiero', this.state.EnviarDatos)
+    // console.log('financiero', this.state.EnviarDatos)
   }
 
   enviarDatosApi() {
@@ -299,7 +296,7 @@ class CronogramaAvance extends Component {
 
     });
 
-    console.log("DataMODIFICADO", DataModificar);
+    // console.log("DataMODIFICADO", DataModificar);
 
     if (confirm('¿Estas seguro de envias los datos del cronograma programado al sistema?')) {
       axios.post(`${UrlServer}/postcronogramamensual`,
@@ -349,7 +346,7 @@ class CronogramaAvance extends Component {
               )
 
               totalSumaInpust = SumaInputs.reduce(((a, b) => { return a + b; }));
-              console.log("totalSumaInpust", totalSumaInpust)
+              // console.log("totalSumaInpust", totalSumaInpust)
 
             }
 
@@ -360,12 +357,12 @@ class CronogramaAvance extends Component {
 
             saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
 
-            console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
+            // console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
 
             // if(saldoTotalCostoDirecto !== NaN){
             //   saldoTotalCostoDirecto = costoDirecto              
             // }
-            console.log("inputs", Inputs);
+            // console.log("inputs", Inputs);
 
             this.setState({
               DataCronoGeneralApi: res.data,
@@ -401,8 +398,8 @@ class CronogramaAvance extends Component {
     var fechaActualMes = FechaActual().slice(0, 7)
 
     if (MesAnioActual === fechaActualMes) {
-      console.log("nooooooooo SE ELIMINA SON DISTINTOS")
-      console.log("MesAnioActual", MesAnioActual, "fechaActualMes", fechaActualMes)
+      // console.log("nooooooooo SE ELIMINA SON DISTINTOS")
+      // console.log("MesAnioActual", MesAnioActual, "fechaActualMes", fechaActualMes)
       toast.error("no es posible eliminar el mes ya que es actual")
 
       this.setState({
@@ -411,7 +408,7 @@ class CronogramaAvance extends Component {
 
     } else {
       if (this.state.EstadoBtnEliminar === false) {
-        console.log("SI SE ELIMINA SON DISTINTOS")
+        // console.log("SI SE ELIMINA SON DISTINTOS")
         var DataEnviarDataCrono = this.state.EnviarDatos
         DataEnviarDataCrono.pop()
 
@@ -429,7 +426,7 @@ class CronogramaAvance extends Component {
           }
         })
           .then((res) => {
-            console.log("response de eliminar", res);
+            // console.log("response de eliminar", res);
 
             if (res.data === "eliminado") {
               var DataEnviarDataCrono = this.state.EnviarDatos
@@ -466,12 +463,12 @@ class CronogramaAvance extends Component {
   eliminarMesNoData() {
     var DetalleFinanciero = ""
     this.state.DataCronoProgramadoApi.forEach(dataFinanciero => {
-      console.log("dataaa", dataFinanciero.financiero_monto)
+      // console.log("dataaa", dataFinanciero.financiero_monto)
 
       DetalleFinanciero = dataFinanciero.financiero_monto
     });
 
-    console.log("DetalleFinanciero", DetalleFinanciero)
+    // console.log("DetalleFinanciero", DetalleFinanciero)
 
     if (DetalleFinanciero === "Nuevo") {
       var DataEnviarDataCrono = this.state.EnviarDatos
@@ -527,7 +524,7 @@ class CronogramaAvance extends Component {
       }
     )
     .then((res)=>{
-      console.log("res envio de financiero", res); 
+      // console.log("res envio de financiero", res); 
 
       var Inputs = []
       var SumaInputs = []
@@ -562,7 +559,7 @@ class CronogramaAvance extends Component {
         )
 
         totalSumaInpust = SumaInputs.reduce(((a, b) => { return a + b; }));
-        console.log("totalSumaInpust", totalSumaInpust)
+        // console.log("totalSumaInpust", totalSumaInpust)
 
       }
 
@@ -573,12 +570,12 @@ class CronogramaAvance extends Component {
 
       saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
 
-      console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
+      // console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
 
       // if(saldoTotalCostoDirecto !== NaN){
       //   saldoTotalCostoDirecto = costoDirecto              
       // }
-      console.log("inputs", Inputs);
+      // console.log("inputs", Inputs);
 
       this.setState({
         DataCronoGeneralApi: res.data,

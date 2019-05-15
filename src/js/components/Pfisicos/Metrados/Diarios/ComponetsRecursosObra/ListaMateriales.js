@@ -78,6 +78,8 @@ class ListaMateriales extends Component {
     this.reqListaRecursos = this.reqListaRecursos.bind(this);
     this.reqResumen = this.reqResumen.bind(this);
     this.reqChartResumenGeneral = this.reqChartResumenGeneral.bind(this);
+    this.reqChartResumenComponente = this.reqChartResumenComponente.bind(this);
+    this.reqResumenXComponente = this.reqResumenXComponente.bind(this);
   }
 
   componentWillMount() {
@@ -189,7 +191,8 @@ class ListaMateriales extends Component {
         id_componente,
         collapse: -1,
         BuscaPartida: null,
-
+        activeTabResumen:"",
+        DataRecursosListaApi:[]
       });
     }
     // consulta al resumen
@@ -197,6 +200,7 @@ class ListaMateriales extends Component {
       this.reqChartResumenGeneral(Id_Obra)
       return
     }
+    this.reqChartResumenComponente( id_componente )
     // get partidas -----------------------------------------------------------------
     axios.post(`${UrlServer}/getmaterialespartidacomponente`, {
       id_componente: id_componente
@@ -479,10 +483,45 @@ class ListaMateriales extends Component {
       })
   }
 
+  reqChartResumenComponente( idComponente ){
+    axios.post(`${UrlServer}/getmaterialescomponentesChart`,{
+      "id_componente":idComponente
+    })
+    .then((res)=>{
+      console.log("res data chart ", res.data)
+      this.setState({ DataResumenGeneralCompApi: res.data })
+    })
+    .catch((err)=>{
+      console.error("algo salió mal ", err)
+    })
+  }
+
+  reqResumenXComponente( index, idComponente, tipoRecurso ) {
+    console.log("tipo recurso ", tipoRecurso)
+    if (this.state.activeTabResumen !== index) {
+      this.setState({
+        activeTabResumen: index
+      });
+    }
+    axios.post(`${UrlServer}/getmaterialescomponentesResumen`, {
+      "id_componente": idComponente,
+      "tipo": tipoRecurso
+    })
+      .then((res) => {
+        console.log("resumen de componentes dddd>>> ", res.data)
+        this.setState({
+          DataRecursosListaApi: res.data
+        })
+      })
+      .catch((err) => {
+        console.error("error al consultar al api ", err)
+      })
+  }
+
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, activeTabResumen, smsValidaMetrado, collapse, nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores, file, CollapseResumenTabla } = this.state
 
-    const ResumenRecursos = {
+    const ChartResumenRecursos = {
       "colors": [
         "#d35400",
         "#2980b9",
@@ -551,114 +590,6 @@ class ListaMateriales extends Component {
 
     }
 
-    const ResumenRecursosComponentes = {
-      "colors": [
-        "#d35400",
-        "#2980b9",
-        "#2ecc71",
-        "#f1c40f",
-        "#2c3e50",
-        "#7f8c8d"
-      ],
-      "chart": {
-        "backgroundColor": "#161C20",
-        "style": {
-          "fontFamily": "Roboto",
-          "color": "#666666"
-        }
-      },
-      title: {
-        text: 'Expediente vs  Ejecutado',
-        "align": "center",
-        "style": {
-          "fontFamily": "Roboto Condensed",
-          "fontWeight": "bold",
-          "color": "#666666"
-        }
-      },
-      "legend": {
-        "align": "center",
-        "verticalAlign": "bottom",
-        "itemStyle": {
-          "color":
-            "#424242",
-          "color": "#ffffff"
-        }
-      },
-      xAxis: {
-        categories: ['Personal', 'Bienes', 'Servicios'],
-      },
-
-      yAxis: {
-        title: {
-          text: 'Soles'
-        },
-        labels: {
-          formatter: function () {
-            return this.value / 1;
-          }
-        },
-        "gridLineColor": "#424242",
-        "ridLineWidth": 1,
-        "minorGridLineColor": "#424242",
-        "inoGridLineWidth": 0.5,
-        "tickColor": "#424242",
-        "minorTickColor": "#424242",
-        "lineColor": "#424242"
-      },
-      labels: {
-        items: [{
-          html: 'TOTAL COSTO DIRECTO',
-          style: {
-            left: '50px',
-            top: '18px',
-            color: (Highcharts.theme && Highcharts.theme.textColor) || 'white'
-          }
-        }]
-      },
-      series: [{
-        type: 'column',
-        name: 'Expediente ',
-        data: [1, 2, 54]
-      }, {
-        type: 'column',
-        name: 'Acumulado',
-        data: [2, 3, 45]
-      }, {
-        type: 'spline',
-        name: 'Average',
-        data: [3, 2.67, 5],
-        marker: {
-          lineWidth: 2,
-          lineColor: Highcharts.getOptions().colors[3],
-          fillColor: 'white'
-        }
-      }, {
-        type: 'pie',
-        name: 'Segun Expediente',
-        data: [{
-          name: 'Servicios',
-          y: 13,
-          color: Highcharts.getOptions().colors[0] // Jane's color
-        }, {
-          name: 'Bienes',
-          y: 23,
-          color: Highcharts.getOptions().colors[1] // John's color
-        }, {
-          name: 'Personal',
-          y: 19,
-          color: Highcharts.getOptions().colors[2] // Joe's color
-        }],
-        center: [100, 80],
-        size: 100,
-        showInLegend: false,
-        dataLabels: {
-          enabled: false
-        }
-      }]
-    }
-
-
     var DatosPartidasFiltrado = DataPartidas
     var BuscaPartida = this.state.BuscaPartida
 
@@ -717,7 +648,7 @@ class ListaMateriales extends Component {
             <NavItem>
               <NavLink className={classnames({ active: this.state.activeTab === "RESUMEN" })} onClick={() => this.Tabs("RESUMEN", "RESUMEN", "RESUMEN")}>
                 RESUMEN
-                  </NavLink>
+              </NavLink>
             </NavItem>
             {DataComponentes.length === 0 ? <Spinner color="primary" size="sm" /> : DataComponentes.map((comp, indexComp) =>
               <NavItem key={indexComp}>
@@ -739,7 +670,7 @@ class ListaMateriales extends Component {
                     <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
-                      options={ResumenRecursos}
+                      options={ChartResumenRecursos}
                     />
                   </div>
                   <Nav tabs>
@@ -791,7 +722,7 @@ class ListaMateriales extends Component {
                     <Col md="6">
 
                       <Card>
-                        <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY 09/05/2019 )</CardHeader>
+                        <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } )</CardHeader>
                         <CardBody>
                           <table className="table table-sm">
                             <thead>
@@ -874,28 +805,22 @@ class ListaMateriales extends Component {
                       <HighchartsReact
                         highcharts={Highcharts}
                         // constructorType={'stockChart'}
-                        options={ResumenRecursosComponentes}
+                        options={ChartResumenRecursos}
                       />
                     </div>
                     <Nav tabs>
-                      
-                      <NavItem>
-                        <NavLink className={classnames({ active: this.state.activeTab === '1' })} onClick={() => { this.toggle('1'); }} >
-                          PERSONAL
-                              </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.toggle('2'); }} >
-                          BIENES
-                              </NavLink>
-                      </NavItem>
+                    {
+                      DataTipoRecursoResumen.map((Resumen, index) =>
+                        <NavItem key={index}>
+                          <NavLink className={classnames({ active: this.state.activeTabResumen === index.toString() })} onClick={() => { this.reqResumenXComponente(index.toString() , this.state.id_componente, Resumen.tipo) ; }} >
+                            {Resumen.tipo}
+                          </NavLink>
+                        </NavItem>
+                      )
 
-                      <NavItem>
-                        <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.toggle('2'); }} >
-                          MATERIALES
-                              </NavLink>
-                      </NavItem>
-                    </Nav>
+                    }
+                  </Nav>
+
                     <Row className="mt-1">
 
                       <Col md="6">
@@ -913,13 +838,17 @@ class ListaMateriales extends Component {
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr>
-                                  <td>ABONO </td>
-                                  <td>M3</td>
-                                  <td>4.300</td>
-                                  <td>46.300</td>
-                                  <td>569.00</td>
-                                </tr>
+                                {
+                                  DataRecursosListaApi.map((ReqLista, IndexRL) =>
+                                    <tr key={IndexRL}>
+                                      <td>{ReqLista.descripcion} </td>
+                                      <td>{ReqLista.unidad} </td>
+                                      <td> {ReqLista.recurso_cantidad}</td>
+                                      <td> {ReqLista.recurso_precio}</td>
+                                      <td> {ReqLista.recurso_parcial}</td>
+                                    </tr>
+                                  )
+                                }
                               </tbody>
                             </table>
                           </CardBody>
@@ -944,14 +873,17 @@ class ListaMateriales extends Component {
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr>
-                                  <td>ABONO </td>
-                                  <td>M3</td>
-                                  <td>4.300</td>
-                                  <td>46.300</td>
-                                  <td>569.00</td>
-                                  <td>569 %</td>
-                                </tr>
+                                {
+                                  DataRecursosListaApi.map((ReqLista, IndexRL) =>
+                                    <tr key={IndexRL}>
+                                      <td> {ReqLista.recurso_gasto_cantidad}</td>
+                                      <td> {ReqLista.recurso_precio}</td>
+                                      <td> {ReqLista.recurso_gasto_parcial}</td>
+                                      <td> {ReqLista.diferencia}</td>
+                                      <td> {ReqLista.porcentaje}</td>
+                                    </tr>
+                                  )
+                                }
                               </tbody>
                             </table>
                           </CardBody>

@@ -139,7 +139,7 @@ class GestionTareas extends Component {
     document.title="GESTIÓN DE TAREAS 🎁"
     // llama api de tareas pendientes
 
-    this.reqProyectos(Id_Acceso, "0", "0", "0")
+    this.reqProyectos(Id_Acceso, "0", "0","", "0")
     this.reqTareasEmitidos(Id_Acceso, "0", "0")
     // this.reqTareasEmitidos(id_acceso, inicio, fin)
 
@@ -272,7 +272,7 @@ class GestionTareas extends Component {
           // document.getElementById("descripcion").value = "";
           document.getElementById("formAgregarTarea").reset();
 
-          this.reqProyectos(Id_Acceso,"0","0","0","0")
+          this.reqProyectos(Id_Acceso,"0","0","","0")
           this.reqTareasEmitidos(Id_Acceso, "0", "0")  
           this.reqSubordinados( Id_Acceso )
 
@@ -550,7 +550,7 @@ class GestionTareas extends Component {
   }
   // REQUESTS AL API ---------------------------------------------
 
-  reqProyectos(id_acceso, inicio, fin, index) {
+  reqProyectos(id_acceso, inicio, fin, tipo, index) {
 
     this.setState({ 
       ActiveTab: index,
@@ -562,7 +562,8 @@ class GestionTareas extends Component {
       {
         "id_acceso": id_acceso,
         "inicio":inicio,
-        "fin":fin
+        "fin":fin,
+        "tipo":tipo
       }
     )
       .then((res) => {
@@ -860,25 +861,25 @@ class GestionTareas extends Component {
 
               <NavItem>
                 {/* <NavLink className={ classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "/getTareaEmisorPendientes", "0")}> */}
-                <NavLink className={ classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "0", "0")}>
+                <NavLink className={ classnames({ active: ActiveTab === "0" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "0","", "0")}>
                   PENDIENTES
                 </NavLink>
               </NavItem>
 
               <NavItem>
-                <NavLink className={ classnames({ active: ActiveTab === "1" })} onClick={() => this.reqProyectos(Id_Acceso, "1", "99","1")}>
+                <NavLink className={ classnames({ active: ActiveTab === "1" })} onClick={() => this.reqProyectos(Id_Acceso, "1", "99", "", "1")}>
                   PROGRESO
                 </NavLink>
               </NavItem>
 
               <NavItem>
-                <NavLink className={ classnames({ active: ActiveTab === "2" })} onClick={() => this.reqProyectos(Id_Acceso, "100", "100", "2")}>
+                <NavLink className={ classnames({ active: ActiveTab === "2" })} onClick={() => this.reqProyectos(Id_Acceso, "100", "100","", "2")}>
                   CONCLUIDOS
                 </NavLink>
               </NavItem>
 
               <NavItem>
-                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "100","3")}>
+                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "100","vencido","3")}>
                   VENCIDOS
                 </NavLink>
               </NavItem>
@@ -896,7 +897,7 @@ class GestionTareas extends Component {
               <Container fluid className="pr-4">
                 <Row>
                   <Col md="3">
-                    <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "nada") }}>
+                    <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "nada") }} className="contTRecodatorios">
                       <Row>
                         {
                           DataTareasEmitidosApi.map((TareasEmit, iS) =>

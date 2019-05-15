@@ -58,9 +58,7 @@ class Componentes extends Component {
                         borderRadius: '2px',
                         transition: 'all .9s ease-in',
                         position: 'absolute',
-                        boxShadow: `0 0 6px 1px ${ObrasComp.porcentaje_avance_componentes > 95 ? 'rgb(164, 251, 1)'
-                            : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
-                            :  '#ff2e00'}`
+                        
                         }}
                     /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
                     </div>

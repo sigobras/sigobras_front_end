@@ -114,27 +114,7 @@ class ListaObras extends Component{
                         <td>{ IndexObras +1 }</td>
                         <td>{ Obras.g_meta }</td>
                         <td style={{width: '15%'}}>
-                            {/* <Circle
-                                animate={true}
-                                animationDuration="1s"
-                                // responsive={true}
-                                size={60}
-                                progress={Obras.porcentaje_avance}
-                                progressColor="orange"
-                                bgColor="whitesmoke"
-                                textColor="orange"
-                            />
 
-                            <Circle
-                                animate={true}
-                                animationDuration="10s"
-                                // responsive={true}
-                                size={60}
-                                progress={Obras.porcentaje_avance}
-                                progressColor="blue"
-                                bgColor="whitesmoke"
-                                textColor="blue"
-                            /> */}
                             <div style={{
                                 width: '100%',
                                 height: '20px',
@@ -159,9 +139,7 @@ class ListaObras extends Component{
                                     borderRadius: '2px',
                                     transition: 'all .9s ease-in',
                                     position: 'absolute',
-                                    boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
-                                        : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
-                                        :  'rgb(2, 235, 255)'}`
+                                   
                                     }}
                                 /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_avance} %</span>
                                 </div>
@@ -195,9 +173,7 @@ class ListaObras extends Component{
                                     borderRadius: '2px',
                                     transition: 'all .9s ease-in',
                                     position: 'absolute',
-                                    boxShadow: `0 0 6px 1px ${Obras.porcentaje_financiero > 95 ? 'rgb(0, 128, 255)'
-                                        : Obras.porcentaje_financiero > 50 ? 'rgb(99, 173, 247)'
-                                        :  'rgb(2, 235, 255)'}`
+                                   
                                     }}
                                 /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_financiero} %</span>
                                 </div>
