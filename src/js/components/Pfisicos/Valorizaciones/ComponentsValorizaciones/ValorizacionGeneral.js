@@ -115,7 +115,7 @@ class ValorizacionGeneral extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
         .then((res) => {
-            // console.table('data val princiapl', res.data);
+            console.table('data val princiapl', res);
             if (res.data !== "vacio") {
                 var ResData = res.data
                 var UltimoAnio = res.data.length -1 

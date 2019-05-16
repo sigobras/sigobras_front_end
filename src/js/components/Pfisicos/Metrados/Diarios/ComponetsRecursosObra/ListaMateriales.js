@@ -29,7 +29,7 @@ class ListaMateriales extends Component {
       DataListaRecursoDetallado: [],
       DataPrioridadesApi: [],
       DataIconosCategoriaApi: [],
-      DataTipoRecursoResumen: [{ tipo: "Equipos" }, { tipo: "Mano de Obra" }, { tipo: "Materiales" }],
+      DataTipoRecursoResumen: [],
       DataRecursosListaApi: [],
       DataResumenGeneralCompApi: [],
 
@@ -61,7 +61,9 @@ class ListaMateriales extends Component {
 
       CollapseResumenTabla: "resumenRecursos",
       TipoRecursoResumen:"",
-      tipoEjecucion:false
+      tipoEjecucion:false,
+
+      DATADEMO:[]
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -78,6 +80,7 @@ class ListaMateriales extends Component {
     this.tabResumenTipoRecurso = this.tabResumenTipoRecurso.bind(this);
     this.reqListaRecursos = this.reqListaRecursos.bind(this);
     this.Ver_No = this.Ver_No.bind(this);
+    this.inputeable = this.inputeable.bind(this);
     this.reqResumen = this.reqResumen.bind(this);
     this.reqChartResumenGeneral = this.reqChartResumenGeneral.bind(this);
     this.reqChartResumenComponente = this.reqChartResumenComponente.bind(this);
@@ -180,6 +183,22 @@ class ListaMateriales extends Component {
         console.log("errores al realizar la peticion de iconos", err);
 
       })
+
+      // axios consulta al api de  RECURSOS =================================================================================
+    axios.post(`${UrlServer}/getmaterialesResumenTipos`,{
+      "id_ficha":Id_Obra
+    })
+    .then((res) => {
+      // console.log("datos", res.data);
+      this.setState({
+        DataTipoRecursoResumen: res.data
+      })
+    })
+    .catch((err) => {
+      console.log("errores al realizar la peticion de prioridades", err);
+
+    })
+      
 
   }
 
@@ -452,6 +471,24 @@ class ListaMateriales extends Component {
     });
   }
 
+  inputeable(index, tipo, e ){
+    
+    console.log("index ", index )
+    var demoArray = this.state.DATADEMO
+
+    if (tipo === "cantidad" || tipo === "precio" ) {
+      demoArray.push( { [tipo]: e.target.innerText } )
+     }
+      //else{
+      //   demoArray.push( { [tipo]: e.target.innerText } )
+      // }
+    
+    
+    // this.setState({ DATADEMO: e.target.innerText})
+
+    console.log("demoArray ", demoArray )
+  }
+
   // requests al api======================================================================
 
   reqListaRecursos(idPartida, tipo) {
@@ -700,7 +737,7 @@ class ListaMateriales extends Component {
                     <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
-                      options={ChartResumenRecursos}
+                      options={ ChartResumenRecursos }
                     />
                   </div>
                   <Nav tabs>
@@ -749,8 +786,24 @@ class ListaMateriales extends Component {
                                 <td> {ReqLista.recurso_precio}</td>
                                 <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
-                                <td> {ReqLista.recurso_gasto_cantidad}</td>
-                                <td> {ReqLista.recurso_precio}</td>
+                                <td>
+                                  {
+                                    this.state.tipoEjecucion === false?`${ReqLista.recurso_gasto_cantidad}`
+                                    :
+                                    <div suppressContentEditableWarning="true" contentEditable="true" value={ IndexRL } onBlur={ this.inputeable.bind(this, { IndexRL },  "cantidad"  )} >
+                                      { ReqLista.recurso_gasto_cantidad }
+                                    </div>
+                                  }
+                                </td>
+                                <td>
+                                  {/* {
+                                    this.state.tipoEjecucion === false?`${ReqLista.recurso_precio}`
+                                    :
+                                    <div suppressContentEditableWarning="true" contentEditable="true" value={ IndexRL } onBlur={  this.inputeable.bind(this, { IndexRL }, "precio"  )} >
+                                      { ReqLista.recurso_precio }
+                                    </div>
+                                  } */}
+                                </td>
                                 <td> {ReqLista.recurso_gasto_parcial}</td>
                                 <td> {ReqLista.diferencia}</td>
                                 <td> {ReqLista.porcentaje}</td>
@@ -812,14 +865,13 @@ class ListaMateriales extends Component {
                   <br />
                   <Collapse isOpen={CollapseResumenTabla === "resumenRecursos"}>
                     <div className="mb-1 mt-1">
-                    {console.log(">>>> ", DataResumenGeneralCompApi.length)}
                         {
                           DataResumenGeneralCompApi.length !== 0 ?
                             <HighchartsReact
                               highcharts={Highcharts}
                               // constructorType={'stockChart'}
                               options={ChartResumenRecursos}
-                            />:<div className="text-center h6 text-danger">Sin hay datos</div>
+                            />:<div className="text-center h6 text-danger">No hay  datos</div>
                         }
                       
                     </div>
