@@ -77,6 +77,7 @@ class ListaMateriales extends Component {
     this.TabRecurso = this.TabRecurso.bind(this);
     this.tabResumenTipoRecurso = this.tabResumenTipoRecurso.bind(this);
     this.reqListaRecursos = this.reqListaRecursos.bind(this);
+    this.Ver_No = this.Ver_No.bind(this);
     this.reqResumen = this.reqResumen.bind(this);
     this.reqChartResumenGeneral = this.reqChartResumenGeneral.bind(this);
     this.reqChartResumenComponente = this.reqChartResumenComponente.bind(this);
@@ -193,7 +194,7 @@ class ListaMateriales extends Component {
         collapse: -1,
         BuscaPartida: null,
         activeTabResumen:"",
-        DataRecursosListaApi:[]
+        DataRecursosListaApi:[],
       });
     }
     // consulta al resumen
@@ -430,10 +431,25 @@ class ListaMateriales extends Component {
     if (this.state.activeTabResumen !== index) {
       this.setState({
         activeTabResumen: index,
-        TipoRecursoResumen:TipoRecurso
+        TipoRecursoResumen:TipoRecurso,
+        tipoEjecucion:false
       });
       this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen" )
     }
+  }
+
+  Ver_No(){
+    this.setState({
+      tipoEjecucion: !this.state.tipoEjecucion
+    }, () => {
+      if (this.state.tipoEjecucion === true ) {
+        // console.log("ejecuntando true")
+
+        this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal" )
+        return
+      }
+      this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen" )
+    });
   }
 
   // requests al api======================================================================
@@ -458,10 +474,6 @@ class ListaMateriales extends Component {
   }
 
   reqResumen(idFicha, tipoRecurso, ruta) {
-    // if (ruta === "/getmaterialesResumenEjecucionReal") {
-    //  this.setState({tipoEjecucion: true }) 
-    // }
-    
 
     console.log("tipo recurso ", tipoRecurso, "tipoEjecucion " ,  this.state.tipoEjecucion, "ruta ", ruta)
 
@@ -487,7 +499,14 @@ class ListaMateriales extends Component {
       "id_ficha": IdObra
     })
       .then((res) => {
+        console.log("res data ", res)
         this.setState({ DataResumenGeneralCompApi: res.data })
+      })
+      .catch((err)=>{
+        console.error("datos incorrectos ", err.response)
+        if (err.response.data=== "vacio" ) {
+          this.setState({ DataResumenGeneralCompApi: [] })        
+        }
       })
   }
 
@@ -500,7 +519,10 @@ class ListaMateriales extends Component {
       this.setState({ DataResumenGeneralCompApi: res.data })
     })
     .catch((err)=>{
-      console.error("algo salió mal ", err)
+      console.error("algo salió mal ", err.response)
+      if (err.response.data=== "vacio" ) {
+        this.setState({ DataResumenGeneralCompApi: [] })        
+      }
     })
   }
 
@@ -700,7 +722,7 @@ class ListaMateriales extends Component {
                           <tr>
                             <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
                             <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } ) 
-                              <div className="float-right prioridad" onClick={ ()=> this.reqResumen( Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal" ) }><MdCompareArrows size={ 20 }/> </div>
+                              <div className= { this.state.tipoEjecucion === true ? "float-right prioridad text-primary": "float-right prioridad"} onClick={ this.Ver_No }><MdCompareArrows size={ 20 }/> </div>
                             </th>
                           </tr>
                           <tr>
@@ -790,11 +812,16 @@ class ListaMateriales extends Component {
                   <br />
                   <Collapse isOpen={CollapseResumenTabla === "resumenRecursos"}>
                     <div className="mb-1 mt-1">
-                      <HighchartsReact
-                        highcharts={Highcharts}
-                        // constructorType={'stockChart'}
-                        options={ChartResumenRecursos}
-                      />
+                    {console.log(">>>> ", DataResumenGeneralCompApi.length)}
+                        {
+                          DataResumenGeneralCompApi.length !== 0 ?
+                            <HighchartsReact
+                              highcharts={Highcharts}
+                              // constructorType={'stockChart'}
+                              options={ChartResumenRecursos}
+                            />:<div className="text-center h6 text-danger">Sin hay datos</div>
+                        }
+                      
                     </div>
                     <Nav tabs>
                     {
