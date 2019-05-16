@@ -898,31 +898,35 @@ class GestionTareas extends Component {
                 <Row>
                   <Col md="3">
                     <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "nada") }} className="contTRecodatorios">
-                      <Row>
-                        {
-                          DataTareasEmitidosApi.map((TareasEmit, iS) =>
-                          <Col md="6 mb-2" key={ iS }>
-                            <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS )} draggable>
-                              <div className="d-flex justify-content-between headerTarea p-1">
-                                <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="20%" height="20%" />
+                      {/* <Container fluid> */}
 
-                                <div className="m-0 h5" onClick={()=>this.MostrasMasTarea(TareasEmit.id_tarea) }>{`${TareasEmit.tipo_tarea}-${iS+1}` }</div>
+                        <Row>
+                          {
+                            DataTareasEmitidosApi.map((TareasEmit, iS) =>
+                            <Col md="6 mb-2" key={ iS } style={{ marginRight: "-5px" }}>
+                              <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS )} draggable>
+                                <div className="d-flex justify-content-between headerTarea p-1">
+                                  <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="20%" height="20%" />
 
-                                <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
+                                  <div className="m-0 h5" onClick={()=>this.MostrasMasTarea(TareasEmit.id_tarea) }>{`${TareasEmit.tipo_tarea}-${iS+1}` }</div>
+
+                                  <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
+                                </div>
+                                <div className="bodyTarea text-capitalize" style={{ background: TareasEmit.proyecto_color }}>
+                                  { TareasEmit.asunto }
+                                  {/* <br />
+                                  { TareasEmit.proyecto_nombre} */}
+                                </div>
                               </div>
-                              <div className="bodyTarea text-capitalize" style={{ background: TareasEmit.proyecto_color }}>
-                                { TareasEmit.asunto }
-                                {/* <br />
-                                { TareasEmit.proyecto_nombre} */}
-                              </div>
-                            </div>
 
-                          </Col>
-                          )
-                        }
+                            </Col>
+                            )
+                          }
 
 
-                      </Row>
+                        </Row>
+                      {/* </Container> */}
+
                     </div>
 
                   </Col>

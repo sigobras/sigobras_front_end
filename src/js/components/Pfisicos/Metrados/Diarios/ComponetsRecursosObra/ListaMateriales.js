@@ -3,7 +3,7 @@ import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
+import { MdFlashOn, MdCompareArrows, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -60,7 +60,8 @@ class ListaMateriales extends Component {
       modalImgPartida: false,
 
       CollapseResumenTabla: "resumenRecursos",
-
+      TipoRecursoResumen:"",
+      tipoEjecucion:false
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -428,9 +429,10 @@ class ListaMateriales extends Component {
   tabResumenTipoRecurso(index, TipoRecurso) {
     if (this.state.activeTabResumen !== index) {
       this.setState({
-        activeTabResumen: index
+        activeTabResumen: index,
+        TipoRecursoResumen:TipoRecurso
       });
-      this.reqResumen(Id_Obra, TipoRecurso)
+      this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen" )
     }
   }
 
@@ -455,9 +457,15 @@ class ListaMateriales extends Component {
       })
   }
 
-  reqResumen(idFicha, tipoRecurso) {
-    console.log("tipo recurso ", tipoRecurso)
-    axios.post(`${UrlServer}/getmaterialesResumen`, {
+  reqResumen(idFicha, tipoRecurso, ruta) {
+    // if (ruta === "/getmaterialesResumenEjecucionReal") {
+    //  this.setState({tipoEjecucion: true }) 
+    // }
+    
+
+    console.log("tipo recurso ", tipoRecurso, "tipoEjecucion " ,  this.state.tipoEjecucion, "ruta ", ruta)
+
+    axios.post(`${UrlServer}${ruta}`, {
       "id_ficha": idFicha,
       "tipo": tipoRecurso
     })
@@ -678,80 +686,60 @@ class ListaMateriales extends Component {
                       DataTipoRecursoResumen.map((Resumen, index) =>
                         <NavItem key={index}>
                           <NavLink className={classnames({ active: this.state.activeTabResumen === index.toString() })} onClick={() => { this.tabResumenTipoRecurso(index.toString(), Resumen.tipo); }} >
-                            {Resumen.tipo}
+                            { Resumen.tipo }
                           </NavLink>
                         </NavItem>
                       )
-
                     }
                   </Nav>
-                  <Row className="mt-1">
-                    <Col md="6">
-                      <Card>
-                        <CardHeader className="p-1">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</CardHeader>
-                        <CardBody>
-                          <table className="table table-sm">
-                            <thead>
-                              <tr>
-                                <th>RECURSO</th>
-                                <th>UND</th>
-                                <th>CANTIDAD</th>
-                                <th>PRECIO S/.</th>
-                                <th> PARCIAL S/.</th>
+
+                  <Card>
+                    <CardBody>
+                      <table className="table table-sm table-hover">
+                        <thead>
+                          <tr>
+                            <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
+                            <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } ) 
+                              <div className="float-right prioridad" onClick={ ()=> this.reqResumen( Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal" ) }><MdCompareArrows size={ 20 }/> </div>
+                            </th>
+                          </tr>
+                          <tr>
+                            <th>RECURSO</th>
+                            <th>UND</th>
+                            <th>CANTIDAD</th>
+                            <th>PRECIO S/.</th>
+                            <th className="bordeDerecho"> PARCIAL S/.</th>
+
+                            <th>CANTIDAD</th>
+                            <th>PRECIO S/.</th>
+                            <th>PARCIAL S/.</th>
+                            <th>DIFERENCIA</th>
+                            <th>%</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {
+                            DataRecursosListaApi.map((ReqLista, IndexRL) =>
+                              <tr key={IndexRL}>
+                                <td>{ReqLista.descripcion} </td>
+                                <td>{ReqLista.unidad} </td>
+                                <td> {ReqLista.recurso_cantidad}</td>
+                                <td> {ReqLista.recurso_precio}</td>
+                                <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
+
+                                <td> {ReqLista.recurso_gasto_cantidad}</td>
+                                <td> {ReqLista.recurso_precio}</td>
+                                <td> {ReqLista.recurso_gasto_parcial}</td>
+                                <td> {ReqLista.diferencia}</td>
+                                <td> {ReqLista.porcentaje}</td>
                               </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                DataRecursosListaApi.map((ReqLista, IndexRL) =>
-                                  <tr key={IndexRL}>
-                                    <td>{ReqLista.descripcion} </td>
-                                    <td>{ReqLista.unidad} </td>
-                                    <td> {ReqLista.recurso_cantidad}</td>
-                                    <td> {ReqLista.recurso_precio}</td>
-                                    <td> {ReqLista.recurso_parcial}</td>
-                                  </tr>
-                                )
-                              }
+                            )
+                          }
 
-                            </tbody>
-                          </table>
-                        </CardBody>
-                      </Card>
-
-                    </Col>
-                    <Col md="6">
-
-                      <Card>
-                        <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } )</CardHeader>
-                        <CardBody>
-                          <table className="table table-sm">
-                            <thead>
-                              <tr>
-                                <th>CANTIDAD</th>
-                                <th>PRECIO S/.</th>
-                                <th>PARCIAL S/.</th>
-                                <th>DIFERENCIA</th>
-                                <th>%</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                DataRecursosListaApi.map((ReqLista, IndexRL) =>
-                                  <tr key={IndexRL}>
-                                    <td> {ReqLista.recurso_gasto_cantidad}</td>
-                                    <td> {ReqLista.recurso_precio}</td>
-                                    <td> {ReqLista.recurso_gasto_parcial}</td>
-                                    <td> {ReqLista.diferencia}</td>
-                                    <td> {ReqLista.porcentaje}</td>
-                                  </tr>
-                                )
-                              }
-                            </tbody>
-                          </table>
-                        </CardBody>
-                      </Card>
-                    </Col>
-                  </Row>
+                        </tbody>
+                      </table>
+                    </CardBody>
+                  </Card>
                 </CardBody>
               </Card>
               :
@@ -821,75 +809,53 @@ class ListaMateriales extends Component {
                     }
                   </Nav>
 
-                    <Row className="mt-1">
 
-                      <Col md="6">
-                        <Card>
-                          <CardHeader className="p-1">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</CardHeader>
-                          <CardBody>
-                            <table className="table table-sm">
-                              <thead>
-                                <tr>
-                                  <th>RECURSO</th>
-                                  <th>UND</th>
-                                  <th>CANTIDAD</th>
-                                  <th>PRECIO S/.</th>
-                                  <th> PARCIAL S/.</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {
-                                  DataRecursosListaApi.map((ReqLista, IndexRL) =>
-                                    <tr key={IndexRL}>
-                                      <td>{ReqLista.descripcion} </td>
-                                      <td>{ReqLista.unidad} </td>
-                                      <td> {ReqLista.recurso_cantidad}</td>
-                                      <td> {ReqLista.recurso_precio}</td>
-                                      <td> {ReqLista.recurso_parcial}</td>
-                                    </tr>
-                                  )
-                                }
-                              </tbody>
-                            </table>
-                          </CardBody>
-                        </Card>
+                  <Card>
+                    {/* <CardHeader className="p-1">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</CardHeader> */}
+                    <CardBody>
+                      <table className="table table-sm table-hover">
+                        <thead>
+                          <tr>
+                            <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</th>
+                            <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } )</th>
+                          </tr>
+                          <tr>
+                            <th>RECURSO</th>
+                            <th>UND</th>
+                            <th>CANTIDAD</th>
+                            <th>PRECIO S/.</th>
+                            <th className="bordeDerecho" > PARCIAL S/.</th>
 
-                      </Col>
-                      <Col md="6">
+                            <th>CANTIDAD</th>
+                            <th>PRECIO S/.</th>
+                            <th>PARCIAL S/.</th>
+                            <th>DIFERENCIA</th>
+                            <th>%</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {
+                            DataRecursosListaApi.map((ReqLista, IndexRL) =>
+                              <tr key={IndexRL}>
+                                <td>{ReqLista.descripcion} </td>
+                                <td>{ReqLista.unidad} </td>
+                                <td> {ReqLista.recurso_cantidad}</td>
+                                <td> {ReqLista.recurso_precio}</td>
+                                <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
-                        <Card>
-                          <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } )</CardHeader>
-                          <CardBody>
-                            <table className="table table-sm">
-                              <thead>
-                                <tr>
-                                  <th>CANTIDAD</th>
+                                <td> {ReqLista.recurso_gasto_cantidad}</td>
+                                <td> {ReqLista.recurso_precio}</td>
+                                <td> {ReqLista.recurso_gasto_parcial}</td>
+                                <td> {ReqLista.diferencia}</td>
+                                <td> {ReqLista.porcentaje}</td>
+                              </tr>
+                            )
+                          }
+                        </tbody>
+                      </table>
+                    </CardBody>
+                  </Card>
 
-                                  <th>CANTIDAD</th>
-                                  <th>PRECIO S/.</th>
-                                  <th>PARCIAL S/.</th>
-                                  <th>DIFERENCIA</th>
-                                  <th>%</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {
-                                  DataRecursosListaApi.map((ReqLista, IndexRL) =>
-                                    <tr key={IndexRL}>
-                                      <td> {ReqLista.recurso_gasto_cantidad}</td>
-                                      <td> {ReqLista.recurso_precio}</td>
-                                      <td> {ReqLista.recurso_gasto_parcial}</td>
-                                      <td> {ReqLista.diferencia}</td>
-                                      <td> {ReqLista.porcentaje}</td>
-                                    </tr>
-                                  )
-                                }
-                              </tbody>
-                            </table>
-                          </CardBody>
-                        </Card>
-                      </Col>
-                    </Row>
 
                   </Collapse>
                   <Collapse isOpen={CollapseResumenTabla === "tablaPartidas"}>
@@ -1027,19 +993,28 @@ class ListaMateriales extends Component {
                                     </Nav>
 
                                     {/* tareas de algo */}
-                                    <Row className="mt-1">
-                                      <Col md="6">
+
                                         <Card>
-                                          <CardHeader className="p-1">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</CardHeader>
+                                          {/* <CardHeader className="p-1">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</CardHeader> */}
                                           <CardBody>
                                             <table className="table table-sm">
                                               <thead>
+                                                <tr>
+                                                  <th colSpan="5" className="bordeDerecho">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
+                                                  <th colSpan="5"> RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } ) </th>
+                                                </tr>
                                                 <tr>
                                                   <th>RECURSO</th>
                                                   <th>UND</th>
                                                   <th>CANTIDAD</th>
                                                   <th>PRECIO S/.</th>
+                                                  <th className="bordeDerecho" >PARCIAL S/.</th>
+
+                                                  <th>CANTIDAD</th>
+                                                  <th>PRECIO S/.</th>
                                                   <th>PARCIAL S/.</th>
+                                                  <th>DIFERENCIA</th>
+                                                  <th>%</th>
                                                 </tr>
                                               </thead>
                                               <tbody>
@@ -1050,37 +1025,8 @@ class ListaMateriales extends Component {
                                                       <td>{listResurso.unidad} </td>
                                                       <td> {listResurso.recurso_cantidad}</td>
                                                       <td> {listResurso.recurso_precio}</td>
-                                                      <td> {listResurso.recurso_parcial}</td>
-                                                    </tr>
-                                                  )
-                                                }
+                                                      <td className="bordeDerecho"> {listResurso.recurso_parcial}</td>
 
-                                              </tbody>
-                                            </table>
-                                          </CardBody>
-                                        </Card>
-
-                                      </Col>
-                                      <Col md="6">
-
-                                        <Card>
-                                          <CardHeader className="p-1">RECURSOS GASTADOS HASTA LA FECHA ( HOY 09/05/2019 )</CardHeader>
-                                          <CardBody>
-                                            <table className="table table-sm">
-                                              <thead>
-                                                <tr>
-                                                  <th>CANTIDAD</th>
-                                                  <th>PRECIO S/.</th>
-                                                  <th>PARCIAL S/.</th>
-                                                  <th>DIFERENCIA</th>
-                                                  <th>%</th>
-                                                </tr>
-                                              </thead>
-                                              <tbody>
-
-                                                {
-                                                  DataListaRecursoDetallado.map((listResurso, indexRe) =>
-                                                    <tr key={indexRe}>
                                                       <td> {listResurso.recurso_gasto_cantidad}</td>
                                                       <td> {listResurso.recurso_precio}</td>
                                                       <td> {listResurso.recurso_gasto_parcial}</td>
@@ -1094,8 +1040,7 @@ class ListaMateriales extends Component {
                                             </table>
                                           </CardBody>
                                         </Card>
-                                      </Col>
-                                    </Row>
+
                                   </Collapse>
                                 </td>
                               </tr>

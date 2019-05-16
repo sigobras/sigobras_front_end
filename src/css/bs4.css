@@ -265,3 +265,8 @@ a{
   text-decoration: none;
   color: #ffffff!important;
 }
+
+.table-hover tbody tr:hover {
+  color: #ffffff;
+  background-color: rgba(17, 110, 172, 0.493);
+}
