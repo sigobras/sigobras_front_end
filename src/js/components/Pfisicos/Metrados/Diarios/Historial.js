@@ -286,11 +286,39 @@ class MDHistorial extends Component {
     render() {
         const {  DataAniosApi, DataMesesApi, DataResumenApi, DataComponentesApi, inputAnio, nombreComponente, DataFechasApi, collapseDate, DataPartidas, DataChartDiasComponente, componenteTotalSoles, componenteTotalPorcentaje } = this.state
         const options = {
+            "colors": [
+                "#d35400",
+                "#2980b9",
+                "#2ecc71",
+                "#f1c40f",
+                "#2c3e50",
+                "#7f8c8d"
+              ],
             chart: {
-                type: 'area'
+                type: 'area',
+                "backgroundColor": "#161C20",
+                "style": {
+                  "fontFamily": "Roboto",
+                  "color": "#666666"
+                }
             },
             title: {
-                text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN DIARIA'
+                text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN DIARIA',
+                "align": "center",
+                "style": {
+                "fontFamily": "Roboto Condensed",
+                "fontWeight": "bold",
+                "color": "#666666"
+                }
+            },
+            "legend": {
+              "align": "center",
+              "verticalAlign": "bottom",
+              "itemStyle": {
+                "color":
+                  "#424242",
+                "color": "#ffffff"
+              }
             },
             subtitle: {
                 text: 'General'
@@ -310,7 +338,14 @@ class MDHistorial extends Component {
                     formatter: function () {
                         return this.value / 1000;
                     }
-                }
+                },
+                "gridLineColor": "#424242",
+                "ridLineWidth": 1,
+                "minorGridLineColor": "#424242",
+                "inoGridLineWidth": 0.5,
+                "tickColor": "#424242",
+                "minorTickColor": "#424242",
+                "lineColor": "#424242"
             },
             tooltip: {
                 split: true, 
@@ -329,15 +364,38 @@ class MDHistorial extends Component {
             },
             series: DataResumenApi.series
         }
+
         const Partidas = {
+            "colors": [
+                "#d35400",
+                "#2980b9",
+                "#2ecc71",
+                "#f1c40f",
+                "#2c3e50",
+                "#7f8c8d"
+                ],
             chart: {
-                type: 'area'
+                type: 'area',
+                "backgroundColor": "#161C20",
+                "style": {
+                  "fontFamily": "Roboto",
+                  "color": "#666666"
+                }
             },
             title: {
                 text: 'VALORIZACIÓN DIARIA POR COMPONENTE'
             },
             subtitle: {
                 text: 'Componente'
+            },
+            "legend": {
+              "align": "center",
+              "verticalAlign": "bottom",
+              "itemStyle": {
+                "color":
+                  "#424242",
+                "color": "#ffffff"
+              }
             },
             xAxis: {
                 categories: DataChartDiasComponente.categories ,
@@ -354,7 +412,14 @@ class MDHistorial extends Component {
                     formatter: function () {
                         return this.value / 1000;
                     }
-                }
+                },
+                "gridLineColor": "#424242",
+                "ridLineWidth": 1,
+                "minorGridLineColor": "#424242",
+                "inoGridLineWidth": 0.5,
+                "tickColor": "#424242",
+                "minorTickColor": "#424242",
+                "lineColor": "#424242"
             },
             tooltip: {
                 split: true, 

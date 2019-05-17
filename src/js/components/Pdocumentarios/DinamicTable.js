@@ -21,15 +21,18 @@ class DinamicTable extends Component {
   }
 
 
-  // edit Column
+  // edit Column  
   editColumn(p, k, e) {
     let inputValue = e.target.innerText;
     let obj = p.p;
     let objId = obj.id;
     let position = k.k;
     let values = Object.values(obj);
+    
     if (values.indexOf(inputValue) == -1) {
+      
       obj[position] = inputValue;
+
       let stateCopy = this.state.data;
       stateCopy.map((object, index) => {
         if (object.id == objId) {
@@ -56,11 +59,11 @@ class DinamicTable extends Component {
 
     let list = this.state.data.map(p => {
       return (
-        <tr className="grey2" key={p.id}>
+        <tr key={p.id}>
           {
             Object.keys(p).filter(k => k !== 'id').map(k => {
               return (
-                <td className="grey1" key={p.id + '' + k}>
+                <td key={p.id + '' + k}>
                   <div suppressContentEditableWarning="true" contentEditable="true" value={k} onInput={this.editColumn.bind(this, { p }, { k })}> 
                     {p[k]}
                   </div>
@@ -72,10 +75,10 @@ class DinamicTable extends Component {
       );
     });
     return (
-      <div className="schedule padd-lr">
-        {/* <table cellSpacing="3" id="mytable">
+      <div className="card">
+        <table className="table table-sm">
           <tbody>{list}</tbody>
-        </table> */}
+        </table>
         <hr />
         <div suppressContentEditableWarning="true" contentEditable="true" onInput={this.inputeable} >hola</div>
         <h1> 

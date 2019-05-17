@@ -422,3 +422,7 @@ input[type=number] {
   padding: 8px;
   border-radius: 8px;
 }
+
+.colorInputeableRecurso{
+  background: #8a8b8c4f;
+}

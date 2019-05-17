@@ -3,7 +3,7 @@ import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
-import { MdFlashOn, MdCompareArrows, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
+import { MdFlashOn, MdCompareArrows, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdSave, MdModeEdit } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -63,7 +63,8 @@ class ListaMateriales extends Component {
       TipoRecursoResumen:"",
       tipoEjecucion:false,
 
-      DATADEMO:[]
+      DataGuardarInput:[],
+      Editable:null
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -80,7 +81,7 @@ class ListaMateriales extends Component {
     this.tabResumenTipoRecurso = this.tabResumenTipoRecurso.bind(this);
     this.reqListaRecursos = this.reqListaRecursos.bind(this);
     this.Ver_No = this.Ver_No.bind(this);
-    this.inputeable = this.inputeable.bind(this);
+    this.activaEditable = this.activaEditable.bind(this);
     this.reqResumen = this.reqResumen.bind(this);
     this.reqChartResumenGeneral = this.reqChartResumenGeneral.bind(this);
     this.reqChartResumenComponente = this.reqChartResumenComponente.bind(this);
@@ -471,20 +472,37 @@ class ListaMateriales extends Component {
     });
   }
 
+  activaEditable(index){
+    console.log("activando", index)
+    this.setState({Editable:index })
+    if(index === null){
+      console.log("entra al log")
+      axios.post(`${UrlServer}/postrecursosEjecucionreal`,
+      this.state.DataGuardarInput
+      )
+      .then((res)=>{
+        console.log("response recurso real ", res)
+      })
+      .catch((err)=>{
+        console.error(" algo salió mal al tratar de actualizar :>", err)
+      })
+    }
+
+  }
+
+
   inputeable(index, tipo, e ){
     
     console.log("index ", index )
-    var demoArray = this.state.DATADEMO
-
-    if (tipo === "cantidad" || tipo === "precio" ) {
-      demoArray.push( { [tipo]: e.target.innerText } )
-     }
-      //else{
-      //   demoArray.push( { [tipo]: e.target.innerText } )
-      // }
+    var demoArray = 
+      {
+        "tipo":tipo,
+        "data":[
+          [Id_Obra, this.state.TipoRecursoResumen ,"desctest", e.target.innerText]
+        ]
+      }
     
-    
-    // this.setState({ DATADEMO: e.target.innerText})
+    this.setState({ DataGuardarInput: demoArray })
 
     console.log("demoArray ", demoArray )
   }
@@ -586,7 +604,7 @@ class ListaMateriales extends Component {
   }
 
   render() {
-    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, activeTabResumen, smsValidaMetrado, collapse, nombreComponente, OpcionMostrarMM, SMSinputTypeImg, mostrarColores, file, CollapseResumenTabla } = this.state
+    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, activeTabResumen, smsValidaMetrado, collapse, nombreComponente, Editable, SMSinputTypeImg, mostrarColores, file, CollapseResumenTabla } = this.state
 
     const ChartResumenRecursos = {
       "colors": [
@@ -786,23 +804,47 @@ class ListaMateriales extends Component {
                                 <td> {ReqLista.recurso_precio}</td>
                                 <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
-                                <td>
+                                <td  className= { this.state.tipoEjecucion === true ?"colorInputeableRecurso ":"" }>
                                   {
                                     this.state.tipoEjecucion === false?`${ReqLista.recurso_gasto_cantidad}`
                                     :
-                                    <div suppressContentEditableWarning="true" contentEditable="true" value={ IndexRL } onBlur={ this.inputeable.bind(this, { IndexRL },  "cantidad"  )} >
-                                      { ReqLista.recurso_gasto_cantidad }
+                                    <div className="d-flex justify-content-between contentDataTd">
+                                      <div suppressContentEditableWarning={Editable === IndexRL} contentEditable={Editable === IndexRL} value={ IndexRL } onBlur={ this.inputeable.bind(this, { IndexRL },  "cantidad"  )} >
+                                        { ReqLista.recurso_gasto_cantidad }
+                                       
+                                      </div>
+
+                                      <div className="ContIcon" >
+                                        {
+                                          Editable === IndexRL?
+                                          <div onClick={ ()=>this.activaEditable( null ) } ><MdSave /> </div>:
+
+                                         <div onClick={ ()=>this.activaEditable( IndexRL ) }><MdModeEdit /> </div> 
+                                        }
+                                      </div>
                                     </div>
                                   }
                                 </td>
-                                <td>
-                                  {/* {
+                                <td  className= { this.state.tipoEjecucion === true ?"colorInputeableRecurso":"" }>
+                                  {
                                     this.state.tipoEjecucion === false?`${ReqLista.recurso_precio}`
                                     :
-                                    <div suppressContentEditableWarning="true" contentEditable="true" value={ IndexRL } onBlur={  this.inputeable.bind(this, { IndexRL }, "precio"  )} >
-                                      { ReqLista.recurso_precio }
+                                    <div className="d-flex justify-content-between contentDataTd" >
+
+                                      <div suppressContentEditableWarning={Editable === IndexRL} contentEditable={Editable === IndexRL} value={ IndexRL } onBlur={  this.inputeable.bind(this, { IndexRL }, "precio"  )} >
+                                        { ReqLista.recurso_precio }
+                                      </div>
+                                      
+                                      <div className="ContIcon">
+                                        {
+                                          Editable === IndexRL?
+                                          <div onClick={ ()=>this.activaEditable( null ) } ><MdSave /> </div>:
+
+                                         <div onClick={ ()=>this.activaEditable( IndexRL ) }><MdModeEdit /> </div> 
+                                        }
+                                      </div>
                                     </div>
-                                  } */}
+                                  }
                                 </td>
                                 <td> {ReqLista.recurso_gasto_parcial}</td>
                                 <td> {ReqLista.diferencia}</td>

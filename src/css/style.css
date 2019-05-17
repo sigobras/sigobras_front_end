@@ -1,7 +1,7 @@
 body {
   font-size: .7rem !important;
   color: #dcd7d7 !important;
-
+  background-image: url("../images/blur-bg.jpg");
 }
 html, body {
   height: 100%;
@@ -554,4 +554,28 @@ table.table thead th {
 
 .bordeDerecho{
   border-right: 2px solid #0f58f6;
+}
+
+
+/* hover en recursos */
+
+.contentDataTd {
+  cursor: pointer;
+  /* background: yellowgreen; */
+  transition: all .1s;
+}
+.ContIcon {
+  display: none;
+}
+
+.contentDataTd:hover .ContIcon {
+  display: block;
+  /* right: 47px; */
+  position: relative;
+}
+
+.contentDataTd:hover > *[contenteditable="true"] {
+  background-color: #1a028585;
+  cursor: text;
+  display: inline-block;
 }
