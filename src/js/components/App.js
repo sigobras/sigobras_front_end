@@ -178,7 +178,7 @@ class AppAng extends Component {
                                         <ul className="nav flex-column ull">
 
                                             <li className="lii">
-                                                <NavLink to="/inicio" activeclassname="nav-link"> <FaHouseDamage /><span> INICIO</span> </NavLink>
+                                                <NavLink to="/inicio" activeclassname="nav-link"> <span> INICIO</span> </NavLink>
                                             </li>
                                             {/* {
                                                 console.log("DataMenus", DataMenus.length)
@@ -188,7 +188,7 @@ class AppAng extends Component {
                                                    
                                                     DataMenus.map((menus, index) =>
                                                         <li className="lii ml-2" key={index}>
-                                                            <span className="nav-link" onClick={()=>this.CollapseMenu(index)} activeclassname="active" > <FaSuperscript /> {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                                            <span className="nav-link" onClick={()=>this.CollapseMenu(index)} activeclassname="active" >  {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
                                                             <Collapse isOpen={collapse === index}>
                                                                 <ul className="nav flex-column ull ">
                                                                     {menus.submenus.map((subMenu, IndexSub) =>
@@ -203,15 +203,15 @@ class AppAng extends Component {
                                             }
                                             
                                             <li className="lii">
-                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <FaFile /><span> REPORTES </span> </NavLink>
+                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <span> REPORTES </span> </NavLink>
                                             </li>
 
                                             <li className="lii">
-                                                <NavLink to="/GestionTareas" activeclassname="nav-link" > <FaFile /><span> GESTIÓN DE TAREAS </span> </NavLink>
+                                                <NavLink to="/GestionTareas" activeclassname="nav-link" > <span> GESTIÓN DE TAREAS </span> </NavLink>
                                             </li>
 
-                                            <li className="lii ml-2">
-                                                <span className="nav-link" onClick={()=>this.CollapseMenu(100)} activeclassname="active" > <FaSuperscript /> PROCESOS DOCUMENTARIOS <div className="float-right"> {collapse === 100 ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                            {/* <li className="lii ml-2">
+                                                <span className="nav-link" onClick={()=>this.CollapseMenu(100)} activeclassname="active" >  PROCESOS DOCUMENTARIOS <div className="float-right"> {collapse === 100 ? <FaChevronUp /> : <FaChevronRight />}</div></span>
                                                 <Collapse isOpen={collapse === 100}>
                                                     <ul className="nav flex-column ull ">
                                                         <li className="lii pl-3">
@@ -219,7 +219,7 @@ class AppAng extends Component {
                                                         </li>
                                                     </ul>
                                                 </Collapse>
-                                            </li>
+                                            </li> */}
 
                                         </ul>
                                         <div className="abajoCirculos pl-2 pr-2">
