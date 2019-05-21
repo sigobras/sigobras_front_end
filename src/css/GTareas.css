@@ -4,6 +4,10 @@
 .containerTarea{
   width: 100%;
 }
+.containerTareaActivo{
+  width: 100%;
+  box-shadow: 0px 0px 5px 3px #ececec;
+}
 
 .headerTarea{
   background: aliceblue;

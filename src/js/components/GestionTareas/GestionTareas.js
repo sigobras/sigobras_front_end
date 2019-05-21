@@ -88,7 +88,7 @@ class GestionTareas extends Component {
 
       activeTabModalTarea: "1",
 
-      modalVerTareas: false,
+      // modalVerTareas: false,
 
       // sub tareas
       inputSubtarea: "",
@@ -118,7 +118,8 @@ class GestionTareas extends Component {
 
       InputEditablePorcent: null,
       IdProyecto: "",
-      modalVerMasTareasUser: false
+      modalVerMasTareasUser: false,
+      idTareaActivo:null
     };
   }
 
@@ -186,6 +187,7 @@ class GestionTareas extends Component {
     let users = this.state.PositsFiltrado
     users.comentarios.push(user);
     console.log("************************** ", users)
+
     this.setState({ PositsFiltrado: users });
   }
 
@@ -458,39 +460,36 @@ class GestionTareas extends Component {
   }
 
   MostrasMasTarea(idTarea) {
+    if (this.state.idTareaActivo !== idTarea) {
+      this.setState({ idTareaActivo: idTarea })
 
-    console.log("id", idTarea)
+      console.log("id", idTarea)
+      
+      this.socket.on(idTarea, data => this.demoFuncion(data));
+      // this.socket.close()
+      axios.post(`${UrlServer}/getTareaIdTarea`,
+        {
+          "id_tarea": idTarea
+        }
+      )
+        .then((res) => {
+          console.log("data mas ver mas tarea ", res.data)
+          // var dataArmar = Object.assign(Tareas[0], res.data);
 
-    this.socket.on(idTarea, data => this.demoFuncion(data));
+          // console.log("dataArmar  ", dataArmar)
 
-    // var Tareas = this.state.DataTareasApi
-    // console.log("DataTareasApi_______ ", Tareas)
+          this.setState({
+            PositsFiltrado: res.data
+          })
 
-    // Tareas = Tareas.filter((tarea) => {
-    //   return tarea.id_tarea === idTarea
-    // })
-
-    // console.log("Tareas>>>>>>>_______ ", Tareas)
-
-    axios.post(`${UrlServer}/getTareaIdTarea`,
-      {
-        "id_tarea": idTarea
-      }
-    )
-      .then((res) => {
-        console.log("data mas ver mas tarea ", res.data)
-        // var dataArmar = Object.assign(Tareas[0], res.data);
-
-        // console.log("dataArmar  ", dataArmar)
-
-        this.setState({
-          PositsFiltrado: res.data
         })
+        .catch((err) => {
+          console.error("algo salió mal al enviar los datos ", err)
+        })
+        return
+    }
+      this.socket.close()
 
-      })
-      .catch((err) => {
-        console.error("algo salió mal al enviar los datos ", err)
-      })
   }
 
   EditPorcentaje(index) {
@@ -710,7 +709,7 @@ class GestionTareas extends Component {
   }
 
   render() {
-    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent } = this.state
+    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent, idTareaActivo } = this.state
     const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.toggle}>&times;</button>;
 
     return (
@@ -1063,7 +1062,7 @@ class GestionTareas extends Component {
                                 {
                                   DataTareasApi.map((tarea, indexT) =>
                                     <Col md="4" key={indexT}>
-                                      <div className="containerTarea m-2">
+                                      <div className={ idTareaActivo === tarea.id_tarea ? "containerTareaActivo": "containerTarea" }>
                                         <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={() => this.MostrasMasTarea(tarea.id_tarea)}>
                                           <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
                                           <div className="m-0 text-center">{tarea.asunto}</div>
