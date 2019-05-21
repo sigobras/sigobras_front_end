@@ -460,6 +460,8 @@ class GestionTareas extends Component {
   }
 
   MostrasMasTarea(idTarea) {
+
+    console.log(this.state.idTareaActivo, " === ", idTarea)
     if (this.state.idTareaActivo !== idTarea) {
       this.setState({ idTareaActivo: idTarea })
 
@@ -472,23 +474,23 @@ class GestionTareas extends Component {
           "id_tarea": idTarea
         }
       )
-        .then((res) => {
-          console.log("data mas ver mas tarea ", res.data)
-          // var dataArmar = Object.assign(Tareas[0], res.data);
+      .then((res) => {
+        console.log("data mas ver mas tarea ", res.data)
+        // var dataArmar = Object.assign(Tareas[0], res.data);
 
-          // console.log("dataArmar  ", dataArmar)
+        // console.log("dataArmar  ", dataArmar)
 
-          this.setState({
-            PositsFiltrado: res.data
-          })
-
+        this.setState({
+          PositsFiltrado: res.data
         })
-        .catch((err) => {
-          console.error("algo salió mal al enviar los datos ", err)
-        })
-        return
+
+      })
+      .catch((err) => {
+        console.error("algo salió mal al enviar los datos ", err)
+      })
+      return
     }
-      this.socket.close()
+      // this.socket.close()
 
   }
 
