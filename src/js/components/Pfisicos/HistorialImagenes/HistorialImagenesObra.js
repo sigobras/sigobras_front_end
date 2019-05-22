@@ -103,7 +103,7 @@ class HistorialImagenesObra extends Component {
         collapse: -1
 
       });
-      console.log("dataAgrupar", DataPartidasApi)
+      // console.log("dataAgrupar", DataPartidasApi)
 
       // llamamos al api de partidas getImagenesPartidas 
       axios.post(`${UrlServer}/getImagenesPartidas`,
@@ -134,15 +134,6 @@ class HistorialImagenesObra extends Component {
       DataImagenesApi: [],
       // setea al componente partidas imagen al  hcer  onClick en otra partida
       activeTabImagen: 'getImagenesHistorialPartidas',
-
-
-
-
-
-
-
-
-
 
     })
 
@@ -175,12 +166,11 @@ class HistorialImagenesObra extends Component {
   }
   // funcion mostrar primer y ultimo imagen
   primeraImagen(id_partida, ruta) {
-    // alert("hola")
-
 
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
+
     if (id_partida !== '') {
       console.log(id_partida, "id_partida")
       axios.post(`${UrlServer}${ruta}`, {
@@ -188,7 +178,7 @@ class HistorialImagenesObra extends Component {
       })
 
         .then((res) => {
-          console.log("res actividades imagenes", res.data)
+          // console.log("res actividades imagenes", res.data)
           this.setState({
             PriUlImg: res.data.imagen
           })

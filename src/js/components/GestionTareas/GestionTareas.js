@@ -112,7 +112,7 @@ class GestionTareas extends Component {
 
       nombreProyectoValidacion: "",
       condicionInputCollapse: false,
-      collapseProyecto: "0",
+      collapseProyecto: null,
       // datos desde hasta para pendientes progreso .....
       Inicio: "",
       Fin: "",
@@ -523,7 +523,7 @@ class GestionTareas extends Component {
 
     // this.inputRefComent.current.scrollIntoView({block: 'end', behavior: 'smooth'})
 
-    console.log(this.state.idTareaActivo, " === ", idTarea)
+    // console.log(this.state.idTareaActivo, " === ", idTarea)
     if (this.state.idTareaActivo !== idTarea) {
       this.setState({ idTareaActivo: idTarea })
 
@@ -631,7 +631,8 @@ class GestionTareas extends Component {
       ActiveTab: index,
       Inicio: inicio,
       Fin: fin,
-      tipoProgresoTarea:tipo
+      tipoProgresoTarea:tipo,
+      collapseProyecto:null
     })
 
     axios.post(`${UrlServer}/getTareasReceptorProyectos`,
@@ -957,7 +958,7 @@ class GestionTareas extends Component {
               </NavItem>
 
               <NavItem>
-                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "100", "vencido", "3")}>
+                <NavLink className={classnames({ active: ActiveTab === "3" })} onClick={() => this.reqProyectos(Id_Acceso, "0", "99", "vencido", "3")}>
                   VENCIDOS
                 </NavLink>
               </NavItem>
@@ -1041,12 +1042,6 @@ class GestionTareas extends Component {
                                     <div className="text-primary" title="descargar archivo" onClick={() => this.DescargarArchivo(`${UrlServer}${PositsFiltrado.tipo_archivo}`)} ><FaFileDownload /></div>
                                     : ""
                                 }
-                                {/* {
-                                  PositsFiltrado.tipo_archivo !== null ?
-                                    <a href={ `${UrlServer}${PositsFiltrado.tipo_archivo}`  } download target="_blank" className="text-primary" title="descargar archivo"> <FaFileDownload /></a>
-                                  :""
-                                }
-                                 */}
                               </div>
                             </div>
                           </div>
@@ -1054,17 +1049,19 @@ class GestionTareas extends Component {
                             <b>Descripción: </b>
                             {PositsFiltrado.descripcion}
                           </div>
+                          {
+                            this.state.tipoProgresoTarea === "vencido" ?"":
+                            <div className="text-center text-warning">
+                              {
+                                PositsFiltrado.diasTranscurridos < 0 ?
+                                  <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) para empezar la tarea asignada.</b>
+                                  :
+                                  <b> Tiene {`${PositsFiltrado.diasTotal}`} dia(s) para cumplir con la meta y te <i> quedan {`${PositsFiltrado.diasTranscurridos}`}</i>  </b>
 
-                          <div className="text-center text-warning">
-                            {
-                              PositsFiltrado.diasTranscurridos < 0 ?
-                                <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) para empezar la tarea asignada.</b>
-                                :
-                                <b> Tiene {`${PositsFiltrado.diasTotal}`} dia(s) para cumplir con la meta y te <i> quedan {`${PositsFiltrado.diasTranscurridos}`}</i>  </b>
+                              }
 
-                            }
-
-                          </div>
+                            </div>
+                          }
                         </div>
                     }
                     <div className="fondoSubord">
@@ -1115,7 +1112,7 @@ class GestionTareas extends Component {
                     </div>
 
                   </Col>
-                  <Col md="6">
+                  <Col md="6">  
                     <div className="contanierProyectoAsignados">
                       {
                         DataProyectoMostrarApi.map((proyectoMostrar, IndexPM) =>
@@ -1141,12 +1138,28 @@ class GestionTareas extends Component {
                                         <div className="bodyTareaProyecto" style={{ background: proyectoMostrar.color }}>
                                           <img src={`${UrlServer}${tarea.imagen_subordinado[0].imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
                                           <div className="text-center flex-column ">
+
+                                          <div> 
                                             {
-                                              InputEditablePorcent === indexT ?
-                                                <input type="number" onBlur={e => this.textPorcentEdit(e, indexT, tarea.id_tarea)} className="inputEditPorcent" autoFocus /> :
-                                                <label className="inputCursorText" onClick={() => this.EditPorcentaje(indexT)} >
-                                                  {tarea.porcentaje_avance}%</label>
+                                              this.state.tipoProgresoTarea === "vencido" ?
+                                              <label className="inputCursorText" >
+                                                    {tarea.porcentaje_avance}%
+                                              </label>:
+                                              <div>
+                                                {
+                                                  InputEditablePorcent === indexT 
+                                                    ?
+                                                      <input type="number" onBlur={e => this.textPorcentEdit(e, indexT, tarea.id_tarea)} className="inputEditPorcent" autoFocus />
+                                                    :
+                                                    <label className="inputCursorText" onClick={() => this.EditPorcentaje(indexT)} >
+                                                      {tarea.porcentaje_avance}%
+                                                    </label>
+                                                }
+                                              </div>
                                             }
+
+                                          </div>
+                                            
 
                                             <div className="text-uppercase">{tarea.emisor_nombre}</div>
                                           </div>

@@ -60,11 +60,12 @@ class ListaMateriales extends Component {
       modalImgPartida: false,
 
       CollapseResumenTabla: "resumenRecursos",
-      TipoRecursoResumen:"",
-      tipoEjecucion:false,
+      TipoRecursoResumen: "",
+      tipoEjecucion: false,
 
-      DataGuardarInput:[],
-      Editable:null
+      DataGuardarInput: [],
+      Editable: null,
+      precioCantidad: ""
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -185,21 +186,21 @@ class ListaMateriales extends Component {
 
       })
 
-      // axios consulta al api de  RECURSOS =================================================================================
-    axios.post(`${UrlServer}/getmaterialesResumenTipos`,{
-      "id_ficha":Id_Obra
+    // axios consulta al api de  RECURSOS =================================================================================
+    axios.post(`${UrlServer}/getmaterialesResumenTipos`, {
+      "id_ficha": Id_Obra
     })
-    .then((res) => {
-      // console.log("datos", res.data);
-      this.setState({
-        DataTipoRecursoResumen: res.data
+      .then((res) => {
+        // console.log("datos", res.data);
+        this.setState({
+          DataTipoRecursoResumen: res.data
+        })
       })
-    })
-    .catch((err) => {
-      console.log("errores al realizar la peticion de prioridades", err);
+      .catch((err) => {
+        console.log("errores al realizar la peticion de prioridades", err);
 
-    })
-      
+      })
+
 
   }
 
@@ -213,8 +214,8 @@ class ListaMateriales extends Component {
         id_componente,
         collapse: -1,
         BuscaPartida: null,
-        activeTabResumen:"",
-        DataRecursosListaApi:[],
+        activeTabResumen: "",
+        DataRecursosListaApi: [],
       });
     }
     // consulta al resumen
@@ -222,7 +223,7 @@ class ListaMateriales extends Component {
       this.reqChartResumenGeneral(Id_Obra)
       return
     }
-    this.reqChartResumenComponente( id_componente )
+    this.reqChartResumenComponente(id_componente)
     // get partidas -----------------------------------------------------------------
     axios.post(`${UrlServer}/getmaterialespartidacomponente`, {
       id_componente: id_componente
@@ -451,60 +452,73 @@ class ListaMateriales extends Component {
     if (this.state.activeTabResumen !== index) {
       this.setState({
         activeTabResumen: index,
-        TipoRecursoResumen:TipoRecurso,
-        tipoEjecucion:false
+        TipoRecursoResumen: TipoRecurso,
+        tipoEjecucion: false
       });
-      this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen" )
+      this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen")
     }
   }
 
-  Ver_No(){
+  Ver_No() {
     this.setState({
       tipoEjecucion: !this.state.tipoEjecucion
     }, () => {
-      if (this.state.tipoEjecucion === true ) {
+      if (this.state.tipoEjecucion === true) {
         // console.log("ejecuntando true")
 
-        this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal" )
+        this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal")
         return
       }
-      this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen" )
+      this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen")
     });
   }
 
-  activaEditable(index){
+  activaEditable(index, CantPrecio) {
     console.log("activando", index)
-    this.setState({Editable:index })
-    if(index === null){
-      console.log("entra al log")
+    this.setState({ Editable: index, precioCantidad: CantPrecio })
+
+    if (CantPrecio === null) {
       axios.post(`${UrlServer}/postrecursosEjecucionreal`,
-      this.state.DataGuardarInput
+        this.state.DataGuardarInput
       )
-      .then((res)=>{
-        console.log("response recurso real ", res)
-      })
-      .catch((err)=>{
-        console.error(" algo salió mal al tratar de actualizar :>", err)
-      })
+        .then((res) => {
+          console.log("response recurso real ", res.data)
+          console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index].recurso_gasto_cantidad ); 
+          console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
+
+          var DataRecursosListaApi = this.state.DataRecursosListaApi
+          DataRecursosListaApi[index].recurso_gasto_cantidad =  res.data.recurso_gasto_cantidad
+          DataRecursosListaApi[index].recurso_gasto_precio =  res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio
+
+          this.setState({
+            DataRecursosListaApi:DataRecursosListaApi
+          })
+          toast.success("✔ Guardado")
+        })
+        .catch((err) => {
+          console.error("algo salió mal al tratar de actualizar :>", err.response)
+
+          toast.error("❌ingrese solo numeros")
+        })
     }
 
   }
 
 
-  inputeable(index, tipo, e ){
-    
-    console.log("index ", index )
-    var demoArray = 
-      {
-        "tipo":tipo,
-        "data":[
-          [Id_Obra, this.state.TipoRecursoResumen ,"desctest", e.target.innerText]
-        ]
-      }
-    
+  inputeable(index, tipo, descripcion, e) {
+
+    console.log("index ", index, "valor ", e.target.value)
+    var demoArray =
+    {
+      "tipo": tipo,
+      "data": [
+        [Id_Obra, this.state.TipoRecursoResumen, descripcion, e.target.value]
+      ]
+    }
+
     this.setState({ DataGuardarInput: demoArray })
 
-    console.log("demoArray ", demoArray )
+    console.log("demoArray ", demoArray)
   }
 
   // requests al api======================================================================
@@ -530,7 +544,7 @@ class ListaMateriales extends Component {
 
   reqResumen(idFicha, tipoRecurso, ruta) {
 
-    console.log("tipo recurso ", tipoRecurso, "tipoEjecucion " ,  this.state.tipoEjecucion, "ruta ", ruta)
+    console.log("tipo recurso ", tipoRecurso, "tipoEjecucion ", this.state.tipoEjecucion, "ruta ", ruta)
 
     axios.post(`${UrlServer}${ruta}`, {
       "id_ficha": idFicha,
@@ -557,31 +571,31 @@ class ListaMateriales extends Component {
         console.log("res data ", res)
         this.setState({ DataResumenGeneralCompApi: res.data })
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.error("datos incorrectos ", err.response)
-        if (err.response.data=== "vacio" ) {
-          this.setState({ DataResumenGeneralCompApi: [] })        
+        if (err.response.data === "vacio") {
+          this.setState({ DataResumenGeneralCompApi: [] })
         }
       })
   }
 
-  reqChartResumenComponente( idComponente ){
-    axios.post(`${UrlServer}/getmaterialescomponentesChart`,{
-      "id_componente":idComponente
+  reqChartResumenComponente(idComponente) {
+    axios.post(`${UrlServer}/getmaterialescomponentesChart`, {
+      "id_componente": idComponente
     })
-    .then((res)=>{
-      console.log("res data chart ", res.data)
-      this.setState({ DataResumenGeneralCompApi: res.data })
-    })
-    .catch((err)=>{
-      console.error("algo salió mal ", err.response)
-      if (err.response.data=== "vacio" ) {
-        this.setState({ DataResumenGeneralCompApi: [] })        
-      }
-    })
+      .then((res) => {
+        console.log("res data chart ", res.data)
+        this.setState({ DataResumenGeneralCompApi: res.data })
+      })
+      .catch((err) => {
+        console.error("algo salió mal ", err.response)
+        if (err.response.data === "vacio") {
+          this.setState({ DataResumenGeneralCompApi: [] })
+        }
+      })
   }
 
-  reqResumenXComponente( index, idComponente, tipoRecurso ) {
+  reqResumenXComponente(index, idComponente, tipoRecurso) {
     console.log("tipo recurso ", tipoRecurso)
     if (this.state.activeTabResumen !== index) {
       this.setState({
@@ -604,7 +618,7 @@ class ListaMateriales extends Component {
   }
 
   render() {
-    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, activeTabResumen, smsValidaMetrado, collapse, nombreComponente, Editable, SMSinputTypeImg, mostrarColores, file, CollapseResumenTabla } = this.state
+    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, activeTabResumen, smsValidaMetrado, collapse, nombreComponente, Editable, precioCantidad, mostrarColores, file, CollapseResumenTabla } = this.state
 
     const ChartResumenRecursos = {
       "colors": [
@@ -755,7 +769,7 @@ class ListaMateriales extends Component {
                     <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
-                      options={ ChartResumenRecursos }
+                      options={ChartResumenRecursos}
                     />
                   </div>
                   <Nav tabs>
@@ -763,7 +777,7 @@ class ListaMateriales extends Component {
                       DataTipoRecursoResumen.map((Resumen, index) =>
                         <NavItem key={index}>
                           <NavLink className={classnames({ active: this.state.activeTabResumen === index.toString() })} onClick={() => { this.tabResumenTipoRecurso(index.toString(), Resumen.tipo); }} >
-                            { Resumen.tipo }
+                            {Resumen.tipo}
                           </NavLink>
                         </NavItem>
                       )
@@ -776,8 +790,8 @@ class ListaMateriales extends Component {
                         <thead>
                           <tr>
                             <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
-                            <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } ) 
-                              <div className= { this.state.tipoEjecucion === true ? "float-right prioridad text-primary": "float-right prioridad"} onClick={ this.Ver_No }><MdCompareArrows size={ 20 }/> </div>
+                            <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY {FechaActual()} )
+                              <div className={this.state.tipoEjecucion === true ? "float-right prioridad text-primary" : "float-right prioridad"} onClick={this.Ver_No}><MdCompareArrows size={20} /> </div>
                             </th>
                           </tr>
                           <tr>
@@ -804,46 +818,61 @@ class ListaMateriales extends Component {
                                 <td> {ReqLista.recurso_precio}</td>
                                 <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
-                                <td  className= { this.state.tipoEjecucion === true ?"colorInputeableRecurso ":"" }>
+                                <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso " : ""}>
                                   {
-                                    this.state.tipoEjecucion === false?`${ReqLista.recurso_gasto_cantidad}`
-                                    :
-                                    <div className="d-flex justify-content-between contentDataTd">
-                                      <div suppressContentEditableWarning={Editable === IndexRL} contentEditable={Editable === IndexRL} value={ IndexRL } onBlur={ this.inputeable.bind(this, { IndexRL },  "cantidad"  )} >
-                                        { ReqLista.recurso_gasto_cantidad }
-                                       
-                                      </div>
+                                    this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_cantidad}`
+                                      :
+                                      <div className="d-flex justify-content-between contentDataTd">
 
-                                      <div className="ContIcon" >
                                         {
-                                          Editable === IndexRL?
-                                          <div onClick={ ()=>this.activaEditable( null ) } ><MdSave /> </div>:
-
-                                         <div onClick={ ()=>this.activaEditable( IndexRL ) }><MdModeEdit /> </div> 
+                                          Editable === IndexRL && precioCantidad === "cantidad" ?
+                                            <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_cantidad)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "cantidad", ReqLista.descripcion)} style={{width: "60px" }}/>
+                                            :
+                                            <span>{ReqLista.recurso_gasto_cantidad}</span>
                                         }
+
+                                        <div className="ContIcon" >
+                                          {
+                                            Editable === IndexRL && precioCantidad === "cantidad"
+                                              ?
+                                              <div className="d-flex"> 
+                                                <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> { " " }
+                                                <div onClick={() => this.setState({Editable: null, precioCantidad: ""})} > <MdClose /></div>
+                                              </div>
+                                              :
+                                              <div onClick={() => this.activaEditable(IndexRL, "cantidad")}><MdModeEdit /> </div>
+                                          }
+                                        </div>
+
                                       </div>
-                                    </div>
                                   }
                                 </td>
-                                <td  className= { this.state.tipoEjecucion === true ?"colorInputeableRecurso":"" }>
+
+                                <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
                                   {
-                                    this.state.tipoEjecucion === false?`${ReqLista.recurso_precio}`
-                                    :
-                                    <div className="d-flex justify-content-between contentDataTd" >
-
-                                      <div suppressContentEditableWarning={Editable === IndexRL} contentEditable={Editable === IndexRL} value={ IndexRL } onBlur={  this.inputeable.bind(this, { IndexRL }, "precio"  )} >
-                                        { ReqLista.recurso_precio }
-                                      </div>
-                                      
-                                      <div className="ContIcon">
+                                    this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_precio}`
+                                      :
+                                      <div className="d-flex justify-content-between contentDataTd" >
                                         {
-                                          Editable === IndexRL?
-                                          <div onClick={ ()=>this.activaEditable( null ) } ><MdSave /> </div>:
-
-                                         <div onClick={ ()=>this.activaEditable( IndexRL ) }><MdModeEdit /> </div> 
+                                          Editable === IndexRL && precioCantidad === "precio" ?
+                                            <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_precio)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "precio", ReqLista.descripcion)} style={{width: "60px" }}/>
+                                            :
+                                            <span>{ReqLista.recurso_gasto_precio}</span>
                                         }
+
+                                        <div className="ContIcon">
+                                          {
+                                            Editable === IndexRL && precioCantidad === "precio"
+                                              ?
+                                              <div className="d-flex"> 
+                                                <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> { " " }
+                                                <div onClick={() => this.setState({Editable: null, precioCantidad: ""})} > <MdClose /></div>
+                                              </div>
+                                              :
+                                              <div onClick={() => this.activaEditable(IndexRL, "precio")}><MdModeEdit /> </div>
+                                          }
+                                        </div>
                                       </div>
-                                    </div>
                                   }
                                 </td>
                                 <td> {ReqLista.recurso_gasto_parcial}</td>
@@ -889,17 +918,17 @@ class ListaMateriales extends Component {
                 <CardBody>
 
                   {/* DATA COMPONENTES LISTA DETALLADO */}
-                  
+
                   <Nav tabs className="float-right">
                     <NavItem>
                       <NavLink className={classnames({ "bg-warning text-dark": this.state.CollapseResumenTabla === 'resumenRecursos' })} onClick={() => { this.CollapseResumenTabla("resumenRecursos") }} >
-                        MOSTRAR RESUMEN  { this.state.CollapseResumenTabla === 'resumenRecursos' ?<IoMdArrowDropdownCircle /> :  <IoMdArrowDropupCircle />}
+                        MOSTRAR RESUMEN  {this.state.CollapseResumenTabla === 'resumenRecursos' ? <IoMdArrowDropdownCircle /> : <IoMdArrowDropupCircle />}
                       </NavLink>
                     </NavItem>
 
                     <NavItem>
                       <NavLink className={classnames({ "bg-warning text-dark": this.state.CollapseResumenTabla === 'tablaPartidas' })} onClick={() => { this.CollapseResumenTabla("tablaPartidas") }} >
-                       MOSTRAR POR PARTIDA { this.state.CollapseResumenTabla === 'tablaPartidas' ?<IoMdArrowDropdownCircle /> :  <IoMdArrowDropupCircle />}
+                        MOSTRAR POR PARTIDA {this.state.CollapseResumenTabla === 'tablaPartidas' ? <IoMdArrowDropdownCircle /> : <IoMdArrowDropupCircle />}
                       </NavLink>
                     </NavItem>
                   </Nav>
@@ -907,75 +936,75 @@ class ListaMateriales extends Component {
                   <br />
                   <Collapse isOpen={CollapseResumenTabla === "resumenRecursos"}>
                     <div className="mb-1 mt-1">
-                        {
-                          DataResumenGeneralCompApi.length !== 0 ?
-                            <HighchartsReact
-                              highcharts={Highcharts}
-                              // constructorType={'stockChart'}
-                              options={ChartResumenRecursos}
-                            />:<div className="text-center h6 text-danger">No hay  datos</div>
-                        }
-                      
+                      {
+                        DataResumenGeneralCompApi.length !== 0 ?
+                          <HighchartsReact
+                            highcharts={Highcharts}
+                            // constructorType={'stockChart'}
+                            options={ChartResumenRecursos}
+                          /> : <div className="text-center h6 text-danger">No hay  datos</div>
+                      }
+
                     </div>
                     <Nav tabs>
-                    {
-                      DataTipoRecursoResumen.map((Resumen, index) =>
-                        <NavItem key={index}>
-                          <NavLink className={classnames({ active: this.state.activeTabResumen === index.toString() })} onClick={() => { this.reqResumenXComponente(index.toString() , this.state.id_componente, Resumen.tipo) ; }} >
-                            {Resumen.tipo}
-                          </NavLink>
-                        </NavItem>
-                      )
+                      {
+                        DataTipoRecursoResumen.map((Resumen, index) =>
+                          <NavItem key={index}>
+                            <NavLink className={classnames({ active: this.state.activeTabResumen === index.toString() })} onClick={() => { this.reqResumenXComponente(index.toString(), this.state.id_componente, Resumen.tipo); }} >
+                              {Resumen.tipo}
+                            </NavLink>
+                          </NavItem>
+                        )
 
-                    }
-                  </Nav>
+                      }
+                    </Nav>
 
 
-                  <Card>
-                    {/* <CardHeader className="p-1">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</CardHeader> */}
-                    <CardBody>
-                      <table className="table table-sm table-hover">
-                        <thead>
-                          <tr>
-                            <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</th>
-                            <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } )</th>
-                          </tr>
-                          <tr>
-                            <th>RECURSO</th>
-                            <th>UND</th>
-                            <th>CANTIDAD</th>
-                            <th>PRECIO S/.</th>
-                            <th className="bordeDerecho" > PARCIAL S/.</th>
+                    <Card>
+                      {/* <CardHeader className="p-1">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</CardHeader> */}
+                      <CardBody>
+                        <table className="table table-sm table-hover">
+                          <thead>
+                            <tr>
+                              <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS DEL COMPONENTE SEGÚN EXPEDIENTE TÉCNICO</th>
+                              <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY {FechaActual()} )</th>
+                            </tr>
+                            <tr>
+                              <th>RECURSO</th>
+                              <th>UND</th>
+                              <th>CANTIDAD</th>
+                              <th>PRECIO S/.</th>
+                              <th className="bordeDerecho" > PARCIAL S/.</th>
 
-                            <th>CANTIDAD</th>
-                            <th>PRECIO S/.</th>
-                            <th>PARCIAL S/.</th>
-                            <th>DIFERENCIA</th>
-                            <th>%</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {
-                            DataRecursosListaApi.map((ReqLista, IndexRL) =>
-                              <tr key={IndexRL}>
-                                <td>{ReqLista.descripcion} </td>
-                                <td>{ReqLista.unidad} </td>
-                                <td> {ReqLista.recurso_cantidad}</td>
-                                <td> {ReqLista.recurso_precio}</td>
-                                <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
+                              <th>CANTIDAD</th>
+                              <th>PRECIO S/.</th>
+                              <th>PARCIAL S/.</th>
+                              <th>DIFERENCIA</th>
+                              <th>%</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              DataRecursosListaApi.map((ReqLista, IndexRL) =>
+                                <tr key={IndexRL}>
+                                  <td>{ReqLista.descripcion} </td>
+                                  <td>{ReqLista.unidad} </td>
+                                  <td> {ReqLista.recurso_cantidad}</td>
+                                  <td> {ReqLista.recurso_precio}</td>
+                                  <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
-                                <td> {ReqLista.recurso_gasto_cantidad}</td>
-                                <td> {ReqLista.recurso_precio}</td>
-                                <td> {ReqLista.recurso_gasto_parcial}</td>
-                                <td> {ReqLista.diferencia}</td>
-                                <td> {ReqLista.porcentaje}</td>
-                              </tr>
-                            )
-                          }
-                        </tbody>
-                      </table>
-                    </CardBody>
-                  </Card>
+                                  <td> {ReqLista.recurso_gasto_cantidad}</td>
+                                  <td> {ReqLista.recurso_precio}</td>
+                                  <td> {ReqLista.recurso_gasto_parcial}</td>
+                                  <td> {ReqLista.diferencia}</td>
+                                  <td> {ReqLista.porcentaje}</td>
+                                </tr>
+                              )
+                            }
+                          </tbody>
+                        </table>
+                      </CardBody>
+                    </Card>
 
 
                   </Collapse>
@@ -1115,52 +1144,52 @@ class ListaMateriales extends Component {
 
                                     {/* tareas de algo */}
 
-                                        <Card>
-                                          {/* <CardHeader className="p-1">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</CardHeader> */}
-                                          <CardBody>
-                                            <table className="table table-sm">
-                                              <thead>
-                                                <tr>
-                                                  <th colSpan="5" className="bordeDerecho">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
-                                                  <th colSpan="5"> RECURSOS GASTADOS HASTA LA FECHA ( HOY { FechaActual() } ) </th>
+                                    <Card>
+                                      {/* <CardHeader className="p-1">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</CardHeader> */}
+                                      <CardBody>
+                                        <table className="table table-sm">
+                                          <thead>
+                                            <tr>
+                                              <th colSpan="5" className="bordeDerecho">RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
+                                              <th colSpan="5"> RECURSOS GASTADOS HASTA LA FECHA ( HOY {FechaActual()} ) </th>
+                                            </tr>
+                                            <tr>
+                                              <th>RECURSO</th>
+                                              <th>UND</th>
+                                              <th>CANTIDAD</th>
+                                              <th>PRECIO S/.</th>
+                                              <th className="bordeDerecho" >PARCIAL S/.</th>
+
+                                              <th>CANTIDAD</th>
+                                              <th>PRECIO S/.</th>
+                                              <th>PARCIAL S/.</th>
+                                              <th>DIFERENCIA</th>
+                                              <th>%</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {
+                                              DataListaRecursoDetallado.map((listResurso, indexRe) =>
+                                                <tr key={indexRe}>
+                                                  <td>{listResurso.descripcion} </td>
+                                                  <td>{listResurso.unidad} </td>
+                                                  <td> {listResurso.recurso_cantidad}</td>
+                                                  <td> {listResurso.recurso_precio}</td>
+                                                  <td className="bordeDerecho"> {listResurso.recurso_parcial}</td>
+
+                                                  <td> {listResurso.recurso_gasto_cantidad}</td>
+                                                  <td> {listResurso.recurso_precio}</td>
+                                                  <td> {listResurso.recurso_gasto_parcial}</td>
+                                                  <td> {listResurso.diferencia}</td>
+                                                  <td> {listResurso.porcentaje}</td>
                                                 </tr>
-                                                <tr>
-                                                  <th>RECURSO</th>
-                                                  <th>UND</th>
-                                                  <th>CANTIDAD</th>
-                                                  <th>PRECIO S/.</th>
-                                                  <th className="bordeDerecho" >PARCIAL S/.</th>
+                                              )
+                                            }
 
-                                                  <th>CANTIDAD</th>
-                                                  <th>PRECIO S/.</th>
-                                                  <th>PARCIAL S/.</th>
-                                                  <th>DIFERENCIA</th>
-                                                  <th>%</th>
-                                                </tr>
-                                              </thead>
-                                              <tbody>
-                                                {
-                                                  DataListaRecursoDetallado.map((listResurso, indexRe) =>
-                                                    <tr key={indexRe}>
-                                                      <td>{listResurso.descripcion} </td>
-                                                      <td>{listResurso.unidad} </td>
-                                                      <td> {listResurso.recurso_cantidad}</td>
-                                                      <td> {listResurso.recurso_precio}</td>
-                                                      <td className="bordeDerecho"> {listResurso.recurso_parcial}</td>
-
-                                                      <td> {listResurso.recurso_gasto_cantidad}</td>
-                                                      <td> {listResurso.recurso_precio}</td>
-                                                      <td> {listResurso.recurso_gasto_parcial}</td>
-                                                      <td> {listResurso.diferencia}</td>
-                                                      <td> {listResurso.porcentaje}</td>
-                                                    </tr>
-                                                  )
-                                                }
-
-                                              </tbody>
-                                            </table>
-                                          </CardBody>
-                                        </Card>
+                                          </tbody>
+                                        </table>
+                                      </CardBody>
+                                    </Card>
 
                                   </Collapse>
                                 </td>

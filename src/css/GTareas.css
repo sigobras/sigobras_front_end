@@ -429,6 +429,7 @@ input[type=number] {
 
 .colorInputeableRecurso{
   background: #8a8b8c4f;
+  /* border-bottom: 1px solid #0080ff; */
 }
 
 .ModalContaninerMas{
