@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Container, TabPane, Nav, NavItem, NavLink, Button, Row, Col, Form, FormGroup, Label, Input, Progress, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Container, Nav, NavItem, NavLink, Button, Row, Col, Form, FormGroup, Label, Input, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import axios from 'axios';
+import HighchartsReact from 'highcharts-react-official';
+import Highcharts from 'highcharts';
 import io from 'socket.io-client';
 
 import classnames from 'classnames';
-import { MdSend, MdSystemUpdateAlt, MdKeyboardArrowDown, MdKeyboardArrowUp, MdAddCircle, MdGroupAdd, MdAlarmAdd, MdSave, MdClose, MdStar, MdStarBorder } from "react-icons/md";
+import { MdSend, MdAddCircle, MdGroupAdd, MdSave, MdStar, MdStarBorder } from "react-icons/md";
 import { FaFileDownload } from "react-icons/fa";
 import { GoSignIn, GoSignOut, GoOrganization } from "react-icons/go";
 import { DebounceInput } from 'react-debounce-input';
@@ -15,9 +17,8 @@ import "react-picky/dist/picky.css";
 import "../../../css/GTareas.css"
 
 import { FechaActual, Extension } from "../Utils/Funciones"
-import { UrlServer, Id_Acceso, ImgAccesoSS, Id_Obra, NombUsuarioSS } from "../Utils/ServerUrlConfig"
+import { UrlServer, Id_Acceso, ImgAccesoSS, Id_Obra } from "../Utils/ServerUrlConfig"
 
-import DragDrop from "./DragDrop"
 
 
 class GestionTareas extends Component {
@@ -60,6 +61,9 @@ class GestionTareas extends Component {
     this.onDragOver = this.onDragOver.bind(this);
     this.onDrop = this.onDrop.bind(this);
     this.demoFuncion = this.demoFuncion.bind(this);
+
+
+    this.inputRefComent = React.createRef();
 
     this.state = {
       online: 0,
@@ -119,7 +123,73 @@ class GestionTareas extends Component {
       InputEditablePorcent: null,
       IdProyecto: "",
       modalVerMasTareasUser: false,
-      idTareaActivo:null
+      idTareaActivo: null,
+      // chart resumen de tareas del usuario
+      chartOptions: {
+        chart: {
+          type: 'column'
+        },
+        title: {
+          text: 'Monthly Average Rainfall'
+        },
+        subtitle: {
+          text: 'Source: WorldClimate.com'
+        },
+        xAxis: {
+          categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+          ],
+          crosshair: true
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: 'Rainfall (mm)'
+          }
+        },
+        tooltip: {
+          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+          }
+        },
+        series: [{
+          name: 'Tokyo',
+          data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+
+        }, {
+          name: 'New York',
+          data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+
+        }, {
+          name: 'London',
+          data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+
+        }, {
+          name: 'Berlin',
+          data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+
+        }]
+      }
     };
   }
 
@@ -127,17 +197,6 @@ class GestionTareas extends Component {
 
     this.socket.on('visitors', data => this.setState({ online: data }));
     // this.socket.on('visitor exits', data => this.setState({ online: data }));
-    // this.socket.on('add', data => this.handleUserAdded(data));
-    // this.socket.on('update', data => this.handleUserUpdated(data));
-    // this.socket.on('delete', data => this.handleUserDeleted(data));
-
-
-
-
-
-
-
-
 
     document.title = "GESTIÓN DE TAREAS 🎁"
     // llama api de tareas pendientes
@@ -461,12 +520,14 @@ class GestionTareas extends Component {
 
   MostrasMasTarea(idTarea) {
 
+    // this.inputRefComent.current.scrollIntoView({block: 'end', behavior: 'smooth'})
+
     console.log(this.state.idTareaActivo, " === ", idTarea)
     if (this.state.idTareaActivo !== idTarea) {
       this.setState({ idTareaActivo: idTarea })
 
       console.log("id", idTarea)
-      
+
       this.socket.on(idTarea, data => this.demoFuncion(data));
       // this.socket.close()
       axios.post(`${UrlServer}/getTareaIdTarea`,
@@ -474,23 +535,23 @@ class GestionTareas extends Component {
           "id_tarea": idTarea
         }
       )
-      .then((res) => {
-        console.log("data mas ver mas tarea ", res.data)
-        // var dataArmar = Object.assign(Tareas[0], res.data);
+        .then((res) => {
+          console.log("data mas ver mas tarea ", res.data)
+          // var dataArmar = Object.assign(Tareas[0], res.data);
 
-        // console.log("dataArmar  ", dataArmar)
+          // console.log("dataArmar  ", dataArmar)
 
-        this.setState({
-          PositsFiltrado: res.data
+          this.setState({
+            PositsFiltrado: res.data
+          })
+
         })
-
-      })
-      .catch((err) => {
-        console.error("algo salió mal al enviar los datos ", err)
-      })
+        .catch((err) => {
+          console.error("algo salió mal al enviar los datos ", err)
+        })
       return
     }
-      // this.socket.close()
+    // this.socket.close()
 
   }
 
@@ -527,7 +588,7 @@ class GestionTareas extends Component {
   GuardaComentario(e) {
     e.preventDefault();
 
-    console.log("ejecuntando data ", e.target[0].value)
+    // console.log("ejecuntando data ", e.target[0].value)
 
     axios.post(`${UrlServer}/postTareaComentario`, {
       "mensaje": e.target[0].value,
@@ -535,16 +596,20 @@ class GestionTareas extends Component {
       "accesos_id_acceso": Id_Acceso
     })
       .then((res) => {
-        console.log("data enviado ", res)
-
-        // this.socket.emit('tareas_comentarios', res.data);
+        // console.log("data enviado ", res)
+        console.log(" this.inputRefComent ", this.inputRefComent.current)
         document.getElementById("inputComentario").value = "";
+        let users = this.state.PositsFiltrado
+        users.comentarios.push(res.data);
+        this.setState({ PositsFiltrado: users });
+
         this.socket.emit("tareas_comentarios",
           {
             id_tarea: this.state.PositsFiltrado.id_tarea,
             data: res.data
           }
         )
+        this.inputRefComent.current.scrollIntoView({ block: 'end', behavior: 'smooth' })
 
       })
       .catch((err) => {
@@ -711,8 +776,8 @@ class GestionTareas extends Component {
   }
 
   render() {
-    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent, idTareaActivo } = this.state
-    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.toggle}>&times;</button>;
+    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, chartOptions, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent, idTareaActivo } = this.state
+    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.ModalVerMasTareas}>&times;</button>;
 
     return (
       <div>
@@ -990,9 +1055,9 @@ class GestionTareas extends Component {
                           <div className="text-center text-warning">
                             {
                               PositsFiltrado.diasTranscurridos < 0 ?
-                                <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dias para empezar la tarea asignada.</b>
+                                <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) para empezar la tarea asignada.</b>
                                 :
-                                <b> Tiene {`${PositsFiltrado.diasTotal}`} dias para cumplir con la meta y te <i> quedan {`${PositsFiltrado.diasTranscurridos}`}</i>  </b>
+                                <b> Tiene {`${PositsFiltrado.diasTotal}`} dia(s) para cumplir con la meta y te <i> quedan {`${PositsFiltrado.diasTranscurridos}`}</i>  </b>
 
                             }
 
@@ -1064,7 +1129,7 @@ class GestionTareas extends Component {
                                 {
                                   DataTareasApi.map((tarea, indexT) =>
                                     <Col md="4" key={indexT}>
-                                      <div className={ idTareaActivo === tarea.id_tarea ? "containerTareaActivo": "containerTarea" }>
+                                      <div className={idTareaActivo === tarea.id_tarea ? "containerTareaActivo mb-2" : "containerTarea mb-2"}>
                                         <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={() => this.MostrasMasTarea(tarea.id_tarea)}>
                                           <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
                                           <div className="m-0 text-center">{tarea.asunto}</div>
@@ -1098,14 +1163,14 @@ class GestionTareas extends Component {
                     {
                       PositsFiltrado.comentarios === undefined ? "" :
                         <div className="ContainerComentarios">
-                          <div className="SmsComentarios">
+                          <div className="SmsComentarios" >
                             {
                               PositsFiltrado.comentarios !== undefined ?
                                 PositsFiltrado.comentarios.map((comentario, indexC) =>
                                   <div className="media mb-2" key={indexC}>
                                     <img className="align-self-end mr-2 imgCircular" src={`${UrlServer}${comentario.imagen}`} alt={comentario.usuario} width="5%" height="5%" />
                                     <div className="media-body bodyComentarios">
-                                      <label> <b className="text-capitalize">{comentario.usuario} </b>{` ${comentario.mensaje}`}</label>
+                                      <label ref={this.inputRefComent} className="mb-0"> <b className="text-capitalize" >{comentario.usuario} </b>{` ${comentario.mensaje}`}</label>
                                       <div className="float-right small">
                                         {`${comentario.hora} ${comentario.fecha}`}
                                       </div>
@@ -1135,14 +1200,42 @@ class GestionTareas extends Component {
 
         <Modal isOpen={this.state.modalVerMasTareasUser} toggle={this.ModalVerMasTareas} external={externalCloseBtn} fade={false} size="xl">
           <Row>
-            <Col sm="4">
+            <Col sm="3">
               <div className="ModalContaninerMas">
-                hola sadgadksadafdsafdjafd
+                <div className="bg-info p-2">
+                  <div className="d-flex flex-column">
+                    <div className="text-center h6">RESIDENTE</div>
+                    <div className="">
+                      <img src="https://www.inmosenna.com/wp-content/uploads/2018/07/avatar-user-teacher-312a499a08079a12-512x512-300x300.png" alt="sigobras" className="imgCircular mx-auto d-block" width="140px" height="140px" />
+
+                    </div>
+                    <div className="text-center"><b>DAYANA</b></div>
+                    <div className="text-center text-warning">
+                      <MdStar size={20} />
+                      <MdStar size={20} />
+                      <MdStar size={20} />
+                      <MdStar size={20} />
+                      <MdStarBorder size={20} />
+                    </div>
+                  </div>
+                </div>
+                <div className="d-flex">
+                  <div className="p-1 bg-danger flex-fill text-center">
+                    <span>35</span><br />
+                    <span>Concluidos</span>
+                  </div>
+                  <div className="p-1 bg-primary flex-fill text-center">
+                    <span>20</span><br />
+                    <span>Vencidos</span>
+                  </div>
+                </div>
               </div>
             </Col>
-            <Col sm="8">
+            <Col sm="9">
               <div className="ModalContaninerMas">
-                <div className="d-flex">
+                <div className="d-flex flex-column">
+                  <div className="h6">RESUMEN  2016 - 2019</div>
+
                   <InputGroup>
                     <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplit}>
                       <Button outline>AÑO</Button>
@@ -1157,52 +1250,17 @@ class GestionTareas extends Component {
                     </InputGroupButtonDropdown>
 
                     <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplit}>
-                      <Button outline>MES</Button>
-                      <DropdownToggle split outline />
-                      <DropdownMenu>
-                        <DropdownItem header>Header</DropdownItem>
-                        <DropdownItem disabled>Action</DropdownItem>
-                        <DropdownItem>Another Action</DropdownItem>
-                        <DropdownItem divider />
-                        <DropdownItem>Another Action</DropdownItem>
-                      </DropdownMenu>
-                    </InputGroupButtonDropdown>
-
-                    <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplit}>
-                      <Button outline>ESTADO</Button>
-                      <DropdownToggle split outline />
-                      <DropdownMenu>
-                        <DropdownItem header>Header</DropdownItem>
-                        <DropdownItem disabled>Action</DropdownItem>
-                        <DropdownItem>Another Action</DropdownItem>
-                        <DropdownItem divider />
-                        <DropdownItem>Another Action</DropdownItem>
-                      </DropdownMenu>
-                    </InputGroupButtonDropdown>
-
-                    <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplit}>
-                      <Button outline>PROYECTO</Button>
-                      <DropdownToggle split outline />
-                      <DropdownMenu>
-                        <DropdownItem header>Header</DropdownItem>
-                        <DropdownItem disabled>Action</DropdownItem>
-                        <DropdownItem>Another Action</DropdownItem>
-                        <DropdownItem divider />
-                        <DropdownItem>Another Action</DropdownItem>
-                      </DropdownMenu>
+                      <Button outline>ENERO</Button>
+                      <Button outline>FEBRERO</Button>
+                      <Button outline>MARZO</Button>
                     </InputGroupButtonDropdown>
                   </InputGroup>
-                  <div>
-                    <img src="https://www.inmosenna.com/wp-content/uploads/2018/07/avatar-user-teacher-312a499a08079a12-512x512-300x300.png" alt="sigobras" width="30px" height="30px"/>
-                  </div>
-                  <div className="text-warning d-flex">
-                    <MdStar />
-                    <MdStar />
-                    <MdStar />
-                    <MdStar />
-                    <MdStarBorder />
-                  </div>
                 </div>
+                <br />
+                <HighchartsReact
+                  highcharts={Highcharts}
+                  options={chartOptions}
+                />
               </div>
             </Col>
           </Row>

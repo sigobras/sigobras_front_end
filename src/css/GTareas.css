@@ -83,7 +83,7 @@
 .fondoMostrarMas{
   background: #9b9ea03b;
   padding: 4px;
-  border-radius: 2%;
+  border-radius: 7px;
   height: calc(100vh - 61%);
   overflow-x: hidden;
   overflow-y: auto;
@@ -139,7 +139,7 @@
 .fondoSubord{
   background: #0080ff3b;
   padding: 4px;
-  border-radius: 2%;
+  border-radius: 7px;
   height: calc(100vh - 493px);
   overflow-x: hidden;
   overflow-y: auto;
@@ -197,7 +197,7 @@
 .contanierProyectoAsignados{
   background: #9b9ea03b;
   padding: 4px;
-  border-radius: 2%;
+  border-radius: 7px;
   height: calc(100vh - 61%);
   overflow-x: hidden;
   overflow-y: auto;
@@ -251,7 +251,7 @@
 .ContainerComentarios{
   background: #0080ff3b;
   padding: 4px;
-  border-radius: 2%;
+  border-radius: 7px;
 }
 /* =============SmsComentarios=================================================================================================================================*/
 
@@ -273,8 +273,7 @@
 .SmsComentarios::-webkit-scrollbar-thumb {
   background: #0080ff;
   border-radius: 4px;
-  cursor: pointer;
-
+  cursor: pointer; 
 }
 
 /* Cambiamos el fondo cuando esté en active */
@@ -309,6 +308,7 @@
   background: #4646467d;
   padding: 5px;
   border-radius: 10px;
+  margin-bottom: -5px;
 }
 /* ==============================================================================================================================================*/
 
@@ -352,7 +352,7 @@ input[type=number] {
   width: 290px;
   transition: all 0.4s;
   background: #9b9ea03b;
-  border-radius: 2%;
+  border-radius: 7px;
   height: calc(100vh - 90px);
   overflow-x: hidden;
   overflow-y: auto;
@@ -435,7 +435,7 @@ input[type=number] {
   background: #000000a1;
   padding: 4px;
   border-radius: 5px;
-  height: calc(100vh - 100%);
+  /* height: calc(100vh - 100%); */
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
