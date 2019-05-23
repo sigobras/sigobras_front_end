@@ -154,7 +154,7 @@ class Btns extends Component {
             <div>
                
                 
-                <button className={ sessionStorage.getItem('estadoObra') === "Ejecucion"? "btn btn-outline-success  p-1 mt-1": sessionStorage.getItem('estadoObra') === "Paralizado" ? "btn btn-outline-warning  p-1 mt-1" : sessionStorage.getItem('estadoObra') === "Corte"? "btn btn-outline-danger  p-1 mt-1":  sessionStorage.getItem('estadoObra')=== "Actualizacion"? "btn btn-outline-primary  p-1 mt-1": "btn btn-outline-info  p-1 mt-1"} title={`situación de la obra ${sessionStorage.getItem('estadoObra') }`} onClick={ this.CambiaEstadoObra }  >situación actual: { sessionStorage.getItem('estadoObra') }</button>
+                <button className={ sessionStorage.getItem('estadoObra') === "Ejecucion"? "btn btn-outline-success  p-1 mt-1": sessionStorage.getItem('estadoObra') === "Paralizado" ? "btn btn-outline-warning  p-1 mt-1" : sessionStorage.getItem('estadoObra') === "Corte"? "btn btn-outline-danger  p-1 mt-1":  sessionStorage.getItem('estadoObra')=== "Actualizacion"? "btn btn-outline-primary  p-1 mt-1": "btn btn-outline-info  p-1 mt-1"} title={`situación de la obra ${sessionStorage.getItem('estadoObra') }`} onClick={ this.CambiaEstadoObra }  ><span className="textSigobras">situación actual:</span> { sessionStorage.getItem('estadoObra') }</button>
 
 
                 <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalEstadoObra} backdrop="static">

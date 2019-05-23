@@ -86,24 +86,24 @@ class AppAng extends Component {
             id_ficha: sessionStorage.getItem('idobra'),
             id_acceso: sessionStorage.getItem('idacceso')
         })
-        .then((res) => {
+            .then((res) => {
 
-            // console.log('data >>>',res)
+                // console.log('data >>>',res)
 
-            if (res.data === "") {
-                this.setState({
-                    DataMenus: []
-                })
-            } else {
-                this.setState({
-                    DataMenus: res.data
-                })
-            }
+                if (res.data === "") {
+                    this.setState({
+                        DataMenus: []
+                    })
+                } else {
+                    this.setState({
+                        DataMenus: res.data
+                    })
+                }
 
-        })
-        .catch(error =>
-            console.log(error)
-        )
+            })
+            .catch(error =>
+                console.log(error)
+            )
 
     }
 
@@ -142,75 +142,96 @@ class AppAng extends Component {
 
             // <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
             <Router>
-
-                    <div>
-                        <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
-                            <span className="col-md-2 mr-0 m-0 pt-1 text-light h5">
-                                <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="48" /> SIGOBRAS
-                                    <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={this.ButtonToogle}>
+                <div>
+                    <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
+                            <div>
+                                <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="43" height="30" />
+                                <span className="textSigobras h5 ml-2"> SIGOBRAS</span>
+                            </div>
+                            <div>
+                                <span className="text-white ButtonToogleMenu" onClick={this.ButtonToogle}>
                                     <MdDehaze size={20} />
-                                </button>
-                            </span>
-                            <div className="clearfix d-none d-sm-block p-0 m-0">
+                                </span>
+                            </div>
+                            <div className="ml-auto">
                                 <div className="float-right"><UserNav /></div>
+
+                                {/* <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ? <MdFullscreen size={20} /> : <MdFullscreenExit size={20} />}</a></div> */}
                                 <div className="float-right"><MensajeNav /></div>
                                 <div className="float-right"><NotificacionNav /></div>
+                                <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
+
+                            </div>
+
+                        {/* <span className="mr-0 m-0 pt-1 text-light h5 d-flex">
+                            <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="43" height="30" /> 
+                                <span className="textSigobras"> SIGOBRAS</span>
+                                <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={this.ButtonToogle}>
+                                    <MdDehaze size={20} />
+                                </button>
+                        
+                            <div className="clearfix p-0 m-0">
                                 <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ? <MdFullscreen size={20} /> : <MdFullscreenExit size={20} />}</a></div>
                                 <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
+                                <div className="float-right"><NotificacionNav /></div>
+                                <div className="float-right"><MensajeNav /></div>
+                                <div className="float-right"><UserNav /></div>
+
                             </div>
-                        </nav>
+                        </span> */}
+                    </nav>
 
-                        <div className="container-fluid ">
-                            <ToastContainer
-                                position="bottom-right"
-                                autoClose={1000}
-                                hideProgressBar={false}
-                                newestOnTop={false}
-                                closeOnClick
-                                rtl={false}
-                                pauseOnVisibilityChange
-                                draggable
-                                pauseOnHover
-                            />
-                            <div className="row">
-                                <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block sidebar' : "navbarCollapseLeft sidebar"}>
-                                    <div className="sidebar-sticky">
-                                        <ul className="nav flex-column ull">
+                    <div className="container-fluid ">
+                        <ToastContainer
+                            position="bottom-right"
+                            autoClose={1000}
+                            hideProgressBar={false}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnVisibilityChange
+                            draggable
+                            pauseOnHover
+                        />
+                        <div className="row">
+                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block sidebar' : "navbarCollapseLeft sidebar"}>
+                                <div className="sidebar-sticky">
+                                    <ul className="nav flex-column ull">
 
-                                            <li className="lii">
-                                                <NavLink to="/inicio" activeclassname="nav-link"> <span> INICIO</span> </NavLink>
-                                            </li>
-                                            {/* {
+                                        <li className="lii">
+                                            <NavLink to="/inicio" activeclassname="nav-link"> <span> INICIO</span> </NavLink>
+                                        </li>
+                                        {/* {
                                                 console.log("DataMenus", DataMenus.length)
                                             } */}
-                                            {
-                                                DataMenus.length === undefined ? <div className="text-center text-white"> <Spinner color="primary" type="grow" /></div> : 
-                                                   
-                                                    DataMenus.map((menus, index) =>
-                                                        <li className="lii ml-2" key={index}>
-                                                            <span className="nav-link" onClick={()=>this.CollapseMenu(index)} activeclassname="active" >  {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
-                                                            <Collapse isOpen={collapse === index}>
-                                                                <ul className="nav flex-column ull ">
-                                                                    {menus.submenus.map((subMenu, IndexSub) =>
-                                                                        <li className="lii pl-3" key={IndexSub}>
-                                                                            <NavLink to={subMenu.ruta} activeclassname="nav-link">{subMenu.nombreMenu}</NavLink>
-                                                                        </li>
-                                                                    )}
-                                                                </ul>
-                                                            </Collapse>
-                                                        </li>
+                                        {
+                                            DataMenus.length === undefined ? <div className="text-center text-white"> <Spinner color="primary" type="grow" /></div> :
+
+                                                DataMenus.map((menus, index) =>
+                                                    <li className="lii ml-2" key={index}>
+                                                        <span className="nav-link" onClick={() => this.CollapseMenu(index)} activeclassname="active" >  {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                                        <Collapse isOpen={collapse === index}>
+                                                            <ul className="nav flex-column ull ">
+                                                                {menus.submenus.map((subMenu, IndexSub) =>
+                                                                    <li className="lii pl-3" key={IndexSub}>
+                                                                        <NavLink to={subMenu.ruta} activeclassname="nav-link">{subMenu.nombreMenu}</NavLink>
+                                                                    </li>
+                                                                )}
+                                                            </ul>
+                                                        </Collapse>
+                                                    </li>
                                                 )
-                                            }
-                                            
-                                            <li className="lii">
-                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <span> REPORTES </span> </NavLink>
-                                            </li>
+                                        }
 
-                                            <li className="lii">
-                                                <NavLink to="/GestionTareas" activeclassname="nav-link" > <span> GESTIÓN DE TAREAS </span> </NavLink>
-                                            </li>
+                                        <li className="lii">
+                                            <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <span> REPORTES </span> </NavLink>
+                                        </li>
 
-                                            {/* <li className="lii ml-2">
+                                        <li className="lii">
+                                            <NavLink to="/GestionTareas" activeclassname="nav-link" > <span> GESTIÓN DE TAREAS </span> </NavLink>
+                                        </li>
+
+                                        {/* <li className="lii ml-2">
                                                 <span className="nav-link" onClick={()=>this.CollapseMenu(100)} activeclassname="active" >  PROCESOS DOCUMENTARIOS <div className="float-right"> {collapse === 100 ? <FaChevronUp /> : <FaChevronRight />}</div></span>
                                                 <Collapse isOpen={collapse === 100}>
                                                     <ul className="nav flex-column ull ">
@@ -221,128 +242,128 @@ class AppAng extends Component {
                                                 </Collapse>
                                             </li> */}
 
-                                        </ul>
-                                        <div className="abajoCirculos pl-2 pr-2">
-                                            <div className="row">
-                                                <div className="col-6">
-                                                    <Circle
-                                                        animate={true}
-                                                        animationDuration="1s"
-                                                        responsive={true}
-                                                        progress={DataObra.porcentaje_acumulado}
-                                                        progressColor="orange"
-                                                        bgColor="whitesmoke"
-                                                        textColor="orange"
-                                                    />
-                                                    <label className="text-center">Acumulado S/.{DataObra.avance_acumulado}</label>
-                                                </div>
-                                                <div className="col-6">
-                                                    <Circle
-                                                        animate={true}
-                                                        animationDuration="1s"
-                                                        responsive={true}
-                                                        progress={DataObra.porcentaje_actual}
-                                                        progressColor="##f5f5f5"
-                                                        bgColor="whitesmoke"
-                                                        textColor="##f5f5f5"
-                                                    />
-                                                    <label className="text-center">Actual S/. {DataObra.avance_actual}</label>
-                                                </div>
-
+                                    </ul>
+                                    <div className="abajoCirculos pl-2 pr-2">
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <Circle
+                                                    animate={true}
+                                                    animationDuration="1s"
+                                                    responsive={true}
+                                                    progress={DataObra.porcentaje_acumulado}
+                                                    progressColor="orange"
+                                                    bgColor="whitesmoke"
+                                                    textColor="orange"
+                                                />
+                                                <label className="text-center">Acumulado S/.{DataObra.avance_acumulado}</label>
                                             </div>
-                                            <br />
-                                            <br />
-
-                                            <div className="text-center">
-                                                Ayer S/. {DataObra.avance_ayer}
+                                            <div className="col-6">
+                                                <Circle
+                                                    animate={true}
+                                                    animationDuration="1s"
+                                                    responsive={true}
+                                                    progress={DataObra.porcentaje_actual}
+                                                    progressColor="##f5f5f5"
+                                                    bgColor="whitesmoke"
+                                                    textColor="##f5f5f5"
+                                                />
+                                                <label className="text-center">Actual S/. {DataObra.avance_actual}</label>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                </nav>
-
-
-                                <main role="main" className="col ml-sm-auto col-lg px-0">
-
-                                    <div className="d-flex mb-0 border-button pt-5 p-1 m-0">
-                                        <div>
-                                            <b>
-                                                {DataObra.g_meta === undefined ?
-                                                    <label className="text-center "><Spinner color="primary" type="grow" /></label> :
-                                                    DataObra.g_meta.toUpperCase()}
-                                            </b>
-                                        </div>
-                                    </div>
-
-                                    <div className="px-1 scroll_contenido mt-2">
-
-
-                                        <Switch>
-                                            <Route exact path="/Inicio" component={Inicio} />
-
-                                            <Route path="/MDdiario" component={MDdiario} />
-                                            <Route path="/MDHistorial" component={MDHistorial} />
-
-                                            {/* <Route path="/CorteObra" component={Corte} />
-                                            <Route path="/ActualizacionObra" component={Actualizacion} /> */}
-                                            {/* <Route path="/CompatibilidadObra" component={Compatibilidad} /> */}
-                                            <Route path="/ParalizacionObra" component={Paralizacion} />
-                                            <Route path="/RecursosObra" component={RecursosObra} />
-                                            <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
-
-                                            <Route path="/General" component={General} />
-
-                                            <Route path="/RecordObras" component={RecordObras} />
-                                            <Route path="/ReportesGenerales" component={ReportesGenerales} />
-
-                                            {/* Gestion de Tareas */}
-                                            <Route path="/GestionTareas" component={ GestionTareas } />
-                                            
-                                            {/* PROCESOS DOCUMENTARIOS */}
-                                            <Route path="/DOCUEMENTOS" component={ Index } />
-                                            
-                                        </Switch>
-                                    </div>
-
-                                </main>
-
-                                <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' : "navbarCollapseRight  border-left FondoBarra"} >
-                                    <div className="sidebar-sticky">
-                                        <div className="p-1">
-                                            <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
-
-                                            <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
-                                                <PopoverHeader>Tiempo de ejecución</PopoverHeader>
-                                                <PopoverBody>
-                                                    <fieldset>
-                                                        <legend>Dias transcurridos</legend>
-                                                        {DataObra.dias_ejecutados} Dias
-                                                        </fieldset>
-                                                    <div className="divider"></div>
-                                                    <br />
-                                                    <fieldset>
-                                                        <legend>Te quedan</legend>
-                                                        {DataObra.dias_saldo > 0 ?
-                                                            <div><b> {DataObra.dias_saldo} </b> Dias </div>
-                                                            :
-                                                            <div><b>oh no Te pasaste  </b><br />{DataObra.dias_saldo} Dias </div>
-                                                        }
-                                                    </fieldset>
-                                                </PopoverBody>
-                                            </UncontrolledPopover>
-
 
                                         </div>
+                                        <br />
+                                        <br />
 
+                                        <div className="text-center">
+                                            Ayer S/. {DataObra.avance_ayer}
+                                        </div>
                                     </div>
-                                </nav>
-
-                                <div className="posAbajo">
-                                    <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={this.collapseRight}> {navbarExplandRight === true ? <FaAngleRight /> : <FaAngleLeft />}</button>
                                 </div>
+
+                            </nav>
+
+
+                            <main role="main" className="col ml-sm-auto col-lg px-0">
+
+                                <div className="d-flex mb-0 border-button pt-5 p-1 m-0">
+                                    <div>
+                                        <b>
+                                            {DataObra.g_meta === undefined ?
+                                                <label className="text-center "><Spinner color="primary" type="grow" /></label> :
+                                                DataObra.g_meta.toUpperCase()}
+                                        </b>
+                                    </div>
+                                </div>
+
+                                <div className="px-1 scroll_contenido mt-2">
+
+
+                                    <Switch>
+                                        <Route exact path="/Inicio" component={Inicio} />
+
+                                        <Route path="/MDdiario" component={MDdiario} />
+                                        <Route path="/MDHistorial" component={MDHistorial} />
+
+                                        {/* <Route path="/CorteObra" component={Corte} />
+                                            <Route path="/ActualizacionObra" component={Actualizacion} /> */}
+                                        {/* <Route path="/CompatibilidadObra" component={Compatibilidad} /> */}
+                                        <Route path="/ParalizacionObra" component={Paralizacion} />
+                                        <Route path="/RecursosObra" component={RecursosObra} />
+                                        <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
+
+                                        <Route path="/General" component={General} />
+
+                                        <Route path="/RecordObras" component={RecordObras} />
+                                        <Route path="/ReportesGenerales" component={ReportesGenerales} />
+
+                                        {/* Gestion de Tareas */}
+                                        <Route path="/GestionTareas" component={GestionTareas} />
+
+                                        {/* PROCESOS DOCUMENTARIOS */}
+                                        <Route path="/DOCUEMENTOS" component={Index} />
+
+                                    </Switch>
+                                </div>
+
+                            </main>
+
+                            <nav className={navbarExplandRight === true ? 'navbarExplandRight border-left FondoBarra' : "navbarCollapseRight  border-left FondoBarra"} >
+                                <div className="sidebar-sticky">
+                                    <div className="p-1">
+                                        <button className="btn btn-outline-warning" id="diasTrans"> Dias  </button>
+
+                                        <UncontrolledPopover trigger="legacy" placement="bottom" target="diasTrans">
+                                            <PopoverHeader>Tiempo de ejecución</PopoverHeader>
+                                            <PopoverBody>
+                                                <fieldset>
+                                                    <legend>Dias transcurridos</legend>
+                                                    {DataObra.dias_ejecutados} Dias
+                                                        </fieldset>
+                                                <div className="divider"></div>
+                                                <br />
+                                                <fieldset>
+                                                    <legend>Te quedan</legend>
+                                                    {DataObra.dias_saldo > 0 ?
+                                                        <div><b> {DataObra.dias_saldo} </b> Dias </div>
+                                                        :
+                                                        <div><b>oh no Te pasaste  </b><br />{DataObra.dias_saldo} Dias </div>
+                                                    }
+                                                </fieldset>
+                                            </PopoverBody>
+                                        </UncontrolledPopover>
+
+
+                                    </div>
+
+                                </div>
+                            </nav>
+
+                            <div className="posAbajo">
+                                <button className="btn btn-outline-dark btn-xs m-0 text-white" onClick={this.collapseRight}> {navbarExplandRight === true ? <FaAngleRight /> : <FaAngleLeft />}</button>
                             </div>
                         </div>
                     </div>
+                </div>
             </Router>
             // </Fullscreen>
         );
