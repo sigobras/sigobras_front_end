@@ -105,7 +105,7 @@ class Login extends Component {
           draggable
           pauseOnHover
         />
-        <div className="modal-content">
+        <div className="modal-content bg-danger">
           <div className="modal-headers">
             <div className="img mt-3">
               <img src={LogoSigobras} className="mx-auto d-block" alt="sigoobras sac" height="75" />
