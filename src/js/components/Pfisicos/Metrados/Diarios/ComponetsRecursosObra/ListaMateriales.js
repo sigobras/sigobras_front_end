@@ -474,7 +474,7 @@ class ListaMateriales extends Component {
   }
 
   activaEditable(index, CantPrecio) {
-    console.log("activando", index)
+    // console.log("activando", index)
     this.setState({ Editable: index, precioCantidad: CantPrecio })
 
     if (CantPrecio === null) {
@@ -483,13 +483,23 @@ class ListaMateriales extends Component {
       )
         .then((res) => {
           console.log("response recurso real ", res.data)
-          console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index].recurso_gasto_cantidad ); 
-          console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
+          console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index] ); 
+          // console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
 
-          var DataRecursosListaApi = this.state.DataRecursosListaApi
+
+          var DataRecursosListaApi = this.state.DataRecursosListaApi  
+          var parcialRG = res.data.recurso_gasto_cantidad * (res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio)
+          var diferenciaRG =  DataRecursosListaApi[index].recurso_parcial - parcialRG
+          var porcentajeRG  = diferenciaRG / DataRecursosListaApi[index].recurso_parcial * 100
+
           DataRecursosListaApi[index].recurso_gasto_cantidad =  res.data.recurso_gasto_cantidad
           DataRecursosListaApi[index].recurso_gasto_precio =  res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio
+          
 
+          DataRecursosListaApi[index].recurso_gasto_parcial =  parcialRG
+          DataRecursosListaApi[index].diferencia = diferenciaRG
+          DataRecursosListaApi[index].porcentaje = porcentajeRG
+          
           this.setState({
             DataRecursosListaApi:DataRecursosListaApi
           })
@@ -789,12 +799,13 @@ class ListaMateriales extends Component {
                       <table className="table table-sm table-hover">
                         <thead>
                           <tr>
-                            <th colSpan="5" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
+                            <th colSpan="6" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
                             <th colSpan="5" > RECURSOS GASTADOS HASTA LA FECHA ( HOY {FechaActual()} )
                               <div className={this.state.tipoEjecucion === true ? "float-right prioridad text-primary" : "float-right prioridad"} onClick={this.Ver_No}><MdCompareArrows size={20} /> </div>
                             </th>
                           </tr>
                           <tr>
+                            <th>cODIGO</th>
                             <th>RECURSO</th>
                             <th>UND</th>
                             <th>CANTIDAD</th>
@@ -812,8 +823,15 @@ class ListaMateriales extends Component {
                           {
                             DataRecursosListaApi.map((ReqLista, IndexRL) =>
                               <tr key={IndexRL}>
-                                <td>{ReqLista.descripcion} </td>
-                                <td>{ReqLista.unidad} </td>
+                                <td> 
+                                  <select>
+                                    <option>cd</option>
+                                    <option>ch</option>
+                                  </select>
+                                  <input type="text " />
+                                </td>
+                                <td> {ReqLista.descripcion} </td>
+                                <td> {ReqLista.unidad} </td>
                                 <td> {ReqLista.recurso_cantidad}</td>
                                 <td> {ReqLista.recurso_precio}</td>
                                 <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
