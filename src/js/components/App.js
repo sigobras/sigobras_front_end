@@ -194,7 +194,7 @@ class AppAng extends Component {
                             pauseOnHover
                         />
                         <div className="row">
-                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block sidebar' : "navbarCollapseLeft sidebar"}>
+                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'navbarExplandLeft sidebar' : "navbarCollapseLeft sidebar"}>
                                 <div className="sidebar-sticky">
                                     <ul className="nav flex-column ull">
 

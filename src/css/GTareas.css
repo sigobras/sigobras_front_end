@@ -3,7 +3,18 @@
 }
 .containerTarea{
   width: 100%;
+  /* opacity: 0.3;
+  transition: opacity .6s; */
+  opacity: 1;
+  /* transform: scale(0.2,0.2); */
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
 }
+.containerTarea:hover{
+  transform: scale(1.05, 1.05);
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
+  box-shadow: 1px 0px 5px 0px #2676bb;
+}
+
 .containerTareaActivo{
   width: 100%;
   box-shadow: 0px 0px 5px 3px #ececec;
@@ -84,7 +95,7 @@
   background: #1033479c;
   padding: 4px;
   border-radius: 7px;
-  height: calc(100vh - 61%);
+  height: calc(40vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
@@ -140,7 +151,7 @@
   background: #0080ff3b;
   padding: 4px;
   border-radius: 7px;
-  height: calc(100vh - 493px);
+  height: calc(40vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
@@ -198,7 +209,7 @@
   background: #9b9ea03b;
   padding: 4px;
   border-radius: 7px;
-  height: calc(100vh - 61%);
+  height: calc(45vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
@@ -256,7 +267,7 @@
 /* =============SmsComentarios=================================================================================================================================*/
 
 .SmsComentarios{
-  height: calc(100vh - 530px);
+  height: calc(30vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
@@ -418,7 +429,7 @@ input[type=number] {
 
 
 .contTRecodatorios{
-  height: calc(100vh - 132px);
+  height: calc(81vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
