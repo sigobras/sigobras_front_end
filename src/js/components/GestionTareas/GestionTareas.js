@@ -26,7 +26,6 @@ class GestionTareas extends Component {
     super(props);
 
     this.server = process.env.REACT_APP_API_URL || UrlServer;
-    // this.server = process.env.REACT_APP_API_URL || "192.168.0.5:9000";
     this.socket = io.connect(this.server);
 
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
@@ -782,6 +781,7 @@ class GestionTareas extends Component {
   render() {
     const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, chartOptions, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent, idTareaActivo } = this.state
     const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.ModalVerMasTareas}>&times;</button>;
+    var optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
     return (
       <div>
@@ -1054,9 +1054,10 @@ class GestionTareas extends Component {
                             <div className="text-center text-warning">
                               {
                                 PositsFiltrado.diasTranscurridos < 0 ?
-                                  <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) para empezar la tarea asignada.</b>
+                                  <b>Dentro de {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) empezará la tarea que se te asignó y tienes {`${PositsFiltrado.diasTotal}`} dias para Concluirlo.</b>
                                   :
-                                  <b> Tiene {`${PositsFiltrado.diasTotal}`} dia(s) para cumplir con la meta y te <i> quedan {`${PositsFiltrado.diasTranscurridos}`}</i>  </b>
+                                  <b> Tiene { `${PositsFiltrado.diasTotal - PositsFiltrado.diasTranscurridos} / ${PositsFiltrado.diasTotal}`}   dia(s) para concluir tu tarea. <br />
+                                  <i> Vence el {`${ new Date(PositsFiltrado.fecha_final).toLocaleDateString('es', optionsDate)}`}</i>  </b>
 
                               }
 

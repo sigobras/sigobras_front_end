@@ -32,6 +32,7 @@ class ListaMateriales extends Component {
       DataTipoRecursoResumen: [],
       DataRecursosListaApi: [],
       DataResumenGeneralCompApi: [],
+      DataTipoDocAdquisicionApi:[],
 
       activeTab: 'RESUMEN',
       activeTabRecusoCd: "0",
@@ -65,7 +66,9 @@ class ListaMateriales extends Component {
 
       DataGuardarInput: [],
       Editable: null,
-      precioCantidad: ""
+      precioCantidad: "",
+
+      selectTipoDocumento:""
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -201,7 +204,19 @@ class ListaMateriales extends Component {
 
       })
 
+    // axios consulta al api de  TIPOS DOCUMENTOS DE ADQUISICIÓN =================================================================================
+    
+    axios.get(`${UrlServer}/gettipodocumentoadquisicion`)
+      .then((res) => {
+        // console.log("TIPOS DOCUMENTOS DE ADQUISICIÓN", res.data);
+        this.setState({
+          DataTipoDocAdquisicionApi: res.data
+        })
+      })
+      .catch((err) => {
+        console.log("errores al realizar la peticion de TIPOS DOCUMENTOS DE ADQUISICIÓN", err);
 
+      })
   }
 
   Tabs(tab, id_componente, nombComp) {
@@ -483,7 +498,7 @@ class ListaMateriales extends Component {
       )
         .then((res) => {
           console.log("response recurso real ", res.data)
-          console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index] ); 
+          // console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index] ); 
           // console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
 
 
@@ -517,14 +532,25 @@ class ListaMateriales extends Component {
 
   inputeable(index, tipo, descripcion, e) {
 
-    console.log("index ", index, "valor ", e.target.value)
-    var demoArray =
-    {
-      "tipo": tipo,
-      "data": [
-        [Id_Obra, this.state.TipoRecursoResumen, descripcion, e.target.value]
-      ]
+    console.log("index ", index, "valor ", e.target.value, "tipo", tipo)
+    if (tipo === "codigo") {
+      var demoArray =
+      {
+        "tipo": tipo,
+        "data": [
+          [Id_Obra, this.state.TipoRecursoResumen, descripcion, e.target.value, this.state.selectTipoDocumento]
+        ]
+      }
+    }else{
+      var demoArray =
+      {
+        "tipo": tipo,
+        "data": [
+          [Id_Obra, this.state.TipoRecursoResumen, descripcion, e.target.value]
+        ]
+      }
     }
+    
 
     this.setState({ DataGuardarInput: demoArray })
 
@@ -578,7 +604,7 @@ class ListaMateriales extends Component {
       "id_ficha": IdObra
     })
       .then((res) => {
-        console.log("res data ", res)
+        // console.log("res data reqChartResumenGeneral", res)
         this.setState({ DataResumenGeneralCompApi: res.data })
       })
       .catch((err) => {
@@ -594,7 +620,7 @@ class ListaMateriales extends Component {
       "id_componente": idComponente
     })
       .then((res) => {
-        console.log("res data chart ", res.data)
+        // console.log("res data chart ", res.data)
         this.setState({ DataResumenGeneralCompApi: res.data })
       })
       .catch((err) => {
@@ -628,7 +654,7 @@ class ListaMateriales extends Component {
   }
 
   render() {
-    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, activeTabResumen, smsValidaMetrado, collapse, nombreComponente, Editable, precioCantidad, mostrarColores, file, CollapseResumenTabla } = this.state
+    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi, DataResumenGeneralCompApi, DataTipoDocAdquisicionApi, smsValidaMetrado, collapse, nombreComponente, Editable, precioCantidad, mostrarColores, file, CollapseResumenTabla } = this.state
 
     const ChartResumenRecursos = {
       "colors": [
@@ -805,7 +831,7 @@ class ListaMateriales extends Component {
                             </th>
                           </tr>
                           <tr>
-                            <th>cODIGO</th>
+                            <th>N° O/C - O/S</th>
                             <th>RECURSO</th>
                             <th>UND</th>
                             <th>CANTIDAD</th>
@@ -823,12 +849,45 @@ class ListaMateriales extends Component {
                           {
                             DataRecursosListaApi.map((ReqLista, IndexRL) =>
                               <tr key={IndexRL}>
-                                <td> 
-                                  <select>
-                                    <option>cd</option>
-                                    <option>ch</option>
-                                  </select>
-                                  <input type="text " />
+                                <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
+                                  {
+                                    this.state.tipoEjecucion === false ? `${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`
+                                    :
+                                      <div className="d-flex justify-content-between contentDataTd">
+                                        {
+                                          Editable === IndexRL && precioCantidad === "codigo"  ?
+                                              <span>
+                                                <select style={{ padding: "1.5px" }} onChange={ e=> this.setState({ selectTipoDocumento: e.target.value })}>
+                                                  {
+                                                    DataTipoDocAdquisicionApi.map((Docu, indexD )=>
+                                                      <option value={Docu.id_tipoDocumentoAdquisicion } key={ indexD }>{Docu.nombre}</option>
+                                                    )
+                                                    
+                                                  }
+                                                  
+                                                </select>
+                                                <input type="text" defaultValue={ReqLista.recurso_codigo} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "codigo", ReqLista.descripcion)} style={{width: "70px" }}/>
+                                              </span>
+                                            :
+
+                                          <span>{`${ReqLista.id_tipoDocumentoAdquisicion === "" ? "-":ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span> 
+                                        }
+
+                                        <div className="ContIcon" >
+                                          {
+                                            Editable === IndexRL && precioCantidad === "codigo"
+                                              ?
+                                              <div className="d-flex"> 
+                                                <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> { " " }
+                                                <div onClick={() => this.setState({Editable: null, precioCantidad: ""})} > <MdClose /></div>
+                                              </div>
+                                              :
+                                              <div onClick={() => this.activaEditable(IndexRL, "codigo")}><MdModeEdit /> </div>
+                                          }
+                                        </div>
+                                      </div>
+                                  }
+                                      
                                 </td>
                                 <td> {ReqLista.descripcion} </td>
                                 <td> {ReqLista.unidad} </td>
@@ -841,14 +900,12 @@ class ListaMateriales extends Component {
                                     this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_cantidad}`
                                       :
                                       <div className="d-flex justify-content-between contentDataTd">
-
                                         {
                                           Editable === IndexRL && precioCantidad === "cantidad" ?
                                             <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_cantidad)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "cantidad", ReqLista.descripcion)} style={{width: "60px" }}/>
                                             :
                                             <span>{ReqLista.recurso_gasto_cantidad}</span>
                                         }
-
                                         <div className="ContIcon" >
                                           {
                                             Editable === IndexRL && precioCantidad === "cantidad"

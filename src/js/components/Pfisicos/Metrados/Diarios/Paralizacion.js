@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Collapse} from 'reactstrap';
 import { MdAdd,MdRemove } from "react-icons/md";
 import ParalizacionObra from './ComponentsParalizacion/ParalizacionObra'
-import ParalizacionPartidasNuevas from './ComponentsParalizacion/ParalizacionPartidasNuevas'
-
 
 class Paralizacion extends Component {
   constructor(){
@@ -11,7 +9,17 @@ class Paralizacion extends Component {
 
     this.state = {
       collapse: 1,
+      Md:{
+        Componentes:"/getComponentes",
+        Partidas:"/getPartidas",
+        Actividades:"/getActividades"
+      },
 
+      Pn:{
+        Componentes:"/getComponentesPNuevas",
+        Partidas:"/getPartidasPNuevas",
+        Actividades:"/getActividadesPNuevas"
+      },
     }
 
     this.CollapseCard = this.CollapseCard.bind(this)
@@ -25,7 +33,7 @@ class Paralizacion extends Component {
   }
 
   render() {
-    var { collapse } = this.state
+    var { collapse, Md , Pn } = this.state
     if(sessionStorage.getItem("idacceso") !== null){ 
       return (
         <div className="pb-3">
@@ -41,7 +49,7 @@ class Paralizacion extends Component {
               </a>
               <Collapse isOpen={ collapse === 1 }>
                 <CardBody> 
-                  <ParalizacionObra />
+                  <ParalizacionObra rutas={Md}  />
                 </CardBody>              
               </Collapse>
           </Card>
@@ -55,7 +63,7 @@ class Paralizacion extends Component {
             </CardHeader></a>
               <Collapse isOpen={ collapse === 2 }>
                   <CardBody>
-                    {collapse === 2 ? <ParalizacionPartidasNuevas /> : '' }
+                    {collapse === 2 ? <ParalizacionObra rutas={ Pn } /> : '' }
                   </CardBody>                   
               </Collapse>
           </Card>
