@@ -615,3 +615,27 @@ table.table thead th {
   cursor: text;
   display: inline-block;
 }
+
+
+.divCodigoRecur{
+  border: 1px solid #2676bb;
+  padding: 4px;
+  border-radius: 6px;
+  margin: 2px;
+  padding-top: 1px;
+  cursor: pointer;
+}
+
+.divCodigoRecur:hover{
+  border: 1px solid #2676bb;
+  box-shadow: inset 0px -3px #2676bb; 
+  transition: all 0.5s;
+}
+
+/*  drag  */
+.grabbable {
+  cursor: move; 
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}

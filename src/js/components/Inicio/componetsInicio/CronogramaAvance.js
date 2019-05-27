@@ -83,7 +83,7 @@ class CronogramaAvance extends Component {
 
           )
 
-          totalSumaInpust = SumaInputs.reduce(((a, b) => { return a + b; }));
+          totalSumaInpust = SumaInputs.reduce((a, b) => { return a + b; },0);
           // console.log("totalSumaInpust", totalSumaInpust)
 
         }

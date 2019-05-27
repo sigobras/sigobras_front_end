@@ -145,7 +145,7 @@ class AppAng extends Component {
                 <div>
                     <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
                             <div>
-                                <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="43" height="30" />
+                                <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="45" height="28" />
                                 <span className="textSigobras h5 ml-2"> SIGOBRAS</span>
                             </div>
                             <div>
