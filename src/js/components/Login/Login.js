@@ -7,6 +7,8 @@ import { UrlServer } from '../Utils/ServerUrlConfig'
 import LogoSigobras from '../../../images/sigobras-neon.jpg'
 import '../../../css/login.css'
 
+// import Example from "./Example"
+
 class Login extends Component {
   constructor() {
     super();
@@ -131,6 +133,8 @@ class Login extends Component {
             <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br /> © 2017 - 2019</label>
           </div>
         </div>
+
+        {/* <Example /> */}
       </div>
     );
   }

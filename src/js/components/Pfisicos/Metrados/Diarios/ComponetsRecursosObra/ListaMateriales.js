@@ -98,6 +98,7 @@ class ListaMateriales extends Component {
 
     this.PaginaActual = this.PaginaActual.bind(this);
     this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
+    
   }
 
   componentWillMount() {
@@ -464,7 +465,7 @@ class ListaMateriales extends Component {
 
     if (this.state.activeTabRecusoCd !== index) {
       this.setState({
-        activeTabRecusoCd: index
+        activeTabRecusoCd: index,
       });
       this.reqListaRecursos(idPartida, tipoRecurso)
     }
@@ -476,7 +477,9 @@ class ListaMateriales extends Component {
       this.setState({
         activeTabResumen: index,
         TipoRecursoResumen: TipoRecurso,
-        tipoEjecucion: false
+        tipoEjecucion: false,
+        CamviarTipoVistaDrag:false
+
       });
       this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen")
     }
@@ -484,7 +487,9 @@ class ListaMateriales extends Component {
 
   Ver_No() {
     this.setState({
-      tipoEjecucion: !this.state.tipoEjecucion
+      tipoEjecucion: !this.state.tipoEjecucion,
+      DataRecursosListaApi:[]
+
     }, () => {
       if (this.state.tipoEjecucion === true) {
         // console.log("ejecuntando true")
@@ -497,23 +502,27 @@ class ListaMateriales extends Component {
   }
 
   cambiarVistaDragDrop() {
-    console.log("informacion de datos");
     this.setState({
-      CamviarTipoVistaDrag: !this.state.CamviarTipoVistaDrag
-    }, () => {
-      if (this.state.CamviarTipoVistaDrag === true) {
-        // console.log("ejecuntando true")
+      CamviarTipoVistaDrag: !this.state.CamviarTipoVistaDrag,
+      DataRecursosListaApi:[]
+    }
+    // , () => {
+    //   if (this.state.CamviarTipoVistaDrag === true) {
+    //     // console.log("ejecuntando true")
+    //   this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen")
 
-        this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionRealCodigosData")
-        return
-      }
-    })
+    //     this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionRealSinCodigo")
+    //     return
+    //   }
+
+    // }
+    )
 
   }
 
-  activaEditable(index, CantPrecio) {
-    // console.log("activando", index)
-    this.setState({ Editable: index, precioCantidad: CantPrecio })
+  activaEditable(index, CantPrecio, selectTipoDocumento ) {
+    console.log("activando", index, "selectTipoDocumento ", selectTipoDocumento)
+    this.setState({ Editable: index, precioCantidad: CantPrecio, selectTipoDocumento })
 
     if (CantPrecio === null) {
       axios.post(`${UrlServer}/postrecursosEjecucionreal`,
@@ -555,7 +564,7 @@ class ListaMateriales extends Component {
 
   inputeable(index, tipo, descripcion, e) {
 
-    console.log("index ", index, "valor ", e.target.value, "tipo", tipo)
+    console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento )
     if (tipo === "codigo") {
       var demoArray =
       {
@@ -603,7 +612,7 @@ class ListaMateriales extends Component {
 
   reqResumen(idFicha, tipoRecurso, ruta) {
 
-    console.log("tipo recurso ", tipoRecurso, "tipoEjecucion ", this.state.tipoEjecucion, "ruta ", ruta)
+    // console.log("tipo recurso ", tipoRecurso, "tipoEjecucion ", this.state.tipoEjecucion, "ruta ", ruta)
 
     axios.post(`${UrlServer}${ruta}`, {
       "id_ficha": idFicha,
@@ -819,7 +828,7 @@ class ListaMateriales extends Component {
     // =========================================   data para paginar ====================================
     // obtener indices para paginar 
     const indexOfUltimo = PaginaActual * CantidadRows;
-    console.log("INDEX OF ULTIMO ", indexOfUltimo)
+    // console.log("INDEX OF ULTIMO ", indexOfUltimo)
 
     const indexOfPrimero = indexOfUltimo - CantidadRows;
     // console.log("INDEX OF PRIMERO ", indexOfPrimero)
@@ -831,7 +840,6 @@ class ListaMateriales extends Component {
     for (let i = 1; i <= Math.ceil(DataRecursosListaApi.length / CantidadRows); i++) {
       NumeroPaginas.push(i);
     }
-
 
     return (
       <div>
@@ -850,6 +858,7 @@ class ListaMateriales extends Component {
               </NavItem>
             )}
           </Nav>
+
           {/* RESUMEN - MAS DETALLES DE BINES DE LA OBRA */}
           {
             this.state.activeTab === "RESUMEN" ?
@@ -860,11 +869,11 @@ class ListaMateriales extends Component {
 
                   <div className="mb-1 mt-1">
 
-                    {/* <HighchartsReact
+                    <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
-                    /> */}
+                    />
                   </div>
                   <Nav tabs>
                     {
@@ -892,8 +901,12 @@ class ListaMateriales extends Component {
                         <div className="float-right">
                           <InputGroup size="sm">
                             <InputGroupAddon addonType="prepend">
-                              <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No} ><MdCompareArrows /> <MdModeEdit /></Button>
-                              <Button outline color="warning" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} ><MdExtension /></Button>
+                              <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No} >
+                                <MdCompareArrows /> <MdModeEdit />
+                              </Button>
+                              <Button outline color="warning" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} >
+                                <MdExtension />
+                              </Button>
                             </InputGroupAddon>
                             <Input />
                           </InputGroup>
@@ -902,7 +915,7 @@ class ListaMateriales extends Component {
                       {
                         this.state.CamviarTipoVistaDrag === true
                           ?
-                          <TblResumenCompDrag DragRecursos={DataRecursosListaApiPaginado} />
+                          <TblResumenCompDrag  ConfigData={ { UrlServer:UrlServer, IdObra: Id_Obra, tipoRecurso: this.state.TipoRecursoResumen } }/>
                           :
                           <table className="table table-sm table-hover">
                             <thead>
@@ -937,7 +950,7 @@ class ListaMateriales extends Component {
                                             {
                                               Editable === IndexRL && precioCantidad === "codigo" ?
                                                 <span>
-                                                  <select style={{ padding: "1.5px" }} onChange={e => this.setState({ selectTipoDocumento: e.target.value })}>
+                                                  <select style={{ padding: "1.5px" }} onChange={e => this.setState({ selectTipoDocumento: e.target.value })} value={this.state.selectTipoDocumento}>
                                                     {
                                                       DataTipoDocAdquisicionApi.map((Docu, indexD) =>
                                                         <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
@@ -958,11 +971,11 @@ class ListaMateriales extends Component {
                                                 Editable === IndexRL && precioCantidad === "codigo"
                                                   ?
                                                   <div className="d-flex">
-                                                    <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> {" "}
-                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "" })} > <MdClose /></div>
+                                                    <div onClick={() => this.activaEditable(IndexRL, null, ReqLista.id_tipoDocumentoAdquisicion||DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion )} ><MdSave /> </div> {" "}
+                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento:"" })} > <MdClose /></div>
                                                   </div>
                                                   :
-                                                  <div onClick={() => this.activaEditable(IndexRL, "codigo")}><MdModeEdit /> </div>
+                                                  <div onClick={() => this.activaEditable(IndexRL, "codigo", ReqLista.id_tipoDocumentoAdquisicion||DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion )}><MdModeEdit /> </div>
                                               }
                                             </div>
                                           </div>
@@ -991,11 +1004,11 @@ class ListaMateriales extends Component {
                                                 Editable === IndexRL && precioCantidad === "cantidad"
                                                   ?
                                                   <div className="d-flex">
-                                                    <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> {" "}
-                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "" })} > <MdClose /></div>
+                                                    <div onClick={() => this.activaEditable(IndexRL, null, "")} ><MdSave /> </div> {" "}
+                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "",selectTipoDocumento:"" })} > <MdClose /></div>
                                                   </div>
                                                   :
-                                                  <div onClick={() => this.activaEditable(IndexRL, "cantidad")}><MdModeEdit /> </div>
+                                                  <div onClick={() => this.activaEditable(IndexRL, "cantidad", "")}><MdModeEdit /> </div>
                                               }
                                             </div>
 

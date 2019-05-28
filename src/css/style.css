@@ -5,6 +5,9 @@ body {
   font-size: .9rem !important;
   color: #dcd7d7 !important;
   background-image: url("../images/blur-bg.jpg");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /*  Sidebar */
@@ -103,7 +106,7 @@ body {
 
 @media only screen and (max-width: 767px) {
   .navbarExplandLeft {
-    width: 200px!important;
+    width: 200px !important;
     position: absolute;
     -webkit-transition: width 0.5s;
     transition: 0.5s;
@@ -617,7 +620,7 @@ table.table thead th {
 }
 
 
-.divCodigoRecur{
+.divCodigoRecur {
   border: 1px solid #2676bb;
   padding: 4px;
   border-radius: 6px;
@@ -626,15 +629,15 @@ table.table thead th {
   cursor: pointer;
 }
 
-.divCodigoRecur:hover{
+.divCodigoRecur:hover {
   border: 1px solid #2676bb;
-  box-shadow: inset 0px -3px #2676bb; 
+  box-shadow: inset 0px -3px #2676bb;
   transition: all 0.5s;
 }
 
 /*  drag  */
 .grabbable {
-  cursor: move; 
+  cursor: move;
   cursor: grab;
   cursor: -moz-grab;
   cursor: -webkit-grab;

@@ -1,20 +1,52 @@
 import React, { Component } from 'react';
-import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
-import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, UncontrolledDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Col, Row } from 'reactstrap';
-import { MdFlashOn, MdCompareArrows, MdClose, MdPerson, MdSearch, MdSettings, MdFilterTiltShift, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdSave, MdModeEdit } from 'react-icons/md';
-import { TiWarning } from "react-icons/ti";
+import { Card, CardHeader, CardBody, Col, Row } from 'reactstrap';
+import axios from 'axios';
 
 class TblResumenCompDrag extends Component {
   constructor(props) {
     super(props);
+    // console.log("props ", props)
     this.state = {
-      // DataTipoRecursoResumen: this.props.DataTipoRecursoResumen
-      DataRecursoAgrupado:[]
+      DataCodigosAgrupado: [],
+      DataRecursoAgrupadoApi: [],
     }
     this.onDragStart = this.onDragStart.bind(this)
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
+  }
+
+  componentWillMount() {
+
+    const { IdObra, UrlServer, tipoRecurso } = this.props.ConfigData
+    axios.post(`${UrlServer}/getmaterialesResumenEjecucionRealCodigos`, {
+      "id_ficha": IdObra,
+      "tipo": tipoRecurso
+    })
+      .then((res) => {
+        console.log("response de codigos agrupado 👀", res.data)
+        this.setState({
+          DataCodigosAgrupado: res.data
+        })
+      })
+      .catch((err) => {
+        console.error("erres al consultar api ,", err)
+      })
+
+    // LAMAA A COMPONENTES DE DATA SIN CODIGO
+
+    axios.post(`${UrlServer}/getmaterialesResumenEjecucionRealSinCodigo`, {
+      "id_ficha": IdObra,
+      "tipo": tipoRecurso
+    })
+      .then((res) => {
+        console.log("resumen de DE RECURSOS SIN CODIGO", res.data)
+        this.setState({
+          DataRecursoAgrupadoApi: res.data
+        })
+      })
+      .catch((err) => {
+        console.error("error al consultar al api ", err)
+      })
   }
 
   onDragStart(ev, id) {
@@ -26,50 +58,62 @@ class TblResumenCompDrag extends Component {
     ev.preventDefault();
   }
 
-  onDrop(ev, cat) {
-    console.log("onDrop ", cat)
+  onDrop(ev, cat, codigo, indexC, icodi, idDocumento) {
+    console.log("onDrop ", cat, "codigo>>>>> ", codigo)
+    const { IdObra, UrlServer, tipoRecurso } = this.props.ConfigData
+    let id = ev.dataTransfer.getData("id");
+
     if (cat === "completado") {
-      const { DragRecursos } = this.props
-      const { DataRecursoAgrupado } = this.state
+      const { DataRecursoAgrupadoApi, DataCodigosAgrupado } = this.state
 
-      let id = ev.dataTransfer.getData("id");
       // console.info("data id en on drop ", id)
+      var NuevaDataEliminada = []
 
-      var DataNuevo = []
+      var FitraDrecrip = DataRecursoAgrupadoApi.filter((descrip) => {
 
-      let recursos = DragRecursos.filter((recurso, i ) => {
-        if (recurso.recurso_codigo !== id) {
-          // console.log(">>>", recurso, "index ", i)
-          // recurso.splice(i, 1)
-          DataNuevo.push(recurso)
+        if (descrip.descripcion !== id) {
+          NuevaDataEliminada.push(descrip)
         }
-        // return recurso;
-        return recurso.recurso_codigo === id;
+        return descrip.descripcion === id
       })
 
-      console.log("DataNuevo>> ", DataNuevo)
-      // console.log("id >>>>>>> ", recursos.recurso_codigo.indexOf(id) ) ;
+      var CantidadSuma = DataCodigosAgrupado[indexC].codigos[icodi].cantidad + 1
+      DataCodigosAgrupado[indexC].codigos[icodi].cantidad = CantidadSuma
+      console.log("CantidadSuma ", CantidadSuma)
+      console.log("FitraDrecrip", FitraDrecrip)
+      console.log("NuevaDataEliminada", NuevaDataEliminada)
 
-      DataRecursoAgrupado.push(
+      this.setState({
+        DataRecursoAgrupadoApi: NuevaDataEliminada,
+        DataCodigosAgrupado: DataCodigosAgrupado
+      })
+      axios.post(`${UrlServer}/postrecursosEjecucionreal`,
         {
-          Codigo: id,
-          Recursos: recursos
+          "tipo":"codigo",
+          "data":[
+            [IdObra, tipoRecurso, id, codigo, idDocumento]
+          ]
         }
       )
-      console.log("DataRecursoAgrupado ", DataRecursoAgrupado);
-      this.setState({ DataRecursoAgrupado,  DataNuevo })
+      .then((res)=>{
+        console.log("res de grad codigo ", res)
+      })
+      .catch((err)=>{
+        console.error("no esta bien en envio de data ", err)
+      })
     }
-    
+
   }
 
+
   render() {
-    const { DragRecursos } = this.props
-    const { DataRecursoAgrupado } = this.state
+
+    const { DataRecursoAgrupadoApi, DataCodigosAgrupado } = this.state
     return (
       <div>
         <Row>
           <Col sm="7">
-            <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion") }}>
+            <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "", "in", "in2", "idDocumento") }}>
               <table className="table table-sm table-hover">
                 <thead>
                   <tr>
@@ -88,9 +132,9 @@ class TblResumenCompDrag extends Component {
                 </thead>
                 <tbody>
                   {
-                    DragRecursos !== undefined ?
-                      DragRecursos.map((ReqLista, IndexRL) =>
-                        <tr key={IndexRL} onDragStart={(e) => this.onDragStart(e, ReqLista.recurso_codigo)} draggable={ReqLista.recurso_codigo !== "" } className={ ReqLista.recurso_codigo !== ""?"grabbable":"" }>
+                    DataRecursoAgrupadoApi !== undefined ?
+                      DataRecursoAgrupadoApi.map((ReqLista, IndexRL) =>
+                        <tr key={IndexRL} onDragStart={(e) => this.onDragStart(e, ReqLista.descripcion)} draggable className="grabbable">
                           <td>
                             {`${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`}
                           </td>
@@ -110,29 +154,26 @@ class TblResumenCompDrag extends Component {
             </div>
           </Col>
           <Col sm="5">
-            <Card>
-              <CardHeader className="p-1">titulo de orden de compra</CardHeader>
-              <CardBody onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado") }}>
-                <div className="p-1">
-                  {
-                    DataRecursoAgrupado.map((codigo, indexC)=>
-                      <div className="divCodigoRecur" key={ indexC }> 
-                        { `${codigo.Codigo} ( ${codigo.Recursos.length } )` }
-                      </div>
-                    )
-                  }
-                </div>
-              </CardBody>
-            </Card>
-            <br />
-            <Card>
-              <CardHeader className="p-1">otro titulo de orden de compra</CardHeader>
-              <CardBody>
-                <div className="bg-info p-2">
+            {
+              DataCodigosAgrupado.map((tipoDoc, indexC) =>
 
-                </div>
-              </CardBody>
-            </Card>
+                <Card key={indexC} className="mb-2">
+                  <CardHeader className="p-1">{`${tipoDoc.tipoDocumento} `}<span className="badge badge-primary"> {tipoDoc.cantidad}</span> </CardHeader>
+                  <CardBody>
+                    <div className="p-1 d-flex">
+                      {
+                        tipoDoc.codigos.map((codigo, icodi) =>
+                          <div className="divCodigoRecur" key={icodi} onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", codigo.codigo, indexC, icodi, tipoDoc.idDocumento) }}>
+                            {`${tipoDoc.nombre} ${codigo.codigo} `}<span className="badge badge-primary">{codigo.cantidad}</span>
+                          </div>
+                        )
+                      }
+                    </div>
+                  </CardBody>
+                </Card>
+              )
+            }
+
           </Col>
         </Row>
 

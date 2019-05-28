@@ -462,8 +462,6 @@ class GestionTareas extends Component {
 
   MostrasMasTarea(idTarea) {
 
-    // this.inputRefComent.current.scrollIntoView({block: 'end', behavior: 'smooth'})
-
     // console.log(this.state.idTareaActivo, " === ", idTarea)
     if (this.state.idTareaActivo !== idTarea) {
       this.setState({ idTareaActivo: idTarea })
@@ -529,34 +527,36 @@ class GestionTareas extends Component {
 
   GuardaComentario(e) {
     e.preventDefault();
-
-    // console.log("ejecuntando data ", e.target[0].value)
-
-    axios.post(`${UrlServer}/postTareaComentario`, {
-      "mensaje": e.target[0].value,
-      "tareas_id_tarea": this.state.PositsFiltrado.id_tarea,
-      "accesos_id_acceso": Id_Acceso
-    })
-      .then((res) => {
-        // console.log("data enviado ", res)
-        console.log(" this.inputRefComent ", this.inputRefComent.current)
-        document.getElementById("inputComentario").value = "";
-        let users = this.state.PositsFiltrado
-        users.comentarios.push(res.data);
-        this.setState({ PositsFiltrado: users });
-
-        this.socket.emit("tareas_comentarios",
-          {
-            id_tarea: this.state.PositsFiltrado.id_tarea,
-            data: res.data
-          }
-        )
-        this.inputRefComent.current.scrollIntoView({ block: 'end', behavior: 'smooth' })
-
+    var valueInputComentario = e.target[0].value
+    // console.log("ejecuntando data ", valueInputComentario)
+    if (valueInputComentario.length !== 0) {
+      axios.post(`${UrlServer}/postTareaComentario`, {
+        "mensaje": valueInputComentario,
+        "tareas_id_tarea": this.state.PositsFiltrado.id_tarea,
+        "accesos_id_acceso": Id_Acceso
       })
-      .catch((err) => {
-        console.error("error al guardar los datos ", err)
-      })
+        .then((res) => {
+          // console.log("data enviado ", res)
+          console.log(" this.inputRefComent ", this.inputRefComent.current)
+          document.getElementById("inputComentario").value = "";
+          let users = this.state.PositsFiltrado
+          users.comentarios.push(res.data);
+          this.setState({ PositsFiltrado: users });
+
+          this.socket.emit("tareas_comentarios",
+            {
+              id_tarea: this.state.PositsFiltrado.id_tarea,
+              data: res.data
+            }
+          )
+          this.inputRefComent.current.scrollIntoView({ block: 'end', behavior: 'smooth' })
+
+        })
+        .catch((err) => {
+          console.error("error al guardar los datos ", err)
+        })  
+    }
+    
   }
 
   ModalVerMasTareas() {
