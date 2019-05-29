@@ -5,9 +5,9 @@ body {
   font-size: .9rem !important;
   color: #dcd7d7 !important;
   background-image: url("../images/blur-bg.jpg");
-  background-position: 50% 50%;
+  /* background-position: 50% 0%;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover; */
 }
 
 /*  Sidebar */
@@ -70,12 +70,12 @@ body {
 /* nav izquierda  angerman  */
 
 .navbarExplandLeft {
-
   border-right: 1px solid #000;
   -webkit-transition: width 0.5s;
   transition: 0.5s;
   flex: 0 0 16.666667%;
   max-width: 16.666667%;
+  background: #1f232d52;
 }
 
 .navbarCollapseLeft {
@@ -86,7 +86,6 @@ body {
   flex: 0 0 0%;
   max-width: 0%;
   opacity: 0;
-
 }
 
 /*fin nav izquierda  angerman  */

@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { DebounceInput } from 'react-debounce-input';
-import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
+import { FaSuperpowers } from 'react-icons/fa';
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
-import { MdFirstPage, MdChevronLeft, MdChevronRight, MdLastPage, MdCompareArrows, MdClose, MdPerson, MdSearch, MdSettings, MdExtension, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdSave, MdModeEdit } from 'react-icons/md';
+import { MdFirstPage, MdChevronLeft, MdChevronRight, MdLastPage, MdCompareArrows, MdClose, MdSearch, MdExtension, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdSave, MdModeEdit } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, UncontrolledDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Col, Row } from 'reactstrap';
+import { InputGroupAddon, InputGroupText, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Collapse, UncontrolledDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
 
-import LogoSigobras from '../../../../../../images/logoSigobras.png'
 import { UrlServer, Id_Obra } from '../../../../Utils/ServerUrlConfig';
-import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
+import { ConvertFormatStringNumber, FechaActual } from '../../../../Utils/Funciones'
 import TblResumenCompDrag from './ResumenCostoDirecto/TblResumenCompDrag'
 // import { inflateRaw } from 'zlib';
 
@@ -72,7 +70,9 @@ class ListaMateriales extends Component {
       selectTipoDocumento: "",
 
       PaginaActual: 1,
-      CantidadRows: 10
+      CantidadRows: 10,
+      // para filtrar en componentes 
+      filterRecursoResumen: "",
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -98,7 +98,7 @@ class ListaMateriales extends Component {
 
     this.PaginaActual = this.PaginaActual.bind(this);
     this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
-    
+
   }
 
   componentWillMount() {
@@ -141,7 +141,7 @@ class ListaMateriales extends Component {
           nombreComponente: res.data[0].nombre,
         })
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
       })
@@ -281,7 +281,7 @@ class ListaMateriales extends Component {
           DataPartidas: partidas,
         })
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
       })
@@ -315,7 +315,7 @@ class ListaMateriales extends Component {
             this.reqListaRecursos(id_partida, res.data[0]["tipo"])
 
           })
-          .catch((error) => {
+          .catch(() => {
             toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
             // console.error('algo salio mal verifique el',error);
           })
@@ -478,7 +478,7 @@ class ListaMateriales extends Component {
         activeTabResumen: index,
         TipoRecursoResumen: TipoRecurso,
         tipoEjecucion: false,
-        CamviarTipoVistaDrag:false
+        CamviarTipoVistaDrag: false
 
       });
       this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen")
@@ -488,7 +488,7 @@ class ListaMateriales extends Component {
   Ver_No() {
     this.setState({
       tipoEjecucion: !this.state.tipoEjecucion,
-      DataRecursosListaApi:[]
+      DataRecursosListaApi: []
 
     }, () => {
       if (this.state.tipoEjecucion === true) {
@@ -504,23 +504,23 @@ class ListaMateriales extends Component {
   cambiarVistaDragDrop() {
     this.setState({
       CamviarTipoVistaDrag: !this.state.CamviarTipoVistaDrag,
-      DataRecursosListaApi:[]
+      // DataRecursosListaApi: []
     }
-    // , () => {
-    //   if (this.state.CamviarTipoVistaDrag === true) {
-    //     // console.log("ejecuntando true")
-    //   this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen")
+      // , () => {
+      //   if (this.state.CamviarTipoVistaDrag === true) {
+      //     // console.log("ejecuntando true")
+      //   this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen")
 
-    //     this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionRealSinCodigo")
-    //     return
-    //   }
+      //     this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionRealSinCodigo")
+      //     return
+      //   }
 
-    // }
+      // }
     )
 
   }
 
-  activaEditable(index, CantPrecio, selectTipoDocumento ) {
+  activaEditable(index, CantPrecio, selectTipoDocumento) {
     console.log("activando", index, "selectTipoDocumento ", selectTipoDocumento)
     this.setState({ Editable: index, precioCantidad: CantPrecio, selectTipoDocumento })
 
@@ -564,7 +564,7 @@ class ListaMateriales extends Component {
 
   inputeable(index, tipo, descripcion, e) {
 
-    console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento )
+    console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
     if (tipo === "codigo") {
       var demoArray =
       {
@@ -699,11 +699,16 @@ class ListaMateriales extends Component {
     this.setState({ CantidadRows: Number(e.target.value) })
   }
 
+  handleChangeFilterDataResumen(event) {
+    this.setState({ filterRecursoResumen: event.target.value });
+  };
+
   render() {
     const {
       DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataRecursosCdAPI, DataListaRecursoDetallado, DataTipoRecursoResumen, DataRecursosListaApi,
-      DataResumenGeneralCompApi, DataTipoDocAdquisicionApi, smsValidaMetrado, collapse, nombreComponente,
-      Editable, precioCantidad, mostrarColores, file, CollapseResumenTabla, CamviarTipoVistaDrag, PaginaActual, CantidadRows } = this.state
+      DataResumenGeneralCompApi, DataTipoDocAdquisicionApi, collapse, nombreComponente,
+      Editable, precioCantidad, CollapseResumenTabla, PaginaActual, CantidadRows, filterRecursoResumen
+    } = this.state
 
     const ChartResumenRecursos = {
       "colors": [
@@ -825,7 +830,18 @@ class ListaMateriales extends Component {
     }
 
 
-    // =========================================   data para paginar ====================================
+    // =========================================   data para BUSCAR TIPO DE RECURSO EN RESUMEN  ====================================
+
+    const DataFiltradaResumenRecurso = filterRecursoResumen.toLowerCase();
+    const filteredData = DataRecursosListaApi.filter(recurso => {
+      return Object.keys(recurso).some(key =>
+        // recurso[key].toLowerCase().includes(DataFiltradaResumenRecurso)
+        typeof recurso[key] === "string" && recurso[key].toLowerCase().includes(DataFiltradaResumenRecurso)
+      );
+    });
+
+
+    // =========================================   data para paginar DATOS DE RECURSOS EN RESUMEN  ====================================
     // obtener indices para paginar 
     const indexOfUltimo = PaginaActual * CantidadRows;
     // console.log("INDEX OF ULTIMO ", indexOfUltimo)
@@ -833,13 +849,14 @@ class ListaMateriales extends Component {
     const indexOfPrimero = indexOfUltimo - CantidadRows;
     // console.log("INDEX OF PRIMERO ", indexOfPrimero)
 
-    const DataRecursosListaApiPaginado = DataRecursosListaApi.slice(indexOfPrimero, indexOfUltimo);
+    const DataRecursosListaApiPaginado = filteredData.slice(indexOfPrimero, indexOfUltimo);
 
     // numero de paginas hasta ahora
     const NumeroPaginas = [];
-    for (let i = 1; i <= Math.ceil(DataRecursosListaApi.length / CantidadRows); i++) {
+    for (let i = 1; i <= Math.ceil(filteredData.length / CantidadRows); i++) {
       NumeroPaginas.push(i);
     }
+
 
     return (
       <div>
@@ -869,11 +886,11 @@ class ListaMateriales extends Component {
 
                   <div className="mb-1 mt-1">
 
-                    <HighchartsReact
+                    {/* <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
-                    />
+                    /> */}
                   </div>
                   <Nav tabs>
                     {
@@ -886,197 +903,204 @@ class ListaMateriales extends Component {
                       )
                     }
                   </Nav>
+                  {
+                    DataRecursosListaApi.length > 0 ?
 
-                  <Card>
-                    <CardBody>
-                      <div className="clearfix mb-2">
-                        <div className="float-left">
-                          <select onChange={this.SelectCantidadRows} value={CantidadRows} className="form-control form-control-sm" >
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={30}>30</option>
-                            <option value={40}>40</option>
-                          </select>
-                        </div>
-                        <div className="float-right">
-                          <InputGroup size="sm">
-                            <InputGroupAddon addonType="prepend">
-                              <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No} >
-                                <MdCompareArrows /> <MdModeEdit />
-                              </Button>
-                              <Button outline color="warning" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} >
-                                <MdExtension />
-                              </Button>
-                            </InputGroupAddon>
-                            <Input />
-                          </InputGroup>
-                        </div>
-                      </div>
-                      {
-                        this.state.CamviarTipoVistaDrag === true
-                          ?
-                          <TblResumenCompDrag  ConfigData={ { UrlServer:UrlServer, IdObra: Id_Obra, tipoRecurso: this.state.TipoRecursoResumen } }/>
-                          :
-                          <table className="table table-sm table-hover">
-                            <thead>
-                              <tr>
-                                <th colSpan="6" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
-                                <th colSpan="5" style={{ width: "36%", minWidth: "40%" }}> RECURSOS GASTADOS HASTA LA FECHA ( HOY {FechaActual()})</th>
-                              </tr>
-                              <tr>
-                                <th>N° O/C - O/S</th>
-                                <th>RECURSO</th>
-                                <th>UND</th>
-                                <th>CANTIDAD</th>
-                                <th>PRECIO S/.</th>
-                                <th className="bordeDerecho"> PARCIAL S/.</th>
+                      <Card>
+                        <CardBody>
+                          <div className="clearfix mb-2">
+                            <div className="float-left">
+                              <select onChange={this.SelectCantidadRows} value={CantidadRows} className="form-control form-control-sm" >
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={30}>30</option>
+                                <option value={40}>40</option>
+                              </select>
+                            </div>
+                            <div className="float-right">
+                              <InputGroup size="sm">
+                                <InputGroupAddon addonType="prepend">
+                                  <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No} >
+                                    <MdCompareArrows /> <MdModeEdit />
+                                  </Button>
+                                  <Button outline color="warning" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} >
+                                    <MdExtension />
+                                  </Button>
+                                </InputGroupAddon>
+                                <Input value={filterRecursoResumen} onChange={this.handleChangeFilterDataResumen.bind(this)} />
+                              </InputGroup>
+                            </div>
+                          </div>
+                          {
+                            this.state.CamviarTipoVistaDrag === true
+                              ?
+                              <TblResumenCompDrag ConfigData={{ UrlServer: UrlServer, IdObra: Id_Obra, tipoRecurso: this.state.TipoRecursoResumen }} />
+                              :
+                              <div>
+                                <table className="table table-sm table-hover">
+                                  <thead>
+                                    <tr>
+                                      <th colSpan="6" className="bordeDerecho">RESUMEN DE RECURSOS SEGÚN EXPEDIENTE TÉCNICO</th>
+                                      <th colSpan="5" style={{ width: "36%", minWidth: "40%" }}> RECURSOS GASTADOS HASTA LA FECHA ( HOY {FechaActual()})</th>
+                                    </tr>
+                                    <tr>
+                                      <th>N° O/C - O/S</th>
+                                      <th>RECURSO</th>
+                                      <th>UND</th>
+                                      <th>CANTIDAD</th>
+                                      <th>PRECIO S/.</th>
+                                      <th className="bordeDerecho"> PARCIAL S/.</th>
 
-                                <th>CANTIDAD</th>
-                                <th>PRECIO S/.</th>
-                                <th>PARCIAL S/.</th>
-                                <th>DIFERENCIA</th>
-                                <th>%</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                DataRecursosListaApiPaginado.map((ReqLista, IndexRL) =>
-                                  <tr key={IndexRL}>
-                                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
-                                      {
-                                        this.state.tipoEjecucion === false ? `${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`
-                                          :
-                                          <div className="d-flex justify-content-between contentDataTd">
+                                      <th>CANTIDAD</th>
+                                      <th>PRECIO S/.</th>
+                                      <th>PARCIAL S/.</th>
+                                      <th>DIFERENCIA</th>
+                                      <th>%</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {
+                                      DataRecursosListaApiPaginado.map((ReqLista, IndexRL) =>
+                                        <tr key={IndexRL}>
+                                          <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
                                             {
-                                              Editable === IndexRL && precioCantidad === "codigo" ?
-                                                <span>
-                                                  <select style={{ padding: "1.5px" }} onChange={e => this.setState({ selectTipoDocumento: e.target.value })} value={this.state.selectTipoDocumento}>
+                                              this.state.tipoEjecucion === false ? `${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`
+                                                :
+                                                <div className="d-flex justify-content-between contentDataTd">
+                                                  {
+                                                    Editable === IndexRL && precioCantidad === "codigo" ?
+                                                      <span>
+                                                        <select style={{ padding: "1.5px" }} onChange={e => this.setState({ selectTipoDocumento: e.target.value })} value={this.state.selectTipoDocumento}>
+                                                          {
+                                                            DataTipoDocAdquisicionApi.map((Docu, indexD) =>
+                                                              <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
+                                                            )
+
+                                                          }
+
+                                                        </select>
+                                                        <input type="text" defaultValue={ReqLista.recurso_codigo} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "codigo", ReqLista.descripcion)} style={{ width: "70px" }} />
+                                                      </span>
+                                                      :
+
+                                                      <span>{`${ReqLista.id_tipoDocumentoAdquisicion === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
+                                                  }
+
+                                                  <div className="ContIcon" >
                                                     {
-                                                      DataTipoDocAdquisicionApi.map((Docu, indexD) =>
-                                                        <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
-                                                      )
-
+                                                      Editable === IndexRL && precioCantidad === "codigo"
+                                                        ?
+                                                        <div className="d-flex">
+                                                          <div onClick={() => this.activaEditable(IndexRL, null, ReqLista.id_tipoDocumentoAdquisicion || DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion)} ><MdSave /> </div> {" "}
+                                                          <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
+                                                        </div>
+                                                        :
+                                                        <div onClick={() => this.activaEditable(IndexRL, "codigo", ReqLista.id_tipoDocumentoAdquisicion || DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion)}><MdModeEdit /> </div>
                                                     }
-
-                                                  </select>
-                                                  <input type="text" defaultValue={ReqLista.recurso_codigo} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "codigo", ReqLista.descripcion)} style={{ width: "70px" }} />
-                                                </span>
-                                                :
-
-                                                <span>{`${ReqLista.id_tipoDocumentoAdquisicion === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
+                                                  </div>
+                                                </div>
                                             }
 
-                                            <div className="ContIcon" >
-                                              {
-                                                Editable === IndexRL && precioCantidad === "codigo"
-                                                  ?
-                                                  <div className="d-flex">
-                                                    <div onClick={() => this.activaEditable(IndexRL, null, ReqLista.id_tipoDocumentoAdquisicion||DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion )} ><MdSave /> </div> {" "}
-                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento:"" })} > <MdClose /></div>
-                                                  </div>
-                                                  :
-                                                  <div onClick={() => this.activaEditable(IndexRL, "codigo", ReqLista.id_tipoDocumentoAdquisicion||DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion )}><MdModeEdit /> </div>
-                                              }
-                                            </div>
-                                          </div>
-                                      }
+                                          </td>
+                                          <td> {ReqLista.descripcion} </td>
+                                          <td> {ReqLista.unidad} </td>
+                                          <td> {ReqLista.recurso_cantidad}</td>
+                                          <td> {ReqLista.recurso_precio}</td>
+                                          <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
-                                    </td>
-                                    <td> {ReqLista.descripcion} </td>
-                                    <td> {ReqLista.unidad} </td>
-                                    <td> {ReqLista.recurso_cantidad}</td>
-                                    <td> {ReqLista.recurso_precio}</td>
-                                    <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
-
-                                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso " : ""}>
-                                      {
-                                        this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_cantidad}`
-                                          :
-                                          <div className="d-flex justify-content-between contentDataTd">
+                                          <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso " : ""}>
                                             {
-                                              Editable === IndexRL && precioCantidad === "cantidad" ?
-                                                <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_cantidad)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "cantidad", ReqLista.descripcion)} style={{ width: "60px" }} />
+                                              this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_cantidad}`
                                                 :
-                                                <span>{ReqLista.recurso_gasto_cantidad}</span>
-                                            }
-                                            <div className="ContIcon" >
-                                              {
-                                                Editable === IndexRL && precioCantidad === "cantidad"
-                                                  ?
-                                                  <div className="d-flex">
-                                                    <div onClick={() => this.activaEditable(IndexRL, null, "")} ><MdSave /> </div> {" "}
-                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "",selectTipoDocumento:"" })} > <MdClose /></div>
+                                                <div className="d-flex justify-content-between contentDataTd">
+                                                  {
+                                                    Editable === IndexRL && precioCantidad === "cantidad" ?
+                                                      <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_cantidad)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "cantidad", ReqLista.descripcion)} style={{ width: "60px" }} />
+                                                      :
+                                                      <span>{ReqLista.recurso_gasto_cantidad}</span>
+                                                  }
+                                                  <div className="ContIcon" >
+                                                    {
+                                                      Editable === IndexRL && precioCantidad === "cantidad"
+                                                        ?
+                                                        <div className="d-flex">
+                                                          <div onClick={() => this.activaEditable(IndexRL, null, "")} ><MdSave /> </div> {" "}
+                                                          <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
+                                                        </div>
+                                                        :
+                                                        <div onClick={() => this.activaEditable(IndexRL, "cantidad", "")}><MdModeEdit /> </div>
+                                                    }
                                                   </div>
-                                                  :
-                                                  <div onClick={() => this.activaEditable(IndexRL, "cantidad", "")}><MdModeEdit /> </div>
-                                              }
-                                            </div>
 
-                                          </div>
-                                      }
-                                    </td>
+                                                </div>
+                                            }
+                                          </td>
 
-                                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
-                                      {
-                                        this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_precio}`
-                                          :
-                                          <div className="d-flex justify-content-between contentDataTd" >
+                                          <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
                                             {
-                                              Editable === IndexRL && precioCantidad === "precio" ?
-                                                <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_precio)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "precio", ReqLista.descripcion)} style={{ width: "60px" }} />
+                                              this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_precio}`
                                                 :
-                                                <span>{ReqLista.recurso_gasto_precio}</span>
-                                            }
+                                                <div className="d-flex justify-content-between contentDataTd" >
+                                                  {
+                                                    Editable === IndexRL && precioCantidad === "precio" ?
+                                                      <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_precio)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "precio", ReqLista.descripcion)} style={{ width: "60px" }} />
+                                                      :
+                                                      <span>{ReqLista.recurso_gasto_precio}</span>
+                                                  }
 
-                                            <div className="ContIcon">
-                                              {
-                                                Editable === IndexRL && precioCantidad === "precio"
-                                                  ?
-                                                  <div className="d-flex">
-                                                    <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> {" "}
-                                                    <div onClick={() => this.setState({ Editable: null, precioCantidad: "" })} > <MdClose /></div>
+                                                  <div className="ContIcon">
+                                                    {
+                                                      Editable === IndexRL && precioCantidad === "precio"
+                                                        ?
+                                                        <div className="d-flex">
+                                                          <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> {" "}
+                                                          <div onClick={() => this.setState({ Editable: null, precioCantidad: "" })} > <MdClose /></div>
+                                                        </div>
+                                                        :
+                                                        <div onClick={() => this.activaEditable(IndexRL, "precio")}><MdModeEdit /> </div>
+                                                    }
                                                   </div>
-                                                  :
-                                                  <div onClick={() => this.activaEditable(IndexRL, "precio")}><MdModeEdit /> </div>
-                                              }
-                                            </div>
-                                          </div>
-                                      }
-                                    </td>
-                                    <td> {ReqLista.recurso_gasto_parcial}</td>
-                                    <td> {ReqLista.diferencia}</td>
-                                    <td> {ReqLista.porcentaje}</td>
-                                  </tr>
-                                )
-                              }
+                                                </div>
+                                            }
+                                          </td>
+                                          <td> {ReqLista.recurso_gasto_parcial}</td>
+                                          <td> {ReqLista.diferencia}</td>
+                                          <td> {ReqLista.porcentaje}</td>
+                                        </tr>
+                                      )
+                                    }
 
-                            </tbody>
-                          </table>
+                                  </tbody>
+                                </table>
 
-                      }
+                                <div className="float-right mr-2 ">
+                                  <div className="d-flex text-dark">
 
-                      <div className="float-right mr-2 ">
-                        <div className="d-flex text-dark">
+                                    <InputGroup size="sm">
+                                      <InputGroupAddon addonType="prepend">
+                                        <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(1)} disabled={PaginaActual === 1}><MdFirstPage /></Button>
+                                        <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(PaginaActual - 1)} disabled={PaginaActual === 1}><MdChevronLeft /></Button>
+                                        <input type="text" style={{ width: "30px" }} value={PaginaActual} onChange={e => this.setState({ PaginaActual: e.target.value })} />
+                                        <InputGroupText>{`de  ${NumeroPaginas.length}`} </InputGroupText>
 
-                          <InputGroup size="sm">
-                            <InputGroupAddon addonType="prepend">
-                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(1)} disabled={PaginaActual === 1}><MdFirstPage /></Button>
-                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(PaginaActual - 1)} disabled={PaginaActual === 1}><MdChevronLeft /></Button>
-                              <input type="text" style={{ width: "30px" }} value={PaginaActual} onChange={e => this.setState({ PaginaActual: e.target.value })} />
-                              <InputGroupText>{`de  ${NumeroPaginas.length}`} </InputGroupText>
+                                      </InputGroupAddon>
+                                      <InputGroupAddon addonType="append">
+                                        <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(PaginaActual + 1)} disabled={PaginaActual === NumeroPaginas.length}><MdChevronRight /></Button>
+                                        <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(NumeroPaginas.pop())} disabled={PaginaActual === NumeroPaginas.length}><MdLastPage /></Button>
+                                      </InputGroupAddon>
+                                    </InputGroup>
 
-                            </InputGroupAddon>
-                            <InputGroupAddon addonType="append">
-                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(PaginaActual + 1)} disabled={PaginaActual === NumeroPaginas.length}><MdChevronRight /></Button>
-                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(NumeroPaginas.pop())} disabled={PaginaActual === NumeroPaginas.length}><MdLastPage /></Button>
-                            </InputGroupAddon>
-                          </InputGroup>
+                                  </div>
+                                </div>
 
-                        </div>
-                      </div>
+                              </div>
+                          }
 
-                    </CardBody>
-                  </Card>
+
+                        </CardBody>
+                      </Card>
+                      : ""
+                  }
                 </CardBody>
               </Card>
               :

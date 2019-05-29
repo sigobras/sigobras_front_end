@@ -71,6 +71,7 @@ class AppAng extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
             .then((res) => {
+                console.log("data obras general ",  res.data)
                 this.setState({
                     DataObra: res.data
                 })
@@ -146,7 +147,6 @@ class AppAng extends Component {
                         </div>
                         <div className="ml-auto">
                             <div className="float-right"><UserNav /></div>
-
                             <div className="float-right"><MensajeNav /></div>
                             <div className="float-right"><NotificacionNav /></div>
                             <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>

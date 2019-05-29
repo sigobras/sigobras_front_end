@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Card, CardHeader, CardBody, Col, Row } from 'reactstrap';
+import { Card, CardHeader, CardBody, Col, Row, Modal } from 'reactstrap';
 import axios from 'axios';
+
+import DataSegunCodigoSelect from "./DataSegunCodigoSelect"
 
 class TblResumenCompDrag extends Component {
   constructor(props) {
@@ -9,6 +11,11 @@ class TblResumenCompDrag extends Component {
     this.state = {
       DataCodigosAgrupado: [],
       DataRecursoAgrupadoApi: [],
+      modalMostrarMasCodigo: false,
+      CodigoSeleccionado: {},
+      idDocumento: {},
+      nombreCodigoDocumento: {},
+      nombreDocumento: {}
     }
     this.onDragStart = this.onDragStart.bind(this)
     this.onDragOver = this.onDragOver.bind(this)
@@ -60,6 +67,9 @@ class TblResumenCompDrag extends Component {
 
   onDrop(ev, cat, codigo, indexC, icodi, idDocumento) {
     console.log("onDrop ", cat, "codigo>>>>> ", codigo)
+
+    // this.setState({idDocumento:{idDocumento}})
+
     const { IdObra, UrlServer, tipoRecurso } = this.props.ConfigData
     let id = ev.dataTransfer.getData("id");
 
@@ -89,26 +99,36 @@ class TblResumenCompDrag extends Component {
       })
       axios.post(`${UrlServer}/postrecursosEjecucionreal`,
         {
-          "tipo":"codigo",
-          "data":[
+          "tipo": "codigo",
+          "data": [
             [IdObra, tipoRecurso, id, codigo, idDocumento]
           ]
         }
       )
-      .then((res)=>{
-        console.log("res de grad codigo ", res)
-      })
-      .catch((err)=>{
-        console.error("no esta bien en envio de data ", err)
-      })
+        .then((res) => {
+          console.log("res de grad codigo ", res)
+        })
+        .catch((err) => {
+          console.error("no esta bien en envio de data ", err)
+        })
     }
 
   }
 
+  ModalVermasRecursoAgrupado(codigo, idDocumento, nombreDocumento, nombreCod ) {
+    // console.log("codigo ", codigo)
+    this.setState(prevState => ({
+      modalMostrarMasCodigo: !prevState.modalMostrarMasCodigo,
+      CodigoSeleccionado: { codigo },
+      idDocumento: { idDocumento },
+      nombreDocumento: {nombreDocumento},
+      nombreCodigoDocumento: { nombreCod }
+    }));
+  }
 
   render() {
-
-    const { DataRecursoAgrupadoApi, DataCodigosAgrupado } = this.state
+    const { DataRecursoAgrupadoApi, DataCodigosAgrupado, CodigoSeleccionado, idDocumento, nombreCodigoDocumento, nombreDocumento } = this.state
+    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.ModalVermasRecursoAgrupado.bind(this, "", "", "", "")}>&times;</button>;
     return (
       <div>
         <Row>
@@ -163,7 +183,12 @@ class TblResumenCompDrag extends Component {
                     <div className="p-1 d-flex">
                       {
                         tipoDoc.codigos.map((codigo, icodi) =>
-                          <div className="divCodigoRecur" key={icodi} onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", codigo.codigo, indexC, icodi, tipoDoc.idDocumento) }}>
+                          <div
+                            className="divCodigoRecur" key={icodi}
+                            onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", codigo.codigo, indexC, icodi, tipoDoc.idDocumento) }}
+
+                            onClick={this.ModalVermasRecursoAgrupado.bind(this, codigo.codigo, tipoDoc.idDocumento, tipoDoc.tipoDocumento, tipoDoc.nombre)}
+                          >
                             {`${tipoDoc.nombre} ${codigo.codigo} `}<span className="badge badge-primary">{codigo.cantidad}</span>
                           </div>
                         )
@@ -178,7 +203,9 @@ class TblResumenCompDrag extends Component {
         </Row>
 
         {/* { console.log("DataTipoRecursoResumen  ", DataTipoRecursoResumen)} */}
-
+        <Modal isOpen={this.state.modalMostrarMasCodigo} toggle={this.ModalVermasRecursoAgrupado.bind(this, "", "", "","")} external={externalCloseBtn} size="lg">
+          <DataSegunCodigoSelect DataConsumir={Object.assign(this.props.ConfigData, CodigoSeleccionado, idDocumento, nombreCodigoDocumento, nombreDocumento)} />
+        </Modal>
       </div>
     );
   }

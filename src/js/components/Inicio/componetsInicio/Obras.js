@@ -90,7 +90,7 @@ class Obras extends Component{
                                         <th>AVANCE </th>
                                         <th className="text-center">IR</th>
                                         <th>ESTADO</th>
-                                        <th>OPCIONES</th>
+                                        <th style={{    width: "105px", minWidth: "100px"}} >OPCIONES</th>
                                     </tr>
                                 </thead>
                                 {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
