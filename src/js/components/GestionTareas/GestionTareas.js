@@ -17,7 +17,7 @@ import "react-picky/dist/picky.css";
 import "../../../css/GTareas.css"
 
 import { FechaActual, Extension } from "../Utils/Funciones"
-import { UrlServer, Id_Acceso, ImgAccesoSS, Id_Obra } from "../Utils/ServerUrlConfig"
+import { UrlServer, Id_Acceso, ImgAccesoSS, Id_Obra, CargoAccesoSS } from "../Utils/ServerUrlConfig"
 
 
 
@@ -26,7 +26,6 @@ class GestionTareas extends Component {
     super(props);
 
     this.server = process.env.REACT_APP_API_URL || UrlServer;
-    // this.server = process.env.REACT_APP_API_URL || "192.168.0.5:9000";
     this.socket = io.connect(this.server);
 
     this.toggleTabDetalleTarea = this.toggleTabDetalleTarea.bind(this);
@@ -37,6 +36,10 @@ class GestionTareas extends Component {
     this.textPorcentEdit = this.textPorcentEdit.bind(this);
     this.GuardaComentario = this.GuardaComentario.bind(this);
     this.ModalVerMasTareas = this.ModalVerMasTareas.bind(this);
+    this.ModalDetallesUsuario = this.ModalDetallesUsuario.bind(this);
+
+    this.toggleSplitAniosTareas = this.toggleSplitAniosTareas.bind(this);
+
     this.subtareaAdd = this.subtareaAdd.bind(this);
     this.onChangeProyecto = this.onChangeProyecto.bind(this);
     this.onChangePara = this.onChangePara.bind(this);
@@ -77,7 +80,8 @@ class GestionTareas extends Component {
       DataCargosApi: [],
       DataPersonalApi: [],
       DatSubordinadospi: [],
-
+      DataMostrarDetallesApi: [],
+      DataMostrarDetallesAnioApi: [],
       // captura inputs de envio de datos del formulario
       Para: [],
       proyecto: [],
@@ -116,7 +120,7 @@ class GestionTareas extends Component {
       // datos desde hasta para pendientes progreso .....
       Inicio: "",
       Fin: "",
-      tipoProgresoTarea:"",
+      tipoProgresoTarea: "",
       // index para eliminar la data 
       indexSubTarea: null,
       // editar valor porcentaje
@@ -126,72 +130,9 @@ class GestionTareas extends Component {
       modalVerMasTareasUser: false,
       idTareaActivo: null,
       // chart resumen de tareas del usuario
-      chartOptions: {
-        chart: {
-          type: 'column'
-        },
-        title: {
-          text: 'ESTADISTICA DE TAREAS'
-        },
-        // subtitle: {
-        //   text: 'Source: WorldClimate.com'
-        // },
-        xAxis: {
-          categories: [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec'
-          ],
-          crosshair: true
-        },
-        // yAxis: {
-        //   min: 0,
-        //   title: {
-        //     text: 'Rainfall (mm)'
-        //   }
-        // },
-        tooltip: {
-          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-          footerFormat: '</table>',
-          shared: true,
-          useHTML: true
-        },
-        plotOptions: {
-          column: {
-            pointPadding: 0.2,
-            borderWidth: 0
-          }
-        },
-        series: [{
-          name: 'GESTION DE DOCUMENTARIA',
-          data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-
-        }, {
-          name: 'GESTION DE PRODUCTIVIDAD',
-          data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
-
-        }, {
-          name: 'GESTION DE RECURSOS ',
-          data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
-
-        }, {
-          name: 'GESTION DE CALIDAD',
-          data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
-
-        }]
-      }
-    };
+      chartOptions: {},
+      splitButtonOpen: false
+    }
   }
 
   componentDidMount() {
@@ -521,8 +462,6 @@ class GestionTareas extends Component {
 
   MostrasMasTarea(idTarea) {
 
-    // this.inputRefComent.current.scrollIntoView({block: 'end', behavior: 'smooth'})
-
     // console.log(this.state.idTareaActivo, " === ", idTarea)
     if (this.state.idTareaActivo !== idTarea) {
       this.setState({ idTareaActivo: idTarea })
@@ -588,34 +527,36 @@ class GestionTareas extends Component {
 
   GuardaComentario(e) {
     e.preventDefault();
-
-    // console.log("ejecuntando data ", e.target[0].value)
-
-    axios.post(`${UrlServer}/postTareaComentario`, {
-      "mensaje": e.target[0].value,
-      "tareas_id_tarea": this.state.PositsFiltrado.id_tarea,
-      "accesos_id_acceso": Id_Acceso
-    })
-      .then((res) => {
-        // console.log("data enviado ", res)
-        console.log(" this.inputRefComent ", this.inputRefComent.current)
-        document.getElementById("inputComentario").value = "";
-        let users = this.state.PositsFiltrado
-        users.comentarios.push(res.data);
-        this.setState({ PositsFiltrado: users });
-
-        this.socket.emit("tareas_comentarios",
-          {
-            id_tarea: this.state.PositsFiltrado.id_tarea,
-            data: res.data
-          }
-        )
-        this.inputRefComent.current.scrollIntoView({ block: 'end', behavior: 'smooth' })
-
+    var valueInputComentario = e.target[0].value
+    // console.log("ejecuntando data ", valueInputComentario)
+    if (valueInputComentario.length !== 0) {
+      axios.post(`${UrlServer}/postTareaComentario`, {
+        "mensaje": valueInputComentario,
+        "tareas_id_tarea": this.state.PositsFiltrado.id_tarea,
+        "accesos_id_acceso": Id_Acceso
       })
-      .catch((err) => {
-        console.error("error al guardar los datos ", err)
-      })
+        .then((res) => {
+          // console.log("data enviado ", res)
+          console.log(" this.inputRefComent ", this.inputRefComent.current)
+          document.getElementById("inputComentario").value = "";
+          let users = this.state.PositsFiltrado
+          users.comentarios.push(res.data);
+          this.setState({ PositsFiltrado: users });
+
+          this.socket.emit("tareas_comentarios",
+            {
+              id_tarea: this.state.PositsFiltrado.id_tarea,
+              data: res.data
+            }
+          )
+          this.inputRefComent.current.scrollIntoView({ block: 'end', behavior: 'smooth' })
+
+        })
+        .catch((err) => {
+          console.error("error al guardar los datos ", err)
+        })  
+    }
+    
   }
 
   ModalVerMasTareas() {
@@ -623,6 +564,131 @@ class GestionTareas extends Component {
       modalVerMasTareasUser: !prevState.modalVerMasTareasUser
     }));
   }
+
+  ModalDetallesUsuario(idUsuario) {
+    console.log("idUsuario ", idUsuario)
+
+    // var Chart = this.state.chartOptions
+
+    this.setState(prevState => ({
+      modalVerMasTareasUser: !prevState.modalVerMasTareasUser
+    }));
+
+    // consulta mas datos  de productividad de añoss ===================================================================
+    axios.post(`${UrlServer}/getChartRendimientoUsuarioAnyos`, {
+      "id_acceso": idUsuario
+    })
+      .then((res) => {
+        console.log("res mas data años ", res.data)
+        this.setState({
+          DataMostrarDetallesAnioApi: res.data,
+        })
+      })
+      .catch((err) => {
+        console.error("errores al solicitar datos del api ", err)
+      })
+
+
+    // consulta mas datos  de productividad de personal ===================================================================
+    axios.post(`${UrlServer}/getUsuarioTareasDetalles`, {
+      "id_acceso": idUsuario
+    })
+      .then((res) => {
+        console.log("res mas data productidad ", res.data)
+        this.setState({
+          DataMostrarDetallesApi: res.data,
+
+        })
+      })
+      .catch((err) => {
+        console.error("errores al solicitar datos del api ", err)
+      })
+    // consulta char de productividad de personal ===================================================================
+    axios.post(`${UrlServer}/getChartRendimientoUsuario`, {
+      "id_acceso": idUsuario
+    })
+      .then((res) => {
+        console.log("res de chart productividad ", res.data)
+        // var series = res.data.series
+        // Chart.series = series
+        // Chart.xAxis.categories = res.data.categories 
+
+        this.setState({
+          chartOptions: {
+            "colors": [
+              "#d35400",
+              "#2980b9",
+              "#2ecc71",
+              "#f1c40f",
+              "#2c3e50",
+              "#7f8c8d"
+            ],
+            chart: {
+              type: 'column',
+              "backgroundColor": "#161C20",
+              "style": {
+                "fontFamily": "Roboto",
+                "color": "#dfc9c9"
+              }
+            },
+            title: {
+              text: 'ESTADÍSTICA DE TAREAS',
+              "align": "center",
+              "style": {
+                "fontFamily": "Roboto Condensed",
+                "fontWeight": "bold",
+                "color": "#dfc9c9"
+              }
+            },
+            "legend": {
+              "align": "center",
+              "verticalAlign": "bottom",
+              "itemStyle": {
+                "color":
+                  "#424242",
+                "color": "#7a7474"
+              }
+            },
+            xAxis: {
+              categories: res.data.categories,
+              crosshair: true
+            },
+            series: res.data.series,
+            yAxis: {
+              min: 0,
+              title: {
+                text: 'Valor'
+              }
+            },
+            tooltip: {
+              headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+              pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+              footerFormat: '</table>',
+              shared: true,
+              useHTML: true
+            },
+            plotOptions: {
+              column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+              }
+            },
+          }
+        })
+        // console.log("chart " , Chart )
+      })
+      .catch((err) => {
+        console.error("errores al solicitar datos del api ", err)
+      })
+  }
+
+  toggleSplitAniosTareas() {
+    this.setState({
+      splitButtonOpen: !this.state.splitButtonOpen
+    });
+  }
+
   // REQUESTS AL API ---------------------------------------------
 
   reqProyectos(id_acceso, inicio, fin, tipo, index) {
@@ -631,8 +697,8 @@ class GestionTareas extends Component {
       ActiveTab: index,
       Inicio: inicio,
       Fin: fin,
-      tipoProgresoTarea:tipo,
-      collapseProyecto:null
+      tipoProgresoTarea: tipo,
+      collapseProyecto: null
     })
 
     axios.post(`${UrlServer}/getTareasReceptorProyectos`,
@@ -668,7 +734,7 @@ class GestionTareas extends Component {
         "inicio": inicio,
         "fin": fin,
         "id_proyecto": IdProyecto,
-        "tipo":this.state.tipoProgresoTarea
+        "tipo": this.state.tipoProgresoTarea
       }
     )
       .then((res) => {
@@ -780,10 +846,12 @@ class GestionTareas extends Component {
   }
 
   render() {
-    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, chartOptions, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent, idTareaActivo } = this.state
+    const { DataProyectoApi, DataProyectoMostrarApi, DataCargosApi, DataPersonalApi, DataTareasApi, DataTareasEmitidosApi, PositsFiltrado, DatSubordinadospi, chartOptions, proyecto, Para, InputPersonal, SMSinputTypeImg, CollapseFormContainerAddTarea, ActiveTab, condicionInputCollapse, InputEditablePorcent, idTareaActivo, DataMostrarDetallesApi, DataMostrarDetallesAnioApi } = this.state
     const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.ModalVerMasTareas}>&times;</button>;
+    var optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
     return (
+
       <div>
         <Row>
           <div className={CollapseFormContainerAddTarea === true ? "formPositContainer" : "widthFormPositContentCierra"}>
@@ -969,244 +1037,244 @@ class GestionTareas extends Component {
                   <MdAlarmAdd size={ 15 } />
                 </NavLink>
               </NavItem> */}
-
             </Nav>
 
-            <div className="p-2">
-              <Container fluid className="pr-4">
-                <Row>
-                  <Col md="3">
-                    <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "nada") }} className="contTRecodatorios">
-                      {/* <Container fluid> */}
+            <div className="p-2 pr-4">
+              <Row>
+                <Col md="3">
+                  <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "ejecucion", "nada") }} className="contTRecodatorios">
+                    {/* <Container fluid> */}
 
-                      <Row>
+                    <Row>
+                      {
+                        DataTareasEmitidosApi.map((TareasEmit, iS) =>
+                          <Col md="6 mb-2" key={iS} style={{ marginRight: "-5px" }}>
+                            <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS)} draggable>
+                              <div className="d-flex justify-content-between headerTarea p-1" onClick={() => this.MostrasMasTarea(TareasEmit.id_tarea)}>
+                                <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="20%" height="20%" />
+
+                                <div className="m-0 h5">{`${TareasEmit.tipo_tarea}-${iS + 1}`}</div>
+
+                                <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
+                              </div>
+                              <div className="bodyTarea text-capitalize" style={{ background: TareasEmit.proyecto_color }}>
+                                {TareasEmit.asunto}
+                                {/* <br />
+                                { TareasEmit.proyecto_nombre} */}
+                              </div>
+                            </div>
+
+                          </Col>
+                        )
+                      }
+
+
+                    </Row>
+                    {/* </Container> */}
+
+                  </div>
+
+                </Col>
+                <Col md="3" className="px-0">
+
+                  {
+                    PositsFiltrado.length === 0 ? "" :
+                      <div className="fondoMostrarMas">
+                        <div className="containerTarea">
+                          <div className="d-flex justify-content-between headerTarea p-1">
+                            <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
+
+                            <label className="m-0 h6 text-center"> {PositsFiltrado.asunto}</label>
+
+                            <div style={{ background: PositsFiltrado.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "10px" }} />
+
+                          </div>
+
+                          <div className="bodyTareaProyecto" style={{ background: PositsFiltrado.proyecto_color }}>
+                            <img src={`${UrlServer}${PositsFiltrado.usuario_imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
+                            <div className="text-center flex-column ">
+                              <div>{`${PositsFiltrado.porcentaje_avance} %`}</div>
+                              <div>{PositsFiltrado.emisor_nombre}</div>
+                            </div>
+
+                          </div>
+                          <div className="headerTarea text-uppercase px-2 clearfix">
+                            <div className="float-left">
+                              Por: {PositsFiltrado.emisor_cargo}
+                            </div>
+                            <div className="float-right prioridad" style={{ marginTop: "-2px" }}>
+                              {
+                                PositsFiltrado.tipo_archivo !== null ?
+                                  <div className="text-primary" title="descargar archivo" onClick={() => this.DescargarArchivo(`${UrlServer}${PositsFiltrado.tipo_archivo}`)} ><FaFileDownload /></div>
+                                  : ""
+                              }
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <b>Descripción: </b>
+                          {PositsFiltrado.descripcion}
+                        </div>
                         {
-                          DataTareasEmitidosApi.map((TareasEmit, iS) =>
-                            <Col md="6 mb-2" key={iS} style={{ marginRight: "-5px" }}>
-                              <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS)} draggable>
-                                <div className="d-flex justify-content-between headerTarea p-1">
-                                  <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="20%" height="20%" />
-
-                                  <div className="m-0 h5" onClick={() => this.MostrasMasTarea(TareasEmit.id_tarea)}>{`${TareasEmit.tipo_tarea}-${iS + 1}`}</div>
-
-                                  <div style={{ background: TareasEmit.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", float: "right" }} />
-                                </div>
-                                <div className="bodyTarea text-capitalize" style={{ background: TareasEmit.proyecto_color }}>
-                                  {TareasEmit.asunto}
-                                  {/* <br />
-                                  { TareasEmit.proyecto_nombre} */}
-                                </div>
-                              </div>
-
-                            </Col>
-                          )
-                        }
-
-
-                      </Row>
-                      {/* </Container> */}
-
-                    </div>
-
-                  </Col>
-                  <Col md="3">
-
-                    {
-                      PositsFiltrado.length === 0 ? "" :
-                        <div className="fondoMostrarMas">
-                          <div className="containerTarea">
-                            <div className="d-flex justify-content-between headerTarea p-1">
-                              <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
-
-                              <label className="m-0 h6 text-center"> {PositsFiltrado.asunto}</label>
-
-                              <div style={{ background: PositsFiltrado.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "10px" }} />
-
-                            </div>
-
-                            <div className="bodyTareaProyecto" style={{ background: PositsFiltrado.proyecto_color }}>
-                              <img src={`${UrlServer}${PositsFiltrado.usuario_imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
-                              <div className="text-center flex-column ">
-                                <div>{`${PositsFiltrado.porcentaje_avance} %`}</div>
-                                <div>{PositsFiltrado.emisor_nombre}</div>
-                              </div>
-
-                            </div>
-                            <div className="headerTarea text-uppercase px-2 clearfix">
-                              <div className="float-left">
-                                Por: {PositsFiltrado.emisor_cargo}
-                              </div>
-                              <div className="float-right prioridad" style={{ marginTop: "-2px" }}>
-                                {
-                                  PositsFiltrado.tipo_archivo !== null ?
-                                    <div className="text-primary" title="descargar archivo" onClick={() => this.DescargarArchivo(`${UrlServer}${PositsFiltrado.tipo_archivo}`)} ><FaFileDownload /></div>
-                                    : ""
-                                }
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <b>Descripción: </b>
-                            {PositsFiltrado.descripcion}
-                          </div>
-                          {
-                            this.state.tipoProgresoTarea === "vencido" ?"":
+                          this.state.tipoProgresoTarea === "vencido" ? "" :
                             <div className="text-center text-warning">
                               {
                                 PositsFiltrado.diasTranscurridos < 0 ?
-                                  <b>Faltan {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) para empezar la tarea asignada.</b>
+                                  <b>Dentro de {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) empezará la tarea que se te asignó y tienes {`${PositsFiltrado.diasTotal}`} dias para Concluirlo.</b>
                                   :
-                                  <b> Tiene {`${PositsFiltrado.diasTotal}`} dia(s) para cumplir con la meta y te <i> quedan {`${PositsFiltrado.diasTranscurridos}`}</i>  </b>
+                                  <b> Tiene {`${PositsFiltrado.diasTotal - PositsFiltrado.diasTranscurridos} / ${PositsFiltrado.diasTotal}`}   dia(s) para concluir tu tarea. <br />
+                                    <i> Vence el {`${new Date(PositsFiltrado.fecha_final).toLocaleDateString('es', optionsDate)}`}</i>  </b>
 
                               }
 
                             </div>
-                          }
-                        </div>
-                    }
-                    <div className="fondoSubord">
-                      <div className="text-center text-primary">
-                        <b> JEFES DE AREA  </b>
+                        }
                       </div>
-                      {
-                        DatSubordinadospi !== undefined ?
-                          DatSubordinadospi.map((subtarea, iS) =>
-                            <div className="media mb-2" key={iS}>
-                              <div className="" style={{ width: "12%" }} onClick={this.ModalVerMasTareas}>
-                                <img className="imgCircular prioridad" src={`${UrlServer}${subtarea.subordinado_imagen}`} alt={subtarea.subordinado_imagenAlt} width="30px" height="30px" /><br />
-                                <div className="d-flex flex-column text-center" style={{ fontSize: "0.5rem" }}>
-                                  {subtarea.usuario_nombre}
-
-                                </div>
-                              </div>
-
-                              <div className="media-body">
-
-
-                                <div className="text-warning  ml-2 text-capitalize">{subtarea.cargo_nombre}</div>
-                                <Container fluid>
-                                  <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", subtarea.id_acceso) }}>
-
-                                    <Row>
-                                      {
-                                        subtarea.subordinadosTareas.map((subTares, IndexS) =>
-                                          <Col md="1" className="m-1 p-0" style={{ background: subTares.prioridad_color }} key={IndexS} >
-                                            <div className="text-center flex-column " style={{ fontSize: "0.6rem" }}>
-                                              {subTares.id_proyecto === null ?
-                                                <div style={{ border: "1px dashed #ffffff", padding: "6px" }} /> :
-                                                <div onClick={() => this.MostrasMasTarea(subTares.tareas_id_tarea)} className="prioridad" >T-{IndexS + 1}</div>}
-                                            </div>
-                                          </Col>
-                                        )
-                                      }
-
-                                    </Row>
-                                  </div>
-                                </Container>
-                              </div>
-
-                            </div>
-
-                          ) : ""
-                      }
+                  }
+                  <div className="fondoSubord">
+                    <div className="text-center">
+                      <b> JEFES DE AREA  </b>
+                      <img src={ImgAccesoSS} className="imgCircular float-right prioridad" alt="perfil sigobras " width="25px" height="25px" onClick={() => this.ModalDetallesUsuario(Id_Acceso)} />
                     </div>
+                    {
+                      DatSubordinadospi !== undefined ?
+                        DatSubordinadospi.map((subtarea, iS) =>
+                          <div className="media mb-2" key={iS}>
+                            <div className="" style={{ width: "12%" }} onClick={() => this.ModalDetallesUsuario(subtarea.id_acceso)}>
+                              <img className="imgCircular prioridad" src={`${UrlServer}${subtarea.subordinado_imagen}`} alt={subtarea.subordinado_imagenAlt} width="30px" height="30px" /><br />
+                              <div className="d-flex flex-column text-center" style={{ fontSize: "0.5rem" }}>
+                                {subtarea.usuario_nombre}
 
-                  </Col>
-                  <Col md="6">  
-                    <div className="contanierProyectoAsignados">
-                      {
-                        DataProyectoMostrarApi.map((proyectoMostrar, IndexPM) =>
-
-                          <div key={IndexPM}>
-
-                            <div className="proyectoBorder prioridad mb-2" style={{ borderBottom: `2px solid ${proyectoMostrar.color}` }} onClick={() => this.CollapseProyecto(IndexPM.toString(), proyectoMostrar.id_proyecto)}>
-                              <div className="numeroProyecto">P-{proyectoMostrar.id_proyecto}</div>
-                              <div className="nombreProyecto" style={{ background: proyectoMostrar.color }}>{proyectoMostrar.nombre}</div>
+                              </div>
                             </div>
 
-                            <Collapse isOpen={this.state.collapseProyecto === IndexPM.toString()}>
-                              <Row>
-                                {
-                                  DataTareasApi.map((tarea, indexT) =>
-                                    <Col md="4" key={indexT}>
-                                      <div className={idTareaActivo === tarea.id_tarea ? "containerTareaActivo mb-2" : "containerTarea mb-2"}>
-                                        <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={() => this.MostrasMasTarea(tarea.id_tarea)}>
-                                          <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
-                                          <div className="m-0 text-center">{tarea.asunto}</div>
-                                          <div style={{ background: tarea.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
-                                        </div>
-                                        <div className="bodyTareaProyecto" style={{ background: proyectoMostrar.color }}>
-                                          <img src={`${UrlServer}${tarea.imagen_subordinado[0].imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
-                                          <div className="text-center flex-column ">
+                            <div className="media-body">
 
-                                          <div> 
+
+                              <div className="text-warning  ml-2 text-capitalize">{subtarea.cargo_nombre}</div>
+                              <Container fluid>
+                                <div onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", subtarea.id_acceso) }}>
+
+                                  <Row>
+                                    {
+                                      subtarea.subordinadosTareas.map((subTares, IndexS) =>
+                                        <Col md="1" className="m-1 p-0" style={{ background: subTares.prioridad_color }} key={IndexS} >
+                                          <div className="text-center flex-column " style={{ fontSize: "0.6rem" }}>
+                                            {subTares.id_proyecto === null ?
+                                              <div style={{ border: "1px dashed #ffffff", padding: "6px" }} /> :
+                                              <div onClick={() => this.MostrasMasTarea(subTares.tareas_id_tarea)} className="prioridad" >T-{IndexS + 1}</div>}
+                                          </div>
+                                        </Col>
+                                      )
+                                    }
+
+                                  </Row>
+                                </div>
+                              </Container>
+                            </div>
+
+                          </div>
+
+                        ) : ""
+                    }
+                  </div>
+
+                </Col>
+                <Col md="6">
+                  <div className="contanierProyectoAsignados">
+                    {
+                      DataProyectoMostrarApi.map((proyectoMostrar, IndexPM) =>
+
+                        <div key={IndexPM}>
+
+                          <div className="proyectoBorder prioridad mb-2" style={{ borderBottom: `2px solid ${proyectoMostrar.color}` }} onClick={() => this.CollapseProyecto(IndexPM.toString(), proyectoMostrar.id_proyecto)}>
+                            <div className="numeroProyecto">P-{proyectoMostrar.id_proyecto}</div>
+                            <div className="nombreProyecto" style={{ background: proyectoMostrar.color }}>{proyectoMostrar.nombre}</div>
+                          </div>
+
+                          <Collapse isOpen={this.state.collapseProyecto === IndexPM.toString()}>
+                            <Row>
+                              {
+                                DataTareasApi.map((tarea, indexT) =>
+                                  <Col md="4" key={indexT}>
+                                    <div className={idTareaActivo === tarea.id_tarea ? "containerTareaActivo mb-2" : "containerTarea mb-2"}>
+                                      <div className="d-flex justify-content-between headerTarea p-1 prioridad" onClick={() => this.MostrasMasTarea(tarea.id_tarea)}>
+                                        <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
+                                        <div className="m-0 text-center">{tarea.asunto}</div>
+                                        <div style={{ background: tarea.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "5px", boxShadow: "0 0 2px 2px #a7a7a7" }} />
+                                      </div>
+                                      <div className="bodyTareaProyecto" style={{ background: proyectoMostrar.color }}>
+                                        <img src={`${UrlServer}${tarea.imagen_subordinado[0].imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
+                                        <div className="text-center flex-column ">
+
+                                          <div>
                                             {
                                               this.state.tipoProgresoTarea === "vencido" ?
-                                              <label className="inputCursorText" >
-                                                    {tarea.porcentaje_avance}%
-                                              </label>:
-                                              <div>
-                                                {
-                                                  InputEditablePorcent === indexT 
-                                                    ?
+                                                <label className="inputCursorText" >
+                                                  {tarea.porcentaje_avance}%
+                                            </label> :
+                                                <div>
+                                                  {
+                                                    InputEditablePorcent === indexT
+                                                      ?
                                                       <input type="number" onBlur={e => this.textPorcentEdit(e, indexT, tarea.id_tarea)} className="inputEditPorcent" autoFocus />
-                                                    :
-                                                    <label className="inputCursorText" onClick={() => this.EditPorcentaje(indexT)} >
-                                                      {tarea.porcentaje_avance}%
-                                                    </label>
-                                                }
-                                              </div>
+                                                      :
+                                                      <label className="inputCursorText" onClick={() => this.EditPorcentaje(indexT)} >
+                                                        {tarea.porcentaje_avance}%
+                                                  </label>
+                                                  }
+                                                </div>
                                             }
 
                                           </div>
-                                            
 
-                                            <div className="text-uppercase">{tarea.emisor_nombre}</div>
-                                          </div>
 
+                                          <div className="text-uppercase">{tarea.emisor_nombre}</div>
                                         </div>
-                                      </div>
-                                    </Col>
-                                  )
-                                }
-                              </Row>
-                            </Collapse>
-                          </div>
 
-                        )
-                      }
-                    </div>
-                    {
-                      PositsFiltrado.comentarios === undefined ? "" :
-                        <div className="ContainerComentarios">
-                          <div className="SmsComentarios" >
-                            {
-                              PositsFiltrado.comentarios !== undefined ?
-                                PositsFiltrado.comentarios.map((comentario, indexC) =>
-                                  <div className="media mb-2" key={indexC}>
-                                    <img className="align-self-end mr-2 imgCircular" src={`${UrlServer}${comentario.imagen}`} alt={comentario.usuario} width="5%" height="5%" />
-                                    <div className="media-body bodyComentarios">
-                                      <label ref={this.inputRefComent} className="mb-0"> <b className="text-capitalize" >{comentario.usuario} </b>{` ${comentario.mensaje}`}</label>
-                                      <div className="float-right small">
-                                        {`${comentario.hora} ${comentario.fecha}`}
                                       </div>
                                     </div>
-                                  </div>
-                                ) : "no hay data"
-                            }
-
-                          </div>
-                          <div className="inputComnentario">
-                            <form onSubmit={this.GuardaComentario} autoComplete="off">
-                              <input type="text" className="form-control form-control-sm" id="inputComentario" />
-                            </form>
-                          </div>
+                                  </Col>
+                                )
+                              }
+                            </Row>
+                          </Collapse>
                         </div>
-                    }
 
-                  </Col>
-                </Row>
-              </Container>
+                      )
+                    }
+                  </div>
+                  {
+                    PositsFiltrado.comentarios === undefined ? "" :
+                      <div className="ContainerComentarios">
+                        <div className="SmsComentarios" >
+                          {
+                            PositsFiltrado.comentarios !== undefined ?
+                              PositsFiltrado.comentarios.map((comentario, indexC) =>
+                                <div className="media mb-2" key={indexC}>
+                                  <img className="align-self-end mr-2 imgCircular" src={`${UrlServer}${comentario.imagen}`} alt={comentario.usuario} width="5%" height="5%" />
+                                  <div className="media-body bodyComentarios">
+                                    <label ref={this.inputRefComent} className="mb-0"> <b className="text-capitalize" >{comentario.usuario} </b>{` ${comentario.mensaje}`}</label>
+                                    <div className="float-right small">
+                                      {`${comentario.hora} ${comentario.fecha}`}
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : "no hay data"
+                          }
+
+                        </div>
+                        <div className="inputComnentario">
+                          <form onSubmit={this.GuardaComentario} autoComplete="off">
+                            <input type="text" className="form-control form-control-sm" id="inputComentario" />
+                          </form>
+                        </div>
+                      </div>
+                  }
+
+                </Col>
+              </Row>
+
             </div>
 
           </Col>
@@ -1220,55 +1288,60 @@ class GestionTareas extends Component {
               <div className="ModalContaninerMas">
                 <div className="bg-info p-2">
                   <div className="d-flex flex-column">
-                    <div className="text-center h6">RESIDENTE</div>
+                    <div className="text-uppercase text-center h6">{`${DataMostrarDetallesApi.cargo}`}</div>
                     <div className="">
-                      <img src="https://www.inmosenna.com/wp-content/uploads/2018/07/avatar-user-teacher-312a499a08079a12-512x512-300x300.png" alt="sigobras" className="imgCircular mx-auto d-block" width="140px" height="140px" />
-
+                      <img src={`${UrlServer}${DataMostrarDetallesApi.foto}`} alt="sigobras" className="imgCircular mx-auto d-block" width="110px" height="110px" />
                     </div>
-                    <div className="text-center"><b>DAYANA</b></div>
-                    <div className="text-center text-warning">
-                      <MdStar size={20} />
-                      <MdStar size={20} />
-                      <MdStar size={20} />
-                      <MdStar size={20} />
-                      <MdStarBorder size={20} />
+                    <div className="text-center"><b>{`${DataMostrarDetallesApi.nombre} ${DataMostrarDetallesApi.apellido_paterno}`} </b></div>
+                    <div className="text-center text-warning ">
+                      {
+                        DataMostrarDetallesApi.calificacionEstrellas !== undefined ?
+                          DataMostrarDetallesApi.calificacionEstrellas.map((estrella, iE) =>
+                            <span key={iE}>
+                              {estrella === 1 ? <MdStar size={20} /> : <MdStarBorder size={20} />}
+
+                            </span>
+                          )
+                          : "dd"
+                      }
                     </div>
                   </div>
                 </div>
                 <div className="d-flex">
-                  <div className="p-1 bg-danger flex-fill text-center">
-                    <span>35</span><br />
+                  <div className="p-1 bg-success flex-fill text-center">
+                    <span>{DataMostrarDetallesApi.tareasConcluidas}</span><br />
                     <span>Concluidos</span>
                   </div>
-                  <div className="p-1 bg-primary flex-fill text-center">
-                    <span>20</span><br />
+                  <div className="p-1 bg-danger flex-fill text-center">
+                    <span>{DataMostrarDetallesApi.tareasVencidas}</span><br />
                     <span>Vencidos</span>
                   </div>
                 </div>
+
               </div>
             </Col>
             <Col sm="9">
               <div className="ModalContaninerMas">
                 <div className="d-flex flex-column">
-                  <div className="h6">RESUMEN  2016 - 2019</div>
+                  <div className="h6">RESUMEN  {DataMostrarDetallesApi.tareasDesdeHastaAnios}</div>
 
                   <InputGroup>
-                    <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplit}>
+                    {/* <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplitAniosTareas}>
                       <Button outline>AÑO</Button>
                       <DropdownToggle split outline />
                       <DropdownMenu>
-                        <DropdownItem header>Header</DropdownItem>
-                        <DropdownItem disabled>Action</DropdownItem>
-                        <DropdownItem>Another Action</DropdownItem>
-                        <DropdownItem divider />
-                        <DropdownItem>Another Action</DropdownItem>
+                        {
+                          DataMostrarDetallesAnioApi.map((anio, iAnio)=>
+                            <DropdownItem key={iAnio}>{ anio.anyo }</DropdownItem>
+                          )
+                        }
                       </DropdownMenu>
-                    </InputGroupButtonDropdown>
+                    </InputGroupButtonDropdown> */}
 
-                    <InputGroupButtonDropdown addonType="prepend" isOpen={this.state.splitButtonOpen} toggle={this.toggleSplit}>
-                      <Button outline>ENERO</Button>
-                      <Button outline>FEBRERO</Button>
-                      <Button outline>MARZO</Button>
+                    <InputGroupButtonDropdown addonType="prepend">
+                      <Button outline>{DataMostrarDetallesAnioApi.length !== 0 ? DataMostrarDetallesAnioApi[0].anyo : ""}</Button>
+                      {/* <Button outline>FEBRERO</Button>
+                      <Button outline>MARZO</Button> */}
                     </InputGroupButtonDropdown>
                   </InputGroup>
                 </div>

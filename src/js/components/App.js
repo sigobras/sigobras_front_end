@@ -53,7 +53,6 @@ class AppAng extends Component {
         this.state = {
             navbarExpland: true,
             navbarExplandRight: false,
-            isFull: false,
             collapse: null,
             DataObra: [],
             DataMenus: []
@@ -61,7 +60,6 @@ class AppAng extends Component {
 
         this.ButtonToogle = this.ButtonToogle.bind(this);
         this.collapseRight = this.collapseRight.bind(this)
-        this.irFullScreen = this.irFullScreen.bind(this)
         this.CollapseMenu = this.CollapseMenu.bind(this)
 
     }
@@ -73,6 +71,7 @@ class AppAng extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
             .then((res) => {
+                console.log("data obras general ",  res.data)
                 this.setState({
                     DataObra: res.data
                 })
@@ -124,61 +123,35 @@ class AppAng extends Component {
         });
     }
 
-    irFullScreen() {
-        this.setState({
-            isFull: !this.state.isFull
-        });
-    }
-
     CollapseMenu(e) {
         let event = Number(e);
         this.setState({ collapse: this.state.collapse !== event ? event : null });
     }
 
     render() {
-        var { navbarExplandRight, isFull, DataObra, DataMenus, collapse } = this.state
+        var { navbarExplandRight, DataObra, DataMenus, collapse } = this.state
 
         return (
 
-            // <Fullscreen enabled={this.state.isFull} onChange={isFull => this.setState({isFull})}> 
             <Router>
                 <div>
                     <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
-                            <div>
-                                <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="43" height="30" />
-                                <span className="textSigobras h5 ml-2"> SIGOBRAS</span>
-                            </div>
-                            <div>
-                                <span className="text-white ButtonToogleMenu" onClick={this.ButtonToogle}>
-                                    <MdDehaze size={20} />
-                                </span>
-                            </div>
-                            <div className="ml-auto">
-                                <div className="float-right"><UserNav /></div>
+                        <div>
+                            <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="45" height="28" />
+                            <span className="textSigobras h5 ml-2"> SIGOBRAS</span>
+                        </div>
+                        <div>
+                            <span className="text-white ButtonToogleMenu" onClick={this.ButtonToogle}>
+                                <MdDehaze size={20} />
+                            </span>
+                        </div>
+                        <div className="ml-auto">
+                            <div className="float-right"><UserNav /></div>
+                            <div className="float-right"><MensajeNav /></div>
+                            <div className="float-right"><NotificacionNav /></div>
+                            <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
 
-                                {/* <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ? <MdFullscreen size={20} /> : <MdFullscreenExit size={20} />}</a></div> */}
-                                <div className="float-right"><MensajeNav /></div>
-                                <div className="float-right"><NotificacionNav /></div>
-                                <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
-
-                            </div>
-
-                        {/* <span className="mr-0 m-0 pt-1 text-light h5 d-flex">
-                            <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="43" height="30" /> 
-                                <span className="textSigobras"> SIGOBRAS</span>
-                                <button className="btn btn-link btn-sm m-0 p-0 float-right text-white" onClick={this.ButtonToogle}>
-                                    <MdDehaze size={20} />
-                                </button>
-                        
-                            <div className="clearfix p-0 m-0">
-                                <div className="float-right"><a className="nav-link" onClick={this.irFullScreen}>{isFull === false ? <MdFullscreen size={20} /> : <MdFullscreenExit size={20} />}</a></div>
-                                <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
-                                <div className="float-right"><NotificacionNav /></div>
-                                <div className="float-right"><MensajeNav /></div>
-                                <div className="float-right"><UserNav /></div>
-
-                            </div>
-                        </span> */}
+                        </div>
                     </nav>
 
                     <div className="container-fluid ">
@@ -194,7 +167,7 @@ class AppAng extends Component {
                             pauseOnHover
                         />
                         <div className="row">
-                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'col-md-2 navbarExplandLeft d-md-block sidebar' : "navbarCollapseLeft sidebar"}>
+                            <nav className={JSON.parse(localStorage.getItem('opcionBtnToogle')) ? 'navbarExplandLeft sidebar' : "navbarCollapseLeft sidebar"}>
                                 <div className="sidebar-sticky">
                                     <ul className="nav flex-column ull">
 
@@ -365,7 +338,6 @@ class AppAng extends Component {
                     </div>
                 </div>
             </Router>
-            // </Fullscreen>
         );
     }
 }

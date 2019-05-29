@@ -5,6 +5,9 @@ body {
   font-size: .9rem !important;
   color: #dcd7d7 !important;
   background-image: url("../images/blur-bg.jpg");
+  /* background-position: 50% 0%;
+  background-repeat: no-repeat;
+  background-size: cover; */
 }
 
 /*  Sidebar */
@@ -67,14 +70,22 @@ body {
 /* nav izquierda  angerman  */
 
 .navbarExplandLeft {
-  -webkit-transition: width 0.9s;
-  transition: width 0.9s;
   border-right: 1px solid #000;
+  -webkit-transition: width 0.5s;
+  transition: 0.5s;
+  flex: 0 0 16.666667%;
+  max-width: 16.666667%;
+  background: #1f232d52;
 }
 
 .navbarCollapseLeft {
   width: 0px;
   position: inherit;
+  -webkit-transition: width 0.5s;
+  transition: 0.5s;
+  flex: 0 0 0%;
+  max-width: 0%;
+  opacity: 0;
 }
 
 /*fin nav izquierda  angerman  */
@@ -94,16 +105,23 @@ body {
 
 @media only screen and (max-width: 767px) {
   .navbarExplandLeft {
-    width: 200px;
+    width: 200px !important;
     position: absolute;
-    -webkit-transition: width 0.9s;
-    transition: 0.9s;
+    -webkit-transition: width 0.5s;
+    transition: 0.5s;
     border-right: 1px solid #000;
     background: #1d202a;
+    flex: 0 0 50%;
+    max-width: 50%;
   }
 
   .navbarCollapseLeft {
-    display: none
+    width: 0px;
+    position: absolute;
+    -webkit-transition: width 0.5s;
+    transition: 0.5s;
+    border-right: 1px solid #000;
+    background: #1d202a;
   }
 
   .navbarExplandRight {
@@ -119,17 +137,18 @@ body {
 .textSigobras {
   text-shadow: 0 0 6px #436cab;
 }
+
 /* fin letra sigobras escoder */
 
 /* ButtonToogle menu */
-.ButtonToogleMenu{
+.ButtonToogleMenu {
   cursor: pointer;
   margin-left: 70px;
 }
 
 /* cambia diseñoe la medida */
 @media only screen and (max-width: 1015px) {
- .textSigobras{
+  .textSigobras {
     display: none;
   }
 }
@@ -597,4 +616,28 @@ table.table thead th {
   background-color: #1a028585;
   cursor: text;
   display: inline-block;
+}
+
+
+.divCodigoRecur {
+  border: 1px solid #2676bb;
+  padding: 4px;
+  border-radius: 6px;
+  margin: 2px;
+  padding-top: 1px;
+  cursor: pointer;
+}
+
+.divCodigoRecur:hover {
+  border: 1px solid #2676bb;
+  box-shadow: inset 0px -3px #2676bb;
+  transition: all 0.5s;
+}
+
+/*  drag  */
+.grabbable {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
 }
