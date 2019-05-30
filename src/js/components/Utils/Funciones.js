@@ -1,5 +1,6 @@
 // redondea a dos decimales
 function Redondea(x) {
+    // console.log("x =>>", x)
     return Number.parseFloat(x).toFixed(2);
 }
 

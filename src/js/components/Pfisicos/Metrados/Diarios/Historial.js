@@ -242,7 +242,7 @@ class MDHistorial extends Component {
             fecha: fecha
         })
             .then((res) => {
-                console.log("response data Componentes ", res.data)
+                // console.log("response data Componentes ", res.data)
                 this.setState({
                     DataComponentesApi: res.data
                 })
