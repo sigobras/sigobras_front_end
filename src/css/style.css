@@ -311,6 +311,13 @@ body {
   padding-top: 45%;
 }
 
+.detallesObra {
+  /* /* bottom: 0px;
+  position: absolute; */
+  width: 100%;
+  padding-top: 45%;
+}
+
 /* tamaño de fuente pequeño */
 .fsize {
   font-size: 0.5rem

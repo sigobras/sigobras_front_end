@@ -216,6 +216,13 @@ class AppAng extends Component {
                                             </li> */}
 
                                     </ul>
+
+                                    <div className="detallesObra pl-2 pr-2">
+                                        <div>{ DataObra.codigo }</div>
+                                        <div>S/. { DataObra.presupuesto_total }</div>
+                                        <div> CD . S/. { DataObra.costo_directo }</div>
+                                    </div>
+
                                     <div className="abajoCirculos pl-2 pr-2">
                                         <div className="row">
                                             <div className="col-6">
