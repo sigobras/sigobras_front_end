@@ -71,7 +71,7 @@ class AppAng extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
             .then((res) => {
-                console.log("data obras general ",  res.data)
+                // console.log("data obras general ",  res.data)
                 this.setState({
                     DataObra: res.data
                 })
@@ -218,9 +218,12 @@ class AppAng extends Component {
                                     </ul>
 
                                     <div className="detallesObra pl-2 pr-2">
-                                        <div>{ DataObra.codigo }</div>
-                                        <div>S/. { DataObra.presupuesto_total }</div>
-                                        <div> CD . S/. { DataObra.costo_directo }</div>
+                                        <div className="codigoObra">{ DataObra.codigo }</div>
+                                        <div className="ContentpresupuestoObra">
+                                            <div className="PresuObra mr-2">S/. { DataObra.presupuesto_total }</div>
+                                            <div className="PresuObra"> CD . S/. { DataObra.costo_directo }</div>
+                                        </div>
+                                        
                                     </div>
 
                                     <div className="abajoCirculos pl-2 pr-2">
