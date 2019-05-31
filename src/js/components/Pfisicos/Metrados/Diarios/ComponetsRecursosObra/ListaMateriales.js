@@ -531,7 +531,7 @@ class ListaMateriales extends Component {
       var Idselect = this.state.DataGuardarInput.data[0][4] || ""
       // console.log("id ",  Idselect )
 
-      if ( this.state.DataGuardarInput.data[0][3] !== "" ) {
+      if (this.state.DataGuardarInput.data[0][3] !== "") {
         // console.log("this.state.DataGuardarInput ", Number(this.state.DataGuardarInput.data[0][4]))
 
         axios.post(`${UrlServer}/postrecursosEjecucionreal`,
@@ -544,11 +544,11 @@ class ListaMateriales extends Component {
             var DataRecursosListaApi = this.state.DataRecursosListaApi
 
             var EncuentraTipoOrdenCompra = DataRecursosListaApi[index].tipodocumentoadquisicion_nombre
-            if ( Idselect !== "" ) {
+            if (Idselect !== "") {
               // console.log("this.state.DataGuardarInput ", Number(this.state.DataGuardarInput.data[0][4]))
-      
+
               var EncuentraTipoOrdenC = this.state.DataTipoDocAdquisicionApi.filter((data) => {
-                return data.id_tipoDocumentoAdquisicion === Number( Idselect )
+                return data.id_tipoDocumentoAdquisicion === Number(Idselect)
               })
               EncuentraTipoOrdenCompra = EncuentraTipoOrdenC[0].nombre
             }
@@ -564,13 +564,13 @@ class ListaMateriales extends Component {
             DataRecursosListaApi[index].recurso_gasto_precio = res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio
 
 
-            DataRecursosListaApi[index].recurso_gasto_parcial = Redondea(parcialRG) 
+            DataRecursosListaApi[index].recurso_gasto_parcial = Redondea(parcialRG)
             DataRecursosListaApi[index].diferencia = Redondea(diferenciaRG)
-            DataRecursosListaApi[index].porcentaje =Redondea( porcentajeRG)
+            DataRecursosListaApi[index].porcentaje = Redondea(porcentajeRG)
 
             // reaq codigo de documento
             DataRecursosListaApi[index].recurso_codigo = res.data.recurso_codigo || DataRecursosListaApi[index].recurso_codigo
-            DataRecursosListaApi[index].tipodocumentoadquisicion_nombre =  EncuentraTipoOrdenCompra 
+            DataRecursosListaApi[index].tipodocumentoadquisicion_nombre = EncuentraTipoOrdenCompra
 
 
             // console.log("DataRecursosListaApi ", DataRecursosListaApi)
@@ -898,13 +898,15 @@ class ListaMateriales extends Component {
                 RESUMEN
               </NavLink>
             </NavItem>
-            {DataComponentes.length === 0 ? <Spinner color="primary" size="sm" /> : DataComponentes.map((comp, indexComp) =>
-              <NavItem key={indexComp}>
-                <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre)}>
-                  C-{comp.numero}
-                </NavLink>
-              </NavItem>
-            )}
+            {
+              DataComponentes.length === 0 ? <Spinner color="primary" size="sm" /> :
+                DataComponentes.map((comp, indexComp) =>
+                  <NavItem key={indexComp}>
+                    <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre)}>
+                      C-{comp.numero}
+                    </NavLink>
+                  </NavItem>
+                )}
           </Nav>
 
           {/* RESUMEN - MAS DETALLES DE BINES DE LA OBRA */}
@@ -916,7 +918,7 @@ class ListaMateriales extends Component {
                 <CardBody>
 
                   <div className="mb-1 mt-1">
-                    
+
                     <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
@@ -951,7 +953,7 @@ class ListaMateriales extends Component {
                             <div className="float-right">
                               <InputGroup size="sm">
                                 <InputGroupAddon addonType="prepend">
-                                  <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No}  title="asignar codigos y editar ">
+                                  <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No} title="asignar codigos y editar ">
                                     <MdCompareArrows /> <MdModeEdit />
                                   </Button>
                                   <Button outline color="info" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} title="organizar">

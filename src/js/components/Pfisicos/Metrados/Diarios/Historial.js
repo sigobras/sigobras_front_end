@@ -50,7 +50,7 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
             .then((res) => {
-                // console.log("response data ANIO GENERAL ", res.data)
+                console.log("response data ANIO GENERAL ", res.data)
                 var tamanioAnios = res.data.length - 1
 
                 var tamanioMeses = res.data[tamanioAnios].meses.length - 1
@@ -80,10 +80,8 @@ class MDHistorial extends Component {
         this.setState({
             inputAnio: e.target.value
         })
-        this.reqAnual(this.state.inputAnio)
+        this.reqAnual(e.target.value)
         this.MesesRequest(e.target.value)
-        
-
     }
 
     TabMeses(tab, fecha) {
@@ -517,11 +515,39 @@ class MDHistorial extends Component {
                     {
                         this.state.activeTabComp === "resumen"
                             ?
-                            <HighchartsReact
-                                highcharts={Highcharts}
-                                // constructorType={'stockChart'}
-                                options={options}
-                            />
+                            <div className="table-responsive card">
+                                <HighchartsReact
+                                    highcharts={Highcharts}
+                                    // constructorType={'stockChart'}
+                                    options={options}
+                                />
+                                <br />
+                                <table className="table table-sm small">
+                                    <thead>
+                                        <tr>
+                                            <th>N°</th>
+                                            <th>NOMBRE</th>
+                                            <th>PRESUPUESTO</th>
+                                            <th>AVANCE</th>
+                                            <th>PORCENTAJE AVANCE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            DataResumenApi.leyenda !== undefined ?
+                                            DataResumenApi.leyenda.map((comp,  iComp)=>
+                                                <tr key={ iComp }>
+                                                    <td>{ comp.numero }</td>
+                                                    <td>{ comp.componente_nombre }</td>
+                                                    <td>{ comp.presupuesto }</td>
+                                                    <td>{ comp.valor }</td>
+                                                    <td>{ comp.porcentaje }</td>   
+                                                </tr>
+                                            ):<tr><td colSpan="5">cargando</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                             :
                             <Card>
                                 <CardHeader>
