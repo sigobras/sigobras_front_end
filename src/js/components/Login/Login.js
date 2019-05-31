@@ -130,7 +130,11 @@ class Login extends Component {
             </form>
           </div>
           <div className="modal-footer p-1 text-center">
-            <label>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C. <br /> © 2017 - 2019</label>
+            {/* <i>SISTEMA DE INFORMACIÓN GERENCIAL DE OBRAS S.A.C.</i>  */}
+               Contanto<br />
+              <i> sigobras.sac@gmail.com</i>
+              <br />
+              <i>951396279</i>
           </div>
         </div>
         {/* <MultiFilter /> */}
