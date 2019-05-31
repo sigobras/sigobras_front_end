@@ -36,8 +36,13 @@ class DataSegunCodigoSelect extends Component {
 
     return (
       <div className="table-responsive">
-        <label className="h5">{`${nombreDocumento } ( ${nombreCod} )`} </label>
-        <InputGroup size="sm">
+        <div className="d-flex justify-content-center">
+          <div className="h5">{`${nombreDocumento} ( ${nombreCod} )`} </div>
+          {/* <button>Guardar</button> */}
+        </div>
+{/* 
+
+        <InputGroup size="sm" className="mb-2 px-1">
           <InputGroupAddon addonType="prepend">
             <InputGroupText>
               ESPECÍFICA
@@ -47,71 +52,72 @@ class DataSegunCodigoSelect extends Component {
         </InputGroup>
 
         <div className="d-flex">
-         
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  RAZÓN SOCIAL
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                RAZÓN SOCIAL
               </InputGroupText>
-              </InputGroupAddon>
-              <Input placeholder="INGRESE " />
-            </InputGroup>
-         
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  RUC
+            </InputGroupAddon>
+            <Input placeholder="INGRESE " />
+          </InputGroup>
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                RUC
                 </InputGroupText>
-              </InputGroupAddon>
-              <Input placeholder="INGRESE" />
-            </InputGroup>
+            </InputGroupAddon>
+            <Input placeholder="INGRESE" />
+          </InputGroup>
         </div>
 
         <div className="d-flex">
-          
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  ORDEN DE COMPRA
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                ORDEN DE COMPRA
                 </InputGroupText>
-              </InputGroupAddon>
-              <Input placeholder="INGRESE" />
-            </InputGroup>
-          
-          
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  FECHA
+            </InputGroupAddon>
+            <Input placeholder="INGRESE" />
+          </InputGroup>
+
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                FECHA
                 </InputGroupText>
-              </InputGroupAddon>
-              <Input type="date" placeholder="INGRESE" />
-            </InputGroup>
-          
-          
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  SIAF
+            </InputGroupAddon>
+            <Input type="date" placeholder="INGRESE" />
+          </InputGroup>
+
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                SIAF
                 </InputGroupText>
-              </InputGroupAddon>
-              <Input placeholder="INGRESE" />
-            </InputGroup>
-          
-          
-            <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  N° C / P
+            </InputGroupAddon>
+            <Input placeholder="INGRESE" />
+          </InputGroup>
+
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                N° C / P
                 </InputGroupText>
-              </InputGroupAddon>
-              <Input placeholder="INGRESE" />
-            </InputGroup>
-          
-        </div>
+            </InputGroupAddon>
+            <Input placeholder="INGRESE" />
+          </InputGroup>
+
+        </div> */}
         <table className="table table-sm table-hover">
           <thead>
             <tr>
+              <th>N°</th>
               <th>N° O/C - O/S</th>
               <th>RECURSO</th>
               <th>UND</th>
@@ -130,6 +136,7 @@ class DataSegunCodigoSelect extends Component {
             {
               DataMostarMasCodigo.map((ReqLista, IndexRL) =>
                 <tr key={IndexRL}>
+                  <td>{IndexRL + 1}</td>
                   <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
 
                     {`${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`}

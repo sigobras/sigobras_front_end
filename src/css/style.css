@@ -308,7 +308,31 @@ body {
   /* /* bottom: 0px;
   position: absolute; */
   width: 100%;
-  padding-top: 45%;
+  /* padding-top: 45%; */
+}
+.codigoObra{
+  text-align: center;
+    font-size: 2em;
+    font-family: courier new;
+    font-weight: bolder;
+}
+.detallesObra {
+  /* /* bottom: 0px;
+  position: absolute; */
+  width: 100%;
+  padding-top: 30%;
+}
+.ContentpresupuestoObra{
+  display: flex;
+  justify-content: center;
+}
+
+.PresuObra{
+  background: #1a2a396e;
+  border-radius: 3px;
+  box-shadow: 0 0 2px 1px #1c2e3d;
+  padding: 3px;
+  font-family: -webkit-body;
 }
 
 /* tamaño de fuente pequeño */

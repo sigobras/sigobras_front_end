@@ -378,7 +378,7 @@ class ValorizacionGeneral extends Component {
 
                                             </tr>
 
-                                            <tr className="resplandPartida font-weight-bolder">
+                                            {/* <tr className="resplandPartida font-weight-bolder">
                                                 <td colSpan="2">TOTAL COSTO INDIRECTO</td>
                                                 <td>S/. {this.state.ppto}</td>
 
@@ -394,7 +394,7 @@ class ValorizacionGeneral extends Component {
                                                 <td>S/. {this.state.saldo}</td>
                                                 <td>{this.state.porcentaje_saldo} %</td>
 
-                                            </tr>
+                                            </tr> */}
                                         </tbody>
                                     </table>
                                 </div>

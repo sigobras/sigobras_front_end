@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import { toast } from "react-toastify";
 
 import { UrlServer, Id_Obra } from '../../../../Utils/ServerUrlConfig';
-import { ConvertFormatStringNumber, FechaActual } from '../../../../Utils/Funciones'
+import { ConvertFormatStringNumber, FechaActual, Redondea } from '../../../../Utils/Funciones'
 import TblResumenCompDrag from './ResumenCostoDirecto/TblResumenCompDrag'
 // import { inflateRaw } from 'zlib';
 
@@ -522,41 +522,72 @@ class ListaMateriales extends Component {
 
   activaEditable(index, CantPrecio, selectTipoDocumento) {
     console.log("activando", index, "selectTipoDocumento ", selectTipoDocumento)
+
+    // console.log("DataTipoDocAdquisicionApi ", this.state.DataTipoDocAdquisicionApi)
+
     this.setState({ Editable: index, precioCantidad: CantPrecio, selectTipoDocumento })
 
     if (CantPrecio === null) {
-      axios.post(`${UrlServer}/postrecursosEjecucionreal`,
-        this.state.DataGuardarInput
-      )
-        .then((res) => {
-          console.log("response recurso real ", res.data)
-          // console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index] ); 
-          // console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
+      var Idselect = this.state.DataGuardarInput.data[0][4] || ""
+      // console.log("id ",  Idselect )
+
+      if ( this.state.DataGuardarInput.data[0][3] !== "" ) {
+        // console.log("this.state.DataGuardarInput ", Number(this.state.DataGuardarInput.data[0][4]))
+
+        axios.post(`${UrlServer}/postrecursosEjecucionreal`,
+          this.state.DataGuardarInput
+        )
+          .then((res) => {
+            console.log("response recurso real ✔", res.data)
+            // console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index] ); 
+            // console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
+            var DataRecursosListaApi = this.state.DataRecursosListaApi
+
+            var EncuentraTipoOrdenCompra = DataRecursosListaApi[index].tipodocumentoadquisicion_nombre
+            if ( Idselect !== "" ) {
+              // console.log("this.state.DataGuardarInput ", Number(this.state.DataGuardarInput.data[0][4]))
+      
+              var EncuentraTipoOrdenC = this.state.DataTipoDocAdquisicionApi.filter((data) => {
+                return data.id_tipoDocumentoAdquisicion === Number( Idselect )
+              })
+              EncuentraTipoOrdenCompra = EncuentraTipoOrdenC[0].nombre
+            }
 
 
-          var DataRecursosListaApi = this.state.DataRecursosListaApi
-          var parcialRG = res.data.recurso_gasto_cantidad * (res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio)
-          var diferenciaRG = DataRecursosListaApi[index].recurso_parcial - parcialRG
-          var porcentajeRG = diferenciaRG / DataRecursosListaApi[index].recurso_parcial * 100
+            // console.log("EncuentraTipoOrdenC ", EncuentraTipoOrdenCompra)
 
-          DataRecursosListaApi[index].recurso_gasto_cantidad = res.data.recurso_gasto_cantidad
-          DataRecursosListaApi[index].recurso_gasto_precio = res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio
+            var parcialRG = res.data.recurso_gasto_cantidad * (res.data.recurso_gasto_precio) || DataRecursosListaApi[index].recurso_gasto_precio
+            var diferenciaRG = DataRecursosListaApi[index].recurso_parcial - parcialRG
+            var porcentajeRG = diferenciaRG / DataRecursosListaApi[index].recurso_parcial * 100
+
+            DataRecursosListaApi[index].recurso_gasto_cantidad = res.data.recurso_gasto_cantidad || DataRecursosListaApi[index].recurso_gasto_cantidad
+            DataRecursosListaApi[index].recurso_gasto_precio = res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio
 
 
-          DataRecursosListaApi[index].recurso_gasto_parcial = parcialRG
-          DataRecursosListaApi[index].diferencia = diferenciaRG
-          DataRecursosListaApi[index].porcentaje = porcentajeRG
+            DataRecursosListaApi[index].recurso_gasto_parcial = Redondea(parcialRG) 
+            DataRecursosListaApi[index].diferencia = Redondea(diferenciaRG)
+            DataRecursosListaApi[index].porcentaje =Redondea( porcentajeRG)
 
-          this.setState({
-            DataRecursosListaApi: DataRecursosListaApi
+            // reaq codigo de documento
+            DataRecursosListaApi[index].recurso_codigo = res.data.recurso_codigo || DataRecursosListaApi[index].recurso_codigo
+            DataRecursosListaApi[index].tipodocumentoadquisicion_nombre =  EncuentraTipoOrdenCompra 
+
+
+            // console.log("DataRecursosListaApi ", DataRecursosListaApi)
+
+            this.setState({
+              DataRecursosListaApi: DataRecursosListaApi
+            })
+            toast.success("✔ Guardado")
           })
-          toast.success("✔ Guardado")
-        })
-        .catch((err) => {
-          console.error("algo salió mal al tratar de actualizar :>", err.response)
+          .catch((err) => {
+            console.error("algo salió mal al tratar de actualizar :>", err)
 
-          toast.error("❌ingrese solo numeros")
-        })
+            toast.error("❌ingrese solo numeros")
+          })
+        return
+      }
+      toast.error("Ingrese todos los campos")
     }
 
   }
@@ -564,7 +595,7 @@ class ListaMateriales extends Component {
 
   inputeable(index, tipo, descripcion, e) {
 
-    console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
+    // console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
     if (tipo === "codigo") {
       var demoArray =
       {
@@ -885,7 +916,7 @@ class ListaMateriales extends Component {
                 <CardBody>
 
                   <div className="mb-1 mt-1">
-
+                    
                     <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
@@ -920,10 +951,10 @@ class ListaMateriales extends Component {
                             <div className="float-right">
                               <InputGroup size="sm">
                                 <InputGroupAddon addonType="prepend">
-                                  <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No} >
+                                  <Button outline color="primary" active={this.state.tipoEjecucion === true} disabled={this.state.CamviarTipoVistaDrag === true} onClick={this.Ver_No}  title="asignar codigos y editar ">
                                     <MdCompareArrows /> <MdModeEdit />
                                   </Button>
-                                  <Button outline color="warning" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} >
+                                  <Button outline color="info" active={this.state.CamviarTipoVistaDrag === true} onClick={this.cambiarVistaDragDrop} title="organizar">
                                     <MdExtension />
                                   </Button>
                                 </InputGroupAddon>
@@ -983,7 +1014,7 @@ class ListaMateriales extends Component {
                                                       </span>
                                                       :
 
-                                                      <span>{`${ReqLista.id_tipoDocumentoAdquisicion === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
+                                                      <span>{`${ReqLista.tipodocumentoadquisicion_nombre === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
                                                   }
 
                                                   <div className="ContIcon" >
@@ -1202,8 +1233,8 @@ class ListaMateriales extends Component {
                             {
                               DataRecursosListaApi.map((ReqLista, IndexRL) =>
                                 <tr key={IndexRL}>
-                                  <td>{ReqLista.descripcion} </td>
-                                  <td>{ReqLista.unidad} </td>
+                                  <td> {ReqLista.descripcion} </td>
+                                  <td> {ReqLista.unidad} </td>
                                   <td> {ReqLista.recurso_cantidad}</td>
                                   <td> {ReqLista.recurso_precio}</td>
                                   <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>

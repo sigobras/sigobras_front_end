@@ -308,7 +308,7 @@ class Report_7 extends Component {
         <div> 
 
           <li className="lii">
-              <a href="#"  onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 7.- RESUMEN DE AVANCE FISICO DE LAS PARTIDAS DE OBRA POR MES Y % (METRADOS) ✔ FALTA ESTRUCTURAR</a>
+              <a href="#"  onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 7.- RESUMEN DE AVANCE FISICO DE LAS PARTIDAS DE OBRA POR MES Y % (METRADOS) </a>
           </li>
 
           <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
@@ -357,7 +357,7 @@ class Report_7 extends Component {
 
                 </Col>
               </Row>
-              
+              <div className="text-center text-danger"> EN DESARROLLO </div>
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
           </ModalBody>
         </Modal>
