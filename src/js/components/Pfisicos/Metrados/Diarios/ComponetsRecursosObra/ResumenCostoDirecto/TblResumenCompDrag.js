@@ -31,9 +31,9 @@ class TblResumenCompDrag extends Component {
     })
       .then((res) => {
         console.log("response de codigos agrupado 👀", res.data)
-        this.setState({
-          DataCodigosAgrupado: res.data
-        })
+        // this.setState({
+        //   DataCodigosAgrupado: res.data
+        // })
       })
       .catch((err) => {
         console.error("erres al consultar api ,", err)

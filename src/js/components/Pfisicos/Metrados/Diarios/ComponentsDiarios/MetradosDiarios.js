@@ -1474,7 +1474,7 @@ class MetradosDiarios extends Component {
 
               <div className="chatBody">
                 <div className="media mt-1">
-                  <img src="http://localhost:180/images/src/images/logoSigobras.png" className="align-self-end rounded-circle mr-2 img-fluid" style={{ width: "50px" }} />
+                  <img src="http://sigobras.com/images/042b3c889a81a0000ea2fb79a249f54c.png" className="align-self-end rounded-circle mr-2 img-fluid" style={{ width: "50px" }} />
                   <div className="media-body">
                     <div className="chatBodyMensaje">
                       <span>Lorem ispansum dolor sit met, consectetur .</span>
