@@ -9,25 +9,24 @@ import exporting from 'highcharts/modules/exporting'
 
 import Chart from "./Chart";
 
-
 import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner } from 'reactstrap';
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
-import { logoSigobras, logoGRPuno } from '../Complementos/ImgB64'
+import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
 
 
 class Report_9 extends Component {
-  constructor() {
+  constructor(){
     super()
     this.state = {
-      DataValGantAPI: [],
-      DataAniosApi: [],
-      DataMesesApi: [],
+      DataValGantAPI:[],
+      DataAniosApi:[],
+      DataMesesApi:[],
       modal: false,
-      DataEncabezado: [],
+      DataEncabezado:[],
       urlPdf: '',
       DataChart: {
 
@@ -55,11 +54,12 @@ class Report_9 extends Component {
           pointStart: 1
         }]
       }
+      
     }
 
     this.ModalReportes = this.ModalReportes.bind(this)
     this.PruebaDatos = this.PruebaDatos.bind(this)
-
+    
     this.seleccionaAnios = this.seleccionaAnios.bind(this)
     this.seleccionaMeses = this.seleccionaMeses.bind(this)
     this.myRefChart = React.createRef()
@@ -75,398 +75,374 @@ class Report_9 extends Component {
       console.log("svg ", svg)
 
     }
+
   }
+
 
   ModalReportes() {
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
     // llama al api de años
-    axios.post(`${UrlServer}/getAnyoReportes`, {
-      "id_ficha": sessionStorage.getItem("idobra")
+    axios.post(`${UrlServer}/getAnyoReportes`,{
+      "id_ficha":sessionStorage.getItem("idobra")
     })
-      .then((res) => {
+    .then((res)=>{
         // console.log('res ANIOS', res.data)
         this.setState({
           DataAniosApi: res.data
         })
-      })
-      .catch((err) => {
-        console.log('ERROR ANG al obtener datos ❌' + err);
-      });
+    })
+    .catch((err)=>{
+        console.log('ERROR ANG al obtener datos ❌'+ err);
+    });
   }
 
-  seleccionaAnios(e) {
+  seleccionaAnios(e){   
     // LLAMA AL API DE MESES
-
-    axios.post(`${UrlServer}/getPeriodsByAnyo`, {
-      "id_ficha": sessionStorage.getItem("idobra"),
-      "anyo": e.target.value
+  
+    axios.post(`${UrlServer}/getPeriodsByAnyo`,{
+      "id_ficha":sessionStorage.getItem("idobra"),
+      "anyo":e.target.value
     })
-      .then((res) => {
-        //  console.log('res Meses', res.data)
+    .then((res)=>{
+      //  console.log('res Meses', res.data)
         this.setState({
           DataMesesApi: res.data
         })
-      })
-      .catch((err) => {
-        console.log('ERROR ANG al obtener datos ❌' + err);
-      });
+    })
+    .catch((err)=>{
+        console.log('ERROR ANG al obtener datos ❌'+ err);
+    });
   }
 
-  seleccionaMeses(id_historial, fecha_inicial, fecha_final) {
-    // LLAMA AL API DE MESES
-    axios.post(`${UrlServer}/avanceMensualComparativoPresupuesto`, {
-      "id_ficha": sessionStorage.getItem("idobra"),
-      "historialestados_id_historialestado": id_historial,
-      "fecha_inicial": fecha_inicial,
-      "fecha_final": fecha_final,
+  seleccionaMeses(id_historial,fecha_inicial,fecha_final,mes_act){
+    
+    this.setState({
+      mesActual:mes_act,
     })
-      .then((res) => {
-        //console.log('res avanceMensualComparativoPresupuesto', res.data)
+    // LLAMA AL API DE MESES
+    axios.post(`${UrlServer}/getcronogramaInicio`,{
+      "id_ficha":sessionStorage.getItem("idobra"),
+      "historialestados_id_historialestado":id_historial,
+      "fecha_inicial":fecha_inicial,
+      "fecha_final":fecha_final,
+    })
+    .then((res)=>{
+        //console.log('res getcronogramaInicio', res.data)
         this.setState({
           DataValGantAPI: res.data,
-          DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final)
+          DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
         })
-      })
-      .catch((err) => {
-        console.log('ERROR ANG al obtener datos ❌' + err);
-      });
-
-
-
+    })
+    .catch((err)=>{
+        console.log('ERROR ANG al obtener datos ❌'+ err);
+    });  
 
 
   }
 
 
-  PruebaDatos() {
+  PruebaDatos(){
 
-    var { DataEncabezado } = this.state
+    var {  DataEncabezado } = this.state
 
-    var DataHist = this.state.DataValGantAPI
-
-
+    var DataHist = this.state.DataValGantAPI 
+    console.log('DH', DataHist)
     var ValGant = []
+    
 
+    // for (let i = 0; i < DataHist.grafico_programado; i++){
 
+      // ValGant1.push (
+      //   {
+      //       style: 'tableExample',
+      //       // color: '#ff0707',
+      //       layout: 'lightHorizontalLines',
 
-    ValGant.push(
-      {
-        style: 'tableExample',
-        // color: '#ff0707',
-        layout: 'lightHorizontalLines',
+      //       table: {
+      //         widths: ["*"],
+      //           body: [
+      //                 [
+      //                   {
+      //                     text: 'CHART',
+      //                     style: "tableHeader1",
+      //                     alignment: "center",
+      //                   }
+                        
+      //               ],
+      //           ]
 
-        table: {
-          widths: ["*"],
-          body: [
-            [
-              {
-                text: 'CHART',
-                style: "tableHeader1",
-                alignment: "center",
-              }
+      //       },
+      //   },
+      // )
+    // }
 
-            ],
-          ]
+    //for (let j = 0; j < DataHist.length; j++) {
+      
+      
+      ValGant.push(
+        
+        {
+            
+            style: 'tableExample',
+            // color: '#ff0707',
+            layout: 'lightHorizontalLines',
 
-        },
-      },
-      {
-
-        style: 'tableExample',
-        // color: '#ff0707',
-        layout: 'lightHorizontalLines',
-
-        table: {
-          widths: [20, 20, 20, 20, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
-          text: 'CHART',
-          style: "tableHeader",
-          alignment: "center",
-
-          body: [
-            [
-              {
-                text: 'TIEMPO',
-                style: "tableHeader",
-                alignment: "center",
-                colSpan: 4,
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-                text: 'PROGRAMADO',
-                style: "tableHeader",
-                alignment: "center",
-                colSpan: 4,
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-                text: 'FISICO EJECUTADO',
-                style: "tableHeader",
-                alignment: "center",
-                colSpan: 5,
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-                text: 'FINANCIERO EJECUTADO',
-                style: "tableHeader",
-                alignment: "center",
-                colSpan: 5,
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-
-              },
-              {
-
-              }
-            ],
-            [
-              {
-                text: 'MES',
-                style: "tableHeader",
-                alignment: "center",
-
-              },
-              {
-                text: 'FECHA DE INICIO',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'DIAS PARCIAL',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'DIAS ACUMULADOS',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'COSTO MENSUAL PROGRAMADO',
-                style: "tableHeader",
-                alignment: "center",
-
-              },
-              {
-                text: 'COSTO ACUMALADO MENSUAL PROGRAMADO',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL PROGRAMADO EN %',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL ACUMULADO PROGRAMDO EN %',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL EJECUTADO',
-                style: "tableHeader",
-                alignment: "center",
-
-              },
-              {
-                text: 'AVANCE MENSUAL ACUMULADO EJECUTADO',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL EJECUTADO EN %',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL ACUMULADO EJECUTADO EN %',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'DESVIACION DE EJECUCION FISICA',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL FINANCIERO',
-                style: "tableHeader",
-                alignment: "center",
-
-              },
-              {
-                text: 'AVANCE MENSUAL ACUMULADO FINANCIERO',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL FINANCIERO EN %',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'AVANCE MENSUAL ACUMULADO FINANCIERO EN %',
-                style: "tableHeader",
-                alignment: "center",
-              },
-              {
-                text: 'DESVIACION DE EJECUCION FINANCIERA',
-                style: "tableHeader",
-                alignment: "center",
-                margin: [0, 0, 2, 0]
-              }
-            ],
-            [
-              {
-                text: 'Enero',
-                style: "tableFecha",
-                alignment: "center",
-
-              },
-              {
-                text: 'qw12221',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'qwert',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'tynwv',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'hnhu',
-                style: "tableFecha",
-                alignment: "center",
-
-              },
-              {
-                text: 'mgughnh',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'yjmtymj',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'fhrjty',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'hrthbrh',
-                style: "tableFecha",
-                alignment: "center",
-
-              },
-              {
-                text: 'hbtrhbhb',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'thbrbh',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'hebthhbr',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'wrgtrtyj',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'thbrbh',
-                style: "tableFecha",
-                alignment: "center",
-
-              },
-              {
-                text: 'ethrartbh',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'sfdfgs',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'Affefe%',
-                style: "tableFecha",
-                alignment: "center",
-              },
-              {
-                text: 'asfdggdfg',
-                style: "tableFecha",
-                alignment: "center",
-                margin: [0, 0, 2, 0]
-              }
-            ],
-          ]
-
-        }
-      }
-    )
-
+            table: {
+              widths: ['auto','auto','auto','auto','auto','auto','auto','auto','auto','auto'],              
+                  
+                body: [
+                        [
+                          {
+                            text: 'CHART',
+                            style: "TableMontosInforme",
+                            alignment: "center",
+                            colSpan: 10,
+                          },
+                          {
+                              
+                          },
+                          {
+                              
+                          },
+                          {
+                              
+                          },
+                          
+                          {
+                             
+                          },
+                          {
+                              
+                          },
+                          {
+                              
+                          },
+                          {
+                          
+                          },
+                          {
+                              
+                          },
+                          {
+                              
+                          }                        
+                      ],
+                        [
+                            {
+                              text: 'MONTOS VALORIZADOS PROGRAMADOS',
+                              style: "TableMontosInforme",
+                              alignment: "center",
+                              colSpan: 4,
+                            },
+                            {
+                                
+                            },
+                            {
+                                
+                            },
+                            {
+                                
+                            },
+                            
+                            {
+                              text: 'MONTOS VALORIZADOS EJECUTADOS',
+                              style: "TableMontosInforme",
+                              alignment: "center",
+                              colSpan: 6,  
+                            },
+                            {
+                                
+                            },
+                            {
+                                
+                            },
+                            {
+                            
+                            },
+                            {
+                                
+                            },
+                            {
+                                
+                            }                        
+                        ],
+                        [
+                          {
+                            text: 'PERIODO',
+                            style: "tableHeader",
+                            alignment: "center",
+                            //colSpan: 2,
+                          },
+                          
+                          {
+                            text: 'PROGRAMADO',
+                            style: "tableHeader",
+                            alignment: "center",
+                            colSpan: 3,   
+                          },
+                          {
+                              
+                          },
+                          {
+                          
+                          },
+                          {
+                            text: 'FISICO EJECUTADO',
+                            style: "tableHeader",
+                            alignment: "center",
+                            colSpan: 3,  
+                          },
+                          {
+                              
+                          },
+                          {
+                              
+                          },
+                          {
+                            text: 'FINANCIERO EJECUTADO',
+                            style: "tableHeader",
+                            alignment: "center",
+                            colSpan: 3,
+                          },
+                          {
+                              
+                          },
+                          {
+                              
+                          }                        
+                      ],
+                      [
+                        
+                        {
+                          text: 'MES DEL INFORME',
+                          style: "tableHeader",
+                          alignment: "center",  
+                        },
+                        {
+                          text: 'MONTO S/.',
+                          style: "tableHeader",
+                          alignment: "center",   
+                        },
+                        {
+                          text: '% EJECUCION PROGRAMADA',
+                          style: "tableHeader",
+                          alignment: "center",
+                        },
+                        {
+                          text: '% ACUMULADO',
+                          style: "tableHeader",
+                          alignment: "center",
+                        },
+                        {
+                          text: 'MONTO S/.',
+                          style: "tableHeader",
+                          alignment: "center",                           
+                        },
+                        {
+                          text: '% EJECUCION PROGRAMADA',
+                          style: "tableHeader",
+                          alignment: "center",   
+                        },
+                        {
+                          text: '% ACUMULADO',
+                          style: "tableHeader",
+                          alignment: "center",   
+                        },
+                        {
+                          text: 'MONTO S/.',
+                          style: "tableHeader",
+                          alignment: "center",                          
+                        },
+                        {
+                          text: '% EJECUCION PROGRAMADA',
+                          style: "tableHeader",
+                          alignment: "center",
+                        },
+                        {
+                          text: '% ACUMULADO',
+                          style: "tableHeader",
+                          alignment: "center",
+                        }                        
+                    ],
+                  ]
+                }
+            }
+        )  
+                    DataHist.data.forEach((dato, index)=>{
+                      ValGant[0].table.body.push(  
+                    [                      
+                      {
+                        text: dato.periodo,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",  
+                      },
+                      {
+                        text: dato.programado_monto,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",   
+                      },
+                      {
+                        text: dato.programado_porcentaje,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",
+                      },
+                      {
+                        text: dato.fisico_monto,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",
+                      },
+                      {
+                        text: dato.fisico_porcentaje,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",                           
+                      },
+                      {
+                        text: dato.financiero_monto,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",   
+                      },
+                      {
+                        text: dato.financiero_porcentaje,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",   
+                      },
+                      {
+                        text: dato.programado_acumulado,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",                          
+                      },
+                      {
+                        text: dato.fisico_acumulado,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",
+                      },
+                      {
+                        text: dato.financiero_acumulado,
+                        style: dato.codigo === 'C'? "tableBodyCorte": "tableBody",
+                        alignment: "center",
+                      }                        
+                  ],
+                )
+              
+              })
+    //} 
+    
     // console.log('data push' ,ValGant);
+    
 
-
-    var ultimoElemento = ValGant.length - 1
-    delete ValGant[ultimoElemento].pageBreak
+      var ultimoElemento = ValGant.length -1
+      delete ValGant[ultimoElemento].pageBreak
     // // console.log(ArFormat)
-
+  
 
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
 
     var docDefinition = {
-      header: {
-
+      header:{
+        
         columns: [
           {
             image: logoGRPuno,
@@ -479,12 +455,12 @@ class Report_9 extends Component {
             width: 48,
             height: 30,
             margin: [20, 10, 10, 0]
-
+            
           }
         ]
       },
-
-      footer: function (currentPage, pageCount) {
+      
+      footer: function(currentPage, pageCount) { 
         return {
           columns: [
             {
@@ -499,35 +475,35 @@ class Report_9 extends Component {
               margin: [20, 10, 10, 0]
             }
           ]
-
+          
         }
       },
-
+       
       content: [
-        {
+        { 
           layout: 'noBorders',
-          margin: 7,
-          table: {
-            widths: ['*'],
-            body: [
-              [
-                {
-                  text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
-                  style: "tableFechaContent",
-                  alignment: "center",
-                  margin: [10, 0, 5, 0],
+                margin: 7,
+                table: {
+                  widths: ['*'],
+                  body: [              
+                    [
+                      {
+                        text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
+                        style: "tableFechaContent",
+                        alignment: "center",
+                        margin:[10,0,5,0],
+                      }
+                    ]
+                    
+                  ]
                 }
-              ]
-
-            ]
-          }
           // text: 'AVANCE COMPARATIVO DIAGRAMA DE GANTT',
           // margin: 7,
           // alignment: 'center'
         },
 
         DataEncabezado,
-
+        
         ValGant
       ],
 
@@ -549,7 +525,7 @@ class Report_9 extends Component {
           bold: true,
           fontSize: 7,
           color: '#000000',
-          fillColor: '#ffcf96',
+          fillColor: '#8baedb',
         },
         tableFecha: {
           bold: true,
@@ -563,13 +539,19 @@ class Report_9 extends Component {
           color: '#000000',
           // fillColor: '#f6f6ff',
         },
+        tableBodyCorte: {
+          bold: true,
+          fontSize: 8,
+          color: '#000000',
+          fillColor: '#ff4040',
+        },
         TableHeaderInforme: {
           bold: true,
           fontSize: 9,
           color: '#000000',
           // fillColor: '#ffcf96',
         },
-        tableBodyInforme: {
+        tableBodyInforme:{
           fontSize: 9,
           color: '#000000',
         },
@@ -587,11 +569,17 @@ class Report_9 extends Component {
         },
         tableFechaContent: {
           bold: true,
-          fontSize: 9,
+          fontSize: 10,
           color: '#000000',
-          fillColor: '#dadada',
+          fillColor: '#8baedb',
         },
-
+        TableMontosInforme: {
+          bold: true,
+          fontSize: 9,
+          color: '#FFFFFF',
+          fillColor: '#3a68af',
+        },
+        
 
       },
       defaultStyle: {
@@ -603,15 +591,16 @@ class Report_9 extends Component {
     };
     // pdfmake.createPdf(docDefinition)
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+    pdfDocGenerator.open()
 
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-      this.setState({
-        urlPdf: dataUrl
-      })
-
-
-    });
-
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    //    this.setState({
+    //     urlPdf:dataUrl
+    //    })
+        
+        
+    // });
+    
   }
 
 
@@ -633,60 +622,61 @@ class Report_9 extends Component {
     return (
       <div>
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger" /> 9.- AVANCE COMPARATIVO DIAGRAMA DE GANT ✔ FALTA API KAI</a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 9.- AVANCE COMPARATIVO DIAGRAMA DE GANT  </a>
         </li>
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
           <ModalHeader toggle={this.ModalReportes}>9.- AVANCE COMPARATIVO DIAGRAMA DE GANT</ModalHeader>
           <ModalBody>
-
-            <Row>
-              <Col sm="2">
-                <fieldset>
-                  <legend>Seleccione</legend>
-
-                  <select className="form-control form-control-sm" onChange={e => this.seleccionaAnios(e)} >
-                    <option value="">Años</option>
-                    {
-                      DataAniosApi.map((anios, iA) =>
-                        <option key={iA} value={anios.anyo}>{anios.anyo}</option>
-                      )
-                    }
-                  </select>
-                </fieldset>
-
-              </Col>
-              <Col sm="9">
-                {DataMesesApi.length <= 0 ? "" :
+              
+              <Row>
+                  <Col sm="2">
                   <fieldset>
-                    <legend>Seleccione el Mes</legend>
-                    <ButtonGroup size="sm">
-                      {
-                        DataMesesApi.map((Meses, iM) =>
-                          <Button color="primary" key={iM} onClick={() => this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_fina)}>{Meses.codigo}</Button>
-                        )
-                      }
-
-                    </ButtonGroup>
-
-
+                      <legend>Seleccione</legend>
+                      
+                      <select className="form-control form-control-sm" onChange={ e=>this.seleccionaAnios(e) } >
+                          <option value="">Años</option> 
+                          {
+                            DataAniosApi.map((anios, iA)=>
+                              <option key={ iA } value={ anios.anyo }>{anios.anyo }</option>
+                            )
+                          }                       
+                      </select>  
                   </fieldset>
-                }
 
-              </Col>
-              <Col sm="1">
-                {
-                  DataValGantAPI.length <= 0 ? "" :
-                    <button className="btn btn-outline-success" onClick={this.PruebaDatos}> PDF </button>
-                }
+                  </Col>
+                  <Col sm="9">
+                  { DataMesesApi.length <= 0? "":
+                    <fieldset>
+                        <legend>Seleccione el Mes</legend>
+                        <ButtonGroup size="sm">
+                          {
+                            DataMesesApi.map((Meses, iM)=>
+                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_fina)}>{ Meses.codigo }</Button>
+                            )
+                          }
 
-              </Col>
-            </Row>
+                        </ButtonGroup>
+                        
+                    
+                    </fieldset>
+                  }
+          
+                  </Col>
+                  <Col sm="1">
+                  {
+                    DataValGantAPI.length <= 0 ?"":
+                    <button className="btn btn-outline-success" onClick={ this.PruebaDatos }> PDF </button>
+                  }
 
-            {
-              urlPdf.length <= 0 ? <Spinner color="primary" /> :
-                <iframe src={this.state.urlPdf} style={{ height: 'calc(100vh - 50px)' }} width="100%"></iframe>
-            }
-            {/* <HighchartsReact
+                </Col>
+              </Row>
+              {/* <div className="text-center text-danger"> EN DESARROLLO 50 % </div> */}
+              
+              {/* {
+              urlPdf.length <= 0 ?<Spinner color="primary" />:
+              <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
+              } */}
+               {/* <HighchartsReact
               highcharts={Highcharts}
               options={DataChart}
               ref={this.myRefChart}
@@ -701,9 +691,7 @@ class Report_9 extends Component {
 
               
             }
-            <Chart options={chartOptions} highcharts={Highcharts} ref={this.myRefChart}/>
-
-
+            {/* <Chart options={chartOptions} highcharts={Highcharts} ref={this.myRefChart}/> */}
           </ModalBody>
         </Modal>
       </div>

@@ -14,6 +14,7 @@ import Report_9 from './Reporte6/Report_9'
 import Report_10 from './Reporte6/Report_10'
 
 
+
 class ReportesGenerales extends Component {
     constructor(props) {
         super(props);
@@ -76,7 +77,7 @@ class ReportesGenerales extends Component {
                                 <li className="lii">    
                                     <a href="#" ><FaFilePdf className="text-danger"/> 11.- PROYECCIÓN DE LOS TRABAJOS PRÓXIMOS MES CRONOGRAMA </a>
                                 </li>
-                          
+                               
                             </ul>
 
                             

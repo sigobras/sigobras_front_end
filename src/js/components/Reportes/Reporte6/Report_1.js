@@ -490,20 +490,20 @@ class Report_1 extends Component {
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
     pdfDocGenerator.open()
 
-    // pdfDocGenerator.getDataUrl((dataUrl) => {
-    //    this.setState({
-    //     urlPdf:dataUrl
-    //    })
+//     pdfDocGenerator.getDataUrl((dataUrl) => {
+//        this.setState({
+//         urlPdf:dataUrl
+//        })
         
         
-    // });
-    // const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-    // pdfDocGenerator.getDataUrl((dataUrl) => {
-    // const targetElement = document.querySelector('#iframeContainer');
-    // const iframe = document.createElement('iframe');
-    // iframe.src = dataUrl;
-    // targetElement.appendChild(iframe);
-//});
+//     // });
+//     // const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+//     // pdfDocGenerator.getDataUrl((dataUrl) => {
+//     // const targetElement = document.querySelector('#iframeContainer');
+//     // const iframe = document.createElement('iframe');
+//     // iframe.src = dataUrl;
+//     // targetElement.appendChild(iframe);
+// });
 
   
   }
@@ -511,14 +511,15 @@ class Report_1 extends Component {
   render() {
     const { DataHistorialApi, DataAniosApi, DataMesesApi, urlPdf } = this.state
       return (
+        
         <div> 
 
           <li className="lii">
               <a href="#"  onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 1- CUADRO DE METRADOS EJECUTADOS (Del Ppto.Base Y Partidas adicionales) ✔</a>
           </li>
 
-          <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
-            <ModalHeader toggle={this.ModalReportes}>1.- CUADRO DE METRADOS EJECUTADOS </ModalHeader>
+          <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} style={{width: '1000px', maxWidth:'9000px'}}>
+            <ModalHeader toggle={this.ModalReportes} >1.- CUADRO DE METRADOS EJECUTADOS </ModalHeader>
             <ModalBody>
               
               <Row>
@@ -529,9 +530,11 @@ class Report_1 extends Component {
                       <select className="form-control form-control-sm" onChange={ e=>this.seleccionaAnios(e) } >
                           <option value="">Años</option> 
                           {
-                            DataAniosApi.map((anios, iA)=>
-                              <option key={ iA } value={ anios.anyo }>{anios.anyo }</option>
-                            )
+                            
+                              DataAniosApi.map((anios, iA)=>
+                                <option key={ iA } value={ anios.anyo }>{anios.anyo}</option>
+                              )
+                            
                           }                       
                       </select>  
                   </fieldset>
@@ -544,19 +547,22 @@ class Report_1 extends Component {
                         <ButtonGroup size="sm">
                           {
                             DataMesesApi.map((Meses, iM)=>
-                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses( Meses.fecha_inicial, Meses.fecha_final)}  >{ Meses.codigo }</Button>                              
+                              <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses( Meses.fecha_inicial, Meses.fecha_final)}  >{ Meses.codigo }</Button>                        
+                              
                             )
+                            
                           }
-                            <p>Selected: {this.state.rSelected}</p>
+                            {/* <p>Selected: {this.state.rSelected}</p> */}
 
-                        </ButtonGroup>
-                        
+                        </ButtonGroup>                       
                     
                     </fieldset>
                   }
+                  {/* {DataMesesApi.length = 0 ? "NO HAY NADA":""} */}
           
                   </Col>
                   <Col sm="1">
+                  
                   {
                     DataHistorialApi.length <= 0 ?"":
                     <button className="btn btn-outline-success" onClick={ this.makePdf } > PDF </button>
@@ -564,9 +570,9 @@ class Report_1 extends Component {
 
                 </Col>
               </Row>
-              { urlPdf.length <= 0 && DataHistorialApi.length <= 0?<Spinner color="primary" />:
+              {/* { urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%" ></iframe>
-              }
+              } */}
           </ModalBody>
         </Modal>
       </div>

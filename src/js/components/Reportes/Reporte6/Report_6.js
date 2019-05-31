@@ -589,7 +589,7 @@ class Report_6 extends Component {
                   body: [              
                     [
                       {
-                        text: 'VALORIZACIÓN POR MAYORES METRADOS',
+                        text: 'CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( Presupuesto Base + Part. Adicionale )',
                         style: "tableFechaContent",
                         alignment: "center",
                         margin:[10,0,5,0],
@@ -664,22 +664,25 @@ class Report_6 extends Component {
       pageOrientation: 'landscape',
 
     };
-    // pdfmake.createPdf(docDefinition)
+
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+    pdfDocGenerator.open()
+    // pdfmake.createPdf(docDefinition)
+    // var pdfDocGenerator = pdfmake.createPdf(docDefinition);
 
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-      this.setState({
-        urlPdf:dataUrl
-       })
-        // const targetElement = document.getElementById('iframeContainer');
-        // const iframe = document.createElement('iframe');
-        // iframe.src = dataUrl;
-        // iframe.style.width = "100%";
-        // iframe.style.height = "100%";
-        // iframe.frameBorder = 0;
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    //   this.setState({
+    //     urlPdf:dataUrl
+    //    })
+    //     // const targetElement = document.getElementById('iframeContainer');
+    //     // const iframe = document.createElement('iframe');
+    //     // iframe.src = dataUrl;
+    //     // iframe.style.width = "100%";
+    //     // iframe.style.height = "100%";
+    //     // iframe.frameBorder = 0;
 
-        // targetElement.appendChild(iframe);
-    });
+    //     // targetElement.appendChild(iframe);
+    // });
     
   }
 
@@ -690,7 +693,7 @@ class Report_6 extends Component {
     return (
       <div>
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 6.- CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( Presupuesto Base + Part. Adicionale ) ✔ FALTA API </a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 6.- CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( Presupuesto Base + Part. Adicionale ) ✔  </a>
         </li>
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
           <ModalHeader toggle={this.ModalReportes}> 6.- CONSOLIDADO GENERAL DE LAS VALORIZACIONES ( Presupuesto Base + Part. Adicionale ) </ModalHeader>
@@ -736,10 +739,10 @@ class Report_6 extends Component {
                 </Col>
               </Row>
               
-              {
+              {/* {
               urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
-              }
+              } */}
           </ModalBody>
         </Modal>
       </div>

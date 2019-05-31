@@ -616,7 +616,7 @@ class Report_2 extends Component {
 
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_anterior,
+              text:  DataHist[i].partidas[j].porcentaje_anterior + ' %',
               style:"tablaValorizacion",
               border: [false, false, false, true],
 
@@ -634,7 +634,7 @@ class Report_2 extends Component {
 
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_actual,
+              text:  DataHist[i].partidas[j].porcentaje_actual + ' %',
               style:"tablaValorizacionActual",
               border: [false, false, false, true],
 
@@ -652,7 +652,7 @@ class Report_2 extends Component {
 
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_total,
+              text:  DataHist[i].partidas[j].porcentaje_total + ' %',
               style:"tablaValorizacion",
               border: [false, false, false, true],
 
@@ -670,7 +670,7 @@ class Report_2 extends Component {
 
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_saldo,
+              text:  DataHist[i].partidas[j].porcentaje_saldo + ' %',
               style:"tablaValorizacion",
               border: [false, false, false, true],
 
@@ -724,12 +724,12 @@ class Report_2 extends Component {
               margin: [45, 10, 10, 0],
               fontSize: 9,
             },
-            {
-              qr: 'http://sigobras.com',
-              fit: 40,
-              alignment: 'right',
-              margin: [20, 0, 10, 0]
-            }
+            // {
+            //   qr: 'http://sigobras.com',
+            //   fit: 40,
+            //   alignment: 'right',
+            //   margin: [20, 0, 10, 0]
+            // }
           ]
           
         }
@@ -780,7 +780,7 @@ class Report_2 extends Component {
           bold: true,
           fontSize: 5.5,
           color: '#000000',
-          fillColor: '#ffcf96',
+          fillColor: '#8baedb',
         },
         tablaValorizacion: {
             fontSize: 4.5,
@@ -808,8 +808,8 @@ class Report_2 extends Component {
         TableMontosInforme: {
           bold: true,
           fontSize: 9,
-          color: '#000000',
-          fillColor: '#ffcf96',
+          color: '#FFFFFF',
+          fillColor: '#3a68af',
         },
         tableBodyInforme:{
           fontSize: 7,
@@ -841,18 +841,20 @@ class Report_2 extends Component {
       },
       pageSize: 'A4',
       pageOrientation: 'landscape',
-      pageMargins: [30, 38, 0, 0],
+      //pageMargins: [30, 38, 0, 0],
 
     };
     // pdfmake.createPdf(docDefinition)
+    
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+    pdfDocGenerator.open()
 
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-      this.setState({
-        urlPdf:dataUrl
-       })
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    //   this.setState({
+    //     urlPdf:dataUrl
+    //    })
         
-    });
+    // });
     
   }
 
@@ -863,7 +865,7 @@ class Report_2 extends Component {
     return (
       <div>
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/>2.- VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE ✔</a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/> 2.- VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE ✔</a>
         </li>
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
           <ModalHeader toggle={this.ModalReportes}>2.- VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE</ModalHeader>
@@ -909,10 +911,10 @@ class Report_2 extends Component {
                 </Col>
               </Row>
                            
-              { 
+              {/* { 
                 urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
-              }
+              } */}
           </ModalBody>
         </Modal>
       </div>

@@ -48,7 +48,7 @@ class Report_3 extends Component {
             "id_ficha":sessionStorage.getItem("idobra")
         })
         .then((res)=>{
-            // console.log('res ANIOS', res.data)
+            console.log('res ANIOS', res.data)
             this.setState({
                 DataAniosApi: res.data
             })
@@ -413,16 +413,16 @@ class Report_3 extends Component {
             DataRestructurado[0].table.body.push(
                 [
                     {
-                        text: CDirecto.nombre,
+                        text: CDirecto.numero,
                         style: "tableFecha",
                         alignment: "left",
-                        colSpan:2,
+                        //colSpan:2,
                         margin: [15, 0, 0, 0]
                     },
                     {
-                        // text: CDirecto.nombre,
-                        // style: "tableFecha",
-                        // alignment: "left",
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
                     },
                     {
                         text: CDirecto.presupuesto,
@@ -522,16 +522,16 @@ class Report_3 extends Component {
             DataRestructurado[0].table.body.push(
                 [
                     {
-                        text: CDirecto.nombre,
+                        text: CDirecto.numero,
                         style: "tableFecha",
                         alignment: "left",
                         colSpan:2,
                         margin: [15, 0, 0, 0]
                     },
                     {
-                        // text: CDirecto.nombre,
-                        // style: "tableFecha",
-                        // alignment: "left",
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
                     },
                     {
                         text: CDirecto.presupuesto,
@@ -631,16 +631,16 @@ class Report_3 extends Component {
             DataRestructurado[0].table.body.push(
                 [
                     {
-                        text: CDirecto.nombre,
+                        text: CDirecto.numero,
                         style: "tableFecha",
                         alignment: "left",
-                        colSpan:2,
+                        //colSpan:2,
                         margin: [15, 0, 0, 0]
                     },
                     {
-                        // text: CDirecto.nombre,
-                        // style: "tableFecha",
-                        // alignment: "left",
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
                     },
                     {
                         text: CDirecto.presupuesto,
@@ -740,16 +740,16 @@ class Report_3 extends Component {
             DataRestructurado[0].table.body.push(
                 [
                     {
-                        text: CDirecto.nombre,
+                        text: CDirecto.numero,
                         style: "tableFecha",
                         alignment: "left",
-                        colSpan:2,
+                        //colSpan:2,
                         margin: [15, 0, 0, 0]
                     },
                     {
-                        // text: CDirecto.nombre,
-                        // style: "tableFecha",
-                        // alignment: "left",
+                        text: CDirecto.nombre,
+                        style: "tableFecha",
+                        alignment: "left",
                     },
                     {
                         text: CDirecto.presupuesto,
@@ -895,7 +895,7 @@ class Report_3 extends Component {
             bold: true,
             fontSize: 7,
             color: '#000000',
-            fillColor: '#ffcf96',
+            fillColor: '#8baedb',
             },
             tableFecha: {
             bold: true,
@@ -923,7 +923,7 @@ class Report_3 extends Component {
             bold: true,
             fontSize: 9,
             color: '#000000',
-            fillColor: '#dadada',
+            fillColor: '#8baedb',
             },
             TableValInforme: {
             bold: true,
@@ -943,14 +943,15 @@ class Report_3 extends Component {
         };
         // pdfmake.createPdf(docDefinition)
         var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+        pdfDocGenerator.open()
 
-        pdfDocGenerator.getDataUrl((dataUrl) => {
-        this.setState({
-            urlPdf:dataUrl
-        })
+        // pdfDocGenerator.getDataUrl((dataUrl) => {
+        // this.setState({
+        //     urlPdf:dataUrl
+        // })
             
             
-        });
+        // });
         
     }
     
@@ -1008,10 +1009,10 @@ class Report_3 extends Component {
                             }
                             </Col>
                         </Row>
-                        {
+                        {/* {
                         urlPdf.length <= 0 ?<Spinner color="primary" />:
                         <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
-                        }
+                        } */}
                     </ModalBody>
                 </Modal>
             </div> 

@@ -123,12 +123,12 @@ class Report_8 extends Component {
         
                   table: {
                     headerRows: 3,
-                    widths: [20, 200, 15, 27, 27, 27, 27, 27,27, 27, 27, 27, 27, 27, 27],
+                    widths: ['auto', '*', 25, 27, 27, 27, 27, 27,27, 27, 27, 27, 27, 27, 27],
                     body: [
                             [
                                 {  
                                 text: 'CONSTRUCION DE INFRAESTRUCTURA' ,
-                                style: "tableFecha",
+                                style: "TableMontosInforme",
                                 alignment: "center",
                                 colSpan: 15,
                                 },
@@ -437,14 +437,14 @@ class Report_8 extends Component {
             fit: [280, 280],
             margin: [45, 12, 10, 0]
           },
-          // {
-          //   alignment: 'right',
-          //   image: logoSigobras,
-          //   width: 48,
-          //   height: 30,
-          //   margin: [20, 10, 10, 0]
+          {
+            alignment: 'right',
+            image: logoSigobras,
+            width: 48,
+            height: 30,
+            margin: [20, 10, 10, 0]
             
-          // }
+          }
         ]
       },
       
@@ -456,12 +456,12 @@ class Report_8 extends Component {
               margin: [45, 10, 10, 0],
               fontSize: 9,
             },
-            {
-              qr: 'http://sigobras.com',
-              fit: 40,
-              alignment: 'right',
-              margin: [20, 10, 10, 0]
-            }
+            // {
+            //   qr: 'http://sigobras.com',
+            //   fit: 40,
+            //   alignment: 'right',
+            //   margin: [20, 10, 10, 0]
+            // }
           ]
           
         }
@@ -511,9 +511,14 @@ class Report_8 extends Component {
         },
         tableHeader: {
           bold: true,
-          fontSize: 7,
+          fontSize: 5.5,
           color: '#000000',
-          fillColor: '#ffcf96',
+          fillColor: '#8baedb',
+        },
+        tablaValorizacion: {
+          fontSize: 4.5,
+          bold: false,
+          color: '#000000',
         },
         tableFecha: {
           bold: true,
@@ -529,10 +534,16 @@ class Report_8 extends Component {
         },
         TableHeaderInforme: {
           bold: true,
-          fontSize: 9,
+          fontSize: 7,
           color: '#000000',
           // fillColor: '#ffcf96',
         },
+        TableMontosInforme: {
+          bold: true,
+          fontSize: 9,
+          color: '#FFFFFF',
+          fillColor: '#3a68af',
+        },                
         tableBodyInforme:{
           fontSize: 9,
           color: '#000000',
@@ -551,9 +562,9 @@ class Report_8 extends Component {
         },
         tableFechaContent: {
           bold: true,
-          fontSize: 9,
+          fontSize: 10,
           color: '#000000',
-          fillColor: '#dadada',
+          fillColor: '#8baedb',
         },
         
 
@@ -563,20 +574,22 @@ class Report_8 extends Component {
       },
       pageSize: 'A4',
       pageOrientation: 'landscape',
-      pageMargins: [40, 40, 0, 0],
+      //pageMargins: [40, 40, 0, 0],
 
 
     };
     // pdfmake.createPdf(docDefinition)
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+    pdfDocGenerator.open()
 
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-       this.setState({
-        urlPdf:dataUrl
-       })
+
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    //    this.setState({
+    //     urlPdf:dataUrl
+    //    })
         
         
-    });
+    // });
   
   }
 
@@ -636,10 +649,10 @@ class Report_8 extends Component {
                 </Col>
               </Row>
               
-              {
+              {/* {
               urlPdf.length <= 0 ?<Spinner color="primary" />:
               <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
-              }
+              } */}
           </ModalBody>
         </Modal>
       </div>

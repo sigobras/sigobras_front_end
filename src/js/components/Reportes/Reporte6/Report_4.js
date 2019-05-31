@@ -7,107 +7,114 @@ import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner }
 import { FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
-import { logoSigobras, logoGRPuno} from '../Complementos/ImgB64'
+import { logoSigobras, logoGRPuno } from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
 
 
 class Report_4 extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
-      DataMayMetlAPI:[],
-      DataAniosApi:[],
-      DataMesesApi:[],
-      ValPresupuesto:[],
+      DataMayMetlAPI: [],
+      DataAniosApi: [],
+      DataMesesApi: [],
+      ValPresupuesto: [],
       modal: false,
-      DataEncabezado:[],
+      DataEncabezado: [],
       urlPdf: '',
-      anioSeleccionado:'',
+      anioSeleccionado: '',
       mesActual: '',
 
     }
 
     this.ModalReportes = this.ModalReportes.bind(this)
     this.PruebaDatos = this.PruebaDatos.bind(this)
-    
+
     this.seleccionaAnios = this.seleccionaAnios.bind(this)
     this.seleccionaMeses = this.seleccionaMeses.bind(this)
 
   }
 
   ModalReportes() {
+
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
     // llama al api de años
-    axios.post(`${UrlServer}/getAnyoReportes`,{
-      "id_ficha":sessionStorage.getItem("idobra")
+    axios.post(`${UrlServer}/getAnyoReportesValGeneraMMyPN`, {
+      "id_ficha": sessionStorage.getItem("idobra"),
+      "tipo": "Mayor Metrado"
     })
-    .then((res)=>{
-         //console.log('res ANIOS', res.data)
-        this.setState({
-          DataAniosApi: res.data
-        })
-    })
-    .catch((err)=>{
-        console.log('ERROR ANG al obtener datos ❌'+ err);
-    });
+      .then((res) => {
+        console.log('res ANIOS', res.data)
+
+        if (res.data !== "vacio") {
+          this.setState({
+            DataAniosApi: res.data
+          })
+        }
+
+      })
+      .catch((err) => {
+        console.log('ERROR ANG al obtener datos ❌' + err);
+      });
   }
 
-  seleccionaAnios(e){   
+  seleccionaAnios(e) {
     // LLAMA AL API DE MESES
 
     this.setState({
-      anioSeleccionado:e.target.value
+      anioSeleccionado: e.target.value
     })
-  
-     axios.post(`${UrlServer}/getPeriodsByAnyo`,{
-       "id_ficha":sessionStorage.getItem("idobra"),
-       "anyo":e.target.value
-     })
-     .then((res)=>{
+
+    axios.post(`${UrlServer}/getPeriodsByAnyoValGeneraMMyPN`, {
+      "id_ficha": sessionStorage.getItem("idobra"),
+      "tipo": "Mayor Metrado",
+      "anyo": e.target.value
+    })
+      .then((res) => {
         //  console.log('res Meses', res.data)
-         this.setState({
-           DataMesesApi: res.data
-         })
-     })
-     .catch((err)=>{
-         console.log('ERROR ANG al obtener datos ❌'+ err);
-     });
-    }
-  
-  seleccionaMeses(id_historial, fecha_inicial,fecha_final,mes_act){
+        this.setState({
+          DataMesesApi: res.data
+        })
+      })
+      .catch((err) => {
+        console.log('ERROR ANG al obtener datos ❌' + err);
+      });
+  }
+
+  seleccionaMeses(id_historial, fecha_inicial, fecha_final, mes_act) {
     // LLAMA AL API DE MESES
     this.setState({
-      mesActual:mes_act,
+      mesActual: mes_act,
     })
 
-    axios.post(`${UrlServer}/valorizacionMayoresMetrados`,{
-      "id_ficha":sessionStorage.getItem("idobra"),
-      "historialestados_id_historialestado":id_historial,      
-      "fecha_inicial":fecha_inicial,
-      "fecha_final":fecha_final,
+    axios.post(`${UrlServer}/valorizacionMayoresMetrados`, {
+      "id_ficha": sessionStorage.getItem("idobra"),
+      "historialestados_id_historialestado": id_historial,
+      "fecha_inicial": fecha_inicial,
+      "fecha_final": fecha_final,
     })
-    .then((res)=>{
+      .then((res) => {
         console.log('res valorizacionMayoresMetrados', res.data)
         this.setState({
           DataMayMetlAPI: res.data,
-          DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
+          DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final)
 
         })
-    })
-    .catch((err)=>{
-        console.log('ERROR ANG al obtener datos ❌'+ err);
-    });
- 
+      })
+      .catch((err) => {
+        console.log('ERROR ANG al obtener datos ❌' + err);
+      });
+
   }
 
-  
 
-  PruebaDatos(){
 
-    var {  DataEncabezado } = this.state
+  PruebaDatos() {
+
+    var { DataEncabezado } = this.state
 
     var DataHist = this.state.DataMayMetlAPI
     //console.log('DH', DataHist)
@@ -123,422 +130,410 @@ class Report_4 extends Component {
 
     for (let i = 0; i < DataHist.length; i++) {
 
-      ValPresupuesto.push (
-        
+      ValPresupuesto.push(
+
         {
-            style: 'tableExample',
-            // color: '#ff0707',
-            layout: 'lightHorizontalLines',
+          style: 'tableExample',
+          // color: '#ff0707',
+          layout: 'lightHorizontalLines',
 
-            table: {
-              headerRows:4 ,
-              widths: [30, 80,10,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25],
-                body: [
-                      [
-                        {
-                          text: 'C -'+ DataHist[i].numero,
-                          style: "TableMontosInforme",
-                          alignment: "center",
-                        },
-                        {
-                          text: DataHist[i].nombre,
-                          style: "TableMontosInforme",
-                          alignment: "center",
-                          colSpan: 15
-                        },
-                        {
-                         
-                        },
-                        {
-                          
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },                            
-                        {
-                         
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },                            
-                        {
-                          
-                        },
-                        {
-                          text: 'S/. ' + DataHist[i].presupuesto,
-                          style: "TableMontosInforme",
-                          alignment: "center",
-                          colSpan: 2,
-                        },
-                        {
-                        
-                        }
-                    ],
+          table: {
+            headerRows: 4,
+            widths: ['*', 'auto', 10, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+            body: [
+              [
+                {
+                  text: 'C -' + DataHist[i].numero,
+                  style: "TableMontosInforme",
+                  alignment: "center",
+                },
+                {
+                  text: DataHist[i].nombre,
+                  style: "TableMontosInforme",
+                  alignment: "center",
+                  colSpan: 15
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+                  text: 'S/. ' + DataHist[i].presupuesto,
+                  style: "TableMontosInforme",
+                  alignment: "center",
+                  colSpan: 2,
+                },
+                {
+
+                }
+              ],
 
 
-                    [
-                        {
-                            text: 'PARTIDA: ',
-                            style: "tableHeader",
-                            alignment: "center",
-                            rowSpan: 3,
-                        },
-                        {
-                          rowSpan: 3,
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
-                        
-                        },
-                        {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center",
-                          rowSpan: 3,
-                        },
-                        {
-                          text: 'PRESUPUESTO PROGRAMADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                          rowSpan: 2,
-                          colSpan: 3,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },                            
-                        {
-                          text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
-                          style: "TableValInforme",
-                          alignment: "center",
-                          colSpan: 9,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },                            
-                        {
-                          text: 'SALDO',
-                          style: "tableHeader",
-                          alignment: "center",
-                          colSpan: 3,
-                          rowSpan: 2,
-                      },
-                        {
-                        
-                        },
-                        {
-                        
-                        }
-                    ],
+              [
+                {
+                  text: 'PARTIDA: ',
+                  style: "tableHeader",
+                  alignment: "center",
+                  rowSpan: 3,
+                },
+                {
+                  rowSpan: 3,
+                  text: 'DESCRIPCION',
+                  style: "tableHeader",
+                  alignment: "center",
 
-                    [
-                        {
-                          text: 'PARTIDA: ',
-                          style: "tableHeader",
-                          alignment: "center"
-                        },
-                        {
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
-                        
-                        },
-                        {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center"
-                        },
-                        {
-                          text: 'PRESUPUESTO PROGRAMADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                          colSpan: 3,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },                            
-                        {
-                          text: 'ANTERIOR',
-                          style: "tableHeader",
-                          alignment: "center",
-                          colSpan: 3,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                          text: 'ACTUAL',
-                          style: "TableValInforme",
-                          alignment: "center",
-                          colSpan: 3,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },
-                        {
-                          text: 'ACUMULADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                          colSpan: 3,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        },                            
-                        {
-                          text: 'SALDO',
-                          style: "tableHeader",
-                          alignment: "center",
-                          colSpan: 3,
-                        },
-                        {
-                        
-                        },
-                        {
-                        
-                        }
-                    ],
+                },
+                {
+                  text: 'UND ',
+                  style: "tableHeader",
+                  alignment: "center",
+                  rowSpan: 3,
+                },
+                {
+                  text: 'PRESUPUESTO PROGRAMADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                  rowSpan: 2,
+                  colSpan: 3,
+                },
+                {
 
-                    [
-                        {
-                          text: 'PARTIDA: ',
-                          style: "tableHeader",
-                          alignment: "center"
-                        },
-                        {
-                          text: 'DESCRIPCION',
-                          style: "tableHeader",
-                          alignment: "center",
-                        
-                        },
-                        {
-                          text: 'UND: ',
-                          style: "tableHeader",
-                          alignment: "center"
-                        },
-                        {
-                          text: 'METRADO',
-                          style: "tableHeader",
-                          alignment: "center",                            
-                        },
-                        {
-                          text: 'P. UNIT. S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        
-                        },
-                        {
-                          text: 'PRESUP. S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        
-                        },                            
-                        {
-                          text: 'METRADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'P. UNIT. S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'PRESUP. S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'METRADO',
-                          style: "TableValInforme",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'P. UNIT. S/.',
-                          style: "TableValInforme",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'PRESUP. S/.',
-                          style: "TableValInforme",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'METRADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'P. UNIT. S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'PRESUP. S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },                            
-                        {
-                          text: 'METRADO',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: 'VALORIZADO S/.',
-                          style: "tableHeader",
-                          alignment: "center",
-                        },
-                        {
-                          text: '%',
-                          style: "tableHeader",
-                          alignment: "center",
-                        }
-                    ],
-                ]
-            },
-            pageBreak: 'after',
+                },
+                {
+
+                },
+                {
+                  text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
+                  style: "TableValInforme",
+                  alignment: "center",
+                  colSpan: 9,
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+                  text: 'SALDO',
+                  style: "tableHeader",
+                  alignment: "center",
+                  colSpan: 3,
+                  rowSpan: 2,
+                },
+                {
+
+                },
+                {
+
+                }
+              ],
+
+              [
+                {
+
+                },
+                {
+
+
+                },
+                {
+
+                },
+                {
+                  text: 'PRESUPUESTO PROGRAMADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                  colSpan: 3,
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+                  text: 'ANTERIOR',
+                  style: "tableHeader",
+                  alignment: "center",
+                  colSpan: 3,
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+                  text: 'ACTUAL',
+                  style: "TableValInforme",
+                  alignment: "center",
+                  colSpan: 3,
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+                  text: 'ACUMULADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                  colSpan: 3,
+                },
+                {
+
+                },
+                {
+
+                },
+                {
+                  text: 'SALDO',
+                  style: "tableHeader",
+                  alignment: "center",
+                  colSpan: 3,
+                },
+                {
+
+                },
+                {
+
+                }
+              ],
+
+              [
+                {
+
+                },
+                {
+
+
+                },
+                {
+
+                },
+                {
+                  text: 'METRADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: 'P. UNIT. S/.',
+                  style: "tableHeader",
+                  alignment: "center",
+
+                },
+                {
+                  text: 'PRESUP. S/.',
+                  style: "tableHeader",
+                  alignment: "center",
+
+                },
+                {
+                  text: 'METRADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: 'P. UNIT. S/.',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: '%',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: 'METRADO',
+                  style: "TableValInforme",
+                  alignment: "center",
+                },
+                {
+                  text: 'P. UNIT. S/.',
+                  style: "TableValInforme",
+                  alignment: "center",
+                },
+                {
+                  text: '%',
+                  style: "TableValInforme",
+                  alignment: "center",
+                },
+                {
+                  text: 'METRADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: 'P. UNIT. S/.',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: '%',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: 'METRADO',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: 'VALORIZADO S/.',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: '%',
+                  style: "tableHeader",
+                  alignment: "center",
+                }
+              ],
+            ]
+          },
+          pageBreak: 'after',
         }
       )
 
       for (let j = 0; j < DataHist[i].partidas.length; j++) {
 
-         console.log('ddatos', DataHist[i].partidas[j]);
-        
+        console.log('ddatos', DataHist[i].partidas[j]);
 
-        ValPresupuesto[i].table.body.push( 
+
+        ValPresupuesto[i].table.body.push(
           [
             {
-              text:DataHist[i].partidas[j].item,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].item,
+              style: "tablaValorizacion",
             },
             {
               text: DataHist[i].partidas[j].descripcion,
-              style:"tablaValorizacion",
-            
+              style: "tablaValorizacion",
+
             },
             {
               text: DataHist[i].partidas[j].unidad_medida,
-              style:"tablaValorizacion",
+              style: "tablaValorizacion",
             },
             {
               text: DataHist[i].partidas[j].metrado,
-              style:"tablaValorizacion",                           
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].costo_unitario,
-              style:"tablaValorizacion",
-            
+              text: DataHist[i].partidas[j].costo_unitario,
+              style: "tablaValorizacion",
+
             },
             {
-              text:  DataHist[i].partidas[j].valor_total,
-              style:"tablaValorizacion",
-            
-            },                            
-            {
-              text:  DataHist[i].partidas[j].metrado_anterior,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].valor_total,
+              style: "tablaValorizacion",
+
             },
             {
-              text:  DataHist[i].partidas[j].valor_anterior,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].metrado_anterior,
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_anterior,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].valor_anterior,
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].metrado_actual,
-              style:"TableValInforme",
+              text: DataHist[i].partidas[j].porcentaje_anterior + ' %',
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].valor_actual,
-              style:"TableValInforme",
+              text: DataHist[i].partidas[j].metrado_actual,
+              style: "TableValInforme",
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_actual,
-              style:"TableValInforme",
+              text: DataHist[i].partidas[j].valor_actual,
+              style: "TableValInforme",
             },
             {
-              text:  DataHist[i].partidas[j].metrado_total,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].porcentaje_actual + ' %',
+              style: "TableValInforme",
             },
             {
-              text:  DataHist[i].partidas[j].valor_total,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].metrado_total,
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_total,
-              style:"tablaValorizacion",
-            },                            
-            {
-              text:  DataHist[i].partidas[j].metrado_saldo,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].valor_total,
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].valor_saldo,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].porcentaje_total + ' %',
+              style: "tablaValorizacion",
             },
             {
-              text:  DataHist[i].partidas[j].porcentaje_saldo,
-              style:"tablaValorizacion",
+              text: DataHist[i].partidas[j].metrado_saldo,
+              style: "tablaValorizacion",
+            },
+            {
+              text: DataHist[i].partidas[j].valor_saldo,
+              style: "tablaValorizacion",
+            },
+            {
+              text: DataHist[i].partidas[j].porcentaje_saldo + ' %',
+              style: "tablaValorizacion",
             }
           ]
         )
@@ -546,12 +541,12 @@ class Report_4 extends Component {
 
     }
 
-      
-    
-    // console.log('data push' ,ValPresupuesto);
-    
 
-    var ultimoElemento = ValPresupuesto.length -1
+
+    // console.log('data push' ,ValPresupuesto);
+
+
+    var ultimoElemento = ValPresupuesto.length - 1
     delete ValPresupuesto[ultimoElemento].pageBreak
 
 
@@ -561,8 +556,8 @@ class Report_4 extends Component {
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
 
     var docDefinition = {
-      header:{
-        
+      header: {
+
         columns: [
           {
             image: logoGRPuno,
@@ -575,12 +570,12 @@ class Report_4 extends Component {
           //   width: 48,
           //   height: 30,
           //   margin: [20, 10, 10, 0]
-            
+
           // }
         ]
       },
-      
-      footer: function(currentPage, pageCount) { 
+
+      footer: function (currentPage, pageCount) {
         return {
           columns: [
             {
@@ -595,28 +590,28 @@ class Report_4 extends Component {
               margin: [20, 0, 10, 0]
             }
           ]
-          
+
         }
       },
-       
+
       content: [
-        { 
+        {
           layout: 'noBorders',
-                margin: 7,
-                table: {
-                  widths: ['*'],
-                  body: [              
-                    [
-                      {
-                        text: 'VALORIZACIÓN POR MAYORES METRADOS',
-                        style: "tableFechaContent",
-                        alignment: "center",
-                        margin:[10,0,5,0],
-                      }
-                    ]
-                    
-                  ]
+          margin: 7,
+          table: {
+            widths: ['*'],
+            body: [
+              [
+                {
+                  text: 'VALORIZACIÓN POR MAYORES METRADOS',
+                  style: "tableFechaContent",
+                  alignment: "center",
+                  margin: [10, 0, 5, 0],
                 }
+              ]
+
+            ]
+          }
           // text: 'VALORIZACIÓN POR MAYORES METRADOS',
           // margin: 7,
           // alignment: 'center'
@@ -644,13 +639,13 @@ class Report_4 extends Component {
           bold: true,
           fontSize: 5.5,
           color: '#000000',
-          fillColor: '#ffcf96',
+          fillColor: '#8baedb',
         },
         tablaValorizacion: {
-            fontSize: 4.5,
-            bold: false,
-            color: '#000000',
-          },
+          fontSize: 4.5,
+          bold: false,
+          color: '#000000',
+        },
         tableFecha: {
           bold: true,
           fontSize: 7,
@@ -669,7 +664,7 @@ class Report_4 extends Component {
           color: '#000000',
           // fillColor: '#ffcf96',
         },
-        tableBodyInforme:{
+        tableBodyInforme: {
           fontSize: 9,
           color: '#000000',
         },
@@ -677,20 +672,20 @@ class Report_4 extends Component {
           bold: true,
           fontSize: 9,
           color: '#000000',
-          fillColor: '#dadada',
+          fillColor: '#8baedb',
         },
         TableMontosInforme: {
           bold: true,
           fontSize: 9,
-          color: '#000000',
-          fillColor: '#ffcf96',
+          color: '#FFFFFF',
+          fillColor: '#3a68af',
         },
         TableValInforme: {
           bold: true,
           fontSize: 6,
           color: '#000000',
           fillColor: '#A4C4EA',
-        },        
+        },
 
       },
       defaultStyle: {
@@ -698,86 +693,95 @@ class Report_4 extends Component {
       },
       pageSize: 'A4',
       pageOrientation: 'landscape',
-      pageMargins: [40, 38, 0, 0],
+      //pageMargins: [40, 38, 0, 0],
 
 
     };
     // pdfmake.createPdf(docDefinition)
     var pdfDocGenerator = pdfmake.createPdf(docDefinition);
+    pdfDocGenerator.open()
 
-    pdfDocGenerator.getDataUrl((dataUrl) => {
-      this.setState({
-        urlPdf:dataUrl
-       })
-        // const targetElement = document.getElementById('iframeContainer');
-        // const iframe = document.createElement('iframe');
-        // iframe.src = dataUrl;
-        // iframe.style.width = "100%";
-        // iframe.style.height = "100%";
-        // iframe.frameBorder = 0;
+    // pdfDocGenerator.getDataUrl((dataUrl) => {
+    //   this.setState({
+    //     urlPdf:dataUrl
+    //    })
+    //     // const targetElement = document.getElementById('iframeContainer');
+    //     // const iframe = document.createElement('iframe');
+    //     // iframe.src = dataUrl;
+    //     // iframe.style.width = "100%";
+    //     // iframe.style.height = "100%";
+    //     // iframe.frameBorder = 0;
 
-        // targetElement.appendChild(iframe);
-    });
-    
+    //     // targetElement.appendChild(iframe);
+    // });
+
   }
 
 
   render() {
-    const { DataMayMetlAPI,DataAniosApi, DataMesesApi,urlPdf } = this.state
-    
+    const { DataMayMetlAPI, DataAniosApi, DataMesesApi, urlPdf } = this.state
+
     return (
       <div>
+
         <li className="lii">
-          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger"/>4.- VALORIZACIÓN POR MAYORES METRADOS ✔</a>
+          <a href="#" onClick={this.ModalReportes} ><FaFilePdf className="text-danger" /> 4.- VALORIZACIÓN POR MAYORES METRADOS ✔</a>
         </li>
+
         <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalReportes} size="xl">
           <ModalHeader toggle={this.ModalReportes}>4.- VALORIZACIÓN POR MAYORES METRADOS</ModalHeader>
           <ModalBody>
-              <Row>
+          {
+            DataAniosApi.length >0 ? 
+            <Row>
               <Col sm="2">
-                <fieldset>
+                {DataAniosApi.length <= 0 ? "" :
+                  <fieldset>
                     <legend>Seleccione</legend>
-                    
-                    <select className="form-control form-control-sm"  onChange={ e=>this.seleccionaAnios(e) }  >
-                        <option value="">Años</option> 
-                        {
-                          DataAniosApi.map((anios, iA)=>
-                            <option key={ iA } value={ anios.anyo }>{anios.anyo }</option>
-                          )
-                        }                      
-                    </select>  
-                </fieldset>
 
+                    <select className="form-control form-control-sm" onChange={e => this.seleccionaAnios(e)}  >
+                      <option value="">Años</option>
+                      {
+                        DataAniosApi.map((anios, iA) =>
+                          <option key={iA} value={anios.anyo}>{anios.anyo}</option>
+                        )
+                      }
+                    </select>
+                  </fieldset>
+                }
               </Col>
 
               <Col sm="9">
-              { DataMesesApi.length <= 0? "":
-                <fieldset>
-                  <legend>Seleccione Mes</legend>
-                  <ButtonGroup size="sm">
-                  {
-                    DataMesesApi.map((Meses, iM)=>
-                      <Button color="primary" key={ iM } onClick={() =>this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final,Meses.mes,)}>{ Meses.codigo }</Button>
-                    )
-                  }
+                {DataMesesApi.length <= 0 ? "" :
+                  <fieldset>
+                    <legend>Seleccione Mes</legend>
+                    <ButtonGroup size="sm">
+                      {
+                        DataMesesApi.map((Meses, iM) =>
+                          <Button color="primary" key={iM} onClick={() => this.seleccionaMeses(Meses.historialestados_id_historialestado, Meses.fecha_inicial, Meses.fecha_final, Meses.mes)}>{Meses.codigo}</Button>
+                        )
+                      }
 
-                  </ButtonGroup>
-                </fieldset>
-              }
-                </Col>
-              
-                <Col sm="1">
-                {
-                  DataMayMetlAPI.length <= 0 ?"":
-                  <button className="btn btn-outline-success" onClick={ this.PruebaDatos }>PDF</button>
+                    </ButtonGroup>
+                  </fieldset>
                 }
-                </Col>
-              </Row>
-              {
-              urlPdf.length <= 0 ?<Spinner color="primary" />:
-              
-              <iframe src={this.state.urlPdf } style={{height: 'calc(100vh - 50px)'}} width="100%"></iframe>
-              }
+              </Col>
+
+              <Col sm="1">
+                {
+                  DataMayMetlAPI.length <= 0 ? "" :
+                    <button className="btn btn-outline-success" onClick={this.PruebaDatos}>PDF</button>
+                }
+              </Col>
+            </Row>
+
+            : "NO HAY MAYORES METRADOS "
+            }
+            {/* {
+              urlPdf.length <= 0 ? <Spinner color="primary" /> :
+
+                <iframe src={this.state.urlPdf} style={{ height: 'calc(100vh - 50px)' }} width="100%"></iframe>
+            } */}
           </ModalBody>
         </Modal>
       </div>

@@ -740,6 +740,7 @@ class MetradosDiarios extends Component {
 
   // mas funciones para metrados
   CollapseItem(valor, id_partida) {
+    console.log("demo entre")
     if (valor !== -1 && id_partida !== -1) {
       let event = valor
       this.setState({
