@@ -135,7 +135,7 @@ class Login extends Component {
               <UncontrolledPopover placement="bottom" target="login">
                 <PopoverHeader>Inicie sesión </PopoverHeader>
                 <PopoverBody>
-                  <form>
+                  <form onSubmit={this.handleSubmit} autoComplete="off" >
                     <div className="form-group">
                       <input type="text" className="form-control" name="user" placeholder="Usuario" onChange={this.handleChange} required autoFocus />
                     </div>
@@ -145,7 +145,7 @@ class Login extends Component {
                     <div className="form-group">
                       <div className={this.state.alert}>{this.state.Loginsms}</div>
 
-                      <button type="submit" disabled={!enabled} onClick={this.handleSubmit} className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" type="grow" /> : 'INGRESAR'}</button>
+                      <button type="submit" disabled={!enabled}  className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" type="grow" /> : 'INGRESAR'}</button>
                     </div>
                   </form>
                 </PopoverBody>

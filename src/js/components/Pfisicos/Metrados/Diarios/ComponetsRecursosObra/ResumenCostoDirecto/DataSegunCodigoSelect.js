@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { InputGroup, InputGroupAddon, InputGroupText, Input } from 'reactstrap';
+import { InputGroup, InputGroupAddon, InputGroupText, Input, Button } from 'reactstrap';
 
 import axios from "axios"
 
@@ -7,7 +7,8 @@ class DataSegunCodigoSelect extends Component {
   constructor() {
     super()
     this.state = {
-      DataMostarMasCodigo: []
+      DataMostarMasCodigo: [],
+      DataEspecificaApi: [],
     }
   }
 
@@ -22,7 +23,8 @@ class DataSegunCodigoSelect extends Component {
       "id_tipoDocumentoAdquisicion": idDocumento
     })
       .then((res) => {
-        console.log("data ", res)
+        console.log("data ", res.data)
+        console.log("data ", res.data.NCP)
         this.setState({ DataMostarMasCodigo: res.data })
       })
       .catch((err) => {
@@ -30,90 +32,175 @@ class DataSegunCodigoSelect extends Component {
       })
   }
 
+  BuscaEspecifica(e) {
+    const { UrlServer } = this.props.DataConsumir
+
+    console.log("BuscaEspecifica 1.1.4 2", e.target.value)
+    axios.post(`${UrlServer}/getclasificadoresPesupuestarios`, {
+      "todos": false,
+      "clasificador": e.target.value
+    })
+      .then((res) => {
+        console.log("data especifica ", res.data[0])
+        this.setState({ DataEspecificaApi: res.data[0] })
+      })
+      .catch((err) => {
+        console.error("mal ", err.response)
+      })
+  }
+
+  GuardaOrdenDeCompra(e) {
+    e.preventDefault()
+    console.log("GuardaOrdenDeCompra ")
+    const { IdObra, UrlServer, tipoRecurso, codigo, idDocumento } = this.props.DataConsumir
+
+
+
+    const { recursos } = this.state.DataMostarMasCodigo
+    const { id_clasificador_presupuestario } = this.state.DataEspecificaApi
+
+    // console.log("recursos ", recursos)
+    var funcion = (data) => [IdObra, data.descripcion]
+
+    var dataRecorre = recursos.map(funcion)
+
+
+    var razonSocial = e.target[2].value
+    var RUC = e.target[3].value
+    var fecha = e.target[5].value
+    var SIAF = e.target[6].value
+    var NCP = e.target[7].value
+    var DataNuevo =
+      {
+
+        "razonSocial": razonSocial,
+        "RUC": RUC,
+        "fecha": fecha,
+        "SIAF": SIAF,
+        "NCP": NCP,
+        "clasificadores_presupuestarios_id_clasificador_presupuestario": id_clasificador_presupuestario,
+        "recursos_ejecucionreal": dataRecorre
+      }
+    // console.log("dataRecorre ", dataRecorre)
+    console.log("DataNuevo ", DataNuevo)
+
+    axios.post(`${UrlServer}/postdocumentoAdquisicion`,
+      DataNuevo
+    )
+      .then((res) => {
+        console.log("envio de orden de compra ",  res)
+      })
+      .catch((err)=>{
+        console.error("no se guardar la orden de compra ",  err)
+      })
+
+  }
   render() {
     const { DataMostarMasCodigo } = this.state
-    const { nombreCod, nombreDocumento } = this.props.DataConsumir
+    const { nombreCod, nombreDocumento, codigo } = this.props.DataConsumir
 
     return (
       <div className="table-responsive">
-        <div className="d-flex justify-content-center">
-          <div className="h5">{`${nombreDocumento} ( ${nombreCod} )`} </div>
-          {/* <button>Guardar</button> */}
-        </div>
-{/* 
+        <form onSubmit={this.GuardaOrdenDeCompra.bind(this)}>
+          <div className="clearfix mb-2">
+            <div className="h5 float-left">{`${nombreDocumento} ( ${nombreCod} )`} </div>
+            {
+              DataMostarMasCodigo.razonSocial === ""?
+              <button type="submit" className="float-right mr-2 btn btn-outline-success">Guardar</button>
+              :""
+            }
+            
+          </div>
 
-        <InputGroup size="sm" className="mb-2 px-1">
-          <InputGroupAddon addonType="prepend">
-            <InputGroupText>
-              ESPECÍFICA
+
+          <InputGroup size="sm" className="mb-2 px-1">
+            <InputGroupAddon addonType="prepend">
+              <InputGroupText>
+                ESPECÍFICA
             </InputGroupText>
-          </InputGroupAddon>
-          <Input placeholder="INGRESE LA ESPECÍFICA" />
-        </InputGroup>
-
-        <div className="d-flex">
-
-          <InputGroup size="sm" className="mb-2 px-1">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                RAZÓN SOCIAL
-              </InputGroupText>
             </InputGroupAddon>
-            <Input placeholder="INGRESE " />
+            {
+              DataMostarMasCodigo.clasificador === ""?
+                <Input placeholder="INGRESE LA ESPECÍFICA ( 1.1.4 2 )" onBlur={this.BuscaEspecifica.bind(this)} />
+                :
+                <Input defaultValue={ DataMostarMasCodigo.clasificador } disabled={ DataMostarMasCodigo.clasificador !== ""} />
+
+                
+            }
+            {
+              DataMostarMasCodigo.clasificador === ""?
+              <InputGroupAddon addonType="prepend">
+                  <Button outline color="primary" disabled={ DataMostarMasCodigo.clasificador !== ""} >BUSCAR</Button> 
+              </InputGroupAddon>
+              :""
+            }
           </InputGroup>
 
-          <InputGroup size="sm" className="mb-2 px-1">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                RUC
+
+          <div className="d-flex">
+
+            <InputGroup size="sm" className="mb-2 px-1">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  RAZÓN SOCIAL
                 </InputGroupText>
-            </InputGroupAddon>
-            <Input placeholder="INGRESE" />
-          </InputGroup>
-        </div>
+              </InputGroupAddon>
+              <Input placeholder="INGRESE " defaultValue={ DataMostarMasCodigo.razonSocial } disabled={ DataMostarMasCodigo.razonSocial !== ""} />
+            </InputGroup>
 
-        <div className="d-flex">
+            <InputGroup size="sm" className="mb-2 px-1">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  RUC
+                  </InputGroupText>
+              </InputGroupAddon>
+              <Input placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.RUC } disabled={ DataMostarMasCodigo.RUC !== ""} />
+            </InputGroup>
+          </div>
 
-          <InputGroup size="sm" className="mb-2 px-1">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                ORDEN DE COMPRA
-                </InputGroupText>
-            </InputGroupAddon>
-            <Input placeholder="INGRESE" />
-          </InputGroup>
+          <div className="d-flex">
 
-
-          <InputGroup size="sm" className="mb-2 px-1">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                FECHA
-                </InputGroupText>
-            </InputGroupAddon>
-            <Input type="date" placeholder="INGRESE" />
-          </InputGroup>
-
-
-          <InputGroup size="sm" className="mb-2 px-1">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                SIAF
-                </InputGroupText>
-            </InputGroupAddon>
-            <Input placeholder="INGRESE" />
-          </InputGroup>
+            <InputGroup size="sm" className="mb-2 px-1">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  { nombreCod }
+                  </InputGroupText>
+              </InputGroupAddon>
+              <Input value={ codigo } disabled />
+            </InputGroup>
 
 
-          <InputGroup size="sm" className="mb-2 px-1">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                N° C / P
-                </InputGroupText>
-            </InputGroupAddon>
-            <Input placeholder="INGRESE" />
-          </InputGroup>
+            <InputGroup size="sm" className="mb-2 px-1">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  FECHA
+                  </InputGroupText>
+              </InputGroupAddon>
+              <Input type="date" placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.fecha } disabled={ DataMostarMasCodigo.fecha !== ""} />
+            </InputGroup>
 
-        </div> */}
+
+            <InputGroup size="sm" className="mb-2 px-1">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  SIAF
+                  </InputGroupText>
+              </InputGroupAddon>
+              <Input placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.SIAF } disabled={ DataMostarMasCodigo.SIAF !== ""} />
+            </InputGroup>
+
+
+            <InputGroup size="sm" className="mb-2 px-1">
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  N° C / P
+                  </InputGroupText>
+              </InputGroupAddon>
+              <Input placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.NCP } disabled={ DataMostarMasCodigo.NCP !== ""} />
+            </InputGroup>
+
+          </div>
+        </form>
         <table className="table table-sm table-hover">
           <thead>
             <tr>
@@ -122,132 +209,32 @@ class DataSegunCodigoSelect extends Component {
               <th>RECURSO</th>
               <th>UND</th>
               <th>CANTIDAD</th>
-              {/* <th>PRECIO S/.</th>
-              <th className="bordeDerecho"> PARCIAL S/.</th>
-
-              <th>CANTIDAD</th> */}
               <th>PRECIO S/.</th>
               <th>PARCIAL S/.</th>
-              {/* <th>DIFERENCIA</th>
-              <th>%</th> */}
             </tr>
           </thead>
           <tbody>
             {
-              DataMostarMasCodigo.map((ReqLista, IndexRL) =>
-                <tr key={IndexRL}>
-                  <td>{IndexRL + 1}</td>
-                  <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
+              DataMostarMasCodigo.recursos !== undefined ?
+                DataMostarMasCodigo.recursos.map((ReqLista, IndexRL) =>
+                  <tr key={IndexRL}>
+                    <td>{IndexRL + 1}</td>
+                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
+                      {`${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`}
+                    </td>
+                    <td> {ReqLista.descripcion} </td>
+                    <td> {ReqLista.unidad} </td>
+                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso " : ""}>
 
-                    {`${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`}
-                    {/* {
-                      this.state.tipoEjecucion === false ? `${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`
-                        :
-                        <div className="d-flex justify-content-between contentDataTd">
-                          {
-                            Editable === IndexRL && precioCantidad === "codigo" ?
-                              <span>
-                                <select style={{ padding: "1.5px" }} onChange={e => this.setState({ selectTipoDocumento: e.target.value })} value={this.state.selectTipoDocumento}>
-                                  {
-                                    DataTipoDocAdquisicionApi.map((Docu, indexD) =>
-                                      <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
-                                    )
+                      {ReqLista.recurso_gasto_cantidad}
+                    </td>
 
-                                  }
-
-                                </select>
-                                <input type="text" defaultValue={ReqLista.recurso_codigo} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "codigo", ReqLista.descripcion)} style={{ width: "70px" }} />
-                              </span>
-                              :
-
-                              <span>{`${ReqLista.id_tipoDocumentoAdquisicion === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
-                          }
-
-                          <div className="ContIcon" >
-                            {
-                              Editable === IndexRL && precioCantidad === "codigo"
-                                ?
-                                <div className="d-flex">
-                                  <div onClick={() => this.activaEditable(IndexRL, null, ReqLista.id_tipoDocumentoAdquisicion || DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion)} ><MdSave /> </div> {" "}
-                                  <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
-                                </div>
-                                :
-                                <div onClick={() => this.activaEditable(IndexRL, "codigo", ReqLista.id_tipoDocumentoAdquisicion || DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion)}><MdModeEdit /> </div>
-                            }
-                          </div>
-                        </div>
-                    } */}
-
-                  </td>
-                  <td> {ReqLista.descripcion} </td>
-                  <td> {ReqLista.unidad} </td>
-                  {/* <td> {ReqLista.recurso_cantidad}</td>
-                  <td> {ReqLista.recurso_precio}</td>
-                  <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td> */}
-
-                  <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso " : ""}>
-                    {/* {
-                      this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_cantidad}`
-                        :
-                        <div className="d-flex justify-content-between contentDataTd">
-                          {
-                            Editable === IndexRL && precioCantidad === "cantidad" ?
-                              <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_cantidad)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "cantidad", ReqLista.descripcion)} style={{ width: "60px" }} />
-                              :
-                              <span>{ReqLista.recurso_gasto_cantidad}</span>
-                          }
-                          <div className="ContIcon" >
-                            {
-                              Editable === IndexRL && precioCantidad === "cantidad"
-                                ?
-                                <div className="d-flex">
-                                  <div onClick={() => this.activaEditable(IndexRL, null, "")} ><MdSave /> </div> {" "}
-                                  <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
-                                </div>
-                                :
-                                <div onClick={() => this.activaEditable(IndexRL, "cantidad", "")}><MdModeEdit /> </div>
-                            }
-                          </div>
-
-                        </div>
-                    } */}
-                    {ReqLista.recurso_gasto_cantidad}
-                  </td>
-
-                  <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
-                    {/* {
-                      this.state.tipoEjecucion === false ? `${ReqLista.recurso_gasto_precio}`
-                        :
-                        <div className="d-flex justify-content-between contentDataTd" >
-                          {
-                            Editable === IndexRL && precioCantidad === "precio" ?
-                              <input type="text" defaultValue={ConvertFormatStringNumber(ReqLista.recurso_gasto_precio)} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "precio", ReqLista.descripcion)} style={{ width: "60px" }} />
-                              :
-                              <span>{ReqLista.recurso_gasto_precio}</span>
-                          }
-
-                          <div className="ContIcon">
-                            {
-                              Editable === IndexRL && precioCantidad === "precio"
-                                ?
-                                <div className="d-flex">
-                                  <div onClick={() => this.activaEditable(IndexRL, null)} ><MdSave /> </div> {" "}
-                                  <div onClick={() => this.setState({ Editable: null, precioCantidad: "" })} > <MdClose /></div>
-                                </div>
-                                :
-                                <div onClick={() => this.activaEditable(IndexRL, "precio")}><MdModeEdit /> </div>
-                            }
-                          </div>
-                        </div>
-                    } */}
-
-                    {ReqLista.recurso_gasto_precio}
-                  </td>
-                  <td> {ReqLista.recurso_gasto_parcial}</td>
-                  {/* <td> {ReqLista.diferencia}</td>
-                  <td> {ReqLista.porcentaje}</td> */}
-                </tr>
-              )
+                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
+                      {ReqLista.recurso_gasto_precio}
+                    </td>
+                    <td> {ReqLista.recurso_gasto_parcial}</td>
+                  </tr>
+                ) : <tr><td colSpan="7">...</td></tr>
             }
 
           </tbody>

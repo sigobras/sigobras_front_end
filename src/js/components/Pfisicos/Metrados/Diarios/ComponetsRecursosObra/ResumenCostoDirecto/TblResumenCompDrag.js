@@ -31,9 +31,9 @@ class TblResumenCompDrag extends Component {
     })
       .then((res) => {
         console.log("response de codigos agrupado 👀", res.data)
-        // this.setState({
-        //   DataCodigosAgrupado: res.data
-        // })
+        this.setState({
+          DataCodigosAgrupado: res.data
+        })
       })
       .catch((err) => {
         console.error("erres al consultar api ,", err)
@@ -184,8 +184,10 @@ class TblResumenCompDrag extends Component {
                       {
                         tipoDoc.codigos.map((codigo, icodi) =>
                           <div
+                          
                             className="divCodigoRecur" key={icodi}
-                            onDragOver={(e) => this.onDragOver(e)} onDrop={(e) => { this.onDrop(e, "completado", codigo.codigo, indexC, icodi, tipoDoc.idDocumento) }}
+                            onDragOver={ codigo.bloqueado !== 1 ? (e) => this.onDragOver(e) : ""} 
+                            onDrop={(e) => { this.onDrop(e, "completado", codigo.codigo, indexC, icodi, tipoDoc.idDocumento) }}
 
                             onClick={this.ModalVermasRecursoAgrupado.bind(this, codigo.codigo, tipoDoc.idDocumento, tipoDoc.tipoDocumento, tipoDoc.nombre)}
                           >
