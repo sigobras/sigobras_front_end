@@ -16,7 +16,7 @@ const items = [
   },
   {
     id: 2,
-    caption: 'PROOCESOS GERENCIALES',
+    caption: 'PROCESOS GERENCIALES',
     altText: '',
     src: 'https://e.rpp-noticias.io/normal/2017/05/23/412741_411981.jpg',
   },
@@ -89,7 +89,7 @@ class Slider extends Component {
           {
             `.custom-tag {
                 max-width: 100%;
-                height: 315px;
+                height: 400px;
                 background: black;
               }`
           }

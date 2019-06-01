@@ -96,7 +96,17 @@ class Login extends Component {
     const { isLoading } = this.state;
     return (
       <div className="container mt-2">
-
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnVisibilityChange
+          draggable
+          pauseOnHover
+        />
         <div className="row mr-1 mb-3">
           <div className="col-sm-8">
             <div className="h4">SISTEMA DE INFORMACÍON GERENCIAL DE OBRAS</div>
@@ -171,7 +181,10 @@ class Login extends Component {
           <div className="col-sm-4">
             <div className="contentLemas">
               <label><b>MISIÓN</b></label>
-              <div>Ser la mejor empresa del Perú en desarrollo de software utilizando inteligencia artificial aplicado a obras.</div>
+              <div>
+                Ayudar a las entidades a gestionar todos sus recursos y evitarles pérdidas económicas en 
+                el procesos constructivo
+              </div>
 
             </div>
           </div>
@@ -180,8 +193,7 @@ class Login extends Component {
             <div className="contentLemas">
               <label><b>VISIÓN</b></label>
               <div>
-                Ser la empresa tecnológica referente en la transformación digital,
-                innovadora y líder en nuestro sector.
+                 Ser la mejor empresa del Perú en desarrollo de software utilizando inteligencia artificial aplicado a obras.
                   {/* Utilizando y aplicando los más altos estándares de calidad y confidencialidad.                 */}
               </div>
             </div>
