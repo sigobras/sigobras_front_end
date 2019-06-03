@@ -183,7 +183,7 @@ class Login extends Component {
               <label><b>MISIÓN</b></label>
               <div>
                 Ayudar a las entidades a gestionar todos sus recursos y evitarles pérdidas económicas en 
-                el procesos constructivo
+                el proceso constructivo
               </div>
 
             </div>

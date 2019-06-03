@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFirstPage, MdLastPage, MdChevronLeft , MdChevronRight , MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
 import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
@@ -16,8 +16,8 @@ import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '.
 // import { inflateRaw } from 'zlib';
 
 class MetradosDiarios extends Component {
-  constructor( props ) {
-    super( props );
+  constructor(props) {
+    super(props);
 
     this.state = {
       DataComponentes: [],
@@ -30,7 +30,7 @@ class MetradosDiarios extends Component {
       modal: false,
       modalMm: false,
       nombreComponente: '',
-
+      CargandoComp: true,
       // creo que son data de imputs
       ValorMetrado: '',
       DescripcionMetrado: '',
@@ -169,11 +169,16 @@ class MetradosDiarios extends Component {
             DataPartidas: res.data[0].partidas,
             nombreComponente: res.data[0].nombre,
           })
-        } 
+        }
       })
       .catch((error) => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
+      })
+      .finally(() => {
+        this.setState({
+          CargandoComp: false
+        })
       })
 
     // axios consulta al api de  prioridades ====================================
@@ -237,7 +242,7 @@ class MetradosDiarios extends Component {
         id_componente,
         collapse: -1,
         BuscaPartida: null,
-        PaginaActual:1
+        PaginaActual: 1
 
       });
     }
@@ -776,14 +781,14 @@ class MetradosDiarios extends Component {
   Filtrador(e) {
     // console.log("datos ", e)
     this.setState({
-      PaginaActual:1        
+      PaginaActual: 1
     })
     var valorRecibido = e
     if (typeof valorRecibido === "number") {
       this.setState({
         BuscaPartida: valorRecibido,
         mostrarIconos: -1,
-        PaginaActual:1        
+        PaginaActual: 1
       })
 
       switch (valorRecibido) {
@@ -989,7 +994,7 @@ class MetradosDiarios extends Component {
     console.log("PaginaActual ", Number(event))
     this.setState({
       PaginaActual: Number(event),
-      collapse:-1,
+      collapse: -1,
     });
   }
 
@@ -999,7 +1004,9 @@ class MetradosDiarios extends Component {
   }
 
   render() {
-    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades, DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, mostrarColores, file } = this.state
+    var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
+      DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,
+      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, mostrarColores, file, CargandoComp } = this.state
     var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado
 
     var DatosPartidasFiltrado = DataPartidas
@@ -1073,531 +1080,448 @@ class MetradosDiarios extends Component {
     // console.log("NumeroPaginas ", NumeroPaginas)
 
     return (
-      <div>
-        { 
-          DataComponentes.length <=0 ? "no hay datos que mostrar":
-       
-          <Card>
-            <Nav tabs>
-              {DataComponentes.length === 0 ? <Spinner color="primary" size="sm" /> : DataComponentes.map((comp, indexComp) =>
-                <NavItem key={indexComp}>
-                  <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre)}>
-                    COMP {comp.numero}
-                  </NavLink>
-                </NavItem>
-              )}
-            </Nav>
+      CargandoComp === true
+        ?
+          <div className="text-center" > <Spinner color="primary" type="grow" /></div>
+        :
 
-            <Card className="m-1">
-              <CardHeader className="p-1">
-                {nombreComponente}
-                <div className="float-right">
-                  <InputGroup size="sm">
-                    <InputGroupAddon addonType="prepend"><InputGroupText><MdSearch size={20} /> </InputGroupText> </InputGroupAddon>
+        <div>
+          {
+            DataComponentes.length <= 0 
+            ?
+              <div className="text-center text-warning" > No hay datos </div>
+            :
 
-                    <Input placeholder="Buscar por descripción" onKeyUp={e => this.Filtrador(e)} />
+              <Card>
+                <Nav tabs>
+                  {DataComponentes.length === 0 ? <Spinner color="primary" size="sm" /> : DataComponentes.map((comp, indexComp) =>
+                    <NavItem key={indexComp}>
+                      <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre)}>
+                        COMP {comp.numero}
+                      </NavLink>
+                    </NavItem>
+                  )}
+                </Nav>
 
-                    <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
-                      <DropdownToggle caret className="bg-primary">
-                        {this.state.FilterSelected}
-                      </DropdownToggle>
-                      <DropdownMenu >
-                        <DropdownItem onClick={() => this.Filtrador(101)}>Todo</DropdownItem>
-                        <DropdownItem onClick={() => this.Filtrador(0)} >0%</DropdownItem>
-                        <DropdownItem onClick={() => this.Filtrador(100)} >100%</DropdownItem>
-                        <DropdownItem onClick={() => this.Filtrador(99)}>Progreso</DropdownItem>
-                        <DropdownItem onClick={() => this.Filtrador(104)}>MM</DropdownItem>
-                      </DropdownMenu>
-                    </InputGroupButtonDropdown>
-                  </InputGroup>
-
-                </div>
-              </CardHeader>
-              <CardBody>
-
-                <table className="table table-sm">
-                  <thead className="resplandPartida">
-                    <tr>
-                      <th style={{ width: "39px" }}>
-                        <div title="Busqueda por prioridad" className="prioridad" onClick={() => this.Prioridad("filtro")}>
-                          <FaSuperpowers size={15} />
-                        </div>
-
-                        {
-                          //selecciona circulo para filtrar
-                          this.state.mostrarIconos === "filtro" ?
-                            <div className="menuCirculo">
-                              {
-                                DataPrioridadesApi.map((priori, IPriori) =>
-                                  <div className="circleColor" style={{ background: priori.color }} onClick={() => this.Filtrador(priori.valor)} key={IPriori} />
-                                )
-                              }
-                            </div>
-                            : ""
-                        }
-
-                      </th>
-                      <th>ITEM</th>
-                      <th>DESCRIPCIÓN</th>
-                      <th>METRADO</th>
-                      <th>P/U </th>
-                      <th>P/P </th>
-                      <th width="20%">BARRA DE PROGRESO</th>
-                      <th> DURACIÓN </th>
-                      {/* <th><MdInsertPhoto size={ 18 } /> </th> */}
-                    </tr>
-                  </thead>
-
-                  {DataPartidasPaginada.length <= 0 ?
-                    <tbody><tr><td colSpan="8" className="text-center text-warning">No hay datos</td></tr></tbody> :
-                    DataPartidasPaginada.map((metrados, i) =>
-                      <tbody key={i} >
-
-                        <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-warning icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
-                          <td>
-                            {
-                              metrados.tipo === "titulo" ? "" :
-                                <div title="prioridad" className="prioridad" style={{ color: metrados.prioridad_color }} onClick={() => this.Prioridad(i)}>
-                                  <span className="h6"> {metrados.iconocategoria_nombre}</span>
-                                </div>
-                            }
-                            {/* map de de colores prioridades */}
-
-                            <div className={this.state.mostrarIconos !== i ? "d-none" : "menuCirculo"}>
-
-                              {/* DIV DE CIRCULOS CON ICONO   */}
-                              {
-                                DataIconosCategoriaApi.map((Icono, IIcono) =>
-                                  <div className="circleIcono" onClick={() => this.UpdatePrioridadIcono(metrados.id_partida, Icono.id_iconoCategoria, i)} key={IIcono}>
-                                    <span className="spanUbi"> {Icono.nombre} </span>
-                                  </div>
-                                )
-                              }
-                            </div>
-
-                            <div className={this.state.mostrarColores !== i ? "d-none" : "menuCirculo"}>
-
-                              {/* DIV DE CIRCULOS CON COLOR   */}
-                              {
-                                DataPrioridadesApi.map((priori, IPriori) =>
-                                  <div className="circleColor" style={{ background: priori.color }} onClick={() => this.UpdatePrioridadColor(metrados.id_partida, priori.id_prioridad, i)} key={IPriori}></div>
-                                )
-                              }
-                            </div>
-
-
-                          </td>
-                          <td className={metrados.tipo === "titulo" ? '' : collapse === i ? "tdData1" : metrados.mayorMetrado === 0 ? "tdData" : "FondMM tdData"} onClick={metrados.tipo === "titulo" ? () => this.CollapseItem(-1, -1) : () => this.CollapseItem(i, metrados.id_partida)} data-event={i} >
-                            {metrados.item}
-                          </td>
-                          <td>
-                            {metrados.descripcion}
-
-                          </td>
-                          <td>{metrados.metrado} {metrados.unidad_medida} </td>
-                          <td>{metrados.costo_unitario}</td>
-                          <td>{metrados.parcial}</td>
-                          <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
-
-                            <div className={(metrados.tipo === "titulo" ? 'd-none' : '')}>
-                              <div className="clearfix">
-                                <span className="float-left text-warning">A. met. {metrados.avance_metrado} {metrados.unidad_medida}</span>
-                                <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
-                              </div>
-
-                              <div style={{
-                                height: '3px',
-                                width: '100%',
-                                background: '#c3bbbb',
-                              }}
-
-                              >
-                                <div
-                                  style={{
-                                    width: `${metrados.porcentaje}%`,
-                                    height: '100%',
-                                    background: metrados.porcentaje > 95 ? '#a4fb01'
-                                      : metrados.porcentaje > 50 ? '#ffbf00'
-                                        : '#ff2e00',
-                                    transition: 'all .9s ease-in',
-                                  }}
-                                />
-                              </div>
-                              <div className="clearfix">
-                                <span className="float-left text-info">Saldo: {metrados.metrados_saldo}</span>
-                                <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
-                              </div>
-                            </div>
-
-                          </td>
-                          <td>
-
-                            {metrados.partida_duracion}
-                            {
-                              metrados.tipo !== "titulo"
-                                ?
-                                <div className="aprecerIcon">
-                                  <span className="prioridad iconoTr" onClick={() => this.capturaDatosCrearImgPartida(metrados.id_partida, "/avancePartidaImagen", "Partidas_id_partida")}><MdAddAPhoto size={20} /></span>
-                                </div>
-                                : ""
-                            }
-                          </td>
-
-                        </tr>
-
-                        <tr className={collapse === i ? "resplandPartidabottom" : "d-none"}>
-                          <td colSpan="8">
-                            <Collapse isOpen={collapse === i}>
-                              <div className="p-1">
-                                <div className="row">
-
-                                  <div className="col-sm-7">
-                                    <MdReportProblem size={20} className="text-warning" />
-                                    <b className="small">
-                                      {metrados.descripcion}
-                                    </b>
-                                    <MdFlashOn size={20} className="text-warning" />
-
-                                  </div>
-                                  <div className="col-sm-2">
-                                    {
-                                      Number(DataMayorMetrado.mm_avance_costo) > 0 ? 'MAYOR METRADO' : ''
-                                    }
-                                  </div>
-
-                                  <div className="col-sm-2">
-                                    {/* datos de mayor metrado ------------------ */}
-
-                                    {
-                                      Number(DataMayorMetrado.mm_avance_costo) > 0 ?
-                                        <div className="small">
-
-                                          <div className="clearfix">
-                                            <span className="float-left text-warning">A. met. {DataMayorMetrado.mm_avance_costo} {metrados.unidad_medida}</span>
-                                            <span className="float-right text-warning">S/. {DataMayorMetrado.mm_avance_metrado}</span>
-                                          </div>
-
-                                          <div>
-                                            {DataMayorMetrado.mm_porcentaje} %
-                                                <div />
-                                          </div>
-                                          <div className="clearfix">
-                                            <span className="float-left text-info">Saldo:  {DataMayorMetrado.mm_metrados_saldo} {metrados.unidad_medida}</span>
-                                            <span className="float-right text-info">S/. {DataMayorMetrado.mm_metrados_costo_saldo}</span>
-                                          </div>
-                                        </div> : ''
-                                    }
-
-
-                                  </div>
-
-                                  <div className="col-sm-1">
-                                    <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={() => this.capturaidMM(metrados.id_partida, this.state.id_componente, i, metrados.descripcion)}> <FaPlus size={10} /> MM</button>
-                                  </div>
-                                </div>
-
-                                <table className="table table-bordered table-sm">
-                                  <thead className="thead-dark">
-                                    <tr>
-                                      <th>NOMBRE DE ACTIVIDAD</th>
-                                      <th>N° VECES</th>
-                                      <th>LARGO</th>
-                                      <th>ANCHO</th>
-                                      <th>ALTO</th>
-                                      <th>METRADO</th>
-                                      <th>S/. P / U </th>
-                                      <th>S/. P / P</th>
-                                      <th>ACTIVIDADES SALDOS</th>
-                                      <th><MdSettings /></th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {
-                                      DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm" /></td></tr> :
-                                        DataActividades.map((actividades, indexA) =>
-                                          <tr key={indexA} className={actividades.actividad_estado === "Mayor Metrado" ? 'FondMM icoVer' : 'icoVer'}>
-                                            <td>{actividades.nombre_actividad}</td>
-                                            <td>{actividades.veces_actividad}</td>
-                                            <td>{actividades.largo_actividad}</td>
-                                            <td>{actividades.ancho_actividad}</td>
-                                            <td>{actividades.alto_actividad}</td>
-                                            <td>{actividades.metrado_actividad} {actividades.unidad_medida}</td>
-                                            <td>{actividades.costo_unitario}</td>
-                                            <td>{actividades.parcial_actividad}</td>
-                                            <td className="small">
-                                              {
-                                                Number(actividades.parcial_actividad) <= 0 ? '' :
-                                                  actividades.actividad_tipo === "titulo" ? "" :
-                                                    <div>
-                                                      <div className="clearfix">
-                                                        <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
-                                                        <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
-                                                      </div>
-
-                                                      <div style={{
-                                                        height: '2px',
-                                                        backgroundColor: '#c3bbbb',
-                                                        position: 'relative'
-                                                      }}
-
-                                                      >
-                                                        <div
-                                                          style={{
-                                                            width: `${actividades.actividad_porcentaje}%`,
-                                                            height: '100%',
-                                                            backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
-                                                              : actividades.actividad_porcentaje > 50 ? '#ffbf00'
-                                                                : '#ff2e00',
-                                                            transition: 'all .9s ease-in',
-                                                            position: 'absolute'
-                                                          }}
-                                                        />
-                                                      </div>
-                                                      <div className="clearfix">
-                                                        <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
-                                                        <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
-                                                      </div>
-                                                    </div>
-                                              }
-
-                                            </td>
-                                            <td className="text-center">
-                                              {
-                                                actividades.actividad_tipo === "titulo" ? "" :
-
-                                                  <div>
-                                                    {
-                                                      actividades.actividad_metrados_saldo <= 0
-                                                        ?
-                                                        sessionStorage.getItem("estadoObra") === "Corte"
-                                                          ?
-                                                          <div>
-                                                            <span className="text-primary prioridad aprecerIcon" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
-                                                              <FaPlus size={15} />
-                                                            </span>
-                                                            {" "}
-                                                            <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
-                                                              <MdAddAPhoto size={15} />
-                                                            </span>
-                                                          </div>
-                                                          :
-                                                          <div>
-                                                            <FaCheck className="text-success" size={15} />
-                                                            {" "}
-                                                            <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
-                                                              <MdAddAPhoto size={15} />
-                                                            </span>
-                                                          </div>
-                                                        :
-                                                        <div>
-                                                          <span className="text-primary prioridad" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
-                                                            <FaPlus size={15} />
-                                                          </span>
-                                                          {" "}
-                                                          <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
-                                                            <MdAddAPhoto size={15} />
-                                                          </span>
-                                                        </div>
-                                                    }
-                                                  </div>
-                                              }
-                                            </td>
-
-                                          </tr>
-                                        )
-                                    }
-                                  </tbody>
-                                </table>
-
-                              </div>
-                            </Collapse>
-                          </td>
-                        </tr>
-                      </tbody>
-                    )
-                  }
-                </table>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <select onChange={ this.SelectCantidadRows } value={CantidadRows} className="form-control form-control-sm" >
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={30}>30</option>
-                      <option value={40}>40</option>
-                    </select>
-                  </div>
-                  <div className="float-right mr-2 ">
-                    <div className="d-flex text-dark">
-
+                <Card className="m-1">
+                  <CardHeader className="p-1">
+                    {nombreComponente}
+                    <div className="float-right">
                       <InputGroup size="sm">
-                        <InputGroupAddon addonType="prepend">
-                            <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual(1)} disabled={ PaginaActual === 1 }><MdFirstPage /></Button>
-                            <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual( PaginaActual-1 ) }  disabled={ PaginaActual === 1 }><MdChevronLeft /></Button>
-                            <input type="text" style={{ width: "30px"}} value={ PaginaActual } onChange={ e=> this.setState({ PaginaActual: e.target.value }) }/>
-                            <InputGroupText>{`de  ${NumeroPaginas.length}`} </InputGroupText>
-                        </InputGroupAddon>
-                        
-                        <InputGroupAddon addonType="append">
-                          <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual( PaginaActual+1 ) } disabled={ PaginaActual === NumeroPaginas.length }><MdChevronRight /></Button>
-                          <Button className="btn btn-light pt-0" onClick={()=>this.PaginaActual(NumeroPaginas.pop())}  disabled={ PaginaActual === NumeroPaginas.length }><MdLastPage /></Button>
-                        </InputGroupAddon>
+                        <InputGroupAddon addonType="prepend"><InputGroupText><MdSearch size={20} /> </InputGroupText> </InputGroupAddon>
+
+                        <Input placeholder="Buscar por descripción" onKeyUp={e => this.Filtrador(e)} />
+
+                        <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
+                          <DropdownToggle caret className="bg-primary">
+                            {this.state.FilterSelected}
+                          </DropdownToggle>
+                          <DropdownMenu >
+                            <DropdownItem onClick={() => this.Filtrador(101)}>Todo</DropdownItem>
+                            <DropdownItem onClick={() => this.Filtrador(0)} >0%</DropdownItem>
+                            <DropdownItem onClick={() => this.Filtrador(100)} >100%</DropdownItem>
+                            <DropdownItem onClick={() => this.Filtrador(99)}>Progreso</DropdownItem>
+                            <DropdownItem onClick={() => this.Filtrador(104)}>MM</DropdownItem>
+                          </DropdownMenu>
+                        </InputGroupButtonDropdown>
                       </InputGroup>
 
                     </div>
-                  </div>
-                  
-                </div>
-              </CardBody>
-            </Card>
+                  </CardHeader>
+                  <CardBody>
 
-            {/* chat de partidas y mas */}
-            <div className="chatContainer">
-              <div className="chatHeader">
-                <div className="p-2">
-                  NOMBRE DE LA PARTIDA
-                      <div className="float-right">
-                    <a href="#" id="enviarA" className="text-decoration-none text-white">
-                      <MdPerson size={20} />
-                      <UncontrolledPopover trigger="focus" placement="bottom" target="enviarA">
-                        <PopoverHeader>Enviar a:</PopoverHeader>
-                        <PopoverBody>
-                          <span>Gerente</span><br />
-                          <span>Supervisor</span><br />
-                          <span>Secretaria</span>
-                        </PopoverBody>
-                      </UncontrolledPopover>
-                    </a>
-                    <MdClose size={20} />
-                  </div>
-                </div>
-              </div>
+                    <table className="table table-sm">
+                      <thead className="resplandPartida">
+                        <tr>
+                          <th style={{ width: "39px" }}>
+                            <div title="Busqueda por prioridad" className="prioridad" onClick={() => this.Prioridad("filtro")}>
+                              <FaSuperpowers size={15} />
+                            </div>
 
-              <div className="chatBody">
-                <div className="media mt-1">
-                  <img src="http://sigobras.com/images/042b3c889a81a0000ea2fb79a249f54c.png" className="align-self-end rounded-circle mr-2 img-fluid" style={{ width: "50px" }} />
-                  <div className="media-body">
-                    <div className="chatBodyMensaje">
-                      <span>Lorem ispansum dolor sit met, consectetur .</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                            {
+                              //selecciona circulo para filtrar
+                              this.state.mostrarIconos === "filtro" ?
+                                <div className="menuCirculo">
+                                  {
+                                    DataPrioridadesApi.map((priori, IPriori) =>
+                                      <div className="circleColor" style={{ background: priori.color }} onClick={() => this.Filtrador(priori.valor)} key={IPriori} />
+                                    )
+                                  }
+                                </div>
+                                : ""
+                            }
 
-              <div className="chatFooter">
-                <input type="text" className="form-control form-control-sm" />
-                <button className="btn btn-sm btn-outline-primary"> Enviar </button>
-              </div>
-            </div>
+                          </th>
+                          <th>ITEM</th>
+                          <th>DESCRIPCIÓN</th>
+                          <th>METRADO</th>
+                          <th>P/U </th>
+                          <th>P/P </th>
+                          <th width="20%">BARRA DE PROGRESO</th>
+                          <th> DURACIÓN </th>
+                          {/* <th><MdInsertPhoto size={ 18 } /> </th> */}
+                        </tr>
+                      </thead>
+                      
 
-          </Card>
-        }
+                      {DataPartidasPaginada.length <= 0 ?
+                        <tbody><tr><td colSpan="8" className="text-center text-warning"> <Spinner color="primary" type="grow" /></td></tr></tbody> :
+                        DataPartidasPaginada.map((metrados, i) =>
+                          <tbody key={i} >
 
-        {/* <!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
-        <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
-          <ModalHeader toggle={this.modalMetrar} className="border-button">
-            <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
-              </ModalHeader>
-          {
-            sessionStorage.getItem("estadoObra") === "Ejecucion"
-              ?
-              <div>
-                {/* codigo de EJECUCION =============================================================================================================== */}
+                            <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-warning icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
+                              <td>
+                                {
+                                  metrados.tipo === "titulo" ? "" :
+                                    <div title="prioridad" className="prioridad" style={{ color: metrados.prioridad_color }} onClick={() => this.Prioridad(i)}>
+                                      <span className="h6"> {metrados.iconocategoria_nombre}</span>
+                                    </div>
+                                }
+                                {/* map de de colores prioridades */}
 
-                <form onSubmit={this.EnviarMetrado_EJECUCION}>
-                  <ModalBody>
-                    <label className="text-center mt-0">{descripcion} </label><br />
+                                <div className={this.state.mostrarIconos !== i ? "d-none" : "menuCirculo"}>
 
-                    <div className="d-flex justify-content-between ">
-                      <div className=""><b> {this.state.nombre_actividad} </b></div>
-                      <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida}</div>
-                    </div>
+                                  {/* DIV DE CIRCULOS CON ICONO   */}
+                                  {
+                                    DataIconosCategoriaApi.map((Icono, IIcono) =>
+                                      <div className="circleIcono" onClick={() => this.UpdatePrioridadIcono(metrados.id_partida, Icono.id_iconoCategoria, i)} key={IIcono}>
+                                        <span className="spanUbi"> {Icono.nombre} </span>
+                                      </div>
+                                    )
+                                  }
+                                </div>
 
-                    <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+                                <div className={this.state.mostrarColores !== i ? "d-none" : "menuCirculo"}>
 
-                    <div className="input-group input-group-sm mb-0">
-                      <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
+                                  {/* DIV DE CIRCULOS CON COLOR   */}
+                                  {
+                                    DataPrioridadesApi.map((priori, IPriori) =>
+                                      <div className="circleColor" style={{ background: priori.color }} onClick={() => this.UpdatePrioridadColor(metrados.id_partida, priori.id_prioridad, i)} key={IPriori}></div>
+                                    )
+                                  }
+                                </div>
 
-                      <div className="input-group-append">
-                        <span className="input-group-text">{this.state.unidad_medida}</span>
+
+                              </td>
+                              <td className={metrados.tipo === "titulo" ? '' : collapse === i ? "tdData1" : metrados.mayorMetrado === 0 ? "tdData" : "FondMM tdData"} onClick={metrados.tipo === "titulo" ? () => this.CollapseItem(-1, -1) : () => this.CollapseItem(i, metrados.id_partida)} data-event={i} >
+                                {metrados.item}
+                              </td>
+                              <td>
+                                {metrados.descripcion}
+
+                              </td>
+                              <td>{metrados.metrado} {metrados.unidad_medida} </td>
+                              <td>{metrados.costo_unitario}</td>
+                              <td>{metrados.parcial}</td>
+                              <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
+
+                                <div className={(metrados.tipo === "titulo" ? 'd-none' : '')}>
+                                  <div className="clearfix">
+                                    <span className="float-left text-warning">A. met. {metrados.avance_metrado} {metrados.unidad_medida}</span>
+                                    <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
+                                  </div>
+
+                                  <div style={{
+                                    height: '3px',
+                                    width: '100%',
+                                    background: '#c3bbbb',
+                                  }}
+
+                                  >
+                                    <div
+                                      style={{
+                                        width: `${metrados.porcentaje}%`,
+                                        height: '100%',
+                                        background: metrados.porcentaje > 95 ? '#a4fb01'
+                                          : metrados.porcentaje > 50 ? '#ffbf00'
+                                            : '#ff2e00',
+                                        transition: 'all .9s ease-in',
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="clearfix">
+                                    <span className="float-left text-info">Saldo: {metrados.metrados_saldo}</span>
+                                    <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
+                                  </div>
+                                </div>
+
+                              </td>
+                              <td>
+
+                                {metrados.partida_duracion}
+                                {
+                                  metrados.tipo !== "titulo"
+                                    ?
+                                    <div className="aprecerIcon">
+                                      <span className="prioridad iconoTr" onClick={() => this.capturaDatosCrearImgPartida(metrados.id_partida, "/avancePartidaImagen", "Partidas_id_partida")}><MdAddAPhoto size={20} /></span>
+                                    </div>
+                                    : ""
+                                }
+                              </td>
+
+                            </tr>
+
+                            <tr className={collapse === i ? "resplandPartidabottom" : "d-none"}>
+                              <td colSpan="8">
+                                <Collapse isOpen={collapse === i}>
+                                  <div className="p-1">
+                                    <div className="row">
+
+                                      <div className="col-sm-7">
+                                        <MdReportProblem size={20} className="text-warning" />
+                                        <b className="small">
+                                          {metrados.descripcion}
+                                        </b>
+                                        <MdFlashOn size={20} className="text-warning" />
+
+                                      </div>
+                                      <div className="col-sm-2">
+                                        {
+                                          Number(DataMayorMetrado.mm_avance_costo) > 0 ? 'MAYOR METRADO' : ''
+                                        }
+                                      </div>
+
+                                      <div className="col-sm-2">
+                                        {/* datos de mayor metrado ------------------ */}
+
+                                        {
+                                          Number(DataMayorMetrado.mm_avance_costo) > 0 ?
+                                            <div className="small">
+
+                                              <div className="clearfix">
+                                                <span className="float-left text-warning">A. met. {DataMayorMetrado.mm_avance_costo} {metrados.unidad_medida}</span>
+                                                <span className="float-right text-warning">S/. {DataMayorMetrado.mm_avance_metrado}</span>
+                                              </div>
+
+                                              <div>
+                                                {DataMayorMetrado.mm_porcentaje} %
+                                                <div />
+                                              </div>
+                                              <div className="clearfix">
+                                                <span className="float-left text-info">Saldo:  {DataMayorMetrado.mm_metrados_saldo} {metrados.unidad_medida}</span>
+                                                <span className="float-right text-info">S/. {DataMayorMetrado.mm_metrados_costo_saldo}</span>
+                                              </div>
+                                            </div> : ''
+                                        }
+
+
+                                      </div>
+
+                                      <div className="col-sm-1">
+                                        <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={() => this.capturaidMM(metrados.id_partida, this.state.id_componente, i, metrados.descripcion)}> <FaPlus size={10} /> MM</button>
+                                      </div>
+                                    </div>
+
+                                    <table className="table table-bordered table-sm">
+                                      <thead className="thead-dark">
+                                        <tr>
+                                          <th>NOMBRE DE ACTIVIDAD</th>
+                                          <th>N° VECES</th>
+                                          <th>LARGO</th>
+                                          <th>ANCHO</th>
+                                          <th>ALTO</th>
+                                          <th>METRADO</th>
+                                          <th>S/. P / U </th>
+                                          <th>S/. P / P</th>
+                                          <th>ACTIVIDADES SALDOS</th>
+                                          <th><MdSettings /></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {
+                                          DataActividades.length <= 0 ? <tr><td colSpan="11" className="text-center"><Spinner color="primary" size="sm" /></td></tr> :
+                                            DataActividades.map((actividades, indexA) =>
+                                              <tr key={indexA} className={actividades.actividad_estado === "Mayor Metrado" ? 'FondMM icoVer' : 'icoVer'}>
+                                                <td>{actividades.nombre_actividad}</td>
+                                                <td>{actividades.veces_actividad}</td>
+                                                <td>{actividades.largo_actividad}</td>
+                                                <td>{actividades.ancho_actividad}</td>
+                                                <td>{actividades.alto_actividad}</td>
+                                                <td>{actividades.metrado_actividad} {actividades.unidad_medida}</td>
+                                                <td>{actividades.costo_unitario}</td>
+                                                <td>{actividades.parcial_actividad}</td>
+                                                <td className="small">
+                                                  {
+                                                    Number(actividades.parcial_actividad) <= 0 ? '' :
+                                                      actividades.actividad_tipo === "titulo" ? "" :
+                                                        <div>
+                                                          <div className="clearfix">
+                                                            <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
+                                                            <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
+                                                          </div>
+
+                                                          <div style={{
+                                                            height: '2px',
+                                                            backgroundColor: '#c3bbbb',
+                                                            position: 'relative'
+                                                          }}
+
+                                                          >
+                                                            <div
+                                                              style={{
+                                                                width: `${actividades.actividad_porcentaje}%`,
+                                                                height: '100%',
+                                                                backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
+                                                                  : actividades.actividad_porcentaje > 50 ? '#ffbf00'
+                                                                    : '#ff2e00',
+                                                                transition: 'all .9s ease-in',
+                                                                position: 'absolute'
+                                                              }}
+                                                            />
+                                                          </div>
+                                                          <div className="clearfix">
+                                                            <span className="float-left text-info">Saldo: {actividades.actividad_metrados_saldo}</span>
+                                                            <span className="float-right text-info">S/. {actividades.actividad_metrados_costo_saldo}</span>
+                                                          </div>
+                                                        </div>
+                                                  }
+
+                                                </td>
+                                                <td className="text-center">
+                                                  {
+                                                    actividades.actividad_tipo === "titulo" ? "" :
+
+                                                      <div>
+                                                        {
+                                                          actividades.actividad_metrados_saldo <= 0
+                                                            ?
+                                                            sessionStorage.getItem("estadoObra") === "Corte"
+                                                              ?
+                                                              <div>
+                                                                <span className="text-primary prioridad aprecerIcon" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                                  <FaPlus size={15} />
+                                                                </span>
+                                                                {" "}
+                                                                <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                                  <MdAddAPhoto size={15} />
+                                                                </span>
+                                                              </div>
+                                                              :
+                                                              <div>
+                                                                <FaCheck className="text-success" size={15} />
+                                                                {" "}
+                                                                <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                                  <MdAddAPhoto size={15} />
+                                                                </span>
+                                                              </div>
+                                                            :
+                                                            <div>
+                                                              <span className="text-primary prioridad" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                                <FaPlus size={15} />
+                                                              </span>
+                                                              {" "}
+                                                              <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                                <MdAddAPhoto size={15} />
+                                                              </span>
+                                                            </div>
+                                                        }
+                                                      </div>
+                                                  }
+                                                </td>
+
+                                              </tr>
+                                            )
+                                        }
+                                      </tbody>
+                                    </table>
+
+                                  </div>
+                                </Collapse>
+                              </td>
+                            </tr>
+                          </tbody>
+                        )
+                      }
+                    </table>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <select onChange={this.SelectCantidadRows} value={CantidadRows} className="form-control form-control-sm" >
+                          <option value={10}>10</option>
+                          <option value={20}>20</option>
+                          <option value={30}>30</option>
+                          <option value={40}>40</option>
+                        </select>
                       </div>
-                    </div>
-                    <div className="texto-rojo mb-0"> <b> {smsValidaMetrado}</b></div>
+                      <div className="float-right mr-2 ">
+                        <div className="d-flex text-dark">
 
-                    <div className="d-flex justify-content-center text-center mt-1">
-                      <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br />
-                        {this.state.metrado} {this.state.unidad_medida}
-                      </div>
+                          <InputGroup size="sm">
+                            <InputGroupAddon addonType="prepend">
+                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(1)} disabled={PaginaActual === 1}><MdFirstPage /></Button>
+                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(PaginaActual - 1)} disabled={PaginaActual === 1}><MdChevronLeft /></Button>
+                              <input type="text" style={{ width: "30px" }} value={PaginaActual} onChange={e => this.setState({ PaginaActual: e.target.value })} />
+                              <InputGroupText>{`de  ${NumeroPaginas.length}`} </InputGroupText>
+                            </InputGroupAddon>
 
-                      <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida}  <br />
-                        = S/.  {this.state.parcial} <br />
-                      </div>
-                      <div className={Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white" : "bg-success p-1 mr-1 text-white"}>Saldo <br />
-                        {this.state.actividad_metrados_saldo} {this.state.unidad_medida}
-                      </div>
+                            <InputGroupAddon addonType="append">
+                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(PaginaActual + 1)} disabled={PaginaActual === NumeroPaginas.length}><MdChevronRight /></Button>
+                              <Button className="btn btn-light pt-0" onClick={() => this.PaginaActual(NumeroPaginas.pop())} disabled={PaginaActual === NumeroPaginas.length}><MdLastPage /></Button>
+                            </InputGroupAddon>
+                          </InputGroup>
 
-                    </div>
-
-                    <div className="form-group mb-1">
-                      <label htmlFor="comment">DESCRIPCION:</label>
-                      <DebounceInput
-                        cols="40"
-                        rows="1"
-                        element="textarea"
-                        minLength={0}
-                        debounceTimeout={debounceTimeout}
-                        onChange={e => this.setState({ DescripcionMetrado: e.target.value })}
-                        className="form-control"
-                      />
-                    </div>
-
-                    <div className="form-group mb-0">
-                      <label htmlFor="comment">OBSERVACIÓN:</label>
-                      <DebounceInput
-                        cols="40"
-                        rows="1"
-                        element="textarea"
-                        minLength={0}
-                        debounceTimeout={debounceTimeout}
-                        onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
-                        className="form-control"
-                      />
-                    </div>
-                    <span className="small">% {this.state.porcentaje_negatividad}</span>
-
-                    {
-                      this.state.UrlImagen.length <= 0
-                        ? "" :
-                        <div className="imgDelete">
-                          <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
-                          <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
                         </div>
-                    }
-                    <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
-
-                    <div className="custom-file">
-                      <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
-                      <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
+                      </div>
 
                     </div>
+                  </CardBody>
+                </Card>
 
-                  </ModalBody>
-                  <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
-                    <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
-                    <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
-                  </ModalFooter>
-                </form>
-              </div>
+                {/* chat de partidas y mas */}
+                <div className="chatContainer">
+                  <div className="chatHeader">
+                    <div className="p-2">
+                      NOMBRE DE LA PARTIDA
+                      <div className="float-right">
+                        <a href="#" id="enviarA" className="text-decoration-none text-white">
+                          <MdPerson size={20} />
+                          <UncontrolledPopover trigger="focus" placement="bottom" target="enviarA">
+                            <PopoverHeader>Enviar a:</PopoverHeader>
+                            <PopoverBody>
+                              <span>Gerente</span><br />
+                              <span>Supervisor</span><br />
+                              <span>Secretaria</span>
+                            </PopoverBody>
+                          </UncontrolledPopover>
+                        </a>
+                        <MdClose size={20} />
+                      </div>
+                    </div>
+                  </div>
 
-              :
-              sessionStorage.getItem("estadoObra") === "Corte"
+                  <div className="chatBody">
+                    <div className="media mt-1">
+                      <img src="http://sigobras.com/images/042b3c889a81a0000ea2fb79a249f54c.png" className="align-self-end rounded-circle mr-2 img-fluid" style={{ width: "50px" }} />
+                      <div className="media-body">
+                        <div className="chatBodyMensaje">
+                          <span>Lorem ispansum dolor sit met, consectetur .</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="chatFooter">
+                    <input type="text" className="form-control form-control-sm" />
+                    <button className="btn btn-sm btn-outline-primary"> Enviar </button>
+                  </div>
+                </div>
+
+              </Card>
+          }
+
+          {/* <!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
+          <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
+            <ModalHeader toggle={this.modalMetrar} className="border-button">
+              <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+              </ModalHeader>
+            {
+              sessionStorage.getItem("estadoObra") === "Ejecucion"
                 ?
                 <div>
-                  {/* codigo de CORTE =============================================================================================================== */}
+                  {/* codigo de EJECUCION =============================================================================================================== */}
 
-                  <form onSubmit={this.EnviarMetrado_CORTE}>
+                  <form onSubmit={this.EnviarMetrado_EJECUCION}>
                     <ModalBody>
                       <label className="text-center mt-0">{descripcion} </label><br />
-
 
                       <div className="d-flex justify-content-between ">
                         <div className=""><b> {this.state.nombre_actividad} </b></div>
@@ -1606,19 +1530,13 @@ class MetradosDiarios extends Component {
 
                       <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
 
-                      <InputGroup>
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText className="p-1">{this.state.actividad_avance_metrado}</InputGroupText>
-                          <InputGroupText className="p-1">-</InputGroupText>
-                        </InputGroupAddon>
-
+                      <div className="input-group input-group-sm mb-0">
                         <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
-                        <InputGroupAddon addonType="append">
-                          <InputGroupText className="p-1">=</InputGroupText>
-                          <InputGroupText className="p-1">  {restaResultado.toLocaleString("es-PE")}</InputGroupText>
-                          <InputGroupText className="p-1">{this.state.unidad_medida}</InputGroupText>
-                        </InputGroupAddon>
-                      </InputGroup>
+
+                        <div className="input-group-append">
+                          <span className="input-group-text">{this.state.unidad_medida}</span>
+                        </div>
+                      </div>
                       <div className="texto-rojo mb-0"> <b> {smsValidaMetrado}</b></div>
 
                       <div className="d-flex justify-content-center text-center mt-1">
@@ -1635,7 +1553,7 @@ class MetradosDiarios extends Component {
 
                       </div>
 
-                      <div className="form-group">
+                      <div className="form-group mb-1">
                         <label htmlFor="comment">DESCRIPCION:</label>
                         <DebounceInput
                           cols="40"
@@ -1648,7 +1566,7 @@ class MetradosDiarios extends Component {
                         />
                       </div>
 
-                      <div className="form-group">
+                      <div className="form-group mb-0">
                         <label htmlFor="comment">OBSERVACIÓN:</label>
                         <DebounceInput
                           cols="40"
@@ -1660,7 +1578,6 @@ class MetradosDiarios extends Component {
                           className="form-control"
                         />
                       </div>
-
                       <span className="small">% {this.state.porcentaje_negatividad}</span>
 
                       {
@@ -1686,233 +1603,332 @@ class MetradosDiarios extends Component {
                     </ModalFooter>
                   </form>
                 </div>
+
                 :
-                <div>
-                  {/* codigo de ACTUALIZACION =============================================================================================================== */}
+                sessionStorage.getItem("estadoObra") === "Corte"
+                  ?
+                  <div>
+                    {/* codigo de CORTE =============================================================================================================== */}
 
-                  <form onSubmit={this.EnviarMetrado_ACTUALIZACION}>
+                    <form onSubmit={this.EnviarMetrado_CORTE}>
+                      <ModalBody>
+                        <label className="text-center mt-0">{descripcion} </label><br />
 
-                    <ModalBody>
-                      <label className="text-center mt-0">{descripcion} </label><br />
 
-
-                      <div className="d-flex justify-content-between ">
-                        <div className=""><b> {this.state.nombre_actividad} </b></div>
-                        <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida.replace("/DIA", "")}</div>
-                      </div>
-
-                      <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
-
-                      <div className="input-group input-group-sm mb-0">
-                        <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
-
-                        <div className="input-group-append">
-                          <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
-                        </div>
-                      </div>
-                      <div className="texto-rojo mb-0"> <b> {smsValidaMetrado}</b></div>
-
-                      <div className="d-flex justify-content-center text-center mt-1">
-                        <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br />
-                          {this.state.metrado} {this.state.unidad_medida.replace("/DIA", "")}
+                        <div className="d-flex justify-content-between ">
+                          <div className=""><b> {this.state.nombre_actividad} </b></div>
+                          <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida}</div>
                         </div>
 
-                        <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida.replace("/DIA", "")}  <br />
-                          = S/.  {this.state.parcial} <br />
+                        <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText className="p-1">{this.state.actividad_avance_metrado}</InputGroupText>
+                            <InputGroupText className="p-1">-</InputGroupText>
+                          </InputGroupAddon>
+
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
+                          <InputGroupAddon addonType="append">
+                            <InputGroupText className="p-1">=</InputGroupText>
+                            <InputGroupText className="p-1">  {restaResultado.toLocaleString("es-PE")}</InputGroupText>
+                            <InputGroupText className="p-1">{this.state.unidad_medida}</InputGroupText>
+                          </InputGroupAddon>
+                        </InputGroup>
+                        <div className="texto-rojo mb-0"> <b> {smsValidaMetrado}</b></div>
+
+                        <div className="d-flex justify-content-center text-center mt-1">
+                          <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br />
+                            {this.state.metrado} {this.state.unidad_medida}
+                          </div>
+
+                          <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida}  <br />
+                            = S/.  {this.state.parcial} <br />
+                          </div>
+                          <div className={Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white" : "bg-success p-1 mr-1 text-white"}>Saldo <br />
+                            {this.state.actividad_metrados_saldo} {this.state.unidad_medida}
+                          </div>
+
                         </div>
-                        <div className={Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white" : "bg-success p-1 mr-1 text-white"}>Saldo <br />
-                          {this.state.actividad_metrados_saldo} {this.state.unidad_medida.replace("/DIA", "")}
+
+                        <div className="form-group">
+                          <label htmlFor="comment">DESCRIPCION:</label>
+                          <DebounceInput
+                            cols="40"
+                            rows="1"
+                            element="textarea"
+                            minLength={0}
+                            debounceTimeout={debounceTimeout}
+                            onChange={e => this.setState({ DescripcionMetrado: e.target.value })}
+                            className="form-control"
+                          />
                         </div>
-                      </div>
+
+                        <div className="form-group">
+                          <label htmlFor="comment">OBSERVACIÓN:</label>
+                          <DebounceInput
+                            cols="40"
+                            rows="1"
+                            element="textarea"
+                            minLength={0}
+                            debounceTimeout={debounceTimeout}
+                            onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
+                            className="form-control"
+                          />
+                        </div>
+
+                        <span className="small">% {this.state.porcentaje_negatividad}</span>
+
+                        {
+                          this.state.UrlImagen.length <= 0
+                            ? "" :
+                            <div className="imgDelete">
+                              <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
+                              <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
+                            </div>
+                        }
+                        <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
+
+                        <div className="custom-file">
+                          <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
+                          <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
+
+                        </div>
+
+                      </ModalBody>
+                      <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
+                        <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
+                        <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
+                      </ModalFooter>
+                    </form>
+                  </div>
+                  :
+                  <div>
+                    {/* codigo de ACTUALIZACION =============================================================================================================== */}
+
+                    <form onSubmit={this.EnviarMetrado_ACTUALIZACION}>
+
+                      <ModalBody>
+                        <label className="text-center mt-0">{descripcion} </label><br />
 
 
-                      <div className="form-group">
-                        <label htmlFor="fehca">FECHA :</label>
-                        <input type="date" min={PrimerDiaDelMesActual()} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
-                        <div className="texto-rojo mb-0"> <b> {this.state.smsValidaFecha}</b></div>
-                      </div>
+                        <div className="d-flex justify-content-between ">
+                          <div className=""><b> {this.state.nombre_actividad} </b></div>
+                          <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida.replace("/DIA", "")}</div>
+                        </div>
+
+                        <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+
+                        <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
+
+                          <div className="input-group-append">
+                            <span className="input-group-text">{this.state.unidad_medida.replace("/DIA", "")}</span>
+                          </div>
+                        </div>
+                        <div className="texto-rojo mb-0"> <b> {smsValidaMetrado}</b></div>
+
+                        <div className="d-flex justify-content-center text-center mt-1">
+                          <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br />
+                            {this.state.metrado} {this.state.unidad_medida.replace("/DIA", "")}
+                          </div>
+
+                          <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida.replace("/DIA", "")}  <br />
+                            = S/.  {this.state.parcial} <br />
+                          </div>
+                          <div className={Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white" : "bg-success p-1 mr-1 text-white"}>Saldo <br />
+                            {this.state.actividad_metrados_saldo} {this.state.unidad_medida.replace("/DIA", "")}
+                          </div>
+                        </div>
 
 
-                      <div className="form-group">
-                        <label htmlFor="comment">DESCRIPCION:</label>
-                        <DebounceInput
-                          cols="40"
-                          rows="1"
-                          element="textarea"
-                          minLength={0}
-                          debounceTimeout={debounceTimeout}
-                          onChange={e => this.setState({ DescripcionMetrado: e.target.value })}
-                          className="form-control"
-                        />
-                      </div>
+                        <div className="form-group">
+                          <label htmlFor="fehca">FECHA :</label>
+                          <input type="date" min={PrimerDiaDelMesActual()} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
+                          <div className="texto-rojo mb-0"> <b> {this.state.smsValidaFecha}</b></div>
+                        </div>
 
-                      <div className="form-group">
-                        <label htmlFor="comment">OBSERVACIÓN:</label>
-                        <DebounceInput
-                          cols="40"
-                          rows="1"
-                          element="textarea"
-                          minLength={0}
-                          debounceTimeout={debounceTimeout}
-                          onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
-                          className="form-control"
-                        />
-                      </div>
 
-                      <span className="small">% {this.state.porcentaje_negatividad}</span>
+                        <div className="form-group">
+                          <label htmlFor="comment">DESCRIPCION:</label>
+                          <DebounceInput
+                            cols="40"
+                            rows="1"
+                            element="textarea"
+                            minLength={0}
+                            debounceTimeout={debounceTimeout}
+                            onChange={e => this.setState({ DescripcionMetrado: e.target.value })}
+                            className="form-control"
+                          />
+                        </div>
 
+                        <div className="form-group">
+                          <label htmlFor="comment">OBSERVACIÓN:</label>
+                          <DebounceInput
+                            cols="40"
+                            rows="1"
+                            element="textarea"
+                            minLength={0}
+                            debounceTimeout={debounceTimeout}
+                            onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
+                            className="form-control"
+                          />
+                        </div>
+
+                        <span className="small">% {this.state.porcentaje_negatividad}</span>
+
+                        {
+                          this.state.UrlImagen.length <= 0
+                            ? "" :
+                            <div className="imgDelete">
+                              <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
+                              <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
+                            </div>
+                        }
+                        <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
+
+                        <div className="custom-file">
+                          <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
+                          <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
+                        </div>
+
+                      </ModalBody>
+                      <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
+                        <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
+                        <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
+                      </ModalFooter>
+                    </form>
+                  </div>
+            }
+          </Modal>
+          {/* ///<!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
+
+
+          {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
+          <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} fade={false} backdrop="static" style={{ width: "900px" }}>
+            <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
+              <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+              </ModalHeader>
+            <form onSubmit={this.EnviarMayorMetrado}>
+
+              <ModalBody>
+
+                <label className="text-center mt-0">{descripcion} </label><br />
+
+                <div className="clearfix">
+                  <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e => this.setState({ OpcionMostrarMM: e.target.value })} />
+                  <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="titulo" onChange={e => this.setState({ OpcionMostrarMM: e.target.value })} />
+                </div>
+
+                {
+                  OpcionMostrarMM.length <= 0 ? "" :
+                    <div>
                       {
-                        this.state.UrlImagen.length <= 0
-                          ? "" :
-                          <div className="imgDelete">
-                            <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
-                            <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
+                        OpcionMostrarMM === "titulo" ?
+                          <div>
+                            <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
+                            <div className="input-group input-group-sm mb-0">
+                              <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ nombre: e.target.value })} type="text" className="form-control" />
+                            </div>
+                          </div>
+                          : <div>
+                            <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
+                            <div className="input-group input-group-sm mb-0">
+                              <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ nombre: e.target.value })} type="text" className="form-control" />
+                            </div>
                           </div>
                       }
-                      <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
 
-                      <div className="custom-file">
-                        <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
-                        <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
-                      </div>
-
-                    </ModalBody>
-                    <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
-                      <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
-                      <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
-                    </ModalFooter>
-                  </form>
-                </div>
-          }
-        </Modal>
-        {/* ///<!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
-
-
-        {/* <!-- MODAL PARA  mayores metrados ( modalMayorMetrado ) --> */}
-        <Modal isOpen={this.state.modalMm} toggle={this.modalMayorMetrado} fade={false} backdrop="static" style={{width: "900px"}}>
-          <ModalHeader toggle={this.modalMayorMetrado} className="border-button">
-            <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
-              </ModalHeader>
-          <form onSubmit={this.EnviarMayorMetrado}>
-
-            <ModalBody>
-
-              <label className="text-center mt-0">{descripcion} </label><br />
-
-              <div className="clearfix">
-                <CustomInput type="radio" id="radio1" name="customRadio" label="Actividad" className="float-right" value="subtitulo" onChange={e => this.setState({ OpcionMostrarMM: e.target.value })} />
-                <CustomInput type="radio" id="radio2" name="customRadio" label="Titulo" className="float-left" value="titulo" onChange={e => this.setState({ OpcionMostrarMM: e.target.value })} />
-              </div>
-
-              {
-                OpcionMostrarMM.length <= 0 ? "" :
-                  <div>
-                    {
-                      OpcionMostrarMM === "titulo" ?
-                        <div>
-                          <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
-                          <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ nombre: e.target.value })} type="text" className="form-control" />
-                          </div>
+                      <div className={OpcionMostrarMM === "titulo" ? "d-none" : ''}>
+                        <label htmlFor="comment">N° VECES:</label>
+                        <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ veces: e.target.value })} type="text" className="form-control" />
                         </div>
-                        : <div>
-                          <label htmlFor="comment">NOMBRE DE LA ACTIVIDAD:</label>
-                          <div className="input-group input-group-sm mb-0">
-                            <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ nombre: e.target.value })} type="text" className="form-control" />
-                          </div>
+
+                        <label htmlFor="comment">LARGO:</label>
+                        <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ largo: e.target.value })} type="text" className="form-control" />
                         </div>
-                    }
 
-                    <div className={OpcionMostrarMM === "titulo" ? "d-none" : ''}>
-                      <label htmlFor="comment">N° VECES:</label>
-                      <div className="input-group input-group-sm mb-0">
-                        <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ veces: e.target.value })} type="text" className="form-control" />
-                      </div>
+                        <label htmlFor="comment">ANCHO:</label>
+                        <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ancho: e.target.value })} type="text" className="form-control" />
+                        </div>
 
-                      <label htmlFor="comment">LARGO:</label>
-                      <div className="input-group input-group-sm mb-0">
-                        <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ largo: e.target.value })} type="text" className="form-control" />
-                      </div>
+                        <label htmlFor="comment">ALTO:</label>
+                        <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ alto: e.target.value })} type="text" className="form-control" />
+                        </div>
 
-                      <label htmlFor="comment">ANCHO:</label>
-                      <div className="input-group input-group-sm mb-0">
-                        <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ancho: e.target.value })} type="text" className="form-control" />
-                      </div>
-
-                      <label htmlFor="comment">ALTO:</label>
-                      <div className="input-group input-group-sm mb-0">
-                        <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ alto: e.target.value })} type="text" className="form-control" />
-                      </div>
-
-                      <label htmlFor="comment">METRADO:</label>
-                      {/* ESTE ES EL METRADO = parcial */}
-                      <div className="input-group input-group-sm mb-0">
-                        <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ parcialMM: e.target.value })} placeholder={Number(this.state.veces) * Number(this.state.largo) * Number(this.state.ancho) * Number(this.state.alto)} type="text" className="form-control" />
+                        <label htmlFor="comment">METRADO:</label>
+                        {/* ESTE ES EL METRADO = parcial */}
+                        <div className="input-group input-group-sm mb-0">
+                          <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ parcialMM: e.target.value })} placeholder={Number(this.state.veces) * Number(this.state.largo) * Number(this.state.ancho) * Number(this.state.alto)} type="text" className="form-control" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-              }
+                }
 
-            </ModalBody>
-            <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
-              <div className="float-left"><Button color="primary" type="submit">Guardar mayor metrado</Button>{' '}</div>
-              <div className="float-right"><Button color="danger" onClick={this.modalMayorMetrado}>Cancelar</Button></div>
-            </ModalFooter>
-          </form>
-        </Modal>
-        {/* ///<!-- MODAL PARA modalMM --> */}
+              </ModalBody>
+              <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
+                <div className="float-left"><Button color="primary" type="submit">Guardar mayor metrado</Button>{' '}</div>
+                <div className="float-right"><Button color="danger" onClick={this.modalMayorMetrado}>Cancelar</Button></div>
+              </ModalFooter>
+            </form>
+          </Modal>
+          {/* ///<!-- MODAL PARA modalMM --> */}
 
 
-        {/* MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
-        <Modal isOpen={this.state.modalImgPartida} fade={false} toggle={this.modalImgPartida} size="sm" >
-          <ModalHeader toggle={this.modalImgPartida}>
-            <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+          {/* MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
+          <Modal isOpen={this.state.modalImgPartida} fade={false} toggle={this.modalImgPartida} size="sm" >
+            <ModalHeader toggle={this.modalImgPartida}>
+              <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
               </ModalHeader>
-          <form onSubmit={this.EnviaImgPartida}>
-            <ModalBody>
+            <form onSubmit={this.EnviaImgPartida}>
+              <ModalBody>
 
-              {
-                this.state.UrlImagen.length <= 0
-                  ? "" :
-                  <div className="imgDelete">
-                    <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
-                    <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
-                  </div>
-              }
-              <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
+                {
+                  this.state.UrlImagen.length <= 0
+                    ? "" :
+                    <div className="imgDelete">
+                      <button className="imgBtn" onClick={() => this.clearImg()}>X</button>
+                      <img src={this.state.UrlImagen} alt="imagen " className="img-fluid mb-2" />
+                    </div>
+                }
+                <div className="texto-rojo mb-0"> <b> {SMSinputTypeImg === true ? "Formatos soportados PNG, JPEG, JPG" : ""}</b></div>
 
-              <div className="custom-file">
-                <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
-                <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
-              </div>
+                <div className="custom-file">
+                  <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
+                  <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
+                </div>
 
-              <div className="form-group mt-2">
-                <label htmlFor="comment">DESCRIPCIÓN / OBSERVACIÓN:</label>
-                <DebounceInput
-                  cols="40"
-                  rows="2"
-                  element="textarea"
-                  minLength={0}
-                  debounceTimeout={debounceTimeout}
-                  onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
-                  className="form-control"
-                />
+                <div className="form-group mt-2">
+                  <label htmlFor="comment">DESCRIPCIÓN / OBSERVACIÓN:</label>
+                  <DebounceInput
+                    cols="40"
+                    rows="2"
+                    element="textarea"
+                    minLength={0}
+                    debounceTimeout={debounceTimeout}
+                    onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
+                    className="form-control"
+                  />
 
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              {
-                file !== null ?
-                  <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>
-                  : ""
-              }
-              {' '}
-              <Button color="danger" onClick={this.modalImgPartida}>Cancelar</Button>
-            </ModalFooter>
-          </form>
-        </Modal>
-        {/* //MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
-      </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                {
+                  file !== null ?
+                    <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>
+                    : ""
+                }
+                {' '}
+                <Button color="danger" onClick={this.modalImgPartida}>Cancelar</Button>
+              </ModalFooter>
+            </form>
+          </Modal>
+          {/* //MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
+        </div>
     );
   }
 }
