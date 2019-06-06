@@ -314,24 +314,27 @@ body {
   width: 100%;
   /* padding-top: 45%; */
 }
-.codigoObra{
+
+.codigoObra {
   text-align: center;
-    font-size: 2em;
-    font-family: courier new;
-    font-weight: bolder;
+  font-size: 2em;
+  font-family: courier new;
+  font-weight: bolder;
 }
+
 .detallesObra {
   /* /* bottom: 0px;
   position: absolute; */
   width: 100%;
   padding-top: 30%;
 }
-.ContentpresupuestoObra{
+
+.ContentpresupuestoObra {
   display: flex;
   justify-content: center;
 }
 
-.PresuObra{
+.PresuObra {
   background: #1a2a396e;
   border-radius: 3px;
   box-shadow: 0 0 2px 1px #1c2e3d;
@@ -668,4 +671,23 @@ table.table thead th {
   cursor: grab;
   cursor: -moz-grab;
   cursor: -webkit-grab;
+}
+
+.NuevaOrdenCompra {
+  background: rgb(58,142,180);
+  background: linear-gradient(90deg, rgba(58,142,180,0.09567577030812324) 0%, rgba(195,253,29,0.10127801120448177) 50%, rgba(252,176,69,0.10127801120448177) 100%);
+}
+
+.btnCancelar{
+  background: #ffffff5c;
+  border-radius: 50%;
+  cursor: pointer;
+  color: red;
+  padding: 4px;
+}
+.btnCancelar:hover{
+  background: red;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
 }

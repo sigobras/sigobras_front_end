@@ -138,7 +138,8 @@ class AppAng extends Component {
                     <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
                         <div>
                             <img src={LogoSigobras} className="rounded p-0 m-0" alt="logo sigobras" width="45" height="28" />
-                            <span className="textSigobras h5 ml-2"> SIGOBRAS</span>
+                            <span className="textSigobras h5 ml-2"> SIGOBRAS </span>
+                            <i className="small"> V. 1.0</i>
                         </div>
                         <div>
                             <span className="text-white ButtonToogleMenu" onClick={this.ButtonToogle}>
