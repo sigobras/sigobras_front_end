@@ -56,8 +56,7 @@ module.exports = {
     allowedHosts: [
       'www.sigobras.com',
       'sigobras.com',
-      '190.117.94.80',
-      'https://www.sigobras.com/MDdiario'
+      '190.117.94.80'
     ],
     filename: 'main.js'
   },

@@ -6,8 +6,12 @@ body {
   color: #dcd7d7 !important;
   background-image: url("../images/blur-bg.jpg");
   /* background-position: 50% 0%; */
-  background-repeat: no-repeat;
+  /* background-repeat: no-repeat;
+  background-size: cover; */
+  height: 100%;
+  background-position: center;
   background-size: cover;
+  position: relative;
 }
 
 /*  Sidebar */
