@@ -128,7 +128,7 @@ class TblResumenCompDrag extends Component {
 
   render() {
     const { DataRecursoAgrupadoApi, DataCodigosAgrupado, CodigoSeleccionado, idDocumento, nombreCodigoDocumento, nombreDocumento } = this.state
-    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '15px', right: '15px' }} onClick={this.ModalVermasRecursoAgrupado.bind(this, "", "", "", "")}>&times;</button>;
+    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '8px', right: '19.5%', color:"red" }} onClick={this.ModalVermasRecursoAgrupado.bind(this, "", "", "", "")}>&times;</button>;
     return (
       <div>
         <Row>
@@ -180,7 +180,7 @@ class TblResumenCompDrag extends Component {
                 <Card key={indexC} className="mb-2">
                   <CardHeader className="p-1">{`${tipoDoc.tipoDocumento} `}<span className="badge badge-primary"> {tipoDoc.cantidad}</span> </CardHeader>
                   <CardBody>
-                    <div className="p-1 d-flex">
+                    <div className="p-1 d-flex flex-wrap">
                       {
                         tipoDoc.codigos.map((codigo, icodi) =>
                           <div
