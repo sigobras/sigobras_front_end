@@ -83,10 +83,15 @@ class ListaMateriales extends Component {
       precio: null,
 
       // editar oficiales y nuevos
+      idCodigoSelectRecursoNuevoOficial: "",
+      nombreCodigoRecursoNuevoOficial: "",
       indexEdtarNuevaOC: null,
       descripcionRecursoNuevoOficial: "",
       unidadMedidaRecursoNuevoOficial: "",
       tipoRecurosoNuevo: "",
+      cantidadRecursoNuevoOficial: "",
+      precioRecursoNuevoOficial: "",
+
       // editar nuva oc 
       editarNuevosOC: false
     }
@@ -639,12 +644,10 @@ class ListaMateriales extends Component {
   // ===================================== activa editable de nueva orden de compra
 
   GuardaNuevaOC(descripcion, index) {
-    const { DataRecursosListaApi, descripcionRecursoNuevoOficial, unidadMedidaRecursoNuevoOficial } = this.state
-    console.log(">>>>> data", DataRecursosListaApi)
+    const { DataRecursosListaApi, DataTipoDocAdquisicionApi, idCodigoSelectRecursoNuevoOficial, nombreCodigoRecursoNuevoOficial, descripcionRecursoNuevoOficial, unidadMedidaRecursoNuevoOficial, cantidadRecursoNuevoOficial, precioRecursoNuevoOficial } = this.state
+    // console.log(">>>>> data", DataRecursosListaApi)
     // console.log(">", descripcion, ">", descripcionRecursoNuevoOficial, "index ", index)
     // console.log("tipo ", tipo)
-
-
 
     var dataFiltro = DataRecursosListaApi.filter((DataRecurso) => {
       return DataRecurso.descripcion === descripcion
@@ -652,23 +655,37 @@ class ListaMateriales extends Component {
 
     var dataEncontrado = dataFiltro[0]
 
-    console.log("encontrado ", dataEncontrado);
-
+    // console.log("encontrado ", dataEncontrado);
+    
     if (dataEncontrado) {
       var DataEnviar = {
         "descripcion": descripcionRecursoNuevoOficial || dataEncontrado.descripcion,
         "unidad": unidadMedidaRecursoNuevoOficial || dataEncontrado.unidad,
-        "cantidad": dataEncontrado.recurso_cantidad,
-        "precio": dataEncontrado.recurso_precio,
-        "id_recursoNuevo": dataEncontrado.id_recursoNuevo
+        "cantidad": cantidadRecursoNuevoOficial || dataEncontrado.recurso_cantidad,
+        "precio": precioRecursoNuevoOficial || dataEncontrado.recurso_precio,
+        "id_recursoNuevo": dataEncontrado.id_recursoNuevo,
+
+        "id_tipoDocumentoAdquisicion":idCodigoSelectRecursoNuevoOficial || dataEncontrado.id_tipoDocumentoAdquisicion,
+        "codigo":nombreCodigoRecursoNuevoOficial || dataEncontrado.recurso_codigo,
       }
+
+      var dataFiltroTipoOrdenCompra = DataTipoDocAdquisicionApi.filter((DataRecurso) => {
+        return DataRecurso.id_tipoDocumentoAdquisicion === +DataEnviar.id_tipoDocumentoAdquisicion
+      })
+
+      // console.log("dataFiltroTipoOrdenCompra", dataFiltroTipoOrdenCompra)
 
       axios.put(`${UrlServer}/putRecursoNuevo`, DataEnviar)
         .then((res) => {
-          console.log("response nueva data ", res.data)
+          // console.log("response nueva data ", res.data)
           if (res.data === "exito") {
+            DataRecursosListaApi[index].tipodocumentoadquisicion_nombre = dataFiltroTipoOrdenCompra[0].nombre
+            DataRecursosListaApi[index].recurso_codigo = DataEnviar.codigo
             DataRecursosListaApi[index].descripcion = DataEnviar.descripcion
             DataRecursosListaApi[index].unidad = DataEnviar.unidad
+            DataRecursosListaApi[index].recurso_cantidad = DataEnviar.cantidad
+            DataRecursosListaApi[index].recurso_precio = DataEnviar.precio
+            DataRecursosListaApi[index].recurso_parcial = +DataEnviar.cantidad * +DataEnviar.precio
 
             this.setState({
               editarNuevosOC: false,
@@ -685,7 +702,7 @@ class ListaMateriales extends Component {
 
     }
 
-    console.log("enviar ", DataEnviar)
+    // console.log("enviar ", DataEnviar)
   }
 
   agregaRecursoNuevo(orden) {
@@ -738,7 +755,7 @@ class ListaMateriales extends Component {
     var DataListaRecursos = DataRecursosListaApi[0]
 
     var idCompraTipo = idTipoOrdenCompra || DataListaRecursos.documentosAdquisicion_id_documentoAdquisicion
-    
+
     // console.log("GUARDANDO ", +idCompraTipo, ">---> ", DataTipoDocAdquisicionApi)
 
     var dataFiltroTipoOrdenCompra = DataTipoDocAdquisicionApi.filter((DataRecurso) => {
@@ -747,8 +764,8 @@ class ListaMateriales extends Component {
 
     var dataEncontrado = dataFiltroTipoOrdenCompra[0]
     // console.log("data encontrado ", dataEncontrado )
-    
-    if (idTipoOrdenCompra === "" || codigoOrdenCompra === "" || nombRecurso === "" || undMedida === "" || cantidad === "" || precio === "" || TipoRecursoResumen === "" ) {
+
+    if (idTipoOrdenCompra === "" || codigoOrdenCompra === "" || nombRecurso === "" || undMedida === "" || cantidad === "" || precio === "" || TipoRecursoResumen === "") {
       toast.error("ingrese todos los campos")
       return
     }
@@ -1105,14 +1122,14 @@ class ListaMateriales extends Component {
                 <CardHeader> {nombreComponente} </CardHeader>
                 <CardBody>
 
-                  {/* <div className="mb-1 mt-1">
+                  <div className="mb-1 mt-1">
 
                     <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
                     />
-                  </div> */}
+                  </div>
                   <Nav tabs>
                     {
                       DataTipoRecursoResumen.map((Resumen, index) =>
@@ -1199,7 +1216,46 @@ class ListaMateriales extends Component {
                                           <tr key={IndexRL} className={ReqLista.recurso_estado_origen === "nuevo" ? "NuevaOrdenCompra" : ""}>
                                             <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
                                               {
-                                                this.state.tipoEjecucion === false ? `${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`
+                                                ReqLista.recurso_estado_origen === "nuevo" || ReqLista.recurso_estado_origen === undefined
+                                                  ?
+                                                  this.state.tipoEjecucion === false
+                                                    ?
+                                                    `${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`
+                                                    :
+                                                    <div className="d-flex justify-content-between contentDataTd">
+                                                      {
+                                                        editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "codigo" ?
+                                                          <span>
+                                                            <select style={{ padding: "1.5px" }} name="idCodigoSelectRecursoNuevoOficial" onChange={this.onChangeInputsRecursoNuevo.bind(this)} defaultValue={ReqLista.id_tipoDocumentoAdquisicion}>
+                                                              {
+                                                                DataTipoDocAdquisicionApi.map((Docu, indexD) =>
+                                                                  <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
+                                                                )
+                                                              }
+                                                            </select>
+                                                            <input type="text" name="nombreCodigoRecursoNuevoOficial" defaultValue={ReqLista.recurso_codigo} autoFocus onChange={this.onChangeInputsRecursoNuevo.bind(this)} style={{ width: "70px" }} />
+                                                          </span>
+                                                          :
+
+                                                          <span>{`${ReqLista.tipodocumentoadquisicion_nombre === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
+                                                      }
+
+                                                      <div className="ContIcon" >
+                                                        {
+                                                          editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "codigo"
+
+                                                            ?
+                                                            <div className="d-flex">
+                                                              <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL)}><MdSave /></div>
+                                                              <div onClick={() => this.setState({ editarNuevosOC: false, indexEdtarNuevaOC: null, tipoRecurosoNuevo: "" })} ><MdClose /></div>
+                                                            </div>
+                                                            :
+                                                            <div onClick={() => this.setState({ editarNuevosOC: true, indexEdtarNuevaOC: IndexRL, tipoRecurosoNuevo: "codigo" })}><MdModeEdit /></div>
+                                                        }
+                                                      </div>
+                                                    </div>
+
+
                                                   :
                                                   <div className="d-flex justify-content-between contentDataTd">
                                                     {
@@ -1241,13 +1297,37 @@ class ListaMateriales extends Component {
                                               {
                                                 ReqLista.recurso_estado_origen === "oficial" || ReqLista.recurso_estado_origen === undefined || ReqLista.id_recursoNuevo.length < 0
                                                   ?
-                                                  `${ReqLista.descripcion}`
+                                                  this.state.tipoEjecucion === false
+                                                    ?
+                                                    `${ReqLista.descripcion}`
+                                                    :
+                                                    <div className="d-flex justify-content-between contentDataTd">
+                                                      {
+                                                        Editable === IndexRL && precioCantidad === "descripcion" ?
+                                                          <textarea name="nombRecurso" rows="1" cols="50" defaultValue={ReqLista.descripcion} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "descripcion", ReqLista.descripcion)} ></textarea>
+                                                          :
+                                                          <span>{ReqLista.descripcion}</span>
+                                                      }
+                                                      <div className="ContIcon" >
+                                                        {
+                                                          Editable === IndexRL && precioCantidad === "descripcion"
+                                                            ?
+                                                            <div className="d-flex">
+                                                              <div onClick={() => this.activaEditable(IndexRL, null, "")} ><MdSave /> </div> {" "}
+                                                              <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
+                                                            </div>
+                                                            :
+                                                            <div onClick={() => this.activaEditable(IndexRL, "descripcion", "")}><MdModeEdit /> </div>
+                                                        }
+                                                      </div>
+
+                                                    </div>
                                                   :
                                                   <div className="d-flex justify-content-between contentDataTd">
                                                     {
                                                       editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "descrip"
                                                         ?
-                                                        <textarea rows="1" name="nombRecurso" cols="50" defaultValue={ReqLista.descripcion} name="descripcionRecursoNuevoOficial" onChange={this.onChangeInputsRecursoNuevo.bind(this)}></textarea>
+                                                        <textarea name="nombRecurso" rows="1" cols="50" defaultValue={ReqLista.descripcion} name="descripcionRecursoNuevoOficial" onChange={this.onChangeInputsRecursoNuevo.bind(this)}></textarea>
                                                         :
                                                         <span>{ReqLista.descripcion}</span>
                                                     }
@@ -1256,7 +1336,7 @@ class ListaMateriales extends Component {
                                                         editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "descrip"
                                                           ?
                                                           <div className="d-flex">
-                                                            <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL )}><MdSave /></div>
+                                                            <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL)}><MdSave /></div>
                                                             <div onClick={() => this.setState({ editarNuevosOC: false, indexEdtarNuevaOC: null, tipoRecurosoNuevo: "" })} ><MdClose /></div>
                                                           </div>
                                                           :
@@ -1272,7 +1352,29 @@ class ListaMateriales extends Component {
                                               {
                                                 ReqLista.recurso_estado_origen === "oficial" || ReqLista.recurso_estado_origen === undefined || ReqLista.id_recursoNuevo.length < 0
                                                   ?
-                                                  `${ReqLista.unidad}`
+                                                  this.state.tipoEjecucion === false ? `${ReqLista.unidad}`
+                                                    :
+                                                    <div className="d-flex justify-content-between contentDataTd">
+                                                      {
+                                                        Editable === IndexRL && precioCantidad === "unidad" ?
+                                                          <input style={{ width: "41px" }} defaultValue={ReqLista.unidad} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "unidad", ReqLista.unidad)} />
+                                                          :
+                                                          <span>{ReqLista.unidad}</span>
+                                                      }
+                                                      <div className="ContIcon" >
+                                                        {
+                                                          Editable === IndexRL && precioCantidad === "unidad"
+                                                            ?
+                                                            <div className="d-flex">
+                                                              <div onClick={() => this.activaEditable(IndexRL, null, "")} ><MdSave /> </div> {" "}
+                                                              <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
+                                                            </div>
+                                                            :
+                                                            <div onClick={() => this.activaEditable(IndexRL, "unidad", "")}><MdModeEdit /> </div>
+                                                        }
+                                                      </div>
+
+                                                    </div>
                                                   :
                                                   <div className="d-flex justify-content-between contentDataTd">
                                                     {
@@ -1288,7 +1390,7 @@ class ListaMateriales extends Component {
                                                         editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "und"
                                                           ?
                                                           <div className="d-flex">
-                                                            <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL )}><MdSave /></div>
+                                                            <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL)}><MdSave /></div>
                                                             <div onClick={() => this.setState({ editarNuevosOC: false, indexEdtarNuevaOC: null, tipoRecurosoNuevo: "" })} ><MdClose /></div>
                                                           </div>
                                                           :
@@ -1302,8 +1404,77 @@ class ListaMateriales extends Component {
                                               }
 
                                             </td>
-                                            <td> {ReqLista.recurso_cantidad}</td>
-                                            <td> {ReqLista.recurso_precio}</td>
+                                            <td>
+                                              {/* {ReqLista.recurso_cantidad} */}
+                                              {
+                                                ReqLista.recurso_estado_origen === "oficial" || ReqLista.recurso_estado_origen === undefined
+                                                  ?
+                                                  `${ReqLista.recurso_cantidad}`
+                                                  :
+                                                  <div className="d-flex justify-content-between contentDataTd">
+                                                    {/* nuevosssssssssssss---------------------------------------------------------------- */}
+                                                    {
+                                                      editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "cantidad"
+                                                        ?
+                                                        <input type="text" name="cantidadRecursoNuevoOficial" style={{ width: "41px" }} defaultValue={ReqLista.recurso_cantidad} onChange={this.onChangeInputsRecursoNuevo.bind(this)} />
+                                                        :
+                                                        <span>{ReqLista.recurso_cantidad}</span>
+                                                    }
+
+                                                    <div className="ContIcon" >
+                                                      {
+                                                        editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "cantidad"
+                                                          ?
+                                                          <div className="d-flex">
+                                                            <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL)}><MdSave /></div>
+                                                            <div onClick={() => this.setState({ editarNuevosOC: false, indexEdtarNuevaOC: null, tipoRecurosoNuevo: "" })} ><MdClose /></div>
+                                                          </div>
+                                                          :
+                                                          <div onClick={() => this.setState({ editarNuevosOC: true, indexEdtarNuevaOC: IndexRL, tipoRecurosoNuevo: "cantidad" })}><MdModeEdit /></div>
+                                                      }
+                                                    </div>
+
+                                                  </div>
+                                              }
+
+
+                                            </td>
+                                            <td>
+                                              {/* {ReqLista.recurso_precio} */}
+                                              {
+                                                ReqLista.recurso_estado_origen === "oficial" || ReqLista.recurso_estado_origen === undefined || ReqLista.id_recursoNuevo.length < 0
+                                                  ?
+                                                  `${ReqLista.recurso_precio}`
+                                                  :
+                                                  <div className="d-flex justify-content-between contentDataTd">
+                                                    {
+                                                      editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "precio"
+                                                        ?
+                                                        <input type="text" name="precioRecursoNuevoOficial" style={{ width: "41px" }} defaultValue={ReqLista.recurso_precio} onChange={this.onChangeInputsRecursoNuevo.bind(this)} />
+                                                        :
+                                                        <span>{ReqLista.recurso_precio}</span>
+                                                    }
+
+                                                    <div className="ContIcon" >
+                                                      {
+                                                        editarNuevosOC === true && indexEdtarNuevaOC === IndexRL && tipoRecurosoNuevo === "precio"
+                                                          ?
+                                                          <div className="d-flex">
+                                                            <div onClick={this.GuardaNuevaOC.bind(this, ReqLista.descripcion, IndexRL)}><MdSave /></div>
+                                                            <div onClick={() => this.setState({ editarNuevosOC: false, indexEdtarNuevaOC: null, tipoRecurosoNuevo: "" })} ><MdClose /></div>
+                                                          </div>
+                                                          :
+                                                          <div onClick={() => this.setState({ editarNuevosOC: true, indexEdtarNuevaOC: IndexRL, tipoRecurosoNuevo: "precio" })}><MdModeEdit /></div>
+
+                                                      }
+
+                                                    </div>
+
+                                                  </div>
+                                              }
+                                            </td>
+
+
                                             <td className="bordeDerecho"> {ReqLista.recurso_parcial}</td>
 
                                             <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
@@ -1394,7 +1565,7 @@ class ListaMateriales extends Component {
                                               <input type="number" name="precio" style={{ width: "55px" }} onChange={this.onChangeInputsRecursoNuevo.bind(this)} />
                                             </td>
                                             <td>
-                                              {(this.state.cantidad * this.state.precio) || 0 }
+                                              {(this.state.cantidad * this.state.precio) || 0}
                                               <div className="float-right btnCancelar" title="Cancelar" onClick={this.agregaRecursoNuevo.bind(this, "cancelar")}>
                                                 <MdClose size={15} />
                                               </div>
