@@ -754,10 +754,11 @@ class ListaMateriales extends Component {
     const { idTipoOrdenCompra, codigoOrdenCompra, nombRecurso, undMedida, cantidad, precio, TipoRecursoResumen, DataTipoDocAdquisicionApi, DataRecursosListaApi } = this.state
     var DataListaRecursos = DataRecursosListaApi[0]
 
-    var idCompraTipo = idTipoOrdenCompra || DataListaRecursos.documentosAdquisicion_id_documentoAdquisicion
-
-    // console.log("GUARDANDO ", +idCompraTipo, ">---> ", DataTipoDocAdquisicionApi)
-
+    var idCompraTipo = idTipoOrdenCompra || DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion
+    
+    // console.log("idTipoOrdenCompra ", idCompraTipo )
+    // console.log("DataListaRecursos ", DataListaRecursos)
+    // console.log("DataTipoDocAdquisicionApi ", DataTipoDocAdquisicionApi)
     var dataFiltroTipoOrdenCompra = DataTipoDocAdquisicionApi.filter((DataRecurso) => {
       return DataRecurso.id_tipoDocumentoAdquisicion === +idCompraTipo
     })
@@ -781,7 +782,7 @@ class ListaMateriales extends Component {
       "tipoDocumentoAdquisicion_id_tipoDocumentoAdquisicion": idCompraTipo
     })
       .then((res) => {
-        console.log("guardando", res.data)
+        // console.log("guardando", res.data)
         if (res.data.id_recursoNuevo) {
           DataListaRecursos.bloqueado = 0
           DataListaRecursos.descripcion = nombRecurso
@@ -801,11 +802,11 @@ class ListaMateriales extends Component {
           DataListaRecursos.unidad = undMedida
           DataListaRecursos.recurso_estado_origen = "nuevo"
           DataListaRecursos.id_recursoNuevo = res.data.id_recursoNuevo
-          console.log("DataRecursosListaApi ", DataListaRecursos)
+          // console.log("DataRecursosListaApi ", DataListaRecursos)
 
           this.setState({
             AgregaNuevaOC: false,
-            // DataRecursosListaApi:DataListaRecursos
+            // DataRecursosListaApi: DataListaRecursos
           })
           toast.success("Guardado en el sistema")
         }
@@ -1541,7 +1542,8 @@ class ListaMateriales extends Component {
                                           <tr key={IndexRL}>
                                             <td>
                                               <span>
-                                                <select style={{ padding: "1.5px" }} name="idTipoOrdenCompra" onChange={this.onChangeInputsRecursoNuevo.bind(this)}  >
+
+                                                <select style={{ padding: "1.5px" }} name="idTipoOrdenCompra" onChange={this.onChangeInputsRecursoNuevo.bind(this)} >
                                                   {
                                                     DataTipoDocAdquisicionApi.map((Docu, indexD) =>
                                                       <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
