@@ -52,12 +52,12 @@ module.exports = {
     port: PORT,
     historyApiFallback: true,
     // hot: true,
-    // public: 'www.sigobras.com',
-    // allowedHosts: [
-    //   'www.sigobras.com',
-    //   'sigobras.com',
-    //   '190.117.94.80'
-    // ],
+    public: 'www.sigobras.com',
+    allowedHosts: [
+      'www.sigobras.com',
+      'sigobras.com',
+      '190.117.94.80'
+    ],
     filename: 'main.js'
   },
 
