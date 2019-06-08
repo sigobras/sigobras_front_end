@@ -674,8 +674,8 @@ table.table thead th {
 }
 
 .NuevaOrdenCompra {
-  background: rgb(58,142,180);
-  background: linear-gradient(90deg, #3a8eb469 0%, rgba(195,253,29,0.10127801120448177) 50%, rgba(252,176,69,0.10127801120448177) 100%);
+  background: rgb(57, 111, 136);
+  background: linear-gradient(90deg, #dc3535ab 0%, #2676bb 50%, rgba(81, 136, 131, 0.2) 100%);
 }
 
 .btnCancelar{
