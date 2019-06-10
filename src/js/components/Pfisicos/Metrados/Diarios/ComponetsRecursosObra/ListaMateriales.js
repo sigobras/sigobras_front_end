@@ -657,7 +657,7 @@ class ListaMateriales extends Component {
 
     var dataEncontrado = dataFiltro[0]
 
-    console.log("encontrado ", dataEncontrado);
+    // console.log("encontrado ", dataEncontrado);
     
     if (dataEncontrado) {
       var DataEnviar = {
@@ -674,8 +674,8 @@ class ListaMateriales extends Component {
       var dataFiltroTipoOrdenCompra = DataTipoDocAdquisicionApi.filter((DataRecurso) => {
         return DataRecurso.id_tipoDocumentoAdquisicion === +DataEnviar.id_tipoDocumentoAdquisicion
       })
-      console.log("DataEnviar ", DataEnviar);
-      console.log("dataFiltroTipoOrdenCompra", dataFiltroTipoOrdenCompra)
+      // console.log("DataEnviar ", DataEnviar);
+      // console.log("dataFiltroTipoOrdenCompra", dataFiltroTipoOrdenCompra)
 
       axios.put(`${UrlServer}/putRecursoNuevo`, DataEnviar)
         .then((res) => {
@@ -714,7 +714,7 @@ class ListaMateriales extends Component {
 
       DataListaRecursos.splice(0, 1)
 
-      console.log("DataListaRecursos ", DataListaRecursos)
+      // console.log("DataListaRecursos ", DataListaRecursos)
       this.setState({
         AgregaNuevaOC: false,
         DataRecursosListaApi: DataListaRecursos,
