@@ -1127,11 +1127,11 @@ class ListaMateriales extends Component {
 
                   <div className="mb-1 mt-1">
 
-                    {/* <HighchartsReact
+                    <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
-                    /> */}
+                    />
                   </div>
                   <Nav tabs>
                     {
