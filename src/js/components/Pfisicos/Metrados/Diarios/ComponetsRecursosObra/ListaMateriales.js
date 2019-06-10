@@ -543,7 +543,7 @@ class ListaMateriales extends Component {
   }
 
   activaEditable(index, CantPrecio, selectTipoDocumento) {
-    console.log("activando", index, "selectTipoDocumento ", selectTipoDocumento)
+    console.log("activando", index, "CantPrecio ", CantPrecio , "selectTipoDocumento ", selectTipoDocumento)
 
     // console.log("DataTipoDocAdquisicionApi ", this.state.DataTipoDocAdquisicionApi)
 
@@ -561,8 +561,6 @@ class ListaMateriales extends Component {
         )
           .then((res) => {
             console.log("response recurso real ✔", res.data)
-            // console.log("recurso_gasto_cantidad >", this.state.DataRecursosListaApi[index] ); 
-            // console.log("recurso_gasto_precio >", this.state.DataRecursosListaApi[index].recurso_gasto_precio ); 
             var DataRecursosListaApi = this.state.DataRecursosListaApi
 
             var EncuentraTipoOrdenCompra = DataRecursosListaApi[index].tipodocumentoadquisicion_nombre
@@ -581,6 +579,10 @@ class ListaMateriales extends Component {
             var parcialRG = res.data.recurso_gasto_cantidad * (res.data.recurso_gasto_precio) || DataRecursosListaApi[index].recurso_gasto_precio
             var diferenciaRG = DataRecursosListaApi[index].recurso_parcial - parcialRG
             var porcentajeRG = diferenciaRG / DataRecursosListaApi[index].recurso_parcial * 100
+
+            
+            DataRecursosListaApi[index].descripcion = res.data.recurso_gasto_descripcion || DataRecursosListaApi[index].descripcion
+            DataRecursosListaApi[index].unidad = res.data.recurso_gasto_unidad || DataRecursosListaApi[index].unidad
 
             DataRecursosListaApi[index].recurso_gasto_cantidad = res.data.recurso_gasto_cantidad || DataRecursosListaApi[index].recurso_gasto_cantidad
             DataRecursosListaApi[index].recurso_gasto_precio = res.data.recurso_gasto_precio || DataRecursosListaApi[index].recurso_gasto_precio
@@ -616,7 +618,7 @@ class ListaMateriales extends Component {
 
   inputeable(index, tipo, descripcion, e) {
 
-    // console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
+    console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
     if (tipo === "codigo") {
       var demoArray =
       {
@@ -655,7 +657,7 @@ class ListaMateriales extends Component {
 
     var dataEncontrado = dataFiltro[0]
 
-    // console.log("encontrado ", dataEncontrado);
+    console.log("encontrado ", dataEncontrado);
     
     if (dataEncontrado) {
       var DataEnviar = {
@@ -672,8 +674,8 @@ class ListaMateriales extends Component {
       var dataFiltroTipoOrdenCompra = DataTipoDocAdquisicionApi.filter((DataRecurso) => {
         return DataRecurso.id_tipoDocumentoAdquisicion === +DataEnviar.id_tipoDocumentoAdquisicion
       })
-
-      // console.log("dataFiltroTipoOrdenCompra", dataFiltroTipoOrdenCompra)
+      console.log("DataEnviar ", DataEnviar);
+      console.log("dataFiltroTipoOrdenCompra", dataFiltroTipoOrdenCompra)
 
       axios.put(`${UrlServer}/putRecursoNuevo`, DataEnviar)
         .then((res) => {
@@ -1125,11 +1127,11 @@ class ListaMateriales extends Component {
 
                   <div className="mb-1 mt-1">
 
-                    <HighchartsReact
+                    {/* <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
-                    />
+                    /> */}
                   </div>
                   <Nav tabs>
                     {
@@ -1351,11 +1353,13 @@ class ListaMateriales extends Component {
                                             </td>
                                             <td>
                                               {
+                                              
                                                 ReqLista.recurso_estado_origen === "oficial" || ReqLista.recurso_estado_origen === undefined || ReqLista.id_recursoNuevo.length < 0
                                                   ?
                                                   this.state.tipoEjecucion === false ? `${ReqLista.unidad}`
                                                     :
                                                     <div className="d-flex justify-content-between contentDataTd">
+                                                    {/* unidad de medida >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */}
                                                       {
                                                         Editable === IndexRL && precioCantidad === "unidad" ?
                                                           <input style={{ width: "41px" }} defaultValue={ReqLista.unidad} autoFocus onBlur={this.inputeable.bind(this, { IndexRL }, "unidad", ReqLista.unidad)} />
@@ -1549,7 +1553,6 @@ class ListaMateriales extends Component {
                                                       <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>
                                                     )
                                                   }
-
                                                 </select>
                                                 <input type="text" name="codigoOrdenCompra" style={{ width: "70px" }} onChange={this.onChangeInputsRecursoNuevo.bind(this)} />
                                               </span>

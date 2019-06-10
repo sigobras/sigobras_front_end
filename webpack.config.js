@@ -4,6 +4,9 @@ var path = require('path');
 
 module.exports = {
   mode: 'production',
+  entry: {
+    index: ['babel-polyfill', './src/index.js']
+  },
   module: {
     rules: [{
         test: /\.js$/,
