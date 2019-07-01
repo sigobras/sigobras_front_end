@@ -545,7 +545,7 @@ class ListaMateriales extends Component {
   activaEditable(index, CantPrecio, selectTipoDocumento) {
     console.log("activando", index, "CantPrecio ", CantPrecio , "selectTipoDocumento ", selectTipoDocumento)
 
-    // console.log("DataTipoDocAdquisicionApi ", this.state.DataTipoDocAdquisicionApi)
+    console.log("DataTipoDocAdquisicionApi ", this.state.DataTipoDocAdquisicionApi)
 
     this.setState({ Editable: index, precioCantidad: CantPrecio, selectTipoDocumento })
 
@@ -619,6 +619,7 @@ class ListaMateriales extends Component {
   inputeable(index, tipo, descripcion, e) {
 
     console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
+
     if (tipo === "codigo") {
       var demoArray =
       {
@@ -1127,11 +1128,11 @@ class ListaMateriales extends Component {
 
                   <div className="mb-1 mt-1">
 
-                    <HighchartsReact
+                    {/* <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
-                    />
+                    /> */}
                   </div>
                   <Nav tabs>
                     {
@@ -1264,7 +1265,7 @@ class ListaMateriales extends Component {
                                                     {
                                                       Editable === IndexRL && precioCantidad === "codigo" ?
                                                         <span>
-                                                          <select style={{ padding: "1.5px" }} onChange={e => this.setState({ selectTipoDocumento: e.target.value })} value={this.state.selectTipoDocumento}>
+                                                          <select style={{ padding: "1.5px" }} name="selectTipoDocumento" onChange={e => this.setState({ selectTipoDocumento: e.target.value })} value={this.state.selectTipoDocumento}>
                                                             {
                                                               DataTipoDocAdquisicionApi.map((Docu, indexD) =>
                                                                 <option value={Docu.id_tipoDocumentoAdquisicion} key={indexD}>{Docu.nombre}</option>

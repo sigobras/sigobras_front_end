@@ -9,11 +9,29 @@
   /* transform: scale(0.2,0.2); */
   transition: opacity 200ms ease-in, transform 200ms ease-in;
 }
+
 .containerTarea:hover{
   transform: scale(1.05, 1.05);
   transition: opacity 200ms ease-in, transform 200ms ease-in;
   box-shadow: 1px 0px 5px 0px #2676bb;
 }
+
+
+.containerTareaPrincipal{
+  width: 100%;
+  opacity: 0.3;
+  transition: opacity .6s;
+  opacity: 1;
+  /* transform: scale(0.2,0.2); */
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
+}
+
+.containerTareaPrincipal:hover{
+  transform: scale(0.98, 0.98);
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
+  box-shadow: 1px 0px 5px 0px #2676bb;
+}
+
 
 .containerTareaActivo{
   width: 100%;
@@ -47,7 +65,14 @@
 
 
 .bodyTareaProyecto{
-  /* background: #f78a07; */
+  color: black;
+  padding: 4px;
+  font-weight: bold;
+  /* height: 100px; */
+  vertical-align: middle;
+}
+
+.bodyTareaProyectoPrincipalMedio{
   color: black;
   padding: 4px;
   font-weight: bold;
@@ -95,7 +120,7 @@
   background: #1033479c;
   padding: 4px;
   border-radius: 7px;
-  height: calc(40vh);
+  height: calc(30vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
@@ -151,7 +176,7 @@
   background: #00468c73;
   padding: 4px;
   border-radius: 7px;
-  height: calc(40vh);
+  height: calc(50vh);
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
