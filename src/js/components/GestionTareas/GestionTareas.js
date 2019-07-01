@@ -554,9 +554,9 @@ class GestionTareas extends Component {
         })
         .catch((err) => {
           console.error("error al guardar los datos ", err)
-        })  
+        })
     }
-    
+
   }
 
   ModalVerMasTareas() {
@@ -1076,59 +1076,56 @@ class GestionTareas extends Component {
 
                 </Col>
                 <Col md="3" className="px-0">
-
                   {
                     PositsFiltrado.length === 0 ? "" :
                       <div className="fondoMostrarMas">
-                        <div className="containerTarea">
+                        <div className="containerTareaPrincipal">
                           <div className="d-flex justify-content-between headerTarea p-1">
-                            <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="18%" height="18%" />
+                            <img src={`${UrlServer}${PositsFiltrado.usuario_imagen}`} alt="sigobras" className="imgCircular" width="18%" height="18%" />
 
-                            <label className="m-0 h6 text-center"> {PositsFiltrado.asunto}</label>
+                            <label className="m-0 text-center">
+                              <div style={{fontFamily: "Comic Sans MS, cursive, sans-serif", fontSize: "1.3em" }} >{PositsFiltrado.emisor_nombre}</div>
+                              <div style={{fontFamily: "Comic Sans MS, cursive, sans-serif", fontSize: "0.8em" }}>{PositsFiltrado.emisor_cargo}</div>
+                            </label>
 
                             <div style={{ background: PositsFiltrado.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "10px" }} />
 
                           </div>
 
-                          <div className="bodyTareaProyecto" style={{ background: PositsFiltrado.proyecto_color }}>
-                            <img src={`${UrlServer}${PositsFiltrado.usuario_imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" />
+                          <div className="bodyTareaProyectoPrincipalMedio" style={{ background: PositsFiltrado.proyecto_color }}>
+                            {/* <img src={`${UrlServer}${PositsFiltrado.usuario_imagen}`} alt="sigobras" className="mx-auto d-block imgCircular" width="70%" height="70%" /> */}
                             <div className="text-center flex-column ">
-                              <div>{`${PositsFiltrado.porcentaje_avance} %`}</div>
-                              <div>{PositsFiltrado.emisor_nombre}</div>
+                              <label className="m-0 h5 text-center"> {PositsFiltrado.asunto}</label>
+                              <div className="text-center">
+                                {/* <b>Descripción: </b> */}
+                                {PositsFiltrado.descripcion}
+                              </div>
+                              {
+                                this.state.tipoProgresoTarea === "vencido" ? "" :
+                                  <div className="text-center text-white">
+                                    {
+                                      PositsFiltrado.diasTranscurridos < 0 ?
+                                        <i>Dentro de {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) empezará la tarea que se te asignó y tienes {`${PositsFiltrado.diasTotal}`} dias para Concluirlo.</i>
+                                        :
+                                        <i> Tiene {`${PositsFiltrado.diasTotal - PositsFiltrado.diasTranscurridos} / ${PositsFiltrado.diasTotal}`}   dia(s) para concluir tu tarea. <br />
+                                          <i> Vence el {`${new Date(PositsFiltrado.fecha_final).toLocaleDateString('es', optionsDate)}`}</i>  </i>
+
+                                    }
+
+                                  </div>
+                              }
                             </div>
 
                           </div>
                           <div className="headerTarea text-uppercase px-2 clearfix">
                             <div className="float-left">
-                              Por: {PositsFiltrado.emisor_cargo}
+                              {`${PositsFiltrado.porcentaje_avance} %`}
                             </div>
-                            <div className="float-right prioridad" style={{ marginTop: "-2px" }}>
-                              {
-                                PositsFiltrado.tipo_archivo !== null ?
-                                  <div className="text-primary" title="descargar archivo" onClick={() => this.DescargarArchivo(`${UrlServer}${PositsFiltrado.tipo_archivo}`)} ><FaFileDownload /></div>
-                                  : ""
-                              }
-                            </div>
+
                           </div>
                         </div>
-                        <div className="text-center">
-                          <b>Descripción: </b>
-                          {PositsFiltrado.descripcion}
-                        </div>
-                        {
-                          this.state.tipoProgresoTarea === "vencido" ? "" :
-                            <div className="text-center text-warning">
-                              {
-                                PositsFiltrado.diasTranscurridos < 0 ?
-                                  <b>Dentro de {PositsFiltrado.diasTranscurridos.toString().replace("-", "")} dia(s) empezará la tarea que se te asignó y tienes {`${PositsFiltrado.diasTotal}`} dias para Concluirlo.</b>
-                                  :
-                                  <b> Tiene {`${PositsFiltrado.diasTotal - PositsFiltrado.diasTranscurridos} / ${PositsFiltrado.diasTotal}`}   dia(s) para concluir tu tarea. <br />
-                                    <i> Vence el {`${new Date(PositsFiltrado.fecha_final).toLocaleDateString('es', optionsDate)}`}</i>  </b>
 
-                              }
 
-                            </div>
-                        }
                       </div>
                   }
                   <div className="fondoSubord">

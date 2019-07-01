@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { InputGroup, InputGroupAddon, InputGroupText, Input, Button } from 'reactstrap';
-
 import axios from "axios"
+
+import { ConvertFormatStringNumber, Redondea } from "../../../../../Utils/Funciones"
 
 class DataSegunCodigoSelect extends Component {
   constructor() {
@@ -9,6 +10,7 @@ class DataSegunCodigoSelect extends Component {
     this.state = {
       DataMostarMasCodigo: [],
       DataEspecificaApi: [],
+      TotalParcial:null
     }
   }
 
@@ -23,9 +25,13 @@ class DataSegunCodigoSelect extends Component {
       "id_tipoDocumentoAdquisicion": idDocumento
     })
       .then((res) => {
-        console.log("data ", res.data)
-        console.log("data ", res.data.NCP)
-        this.setState({ DataMostarMasCodigo: res.data })
+        // console.log("data ", res.data.recursos)
+
+        var totalParcial =  Object.values(res.data.recursos).reduce((anterior, actual) => {
+          return ConvertFormatStringNumber(anterior) + ConvertFormatStringNumber(actual.recurso_gasto_parcial)
+        },0)
+        
+        this.setState({ DataMostarMasCodigo: res.data, TotalParcial: Number(Redondea(totalParcial)).toLocaleString('en-IN') })
       })
       .catch((err) => {
         console.error("mal ", err.response)
@@ -71,16 +77,16 @@ class DataSegunCodigoSelect extends Component {
     var SIAF = e.target[6].value
     var NCP = e.target[7].value
     var DataNuevo =
-      {
+    {
 
-        "razonSocial": razonSocial,
-        "RUC": RUC,
-        "fecha": fecha,
-        "SIAF": SIAF,
-        "NCP": NCP,
-        "clasificadores_presupuestarios_id_clasificador_presupuestario": id_clasificador_presupuestario,
-        "recursos_ejecucionreal": dataRecorre
-      }
+      "razonSocial": razonSocial,
+      "RUC": RUC,
+      "fecha": fecha,
+      "SIAF": SIAF,
+      "NCP": NCP,
+      "clasificadores_presupuestarios_id_clasificador_presupuestario": id_clasificador_presupuestario,
+      "recursos_ejecucionreal": dataRecorre
+    }
     // console.log("dataRecorre ", dataRecorre)
     console.log("DataNuevo ", DataNuevo)
 
@@ -88,16 +94,17 @@ class DataSegunCodigoSelect extends Component {
       DataNuevo
     )
       .then((res) => {
-        console.log("envio de orden de compra ",  res)
+        console.log("envio de orden de compra ", res)
       })
-      .catch((err)=>{
-        console.error("no se guardar la orden de compra ",  err)
+      .catch((err) => {
+        console.error("no se guardar la orden de compra ", err)
       })
 
   }
   render() {
-    const { DataMostarMasCodigo } = this.state
+    const { DataMostarMasCodigo, TotalParcial } = this.state
     const { nombreCod, nombreDocumento, codigo } = this.props.DataConsumir
+
 
     return (
       <div className="table-responsive">
@@ -105,11 +112,11 @@ class DataSegunCodigoSelect extends Component {
           <div className="clearfix mb-2">
             <div className="h5 float-left">{`${nombreDocumento} ( ${nombreCod} )`} </div>
             {
-              DataMostarMasCodigo.razonSocial === ""?
-              <button type="submit" className="float-right mr-2 btn btn-outline-success">Guardar</button>
-              :""
+              DataMostarMasCodigo.razonSocial === "" ?
+                <button type="submit" className="float-right mr-2 btn btn-outline-success">Guardar</button>
+                : ""
             }
-            
+
           </div>
 
 
@@ -120,19 +127,19 @@ class DataSegunCodigoSelect extends Component {
             </InputGroupText>
             </InputGroupAddon>
             {
-              DataMostarMasCodigo.clasificador === ""?
+              DataMostarMasCodigo.clasificador === "" ?
                 <Input placeholder="INGRESE LA ESPECÍFICA ( 1.1.4 2 )" onBlur={this.BuscaEspecifica.bind(this)} />
                 :
-                <Input defaultValue={ DataMostarMasCodigo.clasificador } disabled={ DataMostarMasCodigo.clasificador !== ""} />
+                <Input defaultValue={DataMostarMasCodigo.clasificador} disabled={DataMostarMasCodigo.clasificador !== ""} />
 
-                
+
             }
             {
-              DataMostarMasCodigo.clasificador === ""?
-              <InputGroupAddon addonType="prepend">
-                  <Button outline color="primary" disabled={ DataMostarMasCodigo.clasificador !== ""} >BUSCAR</Button> 
-              </InputGroupAddon>
-              :""
+              DataMostarMasCodigo.clasificador === "" ?
+                <InputGroupAddon addonType="prepend">
+                  <Button outline color="primary" disabled={DataMostarMasCodigo.clasificador !== ""} >BUSCAR</Button>
+                </InputGroupAddon>
+                : ""
             }
           </InputGroup>
 
@@ -145,7 +152,7 @@ class DataSegunCodigoSelect extends Component {
                   RAZÓN SOCIAL
                 </InputGroupText>
               </InputGroupAddon>
-              <Input placeholder="INGRESE " defaultValue={ DataMostarMasCodigo.razonSocial } disabled={ DataMostarMasCodigo.razonSocial !== ""} />
+              <Input placeholder="INGRESE " defaultValue={DataMostarMasCodigo.razonSocial} disabled={DataMostarMasCodigo.razonSocial !== ""} />
             </InputGroup>
 
             <InputGroup size="sm" className="mb-2 px-1">
@@ -154,7 +161,7 @@ class DataSegunCodigoSelect extends Component {
                   RUC
                   </InputGroupText>
               </InputGroupAddon>
-              <Input placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.RUC } disabled={ DataMostarMasCodigo.RUC !== ""} />
+              <Input placeholder="INGRESE" defaultValue={DataMostarMasCodigo.RUC} disabled={DataMostarMasCodigo.RUC !== ""} />
             </InputGroup>
           </div>
 
@@ -163,10 +170,10 @@ class DataSegunCodigoSelect extends Component {
             <InputGroup size="sm" className="mb-2 px-1">
               <InputGroupAddon addonType="prepend">
                 <InputGroupText>
-                  { nombreCod }
-                  </InputGroupText>
+                  {nombreCod}
+                </InputGroupText>
               </InputGroupAddon>
-              <Input value={ codigo } disabled />
+              <Input value={codigo} disabled />
             </InputGroup>
 
 
@@ -176,7 +183,7 @@ class DataSegunCodigoSelect extends Component {
                   FECHA
                   </InputGroupText>
               </InputGroupAddon>
-              <Input type="date" placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.fecha } disabled={ DataMostarMasCodigo.fecha !== ""} />
+              <Input type="date" placeholder="INGRESE" defaultValue={DataMostarMasCodigo.fecha} disabled={DataMostarMasCodigo.fecha !== ""} />
             </InputGroup>
 
 
@@ -186,7 +193,7 @@ class DataSegunCodigoSelect extends Component {
                   SIAF
                   </InputGroupText>
               </InputGroupAddon>
-              <Input placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.SIAF } disabled={ DataMostarMasCodigo.SIAF !== ""} />
+              <Input placeholder="INGRESE" defaultValue={DataMostarMasCodigo.SIAF} disabled={DataMostarMasCodigo.SIAF !== ""} />
             </InputGroup>
 
 
@@ -196,7 +203,7 @@ class DataSegunCodigoSelect extends Component {
                   N° C / P
                   </InputGroupText>
               </InputGroupAddon>
-              <Input placeholder="INGRESE" defaultValue={ DataMostarMasCodigo.NCP } disabled={ DataMostarMasCodigo.NCP !== ""} />
+              <Input placeholder="INGRESE" defaultValue={DataMostarMasCodigo.NCP} disabled={DataMostarMasCodigo.NCP !== ""} />
             </InputGroup>
 
           </div>
@@ -205,7 +212,6 @@ class DataSegunCodigoSelect extends Component {
           <thead>
             <tr>
               <th>N°</th>
-              <th>N° O/C - O/S</th>
               <th>RECURSO</th>
               <th>UND</th>
               <th>CANTIDAD</th>
@@ -219,9 +225,6 @@ class DataSegunCodigoSelect extends Component {
                 DataMostarMasCodigo.recursos.map((ReqLista, IndexRL) =>
                   <tr key={IndexRL}>
                     <td>{IndexRL + 1}</td>
-                    <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso" : ""}>
-                      {`${ReqLista.tipodocumentoadquisicion_nombre} - ${ReqLista.recurso_codigo}`}
-                    </td>
                     <td> {ReqLista.descripcion} </td>
                     <td> {ReqLista.unidad} </td>
                     <td className={this.state.tipoEjecucion === true ? "colorInputeableRecurso " : ""}>
@@ -238,6 +241,12 @@ class DataSegunCodigoSelect extends Component {
             }
 
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="5">TOTAL</td>
+              <td>S/. { TotalParcial }</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     );

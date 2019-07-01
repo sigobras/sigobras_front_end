@@ -10,10 +10,9 @@ import classnames from 'classnames';
 
 import { toast } from "react-toastify";
 
-import LogoSigobras from '../../../../../../images/logoSigobras.png'
+import LogoSigobras from './../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
-// import { inflateRaw } from 'zlib';
 
 class MetradosDiarios extends Component {
   constructor(props) {
@@ -290,7 +289,7 @@ class MetradosDiarios extends Component {
 
     // console.log('porcentaje_negatividad', porcentaje_negativo)
 
-    // this.modalMetrar();
+    this.modalMetrar();
     this.setState({
       modal: !this.state.modal,
       id_actividad: id_actividad,
@@ -336,7 +335,7 @@ class MetradosDiarios extends Component {
     if (inputValueImg.type === "image/jpeg" || inputValueImg.type === "image/png" || inputValueImg.type === "image/jpg") {
       // console.log('subir imagen', inputValueImg);
       var url = URL.createObjectURL(inputValueImg)
-      console.log("url", url);
+      // console.log("url", url);
 
       this.setState({
         file: inputValueImg,

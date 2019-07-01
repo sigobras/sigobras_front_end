@@ -4,6 +4,9 @@ var path = require('path');
 
 module.exports = {
   mode: 'production',
+  entry: {
+    index: ['babel-polyfill', './src/index.js']
+  },
   module: {
     rules: [{
         test: /\.js$/,
@@ -43,7 +46,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "public"),
     filename: 'main.js',
-    publicPath: '',
+    publicPath: '/',
   },
   devServer: {
     host: "0.0.0.0",
