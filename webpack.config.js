@@ -54,12 +54,14 @@ module.exports = {
     compress: true,
     port: PORT,
     historyApiFallback: true,
-    // hot: true,
+    hot: true,
     public: 'www.sigobras.com',
     allowedHosts: [
       'www.sigobras.com',
       'sigobras.com',
-      '190.117.94.80'
+      '190.117.94.80',
+      'https://sigobras.com/'
+
     ],
     filename: 'main.js'
   },
