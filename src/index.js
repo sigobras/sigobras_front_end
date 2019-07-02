@@ -12,7 +12,6 @@ const wrapper = document.getElementById("zoe");
 
 if(sessionStorage.getItem("idacceso") === null){
     wrapper ? ReactDOM.render(<Login />, wrapper) : false;
-    // wrapper ? ReactDOM.render(<AppAng />, wrapper) : false;
 }else{
     wrapper ? ReactDOM.render(<AppAng />, wrapper) : false;
 }
