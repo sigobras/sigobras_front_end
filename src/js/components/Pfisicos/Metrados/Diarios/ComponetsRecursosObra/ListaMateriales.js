@@ -238,13 +238,13 @@ class ListaMateriales extends Component {
 
     axios.get(`${UrlServer}/gettipodocumentoadquisicion`)
       .then((res) => {
-        // console.log("TIPOS DOCUMENTOS DE ADQUISICIÓN", res.data);
+        // console.log("TIPOS DOCUMENTOS DE ADQUISICIÓN", res);
         this.setState({
           DataTipoDocAdquisicionApi: res.data
         })
       })
       .catch((err) => {
-        console.log("errores al realizar la peticion de TIPOS DOCUMENTOS DE ADQUISICIÓN", err);
+        console.log("errores al realizar la peticion de TIPOS DOCUMENTOS DE ADQUISICIÓN", err.response);
 
       })
   }
@@ -1128,11 +1128,11 @@ class ListaMateriales extends Component {
 
                   <div className="mb-1 mt-1">
 
-                    {/* <HighchartsReact
+                    <HighchartsReact
                       highcharts={Highcharts}
                       // constructorType={'stockChart'}
                       options={ChartResumenRecursos}
-                    /> */}
+                    />
                   </div>
                   <Nav tabs>
                     {
@@ -1280,12 +1280,13 @@ class ListaMateriales extends Component {
 
                                                         <span>{`${ReqLista.tipodocumentoadquisicion_nombre === "" ? "-" : ReqLista.tipodocumentoadquisicion_nombre} ${ReqLista.recurso_codigo}`}</span>
                                                     }
-
+ 
                                                     <div className="ContIcon" >
                                                       {
                                                         Editable === IndexRL && precioCantidad === "codigo"
                                                           ?
                                                           <div className="d-flex">
+                                                         
                                                             <div onClick={() => this.activaEditable(IndexRL, null, ReqLista.id_tipoDocumentoAdquisicion || DataTipoDocAdquisicionApi[0].id_tipoDocumentoAdquisicion)} ><MdSave /> </div> {" "}
                                                             <div onClick={() => this.setState({ Editable: null, precioCantidad: "", selectTipoDocumento: "" })} > <MdClose /></div>
                                                           </div>
