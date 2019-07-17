@@ -403,10 +403,7 @@ class MetradosDiarios extends Component {
             console.log('return datos', res)
 
             var partidaSetIcon = res.data.partida
-
-
             var CategoriasIconos = res.data.partida.iconocategoria_nombre
-
             // CategoriasIconos.forEach(ico => {
             if (CategoriasIconos === "<FaSuperpowers/>") {
               CategoriasIconos = <FaSuperpowers />
@@ -425,17 +422,13 @@ class MetradosDiarios extends Component {
             }
 
             partidaSetIcon.iconocategoria_nombre = CategoriasIconos
-
             // console.log("CategoriasIconos" , CategoriasIconos);
-
-
             DataModificadoPartidas[indexPartida] = partidaSetIcon
             DataModificadoActividades = res.data.actividades
 
             this.setState({
               DataPartidas: DataModificadoPartidas,
               DataActividades: DataModificadoActividades,
-
               ValorMetrado: "",
               DescripcionMetrado: "",
               ObservacionMetrado: "",
