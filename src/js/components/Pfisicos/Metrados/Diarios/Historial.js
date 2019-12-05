@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Spinner, Collapse, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Spinner, Collapse, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
+import { ConvertFormatStringNumber, Redondea } from "../../../Utils/Funciones"
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
@@ -29,7 +30,9 @@ class MDHistorial extends Component {
             componenteTotalSoles: "",
             componenteTotalPorcentaje: "",
 
-            collapseDate: null
+            collapseDate: null,
+
+            totalResumenComponenteLeyenda: {}
         };
         this.TabMeses = this.TabMeses.bind(this);
         this.SeleccionaAnio = this.SeleccionaAnio.bind(this);
@@ -50,7 +53,7 @@ class MDHistorial extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
             .then((res) => {
-                console.log("response data ANIO GENERAL ", res.data)
+                // console.log("response data ANIO GENERAL ", res.data)
                 var tamanioAnios = res.data.length - 1
 
                 var tamanioMeses = res.data[tamanioAnios].meses.length - 1
@@ -69,6 +72,9 @@ class MDHistorial extends Component {
                     inputAnio: res.data[tamanioAnios].anyo,
                     fecha: res.data[tamanioAnios].meses[tamanioMeses].fecha
                 })
+
+                this.ObtieneTotalesLeyenda(res.data[tamanioAnios].meses[tamanioMeses].resumen)
+
             })
             .catch((err) => {
                 console.log("errores al conectar el api", err)
@@ -95,7 +101,7 @@ class MDHistorial extends Component {
 
             });
             if (tab === "resAnual") {
-                this.setState({DataComponentesApi:[], activeTabComp:"resumen"})
+                this.setState({ DataComponentesApi: [], activeTabComp: "resumen" })
                 this.reqAnual(this.state.inputAnio)
                 return
             }
@@ -198,7 +204,7 @@ class MDHistorial extends Component {
 
     ResumenRequest(ultimafecha) {
         console.log("fecha", ultimafecha)
-
+        this.setState({totalResumenComponenteLeyenda:{}, DataResumenApi:[]})
         axios.post(`${UrlServer}/getHistorialResumen`, {
             id_ficha: sessionStorage.getItem('idobra'),
             fecha: ultimafecha
@@ -208,6 +214,7 @@ class MDHistorial extends Component {
                 this.setState({
                     DataResumenApi: res.data
                 })
+                this.ObtieneTotalesLeyenda(res.data)
 
             })
             .catch((err) => {
@@ -215,8 +222,8 @@ class MDHistorial extends Component {
             })
     }
 
-    reqAnual(anio){
-        
+    reqAnual(anio) {
+
         axios.post(`${UrlServer}/getHistorialAnyosResumen`, {
             id_ficha: sessionStorage.getItem('idobra'),
             anyo: anio
@@ -305,8 +312,31 @@ class MDHistorial extends Component {
 
     }
 
+    ObtieneTotalesLeyenda(data) {
+        // console.log(data)
+        var total = data.leyenda.reduce((anterior, actual) => {
+            anterior.presupuesto = anterior.presupuesto + ConvertFormatStringNumber(actual.presupuesto)
+            anterior.presupuesto = +Redondea(anterior.presupuesto)
+
+            anterior.avance = anterior.avance + ConvertFormatStringNumber(actual.valor)
+            anterior.avance = +Redondea(anterior.avance)
+
+            anterior.porcentaje_avance = anterior.porcentaje_avance + ConvertFormatStringNumber(actual.porcentaje)
+            anterior.porcentaje_avance = +Redondea(anterior.porcentaje_avance)
+            return anterior
+
+        }, { presupuesto: 0, avance: 0, porcentaje_avance: 0 })
+        // anterior.presupuesto =  anterior.presupuesto.toLocaleString("es-PE")
+        total.presupuesto = total.presupuesto.toLocaleString("es-PE")
+        total.avance = total.avance.toLocaleString("es-PE")
+        total.porcentaje_avance = total.porcentaje_avance.toLocaleString("es-PE")
+
+        this.setState({totalResumenComponenteLeyenda: total })
+    }
+
     render() {
-        const { DataAniosApi, DataMesesApi, DataResumenApi, DataComponentesApi, inputAnio, nombreComponente, DataFechasApi, collapseDate, DataPartidas, DataChartDiasComponente, componenteTotalSoles, componenteTotalPorcentaje } = this.state
+        const { DataAniosApi, DataMesesApi, DataResumenApi, DataComponentesApi, inputAnio, nombreComponente, DataFechasApi, collapseDate,
+            DataPartidas, DataChartDiasComponente, componenteTotalSoles, componenteTotalPorcentaje, totalResumenComponenteLeyenda } = this.state
         const options = {
             "colors": [
                 "#d35400",
@@ -493,7 +523,7 @@ class MDHistorial extends Component {
 
 
                 <Nav tabs>
-                
+
                     <NavItem>
                         <NavLink className={classnames({ active: this.state.activeTabComp === 'resumen' })} onClick={() => { this.TabComponentes('resumen', "", "") }}>
                             RESUMEN
@@ -529,23 +559,31 @@ class MDHistorial extends Component {
                                             <th>NOMBRE</th>
                                             <th>PRESUPUESTO</th>
                                             <th>AVANCE</th>
-                                            <th>PORCENTAJE AVANCE</th>
+                                            <th>% AVANCE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             DataResumenApi.leyenda !== undefined ?
-                                            DataResumenApi.leyenda.map((comp,  iComp)=>
-                                                <tr key={ iComp }>
-                                                    <td>{ comp.numero }</td>
-                                                    <td>{ comp.componente_nombre }</td>
-                                                    <td>{ comp.presupuesto }</td>
-                                                    <td>{ comp.valor }</td>
-                                                    <td>{ comp.porcentaje }</td>   
-                                                </tr>
-                                            ):<tr><td colSpan="5">cargando</td></tr>
+                                                DataResumenApi.leyenda.map((comp, iComp) =>
+                                                    <tr key={iComp}>
+                                                        <td>{comp.numero}</td>
+                                                        <td>{comp.componente_nombre}</td>
+                                                        <td>{comp.presupuesto}</td>
+                                                        <td>{comp.valor} </td>
+                                                        <td className="text-right">{comp.porcentaje}%</td>
+                                                    </tr>
+                                                ) : <tr><td colSpan="5"><div className="text-center" > <Spinner color="primary" type="grow" /></div></td></tr>
                                         }
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colSpan="2">TOTAL</th>
+                                            <th>{totalResumenComponenteLeyenda.presupuesto}</th>
+                                            <th>{totalResumenComponenteLeyenda.avance}</th>
+                                            <th className="text-right">{totalResumenComponenteLeyenda.porcentaje_avance}%</th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                             :

@@ -51,10 +51,9 @@ module.exports = {
   devServer: {
     host: "0.0.0.0",
     contentBase: path.join(__dirname, "public"),
-    // compress: true,
     port: PORT,
     historyApiFallback: true,
-    hot: true,
+    // hot: true,
     public: 'www.sigobras.com',
     allowedHosts: [
       'www.sigobras.com',

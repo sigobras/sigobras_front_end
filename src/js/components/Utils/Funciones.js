@@ -8,7 +8,7 @@ function Redondea(x) {
 function FechaActual(){
     var fecha = new Date();
     
-    var ano = fecha.getFullYear();
+    var anio = fecha.getFullYear();
     var mes = fecha.getMonth()+1;
     var dia = fecha.getDate();
     
@@ -19,7 +19,7 @@ function FechaActual(){
         mes = "0" + mes
     }
 
-    return ano+ '-'+ mes +'-'+  dia
+    return anio+ '-'+ mes +'-'+  dia
 }
 
 // CALCULA EL PRIMER DIA DEL MES ACTUAL
@@ -44,7 +44,7 @@ function PrimerDiaDelMesActual(){
 
 // convierte formato dinero a numero
 function ConvertFormatStringNumber(datoString){
-    // console.log('datoString', typeof datoString)
+    // console.log('datoString', datoString)
 
     if(datoString !== ""  && datoString !==  NaN && datoString !== undefined && typeof datoString !== "number"){
         return Number(datoString.replace(/[^0-9\.-]+/g,""));
@@ -59,8 +59,6 @@ function convertirFechaLetra(fecha){
 
         var fechaLlega = new Date( fecha )
 
-
-        
         var anio = fechaLlega.getFullYear()
         var mes =  (fechaLlega.getMonth() + 1)
         var dia =  fechaLlega.getDate()
