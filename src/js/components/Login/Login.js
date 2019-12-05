@@ -168,8 +168,8 @@ class Login extends Component {
               <label><b>¿QUIENES SOMOS?</b></label>
               <div>
                 <p>
-                  Somos SIGOBRAS, uma empresa dedicada al desarrollo de tecnologia para el manejo eficiente de procesos físicos, gerenciales,
-                  financieros y documentarios.
+                  Somos SIGOBRAS, una empresa dedicada al desarrollo de tecnologia para el manejo eficiente de procesos físicos, gerenciales,
+                  financieros y documentarios en obra.
                   </p>
                 <p>
                   La innovación es otro de los ejes centrales de SIGOBRAS.
