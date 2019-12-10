@@ -76,7 +76,7 @@ class Slider extends Component {
           onExiting={this.onExiting}
           onExited={this.onExited}
         >
-          <img src={item.src} alt={item.altText} width="100%" />
+          <img src={item.src} alt={item.altText} width="100%" style={{height: "-webkit-fill-available"}} />
 
           <CarouselCaption className="h1" captionText={item.altText} captionHeader={item.caption} />
         </CarouselItem>
