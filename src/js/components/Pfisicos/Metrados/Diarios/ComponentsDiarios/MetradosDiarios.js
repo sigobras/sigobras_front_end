@@ -983,7 +983,7 @@ class MetradosDiarios extends Component {
   }
 
   PaginaActual(event) {
-    console.log("PaginaActual ", Number(event))
+    // console.log("PaginaActual ", Number(event))
     this.setState({
       PaginaActual: Number(event),
       collapse: -1,
@@ -991,7 +991,7 @@ class MetradosDiarios extends Component {
   }
 
   SelectCantidadRows(e) {
-    console.log("SelectCantidadRows ", e.target.value)
+    // console.log("SelectCantidadRows ", e.target.value)
     this.setState({ CantidadRows: Number(e.target.value) })
   }
 
@@ -1005,7 +1005,8 @@ class MetradosDiarios extends Component {
     var BuscaPartida = this.state.BuscaPartida
 
     // console.log("BuscaPartida", BuscaPartida);
-
+    // console.log("DatosPartidasFiltrado", DatosPartidasFiltrado);
+    
 
 
     if (BuscaPartida !== null) {
