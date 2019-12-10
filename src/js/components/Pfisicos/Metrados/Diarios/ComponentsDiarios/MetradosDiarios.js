@@ -52,7 +52,7 @@ class MetradosDiarios extends Component {
       descripcion: '',
       metrado: '',
       porcentaje_negatividad: 0,
-
+      rendimiento: null,
       // registrar inputs de mayores metrados
       nombre: '',
       veces: '',
@@ -135,7 +135,7 @@ class MetradosDiarios extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
       .then((res) => {
-        // console.log(" data componentes primera carga "  , res.data);
+        console.log(" data componentes primera carga ", res.data);
         // console.time("tiempo");
 
         if (res.data !== "vacio") {
@@ -285,7 +285,7 @@ class MetradosDiarios extends Component {
       })
   }
 
-  CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo) {
+  CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo, rendimiento) {
 
     // console.log('porcentaje_negatividad', porcentaje_negativo)
 
@@ -308,7 +308,7 @@ class MetradosDiarios extends Component {
       metrado: metrado,
       parcial: parcial,
       porcentaje_negatividad: porcentaje_negativo,
-
+      rendimiento: rendimiento,
       // limpia valores por si los tiene
       UrlImagen: "",
       file: null,
@@ -754,7 +754,7 @@ class MetradosDiarios extends Component {
           id_partida: id_partida
         })
           .then((res) => {
-            // console.log('DataActividades>>', res.data.mayor_metrado);
+            // console.log('DataActividades>>', res.data);
 
             this.setState({
               DataActividades: res.data.actividades,
@@ -997,7 +997,7 @@ class MetradosDiarios extends Component {
 
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
-      DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse,
+      DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
       nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, mostrarColores, file, CargandoComp } = this.state
     var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado
 
@@ -1006,7 +1006,7 @@ class MetradosDiarios extends Component {
 
     // console.log("BuscaPartida", BuscaPartida);
     // console.log("DatosPartidasFiltrado", DatosPartidasFiltrado);
-    
+
 
 
     if (BuscaPartida !== null) {
@@ -1075,15 +1075,15 @@ class MetradosDiarios extends Component {
     return (
       CargandoComp === true
         ?
-          <div className="text-center" > <Spinner color="primary" type="grow" /></div>
+        <div className="text-center" > <Spinner color="primary" type="grow" /></div>
         :
 
         <div>
           {
-            DataComponentes.length <= 0 
-            ?
+            DataComponentes.length <= 0
+              ?
               <div className="text-center text-warning" > No hay datos </div>
-            :
+              :
 
               <Card>
                 <Nav tabs>
@@ -1155,7 +1155,7 @@ class MetradosDiarios extends Component {
                           {/* <th><MdInsertPhoto size={ 18 } /> </th> */}
                         </tr>
                       </thead>
-                      
+
 
                       {DataPartidasPaginada.length <= 0 ?
                         <tbody><tr><td colSpan="8" className="text-center text-warning"> <Spinner color="primary" type="grow" /></td></tr></tbody> :
@@ -1381,7 +1381,7 @@ class MetradosDiarios extends Component {
                                                             sessionStorage.getItem("estadoObra") === "Corte"
                                                               ?
                                                               <div>
-                                                                <span className="text-primary prioridad aprecerIcon" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                                <span className="text-primary prioridad aprecerIcon" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad, metrados.rendimiento)} >
                                                                   <FaPlus size={15} />
                                                                 </span>
                                                                 {" "}
@@ -1399,7 +1399,7 @@ class MetradosDiarios extends Component {
                                                               </div>
                                                             :
                                                             <div>
-                                                              <span className="text-primary prioridad" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad)} >
+                                                              <span className="text-primary prioridad" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad, metrados.rendimiento)} >
                                                                 <FaPlus size={15} />
                                                               </span>
                                                               {" "}
@@ -1521,7 +1521,10 @@ class MetradosDiarios extends Component {
                         <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida}</div>
                       </div>
 
-                      <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+                      <div className="d-flex justify-content-between ">
+                        <div>INGRESE EL METRADO: {this.state.Porcentaje_Metrado} </div>
+                        <div title="redimiento" className="text-right bold text-warning">redim.: {rendimiento}</div>
+                      </div>
 
                       <div className="input-group input-group-sm mb-0">
                         <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
@@ -1613,7 +1616,10 @@ class MetradosDiarios extends Component {
                           <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida}</div>
                         </div>
 
-                        <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+                        <div className="d-flex justify-content-between ">
+                          <div>INGRESE EL METRADO: {this.state.Porcentaje_Metrado} </div>
+                          <div title="redimiento" className="text-right bold text-warning">redim.: {rendimiento}</div>
+                        </div>
 
                         <InputGroup>
                           <InputGroupAddon addonType="prepend">
@@ -1710,7 +1716,10 @@ class MetradosDiarios extends Component {
                           <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida.replace("/DIA", "")}</div>
                         </div>
 
-                        <label htmlFor="comment">INGRESE EL METRADO:</label> {this.state.Porcentaje_Metrado}
+                        <div className="d-flex justify-content-between ">
+                          <div>INGRESE EL METRADO: {this.state.Porcentaje_Metrado} </div>
+                          <div title="redimiento" className="text-right bold text-warning">redim.: {rendimiento}</div>
+                        </div>
 
                         <div className="input-group input-group-sm mb-0">
                           <DebounceInput debounceTimeout={debounceTimeout} onChange={e => this.setState({ ValorMetrado: e.target.value })} type="number" className="form-control" autoFocus />
