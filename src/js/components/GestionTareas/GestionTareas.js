@@ -466,7 +466,7 @@ class GestionTareas extends Component {
     if (this.state.idTareaActivo !== idTarea) {
       this.setState({ idTareaActivo: idTarea })
 
-      console.log("id", idTarea)
+      // console.log("id", idTarea)
 
       this.socket.on(idTarea, data => this.demoFuncion(data));
       // this.socket.close()
@@ -537,7 +537,7 @@ class GestionTareas extends Component {
       })
         .then((res) => {
           // console.log("data enviado ", res)
-          console.log(" this.inputRefComent ", this.inputRefComent.current)
+          // console.log(" this.inputRefComent ", this.inputRefComent.current)
           document.getElementById("inputComentario").value = "";
           let users = this.state.PositsFiltrado
           users.comentarios.push(res.data);
@@ -579,7 +579,7 @@ class GestionTareas extends Component {
       "id_acceso": idUsuario
     })
       .then((res) => {
-        console.log("res mas data años ", res.data)
+        // console.log("res mas data años ", res.data)
         this.setState({
           DataMostrarDetallesAnioApi: res.data,
         })
@@ -594,7 +594,7 @@ class GestionTareas extends Component {
       "id_acceso": idUsuario
     })
       .then((res) => {
-        console.log("res mas data productidad ", res.data)
+        // console.log("res mas data productidad ", res.data)
         this.setState({
           DataMostrarDetallesApi: res.data,
 
@@ -608,7 +608,7 @@ class GestionTareas extends Component {
       "id_acceso": idUsuario
     })
       .then((res) => {
-        console.log("res de chart productividad ", res.data)
+        // console.log("res de chart productividad ", res.data)
         // var series = res.data.series
         // Chart.series = series
         // Chart.xAxis.categories = res.data.categories 
@@ -710,7 +710,7 @@ class GestionTareas extends Component {
       }
     )
       .then((res) => {
-        console.log("response proyectos ", res)
+        // console.log("response proyectos ", res)
         this.setState({
           DataProyectoMostrarApi: res.data
         })
@@ -718,7 +718,7 @@ class GestionTareas extends Component {
       })
 
       .catch((err) => {
-        console.log("error al consultar api ", err.response)
+        // console.log("error al consultar api ", err.response)
         if (err.response.data === "vacio") {
           this.setState({
             DataProyectoMostrarApi: []
@@ -738,7 +738,7 @@ class GestionTareas extends Component {
       }
     )
       .then((res) => {
-        console.log("response tareas api ", res.data)
+        // console.log("response tareas api ", res.data)
         this.setState({
           DataTareasApi: res.data
         })
@@ -1084,8 +1084,8 @@ class GestionTareas extends Component {
                             <img src={`${UrlServer}${PositsFiltrado.usuario_imagen}`} alt="sigobras" className="imgCircular" width="18%" height="18%" />
 
                             <label className="m-0 text-center">
-                              <div style={{fontFamily: "Comic Sans MS, cursive, sans-serif", fontSize: "1.3em" }} >{PositsFiltrado.emisor_nombre}</div>
-                              <div style={{fontFamily: "Comic Sans MS, cursive, sans-serif", fontSize: "0.8em" }}>{PositsFiltrado.emisor_cargo}</div>
+                              <div style={{ fontFamily: "Comic Sans MS, cursive, sans-serif", fontSize: "1.3em" }} >{PositsFiltrado.emisor_nombre}</div>
+                              <div style={{ fontFamily: "Comic Sans MS, cursive, sans-serif", fontSize: "0.8em" }}>{PositsFiltrado.emisor_cargo}</div>
                             </label>
 
                             <div style={{ background: PositsFiltrado.prioridad_color, width: "5px", height: "50%", borderRadius: "50%", padding: "10px" }} />
@@ -1116,6 +1116,15 @@ class GestionTareas extends Component {
                               }
                             </div>
 
+                            {/* descargar el archivo */}
+                            <div className="float-right prioridad" style={{ marginTop: "1px" }}>
+                              {
+                                PositsFiltrado.tipo_archivo !== null ?
+                                  <div className="text-primary" title="descargar archivo" onClick={() => this.DescargarArchivo(`${UrlServer}${PositsFiltrado.tipo_archivo}`)} ><FaFileDownload /></div>
+                                  : ""
+                              }
+                            </div>
+                            
                           </div>
                           <div className="headerTarea text-uppercase px-2 clearfix">
                             <div className="float-left">
