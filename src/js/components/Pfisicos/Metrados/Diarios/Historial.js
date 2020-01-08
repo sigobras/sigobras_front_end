@@ -48,7 +48,7 @@ class MDHistorial extends Component {
 
     }
 
-    componentWillMount() {
+    componentDidMount() {
         axios.post(`${UrlServer}/getHistorialAnyos`, {
             id_ficha: sessionStorage.getItem('idobra')
         })

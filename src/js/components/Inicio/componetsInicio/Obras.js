@@ -23,7 +23,7 @@ class Obras extends Component{
     }
   
     
-    componentWillMount(){
+    componentDidMount(){
         axios.post(`${UrlServer}/PGlistaObras`,{
             id_acceso:sessionStorage.getItem("idacceso")
         })

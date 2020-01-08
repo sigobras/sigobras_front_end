@@ -129,13 +129,13 @@ class MetradosDiarios extends Component {
     this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     document.title = "Metrados Diarios"
     axios.post(`${UrlServer}${this.props.rutas.Componentes}`, {
       id_ficha: sessionStorage.getItem('idobra')
     })
       .then((res) => {
-        console.log(" data componentes primera carga ", res.data);
+        //console.log(" data componentes primera carga ", res.data);
         // console.time("tiempo");
 
         if (res.data !== "vacio") {

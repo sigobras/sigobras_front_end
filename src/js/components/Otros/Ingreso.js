@@ -8,10 +8,9 @@ class Ingreso extends Component {
             dataUsuarios: []
         }
 
-        this.componentWillMount = this.componentWillMount.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         axios.get('http://localhost:3000/usuarios')
             .then((res) => {
                 console.log('rest',res.data);

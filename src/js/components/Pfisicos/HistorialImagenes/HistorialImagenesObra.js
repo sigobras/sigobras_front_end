@@ -39,7 +39,7 @@ class HistorialImagenesObra extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     axios.post(`${UrlServer}/getImagenesComponentes`,
       {
         "id_ficha": sessionStorage.getItem("idobra")

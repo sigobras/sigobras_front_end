@@ -44,7 +44,7 @@ class CronogramaAvance extends Component {
     this.capturaInputCorteFinanciero = this.capturaInputCorteFinanciero.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     axios.post(`${UrlServer}/getcronogramaInicio`,
       {
         "id_ficha": this.props.fichaId

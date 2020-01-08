@@ -26,7 +26,7 @@ class Btns extends Component {
         this.SubmitEsadoObra = this.SubmitEsadoObra.bind(this)
     }
 
-    componentWillMount(){
+    componentDidMount(){
         axios.get(`${UrlServer}/listaestados`)
         .then((res)=>{
             // console.log('data ', res.data)
