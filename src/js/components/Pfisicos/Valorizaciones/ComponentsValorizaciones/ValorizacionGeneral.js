@@ -45,7 +45,7 @@ class ValorizacionGeneral extends Component {
         this.reqMeses = this.reqMeses.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         // llamamos la primera carga de apis
         this.reqAnios()
     }
@@ -115,7 +115,7 @@ class ValorizacionGeneral extends Component {
             id_ficha: sessionStorage.getItem('idobra')
         })
             .then((res) => {
-                console.table('data val princiapl', res);
+                //console.table('data val princiapl', res);
                 if (res.data !== "vacio") {
                     var ResData = res.data
                     var UltimoAnio = res.data.length - 1

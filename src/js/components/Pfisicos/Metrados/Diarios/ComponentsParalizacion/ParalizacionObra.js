@@ -130,7 +130,7 @@ class ParalizacionObra extends Component {
     this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     document.title = "Metrados Diarios"
     axios.post(`${UrlServer}${this.props.rutas.Componentes}`, {
       id_ficha: sessionStorage.getItem('idobra')

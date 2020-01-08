@@ -122,7 +122,7 @@ class ListaMateriales extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     document.title = "Metrados Diarios"
     axios.post(`${UrlServer}/getmaterialescomponentes`, {
       id_ficha: Id_Obra

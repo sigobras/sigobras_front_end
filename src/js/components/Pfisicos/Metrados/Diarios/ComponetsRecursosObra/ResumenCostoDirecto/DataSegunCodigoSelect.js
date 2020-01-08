@@ -14,7 +14,7 @@ class DataSegunCodigoSelect extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { IdObra, UrlServer, tipoRecurso, codigo, idDocumento } = this.props.DataConsumir
     // console.log("propss ", this.props.DataConsumir)
 

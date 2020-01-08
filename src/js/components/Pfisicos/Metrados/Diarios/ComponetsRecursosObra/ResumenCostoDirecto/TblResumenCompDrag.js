@@ -22,7 +22,7 @@ class TblResumenCompDrag extends Component {
     this.onDrop = this.onDrop.bind(this)
   }
 
-  componentWillMount() {
+  componentDidMount() {
 
     const { IdObra, UrlServer, tipoRecurso } = this.props.ConfigData
     axios.post(`${UrlServer}/getmaterialesResumenEjecucionRealCodigos`, {

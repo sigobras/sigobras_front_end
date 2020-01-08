@@ -49,18 +49,18 @@ module.exports = {
     publicPath: '/',
   },
   devServer: {
-    host: "0.0.0.0",
+    // host: "0.0.0.0",
     contentBase: path.join(__dirname, "public"),
     port: PORT,
     historyApiFallback: true,
-    public: 'www.sigobras.com',
-    allowedHosts: [
-      'www.sigobras.com',
-      'sigobras.com',
-      '190.117.94.80',
-      'https://sigobras.com/'
+    // public: 'www.sigobras.com',
+    // allowedHosts: [
+    //   'www.sigobras.com',
+    //   'sigobras.com',
+    //   '190.117.94.80',
+    //   'https://sigobras.com/'
 
-    ],
+    // ],
     filename: 'main.js'
   },
 

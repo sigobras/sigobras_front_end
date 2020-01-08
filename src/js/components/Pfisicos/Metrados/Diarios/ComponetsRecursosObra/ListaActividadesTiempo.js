@@ -12,7 +12,7 @@ class ListaActividadesTiempo extends Component {
         }
     }
 
-    componentWillMount(){
+    componentDidMount(){
         axios.post(`${UrlServer}/getActividadesDuracion`,{
             id_ficha: sessionStorage.getItem('idobra')
         })

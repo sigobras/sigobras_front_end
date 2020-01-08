@@ -64,7 +64,7 @@ class AppAng extends Component {
 
     }
 
-    componentWillMount() {
+    componentDidMount() {
         localStorage.setItem('thema', 'noche');
 
         axios.post(`${UrlServer}/getDatosGenerales`, {
@@ -151,7 +151,6 @@ class AppAng extends Component {
                             <div className="float-right"><MensajeNav /></div>
                             <div className="float-right"><NotificacionNav /></div>
                             <div className="float-right"> {sessionStorage.getItem('estadoObra') === null ? '' : <Btns />} </div>
-
                         </div>
                     </nav>
 
@@ -182,8 +181,8 @@ class AppAng extends Component {
                                             DataMenus.length === undefined ? <div className="text-center text-white"> <Spinner color="primary" type="grow" /></div> :
 
                                                 DataMenus.map((menus, index) =>
-                                                    <li className="lii ml-2" key={index}>
-                                                        <span className="nav-link" onClick={() => this.CollapseMenu(index)} activeclassname="active" >  {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></span>
+                                                    <li className="lii" key={index}>
+                                                        <a href="#" className="nav-link" onClick={() => this.CollapseMenu(index)} activeclassname="active" >  {menus.nombreMenu} <div className="float-right"> {collapse === index ? <FaChevronUp /> : <FaChevronRight />}</div></a>
                                                         <Collapse isOpen={collapse === index}>
                                                             <ul className="nav flex-column ull ">
                                                                 {menus.submenus.map((subMenu, IndexSub) =>
@@ -219,12 +218,12 @@ class AppAng extends Component {
                                     </ul>
 
                                     <div className="detallesObra pl-2 pr-2">
-                                        <div className="codigoObra">{ DataObra.codigo }</div>
+                                        <div className="codigoObra">{DataObra.codigo}</div>
                                         <div className="ContentpresupuestoObra">
-                                            <div className="PresuObra mr-2">S/. { DataObra.presupuesto_total }</div>
-                                            <div className="PresuObra"> CD . S/. { DataObra.costo_directo }</div>
+                                            <div className="PresuObra mr-2">S/. {DataObra.presupuesto_total}</div>
+                                            <div className="PresuObra"> CD . S/. {DataObra.costo_directo}</div>
                                         </div>
-                                        
+
                                     </div>
 
                                     <div className="abajoCirculos pl-2 pr-2">
