@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { MdMoreVert, MdDone } from "react-icons/md";
-import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, } from 'reactstrap';
+import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, Table } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
@@ -312,7 +312,7 @@ class ValorizacionGeneral extends Component {
                                     activeTabComponente === "resumen"
                                         ?
                                         <div className="table-responsive">
-                                            <table className="table table-bordered small table-sm mb-0">
+                                            <Table className="table table-bordered small table-sm mb-0" hover>
                                                 <thead className="resplandPartida">
                                                     <tr className="text-center">
                                                         <th className="align-middle" rowSpan="3">N°</th>
@@ -406,11 +406,11 @@ class ValorizacionGeneral extends Component {
 
                                                 </tr> */}
                                                 </tbody>
-                                            </table>
+                                            </Table>
                                         </div>
                                         :
                                         <div className="table-responsive">
-                                            <table className="table table-bordered table-sm small mb-0">
+                                            <Table className="table table-bordered table-sm small mb-0" hover>
                                                 <thead className="text-center resplandPartida">
                                                     <tr>
                                                         <th colSpan="3" rowSpan="2" className="align-middle">DESCRIPCION</th>
@@ -521,7 +521,7 @@ class ValorizacionGeneral extends Component {
                                                     </tr>
                                                 </tbody>
 
-                                            </table>
+                                            </Table>
                                         </div>
                                 }
 

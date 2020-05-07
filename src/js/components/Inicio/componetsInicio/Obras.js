@@ -82,7 +82,7 @@ class Obras extends Component{
                     </div>
                     <div className="card-body">
                         <div className="table-responsive">
-                            <table className="table table-bordered table-sm " >
+                            <table className="table table-sm" >
                                 <thead>
                                     <tr>
                                         <th>#</th>

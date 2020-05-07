@@ -204,7 +204,7 @@ class MDHistorial extends Component {
 
     ResumenRequest(ultimafecha) {
         console.log("fecha", ultimafecha)
-        this.setState({totalResumenComponenteLeyenda:{}, DataResumenApi:[]})
+        this.setState({ totalResumenComponenteLeyenda: {}, DataResumenApi: [] })
         axios.post(`${UrlServer}/getHistorialResumen`, {
             id_ficha: sessionStorage.getItem('idobra'),
             fecha: ultimafecha
@@ -331,7 +331,7 @@ class MDHistorial extends Component {
         total.avance = total.avance.toLocaleString("es-PE")
         total.porcentaje_avance = total.porcentaje_avance.toLocaleString("es-PE")
 
-        this.setState({totalResumenComponenteLeyenda: total })
+        this.setState({ totalResumenComponenteLeyenda: total })
     }
 
     render() {
@@ -613,14 +613,14 @@ class MDHistorial extends Component {
                                                                 <legend className="prioridad" onClick={() => this.collapseFechas(indexF, fecha.fecha)} >  <b>FECHA: </b>{fecha.fecha_larga}  - <b> S/.</b> {fecha.fecha_total_soles}  - <b> {fecha.fecha_total_porcentaje} %</b></legend>
                                                                 <Collapse isOpen={collapseDate === indexF}>
                                                                     <div className="table-responsive">
-                                                                        <table className="table table-sm small">
+                                                                        <table className="table table-sm small table-hover">
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th>ITEM</th>
-                                                                                    <th>DESCRIPCIÓN</th>
+                                                                                    <th>PARTIDA</th>
                                                                                     <th>ACTIVIDAD </th>
-                                                                                    <th>DESCRIPCIÓN</th>
-                                                                                    <th>OBSERVACIÓN</th>
+                                                                                    <th> DESCRIPCIÓN</th>
+
                                                                                     <th>A. FISICO</th>
                                                                                     <th>C. U.</th>
                                                                                     <th>C. P.</th>
@@ -631,15 +631,29 @@ class MDHistorial extends Component {
                                                                                     <tr key={indexHist}>
                                                                                         <td>{hist.item}</td>
                                                                                         <td>{hist.descripcion_partida}</td>
+                                                                                        
                                                                                         <td>{hist.nombre_actividad}</td>
                                                                                         <td>{hist.descripcion_actividad}</td>
-                                                                                        <td>{hist.observacion}</td>
+                                                                                        
                                                                                         <td>{hist.valor} {hist.unidad_medida}</td>
                                                                                         <td>{hist.costo_unitario}</td>
                                                                                         <td>{hist.parcial}</td>
                                                                                     </tr>
                                                                                 )}
                                                                             </tbody>
+                                                                            <tfoot>
+                                                                                <tr>
+
+                                                                                    <td colSpan="8">
+                                                                                        {DataPartidas.map((hist, indexHist) =>
+                                                                                            <tr key={indexHist}>
+                                                                                                <td> {hist.observacion}</td>
+                                                                                            </tr>
+                                                                                        )}
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tfoot>
+
                                                                         </table>
                                                                     </div>
                                                                 </Collapse>

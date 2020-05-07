@@ -1,0 +1,79 @@
+/* caja de los inputs */
+.inputproy {
+    box-shadow: #6766a8;
+    border-radius: 9px;
+    color: rgb(236, 236, 236);
+    text-align: center;
+    height: 1.2rem;
+    width: 6rem;
+    border: 1px solid rgba(51, 153, 204, 0.267);
+    
+}
+
+.inputproy:enabled{
+    background: #fff  !important;
+    color: #000000;
+}
+.inputproy:disabled{
+    background: #1d242e  !important;
+    color: #d6d6d6;
+    font-weight: bold;
+}
+/* valorizacion de avance  */
+.avance {
+    color: #97ffb1;
+    text-align: center;
+    text-decoration: double;
+    font-weight: bold;
+    line-height: 35px;
+    
+}
+/* boton del componente editar y guardar */
+.botoncomp {
+    background: #3b68af !important;
+    color: #ffffff !important;
+    display: inline-block  !important;
+    font-size: 10px  !important;
+    margin: 20px  !important;
+    padding: 5px 0px  !important;
+    text-align: center  !important;
+    width: 50px  !important;
+    height: 25px  !important;
+    text-align: center  !important;
+    line-height: 1px  !important;
+    border: 0px  !important;
+    border-radius: 1px  !important;
+    margin-bottom: 0px  !important;
+    margin-top: 10px  !important;
+}
+
+.botoncomp:hover {
+    color: #000000 !important;
+    background-color: #8caeda !important;
+    transition: 0.5s;
+}
+
+/* fondo de la tabla  */
+.tablaproy {
+    color: #000000;
+    background-color: #1d242e;
+    
+}
+.tablaproy tbody tr td {
+    border: 1px solid #171c23;
+}
+
+/* titulos position: fixed*/
+thead .fixed_headers th {
+    color: #8caeda;
+    background: #171c23 !important;
+    text-align: center;
+   
+/* color para el nombre de los componentes */
+}
+tbody .componentetitulo{
+    color: #8caeda;
+   
+    line-height: 15px;
+    
+}

@@ -5,7 +5,7 @@ import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
 import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
-import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink, Table } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
@@ -97,7 +97,7 @@ class MetradosDiarios extends Component {
 
       // DATA PARA PAGINACION 
       PaginaActual: 1,
-      CantidadRows: 10
+      CantidadRows: 40
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -1123,7 +1123,7 @@ class MetradosDiarios extends Component {
                   </CardHeader>
                   <CardBody>
 
-                    <table className="table table-sm">
+                    <table className="table table-sm" hover>
                       <thead className="resplandPartida">
                         <tr>
                           <th style={{ width: "39px" }}>
@@ -1305,7 +1305,7 @@ class MetradosDiarios extends Component {
                                       </div>
                                     </div>
 
-                                    <table className="table table-bordered table-sm">
+                                    <Table className="table table-bordered table-sm">
                                       <thead className="thead-dark">
                                         <tr>
                                           <th>NOMBRE DE ACTIVIDAD</th>
@@ -1416,7 +1416,7 @@ class MetradosDiarios extends Component {
                                             )
                                         }
                                       </tbody>
-                                    </table>
+                                    </Table>
 
                                   </div>
                                 </Collapse>
