@@ -36,7 +36,9 @@ import General from '../components/Pfisicos/Valorizaciones/General'
 
 // proceso gerenciales 
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
-
+import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
+        //planificacion
+import Planner from '../components/Pgerenciales/Planner/planner'
 // reportes 
 import ReportesGenerales from './Reportes/ReportesGenerales'
 
@@ -296,14 +298,21 @@ class AppAng extends Component {
 
                                         <Route path="/General" component={General} />
 
+                                         {/* PROCESOS GERENCIALES            */}
                                         <Route path="/RecordObras" component={RecordObras} />
                                         <Route path="/ReportesGenerales" component={ReportesGenerales} />
+                                        <Route path="/planner" component={Planner} />
+                                        <Route path="/comunicados" component={Comunicados} />
+
+
 
                                         {/* Gestion de Tareas */}
                                         <Route path="/GestionTareas" component={GestionTareas} />
 
                                         {/* PROCESOS DOCUMENTARIOS */}
                                         <Route path="/DOCUEMENTOS" component={Index} />
+
+                                        
 
                                     </Switch>
                                 </div>
