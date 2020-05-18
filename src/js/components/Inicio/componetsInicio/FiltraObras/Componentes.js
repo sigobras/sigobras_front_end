@@ -60,7 +60,7 @@ class Componentes extends Component {
                         position: 'absolute',
                         
                         }}
-                    /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
+                    /><span style={{ position:'inherit', fontSize:'0.8rem', top: '4px' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
                     </div>
                 
                 </div> 

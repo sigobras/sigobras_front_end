@@ -113,35 +113,37 @@ class ListaObras extends Component{
                     <tr >
                         <td>{ IndexObras +1 }</td>
                         <td>{ Obras.g_meta }</td>
-                        <td style={{width: '15%'}}>
+                        <td style={{width: '20%'}}>
 
                             <div style={{
                                 width: '100%',
-                                height: '20px',
+                                height: '30px',
                                 textAlign: 'center'
                                 }}
                             >
 
                                 <div style={{
                                     height: '8px',
-                                    backgroundColor: '#c3bbbb',
-                                    borderRadius: '2px',
-                                    position: 'relative'
+                                    backgroundColor: '#5a5b5c',
+                                    borderRadius: '5px',
+                                    position: 'relative',
+                                    
                                     }}
                                 >
                                 <div
                                     style={{
                                     width: `${Obras.porcentaje_avance}%`,
                                     height: '100%',
-                                    backgroundColor: Obras.porcentaje_avance > 95 ? 'rgb(0, 128, 255)'
-                                        : Obras.porcentaje_avance > 50 ? 'rgb(99, 173, 247)'
-                                        :  'rgb(2, 235, 255)',
-                                    borderRadius: '2px',
+                                    backgroundColor: Obras.porcentaje_avance > 85 ? 'rgb(0, 128, 255)'
+                                        : Obras.porcentaje_avance > 30 ? '#ffbf00'
+                                        :  '#ff2e00',
+                                    borderRadius: '5px',
                                     transition: 'all .9s ease-in',
                                     position: 'absolute',
+                                    
                                    
                                     }}
-                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_avance} %</span>
+                                /><span style={{ position:'inherit', fontSize:'0.8rem', top: '6px' }}>Físico ({Obras.porcentaje_avance} %)</span>
                                 </div>
                             
 
@@ -158,8 +160,8 @@ class ListaObras extends Component{
 
                                 <div style={{
                                     height: '8px',
-                                    backgroundColor: '#c3bbbb',
-                                    borderRadius: '2px',
+                                    backgroundColor: '#4a4b4c',
+                                    borderRadius: '5px',
                                     position: 'relative'
                                     }}
                                 >
@@ -167,15 +169,15 @@ class ListaObras extends Component{
                                     style={{
                                     width: `${Obras.porcentaje_financiero}%`,
                                     height: '100%',
-                                    backgroundColor: Obras.porcentaje_financiero > 95 ? 'rgb(0, 128, 255)'
-                                        : Obras.porcentaje_financiero > 50 ? 'rgb(99, 173, 247)'
-                                        :  'rgb(2, 235, 255)',
-                                    borderRadius: '2px',
+                                    backgroundColor: Obras.porcentaje_financiero > 85 ? 'rgb(0, 128, 255)'
+                                        : Obras.porcentaje_financiero > 30 ? '#fac934'
+                                        :  '#ff552f',
+                                    borderRadius: '5px',
                                     transition: 'all .9s ease-in',
                                     position: 'absolute',
                                    
                                     }}
-                                /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_financiero} %</span>
+                                /><span style={{ position:'inherit', fontSize:'0.8rem', top: '6px' }}>Financiero ({Obras.porcentaje_financiero} %)</span>
                                 </div>
 
                             </div> 

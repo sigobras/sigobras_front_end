@@ -514,7 +514,7 @@ class MetradosDiarios extends Component {
 
           partidaSetIcon.iconocategoria_nombre = CategoriasIconos
 
-          console.log("CategoriasIconos", CategoriasIconos);
+          // console.log("CategoriasIconos", CategoriasIconos);
 
 
           DataModificadoPartidas[indexPartida] = partidaSetIcon
@@ -1123,7 +1123,7 @@ class MetradosDiarios extends Component {
                   </CardHeader>
                   <CardBody>
 
-                    <table className="table table-sm" hover>
+                    <table className="table table-sm">
                       <thead className="resplandPartida">
                         <tr>
                           <th style={{ width: "39px" }}>
@@ -1150,19 +1150,23 @@ class MetradosDiarios extends Component {
                           <th>METRADO</th>
                           <th>P/U </th>
                           <th>P/P </th>
-                          <th width="20%">BARRA DE PROGRESO</th>
-                          <th> DURACIÓN </th>
+                          <th width="20%" >BARRA DE PROGRESO</th>
+                          <th>  %  </th>
                           {/* <th><MdInsertPhoto size={ 18 } /> </th> */}
                         </tr>
                       </thead>
 
-
                       {DataPartidasPaginada.length <= 0 ?
-                        <tbody><tr><td colSpan="8" className="text-center text-warning"> <Spinner color="primary" type="grow" /></td></tr></tbody> :
+                        <tbody>
+                          <tr>
+                            <td colSpan="8" className="text-center text-warning"> <Spinner color="primary" type="grow" />
+                            </td>
+                          </tr>
+                        </tbody> :
                         DataPartidasPaginada.map((metrados, i) =>
                           <tbody key={i} >
 
-                            <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-warning icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
+                            <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-info icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
                               <td>
                                 {
                                   metrados.tipo === "titulo" ? "" :
@@ -1210,10 +1214,10 @@ class MetradosDiarios extends Component {
 
                                 <div className={(metrados.tipo === "titulo" ? 'd-none' : '')}>
                                   <div className="clearfix">
-                                    <span className="float-left text-warning">A. met. {metrados.avance_metrado} {metrados.unidad_medida}</span>
+                                    <span className="float-left text-warning">Avance: {metrados.avance_metrado} {metrados.unidad_medida}</span>
                                     <span className="float-right text-warning">S/. {metrados.avance_costo}</span>
                                   </div>
-
+                                  {/* BARRA DE PROCENTAJE PARTIDAS   */}
                                   <div style={{
                                     height: '3px',
                                     width: '100%',
@@ -1225,26 +1229,28 @@ class MetradosDiarios extends Component {
                                       style={{
                                         width: `${metrados.porcentaje}%`,
                                         height: '100%',
-                                        background: metrados.porcentaje > 95 ? '#a4fb01'
-                                          : metrados.porcentaje > 50 ? '#ffbf00'
+                                        background: metrados.porcentaje > 85 ? '#a4fb01'
+                                          : metrados.porcentaje > 30 ? '#0080ff'
                                             : '#ff2e00',
                                         transition: 'all .9s ease-in',
                                       }}
                                     />
                                   </div>
                                   <div className="clearfix">
-                                    <span className="float-left text-info">Saldo: {metrados.metrados_saldo}</span>
+                                    <span className="float-left text-info">Saldo: {metrados.metrados_saldo} {metrados.unidad_medida}</span>
                                     <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
                                   </div>
                                 </div>
 
                               </td>
-                              <td>
+                              <td className="text-center">
 
-                                {metrados.partida_duracion}
+                                {/* {metrados.partida_duracion} */}
+                                {metrados.porcentaje}
                                 {
-                                  metrados.tipo !== "titulo"
-                                    ?
+                                  metrados.tipo !== "titulo" 
+                                  ?
+                                 
                                     <div className="aprecerIcon">
                                       <span className="prioridad iconoTr" onClick={() => this.capturaDatosCrearImgPartida(metrados.id_partida, "/avancePartidaImagen", "Partidas_id_partida")}><MdAddAPhoto size={20} /></span>
                                     </div>
@@ -1260,14 +1266,13 @@ class MetradosDiarios extends Component {
                                   <div className="p-1">
                                     <div className="row">
 
-                                      <div className="col-sm-7">
-                                        <MdReportProblem size={20} className="text-warning" />
-                                        <b className="small">
-                                          {metrados.descripcion}
-                                        </b>
-                                        <MdFlashOn size={20} className="text-warning" />
-
+                                      <div className="col-sm-7 text-info">
+                                        
+                                          {metrados.descripcion} <MdFlashOn size={20} className="text-danger"/>rendimiento: {metrados.rendimiento} {metrados.unidad_medida}
+                                        
+                                        
                                       </div>
+                                      
                                       <div className="col-sm-2">
                                         {
                                           Number(DataMayorMetrado.mm_avance_costo) > 0 ? 'MAYOR METRADO' : ''
@@ -1282,8 +1287,8 @@ class MetradosDiarios extends Component {
                                             <div className="small">
 
                                               <div className="clearfix">
-                                                <span className="float-left text-warning">A. met. {DataMayorMetrado.mm_avance_costo} {metrados.unidad_medida}</span>
-                                                <span className="float-right text-warning">S/. {DataMayorMetrado.mm_avance_metrado}</span>
+                                                <span className="float-left text-info">Avance {DataMayorMetrado.mm_avance_costo} {metrados.unidad_medida}</span>
+                                                <span className="float-right text-info">S/. {DataMayorMetrado.mm_avance_metrado}</span>
                                               </div>
 
                                               <div>
@@ -1301,23 +1306,23 @@ class MetradosDiarios extends Component {
                                       </div>
 
                                       <div className="col-sm-1">
-                                        <button className="btn btn-outline-warning btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados" onClick={() => this.capturaidMM(metrados.id_partida, this.state.id_componente, i, metrados.descripcion)}> <FaPlus size={10} /> MM</button>
+                                        <button className="btn btn-outline-danger btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados sólo con autorización del supervisor" onClick={() => this.capturaidMM(metrados.id_partida, this.state.id_componente, i, metrados.descripcion)}>MM</button>
                                       </div>
                                     </div>
-
-                                    <Table className="table table-bordered table-sm">
-                                      <thead className="thead-dark">
-                                        <tr>
-                                          <th>NOMBRE DE ACTIVIDAD</th>
+                                    {/* tabla de partidas para */}
+                                    <Table className="table-bordered table-sm table-hover">
+                                      <thead>
+                                        <tr className="text-center">
+                                          <th>ACTIVIDADES</th>
                                           <th>N° VECES</th>
                                           <th>LARGO</th>
                                           <th>ANCHO</th>
                                           <th>ALTO</th>
                                           <th>METRADO</th>
-                                          <th>S/. P / U </th>
-                                          <th>S/. P / P</th>
-                                          <th>ACTIVIDADES SALDOS</th>
-                                          <th><MdSettings /></th>
+                                          <th>P / U </th>
+                                          <th>P / P</th>
+                                          <th>AVANCE Y SALDO</th>
+                                          <th>METRAR</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -1339,7 +1344,7 @@ class MetradosDiarios extends Component {
                                                       actividades.actividad_tipo === "titulo" ? "" :
                                                         <div>
                                                           <div className="clearfix">
-                                                            <span className="float-left text-warning">A met. {actividades.actividad_avance_metrado}{actividades.unidad_medida}</span>
+                                                            <span className="float-left text-warning">Avance: {actividades.actividad_avance_metrado} {actividades.unidad_medida}</span>
                                                             <span className="float-right text-warning">S/. {actividades.actividad_avance_costo}</span>
                                                           </div>
 
@@ -1354,8 +1359,8 @@ class MetradosDiarios extends Component {
                                                               style={{
                                                                 width: `${actividades.actividad_porcentaje}%`,
                                                                 height: '100%',
-                                                                backgroundColor: actividades.actividad_porcentaje > 95 ? '#A4FB01'
-                                                                  : actividades.actividad_porcentaje > 50 ? '#ffbf00'
+                                                                backgroundColor: actividades.actividad_porcentaje > 85 ? '#A4FB01'
+                                                                  : actividades.actividad_porcentaje > 30 ? '#0080ff'
                                                                     : '#ff2e00',
                                                                 transition: 'all .9s ease-in',
                                                                 position: 'absolute'
@@ -1503,27 +1508,27 @@ class MetradosDiarios extends Component {
 
           {/* <!-- MODAL PARA METRAR EN ESTADO EJECUCION --> */}
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
-            <ModalHeader toggle={this.modalMetrar} className="border-button">
-              <img src={LogoSigobras} width="30px" alt="logo sigobras" /> SIGOBRAS S.A.C.
+            <ModalHeader toggle={this.modalMetrar} className="border-button center">
+              <img src={LogoSigobras} width="60px" alt="logo sigobras" />
               </ModalHeader>
             {
               sessionStorage.getItem("estadoObra") === "Ejecucion"
                 ?
                 <div>
-                  {/* codigo de EJECUCION =============================================================================================================== */}
+                  {/* codigo de EJECUCION  MODAL  =============================================================================================================== */}
 
                   <form onSubmit={this.EnviarMetrado_EJECUCION}>
                     <ModalBody>
-                      <label className="text-center mt-0">{descripcion} </label><br />
+                      <label className="text-center mt-0 text-info">{descripcion} </label><br />
 
                       <div className="d-flex justify-content-between ">
-                        <div className=""><b> {this.state.nombre_actividad} </b></div>
-                        <div className="small">Costo Unit. S/.  {this.state.costo_unitario} {this.state.unidad_medida}</div>
+                        <div className=""><h6> {this.state.nombre_actividad} </h6></div>
+                        <div className="small">Costo Unit. S/.  {this.state.costo_unitario}/{this.state.unidad_medida}</div>
                       </div>
 
                       <div className="d-flex justify-content-between ">
                         <div>INGRESE EL METRADO: {this.state.Porcentaje_Metrado} </div>
-                        <div title="redimiento" className="text-right bold text-warning">redim.: {rendimiento}</div>
+                        <div title="rendimiento" className="text-right text-danger">Rend: {rendimiento}</div>
                       </div>
 
                       <div className="input-group input-group-sm mb-0">
@@ -1536,21 +1541,21 @@ class MetradosDiarios extends Component {
                       <div className="texto-rojo mb-0"> <b> {smsValidaMetrado}</b></div>
 
                       <div className="d-flex justify-content-center text-center mt-1">
-                        <div className="bg-primary p-1 mr-1 text-white">Metrado total  <br />
+                        <div className="bg-secondary p-1 mr-1 text-white">TOTAL  <br />
                           {this.state.metrado} {this.state.unidad_medida}
                         </div>
 
-                        <div className="bg-info text-white p-1 mr-1">Costo total / {this.state.unidad_medida}  <br />
+                        <div className="bg-info text-white p-1 mr-1">Costo total <br />
                           = S/.  {this.state.parcial} <br />
                         </div>
-                        <div className={Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white" : "bg-success p-1 mr-1 text-white"}>Saldo <br />
+                        <div className={Number(this.state.actividad_metrados_saldo) <= 0 ? "bg-danger p-1 mr-1 text-white" : "bg-success p-1 mr-1 text-white"}>SALDO <br />
                           {this.state.actividad_metrados_saldo} {this.state.unidad_medida}
                         </div>
 
                       </div>
 
                       <div className="form-group mb-1">
-                        <label htmlFor="comment">DESCRIPCION:</label>
+                        <label htmlFor="comment">DESCRIPCION (zonas, ejes):</label>
                         <DebounceInput
                           cols="40"
                           rows="1"
@@ -1563,7 +1568,7 @@ class MetradosDiarios extends Component {
                       </div>
 
                       <div className="form-group mb-0">
-                        <label htmlFor="comment">OBSERVACIÓN:</label>
+                        <label htmlFor="comment">OBSERVACIÓN y/o OCURRENCIAS:</label>
                         <DebounceInput
                           cols="40"
                           rows="1"
@@ -1588,13 +1593,13 @@ class MetradosDiarios extends Component {
 
                       <div className="custom-file">
                         <input type="file" className="custom-file-input" onChange={this.onChangeImgMetrado} id="myImage" />
-                        <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE"}</label>
+                        <label className="custom-file-label" htmlFor="customFile"> {this.state.file !== null ? this.state.file.name : "SELECCIONE IMAGEN"}</label>
 
                       </div>
 
                     </ModalBody>
                     <ModalFooter className="border border-dark border-top border-right-0 border-bottom-0 border-button-0">
-                      <div className="float-left"><Button color="primary" type="submit">Guardar</Button>{' '}</div>
+                      <div className="float-left"><Button color="primary" type="submit">Metrar</Button>{' '}</div>
                       <div className="float-right"><Button color="danger" onClick={this.modalMetrar}>Cancelar</Button></div>
                     </ModalFooter>
                   </form>

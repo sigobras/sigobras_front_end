@@ -22,7 +22,6 @@ class Obras extends Component{
 
     }
   
-    
     componentDidMount(){
         axios.post(`${UrlServer}/PGlistaObras`,{
             id_acceso:sessionStorage.getItem("idacceso")
@@ -70,10 +69,11 @@ class Obras extends Component{
         return(
             <div>
                 <div className="card">
-                    <div className="card-header">
-                        RECORD DE EJECUCION PRESUPUESTAL
+                    <div className="card-header text-center">
+                        LISTA DE OBRAS, AVANCE FISICO Y FINANCIERO 
                         <div className="float-right">
                             <select className="form-control form-control-sm" onChange={ this.filterList } >
+                            {/* llamar al api de tipos de edificacion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
                                 <option value="">Todo</option>
                                 <option value="E">Edificaciones</option>
                                 <option value="C">Carreteras</option>
@@ -86,11 +86,11 @@ class Obras extends Component{
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>OBRA</th>
-                                        <th>AVANCE </th>
-                                        <th className="text-center">IR</th>
-                                        <th>ESTADO</th>
-                                        <th style={{    width: "105px", minWidth: "100px"}} >OPCIONES</th>
+                                        <th style={{    width: "400px", minWidth: "150px"}} >OBRA</th>
+                                        <th className="text-center" >AVANCE </th>
+                                        <th className="text-center">IR A</th>
+                                        <th className="text-center">ESTADO</th>
+                                        <th className="text-center" style={{width: "105px", minWidth: "100px"}} >OPCIONES</th>
                                     </tr>
                                 </thead>
                                 {this.state.event.length === 0 ? <ListaObras items={this.state.DataRecorObra}/> :  <ListaObras items={this.state.items}/>}
