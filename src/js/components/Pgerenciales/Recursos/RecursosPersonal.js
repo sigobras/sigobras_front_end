@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 // import axios from 'axios';
 // import { Nav, NavItem, TabContent, NavLink, TabPane, ListGroup, Modal, ModalHeader, ModalBody, } from 'reactstrap';
-import Modal from 'react-modal'
+// import Modal from 'react-modal'
 // import { UrlServer } from '../../Utils/ServerUrlConfig';
 import "../Recursos/RecursosPersonal.css";
 
