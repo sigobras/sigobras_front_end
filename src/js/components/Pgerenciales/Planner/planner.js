@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { Table, UncontrolledCollapse, Button } from 'reactstrap';
+import { Table, UncontrolledCollapse, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+// import { options} from "../Planner/Charts"
+
 // import '../../../../css/proyeccion.css'
 import "../../../../css/proyeccion.css";
 
@@ -26,7 +28,7 @@ class Proyeccion extends Component {
             chart_data: 0,
             cajalistacomponente: [],
             activatorinput: -1,
-            mesesfor: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            mesesfor: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
 
 
         };
@@ -52,7 +54,7 @@ class Proyeccion extends Component {
     componentWillMount() {
 
         this.setState({
-            cajaidficha: sessionStorage.getItem('idobra')  //es una variable (debe de estar definida en el constructor)
+            cajaidficha: sessionStorage.getItem('idobra')  //es una variable global que se puede acceder desde cualquier interfaz (debe de estar definida en el constructor)
 
         })
 
@@ -320,24 +322,52 @@ class Proyeccion extends Component {
         document.getElementById("create-course-form").reset();
     }
 
+
+
     render() {//es todo lo que se imprime en la pantalla render es una funcion del propio react
 
         var { cajaanyo } = this.state //SE USO PARA PONER EL AÑO EN EL CHART TITULO
 
         const options = {
-            
-            chart:{
-                
-                    type: 'column'
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, '#242526'],
+                        [1, '#242526']
+                    ]
+                },
+
+                type: 'column'
             },
-            
+            style: {
+                fontFamily: '\'Unica One\', sans-serif'
+            },
+
             title: {
+                style: {
+                    color: '#E0E0E3',
+                    textTransform: 'uppercase',
+                    fontSize: '20px'
+                },
                 text: 'PROGRAMADO' + ' ' + cajaanyo
             },
             subtitle: {
-                text: 'Obra: Materno Infantil'  //codigo nombre de la obra
+                style: {
+                    color: '#E0E0E3',
+                    textTransform: 'uppercase'
+                },
+                text: 'Obra:' + '' + sessionStorage.getItem('codigoObra')  //codigo nombre de la obra
             },
             xAxis: {
+                gridLineColor: '#707073',
+                labels: {
+                    style: {
+                        color: '#E0E0E3'
+                    }
+
+                },
+
                 categories: [
                     'Jan',
                     'Feb',
@@ -355,15 +385,42 @@ class Proyeccion extends Component {
                 crosshair: true,
                 title: {
                     text: 'Proyecciones'
+                },
+                lineColor: '#707073',
+                minorGridLineColor: '#505053',
+                tickColor: '#707073',
+                title: {
+                    style: {
+                        color: '#A0A0A3'
+                    }
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
                     text: 'Soles (S/.)'
+                },
+                gridLineColor: '#707073',
+                labels: {
+                    style: {
+                        color: '#E0E0E3'
+                    }
+                },
+                lineColor: '#707073',
+                minorGridLineColor: '#505053',
+                tickColor: '#707073',
+                tickWidth: 1,
+                title: {
+                    style: {
+                        color: '#A0A0A3'
+                    }
                 }
             },
             tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                style: {
+                    color: '#F0F0F0'
+                },
                 headerFormat: '<span style="font-size:20px">{point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                     '<td style="padding:0"><b>{point.y:.1f} soles</b></td></tr>',
@@ -379,6 +436,7 @@ class Proyeccion extends Component {
                 }
             },
             series: [
+
                 {
                     name: 'Avance Mensual',
                     data: this.state.chart_data.avance
@@ -391,10 +449,11 @@ class Proyeccion extends Component {
                     name: 'Proyección Variable',
                     data: this.state.chart_data.proyvar
 
-                }]
+                }
 
-            };
+            ]
 
+        };
 
 
         // arriba del return es netamente javascritp
@@ -402,25 +461,19 @@ class Proyeccion extends Component {
             // dentro del render solo puede haber un elemento (div)
             // dentro del return solo va JSX 
 
-            <div className="container-fluid  mt-5">
-
-                <select onChange={event => this.getComponentes(event.target.value)}>
+            <div className="container-fluid">
+                <select className="selectproye" onChange={event => this.getComponentes(event.target.value)}>
                     <option>Seleccione el año</option>
                     {this.state.anyosproyectados.map((anyo, index) =>     //HACE INTERACCION CON UN SOLO ELEMENTO
-
                         <option key={index} value={anyo}>{anyo}</option>
-
                     )}
                 </select>
-
-
-
                 <form>
-                {/* id="create-course-form" */}
-                    <Table className="tablaproy" responsive size="sm" bordered>
+                    {/* id="create-course-form" */}
+                    <table className="table table-sm table-responsive" >
 
-                        <thead>
-                            <tr className='fixed_headers'>
+                        <thead >
+                            <tr>
                                 <th>N°</th>
                                 <th>COMPONENTE</th>
                                 <th>DESCRIPCION</th>
@@ -439,8 +492,6 @@ class Proyeccion extends Component {
                             </tr>
                         </thead>
 
-
-
                         {this.state.componentes.map((componente, index) =>
 
                             <tbody key={index}>
@@ -458,7 +509,7 @@ class Proyeccion extends Component {
                                     </Button>
 
                                     </td>
-                                    <td  className="componentetitulo" rowSpan="3">{componente.nombre}</td>
+                                    <td className="componentetitulo" rowSpan="3">{componente.nombre}</td>
                                     <td>Avance Mensual</td>
                                     {this.state.mesesfor.map((mes) =>
 
@@ -470,15 +521,15 @@ class Proyeccion extends Component {
                                 <tr>
 
                                     <td >Proyección Aprobada</td>
-                                    {this.state.mesesfor.map((mes) =>
-                                        <td >
+                                    {this.state.mesesfor.map((mes, index_1) =>
+                                        <td key={index_1}>
 
-                                            <input 
-                                                className ="inputproy"
+                                            <input
+                                                className="inputproy"
                                                 onBlur={evento => this.capturaInputProyeccionExp(evento, mes, index)}
                                                 placeholder={this.formatmoney(componente['MEXPT' + mes])}
                                                 disabled={(this.state.activatorinput == index) ? "" : "disabled"}
-                                                
+
                                             />
                                         </td>
                                     )}
@@ -486,16 +537,16 @@ class Proyeccion extends Component {
 
                                 <tr>
                                     <td>Proyección variable</td>
-                                    {this.state.mesesfor.map((mes) =>
+                                    {this.state.mesesfor.map((mes, index_2) =>
 
-                                        <td>
+                                        <td key={index_2}>
 
                                             <input
-                                                className ="inputproy"
+                                                className="inputproy"
                                                 onBlur={evento => this.capturaInputProyeccionVar(evento, mes, index)}
                                                 placeholder={this.formatmoney(componente['MPROVAR' + mes])}
                                                 disabled={(this.state.activatorinput == index) ? "" : "disabled"}
-                                                
+
                                             />
                                         </td>
                                     )}
@@ -513,6 +564,19 @@ class Proyeccion extends Component {
                                                 options={options}
                                             />
                                         </UncontrolledCollapse>
+                                        
+
+                                        {/* <Modal toggler={"#toggler" + componente.numero}>
+                                            <ModalHeader>CHART</ModalHeader>
+                                            <ModalBody>
+                                            <HighchartsReact
+
+                                                highcharts={Highcharts}
+                                                options={options}
+                                            />
+                                                
+                                            </ModalBody>
+                                        </Modal> */}
                                     </td>
                                 </tr>
 
@@ -520,7 +584,7 @@ class Proyeccion extends Component {
                         )}
 
 
-                    </Table>
+                    </table>
                 </form>
             </div>
 

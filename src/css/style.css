@@ -3,7 +3,7 @@ body {
   /* height: 100%; */
 
   font-size: .9rem !important;
-  color: #dcd7d7 !important;
+  color: #cecece !important;
   /* background-image: url("../images/blur-bg.jpg"); */
   /* background-position: 50% 0%; */
   /* background-repeat: no-repeat;
@@ -12,6 +12,8 @@ body {
   background-position: center;
   background-size: cover;
   position: relative;
+  background: #242526 !important;
+  /* #171819 */
 }
 
 /*  Sidebar */
@@ -23,7 +25,7 @@ body {
   /* Behind the navbar */
   padding: 50px 0 0;
   /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  /* box-shadow: inset -1px 0 0 rgb(255, 255, 255); */
   font-size: 0.8rem;
 }
 
@@ -67,19 +69,18 @@ body {
   padding-bottom: .75rem;
   font-size: 1rem;
   /* background-color: rgba(0, 0, 0, 0.25); */
-  box-shadow: inset -1px 0 0 rgba(78, 44, 44, 0.25);
+  /* box-shadow: inset -1px 0 0 rgb(255, 255, 255); */
 }
 
 
-/* nav izquierda  angerman  */
+/* nav izquierda menu principal */
 
 .navbarExplandLeft {
-  border-right: 1px solid #000;
   -webkit-transition: width 0.5s;
   transition: 0.5s;
   flex: 0 0 16.666667%;
   max-width: 16.666667%;
-  background: #1f232d52;
+  background: #171819;
 }
 
 .navbarCollapseLeft {
@@ -113,8 +114,7 @@ body {
     position: absolute;
     -webkit-transition: width 0.5s;
     transition: 0.5s;
-    border-right: 1px solid #000;
-    background: #1d202a;
+    background: #171819;
     flex: 0 0 50%;
     max-width: 50%;
   }
@@ -124,8 +124,8 @@ body {
     position: absolute;
     -webkit-transition: width 0.5s;
     transition: 0.5s;
-    border-right: 1px solid #000;
-    background: #1d202a;
+    /* border-right: 1px solid #171819;
+    background: #1d202a; */
   }
 
   .navbarExplandRight {
@@ -139,7 +139,8 @@ body {
 
 /* letra sigobras escoder */
 .textSigobras {
-  text-shadow: 0 0 6px #436cab;
+  text-shadow: 0 0 6px #ffffff;
+  color: #ffffff;
 }
 
 /* fin letra sigobras escoder */
@@ -173,7 +174,7 @@ body {
   color: #e6e6e6;
   padding: 8px 16px;
   text-decoration: none;
-  border-bottom: 1px solid #1d2029;
+  border-bottom: 1px solid #262728;
 }
 
 
@@ -198,13 +199,13 @@ body {
 }
 
 .scroll_contenido::-webkit-scrollbar {
-  width: 0.5em;
+  width: 0.6em;
 }
-
+/* scrol de partidas */
 .scroll_contenido::-webkit-scrollbar-thumb {
-  background-color: #2d78b9;
+  background-color: #0080ff;
   ;
-  outline: 2px solid rgb(255, 0, 0);
+  outline: 1px solid rgb(255, 0, 0);
 }
 
 
@@ -274,9 +275,9 @@ body {
 .sidebar-sticky::-webkit-scrollbar {
   width: 0.5em;
 }
-
+/* scroll del menu principal */
 .sidebar-sticky::-webkit-scrollbar-thumb {
-  background-color: rgb(195, 202, 190);
+  background-color: #0080ff;
   outline: 5px solid rgb(255, 0, 0);
 }
 
@@ -288,20 +289,20 @@ body {
 
 /* FondoBarraSuperior */
 .FondoBarra {
-  background: #1d2029d9;
+  background: #171819;
 }
 
 /* bordes propios */
 .border-button {
-  border-bottom: 1px solid #000000
+  border-bottom: 1px solid #171819
 }
 
 .border-left {
-  border-left: 1px solid #000000 !important;
+  border-left: 1px solid #171819 !important;
 }
 
 .border-top {
-  border-top: 1px solid #000000 !important;
+  border-top: 1px solid #171819 !important;
 }
 
 .texto-rojo {
@@ -333,11 +334,10 @@ body {
   display: flex;
   justify-content: center;
 }
-
+/* presupuesto de la obra en el circulo de porcentaje */
 .PresuObra {
-  background: #1a2a396e;
+  background: #3a3b3c;
   border-radius: 3px;
-  box-shadow: 0 0 2px 1px #1c2e3d;
   padding: 3px;
   font-family: -webkit-body;
 }
@@ -351,7 +351,7 @@ body {
 
 
 .tdData {
-  border-left: #000;
+  border-left: #272829;
 }
 
 .tdData:hover {
@@ -375,7 +375,7 @@ body {
 
 .resplandPartida {
   border-bottom: 2px solid #0080ff;
-  background: #394c65
+  background: #3a3b3c
 }
 
 .icoVer {
@@ -547,15 +547,15 @@ iframe::-webkit-scrollbar-thumb {
   bottom: 0px;
   right: auto;
   height: 329px;
-  background-color: rgb(237, 239, 244);
+  background-color: rgb(187, 187, 187);
   width: 274px;
-  border: 1px solid rgb(142, 142, 142);
+  border: 1px solid #3a3b3c;
   border-radius: 8px 8px 0px 0px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
 }
 
 .chatHeader {
-  background: #2676bb;
+  background: #3a3b3c;
   padding: 1px;
   border-radius: 5px 5px 0px 0px;
 }
@@ -580,7 +580,7 @@ iframe::-webkit-scrollbar-thumb {
 table.table thead th {
   position: sticky;
   top: 0px;
-  background: #394c65;
+  background: #171819;
 }
 
 
@@ -596,11 +596,11 @@ table.table thead th {
 
 .imgDelete:hover .imgBtn {
   display: block;
-  background: #1f6eb38c;
+  background: #ff00008c;
   position: absolute;
   right: 16px;
   border-radius: 12px;
-  color: #fffbfb;
+  color: #ff0000;
 }
 
 /* color de fondo para mayor metrado en partidas  */
@@ -609,7 +609,7 @@ table.table thead th {
 }
 
 .bg-mm {
-  background: #556e92;
+  background: #171819;
 }
 
 
@@ -621,7 +621,7 @@ table.table thead th {
 }
 
 .bordeDerecho {
-  border-right: 2px solid #0f58f6;
+  border-right: 2px solid #3a3a3a;
 }
 
 

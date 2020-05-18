@@ -97,7 +97,7 @@
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #040910a6;;
+  background-color: #242526;
   background-clip: padding-box;
   border: 1px solid rgba(0,0,0,.2);
   border-radius: .3rem;
@@ -127,15 +127,15 @@
 
 .card {
   border-radius: 0rem;
-  background-color: #2f394454;
-  border: 1px solid rgb(29, 32, 41);
+  background-color: #242526;
+  border: 1px solid #171819;
 }
 /* card heder */
 .card-header {
   padding: .75rem 1.25rem;
   margin-bottom: 0;
-  background-color: rgba(0, 2, 6, 0.5);
-  border-bottom: 1px solid rgb(29, 32, 41);
+  background-color: #171819;
+  border-bottom: 1px solid #171819;
 }
 .card-body {
   -ms-flex: 1 1 auto;
@@ -158,15 +158,16 @@ fieldset {
 /* legend  */
 legend {
   display: block;
-  max-width: max-content;
+  /* max-width: max-content; */
+  max-width: 400px;
   padding: 2px 6px 2px 8px;
   margin-bottom: 0.3rem;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   line-height: inherit;
   color: inherit;
   white-space: normal;
-  border: 1px solid #655e5e;
-  background: #1a2739;
+  border: 1px solid #3b68af;
+  background: #171819;
 }
 
 /* bordes de tabla  */
@@ -265,8 +266,8 @@ a{
   text-decoration: none;
   color: #ffffff!important;
 }
-
+/* hover de todas las tablas */
 .table-hover tbody tr:hover {
   color: #ffffff;
-  background-color: rgba(17, 110, 172, 0.144);
+  background-color: #3a3b3c
 }

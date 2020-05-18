@@ -1149,7 +1149,7 @@ class ParalizacionObra extends Component {
                       DataPartidasPaginada.map((metrados, i) =>
                         <tbody key={i} >
 
-                          <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-warning icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
+                          <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-info icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
                             <td>
                               {
                                 metrados.tipo === "titulo" ? "" :
