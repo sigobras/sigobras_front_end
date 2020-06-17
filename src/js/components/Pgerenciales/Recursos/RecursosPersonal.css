@@ -1,0 +1,84 @@
+.tabla1 {
+    border: 1px solid #1d2029;
+  border-bottom-color: rgb(29, 32, 41);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  }
+ 
+  .tabla1 thead tr td {
+    font-size: 12px;
+    background: #1d242e;
+    color: #d6d6d6;
+    border: 1px solid #334661;
+    text-align: center;
+}
+
+.tabla1 .partida {
+   background: #2c3c52;
+    min-width: 300px;
+    font-size: 15px;
+    
+}
+.partida tr{
+    text-align: left !important;
+     
+ }
+
+.tabla1 tbody tr td {
+    font-size: 12px;
+    background: #3a3b3c;
+    border: 1px solid #555;
+    text-align: center;
+}
+
+.tabla2 thead tr td{
+    font-size: 15px;
+    background: #1d242e;
+    color: #d6d6d6;
+    border: 1px solid #888888;
+    text-align: center;
+}
+.tabla2 tbody tr td{
+    font-size: 13px;
+    background:  #1d242e;
+    color: #d6d6d6;
+    border: 1px solid #888888;
+    text-align: center;
+}
+.tabla2 .resultadomo{
+    background: #ffc107;
+    color: #1d2029;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.tabla1 .resultadomo{
+    background: #2c3c52;
+    color: #d6d6d6;
+    font-size: 12px;
+    font-weight: bold;
+    
+}
+
+.tabla1 .resultadomo thead td{
+    background: #2c3c52;
+    color: #d6d6d6;
+    
+}
+.tabla1 .resultadomo tbody td{
+    background: #2c3c52;
+    color: #d6d6d6;
+    
+}
+
+.tabla1 .resultadomo tbody td :hover{
+    background: #75a2e2;
+    color: #d6d6d6;
+    
+}
+
+
+
+
+
+

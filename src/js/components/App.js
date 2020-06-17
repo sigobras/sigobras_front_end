@@ -38,6 +38,7 @@ import General from '../components/Pfisicos/Valorizaciones/General'
 import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
 import RecursosMo from '../components/Pgerenciales/Recursos/RecursosPersonal'
+import infobras from '../components/Pgerenciales/InformacionObras/InformacionObra'
         //planificacion
 import Planner from '../components/Pgerenciales/Planner/planner'
 // reportes 
@@ -49,6 +50,7 @@ import GestionTareas from "./GestionTareas/GestionTareas"
 
 // PROCESOS DOCUMENTOS 
 import Index from "./Pdocumentarios/Index"
+
 
 class AppAng extends Component {
     constructor() {
@@ -302,6 +304,7 @@ class AppAng extends Component {
                                          {/* PROCESOS GERENCIALES            */}
                                         <Route path="/RecordObras" component={RecordObras} />
                                         <Route path="/ReportesGenerales" component={ReportesGenerales} />
+                                        <Route path="/infobras" component={infobras} />
                                         <Route path="/planner" component={Planner} />
                                         <Route path="/comunicados" component={Comunicados} />
                                         <Route path="/recursosmanodeobra" component={RecursosMo} />

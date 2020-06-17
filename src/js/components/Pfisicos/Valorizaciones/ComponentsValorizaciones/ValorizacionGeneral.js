@@ -4,6 +4,7 @@ import { MdMoreVert, MdDone } from "react-icons/md";
 import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, Table } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
+import { Redondea1 } from '../../../Utils/Funciones';
 
 class ValorizacionGeneral extends Component {
     constructor(props) {
@@ -63,6 +64,7 @@ class ValorizacionGeneral extends Component {
             InputAnio: anio,
             activeTabComponente: "resumen",
         })
+        
         // llama al api de meses
         if (this.state.InputAnio !== anio) {
             this.reqMeses(anio)
@@ -121,7 +123,7 @@ class ValorizacionGeneral extends Component {
                     var UltimoAnio = res.data.length - 1
                     var UltimoMes = res.data[UltimoAnio].periodos.length - 1
 
-                    // console.log("Ultimo mes  ",  UltimoMes )
+                    console.log("DATA", res.data )
 
                     this.setState({
                         DataAniosApi: ResData,
@@ -168,7 +170,12 @@ class ValorizacionGeneral extends Component {
             .then((res) => {
                 var UltimoMes = res.data.length - 1
 
-                // console.log('res meses> ', res.data)
+                console.log('res meses> ', res.data)
+                var mesinicial = res.data [res.data.length - 1]
+        this.setState({
+            FechaInicio: mesinicial.fecha_inicial,
+            FechaFinal:mesinicial.fecha_final
+        })
                 this.setState({
                     DataMesesApi: res.data,
                     activeTabMes: UltimoMes.toString()
@@ -313,7 +320,7 @@ class ValorizacionGeneral extends Component {
                                         ?
                                         <div className="table-responsive">
                                             <Table className="table table-bordered small table-sm mb-0" hover>
-                                                <thead className="resplandPartida">
+                                                <thead  className="resplandPartida">
                                                     <tr className="text-center">
                                                         <th className="align-middle" rowSpan="3">N°</th>
                                                         <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
@@ -370,9 +377,9 @@ class ValorizacionGeneral extends Component {
                                                         )
                                                     }
 
-                                                    <tr className="resplandPartida font-weight-bolder">
+                                                    {/* <tr className="resplandPartida font-weight-bolder">
                                                         <td colSpan="2">TOTAL COSTO DIRECTO</td>
-                                                        <td>S/. {this.state.ppto}</td>
+                                                        <td>S/. {this.state.ppto}xxxxx</td>
 
                                                         <td>S/. {this.state.avance_anterior}</td>
                                                         <td>{this.state.porcentaje_anterior} %</td>
@@ -386,25 +393,25 @@ class ValorizacionGeneral extends Component {
                                                         <td>S/. {this.state.saldo}</td>
                                                         <td>{this.state.porcentaje_saldo} %</td>
 
-                                                    </tr>
+                                                    </tr> */}
 
-                                                    {/* <tr className="resplandPartida font-weight-bolder">
+                                                    <tr className="resplandPartida font-weight-bolder">
                                                     <td colSpan="2">TOTAL COSTO INDIRECTO</td>
-                                                    <td>S/. {this.state.ppto}</td>
+                                                    <td>S/. {DataResumenApi.presupuesto}</td>
 
-                                                    <td>S/. {this.state.avance_anterior}</td>
+                                                    <td>S/. {DataResumenApi.valor_anterior}</td>
                                                     <td>{this.state.porcentaje_anterior} %</td>
 
-                                                    <td>S/. {this.state.avance_actual}</td>
+                                                    <td>S/. {DataResumenApi.valor_actual}</td>
                                                     <td>{this.state.porcentaje_actual} %</td>
 
-                                                    <td>S/. {this.state.avance_acumulado}</td>
+                                                    <td>S/. {DataResumenApi.valor_total}</td>
                                                     <td>{this.state.porcentaje_acumulado} %</td>
 
-                                                    <td>S/. {this.state.saldo}</td>
+                                                    <td>S/. {DataResumenApi.valor_saldo}</td>
                                                     <td>{this.state.porcentaje_saldo} %</td>
 
-                                                </tr> */}
+                                                </tr>
                                                 </tbody>
                                             </Table>
                                         </div>
@@ -510,7 +517,7 @@ class ValorizacionGeneral extends Component {
                                                         <td colSpan="2">S/. {DataPartidasApi.valor_anterior}</td>
                                                         <td>{DataPartidasApi.porcentaje_anterior} %</td>
 
-                                                        <td colSpan="2" >S/. {DataPartidasApi.valor_actual}</td>
+                                                        <td colSpan="2" >S/. {Redondea1(DataPartidasApi.valor_actual)}</td>
                                                         <td>{DataPartidasApi.porcentaje_actual} %</td>
 
                                                         <td colSpan="2">S/. {DataPartidasApi.valor_total}</td>

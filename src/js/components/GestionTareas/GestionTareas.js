@@ -1124,8 +1124,7 @@ class GestionTareas extends Component {
                                   : ""
                               }
                             </div>
-                            
-                          </div>
+                            </div>
                           <div className="headerTarea text-uppercase px-2 clearfix">
                             <div className="float-left">
                               {`${PositsFiltrado.porcentaje_avance} %`}

@@ -1,9 +1,25 @@
 // redondea a dos decimales
 function Redondea(x) {
     // console.log("x =>>", x)
-    return Number.parseFloat(x).toFixed(2);
+    if (x==null) {
+        return "-"
+    }
+    else if(x==0){
+        return "-"
+    }
+    return Number.parseFloat(x).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    
+}
+function Redondea1(x) {
+    // console.log("x =>>", x)
+    return Number(Number.parseFloat(x).toFixed(2));
 }
 
+
+function Redondea2(x) {
+    // console.log("x =>>", x)
+    return Number.parseFloat(x).toFixed(2);
+}
 // CALCULA LA FECHA ACTUAL
 function FechaActual(){
     var fecha = new Date();
@@ -122,6 +138,13 @@ function Extension(nombreArchivo) {
    
 }
 
+var diasdelasemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo" ]
+
+
+
+
+
+
 module.exports = {
     Redondea,
     PrimerDiaDelMesActual,
@@ -131,5 +154,9 @@ module.exports = {
 
     GeraColoresRandom,
 
-    Extension
+    Extension,
+Redondea1,
+diasdelasemana,
+Redondea2
+    
 } 

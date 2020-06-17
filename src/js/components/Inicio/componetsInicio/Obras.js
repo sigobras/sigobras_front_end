@@ -4,6 +4,7 @@ import 'jspdf-autotable';
 import { toast } from "react-toastify";
 
 import ListaObras from './FiltraObras/ListaObras'
+import "../../../../css/inicio.css"
 
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
@@ -69,8 +70,7 @@ class Obras extends Component{
         return(
             <div>
                 <div className="card">
-                    <div className="card-header text-center">
-                        LISTA DE OBRAS, AVANCE FISICO Y FINANCIERO 
+                    <div className="fondo">
                         <div className="float-right">
                             <select className="form-control form-control-sm" onChange={ this.filterList } >
                             {/* llamar al api de tipos de edificacion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
@@ -85,8 +85,8 @@ class Obras extends Component{
                             <table className="table table-sm" >
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th style={{    width: "400px", minWidth: "150px"}} >OBRA</th>
+                                        <th>N°</th>
+                                        <th style={{width: "400px", minWidth: "150px", textAlign:"center"}} >OBRA</th>
                                         <th className="text-center" >AVANCE </th>
                                         <th className="text-center">IR A</th>
                                         <th className="text-center">ESTADO</th>

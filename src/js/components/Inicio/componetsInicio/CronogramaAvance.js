@@ -8,7 +8,7 @@ import { MdSave } from "react-icons/md";
 import { Button, InputGroup, InputGroupAddon, InputGroupText, Input, Row, Col, FormGroup, Label, CustomInput } from 'reactstrap';
 
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-import { ConvertFormatStringNumber, convertirFechaLetra, FechaActual, Redondea } from '../../Utils/Funciones'
+import { ConvertFormatStringNumber, convertirFechaLetra, FechaActual, Redondea2 } from '../../Utils/Funciones'
 
 
 class CronogramaAvance extends Component {
@@ -93,7 +93,7 @@ class CronogramaAvance extends Component {
         var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
         saldoTotalCostoDirecto = saldoTotalCostoDirecto - totalSumaInpust
 
-        saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
+        saldoTotalCostoDirecto = Redondea2(saldoTotalCostoDirecto)
 
         // console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
 
@@ -233,7 +233,7 @@ class CronogramaAvance extends Component {
     costoDirecto = costoDirecto - avanceAcumulado
 
     var saldoTotalCostoDirecto = costoDirecto - total
-    saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
+    saldoTotalCostoDirecto = Redondea2(saldoTotalCostoDirecto)
 
     // console.log('ResultResta',this.state.ResultResta)
 
@@ -352,7 +352,7 @@ class CronogramaAvance extends Component {
             var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
             saldoTotalCostoDirecto = saldoTotalCostoDirecto - totalSumaInpust
 
-            saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
+            saldoTotalCostoDirecto = Redondea2(saldoTotalCostoDirecto)
 
             // console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
 
@@ -565,7 +565,7 @@ class CronogramaAvance extends Component {
         var saldoTotalCostoDirecto = costoDirecto - avanceAcumulado
         saldoTotalCostoDirecto = saldoTotalCostoDirecto - totalSumaInpust
 
-        saldoTotalCostoDirecto = Redondea(saldoTotalCostoDirecto)
+        saldoTotalCostoDirecto = Redondea2(saldoTotalCostoDirecto)
 
         // console.log("saldoTotalCostoDirecto", saldoTotalCostoDirecto)
 
