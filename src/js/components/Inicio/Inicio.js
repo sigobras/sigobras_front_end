@@ -27,7 +27,7 @@ class Inicio extends Component {
 
         )
             .then((res) => {
-                console.log("ESTA ES LA DATA lista obras", res.data);
+                // console.log("ESTA ES LA DATA lista obras", res.data);
                 this.setState({
                     comunicados: res.data,
                     fecha:res.data

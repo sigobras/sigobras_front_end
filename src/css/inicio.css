@@ -1,12 +1,28 @@
 .aviso p {
-    color: #d8d8d8;
-    /* border-radius: 9px; */
+    color: #8caeda;
+    /* border-radius: 15px; */
     text-align: center;
     height: 50px;
     width: 1000;
     /* border: 1px solid rgba(51, 153, 204, 0.267); */
-    background: #3a3b3c;
+    background: #4a4b4c;
     margin-bottom: 5px;
+
+}
+
+.fondo {
+    color: #ffffff;
+    text-align: center;
+    height: 60px;
+    width: 1000;
+    /* border: 1px solid rgba(51, 153, 204, 0.267); */
+    /* background: #a5a5a5; */
+    background-image: url("../images/banner7.jpg");
+    margin-bottom: 5px;
+    background-size: cover; 
+     background-position: 50% 0%;
+     /* border-radius: 15px; */
+     font-size: large;
 
 }
 .textoaviso {

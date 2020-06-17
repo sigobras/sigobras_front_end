@@ -67,9 +67,11 @@
   -ms-flex-pack: justify;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-bottom: 1px solid #003d80;
+  border-bottom: 1px solid #dc3545;
   border-top-left-radius: .3rem;
   border-top-right-radius: .3rem;
+  min-width: 300px;
+  max-width: 800px;
 }
 
 .modal-footer {
@@ -80,12 +82,14 @@
   -ms-flex-pack: end;
   justify-content: flex-end;
   padding: 1rem;
-  border-top: 1px solid  #003d80;
+  border-top: 1px solid  #dc3545;
   border-bottom-right-radius: .3rem;
   border-bottom-left-radius: .3rem;
+  min-width: 300px;
+  max-width: 800px;
 }
 .modal-content {
-  border-radius: .0rem;
+  border-radius: .1rem;
   outline: 0;
 }
 
@@ -95,13 +99,17 @@
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
-  width: 100%;
+  width: max-content;
+  min-width: 300px;
+  max-width: 800px;
+  /* width: 800px; */
   pointer-events: auto;
   background-color: #242526;
-  background-clip: padding-box;
-  border: 1px solid rgba(0,0,0,.2);
+  /* background-clip: padding-box; */
+  /* border: 1px solid rgba(0,0,0,.2); */
   border-radius: .3rem;
   outline: 0;
+
 }
 
 
@@ -268,6 +276,6 @@ a{
 }
 /* hover de todas las tablas */
 .table-hover tbody tr:hover {
-  color: #ffffff;
-  background-color: #3a3b3c
+  color: #dc3545;
+  /* background-color: #48535f */
 }

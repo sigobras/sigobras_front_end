@@ -98,7 +98,7 @@ class ParalizacionObra extends Component {
 
       // DATA PARA PAGINACION 
       PaginaActual: 1,
-      CantidadRows: 10
+      CantidadRows: 40
     }
 
     this.Tabs = this.Tabs.bind(this)

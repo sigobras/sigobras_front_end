@@ -15,21 +15,24 @@ class Componentes extends Component {
         <table className="table table-bordered table-sm">
           <thead>
             <tr>
-                <th>#</th>
+                <th>N°</th>
                 <th>COMPONENTE</th>
-                <th>PRESUPUESTO BASE</th>
+                <th>PRESUPUESTO CD</th>
                 <th>EJECUCIÓN FÍSICA</th>
                 <th>BARRRA PORCENTUAL</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody style={{backgroundColor:'#333333'}}>
             { this.props.DataComponente.length <= 0 ? <tr><td className="text-center" colSpan="5"><Spinner color="primary" size="sm" /></td></tr>:  
             
               this.props.DataComponente.map((ObrasComp, IndexObrasComp)=>
 
               <tr key={ IndexObrasComp } >
                 <td>{ ObrasComp.numero }</td>
-                <td>{ ObrasComp.nombre }</td>
+
+                <td style={{fontSize:'0.75rem', color:'#8caeda' }}
+                >{ ObrasComp.nombre }</td>
+
                 <td> S/. { ObrasComp.presupuesto }</td>
                 <td> S/. { ObrasComp.comp_avance }</td>
                 <td>

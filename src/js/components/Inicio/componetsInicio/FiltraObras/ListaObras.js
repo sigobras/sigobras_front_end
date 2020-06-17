@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios'; 
-import Circle from 'react-circle';
-import { FaList, FaClock, FaRegImages } from "react-icons/fa";
+// import Circle from 'react-circle';
+import { FaList, FaClock } from "react-icons/fa";
 
 import 'jspdf-autotable';
 
@@ -14,6 +14,9 @@ import CronogramaAvance from '../CronogramaAvance';
 // import CtrladminDirecta from '../../Reportes/CtrladminDirecta'
 
 import ModalListaPersonal from './ModalListaPersonal'
+import ModalInformacionObras from '../../../Pgerenciales/InformacionObras/InformacionObra'
+
+
 
 class ListaObras extends Component{
     constructor(props){
@@ -109,10 +112,17 @@ class ListaObras extends Component{
             this.props.items.length <= 0 ?
             <tbody><tr><td colSpan="6" className="text-center text-warning"><Spinner color="primary" size="sm" /> </td></tr></tbody>:
             this.props.items.map((Obras, IndexObras)=>
+                
                 <tbody key={ IndexObras }> 
                     <tr >
                         <td>{ IndexObras +1 }</td>
-                        <td>{ Obras.g_meta }</td>
+                        <td style={{
+                            color: '#cecece',
+                            background: '#242526',
+                            fontSize:'0.8rem'
+                            
+                            
+                            }}>{ Obras.g_meta }</td>
                         <td style={{width: '20%'}}>
 
                             <div style={{
@@ -124,7 +134,7 @@ class ListaObras extends Component{
 
                                 <div style={{
                                     height: '8px',
-                                    backgroundColor: '#5a5b5c',
+                                    backgroundColor: '#4a4b4c',
                                     borderRadius: '5px',
                                     position: 'relative',
                                     
@@ -177,7 +187,7 @@ class ListaObras extends Component{
                                     position: 'absolute',
                                    
                                     }}
-                                /><span style={{ position:'inherit', fontSize:'0.8rem', top: '6px' }}>Financiero ({Obras.porcentaje_financiero} %)</span>
+                                /><span style={{ position:'inherit', fontSize:'0.7rem', top: '6px', color:'#8caeda' }}>Financiero ({Obras.porcentaje_financiero} %)</span>
                                 </div>
 
                             </div> 
@@ -193,8 +203,9 @@ class ListaObras extends Component{
                             <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={()=> this.CollapseComponentes(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
                             <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={()=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button>
                             <ModalListaPersonal idobraSeleccionada={ Obras.id_ficha }/>
-                            {/* <button className="btn btn-outline-primary btn-sm" title="Galeria de Imagenes"><FaRegImages /> </button> */}
-                        </td>
+                            <ModalInformacionObras idobraSeleccionada={ Obras.id_ficha }/>
+
+                            </td>
                     </tr>
                 
                     
