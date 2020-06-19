@@ -454,6 +454,8 @@ class RecursosPersonal extends Component {
         )
             .then((respuesta) => {
                 console.log("perdida_ganancia 1", respuesta.data);
+                console.log("gasto estimado", gastoestimadoexptec_mo_semana);
+                
                 this.setState({
                     gastoestimadogore_mo_semana:respuesta.data,
                     gastoestimadoexptec_mo_semana:gastoestimadoexptec_mo_semana
