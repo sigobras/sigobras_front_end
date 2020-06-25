@@ -39,6 +39,7 @@ import RecordObras from '../components/Pgerenciales/RecordObras/RecordObras'
 import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
 import RecursosMo from '../components/Pgerenciales/Recursos/RecursosPersonal'
 import infobras from '../components/Pgerenciales/InformacionObras/InformacionObra'
+import plazosHistorial from '../components/Pgerenciales/PlazosHistorial/Plazos'
         //planificacion
 import Planner from '../components/Pgerenciales/Planner/planner'
 // reportes 
@@ -308,6 +309,7 @@ class AppAng extends Component {
                                         <Route path="/planner" component={Planner} />
                                         <Route path="/comunicados" component={Comunicados} />
                                         <Route path="/recursosmanodeobra" component={RecursosMo} />
+                                        <Route path="/plazosHistorial" component={plazosHistorial} />
 
 
 
