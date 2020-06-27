@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Redondea } from '../../Utils/Funciones'
 import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig'
+import "../PlazosHistorial/Plazos.css";
 class PlazosHistorial extends Component {
     constructor(props) {
         super(props)
@@ -80,21 +80,29 @@ class PlazosHistorial extends Component {
         })
     }
     elminarHistorial(i) {
-        var plazosHistorial = this.state.plazosHistorial
-        if (plazosHistorial[i].idplazos_historial != null) {
-            axios.post(`${UrlServer}/deletePlazos`,
-                {
-                    "idplazos_historial": plazosHistorial[i].idplazos_historial
-                }
-            )
-                .then((res) => {
-                    console.log(res.data)
-                    this.getPlazos()
-                    console.log("Dato Eliminado");
-                }).catch((error) => {
-                    console.log('error al eliminar: ', error);
+        if (confirm("Estas seguro que desea eliminar")) {
+            var plazosHistorial = this.state.plazosHistorial
+            if (plazosHistorial[i].idplazos_historial != null) {
+                axios.post(`${UrlServer}/deletePlazos`,
+                    {
+                        "idplazos_historial": plazosHistorial[i].idplazos_historial
+                    }
+                )
+                    .then((res) => {
+                        console.log(res.data)
+                        this.getPlazos()
+                        console.log("Dato Eliminado");
+                    }).catch((error) => {
+                        console.log('error al eliminar: ', error);
+                    })
+            } else {
+                plazosHistorial.splice(i, 1);
+                this.setState({
+                    plazosHistorial: plazosHistorial
                 })
+            }
         }
+
 
     }
     agregarHijo(indexPadre) {
@@ -105,9 +113,9 @@ class PlazosHistorial extends Component {
                 "tipo": 0,
                 "nivel": 2,
                 "descripcion": "descripcion",
-                "fecha_inicio": null,
-                "fecha_final": null,
-                "n_dias": null,
+                "fecha_inicio": "",
+                "fecha_final": "",
+                "n_dias": "",
                 "documento_resolucion_estado": "documento_resolucion_estado",
                 "imagen": "imagen",
                 "observacion": "observacion",
@@ -177,6 +185,15 @@ class PlazosHistorial extends Component {
         }
 
     }
+    calcular_dias(fecha_inicio, fecha_final) {
+        console.log(fecha_inicio, fecha_final);
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const firstDate = new Date(fecha_inicio);
+        const secondDate = new Date(fecha_final);
+        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
+        return days || 0
+
+    }
     render() {
         var contador = 0
         var subcontador = 0
@@ -185,7 +202,7 @@ class PlazosHistorial extends Component {
                 <Button color="primary" onClick={this.agregarPadre}>
                     Agregar Estados
                 </Button>
-                <table className="table-responsive">
+                <table className="table">
                     <thead>
                         <tr>
                             <th>
@@ -212,9 +229,7 @@ class PlazosHistorial extends Component {
                             <th>
                                 documento_resolucion_estado
                             </th>
-                            <th>
-                                imagen
-                            </th>
+
                             <th>
                                 observacion
                             </th>
@@ -223,7 +238,7 @@ class PlazosHistorial extends Component {
                     <tbody>
                         {
                             this.state.plazosHistorial.map((plazo, index) =>
-                                <tr>
+                                <tr key={index}>
                                     <td>
                                         {plazo.nivel == 1 ?
                                             <button onClick={() => this.agregarHijo(index)}>
@@ -251,22 +266,26 @@ class PlazosHistorial extends Component {
                                     </td>
                                     <td>
                                         <select onChange={event => this.actualizarPlazo(index, "tipo", event.target.value)} required value={plazo.tipo}>
-                                            <option>Seleccionar el tipo de plazo</option>
+                                            <option>Seleccionar</option>
                                             {plazo.nivel == 1 ?
                                                 this.state.plazosTipo_1.map((plazoTipo, index) =>
-                                                    <option value={plazoTipo.idplazos_tipo}>{plazoTipo.nombre}</option>
+                                                    <option
+                                                        key={index}
+                                                        value={plazoTipo.idplazos_tipo}>{plazoTipo.nombre}</option>
                                                 )
                                                 :
                                                 this.state.plazosTipo_2.map((plazoTipo, index) =>
-                                                    <option value={plazoTipo.idplazos_tipo}>{plazoTipo.nombre}</option>
+                                                    <option
+                                                        key={index}
+                                                        value={plazoTipo.idplazos_tipo}>{plazoTipo.nombre}</option>
                                                 )
                                             }
                                         </select>
                                     </td>
-                                    <td>
-                                        <input
+                                    <td >
+                                        <textarea
                                             type="text"
-                                            placeholder={plazo.descripcion}
+                                            defaultValue={plazo.descripcion}
                                             onBlur={event => this.actualizarPlazo(index, "descripcion", event.target.value)}
                                         />
                                     </td>
@@ -286,26 +305,24 @@ class PlazosHistorial extends Component {
                                         />
                                     </td>
                                     <td>
-                                        <input type="number" placeholder={10} disabled />
+                                        <input
+                                            style={{ width: "40px" }}
+                                            type="number"
+                                            value={this.calcular_dias(plazo.fecha_inicio, plazo.fecha_final)}
+                                            readOnly
+                                        />
                                     </td>
                                     <td>
-                                        <input
+                                        <textarea
                                             type="text"
-                                            placeholder={plazo.documento_resolucion_estado}
+                                            defaultValue={plazo.documento_resolucion_estado}
                                             onBlur={event => this.actualizarPlazo(index, "documento_resolucion_estado", event.target.value)}
                                         />
                                     </td>
                                     <td>
-                                        <input
+                                        <textarea
                                             type="text"
-                                            placeholder={plazo.imagen}
-                                            onBlur={event => this.actualizarPlazo(index, "imagen", event.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="text"
-                                            placeholder={plazo.observacion}
+                                            defaultValue={plazo.observacion}
                                             onBlur={event => this.actualizarPlazo(index, "observacion", event.target.value)}
                                         />
                                     </td>
@@ -316,17 +333,31 @@ class PlazosHistorial extends Component {
                                         </Button>
                                     </td>
                                 </tr>
+
                             )
                         }
+                        <tr >
+                            <td colspan="5">
+
+                            </td>
+                            <td >
+                                TOTAL
+                            </td>
+                            <td>
+                                {
+                                    (() => {
+                                        let formula = (acc, cur) => acc + this.calcular_dias(cur.fecha_inicio, cur.fecha_final)
+                                        return this.state.plazosHistorial.reduce(formula, 0)
+                                    })()
+                                }
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <br />
                 <Button color="success" type="submit" onClick={this.guardarPlazosHistoria} >
                     Guardar Datos
                 </Button>
-
-
-
             </div>
         )
     }
