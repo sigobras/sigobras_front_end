@@ -396,7 +396,7 @@ class ValorizacionGeneral extends Component {
                                                     </tr> */}
 
                                                     <tr className="resplandPartida font-weight-bolder">
-                                                    <td colSpan="2">TOTAL COSTO INDIRECTO</td>
+                                                    <td colSpan="2">TOTAL COSTO DIRECTO</td>
                                                     <td>S/. {DataResumenApi.presupuesto}</td>
 
                                                     <td>S/. {DataResumenApi.valor_anterior}</td>
