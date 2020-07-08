@@ -564,7 +564,7 @@ class Proyeccion extends Component {
                                                 options={options}
                                             />
                                         </UncontrolledCollapse>
-                                        
+
 
                                         {/* <Modal toggler={"#toggler" + componente.numero}>
                                             <ModalHeader>CHART</ModalHeader>
@@ -583,7 +583,76 @@ class Proyeccion extends Component {
                             </tbody>
                         )}
 
+                        <tbody>
+                            <tr>
+                                <td rowSpan="3"></td>
+                                <td rowSpan="3" className="componentetitulo" >
+                                    TOTAL
+                                </td>
+                                <td>Avance Mensual</td>
+                                {this.state.mesesfor.map((mes, index) =>
 
+                                    <td className="avance">
+
+                                        {
+                                            (() => {
+                                                console.log(this.state.componentes);
+                                                var avance_mensual = 0
+                                                for (let i = 0; i < this.state.componentes.length; i++) {
+                                                    const componente = this.state.componentes[i];
+                                                    avance_mensual += componente['M' + mes]
+                                                }
+                                                return this.formatmoney(avance_mensual)
+                                            })()
+                                        }
+                                    </td>
+                                )}
+                            </tr>
+
+
+                            <tr>
+
+                                <td >Proyección Aprobada</td>
+                                {this.state.mesesfor.map((mes, index) =>
+
+                                    <td className="avance">
+
+                                        {
+                                            (() => {
+                                                console.log(this.state.componentes);
+                                                var avance_mensual = 0
+                                                for (let i = 0; i < this.state.componentes.length; i++) {
+                                                    const componente = this.state.componentes[i];
+                                                    avance_mensual += componente['MEXPT' + mes]
+                                                }
+                                                return this.formatmoney(avance_mensual)
+                                            })()
+                                        }
+                                    </td>
+                                )}
+                            </tr>
+
+                            <tr>
+                                <td>Proyección variable</td>
+                                {this.state.mesesfor.map((mes, index) =>
+
+                                    <td className="avance">
+
+                                        {
+                                            (() => {
+                                                console.log(this.state.componentes);
+                                                var avance_mensual = 0
+                                                for (let i = 0; i < this.state.componentes.length; i++) {
+                                                    const componente = this.state.componentes[i];
+                                                    avance_mensual += componente['MPROVAR' + mes]
+                                                }
+                                                return this.formatmoney(avance_mensual)
+                                            })()
+                                        }
+                                    </td>
+                                )}
+                            </tr>
+                        </tbody>
                     </table>
                 </form>
             </div>
