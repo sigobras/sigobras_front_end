@@ -346,8 +346,16 @@ class PlazosHistorial extends Component {
                             <td>
                                 {
                                     (() => {
-                                        let formula = (acc, cur) => acc + this.calcular_dias(cur.fecha_inicio, cur.fecha_final)
-                                        return this.state.plazosHistorial.reduce(formula, 0)
+
+                                        console.log(this.state.plazosHistorial);
+                                        var TotalDiasPadre = 0
+                                        for (let i = 0; i < this.state.plazosHistorial.length; i++) {
+                                            const plazo = this.state.plazosHistorial[i];
+                                            if(plazo.nivel==1){
+                                                TotalDiasPadre += this.calcular_dias(plazo.fecha_inicio, plazo.fecha_final)
+                                            }
+                                        }
+                                        return TotalDiasPadre
                                     })()
                                 }
                             </td>
