@@ -1924,12 +1924,7 @@ class MetradosDiarios extends Component {
                 </div>
               </ModalBody>
               <ModalFooter>
-                {
-                  file !== null ?
-                    <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>
-                    : ""
-                }
-                {' '}
+                <Button color="primary" type="submit" onClick={this.EnviaImgPartida}>Guardar</Button>
                 <Button color="danger" onClick={this.modalImgPartida}>Cancelar</Button>
               </ModalFooter>
             </form>
