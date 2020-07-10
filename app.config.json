@@ -1,0 +1,8 @@
+{
+	"apps": [
+		{
+			"name": "front",
+			"script": "npm start"
+		}
+	]
+}
