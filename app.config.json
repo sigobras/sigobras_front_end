@@ -2,7 +2,7 @@
 	"apps": [
 		{
 			"name": "front",
-			"script": "echo 'mds@anton' | sudo -S npm start"
+			"script": "sudo npm start"
 		}
 	]
 }
