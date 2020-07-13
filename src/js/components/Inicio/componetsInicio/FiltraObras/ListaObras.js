@@ -103,6 +103,15 @@ class ListaObras extends Component{
         });
        
     }
+    calcular_dias(fecha_inicio, fecha_final) {
+        console.log(fecha_inicio, fecha_final);
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const firstDate = new Date(fecha_inicio);
+        const secondDate = new Date(fecha_final);
+        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay)) ;
+        return days || 0
+
+    }
 
     render(){
         const { collapse, collapseCrono } = this.state
@@ -193,6 +202,12 @@ class ListaObras extends Component{
                             </div> 
 
                         </td>
+                        <td style={{
+                            color: '#cecece',
+                            background: '#242526',
+                            fontSize:'0.8rem'
+                            
+                            }}>{ this.calcular_dias(Obras.ultima_fecha_avance,new Date()) }</td>
                         <td className="text-center"> 
                             <button className={ sessionStorage.getItem("codigoObra") === Obras.codigo?" btn btn-primary btn-sm text-white ":  "btn btn-outline-dark btn-sm text-white"} onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre, Obras.codigo  )) }>{ Obras.codigo } </button> 
                         </td>

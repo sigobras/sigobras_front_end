@@ -88,6 +88,7 @@ class Obras extends Component{
                                         <th>N°</th>
                                         <th style={{width: "400px", minWidth: "150px", textAlign:"center"}} >OBRA</th>
                                         <th className="text-center" >AVANCE </th>
+                                        <th className="text-center" >UDM </th>
                                         <th className="text-center">IR A</th>
                                         <th className="text-center">ESTADO</th>
                                         <th className="text-center" style={{width: "105px", minWidth: "100px"}} >OPCIONES</th>
