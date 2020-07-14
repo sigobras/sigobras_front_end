@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import axios from "axios";
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
 
 class InterfazGerencial extends Component {
     constructor() {
@@ -15,7 +17,9 @@ class InterfazGerencial extends Component {
             idmodalidad_ejecutora: 0,
             id_Estado: 0,
             getInterfazGerencialData: [],
-            getInterfazGerencialDataProcesada: []
+            getInterfazGerencialDataProcesada: [],
+            avance_fisico_chart:[],
+            avance_fisico_programado_chart:[],
         };
         this.getDataSelect = this.getDataSelect.bind(this);
         this.updateInput = this.updateInput.bind(this);
@@ -27,8 +31,13 @@ class InterfazGerencial extends Component {
         this.getDataSelect("getModalidadesEjecutoras")
         this.getDataSelect("getEstados")
     }
-    getDataSelect(selectData) {
-        axios.get(`${UrlServer}/${selectData}`)
+    getDataSelect(selectData,id_unidadEjecutora=0) {
+        axios.post(`${UrlServer}/${selectData}`,
+        {
+            "id_acceso":sessionStorage.getItem("idacceso"),
+            "id_unidadEjecutora":id_unidadEjecutora
+        }
+        )
             .then((res) => {
                 this.setState({
                     [selectData]: res.data,
@@ -42,7 +51,13 @@ class InterfazGerencial extends Component {
         await this.setState({
             [name]: value,
         })
-        console.log(this.state);
+        if(name=="id_unidadEjecutora"){
+        
+            this.getDataSelect("getSectores",value)
+            this.getDataSelect("getModalidadesEjecutoras",value)
+            this.getDataSelect("getEstados",value)
+        }
+        
     }
     getInterfazGerencialData() {
         console.log("cargando data");
@@ -64,10 +79,8 @@ class InterfazGerencial extends Component {
                 var sector_nombre = ""
                 for (let i = 0; i < dataTemp.length; i++) {
                     const element = dataTemp[i];
-                    console.log("sector", sector);
 
                     if (element.unidad_ejecutora_nombre != unidad_ejecutora_nombre) {
-                        console.log("nueva unidad ejecutora", element.codigo);
                         if (i != 0) {
                             unidad_ejecutora.sectores.push(sector)
                             unidad_ejecutora_lista.push(unidad_ejecutora)
@@ -89,10 +102,8 @@ class InterfazGerencial extends Component {
                         unidad_ejecutora_nombre = element.unidad_ejecutora_nombre
                         sector_nombre = element.sector_nombre
                     } else {
-                        console.log("misma unidad", element.codigo);
 
                         if (element.sector_nombre != sector_nombre) {
-                            console.log("nuevo sector", element.sector_nombre);
 
                             unidad_ejecutora.sectores.push(sector)
                             sector = {
@@ -108,7 +119,6 @@ class InterfazGerencial extends Component {
                             }
                             sector_nombre = element.sector_nombre
                         } else {
-                            console.log("mismo sector", element.sector_nombre);
                             sector.obras.push(
                                 {
                                     codigo: element.codigo,
@@ -126,9 +136,6 @@ class InterfazGerencial extends Component {
                 }
                 unidad_ejecutora.sectores.push(sector)
                 unidad_ejecutora_lista.push(unidad_ejecutora)
-                console.log(unidad_ejecutora_lista);
-
-
                 this.setState({
                     getInterfazGerencialData: res.data,
                     getInterfazGerencialDataProcesada: unidad_ejecutora_lista
@@ -137,8 +144,162 @@ class InterfazGerencial extends Component {
             .catch((error) => {
                 console.log('algo salió mal al tratar de listar las obras error es: ', error);
             })
+        this.chart_data()
+    }
+    async chart_data() {
+        console.log("chart data");
+        var avance_fisico = []
+        var avance_fisico_programado = []
+        var res = await axios.post(`${UrlServer}/IG_AvanceFisico`);
+        avance_fisico = res.data
+        res = await axios.post(`${UrlServer}/IG_AvanceFisicoProgramado`);
+        avance_fisico_programado = res.data
+        console.log(avance_fisico, avance_fisico_programado);
+        var avance_fisico_chart = []
+        var avance_fisico_programado_chart = []
+        for (let i = 1; i <= 12; i++) {
+            var index = avance_fisico.findIndex(x => x.mes ==i)
+            if(index != -1){
+                avance_fisico_chart.push(avance_fisico[index].avance)
+            }else{
+                avance_fisico_chart.push(
+                   0
+                )
+            }
+            var index = avance_fisico_programado.findIndex(x => x.mes ==i)
+            if(index != -1){
+                avance_fisico_programado_chart.push(avance_fisico_programado[index].avance)
+            }else{
+                avance_fisico_programado_chart.push(
+                   0
+                )
+            }
+        }
+        console.log(avance_fisico_chart, avance_fisico_programado_chart);
+        this.setState({
+            avance_fisico_chart,
+            avance_fisico_programado_chart
+        })
     }
     render() {
+        const options = {
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, '#242526'],
+                        [1, '#242526']
+                    ]
+                },
+
+                type: 'column'
+            },
+            style: {
+                fontFamily: '\'Unica One\', sans-serif'
+            },
+
+            title: {
+                style: {
+                    color: '#E0E0E3',
+                    textTransform: 'uppercase',
+                    fontSize: '20px'
+                },
+                text: 'PROGRAMADO' + ' ' + 2020
+            },
+            subtitle: {
+                style: {
+                    color: '#E0E0E3',
+                    textTransform: 'uppercase'
+                },
+                text: 'Obra:' + '' + sessionStorage.getItem('codigoObra')  //codigo nombre de la obra
+            },
+            xAxis: {
+                gridLineColor: '#707073',
+                labels: {
+                    style: {
+                        color: '#E0E0E3'
+                    }
+                },
+                categories: [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+                ],
+                crosshair: true,
+                title: {
+                    text: 'Proyecciones'
+                },
+                lineColor: '#707073',
+                minorGridLineColor: '#505053',
+                tickColor: '#707073',
+                title: {
+                    style: {
+                        color: '#A0A0A3'
+                    }
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Soles (S/.)'
+                },
+                gridLineColor: '#707073',
+                labels: {
+                    style: {
+                        color: '#E0E0E3'
+                    }
+                },
+                lineColor: '#707073',
+                minorGridLineColor: '#505053',
+                tickColor: '#707073',
+                tickWidth: 1,
+                title: {
+                    style: {
+                        color: '#A0A0A3'
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                style: {
+                    color: '#F0F0F0'
+                },
+                headerFormat: '<span style="font-size:20px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} soles</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.1,
+                    borderWidth: 0
+                }
+            },
+            series: [
+
+                {
+                    name: 'Avance Fisico',
+                    data: this.state.avance_fisico_chart
+                }, {
+                    name: 'Avance Fisico Programado',
+                    data: this.state.avance_fisico_programado_chart
+
+                }
+            ]
+
+        };
         return (
             <div>
                 <select onChange={event => this.updateInput('id_unidadEjecutora', event.target.value)}>
@@ -176,6 +337,11 @@ class InterfazGerencial extends Component {
                 <button onClick={() => this.getInterfazGerencialData()}>
                     Buscar
                 </button>
+                <HighchartsReact
+
+                    highcharts={Highcharts}
+                    options={options}
+                />
                 {this.state.getInterfazGerencialDataProcesada.map((provincia, index) =>
                     [
                         <h4>{provincia.nombre}</h4>,
@@ -209,6 +375,7 @@ class InterfazGerencial extends Component {
                         )
                     ]
                 )}
+                
 
             </div>
         );

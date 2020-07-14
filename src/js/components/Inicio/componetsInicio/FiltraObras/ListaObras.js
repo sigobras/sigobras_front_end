@@ -207,7 +207,7 @@ class ListaObras extends Component{
                             background: '#242526',
                             fontSize:'0.8rem'
                             
-                            }}>{ this.calcular_dias(Obras.ultima_fecha_avance,new Date()) } dias</td>
+                            }}>{ this.calcular_dias(Obras.ultima_fecha_avance,new Date()) } días</td>
                         <td className="text-center"> 
                             <button className={ sessionStorage.getItem("codigoObra") === Obras.codigo?" btn btn-primary btn-sm text-white ":  "btn btn-outline-dark btn-sm text-white"} onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre, Obras.codigo  )) }>{ Obras.codigo } </button> 
                         </td>
