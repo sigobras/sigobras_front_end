@@ -18,8 +18,10 @@ class InterfazGerencial extends Component {
             id_Estado: 0,
             getInterfazGerencialData: [],
             getInterfazGerencialDataProcesada: [],
-            avance_fisico_chart:[],
-            avance_fisico_programado_chart:[],
+            avance_fisico_chart: [],
+            avance_fisico_programado_chart: [],
+            anyos_chart:[],
+            anyo_chart_seleccionado:0
         };
         this.getDataSelect = this.getDataSelect.bind(this);
         this.updateInput = this.updateInput.bind(this);
@@ -30,13 +32,14 @@ class InterfazGerencial extends Component {
         this.getDataSelect("getSectores")
         this.getDataSelect("getModalidadesEjecutoras")
         this.getDataSelect("getEstados")
+        this.chart_data_anyos()
     }
-    getDataSelect(selectData,id_unidadEjecutora=0) {
+    getDataSelect(selectData, id_unidadEjecutora = 0) {
         axios.post(`${UrlServer}/${selectData}`,
-        {
-            "id_acceso":sessionStorage.getItem("idacceso"),
-            "id_unidadEjecutora":id_unidadEjecutora
-        }
+            {
+                "id_acceso": sessionStorage.getItem("idacceso"),
+                "id_unidadEjecutora": id_unidadEjecutora
+            }
         )
             .then((res) => {
                 this.setState({
@@ -51,19 +54,24 @@ class InterfazGerencial extends Component {
         await this.setState({
             [name]: value,
         })
-        if(name=="id_unidadEjecutora"){
-        
-            this.getDataSelect("getSectores",value)
-            this.getDataSelect("getModalidadesEjecutoras",value)
-            this.getDataSelect("getEstados",value)
+        if (name == "id_unidadEjecutora") {
+
+            this.getDataSelect("getSectores", value)
+            this.getDataSelect("getModalidadesEjecutoras", value)
+            this.getDataSelect("getEstados", value)
+            this.chart_data_anyos()
+        }else if(name == "anyo_chart_seleccionado"){
+            this.chart_data()
         }
-        
+
+
     }
     getInterfazGerencialData() {
         console.log("cargando data");
 
         axios.post(`${UrlServer}/getInterfazGerencialData`,
             {
+                "id_acceso": sessionStorage.getItem("idacceso"),
                 "id_unidadEjecutora": this.state.id_unidadEjecutora,
                 "idsectores": this.state.idsectores,
                 "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
@@ -146,32 +154,93 @@ class InterfazGerencial extends Component {
             })
         this.chart_data()
     }
+    async chart_data_anyos() {
+        var avance_fisico_anyos = []
+        var avance_fisico_programado_anyos = []
+        var res = await axios.post(`${UrlServer}/IG_AvanceFisico_anyos`,
+            {
+                "id_acceso": sessionStorage.getItem("idacceso"),
+                "id_unidadEjecutora": this.state.id_unidadEjecutora,
+                "idsectores": this.state.idsectores,
+                "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
+                "id_Estado": this.state.id_Estado,
+                
+            }
+        );
+        avance_fisico_anyos = res.data
+        res = await axios.post(`${UrlServer}/IG_AvanceFisicoProgramado_anyos`,
+            {
+                "id_acceso": sessionStorage.getItem("idacceso"),
+                "id_unidadEjecutora": this.state.id_unidadEjecutora,
+                "idsectores": this.state.idsectores,
+                "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
+                "id_Estado": this.state.id_Estado,
+                
+            }
+        );
+        avance_fisico_programado_anyos = res.data
+        function arrayUnique(array) {
+            var a = array.concat();
+            for (var i = 0; i < a.length; ++i) {
+                for (var j = i + 1; j < a.length; ++j) {
+                    console.log(a[i]);
+                    if (a[i].anyo === a[j].anyo)
+                        a.splice(j--, 1);
+                }
+            }
+            return a;
+        }
+        var anyos_chart = arrayUnique(avance_fisico_anyos.concat( avance_fisico_programado_anyos))
+        console.log(avance_fisico_anyos, avance_fisico_programado_anyos, anyos_chart);
+        this.setState({
+            anyos_chart
+        })
+
+    }
     async chart_data() {
         console.log("chart data");
         var avance_fisico = []
         var avance_fisico_programado = []
-        var res = await axios.post(`${UrlServer}/IG_AvanceFisico`);
+        var res = await axios.post(`${UrlServer}/IG_AvanceFisico`,
+            {
+                "id_acceso": sessionStorage.getItem("idacceso"),
+                "id_unidadEjecutora": this.state.id_unidadEjecutora,
+                "idsectores": this.state.idsectores,
+                "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
+                "id_Estado": this.state.id_Estado,
+                "anyo":this.state.anyo_chart_seleccionado
+            }
+        );
         avance_fisico = res.data
-        res = await axios.post(`${UrlServer}/IG_AvanceFisicoProgramado`);
+        res = await axios.post(`${UrlServer}/IG_AvanceFisicoProgramado`,
+            {
+                "id_acceso": sessionStorage.getItem("idacceso"),
+                "id_unidadEjecutora": this.state.id_unidadEjecutora,
+                "idsectores": this.state.idsectores,
+                "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
+                "id_Estado": this.state.id_Estado,
+                "anyo":this.state.anyo_chart_seleccionado
+            }
+        );
         avance_fisico_programado = res.data
         console.log(avance_fisico, avance_fisico_programado);
         var avance_fisico_chart = []
         var avance_fisico_programado_chart = []
         for (let i = 1; i <= 12; i++) {
-            var index = avance_fisico.findIndex(x => x.mes ==i)
-            if(index != -1){
+            var index = avance_fisico.findIndex(x => x.mes == i)
+            if (index != -1) {
                 avance_fisico_chart.push(avance_fisico[index].avance)
-            }else{
+            } else {
                 avance_fisico_chart.push(
-                   0
+                    0
                 )
             }
-            var index = avance_fisico_programado.findIndex(x => x.mes ==i)
-            if(index != -1){
+            var index = avance_fisico_programado.findIndex(x => x.mes == i)
+            if (index != -1) {
                 avance_fisico_programado_chart.push(avance_fisico_programado[index].avance)
-            }else{
+            } else {
                 avance_fisico_programado_chart.push(
-                   0
+                    0
                 )
             }
         }
@@ -337,6 +406,15 @@ class InterfazGerencial extends Component {
                 <button onClick={() => this.getInterfazGerencialData()}>
                     Buscar
                 </button>
+                <br />
+                <select onChange={event => this.updateInput('anyo_chart_seleccionado', event.target.value)}>
+                    <option value="0">
+                        seleccione el anyo
+                    </option>
+                    {this.state.anyos_chart.map((item, index) =>
+                        <option value={item.anyo}>{item.anyo}</option>
+                    )}
+                </select>
                 <HighchartsReact
 
                     highcharts={Highcharts}
@@ -375,7 +453,7 @@ class InterfazGerencial extends Component {
                         )
                     ]
                 )}
-                
+
 
             </div>
         );
