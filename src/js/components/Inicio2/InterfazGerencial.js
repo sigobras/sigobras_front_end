@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { UrlServer } from '../Utils/ServerUrlConfig';
+import { Redondea1 } from '../Utils/Funciones';
 import axios from "axios";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -20,8 +21,8 @@ class InterfazGerencial extends Component {
             getInterfazGerencialDataProcesada: [],
             avance_fisico_chart: [],
             avance_fisico_programado_chart: [],
-            anyos_chart:[],
-            anyo_chart_seleccionado:0
+            anyos_chart: [],
+            anyo_chart_seleccionado: 0
         };
         this.getDataSelect = this.getDataSelect.bind(this);
         this.updateInput = this.updateInput.bind(this);
@@ -60,7 +61,7 @@ class InterfazGerencial extends Component {
             this.getDataSelect("getModalidadesEjecutoras", value)
             this.getDataSelect("getEstados", value)
             this.chart_data_anyos()
-        }else if(name == "anyo_chart_seleccionado"){
+        } else if (name == "anyo_chart_seleccionado") {
             this.chart_data()
         }
 
@@ -103,7 +104,9 @@ class InterfazGerencial extends Component {
                                     codigo: element.codigo,
                                     modalidad_ejecutora_nombre: element.modalidad_ejecutora_nombre,
                                     estado_nombre: element.estado_nombre,
-                                    fecha_inicial: element.fecha_inicial
+                                    fecha_inicial: element.fecha_inicial,
+                                    avanceFisico_porcentaje: element.avanceFisico_porcentaje,
+                                    avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje
                                 }
                             ]
                         }
@@ -121,7 +124,9 @@ class InterfazGerencial extends Component {
                                         codigo: element.codigo,
                                         modalidad_ejecutora_nombre: element.modalidad_ejecutora_nombre,
                                         estado_nombre: element.estado_nombre,
-                                        fecha_inicial: element.fecha_inicial
+                                        fecha_inicial: element.fecha_inicial,
+                                        avanceFisico_porcentaje: element.avanceFisico_porcentaje,
+                                        avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje
                                     }
                                 ]
                             }
@@ -132,7 +137,9 @@ class InterfazGerencial extends Component {
                                     codigo: element.codigo,
                                     modalidad_ejecutora_nombre: element.modalidad_ejecutora_nombre,
                                     estado_nombre: element.estado_nombre,
-                                    fecha_inicial: element.fecha_inicial
+                                    fecha_inicial: element.fecha_inicial,
+                                    avanceFisico_porcentaje: element.avanceFisico_porcentaje,
+                                    avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje
                                 }
                             )
 
@@ -164,7 +171,7 @@ class InterfazGerencial extends Component {
                 "idsectores": this.state.idsectores,
                 "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
                 "id_Estado": this.state.id_Estado,
-                
+
             }
         );
         avance_fisico_anyos = res.data
@@ -175,7 +182,7 @@ class InterfazGerencial extends Component {
                 "idsectores": this.state.idsectores,
                 "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
                 "id_Estado": this.state.id_Estado,
-                
+
             }
         );
         avance_fisico_programado_anyos = res.data
@@ -190,7 +197,7 @@ class InterfazGerencial extends Component {
             }
             return a;
         }
-        var anyos_chart = arrayUnique(avance_fisico_anyos.concat( avance_fisico_programado_anyos))
+        var anyos_chart = arrayUnique(avance_fisico_anyos.concat(avance_fisico_programado_anyos))
         console.log(avance_fisico_anyos, avance_fisico_programado_anyos, anyos_chart);
         this.setState({
             anyos_chart
@@ -208,7 +215,7 @@ class InterfazGerencial extends Component {
                 "idsectores": this.state.idsectores,
                 "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
                 "id_Estado": this.state.id_Estado,
-                "anyo":this.state.anyo_chart_seleccionado
+                "anyo": this.state.anyo_chart_seleccionado
             }
         );
         avance_fisico = res.data
@@ -219,7 +226,7 @@ class InterfazGerencial extends Component {
                 "idsectores": this.state.idsectores,
                 "idmodalidad_ejecutora": this.state.idmodalidad_ejecutora,
                 "id_Estado": this.state.id_Estado,
-                "anyo":this.state.anyo_chart_seleccionado
+                "anyo": this.state.anyo_chart_seleccionado
             }
         );
         avance_fisico_programado = res.data
@@ -280,7 +287,7 @@ class InterfazGerencial extends Component {
                     color: '#E0E0E3',
                     textTransform: 'uppercase'
                 },
-                text: 'Obra:' + '' + sessionStorage.getItem('codigoObra')  //codigo nombre de la obra
+                // text: 'Obra:' + '' + sessionStorage.getItem('codigoObra')  //codigo nombre de la obra
             },
             xAxis: {
                 gridLineColor: '#707073',
@@ -420,39 +427,117 @@ class InterfazGerencial extends Component {
                     highcharts={Highcharts}
                     options={options}
                 />
-                {this.state.getInterfazGerencialDataProcesada.map((provincia, index) =>
-                    [
-                        <h4>{provincia.nombre}</h4>,
-                        provincia.sectores.map((sector, index2) =>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>codigo</th>
+                            <th>avance</th>
+                            <th>modalidad_ejecutora_nombre</th>
+                            <th>estado_nombre</th>
+                            <th>fecha_inicial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.getInterfazGerencialDataProcesada.map((provincia, index) =>
                             [
-                                <h5>{sector.nombre}</h5>,
-
-                                <table class="table table-striped">
-                                    <thead>
+                                <tr>
+                                    <th>
+                                        <h4 colSpan="2">{provincia.nombre}</h4>
+                                    </th>
+                                </tr>,
+                                provincia.sectores.map((sector, index2) =>
+                                    [
                                         <tr>
-                                            <th>codigo</th>
-                                            <th>modalidad_ejecutora_nombre</th>
-                                            <th>estado_nombre</th>
-                                            <th>fecha_inicial</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {sector.obras.map((obra, index3) =>
+                                            <th>
+                                                <h5 colSpan="2">{sector.nombre}</h5>
+                                            </th>
+                                        </tr>,
+
+                                        sector.obras.map((obra, index3) =>
                                             <tr>
                                                 <td>{obra.codigo}</td>
+                                                <td style={{ width: '20%' }}>
+
+                                                    <div style={{
+                                                        width: '100%',
+                                                        height: '30px',
+                                                        textAlign: 'center'
+                                                    }}
+                                                    >
+
+                                                        <div style={{
+                                                            height: '8px',
+                                                            backgroundColor: '#4a4b4c',
+                                                            borderRadius: '5px',
+                                                            position: 'relative',
+
+                                                        }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    width: `${Redondea1(obra.avanceFisico_porcentaje)}%`,
+                                                                    height: '100%',
+                                                                    backgroundColor: Redondea1(obra.avanceFisico_porcentaje) > 85 ? 'rgb(0, 128, 255)'
+                                                                        : Redondea1(obra.avanceFisico_porcentaje) > 30 ? '#ffbf00'
+                                                                            : '#ff2e00',
+                                                                    borderRadius: '5px',
+                                                                    transition: 'all .9s ease-in',
+                                                                    position: 'absolute',
+
+
+                                                                }}
+                                                            /><span style={{ position: 'inherit', fontSize: '0.8rem', top: '6px' }}>Físico ({Redondea1(obra.avanceFisico_porcentaje)} %)</span>
+                                                        </div>
+
+
+
+
+                                                    </div>
+                                                    {/* porcentaje_financiero */}
+                                                    <div style={{
+                                                        width: '100%',
+                                                        height: '20px',
+                                                        textAlign: 'center'
+                                                    }}
+                                                    >
+
+                                                        <div style={{
+                                                            height: '8px',
+                                                            backgroundColor: '#4a4b4c',
+                                                            borderRadius: '5px',
+                                                            position: 'relative'
+                                                        }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    width: `${Redondea1(obra.avanceFinanciero_porcentaje)}%`,
+                                                                    height: '100%',
+                                                                    backgroundColor: Redondea1(obra.avanceFinanciero_porcentaje) > 85 ? 'rgb(0, 128, 255)'
+                                                                        : Redondea1(obra.avanceFinanciero_porcentaje) > 30 ? '#fac934'
+                                                                            : '#ff552f',
+                                                                    borderRadius: '5px',
+                                                                    transition: 'all .9s ease-in',
+                                                                    position: 'absolute',
+
+                                                                }}
+                                                            /><span style={{ position: 'inherit', fontSize: '0.7rem', top: '6px', color: '#8caeda' }}>Financiero ({Redondea1(obra.avanceFinanciero_porcentaje)} %)</span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </td>
                                                 <td>{obra.modalidad_ejecutora_nombre}</td>
                                                 <td>{obra.estado_nombre}</td>
                                                 <td>{obra.fecha_inicial}</td>
                                             </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                        )
 
-
+                                    ]
+                                )
                             ]
-                        )
-                    ]
-                )}
+                        )}
+                    </tbody>
+                </table>
 
 
             </div>
