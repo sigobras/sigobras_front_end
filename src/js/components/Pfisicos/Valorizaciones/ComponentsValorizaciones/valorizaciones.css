@@ -1,0 +1,15 @@
+.buttonHover {
+    display: none;
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+}
+
+
+
+.buttonHover, .buttonHover:hover {
+    display: inline-block;
+    color: #fff;
+    background-color: #0062cc;
+    border-color: #005cbf;
+}

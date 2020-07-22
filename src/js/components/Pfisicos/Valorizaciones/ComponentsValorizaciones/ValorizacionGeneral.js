@@ -4,7 +4,11 @@ import { MdMoreVert, MdDone } from "react-icons/md";
 import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, UncontrolledPopover, PopoverBody, Spinner, Dropdown, DropdownItem, DropdownToggle, DropdownMenu, Table } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
-import { Redondea1 } from '../../../Utils/Funciones';
+import { Redondea1, Redondea } from '../../../Utils/Funciones';
+import  "./valorizaciones.css";
+import { BsFillTrashFill } from "react-icons/bs";
+import { FaEdit,FaSave } from "react-icons/fa";
+import { AiOutlineFileAdd } from "react-icons/ai";
 
 class ValorizacionGeneral extends Component {
     constructor(props) {
@@ -33,7 +37,12 @@ class ValorizacionGeneral extends Component {
             IdComponente: "",
             FechaInicio: "",
             FechaFinal: "",
-            SMSValorizacion: true
+            SMSValorizacion: true,
+
+            // costos indirectos
+
+            costos_indirectos: [],
+            activatorinput: -1,
         };
 
         this.OpenSelectAnios = this.OpenSelectAnios.bind(this);
@@ -49,6 +58,7 @@ class ValorizacionGeneral extends Component {
     componentDidMount() {
         // llamamos la primera carga de apis
         this.reqAnios()
+
     }
 
     OpenSelectAnios() {
@@ -64,22 +74,22 @@ class ValorizacionGeneral extends Component {
             InputAnio: anio,
             activeTabComponente: "resumen",
         })
-        
+
         // llama al api de meses
         if (this.state.InputAnio !== anio) {
             this.reqMeses(anio)
         }
     }
 
-    TabMeses(tab, FechaInicio, FechaFinal) {
+    async TabMeses(tab, FechaInicio, FechaFinal) {
         // console.log( "TAB MESES ", FechaInicio, " -- ",  FechaFinal, "id componente",  this.state.IdComponente)
         if (this.state.activeTabMes !== tab) {
-            this.setState({
+            await this.setState({
                 activeTabMes: tab,
                 FechaInicio,
                 FechaFinal
             })
-
+            this.get_data_costos_indirectos();
             // llamamos a componentes
             this.reqComponentes(FechaInicio, FechaFinal)
             if (this.state.activeTabComponente === "resumen") {
@@ -116,16 +126,16 @@ class ValorizacionGeneral extends Component {
         axios.post(`${UrlServer}${this.props.Ruta.Anios}`, {
             id_ficha: sessionStorage.getItem('idobra')
         })
-            .then((res) => {
+            .then(async (res) => {
                 //console.table('data val princiapl', res);
                 if (res.data !== "vacio") {
                     var ResData = res.data
                     var UltimoAnio = res.data.length - 1
                     var UltimoMes = res.data[UltimoAnio].periodos.length - 1
 
-                    console.log("DATA", res.data )
+                    console.log("DATA", res.data)
 
-                    this.setState({
+                    await this.setState({
                         DataAniosApi: ResData,
                         DataMesesApi: res.data[UltimoAnio].periodos,
                         DataResumenApi: res.data[UltimoAnio].periodos[UltimoMes].resumen,
@@ -143,6 +153,7 @@ class ValorizacionGeneral extends Component {
                         FechaInicio: res.data[UltimoAnio].periodos[UltimoMes].fecha_inicial,
                         FechaFinal: res.data[UltimoAnio].periodos[UltimoMes].fecha_final,
                     })
+                    this.get_data_costos_indirectos();
                     return
                 }
 
@@ -167,15 +178,17 @@ class ValorizacionGeneral extends Component {
                 "anyo": anio
             }
         )
-            .then((res) => {
+            .then(async (res) => {
                 var UltimoMes = res.data.length - 1
 
                 console.log('res meses> ', res.data)
-                var mesinicial = res.data [res.data.length - 1]
-        this.setState({
-            FechaInicio: mesinicial.fecha_inicial,
-            FechaFinal:mesinicial.fecha_final
-        })
+                var mesinicial = res.data[res.data.length - 1]
+                await this.setState({
+
+                    FechaInicio: mesinicial.fecha_inicial,
+                    FechaFinal: mesinicial.fecha_final
+                })
+                this.get_data_costos_indirectos();
                 this.setState({
                     DataMesesApi: res.data,
                     activeTabMes: UltimoMes.toString()
@@ -253,15 +266,119 @@ class ValorizacionGeneral extends Component {
             })
     }
 
+    async get_data_costos_indirectos() {
+        var costos_indirectos = await axios.post(`${UrlServer}/getCostosIndirectos`,
+            {
+                "fecha_inicial": this.state.FechaInicio,
+                "fecha_final": this.state.FechaFinal,
+                "fichas_id_ficha": sessionStorage.getItem("idobra"),
+
+            }
+        );
+        console.log('====================================');
+        console.log("costos_indirectos ", costos_indirectos);
+        console.log('====================================');
+
+        this.setState({
+            costos_indirectos: costos_indirectos.data
+
+        })
+    }
+
+    agregar_costo_indirecto() {
+        var costos_indirectos = this.state.costos_indirectos
+        costos_indirectos.push(
+            {
+                "costo_indirecto": " Gastos generales",
+                "monto": " 15151613",
+
+            }
+        )
+        this.setState(
+            {
+                costos_indirectos
+            }
+        )
+    }
+
+    updateinput(index, nombre_campo, valor) {
+        var costos_indirectos = this.state.costos_indirectos
+        costos_indirectos[index][nombre_campo] = valor
+
+        console.log("costos_indirectos", costos_indirectos);
+
+        this.setState(
+            {
+                costos_indirectos
+            }
+        )
+    }
+
+    async eliminar_costo_indirecto(index) {
+        if (confirm("Desea eliminar este registro ? " + index)) {
+            var res = await axios.post(`${UrlServer}/eliminarCostosIndirectos`,
+                {
+                    "id": this.state.costos_indirectos[index].id
+
+                }
+            );
+            console.log('====================================');
+            console.log("res1 ", res);
+            console.log('====================================');
+
+            var costos_indirectos = this.state.costos_indirectos
+            
+                costos_indirectos.splice(index, 1);
+            
+            this.setState(
+                {
+                    costos_indirectos
+                }
+            );
+            console.log("costos_indirectos eliminados", costos_indirectos);
+        }
+
+    }
+
+    activarEdicion(index) {
+        this.setState(
+            {
+
+                activatorinput: index
+            }
+        )
+
+    }
+
+    async guardar_costo_indirecto(index) {
+        
+        var res = await axios.post(`${UrlServer}/agregarCostoIndirecto`,
+            {
+                "id":this.state.costos_indirectos[index].id,
+                "nombre": this.state.costos_indirectos[index].nombre,
+                "monto": this.state.costos_indirectos[index].monto,
+                "fecha_inicial": this.state.FechaInicio,
+                "fecha_final": this.state.FechaFinal,
+                "fichas_id_ficha": sessionStorage.getItem("idobra"),
+
+            }
+        );
+        console.log('====================================');
+        console.log("res ", res);
+        console.log('====================================');
+    }
+
+
+
     render() {
         const { DataAniosApi, DataMesesApi, DataResumenApi, DataComponentesApi, DataPartidasApi, activeTabMes, activeTabComponente, NombreComponente, InputAnio, SMSValorizacion } = this.state
         return (
 
             SMSValorizacion === true
                 ?
-                    <div className="text-center" > <Spinner color="primary" type="grow" /></div>
+                <div className="text-center" > <Spinner color="primary" type="grow" /></div>
                 :
-                    DataAniosApi.length >0 
+                DataAniosApi.length > 0
                     ?
                     <div>
 
@@ -320,7 +437,7 @@ class ValorizacionGeneral extends Component {
                                         ?
                                         <div className="table-responsive">
                                             <Table className="table table-bordered small table-sm mb-0" hover>
-                                                <thead  className="resplandPartida">
+                                                <thead className="resplandPartida">
                                                     <tr className="text-center">
                                                         <th className="align-middle" rowSpan="3">N°</th>
                                                         <th className="align-middle" rowSpan="3">NOMBRE DEL COMPONENTE</th>
@@ -396,22 +513,174 @@ class ValorizacionGeneral extends Component {
                                                     </tr> */}
 
                                                     <tr className="resplandPartida font-weight-bolder">
-                                                    <td colSpan="2">TOTAL COSTO DIRECTO</td>
-                                                    <td>S/. {DataResumenApi.presupuesto}</td>
+                                                        <td colSpan="2">TOTAL COSTO DIRECTO</td>
+                                                        <td>S/. {DataResumenApi.presupuesto}</td>
 
-                                                    <td>S/. {DataResumenApi.valor_anterior}</td>
-                                                    <td>{this.state.porcentaje_anterior} %</td>
+                                                        <td>S/. {DataResumenApi.valor_anterior}</td>
+                                                        <td>{DataResumenApi.porcentaje_anterior} %</td>
 
-                                                    <td>S/. {DataResumenApi.valor_actual}</td>
-                                                    <td>{this.state.porcentaje_actual} %</td>
+                                                        <td>S/. {DataResumenApi.valor_actual}</td>
+                                                        <td>{DataResumenApi.porcentaje_actual} %</td>
 
-                                                    <td>S/. {DataResumenApi.valor_total}</td>
-                                                    <td>{this.state.porcentaje_acumulado} %</td>
+                                                        <td>S/. {DataResumenApi.valor_total}</td>
+                                                        <td>{DataResumenApi.porcentaje_acumulado} %</td>
 
-                                                    <td>S/. {DataResumenApi.valor_saldo}</td>
-                                                    <td>{this.state.porcentaje_saldo} %</td>
+                                                        <td>S/. {DataResumenApi.valor_saldo}</td>
+                                                        <td>{DataResumenApi.porcentaje_saldo} %</td>
 
-                                                </tr>
+                                                    </tr>
+                                                    {/* Costos inderectos */}
+                                                    {this.state.costos_indirectos.map((item, index) =>
+                                                        <tr key={index}>
+                                                            <td>
+
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                    className="inputproy" 
+                                                                    type="text" placeholder={item.nombre}
+                                                                    onBlur={event => this.updateinput(index, "nombre", event.target.value)}
+                                                                    disabled={(this.state.activatorinput == index) ? "" : "disabled"}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <input 
+                                                                    className="inputproy"
+                                                                    type="text" placeholder={Redondea(item.monto)}
+                                                                    onBlur={event => this.updateinput(index, "monto", event.target.value)}
+                                                                    disabled={(this.state.activatorinput == index) ? "" : "disabled"}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    Redondea(item.monto * DataResumenApi.porcentaje_anterior / 100)
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    DataResumenApi.porcentaje_anterior
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    Redondea(item.monto * DataResumenApi.porcentaje_actual / 100)
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    DataResumenApi.porcentaje_actual
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    Redondea(item.monto * DataResumenApi.porcentaje_total / 100)
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    DataResumenApi.porcentaje_total
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    Redondea(item.monto * DataResumenApi.porcentaje_saldo / 100)
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    DataResumenApi.porcentaje_saldo
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    //className="boxy"
+                                                                    className="btn btn-danger"
+                                                                    onClick={() => this.eliminar_costo_indirecto(index)}>
+                                                                    <BsFillTrashFill size={10} />
+                                                                    </button>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    className="btn btn-success"
+                                                                    onClick={event => this.activarEdicion(index)}>
+                                                                    <FaEdit size={10} />    
+                                                                    </button>
+                                                            </td>
+                                                            <td>
+                                                                <button className="buttonHover  " onClick={event => this.guardar_costo_indirecto(index)}>
+                                                                <FaSave size={10} />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+
+                                                    )}
+                                                    <tr className="resplandPartida font-weight-bolder">
+                                                        
+                                                        <td  colSpan="2">
+                                                            TOTAL COSTO INDIRECTO
+                                                        </td>
+                                                        <td>
+                                                            {
+                                                                (() => {
+                                                                    var suma = 0
+                                                                    for (let index = 0; index < this.state.costos_indirectos.length; index++) {
+                                                                        const element = this.state.costos_indirectos[index];
+                                                                        suma = suma + parseFloat(element.monto)
+                                                                    }
+                                                                    return Redondea(suma)
+                                                                })()
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                        {
+                                                                (() => {
+                                                                    var suma = 0
+                                                                    for (let index = 0; index < this.state.costos_indirectos.length; index++) {
+                                                                        const element = this.state.costos_indirectos[index];
+                                                                        suma = suma + parseFloat(element.monto)
+                                                                    }
+                                                                    return Redondea(suma)
+                                                                })()
+                                                            }
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-primary" onClick={event => this.agregar_costo_indirecto()}>
+                                                            <AiOutlineFileAdd  size={20} />
+                                                               
+                                                            </button>
+                                                        </td>
+
+
+                                                    </tr>
+
+
+
                                                 </tbody>
                                             </Table>
                                         </div>
@@ -537,7 +806,7 @@ class ValorizacionGeneral extends Component {
 
 
                     </div>
-                    
+
                     :
                     <div className="text-center text-warning" > No hay datos </div>
 

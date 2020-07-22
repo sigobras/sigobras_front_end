@@ -4,7 +4,7 @@ function Redondea(x) {
     if (x==null) {
         return "-"
     }
-    else if(x==0){
+    else if(x==0 || isNaN(x)){
         return "-"
     }
     return Number.parseFloat(x).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
