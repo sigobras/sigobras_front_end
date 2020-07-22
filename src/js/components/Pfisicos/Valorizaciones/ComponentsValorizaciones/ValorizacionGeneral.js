@@ -5,9 +5,9 @@ import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Row, Col, Uncontroll
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 import { Redondea1, Redondea } from '../../../Utils/Funciones';
-import  "./valorizaciones.css";
+import "./valorizaciones.css";
 import { BsFillTrashFill } from "react-icons/bs";
-import { FaEdit,FaSave } from "react-icons/fa";
+import { FaEdit, FaSave } from "react-icons/fa";
 import { AiOutlineFileAdd } from "react-icons/ai";
 
 class ValorizacionGeneral extends Component {
@@ -327,9 +327,9 @@ class ValorizacionGeneral extends Component {
             console.log('====================================');
 
             var costos_indirectos = this.state.costos_indirectos
-            
-                costos_indirectos.splice(index, 1);
-            
+
+            costos_indirectos.splice(index, 1);
+
             this.setState(
                 {
                     costos_indirectos
@@ -351,10 +351,10 @@ class ValorizacionGeneral extends Component {
     }
 
     async guardar_costo_indirecto(index) {
-        
+
         var res = await axios.post(`${UrlServer}/agregarCostoIndirecto`,
             {
-                "id":this.state.costos_indirectos[index].id,
+                "id": this.state.costos_indirectos[index].id,
                 "nombre": this.state.costos_indirectos[index].nombre,
                 "monto": this.state.costos_indirectos[index].monto,
                 "fecha_inicial": this.state.FechaInicio,
@@ -523,7 +523,7 @@ class ValorizacionGeneral extends Component {
                                                         <td>{DataResumenApi.porcentaje_actual} %</td>
 
                                                         <td>S/. {DataResumenApi.valor_total}</td>
-                                                        <td>{DataResumenApi.porcentaje_acumulado} %</td>
+                                                        <td>{DataResumenApi.porcentaje_total} %</td>
 
                                                         <td>S/. {DataResumenApi.valor_saldo}</td>
                                                         <td>{DataResumenApi.porcentaje_saldo} %</td>
@@ -537,15 +537,15 @@ class ValorizacionGeneral extends Component {
                                                             </td>
                                                             <td>
                                                                 <input
-                                                                    className="inputproy" 
+                                                                    className=" input_expandible "
                                                                     type="text" placeholder={item.nombre}
                                                                     onBlur={event => this.updateinput(index, "nombre", event.target.value)}
                                                                     disabled={(this.state.activatorinput == index) ? "" : "disabled"}
                                                                 />
                                                             </td>
                                                             <td>
-                                                                <input 
-                                                                    className="inputproy"
+                                                                <input
+                                                                    className="input_expandible "
                                                                     type="text" placeholder={Redondea(item.monto)}
                                                                     onBlur={event => this.updateinput(index, "monto", event.target.value)}
                                                                     disabled={(this.state.activatorinput == index) ? "" : "disabled"}
@@ -559,7 +559,7 @@ class ValorizacionGeneral extends Component {
                                                             <td>
                                                                 {
                                                                     DataResumenApi.porcentaje_anterior
-                                                                }
+                                                                } 
                                                             </td>
                                                             <td>
                                                                 {
@@ -597,29 +597,32 @@ class ValorizacionGeneral extends Component {
                                                                     className="btn btn-danger"
                                                                     onClick={() => this.eliminar_costo_indirecto(index)}>
                                                                     <BsFillTrashFill size={10} />
-                                                                    </button>
+                                                                </button>
                                                             </td>
                                                             <td>
                                                                 <button
                                                                     className="btn btn-success"
                                                                     onClick={event => this.activarEdicion(index)}>
-                                                                    <FaEdit size={10} />    
-                                                                    </button>
+                                                                    <FaEdit size={10} />
+                                                                </button>
                                                             </td>
                                                             <td>
-                                                                <button className="buttonHover  " onClick={event => this.guardar_costo_indirecto(index)}>
-                                                                <FaSave size={10} />
+                                                                <button className="btn btn-primary  " onClick={event => this.guardar_costo_indirecto(index)}>
+                                                                    <FaSave size={10} />
                                                                 </button>
                                                             </td>
                                                         </tr>
 
                                                     )}
                                                     <tr className="resplandPartida font-weight-bolder">
-                                                        
-                                                        <td  colSpan="2">
+
+                                                        <td colSpan="2">
                                                             TOTAL COSTO INDIRECTO
                                                         </td>
+
+                                                        {/* PRESUPUESTO DE COSTO INDIRECTO */}
                                                         <td>
+                                                        S/. 
                                                             {
                                                                 (() => {
                                                                     var suma = 0
@@ -631,38 +634,107 @@ class ValorizacionGeneral extends Component {
                                                                 })()
                                                             }
                                                         </td>
+
+                                                        {/* AVANCE ANTERIOR */}
                                                         <td>
-                                                        {
+                                                        S/. 
+                                                            {
                                                                 (() => {
                                                                     var suma = 0
                                                                     for (let index = 0; index < this.state.costos_indirectos.length; index++) {
                                                                         const element = this.state.costos_indirectos[index];
-                                                                        suma = suma + parseFloat(element.monto)
+                                                                        suma = suma + parseFloat(element.monto * DataResumenApi.porcentaje_anterior / 100)
+
                                                                     }
                                                                     return Redondea(suma)
                                                                 })()
                                                             }
                                                         </td>
+                                                        {/* AVANCE ANTERIOR PORCENTAJE  */}
                                                         <td>
+                                                            {
+                                                                DataResumenApi.porcentaje_anterior
+                                                            } %
 
+                                                            {/* {
+                                                                (() => {
+                                                                    var presupuesto = 0
+                                                                    var avance_anterior = 0
+                                                                    for (let index = 0; index < this.state.costos_indirectos.length; index++) {
+                                                                        const element = this.state.costos_indirectos[index];
+                                                                        presupuesto = presupuesto + parseFloat(element.monto)
+                                                                        avance_anterior = avance_anterior + parseFloat(element.monto * DataResumenApi.porcentaje_anterior / 100)
+                                                                    }                                                                    
+                                                                    return Redondea(avance_anterior/presupuesto*100)
+                                                                })()
+                                                            } */}
                                                         </td>
-                                                        <td>
+                                                            {/* AVANCE ACTUAL  */}
 
+                                                        <td>
+                                                        S/. 
+                                                            {
+                                                                (() => {
+                                                                    var suma = 0
+                                                                    for (let index = 0; index < this.state.costos_indirectos.length; index++) {
+                                                                        const element = this.state.costos_indirectos[index];
+                                                                        suma = suma + parseFloat(element.monto * DataResumenApi.porcentaje_actual / 100)
+                                                                    }
+                                                                    return Redondea(suma)
+                                                                })()
+                                                            }
                                                         </td>
-                                                        <td>
+                                                            {/* AVANCE ACTUAL PORCENTAJE  */}
 
+                                                        <td>
+                                                            {
+                                                                DataResumenApi.porcentaje_actual
+                                                            } %
                                                         </td>
-                                                        <td>
 
+                                                        {/* AVANCE ACUMULADO */}
+                                                        <td>
+                                                        S/. 
+                                                            {
+                                                                (() => {
+                                                                    var suma = 0
+                                                                    for (let index = 0; index < this.state.costos_indirectos.length; index++) {
+                                                                        const element = this.state.costos_indirectos[index];
+                                                                        suma = suma + parseFloat(element.monto * DataResumenApi.porcentaje_total / 100)
+                                                                    }
+                                                                    return Redondea(suma)
+                                                                })()
+                                                            }
                                                         </td>
-                                                        <td>
 
+                                                        {/* AVANCE ACUMULADO PORCENTAJE  */}
+                                                        <td>
+                                                            {
+                                                                DataResumenApi.porcentaje_total
+                                                            } %
                                                         </td>
-                                                        <td>
 
+                                                            {/* AVANCE SALDO  */}
+                                                        <td>
+                                                        S/. 
+                                                            {
+                                                                (() => {
+                                                                    var suma = 0
+                                                                    for (let index = 0; index < this.state.costos_indirectos.length; index++) {
+                                                                        const element = this.state.costos_indirectos[index];
+                                                                        suma = suma + parseFloat(element.monto * DataResumenApi.porcentaje_saldo / 100)
+                                                                    }
+                                                                    return Redondea(suma)
+                                                                })()
+                                                            }
                                                         </td>
-                                                        <td>
 
+                                                        {/* AVANCE SALDO PORCENTAJE  */}
+                                                        <td>
+                                                            {
+                                                                DataResumenApi.porcentaje_saldo
+                                                            }
+                                                            %
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -671,8 +743,8 @@ class ValorizacionGeneral extends Component {
                                                         </td>
                                                         <td>
                                                             <button className="btn btn-primary" onClick={event => this.agregar_costo_indirecto()}>
-                                                            <AiOutlineFileAdd  size={20} />
-                                                               
+                                                                <AiOutlineFileAdd size={20} />
+
                                                             </button>
                                                         </td>
 
