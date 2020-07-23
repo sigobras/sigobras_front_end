@@ -52,31 +52,31 @@ class ReportesGenerales extends Component {
                                 <Report_3 />
                                 
                                 {/* 6.4 */}
-                                <Report_4 />
+                                {/* <Report_4 /> */}
                                 
                                 {/* 6.5 */}
-                                <Report_5 />
+                                {/* <Report_5 /> */}
 
                                 {/* 6.6 */}
-                                <Report_6 />
+                                {/* <Report_6 /> */}
 
                                 {/* 6.7 */}
-                                <Report_7 />
+                                {/* <Report_7 /> */}
 
                                 
                                 {/* 6.8 */}
-                                <Report_8 />
+                                {/* <Report_8 /> */}
 
                                 {/* 6.9 */}
-                                <Report_9 />
+                                {/* <Report_9 /> */}
 
                                 {/* 6.10 */}
-                                <Report_10 />
+                                {/* <Report_10 /> */}
 
                                 {/* 6.11 */}
-                                <li className="lii">    
+                                {/* <li className="lii">    
                                     <a href="#" ><FaFilePdf className="text-danger"/> 11.- PROYECCIÓN DE LOS TRABAJOS PRÓXIMOS MES CRONOGRAMA </a>
-                                </li>
+                                </li> */}
                                
                             </ul>
 

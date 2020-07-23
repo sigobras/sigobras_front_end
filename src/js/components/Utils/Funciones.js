@@ -140,6 +140,12 @@ function Extension(nombreArchivo) {
 
 var diasdelasemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo" ]
 
+function Money_to_float(money) {
+    money = money.replace(/,/g, "")
+    money = parseFloat(money)
+    return money
+}
+
 
 
 
@@ -157,6 +163,7 @@ module.exports = {
     Extension,
 Redondea1,
 diasdelasemana,
-Redondea2
+Redondea2,
+Money_to_float
     
 } 

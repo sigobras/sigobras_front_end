@@ -1,5 +1,6 @@
 const axios =  require('axios');
-const { UrlServer } = require('../../Utils/ServerUrlConfig')
+const { UrlServer } = require('../../Utils/ServerUrlConfig');
+const { Redondea } = require('../../Utils/Funciones');
 
 
 const DataHeaderInforme = (fecha_inicial,fecha_final) => {
@@ -63,7 +64,7 @@ function encabezadoInforme(fecha_inicial,fecha_final){
                       alignment: 'left',
                     },
                     {
-                      text: ': S/. '+res.data.presupuesto_general,
+                      text: ': S/. '+ Redondea(res.data.presupuesto_general),
                       style: 'tableBodyInforme',
                       alignment: 'left',
                       //colSpan:3
@@ -163,7 +164,7 @@ function encabezadoInforme(fecha_inicial,fecha_final){
                       alignment: 'left'
                     },
                     {
-                      text: ': '+res.data.porcentaje_avance_fisico+ ' %',
+                      text: ': '+Redondea(res.data.porcentaje_avance_fisico)+ ' %',
                       style: 'tableBodyInforme',
                       alignment: 'left'
                     },

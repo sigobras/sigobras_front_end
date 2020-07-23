@@ -144,7 +144,7 @@ class Report_1 extends Component {
           layout: 'lightHorizontalLines',           
           table: {            
             headerRows: 2,
-            widths: [40, '*', 'auto', 60, 50, 40, 100],
+            widths: [40, '*', 'auto', 50, 40, 100],
             //pageBreak: 'before',
             
             body: [
@@ -159,7 +159,7 @@ class Report_1 extends Component {
                 text: DataHist[i].nombre_componente,
                 style: "TableMontosInforme",
                 alignment: "center",
-                colSpan: 5,
+                colSpan: 4,
               },
               {
           
@@ -170,9 +170,9 @@ class Report_1 extends Component {
               {
           
               },
-              {
+              // {
           
-              },
+              // },
               // {
           
               // },
@@ -210,11 +210,11 @@ class Report_1 extends Component {
               //   style: 'tableHeader',
               //   alignment: 'center'
               // },
-              {
-                text: 'OBSERVACION',
-                style: 'tableHeader',
-                alignment: 'center'
-              },
+              // {
+              //   text: 'OBSERVACION',
+              //   style: 'tableHeader',
+              //   alignment: 'center'
+              // },
               {
                 text: 'EJECUTADO',
                 style: 'tableHeader',
@@ -240,7 +240,7 @@ class Report_1 extends Component {
       // console.log('ArFormat', ArFormat[0].table.body)
 
         for (let j = 0; j < DataHist[i].fechas.length; j++) {
-          // console.log(i, 'dhssss', DataHist[i].fechas[j].fecha, 'index j' , j)
+           console.log(i, 'dhssss', DataHist[i].fechas[j].fecha, 'index j' , j)
           
           ArFormat[i].table.body.push(
 
@@ -251,7 +251,7 @@ class Report_1 extends Component {
                 text: DataHist[i].fechas[j].fecha_larga,
                 style: "tableFecha",
                 alignment: "center",
-                colSpan: 6,
+                colSpan: 5,
                 margin:[5,0,0,0],
 
               },
@@ -267,9 +267,9 @@ class Report_1 extends Component {
               {
           
               },
-              {
+              // {
           
-              },
+              // },
               // {
           
               // },
@@ -313,13 +313,13 @@ class Report_1 extends Component {
                 //   style: 'tableBody',
                 //   alignment: 'center'
                 // },
+                // {
+                //   text: DataHist[i].fechas[j].historial[k].observacion,
+                //   style: 'tableBody',
+                //   alignment: 'center'
+                // },
                 {
-                  text: DataHist[i].fechas[j].historial[k].observacion,
-                  style: 'tableBody',
-                  alignment: 'center'
-                },
-                {
-                  text: DataHist[i].fechas[j].historial[k].valor,
+                  text: DataHist[i].fechas[j].historial[k].valor + " " + DataHist[i].fechas[j].historial[k].unidad_medida,
                   style: 'tableBody',
                   alignment: 'center'
                 },
@@ -333,6 +333,33 @@ class Report_1 extends Component {
                   style: 'tableBody',
                   alignment: 'center',
                   margin:[0,0,5,0]
+                }
+              ],
+              [
+                
+                {
+                  text: DataHist[i].fechas[j].historial[k].observacion.trim(),
+                  style: 'tableBody',
+                  //alignment: 'center',
+                  colSpan: 6,
+                  
+                },
+                {
+                  
+                },
+                {
+                  
+                },
+                
+                
+                {
+                 
+                },
+                {
+                  
+                },
+                {
+                  
                 }
               ]
             )
