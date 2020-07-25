@@ -70,7 +70,7 @@ class Report_3 extends Component {
             "anyo": e.target.value
         })
             .then((res) => {
-                // console.log('res Meses', res.data)
+                 console.log('res Meses', res.data)
                 this.setState({
                     DataMesesApi: res.data
                 })

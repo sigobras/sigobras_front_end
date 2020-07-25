@@ -91,17 +91,7 @@ class Report_2 extends Component {
       "fecha_inicial": fecha_inicial,
       "fecha_final": fecha_final,
     })
-    // .then((res)=>{
-    //     console.log('res valorizacionPrincipal', res.data)
-    //     this.setState({
-    //       DataValGeneralAPI: res.data,
-    //       DataEncabezado:encabezadoInforme(fecha_inicial,fecha_final)
 
-    //     })
-    // })
-    // .catch((err)=>{
-    //     console.log('ERROR ANG al obtener datos ❌'+ err);
-    // });
     console.log("Componentes1", res.data);
 
     var Componentes = res.data
@@ -113,18 +103,151 @@ class Report_2 extends Component {
         "fecha_final": fecha_final,
       })
       if (res2.data == "VACIO") {
-        Componentes.splice(index, 1);
-        index--;
+        element.partidas = []
+        element.porcentaje_actual = "0"
+        element.porcentaje_anterior = "0"
+        element.porcentaje_saldo = "0"
+        element.porcentaje_total = "0"
+        element.precio_parcial = "0"
+        //element.presupuesto = "0"
+        element.valor_actual = "0"
+        element.valor_anterior = "0"
+        element.valor_saldo = element.presupuesto
+        element.valor_total = "0"
+        // Componentes.splice(index, 1);
+        // index--;
       } else {
         element = Object.assign(element, res2.data)
       }
 
     }
-    console.log("Componenetes_procesados", Componentes);
+    var CD_porcentaje_anterior = 0;
+    var CD_porcentaje_actual = 0;
+    var CD_porcentaje_total = 0;
+    var CD_porcentaje_saldo = 0;
+
+    var CD_presupuesto = 0;
+
+    var CD_valor_anterior = 0;
+    var CD_valor_actual = 0;
+    var CD_valor_total = 0;
+    var CD_valor_saldo = 0;
+
+    for (let index = 0; index < Componentes.length; index++) {
+      const element = Componentes[index];
+      
+      CD_presupuesto += element.presupuesto 
+      CD_valor_anterior += Money_to_float(element.valor_anterior)
+      CD_valor_actual += Money_to_float(element.valor_actual)
+      CD_valor_total += Money_to_float(element.valor_total)
+      CD_valor_saldo += Money_to_float(element.valor_saldo)
+    }
+    CD_porcentaje_anterior = Redondea(CD_valor_anterior / CD_presupuesto * 100)
+    CD_porcentaje_actual = Redondea(CD_valor_actual / CD_presupuesto * 100)
+    CD_porcentaje_total = Redondea(CD_valor_total / CD_presupuesto * 100)
+    CD_porcentaje_saldo = Redondea(CD_valor_saldo / CD_presupuesto * 100)
+    //CD_presupuesto = Redondea(CD_presupuesto)
+    // CD_valor_anterior = Redondea(CD_valor_anterior)
+    // CD_valor_actual = Redondea(CD_valor_actual)
+    // CD_valor_total = Redondea(CD_valor_total)
+    // CD_valor_saldo = Redondea(CD_valor_saldo)
+
+    
     this.setState({
       DataValGeneralAPI: Componentes,
-      DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final)
+      DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final),
+      CD_presupuesto : Redondea(CD_presupuesto),
+      CD_valor_anterior : Redondea(CD_valor_anterior),
+      CD_porcentaje_anterior,
+      CD_valor_actual : Redondea(CD_valor_actual),
+      CD_porcentaje_actual,
+      CD_valor_total :  Redondea(CD_valor_total),
+      CD_porcentaje_total,
+      CD_valor_saldo : Redondea(CD_valor_saldo),
+      CD_porcentaje_saldo,
     })
+
+    // ------------------------------------------------------------>COSTOS INDIRECTOS
+      axios.post(`${UrlServer}/getCostosIndirectos`, {
+        "fichas_id_ficha": sessionStorage.getItem("idobra"),
+        //"historialestados_id_historialestado":id_historial,
+        "fecha_inicial": fecha_inicial,
+        "fecha_final": fecha_final,
+    })
+        .then((res3) => {
+            console.log('res costos indirectos', res3.data)
+            var costos_indirectos = res3.data
+            var CI_total_presupuesto = 0;
+            var CI_total_avance_anterior = 0;
+            var CI_total_avance_actual = 0;
+            var CI_total_avance_total = 0;
+            var CI_total_avance_saldo = 0;
+           
+            for (let index = 0; index < costos_indirectos.length; index++) {
+                const item = costos_indirectos[index];
+                item.avance_anterior = Redondea(item.monto * CD_porcentaje_anterior / 100)
+                item.porcentaje_anterior = CD_porcentaje_anterior
+                item.avance_actual = Redondea(item.monto * CD_porcentaje_actual / 100)
+                item.porcentaje_actual = CD_porcentaje_actual
+                item.avance_total = Redondea(item.monto * CD_porcentaje_total / 100)
+                item.porcentaje_total = CD_porcentaje_total
+                item.avance_saldo = Redondea(item.monto * CD_porcentaje_saldo/ 100)
+                item.porcentaje_saldo = CD_porcentaje_saldo
+
+                CI_total_presupuesto += item.monto
+                CI_total_avance_anterior += item.monto * CD_porcentaje_anterior / 100
+                CI_total_avance_actual += item.monto * CD_porcentaje_actual / 100
+                CI_total_avance_total += item.monto * CD_porcentaje_total / 100
+                CI_total_avance_saldo += item.monto * CD_porcentaje_saldo / 100
+
+            }
+            var CT_presupuesto = CI_total_presupuesto + CD_presupuesto
+            //console.log("Presupuesto total" , CI_total_presupuesto,Money_to_float(this.state.DataValGeneralAPI.presupuesto));
+            CT_presupuesto = Redondea(CT_presupuesto)
+
+            var CT_avance_anterior = CI_total_avance_anterior + CD_valor_anterior
+            //console.log("Presupuesto total" , CI_total_presupuesto,Money_to_float(this.state.DataValGeneralAPI.presupuesto));
+            CT_avance_anterior = Redondea(CT_avance_anterior)
+
+            var CT_avance_actual = CI_total_avance_actual + CD_valor_actual
+            //console.log("Presupuesto total" , CI_total_presupuesto,Money_to_float(this.state.DataValGeneralAPI.presupuesto));
+            CT_avance_actual = Redondea(CT_avance_actual)
+
+            var CT_avance_total = CI_total_avance_total + CD_valor_total
+            //console.log("Presupuesto total" , CI_total_presupuesto,Money_to_float(this.state.DataValGeneralAPI.presupuesto));
+            CT_avance_total = Redondea(CT_avance_total)
+
+            var CT_avance_saldo = CI_total_avance_saldo + CD_valor_saldo
+            //console.log("Presupuesto total" , CI_total_presupuesto,Money_to_float(this.state.DataValGeneralAPI.presupuesto));
+            CT_avance_saldo = Redondea(CT_avance_saldo)
+
+            CI_total_presupuesto = Redondea(CI_total_presupuesto )
+            CI_total_avance_anterior = Redondea(CI_total_avance_anterior )
+            CI_total_avance_actual = Redondea(CI_total_avance_actual )
+            CI_total_avance_total = Redondea(CI_total_avance_total )
+            CI_total_avance_saldo = Redondea(CI_total_avance_saldo )
+           
+
+            console.log('costos_indirectos', costos_indirectos);
+            this.setState({
+                DataValGeneralAPI: Componentes,
+                DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final),
+                costos_indirectos,
+                CI_total_presupuesto,
+                CI_total_avance_anterior,
+                CI_total_avance_actual,
+                CI_total_avance_total,
+                CI_total_avance_saldo,               
+                CT_presupuesto,
+                CT_avance_anterior,
+                CT_avance_actual,
+                CT_avance_total,
+                CT_avance_saldo
+            })
+        })
+        .catch((err) => {
+            console.log('ERROR ANG al obtener datos ❌' + err);
+        });
 
   }
 
@@ -143,7 +266,7 @@ class Report_2 extends Component {
     for (let i = 0; i < DataHist.length; i++) {
 
       ValPresupuesto.push(
-
+  
         {
           style: 'tableExample',
           // color: '#ff0707',
@@ -168,8 +291,8 @@ class Report_2 extends Component {
             //paddingBottom: function(i, node) { return 2; },
             //fillColor: function (rowIndex, node, columnIndex) { return null; }
           },
-
-
+  
+  
           table: {
             headerRows: 5,
             widths: [30, 180, 13, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27],
@@ -184,63 +307,63 @@ class Report_2 extends Component {
                   text: DataHist[i].nombre,
                   style: "TableMontosInforme",
                   alignment: "center",
-
+  
                   colSpan: 15
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: ' S/. ' + Redondea(DataHist[i].presupuesto),
                   style: "TableMontosInforme",
                   alignment: "center",
                   colSpan: 2,
-
+  
                 },
                 {
-
+  
                 }
               ],
-
+  
               [
                 {
                   text: 'PARTIDA: ',
@@ -248,7 +371,7 @@ class Report_2 extends Component {
                   alignment: "center",
                   rowSpan: 4,
                   margin: [2, 15, 0, 0],
-
+  
                 },
                 {
                   rowSpan: 4,
@@ -273,10 +396,10 @@ class Report_2 extends Component {
                   margin: [2, 15, 0, 0],
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'S/. ' + DataHist[i].valor_anterior,
@@ -285,7 +408,7 @@ class Report_2 extends Component {
                   colSpan: 2,
                 },
                 {
-
+  
                 },
                 {
                   text: DataHist[i].porcentaje_anterior + ' %',
@@ -299,7 +422,7 @@ class Report_2 extends Component {
                   colSpan: 2,
                 },
                 {
-
+  
                 },
                 {
                   text: DataHist[i].porcentaje_actual + ' %',
@@ -313,7 +436,7 @@ class Report_2 extends Component {
                   colSpan: 2,
                 },
                 {
-
+  
                 },
                 {
                   text: DataHist[i].porcentaje_total + ' %',
@@ -327,7 +450,7 @@ class Report_2 extends Component {
                   colSpan: 2,
                 },
                 {
-
+  
                 },
                 {
                   text: DataHist[i].porcentaje_saldo + ' %',
@@ -335,59 +458,59 @@ class Report_2 extends Component {
                   alignment: "center",
                 }
               ],
-
-
-
+  
+  
+  
               [
                 {
-
+  
                 },
                 {
-
-
+  
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                   text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
                   style: "TableValInforme",
                   alignment: "center",
                   colSpan: 9,
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'SALDO',
@@ -398,23 +521,23 @@ class Report_2 extends Component {
                   rowSpan: 2,
                 },
                 {
-
+  
                 },
                 {
-
+  
                 }
               ],
-
+  
               [
                 {
-
+  
                 },
                 {
-
-
+  
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'PRESUPUESTO PROGRAMADO',
@@ -423,10 +546,10 @@ class Report_2 extends Component {
                   colSpan: 3,
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'ANTERIOR',
@@ -436,10 +559,10 @@ class Report_2 extends Component {
                   //border: [true, false, false, false],
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'ACTUAL',
@@ -448,10 +571,10 @@ class Report_2 extends Component {
                   colSpan: 3,
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'ACUMULADO',
@@ -460,10 +583,10 @@ class Report_2 extends Component {
                   colSpan: 3,
                 },
                 {
-
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'SALDO',
@@ -472,23 +595,23 @@ class Report_2 extends Component {
                   colSpan: 3,
                 },
                 {
-
+  
                 },
                 {
-
+  
                 }
               ],
-
+  
               [
                 {
-
+  
                 },
                 {
-
-
+  
+  
                 },
                 {
-
+  
                 },
                 {
                   text: 'METRADO',
@@ -500,13 +623,13 @@ class Report_2 extends Component {
                   text: 'P. UNIT. S/.',
                   style: "tableHeader",
                   alignment: "center",
-
+  
                 },
                 {
                   text: 'PARCIAL. S/.',
                   style: "tableHeader",
                   alignment: "center",
-
+  
                 },
                 {
                   text: 'METRADO',
@@ -574,165 +697,168 @@ class Report_2 extends Component {
           pageBreak: 'after',
         }
       )
-
+  
       for (let j = 0; j < DataHist[i].partidas.length; j++) {
-
-        console.log(i, 'ddatos', DataHist[i].partidas[j], 'index j', j);
-
-
+  
+        //console.log(i, 'ddatos', DataHist[i].partidas[j], 'index j', j);
+  
+  
         ValPresupuesto[i].table.body.push(
           [
-
+  
             {
               text: DataHist[i].partidas[j].item,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].descripcion,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].unidad_medida,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].metrado,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].costo_unitario,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
-
+  
+  
             },
             {
               text: DataHist[i].partidas[j].valor_total,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
               //border: [true, false, false, false],
-
+  
             },
             {
               text: DataHist[i].partidas[j].metrado_anterior,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
-
+  
+  
             },
             {
               text: DataHist[i].partidas[j].valor_anterior,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].porcentaje_anterior + ' %',
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].metrado_actual,
               style: "tablaValorizacionActual",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].valor_actual,
               style: "tablaValorizacionActual",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].porcentaje_actual + ' %',
               style: "tablaValorizacionActual",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].metrado_total,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].valor_total,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].porcentaje_total + ' %',
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].metrado_saldo,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].valor_saldo,
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
             {
               text: DataHist[i].partidas[j].porcentaje_saldo + ' %',
               style: "tablaValorizacion",
               border: [false, false, false, true],
-
+  
             },
-
-
+  
+  
           ]
-
+  
         )
-
-
+  
+  
       }
       ValPresupuesto[i].table.body.push(
         [
-
+  
           {
             text: "TOTAL",
             style: "tableHeader",
             alignment: "center",
             border: [false, false, false, true],
-            colSpan: 6,
-
+            colSpan: 3,
+  
           },
           {
-            
+  
           },
           {
-            
-
+  
+  
           },
           {
-            
-
+            text: 'S/. ' + Redondea(DataHist[i].presupuesto),
+            style: "tableHeader",
+            alignment: "center",
+            colSpan: 3,
+  
           },
           {
-            
-
-
+  
+  
+  
           },
           {
-            
-
+  
+  
           },
           {
             text: 'S/. ' + DataHist[i].valor_anterior,
@@ -741,7 +867,7 @@ class Report_2 extends Component {
             colSpan: 2,
           },
           {
-
+  
           },
           {
             text: DataHist[i].porcentaje_anterior + ' %',
@@ -755,7 +881,7 @@ class Report_2 extends Component {
             colSpan: 2,
           },
           {
-
+  
           },
           {
             text: DataHist[i].porcentaje_actual + ' %',
@@ -769,7 +895,7 @@ class Report_2 extends Component {
             colSpan: 2,
           },
           {
-
+  
           },
           {
             text: DataHist[i].porcentaje_total + ' %',
@@ -783,7 +909,7 @@ class Report_2 extends Component {
             colSpan: 2,
           },
           {
-
+  
           },
           {
             text: DataHist[i].porcentaje_saldo + ' %',
@@ -791,23 +917,512 @@ class Report_2 extends Component {
             alignment: "center",
             border: [false, false, false, true],
           },
-
-
+  
+  
         ]
-
+  
       )
+  
+  
+  
+  
+    };
+     
+    //-------------------------COSTOS DIRECTOS TOTAL
+    ValPresupuesto.push(
+      {
+        style: 'tableExample',
+        // color: '#ff0707',
+        layout: 'lightHorizontalLines',
 
-    }
+        table: {
+          widths: [20, 185, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+          body: [
+            [
+
+              {
+                text: "TOTAL COSTOS DIRECTOS",
+                style: "TableTotalesInforme",
+                alignment: "center",
+                border: [true, true, false, true],
+                colSpan: 2,
+
+              },
+
+              {
+                
+              },
+              {
+                text: "S/." + this.state.CD_presupuesto,
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: "S/." + this.state.CD_valor_anterior,
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: this.state.CD_porcentaje_anterior + " %",
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: "S/." + this.state.CD_valor_actual,
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: this.state.CD_porcentaje_actual + " %",
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: "S/." + this.state.CD_valor_total,
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: this.state.CD_porcentaje_total + " %",
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: "S/." + this.state.CD_valor_saldo,
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
+              {
+                text: this.state.CD_porcentaje_saldo + " %",
+                style: "TableTotalesInforme",
+                alignment: "center",
+              },
 
 
-    // console.log('data push' ,ValPresupuesto);
+            ]
 
 
+          ]
+        }
+      }
+    )
+    //-------------------------- COSTOS INDIRECTOS 
+    var costosIndirectos = this.state.costos_indirectos
+    ValPresupuesto.push(
+      {
+        style: 'tableExample',
+        // color: '#ff0707',
+        layout: 'lightHorizontalLines',
+
+        table: {
+          widths: [20, 185, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+          body: [
+            [
+              {
+
+                text: 'ITEM',
+                style: "tableHeader",
+                alignment: "center",
+                rowSpan: 3,
+                margin: [2, 8, 0, 0]
+
+              },
+              {
+                text: 'COMPONENTE',
+                style: "tableHeader",
+                alignment: "center",
+                rowSpan: 3,
+                margin: [2, 8, 0, 0]
+              },
+              {
+                text: 'MONTO PPTDO',
+                style: "tableHeader",
+                alignment: "center",
+                rowSpan: 2
+              },
+              {
+                text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
+                style: "TableValInforme",
+                alignment: "center",
+                colSpan: 6
+              },
+              {
+
+              },
+              {
+
+              },
+              {
+
+              },
+              {
+
+              },
+              {
+
+              },
+              {
+                text: 'SALDO',
+                style: "tableHeader",
+                alignment: "center",
+                colSpan: 2,
+                rowSpan: 2
+              },
+              {
+
+              }
+
+            ],
+            [
+              {
+
+              },
+              {
+
+              },
+              {
+
+              },
+              {
+                text: 'ANTERIOR',
+                style: "tableHeader",
+                alignment: "center",
+                colSpan: 2
+              },
+              {
+
+              },
+              {
+                text: 'ACTUAL',
+                style: "TableValInforme",
+                alignment: "center",
+                colSpan: 2
+              },
+              {
+
+              },
+              {
+                text: 'ACUMULADO',
+                style: "tableHeader",
+                alignment: "center",
+                colSpan: 2
+              },
+              {
+
+              },
+              {
+
+              },
+              {
+
+              },
+
+            ],
+            [
+              {
+
+              },
+              {
+
+              },
+              {
+                text: 'Presup. S/.',
+                style: "tableHeader",
+                alignment: "center",
+              },
+              {
+                text: 'Valorizado S/.',
+                style: "tableHeader",
+                alignment: "center",
+              },
+              {
+                //text: `${DataHist.porcentaje_anterior} `,
+                text: "%",
+                style: "tableHeader",
+                alignment: "center",
+              },
+              {
+                text: 'Valorizado S/.',
+                style: "TableValInforme",
+                alignment: "center",
+              },
+              {
+                text: '%',
+                style: "TableValInforme",
+                alignment: "center",
+              },
+              {
+                text: 'Valorizado S/.',
+                style: "tableHeader",
+                alignment: "center",
+              },
+              {
+                text: '%',
+                style: "tableHeader",
+                alignment: "center",
+              },
+              {
+                text: 'Valorizado S/.',
+                style: "tableHeader",
+                alignment: "center",
+              },
+              {
+                text: '%',
+                style: "tableHeader",
+                alignment: "center",
+              },
+
+            ],
+
+
+          ]
+        }
+      }
+    )
+    console.log("ValPresupuesto",ValPresupuesto);
+    costosIndirectos.forEach((CDirecto, j) => {
+      
+      ValPresupuesto[ValPresupuesto.length - 1].table.body.push( 
+        [
+          {
+              text: 1 + j,
+              style: "tableFecha",
+              alignment: "center",
+              //colSpan:2,
+              margin: [12, 0, 0, 0]
+          },
+          {
+              text: CDirecto.nombre,
+              style: "tableFecha",
+              alignment: "left",
+          },
+          {
+              text: Redondea(CDirecto.monto),
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.avance_anterior,
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.porcentaje_anterior + " %",
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.avance_actual,
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: Redondea(CDirecto.porcentaje_actual) + " %",
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.avance_total,
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.porcentaje_total + " %",
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.avance_saldo,
+              style: "tableFecha",
+              alignment: "right",
+          },
+          {
+              text: CDirecto.porcentaje_saldo + " %",
+              style: "tableFecha",
+              alignment: "right",
+              margin: [0, 0, 4, 0]
+          },
+      ]
+      )
+    })
+    // Totales costos indirectos 
+    ValPresupuesto[ValPresupuesto.length - 1].table.body.push(
+      //console.log("SUma avance anterio", this.state.CI_total_avance_anterior),
+      [
+          {
+              text: ' Total Costo Indirecto',
+              style: "TableTotalesInforme",
+              alignment: "center",
+              colSpan: 2,
+              margin: [0, 2, 0, 0]
+          },
+          {
+          
+          },
+          {
+              text: "S/. " + this.state.CI_total_presupuesto,
+              style: "TableTotalesInforme",
+              alignment: "right",
+          },
+          {
+              text: "S/. " + this.state.CI_total_avance_anterior,
+              style: "TableTotalesInforme",
+              alignment: "right",
+              //colSpan: 2,
+          },
+          {
+              text: this.state.CD_porcentaje_anterior + " %",
+              style: "TableTotalesInforme",
+              alignment: "right",
+          },
+          {
+              text:"S/. " + this.state.CI_total_avance_actual,
+              style: "TableTotalesInforme",
+              alignment: "right",
+              //colSpan: 2,
+          },
+          {
+              text: this.state.CD_porcentaje_actual + " %",
+              style: "TableTotalesInforme",
+              alignment: "right",
+          },
+          {
+              text:"S/. " + this.state.CI_total_avance_total,
+              style: "TableTotalesInforme",
+              alignment: "right",
+              //colSpan: 2,
+          },
+          {
+              text: this.state.CD_porcentaje_total + " %",
+              style: "TableTotalesInforme",
+              alignment: "right",
+          },
+          {
+              text: "S/. " + this.state.CI_total_avance_saldo,
+              style: "TableTotalesInforme",
+              alignment: "right",
+              //colSpan: 2,
+          },
+          {
+              text: this.state.CD_porcentaje_saldo + " %",
+              style: "TableTotalesInforme",
+              alignment: "right",
+          },
+      ]
+  )
+
+  ValPresupuesto[ValPresupuesto.length - 1].table.body.push(
+      //console.log("SUma avance anterio", this.state.CI_total_avance_anterior),
+      [
+          {
+              text: ' ',
+              style: "TableHeaderInforme",
+              alignment: "center",
+              colSpan: 11,
+              margin: [0, 2, 0, 0]
+          },
+          {
+          
+          },
+          {
+              
+          },
+          {
+              
+          },
+          {
+             
+          },
+          {
+              
+          },
+          {
+              
+          },
+          {
+              
+          },
+          {
+              
+          },
+          {
+              
+          },
+          {
+              
+          },
+      ]
+  )
+  ValPresupuesto[ValPresupuesto.length - 1].table.body.push(
+    //console.log("SUma avance anterio", this.state.CI_total_avance_anterior),
+    [
+        {
+            text: 'PRESUPUESTO TOTAL ',
+            style: "TableTotalesInforme",
+            alignment: "center",
+            colSpan: 2,
+            margin: [0, 2, 0, 0]
+        },
+        {
+        
+        },
+        {
+            text: this.state.CT_presupuesto,
+            style: "TableTotalesInforme",
+            alignment: "center", 
+        },
+        {
+            text: this.state.CT_avance_anterior,
+            style: "TableTotalesInforme",
+            alignment: "center",  
+        },
+        {
+            text: this.state.CD_porcentaje_anterior + " %",
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+        {
+            text: this.state.CT_avance_actual,
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+        {
+            text: this.state.CD_porcentaje_actual + " %",
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+        {
+            text: this.state.CT_avance_total,
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+        {
+            text: this.state.CD_porcentaje_total + " %",
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+        {
+            text: this.state.CT_avance_saldo,
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+        {
+            text: this.state.CD_porcentaje_total + " %",
+            style: "TableTotalesInforme",
+            alignment: "center",
+        },
+    ]
+)
+    
+    //console.log('data push' ,DataRestructurado);
+    console.log('data push' ,ValPresupuesto);
+
+  
     var ultimoElemento = ValPresupuesto.length - 1
     delete ValPresupuesto[ultimoElemento].pageBreak
 
 
-    var { DataEncabezado } = this.state
+    //var { DataEncabezado } = this.state
 
 
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
@@ -949,6 +1564,12 @@ class Report_2 extends Component {
           color: '#000000',
           fillColor: '#8baedb',
         },
+        TableTotalesInforme: {
+          bold: true,
+          fontSize: 7.5,
+          color: '#000000',
+          fillColor: '#839cbb',
+      },
 
 
       },

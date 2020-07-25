@@ -139,16 +139,14 @@ function Extension(nombreArchivo) {
 }
 
 var diasdelasemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo" ]
+var meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio","agosto","septiembre","octubre","noviembre","diciembre" ]
 
 function Money_to_float(money) {
+    money = '' + money
     money = money.replace(/,/g, "")
-    money = parseFloat(money)
-    return money
+    money = parseFloat(money) || 0
+    return money 
 }
-
-
-
-
 
 
 module.exports = {
