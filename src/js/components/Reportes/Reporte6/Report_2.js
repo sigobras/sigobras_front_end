@@ -101,7 +101,9 @@ class Report_2 extends Component {
         "id_componente": element.id_componente,
         "fecha_inicial": fecha_inicial,
         "fecha_final": fecha_final,
+        "formato": false,
       })
+      
       if (res2.data == "VACIO") {
         element.partidas = []
         element.porcentaje_actual = "0"
@@ -119,8 +121,11 @@ class Report_2 extends Component {
       } else {
         element = Object.assign(element, res2.data)
       }
-
+      console.log("Seguimiento  ",element.presupuesto,element.valor_actual,element.valor_anterior);
+      console.log("Seguimiento Total ",element.presupuesto-element.valor_actual-element.valor_anterior);
+      element.valor_saldo = element.presupuesto-element.valor_actual-element.valor_anterior
     }
+    console.log("Componenetes modificcados", Componentes);
     var CD_porcentaje_anterior = 0;
     var CD_porcentaje_actual = 0;
     var CD_porcentaje_total = 0;
@@ -142,15 +147,15 @@ class Report_2 extends Component {
       CD_valor_total += Money_to_float(element.valor_total)
       CD_valor_saldo += Money_to_float(element.valor_saldo)
     }
-    CD_porcentaje_anterior = Redondea(CD_valor_anterior / CD_presupuesto * 100)
-    CD_porcentaje_actual = Redondea(CD_valor_actual / CD_presupuesto * 100)
-    CD_porcentaje_total = Redondea(CD_valor_total / CD_presupuesto * 100)
-    CD_porcentaje_saldo = Redondea(CD_valor_saldo / CD_presupuesto * 100)
-    //CD_presupuesto = Redondea(CD_presupuesto)
-    // CD_valor_anterior = Redondea(CD_valor_anterior)
-    // CD_valor_actual = Redondea(CD_valor_actual)
-    // CD_valor_total = Redondea(CD_valor_total)
-    // CD_valor_saldo = Redondea(CD_valor_saldo)
+    CD_porcentaje_anterior = CD_valor_anterior / CD_presupuesto * 100
+    CD_porcentaje_actual = CD_valor_actual / CD_presupuesto * 100
+    CD_porcentaje_total = CD_valor_total / CD_presupuesto * 100
+    CD_porcentaje_saldo = CD_valor_saldo / CD_presupuesto * 100
+
+    CD_porcentaje_anterior = CD_porcentaje_anterior.toFixed(2)
+    CD_porcentaje_actual = CD_porcentaje_actual.toFixed(2)
+    CD_porcentaje_total = CD_porcentaje_total.toFixed(2)
+    CD_porcentaje_saldo = CD_porcentaje_saldo.toFixed(2)
 
     
     this.setState({
@@ -158,13 +163,13 @@ class Report_2 extends Component {
       DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final),
       CD_presupuesto : Redondea(CD_presupuesto),
       CD_valor_anterior : Redondea(CD_valor_anterior),
-      CD_porcentaje_anterior,
+      CD_porcentaje_anterior : Redondea(CD_porcentaje_anterior ),
       CD_valor_actual : Redondea(CD_valor_actual),
-      CD_porcentaje_actual,
+      CD_porcentaje_actual : Redondea(CD_porcentaje_actual ),
       CD_valor_total :  Redondea(CD_valor_total),
-      CD_porcentaje_total,
+      CD_porcentaje_total : Redondea(CD_porcentaje_total ),
       CD_valor_saldo : Redondea(CD_valor_saldo),
-      CD_porcentaje_saldo,
+      CD_porcentaje_saldo : Redondea(CD_porcentaje_saldo ),
     })
 
     // ------------------------------------------------------------>COSTOS INDIRECTOS
@@ -402,7 +407,7 @@ class Report_2 extends Component {
   
                 },
                 {
-                  text: 'S/. ' + DataHist[i].valor_anterior,
+                  text: 'S/. ' + Redondea(DataHist[i].valor_anterior),
                   style: "tableHeader",
                   alignment: "center",
                   colSpan: 2,
@@ -411,26 +416,12 @@ class Report_2 extends Component {
   
                 },
                 {
-                  text: DataHist[i].porcentaje_anterior + ' %',
+                  text: Redondea(DataHist[i].porcentaje_anterior) + ' %',
                   style: "tableHeader",
                   alignment: "center",
                 },
                 {
-                  text: 'S/. ' + DataHist[i].valor_actual,
-                  style: "tableHeader",
-                  alignment: "center",
-                  colSpan: 2,
-                },
-                {
-  
-                },
-                {
-                  text: DataHist[i].porcentaje_actual + ' %',
-                  style: "tableHeader",
-                  alignment: "center",
-                },
-                {
-                  text: 'S/. ' + DataHist[i].valor_total,
+                  text: 'S/. ' + Redondea(DataHist[i].valor_actual),
                   style: "tableHeader",
                   alignment: "center",
                   colSpan: 2,
@@ -439,12 +430,12 @@ class Report_2 extends Component {
   
                 },
                 {
-                  text: DataHist[i].porcentaje_total + ' %',
+                  text: Redondea(DataHist[i].porcentaje_actual) + ' %',
                   style: "tableHeader",
                   alignment: "center",
                 },
                 {
-                  text: ' S/. ' + DataHist[i].valor_saldo,
+                  text: 'S/. ' + Redondea(DataHist[i].valor_total),
                   style: "tableHeader",
                   alignment: "center",
                   colSpan: 2,
@@ -453,7 +444,21 @@ class Report_2 extends Component {
   
                 },
                 {
-                  text: DataHist[i].porcentaje_saldo + ' %',
+                  text: Redondea(DataHist[i].porcentaje_total) + ' %',
+                  style: "tableHeader",
+                  alignment: "center",
+                },
+                {
+                  text: ' S/. ' + Redondea(DataHist[i].valor_saldo),
+                  style: "tableHeader",
+                  alignment: "center",
+                  colSpan: 2,
+                },
+                {
+  
+                },
+                {
+                  text: Redondea(DataHist[i].porcentaje_saldo) + ' %',
                   style: "tableHeader",
                   alignment: "center",
                 }
@@ -861,7 +866,7 @@ class Report_2 extends Component {
   
           },
           {
-            text: 'S/. ' + DataHist[i].valor_anterior,
+            text: 'S/. ' + Redondea(DataHist[i].valor_anterior),
             style: "tableHeader",
             alignment: "center",
             colSpan: 2,
@@ -870,26 +875,12 @@ class Report_2 extends Component {
   
           },
           {
-            text: DataHist[i].porcentaje_anterior + ' %',
+            text: Redondea(DataHist[i].porcentaje_anterior) + ' %',
             style: "tableHeader",
             alignment: "center",
           },
           {
-            text: 'S/. ' + DataHist[i].valor_actual,
-            style: "tableHeader",
-            alignment: "center",
-            colSpan: 2,
-          },
-          {
-  
-          },
-          {
-            text: DataHist[i].porcentaje_actual + ' %',
-            style: "tableHeader",
-            alignment: "center",
-          },
-          {
-            text: 'S/. ' + DataHist[i].valor_total,
+            text: 'S/. ' + Redondea(DataHist[i].valor_actual),
             style: "tableHeader",
             alignment: "center",
             colSpan: 2,
@@ -898,12 +889,12 @@ class Report_2 extends Component {
   
           },
           {
-            text: DataHist[i].porcentaje_total + ' %',
+            text: Redondea(DataHist[i].porcentaje_actual) + ' %',
             style: "tableHeader",
             alignment: "center",
           },
           {
-            text: ' S/. ' + DataHist[i].valor_saldo,
+            text: 'S/. ' + Redondea(DataHist[i].valor_total),
             style: "tableHeader",
             alignment: "center",
             colSpan: 2,
@@ -912,7 +903,21 @@ class Report_2 extends Component {
   
           },
           {
-            text: DataHist[i].porcentaje_saldo + ' %',
+            text: Redondea(DataHist[i].porcentaje_total) + ' %',
+            style: "tableHeader",
+            alignment: "center",
+          },
+          {
+            text: ' S/. ' + Redondea(DataHist[i].valor_saldo),
+            style: "tableHeader",
+            alignment: "center",
+            colSpan: 2,
+          },
+          {
+  
+          },
+          {
+            text: Redondea(DataHist[i].porcentaje_saldo) + ' %',
             style: "tableHeader",
             alignment: "center",
             border: [false, false, false, true],
@@ -936,7 +941,7 @@ class Report_2 extends Component {
         layout: 'lightHorizontalLines',
 
         table: {
-          widths: [20, 185, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+          widths: [20, '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
           body: [
             [
 
@@ -1015,7 +1020,7 @@ class Report_2 extends Component {
         layout: 'lightHorizontalLines',
 
         table: {
-          widths: [20, 185, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+          widths: [20, '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
           body: [
             [
               {
@@ -1207,7 +1212,7 @@ class Report_2 extends Component {
               alignment: "right",
           },
           {
-              text: CDirecto.porcentaje_anterior + " %",
+              text: Redondea(CDirecto.porcentaje_anterior) + " %",
               style: "tableFecha",
               alignment: "right",
           },
@@ -1227,7 +1232,7 @@ class Report_2 extends Component {
               alignment: "right",
           },
           {
-              text: CDirecto.porcentaje_total + " %",
+              text: Redondea(CDirecto.porcentaje_total) + " %",
               style: "tableFecha",
               alignment: "right",
           },
@@ -1237,7 +1242,7 @@ class Report_2 extends Component {
               alignment: "right",
           },
           {
-              text: CDirecto.porcentaje_saldo + " %",
+              text: Redondea(CDirecto.porcentaje_saldo) + " %",
               style: "tableFecha",
               alignment: "right",
               margin: [0, 0, 4, 0]

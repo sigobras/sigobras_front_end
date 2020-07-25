@@ -444,16 +444,16 @@ class ValorizacionGeneral extends Component {
                                                         <th>S/. {DataResumenApi.presupuesto}</th>
 
                                                         <th>S/. {DataResumenApi.valor_anterior}</th>
-                                                        <th>{DataResumenApi.porcentaje_anterior} %</th>
+                                                        <th>{Redondea(DataResumenApi.porcentaje_anterior)} %</th>
 
                                                         <th>S/. {DataResumenApi.valor_actual}</th>
-                                                        <th>{DataResumenApi.porcentaje_actual} %</th>
+                                                        <th>{Redondea(DataResumenApi.porcentaje_actual)} %</th>
 
                                                         <th>S/. {DataResumenApi.valor_total}</th>
-                                                        <th>{DataResumenApi.porcentaje_total} %</th>
+                                                        <th>{Redondea(DataResumenApi.porcentaje_total)} %</th>
 
                                                         <th>S/. {DataResumenApi.valor_saldo}</th>
-                                                        <th>{DataResumenApi.porcentaje_saldo} %</th>
+                                                        <th>{Redondea(DataResumenApi.porcentaje_saldo)} %</th>
                                                     </tr>
                                                     <tr className="text-center">
                                                         <th>MONTO ACT.</th>
@@ -517,16 +517,16 @@ class ValorizacionGeneral extends Component {
                                                         <td>S/. {DataResumenApi.presupuesto}</td>
 
                                                         <td>S/. {DataResumenApi.valor_anterior}</td>
-                                                        <td>{DataResumenApi.porcentaje_anterior} %</td>
+                                                        <td>{Redondea(DataResumenApi.porcentaje_anterior)} %</td>
 
                                                         <td>S/. {DataResumenApi.valor_actual}</td>
-                                                        <td>{DataResumenApi.porcentaje_actual} %</td>
+                                                        <td>{Redondea(DataResumenApi.porcentaje_actual)} %</td>
 
                                                         <td>S/. {DataResumenApi.valor_total}</td>
-                                                        <td>{DataResumenApi.porcentaje_total} %</td>
+                                                        <td>{Redondea(DataResumenApi.porcentaje_total)} %</td>
 
                                                         <td>S/. {DataResumenApi.valor_saldo}</td>
-                                                        <td>{DataResumenApi.porcentaje_saldo} %</td>
+                                                        <td>{Redondea(DataResumenApi.porcentaje_saldo)} %</td>
 
                                                     </tr>
                                                     {/* Costos inderectos */}
@@ -553,42 +553,42 @@ class ValorizacionGeneral extends Component {
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    Redondea(item.monto * DataResumenApi.porcentaje_anterior / 100)
+                                                                    Redondea(item.monto * parseFloat(DataResumenApi.porcentaje_anterior).toFixed(2) / 100)
                                                                 }
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    DataResumenApi.porcentaje_anterior
+                                                                    Redondea(DataResumenApi.porcentaje_anterior)
                                                                 } 
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    Redondea(item.monto * DataResumenApi.porcentaje_actual / 100)
+                                                                    Redondea(item.monto * parseFloat(DataResumenApi.porcentaje_actual).toFixed(2) / 100)
                                                                 }
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    DataResumenApi.porcentaje_actual
+                                                                    Redondea(DataResumenApi.porcentaje_actual)
                                                                 }
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    Redondea(item.monto * DataResumenApi.porcentaje_total / 100)
+                                                                    Redondea(item.monto * parseFloat(DataResumenApi.porcentaje_total).toFixed(2) / 100)
                                                                 }
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    DataResumenApi.porcentaje_total
+                                                                    Redondea(DataResumenApi.porcentaje_total)
                                                                 }
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    Redondea(item.monto * DataResumenApi.porcentaje_saldo / 100)
+                                                                    Redondea(item.monto * parseFloat(DataResumenApi.porcentaje_saldo).toFixed(2) / 100)
                                                                 }
                                                             </td>
                                                             <td>
                                                                 {
-                                                                    DataResumenApi.porcentaje_saldo
+                                                                    Redondea(DataResumenApi.porcentaje_saldo)
                                                                 }
                                                             </td>
                                                             <td>
