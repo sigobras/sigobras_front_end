@@ -27,6 +27,7 @@ function FechaActual(){
     var anio = fecha.getFullYear();
     var mes = fecha.getMonth()+1;
     var dia = fecha.getDate();
+
     
     if(dia < 10){
         dia = "0" + dia

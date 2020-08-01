@@ -1751,7 +1751,7 @@ class MetradosDiarios extends Component {
 
                         <div className="form-group">
                           <label htmlFor="fehca">FECHA :</label>
-                          <input type="date" min={PrimerDiaDelMesActual()} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
+                          <input type="date" min={PrimerDiaDelMesActual()- 0} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
                           <div className="texto-rojo mb-0"> <b> {this.state.smsValidaFecha}</b></div>
                         </div>
 
