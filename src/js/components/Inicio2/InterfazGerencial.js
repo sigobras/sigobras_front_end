@@ -3,7 +3,8 @@ import { UrlServer } from '../Utils/ServerUrlConfig';
 import { Redondea1 } from '../Utils/Funciones';
 import axios from "axios";
 import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
+import HighchartsReact from 'highcharts-react-official';
+import "./InterfazGerencial2.css"
 
 class InterfazGerencial extends Component {
     constructor() {
@@ -388,7 +389,7 @@ class InterfazGerencial extends Component {
                 </select>
                 <select onChange={event => this.updateInput('idsectores', event.target.value)}>
                     <option value="0">
-                        Todas las sectores
+                        Todos las sectores
                     </option>
                     {this.state.getSectores.map((item, index) =>
                         <option value={item.idsectores}>{item.nombre}</option>
@@ -404,7 +405,7 @@ class InterfazGerencial extends Component {
                 </select>
                 <select onChange={event => this.updateInput('id_Estado', event.target.value)}>
                     <option value="0">
-                        Todas los estados
+                        Todos los estados
                     </option>
                     {this.state.getEstados.map((item, index) =>
                         <option value={item.id_Estado}>{item.nombre}</option>
@@ -416,7 +417,7 @@ class InterfazGerencial extends Component {
                 <br />
                 <select onChange={event => this.updateInput('anyo_chart_seleccionado', event.target.value)}>
                     <option value="0">
-                        seleccione el anyo
+                        seleccione el año
                     </option>
                     {this.state.anyos_chart.map((item, index) =>
                         <option value={item.anyo}>{item.anyo}</option>
@@ -430,26 +431,26 @@ class InterfazGerencial extends Component {
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>codigo</th>
+                            <th>código</th>
                             <th>avance</th>
-                            <th>modalidad_ejecutora_nombre</th>
-                            <th>estado_nombre</th>
-                            <th>fecha_inicial</th>
+                            <th>modalidad de ejecución</th>
+                            <th>estado</th>
+                            <th>inicio de obra</th>
                         </tr>
                     </thead>
                     <tbody>
                         {this.state.getInterfazGerencialDataProcesada.map((provincia, index) =>
                             [
                                 <tr>
-                                    <th>
-                                        <h4 colSpan="2">{provincia.nombre}</h4>
+                                    <th className= "provincia"
+                                        colSpan="2">{provincia.nombre}
                                     </th>
                                 </tr>,
                                 provincia.sectores.map((sector, index2) =>
                                     [
                                         <tr>
-                                            <th>
-                                                <h5 colSpan="2">{sector.nombre}</h5>
+                                            <th className="sector"
+                                                colSpan="2">{sector.nombre}
                                             </th>
                                         </tr>,
 

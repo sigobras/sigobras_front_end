@@ -203,16 +203,16 @@ class ListaObras extends Component{
 
                         </td>
                         <td style={{
-                            color: '#cecece',
+                            color: '#8caeda',
                             background: '#242526',
                             fontSize:'0.8rem'
                             
-                            }}>{ this.calcular_dias(Obras.ultima_fecha_avance,new Date()) } días</td>
+                            }}>{ this.calcular_dias(Obras.ultima_fecha_avance,new Date())-1} días sin reportar</td>
                         <td className="text-center"> 
-                            <button className={ sessionStorage.getItem("codigoObra") === Obras.codigo?" btn btn-primary btn-sm text-white ":  "btn btn-outline-dark btn-sm text-white"} onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre, Obras.codigo  )) }>{ Obras.codigo } </button> 
+                            <button className={ sessionStorage.getItem("codigoObra") === Obras.codigo?" btn btn-primary btn-sm text-white ":  "btn btn-outline-secondary btn-sm text-white"} onClick={((e) => this.Setobra(  Obras.id_ficha,  Obras.estado_nombre, Obras.codigo  )) }>{ Obras.codigo }</button> 
                         </td>
                         <td className="text-center"> 
-                            <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-primary p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
+                            <span className={ Obras.estado_nombre === "Ejecucion"? "badge badge-success p-1": Obras.estado_nombre === "Paralizado" ? "badge badge-warning p-1" : Obras.estado_nombre === "Corte"? "badge badge-danger p-1":  Obras.estado_nombre=== "Actualizacion"? "badge badge-info p-1": "badge badge-info p-1"}>{ Obras.estado_nombre } </span>
                         </td>
                         <td style={{width: '12%'}}  className="text-center">
                             <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={()=> this.CollapseComponentes(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
