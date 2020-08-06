@@ -43,7 +43,6 @@ function FechaActual(){
 function PrimerDiaDelMesActual(){
     var date = new Date();
     var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
-    var primerDia = new Date(date.getFullYear(), date.getMonth(),1 -1);
 
     primerDia = primerDia.getDate()
         
