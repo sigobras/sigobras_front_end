@@ -1412,7 +1412,7 @@ class Report_2 extends Component {
             alignment: "center",
         },
         {
-            text: this.state.CD_porcentaje_total + " %",
+            text: this.state.CD_porcentaje_saldo + " %",
             style: "TableTotalesInforme",
             alignment: "center",
         },
