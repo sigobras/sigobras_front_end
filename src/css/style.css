@@ -692,3 +692,47 @@ table.table thead th {
   color: white;
 }
 
+
+/* comentarios de partidas metrados diarios */
+
+.comentario {
+  /* float: right; */
+  width: 350px;
+  padding: 10px;
+  border-radius: 6px;
+  color: #FFF;
+  position: relative;
+  line-height: 20px;
+  margin-left: 67px;
+}
+.comentario:nth-child(odd):before {
+  content: "";
+  display: block;
+  width: 0; 
+  height: 0; 
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid #3966ab; 
+  position: absolute;
+  top: 10px;
+  left: -12px;
+}
+
+.comentario:nth-child(odd) {
+  background: linear-gradient(to right, #3966ab, #3a3a3a);
+}
+.comentario:nth-child(even):after {
+  content: "";
+  display: block;
+  width: 0; 
+  height: 0; 
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid #3a3c3f; 
+  position: absolute;
+  top: 16px;
+  left: -12px;
+}
+.comentario:nth-child(even){
+  background: linear-gradient(to right, #3a3a3a, #3966ab);
+}

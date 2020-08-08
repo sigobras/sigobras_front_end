@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdSettings, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
+import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdComment, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
 import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink, Table } from 'reactstrap';
@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import LogoSigobras from './../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
+import Comentarios from './Comentarios';
 
 class MetradosDiarios extends Component {
   constructor(props) {
@@ -97,7 +98,9 @@ class MetradosDiarios extends Component {
 
       // DATA PARA PAGINACION 
       PaginaActual: 1,
-      CantidadRows: 40
+      CantidadRows: 40,
+      modalComentarios: false,
+      PartidaSeleccionada: null
     }
 
     this.Tabs = this.Tabs.bind(this)
@@ -127,6 +130,7 @@ class MetradosDiarios extends Component {
     // metrados diarios
     this.PaginaActual = this.PaginaActual.bind(this);
     this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
+    this.modalComentarios = this.modalComentarios.bind(this)
   }
 
   componentDidMount() {
@@ -995,6 +999,13 @@ class MetradosDiarios extends Component {
     this.setState({ CantidadRows: Number(e.target.value) })
   }
 
+  modalComentarios() {
+    this.setState(prevState => ({
+      modalComentarios: !prevState.modalComentarios
+    }));
+  }
+
+
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
@@ -1101,7 +1112,7 @@ class MetradosDiarios extends Component {
                     {nombreComponente}
                     <div className="float-right">
                       <InputGroup size="sm">
-                        <InputGroupAddon addonType="prepend"><InputGroupText><MdSearch size={20} /> </InputGroupText> </InputGroupAddon>
+                        <InputGroupAddon addonType="prepend"><InputGroupText><MdSearch size={19} /> </InputGroupText> </InputGroupAddon>
 
                         <Input placeholder="Buscar por descripción" onKeyUp={e => this.Filtrador(e)} />
 
@@ -1152,6 +1163,7 @@ class MetradosDiarios extends Component {
                           <th>P/P </th>
                           <th width="20%" >BARRA DE PROGRESO</th>
                           <th>  %  </th>
+                          <th style={{ width: "32px" }}></th>
                           {/* <th><MdInsertPhoto size={ 18 } /> </th> */}
                         </tr>
                       </thead>
@@ -1169,7 +1181,7 @@ class MetradosDiarios extends Component {
                             <tr className={metrados.tipo === "titulo" ? "font-weight-bold text-info icoVer" : collapse === i ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
                               <td>
                                 {
-                                  metrados.tipo === "titulo" ? "" :
+                                  metrados.tipo === "titulo" ? null :
                                     <div title="prioridad" className="prioridad" style={{ color: metrados.prioridad_color }} onClick={() => this.Prioridad(i)}>
                                       <span className="h6"> {metrados.iconocategoria_nombre}</span>
                                     </div>
@@ -1248,16 +1260,47 @@ class MetradosDiarios extends Component {
                                 {/* {metrados.partida_duracion} */}
                                 {metrados.porcentaje}
                                 {
-                                  metrados.tipo !== "titulo" 
-                                  ?
-                                 
+                                  metrados.tipo !== "titulo"
+                                    ?
+
                                     <div className="aprecerIcon">
                                       <span className="prioridad iconoTr" onClick={() => this.capturaDatosCrearImgPartida(metrados.id_partida, "/avancePartidaImagen", "Partidas_id_partida")}><MdAddAPhoto size={20} /></span>
                                     </div>
                                     : ""
                                 }
                               </td>
-
+                              <td>
+                                {
+                                  metrados.tipo === "titulo" ? "" :
+                                    <div
+                                      className="align-center position-relative"
+                                      onClick={() => this.setState({
+                                        PartidaSeleccionada: metrados.descripcion,
+                                        modalComentarios: true
+                                      })}
+                                    >
+                                      <div style={{
+                                        background: "red",
+                                        borderRadius: "50%",
+                                        textAlign: "center",
+                                        position: "absolute",
+                                        left: "9px",
+                                        top: "1px",
+                                        padding: "1px 4px",
+                                        zIndex: "20",
+                                        fontSize: "9px",
+                                        fontWeight: "bold"
+                                      }}>12</div>
+                                      <div style={{
+                                        position: "absolute",
+                                        top: "10px",
+                                        zIndex: "10"
+                                      }}>
+                                        <MdComment size={17} />
+                                      </div>
+                                    </div>
+                                }
+                              </td>
                             </tr>
 
                             <tr className={collapse === i ? "resplandPartidabottom" : "d-none"}>
@@ -1267,12 +1310,12 @@ class MetradosDiarios extends Component {
                                     <div className="row">
 
                                       <div className="col-sm-7 text-info">
-                                        
-                                          {metrados.descripcion} <MdFlashOn size={20} className="text-danger"/>rendimiento: {metrados.rendimiento} {metrados.unidad_medida}
-                                        
-                                        
+
+                                        {metrados.descripcion} <MdFlashOn size={20} className="text-danger" />rendimiento: {metrados.rendimiento} {metrados.unidad_medida}
+
+
                                       </div>
-                                      
+
                                       <div className="col-sm-2">
                                         {
                                           Number(DataMayorMetrado.mm_avance_costo) > 0 ? 'MAYOR METRADO' : ''
@@ -1510,7 +1553,7 @@ class MetradosDiarios extends Component {
           <Modal isOpen={this.state.modal} toggle={this.modalMetrar} size="sm" fade={false} backdrop="static">
             <ModalHeader toggle={this.modalMetrar} className="border-button center">
               <img src={LogoSigobras} width="60px" alt="logo sigobras" />
-              </ModalHeader>
+            </ModalHeader>
             {
               sessionStorage.getItem("estadoObra") === "Ejecucion"
                 ?
@@ -1751,7 +1794,7 @@ class MetradosDiarios extends Component {
 
                         <div className="form-group">
                           <label htmlFor="fehca">FECHA :</label>
-                          <input type="date" min={PrimerDiaDelMesActual()-1} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
+                          <input type="date" min={PrimerDiaDelMesActual() - 1} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
                           <div className="texto-rojo mb-0"> <b> {this.state.smsValidaFecha}</b></div>
                         </div>
 
@@ -1930,6 +1973,31 @@ class MetradosDiarios extends Component {
             </form>
           </Modal>
           {/* //MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
+
+          {/* MODAL COMENTARIOS */}
+          <Modal isOpen={this.state.modalComentarios} fade={false} toggle={this.modalComentarios} size="sm">
+            <ModalHeader toggle={this.modalComentarios}>
+              <div className="d-flex">
+                <img src={LogoSigobras} width="30px" alt="logo sigobras"
+                  style={{
+                    height: "22px",
+                    top: "1px",
+                    position: "inherit"
+                  }} />
+                <div style={{
+                  whiteSpace: "nowrap",
+                  width: "340px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  marginLeft: "4px"
+                }}>
+                  {this.state.PartidaSeleccionada}
+                </div>
+              </div>
+            </ModalHeader>
+            <Comentarios />
+          </Modal>
+          {/* //MODAL COMENTARIOS */}
         </div>
     );
   }
