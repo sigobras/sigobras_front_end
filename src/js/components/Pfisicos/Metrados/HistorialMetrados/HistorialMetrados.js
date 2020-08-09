@@ -34,18 +34,6 @@ class HistorialMetrados extends Component {
 
             totalResumenComponenteLeyenda: {}
         };
-        this.TabMeses = this.TabMeses.bind(this);
-        this.SeleccionaAnio = this.SeleccionaAnio.bind(this);
-        this.TabComponentes = this.TabComponentes.bind(this)
-        this.collapseFechas = this.collapseFechas.bind(this);
-
-        this.MesesRequest = this.MesesRequest.bind(this)
-        this.ResumenRequest = this.ResumenRequest.bind(this)
-        this.reqAnual = this.reqAnual.bind(this)
-        this.ComponentesRequest = this.ComponentesRequest.bind(this)
-        this.chartValDiaRequest = this.chartValDiaRequest.bind(this)
-        this.FechaAvancePartidas = this.FechaAvancePartidas.bind(this)
-
     }
 
     componentDidMount() {
@@ -81,7 +69,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    SeleccionaAnio(e) {
+    SeleccionaAnio=(e)=> {
         // console.log("año ", e.target.value)
         this.setState({
             inputAnio: e.target.value
@@ -90,7 +78,7 @@ class HistorialMetrados extends Component {
         this.MesesRequest(e.target.value)
     }
 
-    TabMeses(tab, fecha) {
+    TabMeses=(tab, fecha)=> {
         // console.log("api de algo " , tab, "inputAnio ", this.state.inputAnio )
         if (this.state.activeTabMes !== tab) {
             this.setState({
@@ -116,7 +104,7 @@ class HistorialMetrados extends Component {
 
     }
 
-    TabComponentes(tab, idComp, nombreComp, solesTotal, TotalPorcentaje) {
+    TabComponentes=(tab, idComp, nombreComp, solesTotal, TotalPorcentaje)=> {
         // console.log("idComp",idComp)
 
         if (this.state.activeTabComp !== tab) {
@@ -145,7 +133,7 @@ class HistorialMetrados extends Component {
         }
     }
 
-    collapseFechas(e, fecha) {
+    collapseFechas=(e, fecha)=> {
         let event = Number(e);
         if (event !== this.state.collapseDate) {
             this.setState({ collapseDate: event });
@@ -172,7 +160,7 @@ class HistorialMetrados extends Component {
     }
     //------------------------------ peticiones tipo http con axios ---------------------------------------------------
 
-    MesesRequest(anio) {
+    MesesRequest=(anio) =>{
 
         // console.log("anio que llega ", anio)
         //   llamamos el api de meses5
@@ -202,7 +190,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    ResumenRequest(ultimafecha) {
+    ResumenRequest=(ultimafecha)=> {
         console.log("fecha", ultimafecha)
         this.setState({ totalResumenComponenteLeyenda: {}, DataResumenApi: [] })
         axios.post(`${UrlServer}/getHistorialResumen`, {
@@ -222,7 +210,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    reqAnual(anio) {
+    reqAnual=(anio)=> {
 
         axios.post(`${UrlServer}/getHistorialAnyosResumen`, {
             id_ficha: sessionStorage.getItem('idobra'),
@@ -240,7 +228,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    ComponentesRequest(fecha) {
+    ComponentesRequest=(fecha) =>{
         // console.log("fecha de datos ", fecha)
         axios.post(`${UrlServer}/getHistorialComponentes`, {
             id_ficha: sessionStorage.getItem('idobra'),
@@ -258,7 +246,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    chartValDiaRequest(idComp, Fecha) {
+    chartValDiaRequest=(idComp, Fecha)=> {
 
         axios.post(`${UrlServer}/getHistorialComponenteChart`, {
             id_componente: idComp,
@@ -285,7 +273,7 @@ class HistorialMetrados extends Component {
 
     }
 
-    FechaAvancePartidas(fecha, idComp) {
+    FechaAvancePartidas=(fecha, idComp) =>{
         // console.log("partidas fecha>>>>", fecha, "id componente ", idComp);
 
         axios.post(`${UrlServer}/getHistorialFechas`, {
@@ -312,7 +300,7 @@ class HistorialMetrados extends Component {
 
     }
 
-    ObtieneTotalesLeyenda(data) {
+    ObtieneTotalesLeyenda=(data)=> {
         // console.log(data)
         var total = data.leyenda.reduce((anterior, actual) => {
             anterior.presupuesto = anterior.presupuesto + ConvertFormatStringNumber(actual.presupuesto)
