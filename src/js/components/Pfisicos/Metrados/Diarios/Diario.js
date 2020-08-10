@@ -20,12 +20,10 @@ class MDdiario extends Component {
         Actividades:"/getActividadesPNuevas"
       },
     }
-
-    this.CollapseCard = this.CollapseCard.bind(this)
   }
 
 
-  CollapseCard(valor){
+  CollapseCard=(valor)=>{
     let event = valor
     this.setState({ collapse: this.state.collapse === Number(event) ? 121 : Number(event) });
   }

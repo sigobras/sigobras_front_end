@@ -11,10 +11,10 @@
   "author": "ANGERMAN",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.4.5",
+    "@babel/core": "^7.11.1",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.3.1",
     "css-loader": "^2.1.1",
@@ -29,6 +29,7 @@
     "webpack-dev-server": "^3.4.1"
   },
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/runtime": "^7.4.5",
     "axios": "^0.18.0",
     "highcharts": "^7.1.1",
