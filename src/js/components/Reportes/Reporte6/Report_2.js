@@ -392,7 +392,7 @@ class Report_2 extends Component {
                   margin: [2, 15, 0, 0],
                 },
                 {
-                  text: 'PRESUPUESTO PROGRAMADO',
+                  text: 'PRESUPUESTO DEL EXPEDIENTE APROBADO',
                   style: "tableHeader",
                   alignment: "center",
                   rowSpan: 3,
@@ -544,7 +544,7 @@ class Report_2 extends Component {
   
                 },
                 {
-                  text: 'PRESUPUESTO PROGRAMADO',
+                  text: 'PRESUPUESTO DEL EXPEDIENTE APROBADO',
                   style: "tableHeader",
                   alignment: "center",
                   colSpan: 3,
