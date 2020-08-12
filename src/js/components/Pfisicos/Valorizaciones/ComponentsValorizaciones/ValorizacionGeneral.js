@@ -10,6 +10,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 import { FaEdit, FaSave } from "react-icons/fa";
 import { AiOutlineFileAdd } from "react-icons/ai";
 
+
 class ValorizacionGeneral extends Component {
     constructor(props) {
         super(props);
@@ -827,9 +828,10 @@ class ValorizacionGeneral extends Component {
                                                                     <td className="bg-mm">{partidas.metrado_actual}</td>
                                                                     <td className="bg-mm">{partidas.valor_actual}</td>
                                                                     <td className="bg-mm">{partidas.porcentaje_actual}</td>
-
+{/* SOLUCIONAR URGENTE!!!!!!!!!!!!!!!!!! SOLUCIÓN TEMPORAL porcentaje total */}
                                                                     <td>{partidas.metrado_total}</td>
                                                                     <td>{partidas.valor_total}</td>
+                                                                     
                                                                     <td>{partidas.porcentaje_total}</td>
 
                                                                     <td>

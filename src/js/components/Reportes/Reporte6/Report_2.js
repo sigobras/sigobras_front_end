@@ -1539,7 +1539,7 @@ class Report_2 extends Component {
           fillColor: '#8baedb',
         },
         tablaValorizacion: {
-          fontSize: 5.5,
+          fontSize: 5,
           bold: false,
           color: '#000000',
         },
@@ -1573,12 +1573,12 @@ class Report_2 extends Component {
         },
         TableValInforme: {
           bold: true,
-          fontSize: 5.5,
+          fontSize: 5,
           color: '#000000',
           fillColor: '#c5d5ea',
         },
         tablaValorizacionActual: {
-          fontSize: 5.5,
+          fontSize: 5,
           bold: false,
           color: '#000000',
           fillColor: '#c5d5ea',
