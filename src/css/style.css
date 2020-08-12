@@ -486,8 +486,44 @@ iframe::-webkit-scrollbar-thumb {
   transform: rotate(288deg) translateX(18px);
 }
 
+/* CIRCULO CON COLERES PARA SELECCIONAR EL FILTRADO POR COLOR  */
+.circleColorFilter {
+  position: absolute;
+  left: calc(167% - 0px);
+  top: calc(167% - 0px);
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+}
 
-/* CIRCULO GIRATORIO CON PALETA DE COLORES EN PARTIDAS PARA ELEGIR LA ICONOS  ===========================ZZZZZZZZZ*/
+.circleColorFilter:nth-child(1) {
+  transform: translateX(18px);
+}
+
+.circleColorFilter:nth-child(2) {
+  transform: rotate(72deg) translateX(18px);
+}
+
+.circleColorFilter:nth-child(3) {
+  transform: rotate(144deg) translateX(18px);
+}
+
+.circleColorFilter:nth-child(4) {
+  transform: rotate(216deg) translateX(18px);
+}
+
+.circleColorFilter:nth-child(5) {
+  transform: rotate(288deg) translateX(18px);
+}
+.circleColorFilter:nth-child(6) {
+  transform: rotate(288deg) translateX(0px);
+  color: #c5c5c5;
+  top: 21px;
+  left: 20px;
+}
+
+/* CIRCULO GIRATORIO CON PALETA DE COLORES EN PARTIDAS PARA ELEGIR LA ICONOS  ===========================*/
 .circleIcono {
   position: absolute;
   left: calc(50% - 8px);
@@ -520,7 +556,50 @@ iframe::-webkit-scrollbar-thumb {
 }
 
 .circleIcono:nth-child(6) {
-  transform: rotate(300deg) translateX(18px);
+  transform: rotate(302deg) translateX(18px);
+}
+
+/* CIRCULO GIRATORIO CON PALETA DE COLORES EN PARTIDAS PARA ELEGIR LA ICONOS  ===========================*/
+.circleIconoFiltrar {
+  position: absolute;
+  left: calc(50% - 8px);
+  top: calc(38% - 0px);
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+
+.circleIconoFiltrar:nth-child(1) {
+  /* transform: rotate(0deg) translateX(18px); */
+  transform: translateX(20px);
+}
+
+.circleIconoFiltrar:nth-child(2) {
+  transform: rotate(60deg) translateX(20px);
+}
+
+.circleIconoFiltrar:nth-child(3) {
+  transform: rotate(120deg) translateX(20px);
+}
+
+.circleIconoFiltrar:nth-child(4) {
+  transform: rotate(180deg) translateX(20px);
+}
+
+.circleIconoFiltrar:nth-child(5) {
+  transform: rotate(240deg) translateX(20px);
+}
+
+.circleIconoFiltrar:nth-child(6) {
+  transform: rotate(300deg) translateX(20px);
+}
+.circleIconoFiltrar:nth-child(7) {
+  transform: rotate(297deg) translateX(0px);
+  color: crimson;
+  top: 20px;
+  left: 21px;
 }
 
 /* ubicacion del span  */
@@ -530,13 +609,12 @@ iframe::-webkit-scrollbar-thumb {
   -webkit-transform: rotate(20deg);
   transform: rotate(118deg);
   position: absolute;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 .spanUbi:hover {
   color: #ffc107;
   font-size: 1.2rem;
-
 }
 
 /* chat partidas  */
@@ -696,7 +774,6 @@ table.table thead th {
 /* comentarios de partidas metrados diarios */
 
 .comentario {
-  /* float: right; */
   width: 350px;
   padding: 10px;
   border-radius: 6px;
