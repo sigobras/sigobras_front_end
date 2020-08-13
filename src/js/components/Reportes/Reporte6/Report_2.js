@@ -742,7 +742,7 @@ class Report_2 extends Component {
   
             },
             {
-              text: DataHist[i].partidas[j].valor_total,
+              text: DataHist[i].partidas[j].precio_parcial,
               style: "tablaValorizacion",
               border: [false, false, false, true],
   
