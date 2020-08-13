@@ -1,136 +1,105 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
-import { FaPlus, FaCheck, FaSuperpowers } from 'react-icons/fa';
-import { MdFlashOn, MdReportProblem, MdClose, MdPerson, MdSearch, MdComment, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdInsertPhoto, MdAddAPhoto } from 'react-icons/md';
+import { FaPlus, FaCheck, FaSuperpowers, FaFilter, FaCircle } from 'react-icons/fa';
+import { MdFlashOn, MdClose, MdPerson, MdSearch, MdComment, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from "react-icons/ti";
 
-import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Pagination, PaginationItem, PaginationLink, Table } from 'reactstrap';
+import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Table } from 'reactstrap';
 import classnames from 'classnames';
 
 import { toast } from "react-toastify";
+import * as Icos from './index';
 
 import LogoSigobras from './../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
 import Comentarios from './Comentarios';
 
+
 class MetradosDiarios extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    DataComponentes: [],
+    DataPartidas: [],
+    DataActividades: [],
+    DataMayorMetrado: [],
+    DataPrioridadesApi: [],
+    DataIconosCategoriaApi: [],
+    activeTab: '0',
+    modal: false,
+    modalMm: false,
+    nombreComponente: '',
+    CargandoComp: true,
+    // creo que son data de imputs
+    ValorMetrado: '',
+    DescripcionMetrado: '',
+    ObservacionMetrado: '',
+    IdMetradoActividad: '',
+    debounceTimeout: 500,
 
-    this.state = {
-      DataComponentes: [],
-      DataPartidas: [],
-      DataActividades: [],
-      DataMayorMetrado: [],
-      DataPrioridadesApi: [],
-      DataIconosCategoriaApi: [],
-      activeTab: '0',
-      modal: false,
-      modalMm: false,
-      nombreComponente: '',
-      CargandoComp: true,
-      // creo que son data de imputs
-      ValorMetrado: '',
-      DescripcionMetrado: '',
-      ObservacionMetrado: '',
-      IdMetradoActividad: '',
-      debounceTimeout: 500,
+    // datos para capturar en el modal
+    id_actividad: '',
+    nombre_actividad: '',
+    unidad_medida: '',
+    costo_unitario: '',
+    actividad_metrados_saldo: '',
+    indexComp: '',
+    actividad_porcentaje: '',
+    actividad_avance_metrado: '',
+    metrado_actividad: '',
+    viewIndex: '',
+    parcial_actividad: '',
+    descripcion: '',
+    metrado: '',
+    porcentaje_negatividad: 0,
+    rendimiento: null,
+    // registrar inputs de mayores metrados
+    nombre: '',
+    veces: '',
+    largo: '',
+    ancho: '',
+    alto: '',
+    parcialMM: 0,
+    tipo: '',
+    partidas_id_partida: '',
 
-      // datos para capturar en el modal
-      id_actividad: '',
-      nombre_actividad: '',
-      unidad_medida: '',
-      costo_unitario: '',
-      actividad_metrados_saldo: '',
-      indexComp: '',
-      actividad_porcentaje: '',
-      actividad_avance_metrado: '',
-      metrado_actividad: '',
-      viewIndex: '',
-      parcial_actividad: '',
-      descripcion: '',
-      metrado: '',
-      porcentaje_negatividad: 0,
-      rendimiento: null,
-      // registrar inputs de mayores metrados
-      nombre: '',
-      veces: '',
-      largo: '',
-      ancho: '',
-      alto: '',
-      parcialMM: 0,
-      tipo: '',
-      partidas_id_partida: '',
+    // validacion de al momento de metrar
+    smsValidaMetrado: '',
+    parcial: '',
+    // cargar imagenes
+    file: null,
+    UrlImagen: "",
+    SMSinputTypeImg: false,
 
-      // validacion de al momento de metrar
-      smsValidaMetrado: '',
-      parcial: '',
-      // cargar imagenes
-      file: null,
-      UrlImagen: "",
-      SMSinputTypeImg: false,
+    // funciones de nueva libreria
+    dropdownOpen: false,
+    collapse: 2599,
+    id_componente: '',
+    indexPartida: 0,
+    OpcionMostrarMM: '',
+    mostrarIconos: null,
+    mostrarColores: null,
+    // filtrador
+    BuscaPartida: null,
+    FilterSelected: "% Avance",
 
-      // funciones de nueva libreria
-      dropdownOpen: false,
-      collapse: 2599,
-      id_componente: '',
-      indexPartida: 0,
-      OpcionMostrarMM: '',
-      mostrarIconos: null,
-      mostrarColores: null,
-      // filtrador
-      BuscaPartida: null,
-      FilterSelected: "% Avance",
+    // captura de la fecha
+    fecha_actualizacion: '',
+    // demos  iconos-----------------
+    iconos: [<MdMonetizationOn />, <MdVisibility />, <MdWatch />, <TiWarning />, <MdLibraryBooks />, <FaSuperpowers />],
 
-      // captura de la fecha
-      fecha_actualizacion: '',
-      // demos  iconos-----------------
-      iconos: [<MdMonetizationOn />, <MdVisibility />, <MdWatch />, <TiWarning />, <MdLibraryBooks />, <FaSuperpowers />],
+    dataFiltrada: [],
 
-      dataFiltrada: [],
+    modalImgPartida: false,
+    // ENVIO DE FORMULARIO DE IMAGEN DINAMICO
+    Id_Partida_O_Actividad: null,
+    EnvioImgObsApiRuta: null,
 
-      modalImgPartida: false,
-      // ENVIO DE FORMULARIO DE IMAGEN DINAMICO
-      Id_Partida_O_Actividad: null,
-      EnvioImgObsApiRuta: null,
-
-      // DATA PARA PAGINACION 
-      PaginaActual: 1,
-      CantidadRows: 40,
-      modalComentarios: false,
-      PartidaSeleccionada: null
-    }
-
-    this.Tabs = this.Tabs.bind(this)
-    this.CapturarID = this.CapturarID.bind(this)
-    this.modalMetrar = this.modalMetrar.bind(this)
-    this.modalMayorMetrado = this.modalMayorMetrado.bind(this)
-    this.onChangeImgMetrado = this.onChangeImgMetrado.bind(this)
-
-    this.EnviarMetrado_EJECUCION = this.EnviarMetrado_EJECUCION.bind(this)
-    this.EnviarMetrado_CORTE = this.EnviarMetrado_CORTE.bind(this)
-    this.EnviarMetrado_ACTUALIZACION = this.EnviarMetrado_ACTUALIZACION.bind(this)
-
-    this.capturaidMM = this.capturaidMM.bind(this)
-    this.EnviarMayorMetrado = this.EnviarMayorMetrado.bind(this)
-
-    this.Filtrador = this.Filtrador.bind(this)
-    this.toggleDropDown = this.toggleDropDown.bind(this);
-    this.CollapseItem = this.CollapseItem.bind(this);
-    this.Prioridad = this.Prioridad.bind(this);
-    this.UpdatePrioridadIcono = this.UpdatePrioridadIcono.bind(this);
-    this.UpdatePrioridadColor = this.UpdatePrioridadColor.bind(this);
-    this.clearImg = this.clearImg.bind(this);
-    this.modalImgPartida = this.modalImgPartida.bind(this);
-    this.capturaDatosCrearImgPartida = this.capturaDatosCrearImgPartida.bind(this);
-    this.EnviaImgPartida = this.EnviaImgPartida.bind(this);
-
-    // metrados diarios
-    this.PaginaActual = this.PaginaActual.bind(this);
-    this.SelectCantidadRows = this.SelectCantidadRows.bind(this);
-    this.modalComentarios = this.modalComentarios.bind(this)
+    // DATA PARA PAGINACION 
+    PaginaActual: 1,
+    CantidadRows: 40,
+    modalComentarios: false,
+    PartidaSeleccionada: null
   }
 
   componentDidMount() {
@@ -146,6 +115,10 @@ class MetradosDiarios extends Component {
           var partidas = res.data[0].partidas
           // seteando la data que se me envia del api- agrega un icono
           for (let i = 0; i < partidas.length; i++) {
+            var iconoA = partidas[i].iconocategoria_nombre.split('<').join("")
+          var iconoB = iconoA.split('/>').join("")
+
+          Object.assign(partidas[i], { icono: iconoB })
             // console.log("partida",  partidas[i].iconocategoria_nombre)
             if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
               partidas[i].iconocategoria_nombre = <FaSuperpowers />
@@ -174,7 +147,7 @@ class MetradosDiarios extends Component {
           })
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
       })
@@ -205,6 +178,10 @@ class MetradosDiarios extends Component {
         var CategoriasIconos = res.data
 
         CategoriasIconos.forEach(ico => {
+          var iconoA = ico.nombre.split('<').join("")
+          var iconoB = iconoA.split('/>').join("")
+
+          Object.assign(ico, { icono: iconoB })
           if (ico.nombre === "<FaSuperpowers/>") {
             ico.nombre = <FaSuperpowers />
           } else if (ico.nombre === "<MdLibraryBooks/>") {
@@ -217,8 +194,8 @@ class MetradosDiarios extends Component {
             ico.nombre = <MdVisibility />
           } else if (ico.nombre === "<MdMonetizationOn/>") {
             ico.nombre = <MdMonetizationOn />
-          } else {
-            ico.nombre = null
+            // } else {
+            //   ico.nombre = null
           }
         });
 
@@ -235,7 +212,7 @@ class MetradosDiarios extends Component {
 
   }
 
-  Tabs(tab, id_componente, nombComp) {
+  Tabs = (tab, id_componente, nombComp) => {
 
     if (this.state.activeTab !== tab) {
       this.setState({
@@ -255,12 +232,16 @@ class MetradosDiarios extends Component {
       id_componente: id_componente
     })
       .then((res) => {
-        // console.log('getPartidas>>', res.data);
+        console.log('getPartidas>>', res.data);
 
         var partidas = res.data
         // seteando la data que se me envia del api- agrega un icono
         for (let i = 0; i < partidas.length; i++) {
           // console.log("partida",  partidas[i].iconocategoria_nombre)
+          var iconoA = partidas[i].iconocategoria_nombre.split('<').join("")
+          var iconoB = iconoA.split('/>').join("")
+
+          Object.assign(partidas[i], { icono: iconoB })
           if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
             partidas[i].iconocategoria_nombre = <FaSuperpowers />
           } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
@@ -283,13 +264,13 @@ class MetradosDiarios extends Component {
           DataPartidas: partidas,
         })
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
       })
   }
 
-  CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo, rendimiento) {
+  CapturarID = (id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo, rendimiento) => {
 
     // console.log('porcentaje_negatividad', porcentaje_negativo)
 
@@ -320,19 +301,19 @@ class MetradosDiarios extends Component {
 
   }
 
-  modalMetrar() {
+  modalMetrar = () => {
     this.setState({
       modal: !this.state.modal
     });
   }
 
-  modalMayorMetrado() {
+  modalMayorMetrado = () => {
     this.setState({
       modalMm: !this.state.modalMm
     });
   }
 
-  onChangeImgMetrado(e) {
+  onChangeImgMetrado = (e) => {
 
     var inputValueImg = e.target.files[0]
 
@@ -357,11 +338,11 @@ class MetradosDiarios extends Component {
   }
 
   // FUNCIONES DE ESTADOS DE OBRA  =====================================================
-  EnviarMetrado_EJECUCION(e) {
+  EnviarMetrado_EJECUCION = (e) => {
 
     e.preventDefault()
 
-    var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida } = this.state
+    var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, indexPartida } = this.state
     var DataModificadoPartidas = DataPartidas
     var DataModificadoActividades = DataActividades
     actividad_metrados_saldo = ConvertFormatStringNumber(actividad_metrados_saldo)
@@ -441,7 +422,7 @@ class MetradosDiarios extends Component {
             })
             toast.success('Exito! Metrado ingresado');
           })
-          .catch((errors) => {
+          .catch(() => {
             toast.error('hubo errores al ingresar el metrado');
             // console.error('algo salio mal al consultar al servidor ', error)
           })
@@ -449,11 +430,11 @@ class MetradosDiarios extends Component {
     }
   }
 
-  EnviarMetrado_CORTE(e) {
+  EnviarMetrado_CORTE = (e) => {
 
     e.preventDefault()
 
-    var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida } = this.state
+    var { id_actividad, DescripcionMetrado, ObservacionMetrado, DataPartidas, DataActividades, indexPartida } = this.state
     var DataModificadoPartidas = DataPartidas
     var DataModificadoActividades = DataActividades
     // actividad_metrados_saldo =  ConvertFormatStringNumber(actividad_metrados_saldo)
@@ -536,7 +517,7 @@ class MetradosDiarios extends Component {
           })
           toast.success('Exito! Metrado ingresado');
         })
-        .catch((errors) => {
+        .catch(() => {
           toast.error('hubo errores al ingresar el metrado');
           // console.error('algo salio mal al consultar al servidor ', error)
         })
@@ -544,11 +525,11 @@ class MetradosDiarios extends Component {
     }
   }
 
-  EnviarMetrado_ACTUALIZACION(e) {
+  EnviarMetrado_ACTUALIZACION = (e) => {
 
     e.preventDefault()
 
-    var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, file, indexPartida, fecha_actualizacion } = this.state
+    var { id_actividad, DescripcionMetrado, ObservacionMetrado, ValorMetrado, DataPartidas, DataActividades, actividad_metrados_saldo, indexPartida, fecha_actualizacion } = this.state
     var DataModificadoPartidas = DataPartidas
     var DataModificadoActividades = DataActividades
     actividad_metrados_saldo = ConvertFormatStringNumber(actividad_metrados_saldo)
@@ -642,7 +623,7 @@ class MetradosDiarios extends Component {
             }
 
           })
-          .catch((errors) => {
+          .catch(() => {
             toast.error('hubo errores al ingresar el metrado');
             // console.error('algo salio mal al consultar al servidor ', error)
           })
@@ -650,7 +631,7 @@ class MetradosDiarios extends Component {
     }
   }
 
-  capturaidMM(partidas_id_partida, indexComp, indexPartida, descripcion) {
+  capturaidMM = (partidas_id_partida, indexComp, indexPartida, descripcion) => {
     this.setState({
       modalMm: !this.state.modalMm,
       partidas_id_partida: partidas_id_partida,
@@ -661,7 +642,7 @@ class MetradosDiarios extends Component {
     })
   }
 
-  EnviarMayorMetrado(e) {
+  EnviarMayorMetrado = (e) => {
     e.preventDefault()
 
     var { DataPartidas, DataActividades, nombre, veces, largo, ancho, alto, parcialMM, partidas_id_partida, indexPartida, OpcionMostrarMM } = this.state
@@ -740,7 +721,7 @@ class MetradosDiarios extends Component {
   }
 
   // mas funciones para metrados
-  CollapseItem(valor, id_partida) {
+  CollapseItem = (valor, id_partida) => {
     console.log("demo entre")
     if (valor !== -1 && id_partida !== -1) {
       let event = valor
@@ -765,7 +746,7 @@ class MetradosDiarios extends Component {
               DataMayorMetrado: res.data.mayor_metrado
             })
           })
-          .catch((error) => {
+          .catch(() => {
             toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
             // console.error('algo salio mal verifique el',error);
           })
@@ -774,7 +755,7 @@ class MetradosDiarios extends Component {
     }
   }
 
-  Filtrador(e) {
+  Filtrador = (e) => {
     // console.log("datos ", e)
     this.setState({
       PaginaActual: 1
@@ -820,28 +801,36 @@ class MetradosDiarios extends Component {
       // console.log("valorRecibido ",valorRecibido)
 
     } else {
-      this.setState({
-        BuscaPartida: e.target.value,
-      })
+      if (e.target !== undefined) {
+        this.setState({
+          BuscaPartida: e.target.value,
+        })
+      }
+      else {
+        // console.log("eee", e);
+        this.setState({
+          BuscaPartida: e
+        })
+      }
       // console.log("valorRecibido ",e.target.value)
 
     }
   }
 
-  toggleDropDown() {
+  toggleDropDown = () => {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen
     });
   }
 
-  Prioridad(i) {
-    console.log("cambia", i)
+  Prioridad = (i) => {
+    console.log("cambia >>", i)
     this.setState({
       mostrarIconos: this.state.mostrarIconos === i ? -1 : i
     })
   }
 
-  UpdatePrioridadIcono(idPartida, id_icono, index) {
+  UpdatePrioridadIcono = (idPartida, id_icono, index) => {
     // console.log("index", index);
 
 
@@ -888,7 +877,7 @@ class MetradosDiarios extends Component {
       })
   }
 
-  UpdatePrioridadColor(idPartida, prioridad, index) {
+  UpdatePrioridadColor = (idPartida, prioridad, index) => {
 
     var partidas = this.state.DataPartidas
     // console.log("partidas", idPartida, prioridad, index);
@@ -913,7 +902,7 @@ class MetradosDiarios extends Component {
       })
   }
 
-  clearImg() {
+  clearImg = () => {
     this.setState({
       UrlImagen: "",
       // limpia valores por si los tiene
@@ -922,13 +911,13 @@ class MetradosDiarios extends Component {
     document.getElementById("myImage").value = "";
   }
 
-  modalImgPartida() {
+  modalImgPartida = () => {
     this.setState(prevState => ({
       modalImgPartida: !prevState.modalImgPartida,
     }));
   }
 
-  capturaDatosCrearImgPartida(id_partida, Ruta, variable) {
+  capturaDatosCrearImgPartida = (id_partida, Ruta, variable) => {
     console.log("id_partida", id_partida, "Ruta", Ruta, "variable", variable);
 
     this.setState({
@@ -942,7 +931,7 @@ class MetradosDiarios extends Component {
     })
   }
 
-  EnviaImgPartida(e) {
+  EnviaImgPartida = (e) => {
     e.preventDefault();
     var { partidas_id_partida, file, ObservacionMetrado, Id_Partida_O_Actividad, EnvioImgObsApiRuta } = this.state
 
@@ -986,7 +975,7 @@ class MetradosDiarios extends Component {
     }
   }
 
-  PaginaActual(event) {
+  PaginaActual = (event) => {
     // console.log("PaginaActual ", Number(event))
     this.setState({
       PaginaActual: Number(event),
@@ -994,12 +983,12 @@ class MetradosDiarios extends Component {
     });
   }
 
-  SelectCantidadRows(e) {
+  SelectCantidadRows = (e) => {
     // console.log("SelectCantidadRows ", e.target.value)
     this.setState({ CantidadRows: Number(e.target.value) })
   }
 
-  modalComentarios() {
+  modalComentarios = () => {
     this.setState(prevState => ({
       modalComentarios: !prevState.modalComentarios
     }));
@@ -1009,7 +998,7 @@ class MetradosDiarios extends Component {
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
-      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, mostrarColores, file, CargandoComp } = this.state
+      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp } = this.state
     var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado
 
     var DatosPartidasFiltrado = DataPartidas
@@ -1029,6 +1018,8 @@ class MetradosDiarios extends Component {
           } else if (BuscaPartida === 99 && filtrado.tipo !== "titulo" && filtrado.porcentaje !== 0) {
             return (filtrado.porcentaje <= 99);
 
+          } else if (BuscaPartida === 100 && filtrado.tipo !== "titulo" && filtrado.porcentaje !== 0) {
+            return (filtrado.porcentaje === 100);
 
           } else if (BuscaPartida === 104 && filtrado.tipo !== "titulo") {
             return (filtrado.mayorMetrado === 1);
@@ -1048,17 +1039,28 @@ class MetradosDiarios extends Component {
 
           } else if (BuscaPartida === 5 && filtrado.tipo !== "titulo") {
             return (filtrado.prioridad_color === "#ffffff");
-
-          } else {
-            return filtrado.porcentaje === BuscaPartida
           }
+
+          // filtro de prioridades por icono
+          else if (filtrado.icono === BuscaPartida){
+            // console.log(">>", filtrado.icono , BuscaPartida);
+            return filtrado.icono === BuscaPartida
+          } 
+
+
+
+          // } else {
+          //   console.log(">>>> else ", filtrado.porcentaje , BuscaPartida);
+
+          //   return filtrado.porcentaje === BuscaPartida
+          // }
 
         });
       } else {
-
         BuscaPartida = this.state.BuscaPartida.trim().toLowerCase();
         DatosPartidasFiltrado = DatosPartidasFiltrado.filter((filtrado) => {
-          return filtrado.descripcion.toLowerCase().match(BuscaPartida);
+          // console.log(">> demos", BuscaPartida.toLowerCase());
+          return filtrado.descripcion.toLowerCase().match(BuscaPartida) || filtrado.icono.toLowerCase() === BuscaPartida;
         });
       }
 
@@ -1138,23 +1140,73 @@ class MetradosDiarios extends Component {
                       <thead className="resplandPartida">
                         <tr>
                           <th style={{ width: "39px" }}>
-                            <div title="Busqueda por prioridad" className="prioridad" onClick={() => this.Prioridad("filtro")}>
-                              <FaSuperpowers size={15} />
-                            </div>
+                            <Button id="FiltrarPor" type="button" className="py-0 px-1">
+                              <FaFilter />
+                            </Button>
+                            <UncontrolledPopover trigger="click" placement="bottom" target="FiltrarPor">
+                              <div title="Busqueda por prioridad - color" className="prioridad" onClick={() => this.Prioridad("filtro")}>
+                                <FaCircle size={17} />
+                              </div>
+                              <div title="Busqueda por prioridad - ícono" className="prioridad" onClick={() => this.Prioridad("filtroIcono")}>
+                                <FaSuperpowers size={17} />
+                              </div>
+                              {
+                                //selecciona circulo para filtrar por color
+                                this.state.mostrarIconos === "filtro" ?
+                                  <div
+                                    style={{
+                                      background: 'radial-gradient(black, #000000a6)',
+                                      width: '60px',
+                                      height: '60px',
+                                      borderRadius: '50%',
+                                      top: '0px',
+                                      position: 'absolute',
+                                      boxShadow: '1px 1px 6px 4px #545454',
+                                      left: '-20px'
+                                    }}>
+                                    <div className="menuCirculo" style={{ zIndex: "20" }}>
+                                      {
+                                        DataPrioridadesApi.map((priori, IPriori) =>
+                                          <div className="circleColorFilter" style={{ background: priori.color }} onClick={() => this.Filtrador(priori.valor)} key={IPriori} />
+                                        )
+                                      }
+                                      <div className="circleColorFilter" onClick={() => this.Prioridad("filtro")}>
+                                        <FaCircle size={15} />
+                                      </div>
+                                    </div>
+                                  </div>
 
-                            {
-                              //selecciona circulo para filtrar
-                              this.state.mostrarIconos === "filtro" ?
-                                <div className="menuCirculo">
-                                  {
-                                    DataPrioridadesApi.map((priori, IPriori) =>
-                                      <div className="circleColor" style={{ background: priori.color }} onClick={() => this.Filtrador(priori.valor)} key={IPriori} />
-                                    )
-                                  }
-                                </div>
-                                : ""
-                            }
+                                  : null
+                              }
 
+                              {// iconos circulares para hacer el filtro segun seleccion de un icono
+                                this.state.mostrarIconos === "filtroIcono" ?
+                                  <div
+                                    style={{
+                                      background: 'radial-gradient(black, #000000a6)',
+                                      width: '60px',
+                                      height: '60px',
+                                      borderRadius: '50%',
+                                      top: '0px',
+                                      position: 'absolute',
+                                      boxShadow: '1px 1px 6px 4px #545454',
+                                      left: '-20px'
+                                    }}>
+                                    {
+                                      DataIconosCategoriaApi.map((Icono, IIcono) =>
+                                        <div className="circleIconoFiltrar" onClick={() => this.Filtrador(Icono.icono)} key={IIcono}>
+                                          <span className="spanUbi"> {Icono.nombre} </span>
+                                        </div>
+                                      )}
+                                    <div className="circleIconoFiltrar" onClick={() => this.Prioridad("filtroIcono")}>
+                                      <span className="spanUbi">  <FaSuperpowers size={17} /> </span>
+                                    </div>
+                                  </div>
+
+                                  : null
+                              }
+
+                            </UncontrolledPopover>
                           </th>
                           <th>ITEM</th>
                           <th>DESCRIPCIÓN</th>
@@ -1183,7 +1235,9 @@ class MetradosDiarios extends Component {
                                 {
                                   metrados.tipo === "titulo" ? null :
                                     <div title="prioridad" className="prioridad" style={{ color: metrados.prioridad_color }} onClick={() => this.Prioridad(i)}>
-                                      <span className="h6"> {metrados.iconocategoria_nombre}</span>
+                                      <span className="h6">{metrados.iconocategoria_nombre}</span>
+                                      {/* {`${Icos[metrados.icono]}`}
+                                      {console.log("icon", Icos)} */}
                                     </div>
                                 }
                                 {/* map de de colores prioridades */}
@@ -1429,11 +1483,11 @@ class MetradosDiarios extends Component {
                                                             sessionStorage.getItem("estadoObra") === "Corte"
                                                               ?
                                                               <div>
-                                                                <span className="text-primary prioridad aprecerIcon" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad, metrados.rendimiento)} >
+                                                                <span className="text-primary prioridad aprecerIcon" onClick={() => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad, metrados.rendimiento)} >
                                                                   <FaPlus size={15} />
                                                                 </span>
                                                                 {" "}
-                                                                <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                                <span className="prioridad" onClick={() => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
                                                                   <MdAddAPhoto size={15} />
                                                                 </span>
                                                               </div>
@@ -1441,17 +1495,17 @@ class MetradosDiarios extends Component {
                                                               <div>
                                                                 <FaCheck className="text-success" size={15} />
                                                                 {" "}
-                                                                <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                                <span className="prioridad" onClick={() => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
                                                                   <MdAddAPhoto size={15} />
                                                                 </span>
                                                               </div>
                                                             :
                                                             <div>
-                                                              <span className="text-primary prioridad" onClick={(e) => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad, metrados.rendimiento)} >
+                                                              <span className="text-primary prioridad" onClick={() => this.CapturarID(actividades.id_actividad, actividades.nombre_actividad, actividades.unidad_medida, actividades.costo_unitario, actividades.actividad_metrados_saldo, this.state.id_componente, actividades.actividad_porcentaje, actividades.actividad_avance_metrado, actividades.metrado_actividad, indexA, actividades.parcial_actividad, metrados.descripcion, metrados.metrado, metrados.parcial, metrados.porcentaje_negatividad, metrados.rendimiento)} >
                                                                 <FaPlus size={15} />
                                                               </span>
                                                               {" "}
-                                                              <span className="prioridad" onClick={(e) => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
+                                                              <span className="prioridad" onClick={() => this.capturaDatosCrearImgPartida(actividades.id_actividad, "/avanceActividadImagen", "Actividades_id_actividad")} >
                                                                 <MdAddAPhoto size={15} />
                                                               </span>
                                                             </div>
