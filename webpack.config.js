@@ -48,20 +48,19 @@ module.exports = {
     filename: 'main.js',
     publicPath: '/',
   },
-  devServer: {
+   devServer: {
     host: "0.0.0.0",
     contentBase: path.join(__dirname, "public"),
     port: PORT,
     historyApiFallback: true,
     public: 'www.sigobras.com',
     allowedHosts: [
-    www.sigobras.com,
-    sigobras.com',
-    190.117.94.80',
-    'https://sigobras.com/'
+      'www.sigobras.com',
+      'sigobras.com',
+      '190.117.94.80',
+      'https://sigobras.com/'
+
     ],
-    filename: 'main.js'
-  },
   performance: {
     hints: false,
     maxEntrypointSize: 512000,
