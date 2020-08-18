@@ -119,10 +119,10 @@ class Login extends Component {
                 <PopoverHeader>Contácto</PopoverHeader>
                 <PopoverBody>
                   <p>
-                    <b>Celular N° : </b><br /><span>951396279</span>
+                    <b>Celular N° : </b><br /><span>951 396 279</span>
                   </p>
                   <p>
-                   <b>Email :</b><br /> <span> sigobras.sac@gmail.com</span>
+                   <b>Email :</b><br /> <span> manager@sigobras.com</span>
                   </p>
                   
                 </PopoverBody>
@@ -133,7 +133,7 @@ class Login extends Component {
               <Button id="login" outline color="primary">Ingresar <TiArrowSortedDown /></Button>
 
               <UncontrolledPopover placement="bottom" target="login">
-                <PopoverHeader>Inicie sesión </PopoverHeader>
+                <PopoverHeader>Acceda a SIGOBRAS </PopoverHeader>
                 <PopoverBody>
                   <form onSubmit={this.handleSubmit} autoComplete="off" >
                     <div className="form-group">
@@ -168,11 +168,10 @@ class Login extends Component {
               <label><b>¿QUIENES SOMOS?</b></label>
               <div>
                 <p>
-                  Somos SIGOBRAS, una empresa dedicada al desarrollo de tecnologia para el manejo eficiente de procesos físicos, gerenciales,
-                  financieros y documentarios en obra.
+                  Somos SIGOBRAS, una empresa dedicada al desarrollo de tecnologías para una gestión más óptima de la información de las obras.
                   </p>
                 <p>
-                  La innovación es otro de los ejes centrales de SIGOBRAS.
+                  La innovación y la flexibilidad de interacción con nuestros clientes es un pilar clave para nosotros.
                   </p>
 
               </div>
@@ -182,8 +181,7 @@ class Login extends Component {
             <div className="contentLemas">
               <label><b>MISIÓN</b></label>
               <div>
-                Ayudar a las entidades a gestionar todos sus recursos y evitarles pérdidas económicas en 
-                el proceso constructivo
+                Ayudar a las entidades a gestionar sus recursos y evitarles pérdidas económicas en el proceso constructivo.
               </div>
 
             </div>
@@ -193,7 +191,7 @@ class Login extends Component {
             <div className="contentLemas">
               <label><b>VISIÓN</b></label>
               <div>
-                 Ser la mejor empresa del Perú en desarrollo de software utilizando inteligencia artificial aplicado a obras.
+                 Nos orientaremos a crear un sistema INTELIGENTE utilizando tecnologías de desarrollo de vanguardia.
                   {/* Utilizando y aplicando los más altos estándares de calidad y confidencialidad.                 */}
               </div>
             </div>
