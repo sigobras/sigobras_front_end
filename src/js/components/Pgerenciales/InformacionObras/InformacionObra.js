@@ -5,9 +5,9 @@ import classnames from 'classnames';
 import { FaEarlybirds } from "react-icons/fa";
 // import Usuario from '../../../../../images/usuario.png'
 import "../InformacionObras/infobras.css";
-
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-import { Redondea } from '../../Utils/Funciones'
+import { Redondea} from '../../Utils/Funciones'
+import { color } from 'highcharts';
 
 
 class ModalInformacionObras extends Component {
@@ -17,6 +17,7 @@ class ModalInformacionObras extends Component {
       DataInfoObra: [],
       activeTab: '0',
       infoObras: false
+      
     }
     this.ModalInfoObras = this.ModalInfoObras.bind(this);
     this.tabs = this.tabs.bind(this)
@@ -68,14 +69,17 @@ class ModalInformacionObras extends Component {
       <button className="btn btn-outline-info btn-sm mr-1" title="Personal" onClick={this.ModalInfoObras} ><FaEarlybirds />
         {/* toggle = es para activar y desactivar el modal */}
         <Modal className="modalinfo"  isOpen={this.state.infoObras} fade={false} toggle={this.ModalInfoObras} >
-          <ModalHeader toggle={this.toggleModal}>
+          <ModalHeader className="modalheader1" toggle={this.toggleModal}>
           {DataInfoObra.map((obra, index) =>
-          <div>{obra.codigo}</div>
+          [
+          <div>OBRA: {obra.codigo} / SNIP: {obra.g_snip} / SECTOR: {obra.g_tipo_act} </div>,
+                   ]
+          
           )}
           
           </ModalHeader>
           
-          <ModalBody >
+          <ModalBody className="modalinfo1">
             <Container >
               <Nav tabs>
                 {/* COLOCAR MAS PESTAÑAS */}
@@ -86,7 +90,7 @@ class ModalInformacionObras extends Component {
                       onClick={() => { this.tabs(info.toString()); }}
                     > RESUMEN
                             </NavLink>
-                            
+                                                       
                   </NavItem>
                   
                 )}
@@ -95,34 +99,48 @@ class ModalInformacionObras extends Component {
                 {DataInfoObra.map((obra, index) =>
                   <TabPane tabId={index.toString()} key={index}>
 
+                    {/* <table className="table table-bordered"> */}
                     <table className="modalinfobras table table-bordered">
-                          <thead>
+                          <thead style={{
+                                    color: '#dc3545',
+                                    textAlign: 'center'
+                                    }}>
                             <tr>
-                                <th>FECHA DE INICIO</th>
-                                <th>TIPO DE ACTIVIDAD</th>
-                                <th>CODIGO SNIP</th>
-                                <th>TIEMPO DE EJECUCIÓN</th>
-                                <th>OBRA</th>
-
+                                <th><h5>NOMBRE DE LA OBRA</h5></th>
+                                <th>ACUMULADO</th>
+                                <th>%</th>
+                                <th>SALDO</th>
+                                <th>%</th>
+                                <th>UDM</th>
                             </tr>
 
                           </thead>
                           <tbody>
-                          <tr>
-                          
-                          <td>{obra.fecha_inicial}</td>
-                          <td>{obra.g_tipo_act}</td>
-                          <td>{obra.g_snip}</td>
-                          <td>{obra.tiempo_ejec}</td>
+                          <tr className = "cuerpomodal">
                           <td>{obra.g_meta}</td>
-
+                          <td>{obra.acumulado_hoy}</td>
+                          <td>{obra.porcentaje_acumulado}</td>
+                          <td>{obra.saldo}</td>
+                          <td>{obra.porcentaje_saldo}</td>
+                          <td>{obra.udm}</td>
                           
                           </tr>
                           </tbody>
                           <tfoot>
                           <tr>
-                          PRESUPUESTO
+                          <th></th>
+                          <th></th>
+                          <th>TIEMPO DE EJECUCIÓN</th>
+                          <th>FECHA DE INICIO</th>
+                          <th>PRESUPUESTO CD</th>
+                          <th>PRESUPUESTO TOTAL</th>
                           </tr>
+                          <th></th>
+                          <th></th>
+                          
+                          <td>{obra.tiempo_ejec}</td>
+                          <td >{obra.fecha_inicial}</td>
+                          <td>{obra.presupuesto_total}</td>
                           <td>{Redondea(obra.g_total_presu)}</td>
                           </tfoot>
 
