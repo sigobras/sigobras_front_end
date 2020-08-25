@@ -215,10 +215,30 @@ class Report_3 extends Component {
             {
                 style: 'tableExample',
                 // color: '#ff0707',
-                layout: 'lightHorizontalLines',
+                layout: {
+                    hLineWidth: function (i, node) {
+                      return (i === 0 || i === node.table.body.length) ? 0.1 : 0.1;
+                    },
+                    vLineWidth: function (i, node) {
+                      return (i === 0 || i === node.table.widths.length) ? 0.5 : 0.5;
+                    },
+                    hLineColor: function (i, node) {
+                      return (i === 0 || i === node.table.body.length) ? '#030027' : '#001638';
+                    },
+                    vLineColor: function (i, node) {
+                      return (i === 0 || i === node.table.widths.length) ? '#030027' : '#001638';
+                    },
+                    //hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
+                    //vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
+                    //paddingLeft: function(i, node) { return 4; },
+                    //paddingRight: function(i, node) { return 4; },
+                    //paddingTop: function(i, node) { return 2; },
+                    //paddingBottom: function(i, node) { return 2; },
+                    //fillColor: function (rowIndex, node, columnIndex) { return null; }
+                  },
 
                 table: {
-                    widths: [20, 185, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+                    widths: [20, 200, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
                     body: [
                         [
                             {
@@ -245,7 +265,7 @@ class Report_3 extends Component {
                             },
                             {
                                 text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
-                                style: "TableValInforme",
+                                style: "Tablafecha",
                                 alignment: "center",
                                 colSpan: 6
                             },
@@ -300,7 +320,7 @@ class Report_3 extends Component {
                             },
                             {
                                 text: 'ACTUAL',
-                                style: "TableValInforme",
+                                style: "Tablafecha",
                                 alignment: "center",
                                 colSpan: 2
                             },
@@ -426,7 +446,7 @@ class Report_3 extends Component {
                         alignment: "right",
                     },
                     {
-                        text: dato.porcentaje_actual + " %",
+                        text: `${Redondea(dato.porcentaje_actual)}` + " %",
                         style: "TableValInforme",
                         alignment: "right",
                     },
@@ -1140,14 +1160,14 @@ class Report_3 extends Component {
                 columns: [
                     {
                         image: logoGRPuno,
-                        fit: [280, 280],
+                        fit: [260, 260],
                         margin: [45, 12, 10, 0]
                     },
                     {
                         alignment: 'right',
                         image: logoSigobras,
-                        width: 48,
-                        height: 30,
+                        width: 40,
+                        height: 25,
                         margin: [20, 10, 10, 0]
 
                     }
@@ -1259,10 +1279,16 @@ class Report_3 extends Component {
                     bold: true,
                     fontSize: 7.5,
                     color: '#000000',
-                    fillColor: '#839cbb',
+                    fillColor: '#c5d5ea',
+                },
+                Tablafecha: {
+                    bold: true,
+                    fontSize: 8,
+                    color: '#000000',
+                    fillColor: '#c5d5ea',
                 },
 
-
+                
             },
             defaultStyle: {
                 // alignment: 'justify'

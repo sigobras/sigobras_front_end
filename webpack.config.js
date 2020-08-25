@@ -44,7 +44,7 @@ module.exports = {
         ]
     },
     output: {
-        path: path.resolve(__dirname, "/var/www/sigobras.com/html"),
+        path: path.resolve(__dirname, "/var/www/sigobras.com/public"),
         filename: 'main.js',
         publicPath: '/',
     },

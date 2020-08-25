@@ -24,7 +24,7 @@ function Comentarios() {
         <ModalBody>
             <form>
                 <div className="form-group mt-2">
-                    <label htmlFor="comment">DESCRIPCIÓN / OBSERVACIÓN:</label>
+                    <label htmlFor="comment"> EN DESARROLLO...(DESCRIPCIÓN / OBSERVACIÓN / CONSULTA)</label>
                     <DebounceInput
                         placeholder="Escribe un comentario"
                         minLength={1}
@@ -39,11 +39,11 @@ function Comentarios() {
                 <div className="comentario mb-3">
                     <div>
                         <div>
-                            <div className="float-left small"><b>RESIDENTE: </b><em>GERMAN APAZA NINARAQUE</em> </div>
+                            <div className="float-left small"><b>RESIDENTE: </b><em>NOMBRE DEL RESIDENTE</em> </div>
                             <div className="float-right small">12 agosto 2020</div>
                         </div>
                         <br />
-                    The first paragraph.
+                    Comentario realizado en función a la partida
 
                     <div style={{
                             position: "absolute",
@@ -59,11 +59,11 @@ function Comentarios() {
                 <div className="comentario mb-3">
                     <div>
                         <div>
-                            <div className="float-left small"><b>RESIDENTE: </b><em>GERMAN APAZA NINARAQUE</em> </div>
+                            <div className="float-left small"><b>SUPERVISOR: </b><em>NOMBRE DEL SUPERVISOR</em> </div>
                             <div className="float-right small">12 agosto 2020</div>
                         </div>
                         <br />
-                        The first paragraph.
+                        Respuesta a la consulta realizada sobre la partida
 
                     <div style={{
                             position: "absolute",
@@ -79,11 +79,11 @@ function Comentarios() {
                 <div className="comentario mb-3">
                     <div>
                         <div>
-                            <div className="float-left small"><b>RESIDENTE: </b><em>GERMAN APAZA NINARAQUE</em> </div>
+                            <div className="float-left small"><b>GERENTE: </b><em>NOMBRE DEL GERENTE</em> </div>
                             <div className="float-right small">12 agosto 2020</div>
                         </div>
                         <br />
-                    The first paragraph.
+                    Observacion hecha a la consulta de los ejecutores, respuesta rápida
 
                     <div style={{
                             position: "absolute",

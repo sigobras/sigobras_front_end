@@ -277,16 +277,16 @@ class Report_2 extends Component {
           // color: '#ff0707',
           layout: {
             hLineWidth: function (i, node) {
-              return (i === 0 || i === node.table.body.length) ? 2 : 1;
+              return (i === 0 || i === node.table.body.length) ? 0.5 : 0.5;
             },
             vLineWidth: function (i, node) {
-              return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+              return (i === 0 || i === node.table.widths.length) ? 0.5 : 0.5;
             },
             hLineColor: function (i, node) {
-              return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
+              return (i === 0 || i === node.table.body.length) ? '#030027' : '#001638';
             },
             vLineColor: function (i, node) {
-              return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+              return (i === 0 || i === node.table.widths.length) ? '#030027' : '#001638';
             },
             //hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
             //vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
@@ -306,17 +306,14 @@ class Report_2 extends Component {
                 {
                   text: 'C-' + DataHist[i].numero,
                   style: "TableMontosInforme",
-                  alignment: "center",
+                  alignment: "left",
                 },
                 {
                   text: DataHist[i].nombre,
                   style: "TableMontosInforme",
                   alignment: "center",
   
-                  colSpan: 15
-                },
-                {
-  
+                  colSpan: 14
                 },
                 {
   
@@ -361,8 +358,10 @@ class Report_2 extends Component {
                   text: ' S/. ' + Redondea(DataHist[i].presupuesto),
                   style: "TableMontosInforme",
                   alignment: "center",
-                  colSpan: 2,
-  
+                  colSpan: 3,
+                },
+                {
+                  
                 },
                 {
   
@@ -393,7 +392,7 @@ class Report_2 extends Component {
                   margin: [2, 15, 0, 0],
                 },
                 {
-                  text: 'PRESUPUESTO PROGRAMADO',
+                  text: 'PRESUPUESTO DEL EXPEDIENTE APROBADO',
                   style: "tableHeader",
                   alignment: "center",
                   rowSpan: 3,
@@ -489,7 +488,7 @@ class Report_2 extends Component {
                 {
   
                   text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
-                  style: "TableValInforme",
+                  style: "fechaval",
                   alignment: "center",
                   colSpan: 9,
                 },
@@ -545,7 +544,7 @@ class Report_2 extends Component {
   
                 },
                 {
-                  text: 'PRESUPUESTO PROGRAMADO',
+                  text: 'PRESUPUESTO DEL EXPEDIENTE APROBADO',
                   style: "tableHeader",
                   alignment: "center",
                   colSpan: 3,
@@ -743,7 +742,7 @@ class Report_2 extends Component {
   
             },
             {
-              text: DataHist[i].partidas[j].valor_total,
+              text: DataHist[i].partidas[j].precio_parcial,
               style: "tablaValorizacion",
               border: [false, false, false, true],
   
@@ -946,8 +945,8 @@ class Report_2 extends Component {
             [
 
               {
-                text: "TOTAL COSTOS DIRECTOS",
-                style: "TableTotalesInforme",
+                text: "TOTAL COSTO DIRECTO",
+                style: "TotalCD",
                 alignment: "center",
                 border: [true, true, false, true],
                 colSpan: 2,
@@ -959,47 +958,47 @@ class Report_2 extends Component {
               },
               {
                 text: "S/." + this.state.CD_presupuesto,
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: "S/." + this.state.CD_valor_anterior,
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: this.state.CD_porcentaje_anterior + " %",
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: "S/." + this.state.CD_valor_actual,
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: this.state.CD_porcentaje_actual + " %",
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: "S/." + this.state.CD_valor_total,
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: this.state.CD_porcentaje_total + " %",
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: "S/." + this.state.CD_valor_saldo,
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
               {
                 text: this.state.CD_porcentaje_saldo + " %",
-                style: "TableTotalesInforme",
+                style: "TotalCD",
                 alignment: "center",
               },
 
@@ -1017,7 +1016,27 @@ class Report_2 extends Component {
       {
         style: 'tableExample',
         // color: '#ff0707',
-        layout: 'lightHorizontalLines',
+        layout: {
+            hLineWidth: function (i, node) {
+              return (i === 0 || i === node.table.body.length) ? 0.5 : 0.5;
+            },
+            vLineWidth: function (i, node) {
+              return (i === 0 || i === node.table.widths.length) ? 0.5 : 0.5;
+            },
+            hLineColor: function (i, node) {
+              return (i === 0 || i === node.table.body.length) ? 'gray' : 'gray';
+            },
+            vLineColor: function (i, node) {
+              return (i === 0 || i === node.table.widths.length) ? 'gray' : 'gray';
+            },
+            //hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
+            //vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
+            //paddingLeft: function(i, node) { return 4; },
+            //paddingRight: function(i, node) { return 4; },
+            //paddingTop: function(i, node) { return 2; },
+            //paddingBottom: function(i, node) { return 2; },
+            //fillColor: function (rowIndex, node, columnIndex) { return null; }
+          },
 
         table: {
           widths: [20, '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
@@ -1033,7 +1052,7 @@ class Report_2 extends Component {
 
               },
               {
-                text: 'COMPONENTE',
+                text: 'DESCRIPCIÓN',
                 style: "tableHeader",
                 alignment: "center",
                 rowSpan: 3,
@@ -1047,7 +1066,7 @@ class Report_2 extends Component {
               },
               {
                 text: `${this.state.mesActual} ${this.state.anioSeleccionado}`,
-                style: "TableValInforme",
+                style: "fechaval",
                 alignment: "center",
                 colSpan: 6
               },
@@ -1184,6 +1203,7 @@ class Report_2 extends Component {
         }
       }
     )
+    //TABLITA DEL COSTO DIRECTO 
     console.log("ValPresupuesto",ValPresupuesto);
     costosIndirectos.forEach((CDirecto, j) => {
       
@@ -1255,7 +1275,7 @@ class Report_2 extends Component {
       //console.log("SUma avance anterio", this.state.CI_total_avance_anterior),
       [
           {
-              text: ' Total Costo Indirecto',
+              text: ' TOTAL Costo Indirecto',
               style: "TableTotalesInforme",
               alignment: "center",
               colSpan: 2,
@@ -1438,15 +1458,15 @@ class Report_2 extends Component {
         columns: [
           {
             image: logoGRPuno,
-            fit: [280, 280],
-            margin: [45, 12, 10, 0]
+            fit: [260, 260],
+            margin: [45, 10, 10, 0]
           },
           {
             alignment: 'right',
             image: logoSigobras,
-            width: 48,
-            height: 30,
-            margin: [20, 10, 10, 0]
+            width: 40,
+            height: 25,
+            margin: [5, 12, 10, 0]
 
           }
         ]
@@ -1458,7 +1478,7 @@ class Report_2 extends Component {
             {
               text: currentPage.toString() + ' de ' + pageCount,
               margin: [45, 10, 10, 0],
-              fontSize: 9,
+              fontSize: 8,
             },
             // {
             //   qr: 'http://sigobras.com',
@@ -1474,16 +1494,16 @@ class Report_2 extends Component {
       content: [
         {
           layout: 'noBorders',
-          margin: 7,
+          margin: 0,
           table: {
             widths: ['*'],
             body: [
               [
                 {
-                  text: 'VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE',
+                  text: 'VALORIZACIÓN PRINCIPAL DE LA OBRA-PRESUPUESTO BASE' + ' ' + `${this.state.mesActual} ${this.state.anioSeleccionado}`,
                   style: "tableFechaContent",
                   alignment: "center",
-                  margin: [10, 0, 5, 0],
+                  margin: [0, 0, 5, 0],
                 }
               ]
 
@@ -1519,7 +1539,7 @@ class Report_2 extends Component {
           fillColor: '#8baedb',
         },
         tablaValorizacion: {
-          fontSize: 4.5,
+          fontSize: 5,
           bold: false,
           color: '#000000',
         },
@@ -1527,7 +1547,7 @@ class Report_2 extends Component {
           bold: true,
           fontSize: 7,
           color: '#000000',
-          fillColor: '#dadada',
+          fillColor: '#c5d5ea',
         },
         tableBody: {
           // bold: true,
@@ -1553,15 +1573,15 @@ class Report_2 extends Component {
         },
         TableValInforme: {
           bold: true,
-          fontSize: 6,
+          fontSize: 5,
           color: '#000000',
-          fillColor: '#A4C4EA',
+          fillColor: '#c5d5ea',
         },
         tablaValorizacionActual: {
-          fontSize: 4.5,
+          fontSize: 5,
           bold: false,
           color: '#000000',
-          fillColor: '#A4C4EA',
+          fillColor: '#c5d5ea',
         },
         tableFechaContent: {
           bold: true,
@@ -1571,10 +1591,22 @@ class Report_2 extends Component {
         },
         TableTotalesInforme: {
           bold: true,
-          fontSize: 7.5,
+          fontSize: 8,
           color: '#000000',
-          fillColor: '#839cbb',
+          fillColor: '#c5d5ea',
       },
+      TotalCD: {
+        bold: true,
+        fontSize: 8,
+        color: '#000000',
+        fillColor: '#8baedb',
+    },
+    fechaval: {
+      bold: true,
+      fontSize: 8,
+      color: '#000000',
+      fillColor: '#c5d5ea',
+  },
 
 
       },
