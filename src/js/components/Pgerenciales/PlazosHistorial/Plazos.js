@@ -1,15 +1,23 @@
-import React, { Component } from 'react'
-import axios from 'axios'
-import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input } from 'reactstrap';
+import React, { Component } from 'react';
+import axios from 'axios';
+import { BiMessageAltEdit } from "react-icons/fa";
+import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import "../PlazosHistorial/Plazos.css";
+
+
 class PlazosHistorial extends Component {
     constructor(props) {
         super(props)
         this.state = {
             plazosTipo_1: [],
             plazosTipo_2: [],
-            plazosHistorial: []
+            plazosHistorial: [],
+            visible: true,
+            modalIsOpen: false,
+            descripcion: null,
+            indexDescripcion: null,
+
         }
         this.getPlazos = this.getPlazos.bind(this)
         this.agregarPadre = this.agregarPadre.bind(this)
@@ -18,13 +26,12 @@ class PlazosHistorial extends Component {
         this.getPlazosTipo = this.getPlazosTipo.bind(this)
         this.actualizarPlazo = this.actualizarPlazo.bind(this)
         this.guardarPlazosHistoria = this.guardarPlazosHistoria.bind(this)
-
+        this.toggleModal = this.toggleModal.bind(this)
     }
-    componentWillMount() {
+    componentDidMount() {
         this.getPlazos()
         this.getPlazosTipo(1)
         this.getPlazosTipo(2)
-
     }
     getPlazos() {
         axios.post(`${UrlServer}/getPlazos`,
@@ -33,7 +40,7 @@ class PlazosHistorial extends Component {
             }
         )
             .then((res) => {
-                console.log(res.data)
+                // console.log(res.data)
                 this.setState({
                     plazosHistorial: res.data
                 })
@@ -48,7 +55,7 @@ class PlazosHistorial extends Component {
             }
         )
             .then((res) => {
-                console.log(res.data)
+                // console.log(res.data)
                 this.setState({
                     ["plazosTipo_" + nivel]: res.data
                 })
@@ -74,7 +81,7 @@ class PlazosHistorial extends Component {
                 "fichas_id_ficha": sessionStorage.getItem('idobra')
             },
         )
-        console.log("plazosHistorial", plazosHistorial);
+        // console.log("plazosHistorial", plazosHistorial);
         this.setState({
             plazosHistorial: plazosHistorial
         })
@@ -89,11 +96,11 @@ class PlazosHistorial extends Component {
                     }
                 )
                     .then((res) => {
-                        console.log(res.data)
+                        // console.log(res.data)
                         this.getPlazos()
-                        console.log("Dato Eliminado");
+                        // console.log("Dato Eliminado");
                     }).catch((error) => {
-                        console.log('error al eliminar: ', error);
+                        // console.log('error al eliminar: ', error);
                     })
             } else {
                 plazosHistorial.splice(i, 1);
@@ -123,18 +130,18 @@ class PlazosHistorial extends Component {
                 "fichas_id_ficha": sessionStorage.getItem('idobra')
             },
         );
-        console.log("plazosHistorial", plazosHistorial);
+        // console.log("plazosHistorial", plazosHistorial);
         this.setState({
             plazosHistorial: plazosHistorial
         })
-        console.log("hijo agregado");
+        // console.log("hijo agregado");
     }
     actualizarPlazo(index, nombre, value) {
-        console.log(index, nombre, value);
+        // console.log(index, nombre, value);
 
         var plazosHistorial = this.state.plazosHistorial
         plazosHistorial[index][nombre] = value
-        console.log("plazosHistorial", plazosHistorial);
+        // console.log("plazosHistorial", plazosHistorial);
 
         this.setState({
             plazosHistorial: plazosHistorial
@@ -167,26 +174,31 @@ class PlazosHistorial extends Component {
             plazosHistorial_procesada.push(
                 plazo_temp
             )
+            
         }
         if (!error) {
-            console.log("plazosHistorial_procesada", plazosHistorial_procesada);
+            // console.log("plazosHistorial_procesada", plazosHistorial_procesada);
             axios.post(`${UrlServer}/putPlazos`,
                 plazosHistorial_procesada
             )
                 .then((res) => {
+
+                    alert("data guardada")
                     console.log(res.data)
                     this.getPlazos()
+                    
                 }).catch((error) => {
+                    
                     console.log('Algo salió mal al tratar de listar los estados, error es: ', error);
                 })
         } else {
             console.log("error faltan seleccionar algunos tipos");
-
+            
         }
 
     }
     calcular_dias(fecha_inicio, fecha_final) {
-        console.log(fecha_inicio, fecha_final);
+        // console.log(fecha_inicio, fecha_final);
         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
         const firstDate = new Date(fecha_inicio);
         const secondDate = new Date(fecha_final);
@@ -194,45 +206,86 @@ class PlazosHistorial extends Component {
         return days || 0
 
     }
+
+
+    toggleAlert() {
+
+        this.setState({
+
+            visible: !this.state.visible,
+        })
+    }
+
+    toggleModal() {
+
+        this.setState({
+
+            modalIsOpen: !this.state.modalIsOpen,
+        })
+    }
+    //funcion flecha
+    descripcion1 = (datos, datos1, datos2, i, k) => {
+
+        // console.log("DESCRIPCION", datos);
+
+
+        this.setState({
+
+            modalIsOpen: !this.state.modalIsOpen,
+            descripcion: datos,
+            indexDescripcion: i,
+            documento_resolucion_estado: datos1,
+            observacion: datos2
+            // indexResolucion: k
+
+        })
+    }
+
     render() {
         var contador = 0
         var subcontador = 0
+        // para no estar llamando cada rato en el render "DEStruCturing"
+        var { descripcion, indexDescripcion, documento_resolucion_estado, observacion } = this.state
         return (
             <div>
                 <Button color="primary" onClick={this.agregarPadre}>
                     Agregar Estados
                 </Button>
-                <table className="table">
+                <Table dark >
                     <thead>
                         <tr>
                             <th>
 
                             </th>
                             <th>
-                                N
+                                N°
                             </th>
                             <th>
-                                tipo
+                                Tipo/Estado
                             </th>
                             <th>
-                                descripcion
+                                Añadir Datos
                             </th>
                             <th>
-                                fecha_inicio
+                                Fecha de Inicio
                             </th>
                             <th>
-                                fecha_final
+                                Fecha de Término
+
                             </th>
                             <th>
-                                dias
+                                Días
                             </th>
                             <th>
-                                documento_resolucion_estado
+                                
+                            </th>
+                            {/* <th>
+                                Resolución
                             </th>
 
                             <th>
-                                observacion
-                            </th>
+                                Observación
+                            </th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -241,7 +294,7 @@ class PlazosHistorial extends Component {
                                 <tr key={index}>
                                     <td>
                                         {plazo.nivel == 1 ?
-                                            <button onClick={() => this.agregarHijo(index)}>
+                                            <button className="btn btn-outline-primary btn-sm mr-1" onClick={() => this.agregarHijo(index)}>
                                                 +
                                         </button>
                                             :
@@ -283,14 +336,14 @@ class PlazosHistorial extends Component {
                                         </select>
                                     </td>
                                     <td >
-                                        <textarea
-                                            type="text"
-                                            defaultValue={plazo.descripcion}
-                                            onBlur={event => this.actualizarPlazo(index, "descripcion", event.target.value)}
-                                        />
+                                       <button className="btn btn-outline-primary btn-sm mr-1"  onClick={() => this.descripcion1(plazo.descripcion, plazo.documento_resolucion_estado, plazo.observacion, index)}> Add
+                                        </button>
+                                        
+                                     
                                     </td>
                                     <td>
-                                        <input
+                                        <input 
+                                            className ="inputplazos"
                                             type="date"
                                             value={plazo.fecha_inicio}
                                             onChange={event => this.actualizarPlazo(index, "fecha_inicio", event.target.value)}
@@ -298,7 +351,8 @@ class PlazosHistorial extends Component {
                                     </td>
 
                                     <td>
-                                        <input
+                                        <input 
+                                            className ="inputplazos"
                                             type="date"
                                             value={plazo.fecha_final}
                                             onChange={event => this.actualizarPlazo(index, "fecha_final", event.target.value)}
@@ -306,13 +360,14 @@ class PlazosHistorial extends Component {
                                     </td>
                                     <td>
                                         <input
+                                            className ="inputplazos"
                                             style={{ width: "40px" }}
                                             type="number"
                                             value={this.calcular_dias(plazo.fecha_inicio, plazo.fecha_final)}
                                             readOnly
                                         />
                                     </td>
-                                    <td>
+                                    {/* <td>
                                         <textarea
                                             type="text"
                                             defaultValue={plazo.documento_resolucion_estado}
@@ -325,7 +380,7 @@ class PlazosHistorial extends Component {
                                             defaultValue={plazo.observacion}
                                             onBlur={event => this.actualizarPlazo(index, "observacion", event.target.value)}
                                         />
-                                    </td>
+                                    </td> */}
 
                                     <td>
                                         <Button color="danger" onClick={() => this.elminarHistorial(index)} >
@@ -347,11 +402,11 @@ class PlazosHistorial extends Component {
                                 {
                                     (() => {
 
-                                        console.log(this.state.plazosHistorial);
+                                        {/* console.log(this.state.plazosHistorial); */}
                                         var TotalDiasPadre = 0
                                         for (let i = 0; i < this.state.plazosHistorial.length; i++) {
                                             const plazo = this.state.plazosHistorial[i];
-                                            if(plazo.nivel==1){
+                                            if (plazo.nivel == 1) {
                                                 TotalDiasPadre += this.calcular_dias(plazo.fecha_inicio, plazo.fecha_final)
                                             }
                                         }
@@ -360,8 +415,49 @@ class PlazosHistorial extends Component {
                                 }
                             </td>
                         </tr>
+
+                        <Modal isOpen={this.state.modalIsOpen}>
+                            <ModalHeader toggle={this.toggleModal} className="border-button center">Añadir Descripción</ModalHeader>
+                            <ModalBody>
+                                <div>
+                                    <td>DESCRIPCIÓN</td>
+                                    <Input
+                                    
+                                        defaultValue={descripcion}
+                                        onBlur={event => this.actualizarPlazo(indexDescripcion, "descripcion", event.target.value)}>
+
+                                    </Input>
+                                </div>
+                                <div>
+                                    <td>N° DE RESOLUCIÓN</td>
+                                    <Input
+                                        defaultValue={documento_resolucion_estado}
+                                        onBlur={event => this.actualizarPlazo(indexDescripcion, "documento_resolucion_estado", event.target.value)}>
+
+                                    </Input></div>
+
+                                <div>
+                                    <td>OBSERVACIÓN</td>
+                                    <Input
+                                        
+                                        defaultValue={observacion}
+                                        onBlur={event => this.actualizarPlazo(indexDescripcion, "observacion", event.target.value)}>
+
+                                    </Input>
+                                    
+                                    </div>
+
+
+
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onClick={this.toggleModal} color="success"> AÑADIR</Button>
+                            </ModalFooter>
+                        </Modal>
+
                     </tbody>
-                </table>
+                    
+                </Table><div><p>Guarde siempre que genere una nueva fila, siempre y cuando llene todos los datos de la fila, si comete algún error en el momento del llenado se puede modificar sin problema alguno, sea responsable con el uso del sistema.</p></div> 
                 <br />
                 <Button color="success" type="submit" onClick={this.guardarPlazosHistoria} >
                     Guardar Datos

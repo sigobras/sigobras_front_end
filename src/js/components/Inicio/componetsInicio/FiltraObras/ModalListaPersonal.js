@@ -93,7 +93,10 @@ class ModalListaPersonal extends Component {
                                         <b>CELULAR N° </b> <span>{ usuarios.celular }</span>
                                         <b>DNI </b> <span>{ usuarios.dni }</span>
                                         <b>EMAIL </b> <span>{ usuarios.email }</span>
-                                        <b>DIRECCION </b> <span>{ usuarios.direccion }</span>
+                                        <b>DIRECCION </b> <span>{ usuarios.direccion }
+                                        </span>
+                                        <b>N° COLEGIATURA </b> <span>{ usuarios.cpt }
+                                        </span>
                                     </ListGroup>
                                 </div>
                             </div>
