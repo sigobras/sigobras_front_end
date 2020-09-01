@@ -86,6 +86,7 @@ class InterfazGerencial extends Component {
                 var unidad_ejecutora_lista = []
                 var unidad_ejecutora = {}
                 var sector = {}
+
                 var sector_nombre = ""
                 for (let i = 0; i < dataTemp.length; i++) {
                     const element = dataTemp[i];
@@ -107,7 +108,11 @@ class InterfazGerencial extends Component {
                                     estado_nombre: element.estado_nombre,
                                     fecha_inicial: element.fecha_inicial,
                                     avanceFisico_porcentaje: element.avanceFisico_porcentaje,
-                                    avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje
+                                    avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje,
+                                    presupuesto_total: element.presupuesto_total,
+                                    presupuesto: element.presupuesto,
+                                    acumulado_HOY: element.acumulado_HOY,
+                                    saldo: element.saldo
                                 }
                             ]
                         }
@@ -127,7 +132,12 @@ class InterfazGerencial extends Component {
                                         estado_nombre: element.estado_nombre,
                                         fecha_inicial: element.fecha_inicial,
                                         avanceFisico_porcentaje: element.avanceFisico_porcentaje,
-                                        avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje
+                                        avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje,
+                                        presupuesto_total: element.presupuesto_total,
+                                        presupuesto: element.presupuesto,
+                                        acumulado_HOY: element.acumulado_HOY,
+                                        saldo: element.saldo
+
                                     }
                                 ]
                             }
@@ -140,7 +150,12 @@ class InterfazGerencial extends Component {
                                     estado_nombre: element.estado_nombre,
                                     fecha_inicial: element.fecha_inicial,
                                     avanceFisico_porcentaje: element.avanceFisico_porcentaje,
-                                    avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje
+                                    avanceFinanciero_porcentaje: element.avanceFinanciero_porcentaje,
+                                    presupuesto_total: element.presupuesto_total,
+                                    presupuesto: element.presupuesto,
+                                    acumulado_HOY: element.acumulado_HOY,
+                                    saldo: element.saldo
+
                                 }
                             )
 
@@ -389,7 +404,7 @@ class InterfazGerencial extends Component {
                 </select>
                 <select onChange={event => this.updateInput('idsectores', event.target.value)}>
                     <option value="0">
-                        Todos las sectores
+                        Todos los sectores
                     </option>
                     {this.state.getSectores.map((item, index) =>
                         <option value={item.idsectores}>{item.nombre}</option>
@@ -431,18 +446,23 @@ class InterfazGerencial extends Component {
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>código</th>
-                            <th>avance</th>
-                            <th>modalidad de ejecución</th>
-                            <th>estado</th>
-                            <th>inicio de obra</th>
+                            <th>Código</th>
+                            <th>Presupuesto General</th>
+                            <th>Presupuesto CD</th>
+
+                            <th>Barra de avance</th>
+                            <th>Acumulado</th>
+
+                            <th>Saldo</th>
+                            <th>Inicio de obra</th>
+
                         </tr>
                     </thead>
                     <tbody>
                         {this.state.getInterfazGerencialDataProcesada.map((provincia, index) =>
                             [
                                 <tr>
-                                    <th className= "provincia"
+                                    <th className="provincia"
                                         colSpan="2">{provincia.nombre}
                                     </th>
                                 </tr>,
@@ -457,6 +477,8 @@ class InterfazGerencial extends Component {
                                         sector.obras.map((obra, index3) =>
                                             <tr>
                                                 <td>{obra.codigo}</td>
+                                                <td>S/. {obra.presupuesto}</td>
+                                                <td>S/. {obra.presupuesto_total}</td>
                                                 <td style={{ width: '20%' }}>
 
                                                     <div style={{
@@ -467,7 +489,7 @@ class InterfazGerencial extends Component {
                                                     >
 
                                                         <div style={{
-                                                            height: '8px',
+                                                            height: '5px',
                                                             backgroundColor: '#4a4b4c',
                                                             borderRadius: '5px',
                                                             position: 'relative',
@@ -478,9 +500,10 @@ class InterfazGerencial extends Component {
                                                                 style={{
                                                                     width: `${Redondea1(obra.avanceFisico_porcentaje)}%`,
                                                                     height: '100%',
-                                                                    backgroundColor: Redondea1(obra.avanceFisico_porcentaje) > 85 ? 'rgb(0, 128, 255)'
-                                                                        : Redondea1(obra.avanceFisico_porcentaje) > 30 ? '#ffbf00'
-                                                                            : '#ff2e00',
+                                                                    boxShadow:'0 0 12px #3578bb',
+                                                                    backgroundColor: Redondea1(obra.avanceFisico_porcentaje) > 85 ? '#3578bb'
+                                                                        : Redondea1(obra.avanceFisico_porcentaje) > 30 ? '#8caeda'
+                                                                            : '#cecece',
                                                                     borderRadius: '5px',
                                                                     transition: 'all .9s ease-in',
                                                                     position: 'absolute',
@@ -503,7 +526,7 @@ class InterfazGerencial extends Component {
                                                     >
 
                                                         <div style={{
-                                                            height: '8px',
+                                                            height: '5px',
                                                             backgroundColor: '#4a4b4c',
                                                             borderRadius: '5px',
                                                             position: 'relative'
@@ -513,9 +536,10 @@ class InterfazGerencial extends Component {
                                                                 style={{
                                                                     width: `${Redondea1(obra.avanceFinanciero_porcentaje)}%`,
                                                                     height: '100%',
-                                                                    backgroundColor: Redondea1(obra.avanceFinanciero_porcentaje) > 85 ? 'rgb(0, 128, 255)'
-                                                                        : Redondea1(obra.avanceFinanciero_porcentaje) > 30 ? '#fac934'
-                                                                            : '#ff552f',
+                                                                    boxShadow:'0 0 12px #ff7400',
+                                                                    backgroundColor: Redondea1(obra.avanceFinanciero_porcentaje) > 85 ? '#ff7400'
+                                                                        : Redondea1(obra.avanceFinanciero_porcentaje) > 30 ? '#fb8420'
+                                                                            : '#f3984b',
                                                                     borderRadius: '5px',
                                                                     transition: 'all .9s ease-in',
                                                                     position: 'absolute',
@@ -527,9 +551,13 @@ class InterfazGerencial extends Component {
                                                     </div>
 
                                                 </td>
-                                                <td>{obra.modalidad_ejecutora_nombre}</td>
-                                                <td>{obra.estado_nombre}</td>
+                                                <td>S/. {obra.acumulado_HOY}</td>
+                                                {/* <td>{obra.estado_nombre}</td> */}
+                                                <td>S/. {obra.saldo}</td>
+
                                                 <td>{obra.fecha_inicial}</td>
+
+
                                             </tr>
                                         )
 

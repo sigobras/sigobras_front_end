@@ -55,7 +55,8 @@ class Componentes extends Component {
                         style={{
                         width: `${ObrasComp.porcentaje_avance_componentes}%`,
                         height: '100%',
-                        backgroundColor: ObrasComp.porcentaje_avance_componentes > 95 ? 'rgb(164, 251, 1)'
+                        // boxShadow:'0 0 12px #c3bbbb',
+                        backgroundColor: ObrasComp.porcentaje_avance_componentes > 95 ? '#e6ff00'
                             : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
                             :  '#ff2e00',
                         borderRadius: '2px',

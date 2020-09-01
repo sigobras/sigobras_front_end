@@ -142,7 +142,7 @@ class ListaObras extends Component{
                             >
 
                                 <div style={{
-                                    height: '8px',
+                                    height: '5px',
                                     backgroundColor: '#4a4b4c',
                                     borderRadius: '5px',
                                     position: 'relative',
@@ -153,9 +153,10 @@ class ListaObras extends Component{
                                     style={{
                                     width: `${Obras.porcentaje_avance}%`,
                                     height: '100%',
-                                    backgroundColor: Obras.porcentaje_avance > 85 ? 'rgb(0, 128, 255)'
-                                        : Obras.porcentaje_avance > 30 ? '#ffbf00'
-                                        :  '#ff2e00',
+                                    boxShadow:'0 0 12px #3578bb',
+                                    backgroundColor: Obras.porcentaje_avance > 85 ? '#3578bb'
+                                        : Obras.porcentaje_avance > 30 ? '#8caeda'
+                                        :  '#cecece',
                                     borderRadius: '5px',
                                     transition: 'all .9s ease-in',
                                     position: 'absolute',
@@ -178,7 +179,7 @@ class ListaObras extends Component{
                             >
 
                                 <div style={{
-                                    height: '8px',
+                                    height: '5px',
                                     backgroundColor: '#4a4b4c',
                                     borderRadius: '5px',
                                     position: 'relative'
@@ -188,9 +189,10 @@ class ListaObras extends Component{
                                     style={{
                                     width: `${Obras.porcentaje_financiero}%`,
                                     height: '100%',
-                                    backgroundColor: Obras.porcentaje_financiero > 85 ? 'rgb(0, 128, 255)'
-                                        : Obras.porcentaje_financiero > 30 ? '#fac934'
-                                        :  '#ff552f',
+                                    boxShadow:'0 0 12px #ff7400',
+                                    backgroundColor: Obras.porcentaje_financiero > 85 ? '#ff7400'
+                                        : Obras.porcentaje_financiero > 30 ? '#fb8420'
+                                        :  '#f3984b',
                                     borderRadius: '5px',
                                     transition: 'all .9s ease-in',
                                     position: 'absolute',
