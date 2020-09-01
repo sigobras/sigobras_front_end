@@ -205,7 +205,7 @@ body {
 .scroll_contenido::-webkit-scrollbar-thumb {
   background-color: #0080ff;
   ;
-  outline: 1px solid rgb(255, 0, 0);
+  outline: 0px solid rgb(255, 0, 0);
 }
 
 
@@ -278,7 +278,7 @@ body {
 /* scroll del menu principal */
 .sidebar-sticky::-webkit-scrollbar-thumb {
   background-color: #0080ff;
-  outline: 5px solid rgb(255, 0, 0);
+  outline: 0px solid rgb(255, 255, 255);
 }
 
 .posAbajo {

@@ -45,7 +45,7 @@
   /* corecccion de bootstrap 4 -_-------------------__________________________________*/
 /* nav-tabs */
 .nav-tabs {
-  border-bottom: 1px solid #1d2029;
+  border-bottom: 1px solid #3b3b3b;
   background-color: rgba(0, 0, 0, .03);
   padding-top: 6px;
   padding-left: 8px;
@@ -54,7 +54,7 @@
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
   color: #fff;
   background-color: #2676bb;
-  border-color: #1d2029 #1d2029 #2e3742;
+  border-color: #3b3b3b #3b3b3b #2e3742;
 }
 
 /* modals */
@@ -180,7 +180,7 @@ legend {
 
 /* bordes de tabla  */
 .table-bordered td, .table-bordered th {
-  border: 1px solid #1d2029;
+  border: 1px solid #3b3b3b;
   border-bottom-color: rgb(29, 32, 41);
   border-bottom-style: solid;
   border-bottom-width: 1px;
@@ -190,7 +190,7 @@ legend {
 
 .table thead th {
   vertical-align: bottom;
-  border-bottom: 2px solid #1d2029;
+  border-bottom: 1px solid #3b3b3b;
 }
 
 .text-success {
@@ -233,8 +233,8 @@ legend {
   margin-bottom: 0;
   font-size: 0.8rem;
   color: inherit;
-  background-color: #1d2029;
-  border-bottom: 1px solid #1d2029;
+  background-color: #3b3b3b;
+  border-bottom: 1px solid #3b3b3b;
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
 }
@@ -262,12 +262,12 @@ legend {
 /* tbody cambiar  */
 
 .table tbody+tbody {
-  border-top: 1px solid #1d2029;
+  border-top: 1px solid #3b3b3b;
 }
 .table td, .table th {
   padding: 0.4rem;
   vertical-align: top;
-  border-top: 1px solid #1d2029;
+  border-top: 1px solid #3b3b3b;
 }
 
 a{

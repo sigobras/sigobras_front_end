@@ -386,15 +386,15 @@ class List extends Component{
                                                     style={{
                                                     width: `${ObrasComp.porcentaje_avance_componentes}%`,
                                                     height: '100%',
-                                                    backgroundColor: ObrasComp.porcentaje_avance_componentes > 95 ? 'rgb(164, 251, 1)'
-                                                        : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
-                                                        :  '#ff2e00',
+                                                    backgroundColor: ObrasComp.porcentaje_avance_componentes > 85 ? '#3578bb'
+                                                        : ObrasComp.porcentaje_avance_componentes > 30 ? '#8caeda'
+                                                        :  '#cecece',
                                                     borderRadius: '2px',
                                                     transition: 'all .9s ease-in',
                                                     position: 'absolute',
-                                                    boxShadow: `0 0 6px 1px ${ObrasComp.porcentaje_avance_componentes > 95 ? 'rgb(164, 251, 1)'
-                                                        : ObrasComp.porcentaje_avance_componentes > 50 ? '#ffbf00'
-                                                        :  '#ff2e00'}`
+                                                    boxShadow: `0 0 6px 1px ${ObrasComp.porcentaje_avance_componentes > 85 ? '#3578bb'
+                                                        : ObrasComp.porcentaje_avance_componentes > 30 ? '#8caeda'
+                                                        :  '#cecece'}`
                                                     }}
                                                 /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{ObrasComp.porcentaje_avance_componentes} %</span>
                                                 </div>
@@ -428,15 +428,15 @@ class List extends Component{
                                                     style={{
                                                     width: `${Obras.porcentaje_avance}%`,
                                                     height: '100%',
-                                                    backgroundColor: Obras.porcentaje_avance > 95 ? 'rgb(164, 251, 1)'
-                                                        : Obras.porcentaje_avance > 50 ? '#ffbf00'
-                                                        :  '#ff2e00',
+                                                    backgroundColor: Obras.porcentaje_avance > 85 ? '#ff7400'
+                                                        : Obras.porcentaje_avance > 30 ? '#fb8420'
+                                                        :  '#f3984b',
                                                     borderRadius: '2px',
                                                     transition: 'all .9s ease-in',
                                                     position: 'absolute',
-                                                    boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 95 ? 'rgb(164, 251, 1)'
-                                                        : Obras.porcentaje_avance > 50 ? '#ffbf00'
-                                                        :  '#ff2e00'}`
+                                                    boxShadow: `0 0 6px 1px ${Obras.porcentaje_avance > 85 ? '#ff7400'
+                                                        : Obras.porcentaje_avance > 30 ? '#fb8420'
+                                                        :  '#f3984b'}`
                                                     }}
                                                 /><span style={{ position:'inherit', fontSize:'0.6rem', top: '4px' }}>{Obras.porcentaje_avance} %</span>
                                                 </div>
