@@ -1858,7 +1858,7 @@ class MetradosDiarios extends Component {
                           <DebounceInput
                             cols="40"
                             rows="1"
-                            // element="textarea"
+                            element="textarea"
                             minLength={0}
                             debounceTimeout={debounceTimeout}
                             onChange={e => this.setState({ DescripcionMetrado: e.target.value })}
@@ -1871,7 +1871,7 @@ class MetradosDiarios extends Component {
                           <DebounceInput
                             cols="40"
                             rows="1"
-                            // element="textarea"
+                            element="textarea"
                             minLength={0}
                             debounceTimeout={debounceTimeout}
                             onChange={e => this.setState({ ObservacionMetrado: e.target.value })}
