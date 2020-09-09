@@ -5,6 +5,7 @@ import axios from "axios";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official';
 import "./InterfazGerencial2.css"
+import { CustomInput } from "reactstrap";
 
 class InterfazGerencial extends Component {
     constructor() {
@@ -82,6 +83,7 @@ class InterfazGerencial extends Component {
         )
             .then((res) => {
                 var dataTemp = res.data
+                console.log("dataTemp ", dataTemp);
                 var unidad_ejecutora_nombre = ""
                 var unidad_ejecutora_lista = []
                 var unidad_ejecutora = {}
@@ -112,7 +114,8 @@ class InterfazGerencial extends Component {
                                     presupuesto_total: element.presupuesto_total,
                                     presupuesto: element.presupuesto,
                                     acumulado_HOY: element.acumulado_HOY,
-                                    saldo: element.saldo
+                                    saldo: element.saldo,
+                                    confirmacion_super_inf: element.confirmacion_super_inf
                                 }
                             ]
                         }
@@ -136,8 +139,8 @@ class InterfazGerencial extends Component {
                                         presupuesto_total: element.presupuesto_total,
                                         presupuesto: element.presupuesto,
                                         acumulado_HOY: element.acumulado_HOY,
-                                        saldo: element.saldo
-
+                                        saldo: element.saldo,
+                                        confirmacion_super_inf: element.confirmacion_super_inf
                                     }
                                 ]
                             }
@@ -154,8 +157,8 @@ class InterfazGerencial extends Component {
                                     presupuesto_total: element.presupuesto_total,
                                     presupuesto: element.presupuesto,
                                     acumulado_HOY: element.acumulado_HOY,
-                                    saldo: element.saldo
-
+                                    saldo: element.saldo,
+                                    confirmacion_super_inf: element.confirmacion_super_inf
                                 }
                             )
 
@@ -167,6 +170,7 @@ class InterfazGerencial extends Component {
                 }
                 unidad_ejecutora.sectores.push(sector)
                 unidad_ejecutora_lista.push(unidad_ejecutora)
+                console.log("unidad_ejecutora_lista ", unidad_ejecutora_lista);
                 this.setState({
                     getInterfazGerencialData: res.data,
                     getInterfazGerencialDataProcesada: unidad_ejecutora_lista
@@ -206,7 +210,7 @@ class InterfazGerencial extends Component {
             var a = array.concat();
             for (var i = 0; i < a.length; ++i) {
                 for (var j = i + 1; j < a.length; ++j) {
-                    console.log(a[i]);
+                    // console.log(a[i]);
                     if (a[i].anyo === a[j].anyo)
                         a.splice(j--, 1);
                 }
@@ -246,7 +250,7 @@ class InterfazGerencial extends Component {
             }
         );
         avance_fisico_programado = res.data
-        console.log(avance_fisico, avance_fisico_programado);
+        // console.log(avance_fisico, avance_fisico_programado);
         var avance_fisico_chart = []
         var avance_fisico_programado_chart = []
         for (let i = 1; i <= 12; i++) {
@@ -399,7 +403,7 @@ class InterfazGerencial extends Component {
                         Todas las provincias
                     </option>
                     {this.state.getProvincias.map((item, index) =>
-                        <option value={item.id_unidadEjecutora}>{item.nombre}</option>
+                        <option key={index} value={item.id_unidadEjecutora}>{item.nombre}</option>
                     )}
                 </select>
                 <select onChange={event => this.updateInput('idsectores', event.target.value)}>
@@ -407,7 +411,7 @@ class InterfazGerencial extends Component {
                         Todos los sectores
                     </option>
                     {this.state.getSectores.map((item, index) =>
-                        <option value={item.idsectores}>{item.nombre}</option>
+                        <option key={index} value={item.idsectores}>{item.nombre}</option>
                     )}
                 </select>
                 <select onChange={event => this.updateInput('idmodalidad_ejecutora', event.target.value)}>
@@ -415,7 +419,7 @@ class InterfazGerencial extends Component {
                         Todas las modalidades
                     </option>
                     {this.state.getModalidadesEjecutoras.map((item, index) =>
-                        <option value={item.idmodalidad_ejecutora}>{item.nombre}</option>
+                        <option key={index} value={item.idmodalidad_ejecutora}>{item.nombre}</option>
                     )}
                 </select>
                 <select onChange={event => this.updateInput('id_Estado', event.target.value)}>
@@ -423,7 +427,7 @@ class InterfazGerencial extends Component {
                         Todos los estados
                     </option>
                     {this.state.getEstados.map((item, index) =>
-                        <option value={item.id_Estado}>{item.nombre}</option>
+                        <option key={index} value={item.id_Estado}>{item.nombre}</option>
                     )}
                 </select>
                 <button onClick={() => this.getInterfazGerencialData()}>
@@ -435,7 +439,7 @@ class InterfazGerencial extends Component {
                         seleccione el año
                     </option>
                     {this.state.anyos_chart.map((item, index) =>
-                        <option value={item.anyo}>{item.anyo}</option>
+                        <option key={index} value={item.anyo}>{item.anyo}</option>
                     )}
                 </select>
                 <HighchartsReact
@@ -443,7 +447,7 @@ class InterfazGerencial extends Component {
                     highcharts={Highcharts}
                     options={options}
                 />
-                <table class="table table-striped">
+                <table className="table table-striped">
                     <thead>
                         <tr>
                             <th>Código</th>
@@ -461,21 +465,21 @@ class InterfazGerencial extends Component {
                     <tbody>
                         {this.state.getInterfazGerencialDataProcesada.map((provincia, index) =>
                             [
-                                <tr>
+                                <tr key={index}>
                                     <th className="provincia"
                                         colSpan="2">{provincia.nombre}
                                     </th>
                                 </tr>,
                                 provincia.sectores.map((sector, index2) =>
                                     [
-                                        <tr>
+                                        <tr key={index2}>
                                             <th className="sector"
                                                 colSpan="2">{sector.nombre}
                                             </th>
                                         </tr>,
 
                                         sector.obras.map((obra, index3) =>
-                                            <tr>
+                                            <tr key={index3}>
                                                 <td>{obra.codigo}</td>
                                                 <td>S/. {obra.presupuesto}</td>
                                                 <td>S/. {obra.presupuesto_total}</td>
@@ -500,7 +504,7 @@ class InterfazGerencial extends Component {
                                                                 style={{
                                                                     width: `${Redondea1(obra.avanceFisico_porcentaje)}%`,
                                                                     height: '100%',
-                                                                    boxShadow:'0 0 12px #3578bb',
+                                                                    boxShadow: '0 0 12px #3578bb',
                                                                     backgroundColor: Redondea1(obra.avanceFisico_porcentaje) > 85 ? '#3578bb'
                                                                         : Redondea1(obra.avanceFisico_porcentaje) > 30 ? '#8caeda'
                                                                             : '#cecece',
@@ -536,7 +540,7 @@ class InterfazGerencial extends Component {
                                                                 style={{
                                                                     width: `${Redondea1(obra.avanceFinanciero_porcentaje)}%`,
                                                                     height: '100%',
-                                                                    boxShadow:'0 0 12px #ff7400',
+                                                                    boxShadow: '0 0 12px #ff7400',
                                                                     backgroundColor: Redondea1(obra.avanceFinanciero_porcentaje) > 85 ? '#ff7400'
                                                                         : Redondea1(obra.avanceFinanciero_porcentaje) > 30 ? '#fb8420'
                                                                             : '#f3984b',
@@ -556,7 +560,9 @@ class InterfazGerencial extends Component {
                                                 <td>S/. {obra.saldo}</td>
 
                                                 <td>{obra.fecha_inicial}</td>
-
+                                                <td>
+                                                    <CustomInput type="switch" checked={obra.confirmacion_super_inf ? true : false} id="confirmacion_super_inf" name="customSwitch" readOnly />
+                                                </td>
 
                                             </tr>
                                         )
