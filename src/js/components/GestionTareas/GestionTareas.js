@@ -368,7 +368,7 @@ class GestionTareas extends Component {
 
     // Extension(inputValueImg.name)
 
-    if (Extension(inputValueImg.name) === ".jpeg" || Extension(inputValueImg.name) === ".png" || Extension(inputValueImg.name) === ".jpg" || Extension(inputValueImg.name) === ".dwg" || Extension(inputValueImg.name) === ".xls" || Extension(inputValueImg.name) === ".xlsx" || Extension(inputValueImg.name) === ".PDF")  {
+    if (Extension(inputValueImg.name) === ".jpeg" || Extension(inputValueImg.name) === ".png" || Extension(inputValueImg.name) === ".jpg" || Extension(inputValueImg.name) === ".dwg" || Extension(inputValueImg.name) === ".xls" || Extension(inputValueImg.name) === ".xlsx" || Extension(inputValueImg.name) === ".PDF" || Extension(inputValueImg.name) === ".pdf" || Extension(inputValueImg.name) === ".docx") {
       var url = URL.createObjectURL(inputValueImg)
       // console.log("url", url);
 
