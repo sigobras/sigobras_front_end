@@ -338,7 +338,7 @@ class Report_1 extends Component {
               [
                 
                 {
-                  text: DataHist[i].fechas[j].historial[k].observacion.trim(),
+                  text: DataHist[i].fechas[j].historial[k].observacion,
                   style: 'tableBody',
                   //alignment: 'center',
                   colSpan: 6,
