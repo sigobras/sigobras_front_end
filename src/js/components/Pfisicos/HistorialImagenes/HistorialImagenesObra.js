@@ -79,7 +79,7 @@ class HistorialImagenesObra extends Component {
           thumbnailWidth: "10%",
           thumbnailHeight: "5%",
           // tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-          caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion}`
+          caption: `DESCRIPCIÓN DE LA FOTOGRAFÍA : ${img.descripcion} / fecha: ${img.fecha}`,
         }
       )
 
@@ -309,7 +309,7 @@ class HistorialImagenesObra extends Component {
                       </tr>
                     </thead>
                     {
-                      DatosPartidasFiltrado.map((partida, IP) =>
+                      DatosPartidasFiltrado.map((partida,  IP) =>
                         <tbody key={IP}>
                           <tr className={partida.tipo === "titulo" ? "font-weight-bold" : collapse === IP ? "font-weight-light resplandPartida icoVer" : "font-weight-light icoVer"}>
                             <td className={partida.tipo === "titulo" ? '' : collapse === IP ? "tdData1" : "tdData"} onClick={() => partida.tipo === "titulo" ? this.CollapseItem(-1, -1) : this.CollapseItem(IP, partida.id_partida)} data-event={IP} >{partida.item}</td>
@@ -344,10 +344,10 @@ class HistorialImagenesObra extends Component {
                                 </Nav>
                                 {
                                   DataImagenesApi.length !== 0 ?
-                                    <Gallery images={DataImagenesApi} />
+                                    <Gallery images={DataImagenesApi}/> 
                                     : "No hay imagenes que mostrar"
                                 }
-
+                                
                               </Collapse>
                             </td>
                           </tr>
