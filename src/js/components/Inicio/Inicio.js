@@ -45,7 +45,7 @@ class Inicio extends Component {
 
                     {this.state.comunicados.map((comunicado, index) =>
 
-                        <div className="aviso"> <h6 className="textoaviso">COMUNICADO: </h6> <p>{comunicado.texto_mensaje}</p> </div>
+                        <div className="aviso"> <h6 className="textoaviso">COMUNICADO: </h6> <p> -- {comunicado.texto_mensaje}</p> </div>
                     )}
                     <Obras/>
                 </div>
