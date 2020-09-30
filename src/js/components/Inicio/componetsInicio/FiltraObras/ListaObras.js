@@ -171,7 +171,7 @@ class ListaObras extends Component{
 
                             </div> 
                             {/* porcentaje_financiero */}
-                            <div style={{
+                            {/* <div style={{
                                 width: '100%',
                                 height: '20px',
                                 textAlign: 'center'
@@ -201,7 +201,7 @@ class ListaObras extends Component{
                                 /><span style={{ position:'inherit', fontSize:'0.7rem', top: '6px', color:'#8caeda' }}>Financiero ({Obras.porcentaje_financiero} %)</span>
                                 </div>
 
-                            </div> 
+                            </div>  */}
 
                         </td>
                         <td style={{
@@ -218,7 +218,7 @@ class ListaObras extends Component{
                         </td>
                         <td style={{width: '12%'}}  className="text-center">
                             <button className="btn btn-outline-info btn-sm mr-1" title="Avance Componentes" onClick={()=> this.CollapseComponentes(IndexObras, Obras.id_ficha) } data-event={IndexObras} ><FaList /></button>
-                            <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={()=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button>
+                            {/* <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={()=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button> */}
                             <ModalListaPersonal idobraSeleccionada={ Obras.id_ficha }/>
                             <ModalInformacionObras idobraSeleccionada={ Obras.id_ficha }/>
 
