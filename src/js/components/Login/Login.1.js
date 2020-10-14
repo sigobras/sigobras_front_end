@@ -36,7 +36,7 @@ class Login extends Component {
     e.preventDefault();
 
     this.setState({ isLoading: true });
-    axios.post(UrlServer + '/login', {
+    axios.get(UrlServer + '/login', {
       usuario: this.state.user,
       password: this.state.pass
     })
