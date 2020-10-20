@@ -5,7 +5,9 @@
 // const UrlServer = "http://localhost:9000";
 
 // //para git pull cambiar a este modo
-const UrlServer = "http://190.117.94.80:9000";
+// const UrlServer = "http://190.117.94.80:9000";
+const UrlServer = "http://api.sigobras.com";
+
 const Id_Acceso = sessionStorage.getItem("idacceso")
 const ImgAccesoSS = sessionStorage.getItem("imgUsuario")
 const CargoAccesoSS = sessionStorage.getItem("cargo")
