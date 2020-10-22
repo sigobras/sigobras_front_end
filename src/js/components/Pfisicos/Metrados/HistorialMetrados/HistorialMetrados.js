@@ -6,6 +6,7 @@ import { UrlServer } from '../../../Utils/ServerUrlConfig'
 import { ConvertFormatStringNumber, Redondea } from "../../../Utils/Funciones"
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import HistorialObservaciones from './HistorialObservaciones';
 
 class HistorialMetrados extends Component {
     constructor(props) {
@@ -69,7 +70,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    SeleccionaAnio=(e)=> {
+    SeleccionaAnio = (e) => {
         // console.log("año ", e.target.value)
         this.setState({
             inputAnio: e.target.value
@@ -78,7 +79,7 @@ class HistorialMetrados extends Component {
         this.MesesRequest(e.target.value)
     }
 
-    TabMeses=(tab, fecha)=> {
+    TabMeses = (tab, fecha) => {
         // console.log("api de algo " , tab, "inputAnio ", this.state.inputAnio )
         if (this.state.activeTabMes !== tab) {
             this.setState({
@@ -104,7 +105,7 @@ class HistorialMetrados extends Component {
 
     }
 
-    TabComponentes=(tab, idComp, nombreComp, solesTotal, TotalPorcentaje)=> {
+    TabComponentes = (tab, idComp, nombreComp, solesTotal, TotalPorcentaje) => {
         // console.log("idComp",idComp)
 
         if (this.state.activeTabComp !== tab) {
@@ -133,7 +134,7 @@ class HistorialMetrados extends Component {
         }
     }
 
-    collapseFechas=(e, fecha)=> {
+    collapseFechas = (e, fecha) => {
         let event = Number(e);
         if (event !== this.state.collapseDate) {
             this.setState({ collapseDate: event });
@@ -160,7 +161,7 @@ class HistorialMetrados extends Component {
     }
     //------------------------------ peticiones tipo http con axios ---------------------------------------------------
 
-    MesesRequest=(anio) =>{
+    MesesRequest = (anio) => {
 
         // console.log("anio que llega ", anio)
         //   llamamos el api de meses5
@@ -190,7 +191,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    ResumenRequest=(ultimafecha)=> {
+    ResumenRequest = (ultimafecha) => {
         console.log("fecha", ultimafecha)
         this.setState({ totalResumenComponenteLeyenda: {}, DataResumenApi: [] })
         axios.post(`${UrlServer}/getHistorialResumen`, {
@@ -210,7 +211,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    reqAnual=(anio)=> {
+    reqAnual = (anio) => {
 
         axios.post(`${UrlServer}/getHistorialAnyosResumen`, {
             id_ficha: sessionStorage.getItem('idobra'),
@@ -228,7 +229,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    ComponentesRequest=(fecha) =>{
+    ComponentesRequest = (fecha) => {
         // console.log("fecha de datos ", fecha)
         axios.post(`${UrlServer}/getHistorialComponentes`, {
             id_ficha: sessionStorage.getItem('idobra'),
@@ -246,7 +247,7 @@ class HistorialMetrados extends Component {
             })
     }
 
-    chartValDiaRequest=(idComp, Fecha)=> {
+    chartValDiaRequest = (idComp, Fecha) => {
 
         axios.post(`${UrlServer}/getHistorialComponenteChart`, {
             id_componente: idComp,
@@ -273,7 +274,7 @@ class HistorialMetrados extends Component {
 
     }
 
-    FechaAvancePartidas=(fecha, idComp) =>{
+    FechaAvancePartidas = (fecha, idComp) => {
         // console.log("partidas fecha>>>>", fecha, "id componente ", idComp);
 
         axios.post(`${UrlServer}/getHistorialFechas`, {
@@ -300,7 +301,7 @@ class HistorialMetrados extends Component {
 
     }
 
-    ObtieneTotalesLeyenda=(data)=> {
+    ObtieneTotalesLeyenda = (data) => {
         // console.log(data)
         var total = data.leyenda.reduce((anterior, actual) => {
             anterior.presupuesto = anterior.presupuesto + ConvertFormatStringNumber(actual.presupuesto)
@@ -327,23 +328,28 @@ class HistorialMetrados extends Component {
             DataPartidas, DataChartDiasComponente, componenteTotalSoles, componenteTotalPorcentaje, totalResumenComponenteLeyenda } = this.state
         const options = {
             "colors": [
+                "#0080ff",
                 "#d35400",
                 "#2980b9",
                 "#2ecc71",
                 "#f1c40f",
                 "#2c3e50",
-                "#7f8c8d"
+                "#7f8c8d",
+                "#cc00ff",
+                "#dc3545",
+                "#289ba7",
+                "#2855a7"
             ],
             chart: {
                 type: 'area',
-                "backgroundColor": "#161C20",
+                "backgroundColor": "#242526",
                 "style": {
                     "fontFamily": "Roboto",
                     "color": "#666666"
                 }
             },
             title: {
-                text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN DIARIA',
+                text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN MENSUAL',
                 "align": "center",
                 "style": {
                     "fontFamily": "Roboto Condensed",
@@ -372,7 +378,7 @@ class HistorialMetrados extends Component {
             },
             yAxis: {
                 title: {
-                    text: 'Soles'
+                    text: 'SOLES'
                 },
                 labels: {
                     formatter: function () {
@@ -407,23 +413,32 @@ class HistorialMetrados extends Component {
 
         const Partidas = {
             "colors": [
+                "#0080ff",
                 "#d35400",
                 "#2980b9",
                 "#2ecc71",
                 "#f1c40f",
                 "#2c3e50",
-                "#7f8c8d"
+                "#7f8c8d",
+                "#cc00ff",
+                "#dc3545",
+                "#289ba7",
+                "#2855a7"
+
+
+
             ],
             chart: {
                 type: 'area',
-                "backgroundColor": "#161C20",
+                "backgroundColor": "#242526",
                 "style": {
                     "fontFamily": "Roboto",
-                    "color": "#666666"
+                    "color": "#2ecc71"
                 }
             },
             title: {
-                text: 'VALORIZACIÓN DIARIA POR COMPONENTE'
+                text: 'VALORIZACIÓN DIARIA POR COMPONENTE',
+
             },
             subtitle: {
                 text: 'Componente'
@@ -433,7 +448,7 @@ class HistorialMetrados extends Component {
                 "verticalAlign": "bottom",
                 "itemStyle": {
                     "color":
-                        "#424242",
+                        "#2ecc71",
                     "color": "#ffffff"
                 }
             },
@@ -619,10 +634,10 @@ class HistorialMetrados extends Component {
                                                                                     <tr key={indexHist}>
                                                                                         <td>{hist.item}</td>
                                                                                         <td>{hist.descripcion_partida}</td>
-                                                                                        
+
                                                                                         <td>{hist.nombre_actividad}</td>
                                                                                         <td>{hist.descripcion_actividad}</td>
-                                                                                        
+
                                                                                         <td>{hist.valor} {hist.unidad_medida}</td>
                                                                                         <td>{hist.costo_unitario}</td>
                                                                                         <td>{hist.parcial}</td>
@@ -631,7 +646,6 @@ class HistorialMetrados extends Component {
                                                                             </tbody>
                                                                             <tfoot>
                                                                                 <tr>
-
                                                                                     <td colSpan="8">
                                                                                         {DataPartidas.map((hist, indexHist) =>
                                                                                             <tr key={indexHist}>
@@ -643,6 +657,7 @@ class HistorialMetrados extends Component {
                                                                             </tfoot>
 
                                                                         </table>
+                                                                        <HistorialObservaciones />
                                                                     </div>
                                                                 </Collapse>
                                                             </fieldset>
@@ -656,7 +671,7 @@ class HistorialMetrados extends Component {
                     }
 
                 </CardBody>
-
+                <HistorialObservaciones />
             </div>
         )
     }
