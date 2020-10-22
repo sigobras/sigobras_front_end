@@ -136,44 +136,25 @@ class ParalizacionObra extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
       .then((res) => {
-        // console.log(" data componentes primera carga "  , res.data);
+        //console.log(" data componentes primera carga ", res.data);
         // console.time("tiempo");
 
         if (res.data !== "vacio") {
-          var partidas = res.data[0].partidas
-          // seteando la data que se me envia del api- agrega un icono
-          for (let i = 0; i < partidas.length; i++) {
-            // console.log("partida",  partidas[i].iconocategoria_nombre)
-            if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
-              partidas[i].iconocategoria_nombre = <FaSuperpowers />
-            } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
-              partidas[i].iconocategoria_nombre = <MdLibraryBooks />
-            } else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
-              partidas[i].iconocategoria_nombre = <TiWarning />
-            } else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
-              partidas[i].iconocategoria_nombre = <MdWatch />
-            } else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
-              partidas[i].iconocategoria_nombre = <MdVisibility />
-            } else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
-              partidas[i].iconocategoria_nombre = <MdMonetizationOn />
-            } else {
-              partidas[i].iconocategoria_nombre = null
-            }
-          }
-
-          // console.log(partidas)
-          // console.timeEnd("tiempo");
-
           this.setState({
             DataComponentes: res.data,
-            DataPartidas: res.data[0].partidas,
             nombreComponente: res.data[0].nombre,
           })
+          this.getPartidas(res.data[0].id_componente);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
         // console.error('algo salio mal verifique el',error);
+      })
+      .finally(() => {
+        this.setState({
+          CargandoComp: false
+        })
       })
 
     // axios consulta al api de  prioridades ====================================
@@ -197,6 +178,10 @@ class ParalizacionObra extends Component {
         var CategoriasIconos = res.data
 
         CategoriasIconos.forEach(ico => {
+          var iconoA = ico.nombre.split('<').join("")
+          var iconoB = iconoA.split('/>').join("")
+
+          Object.assign(ico, { icono: iconoB })
           if (ico.nombre === "<FaSuperpowers/>") {
             ico.nombre = <FaSuperpowers />
           } else if (ico.nombre === "<MdLibraryBooks/>") {
@@ -209,8 +194,8 @@ class ParalizacionObra extends Component {
             ico.nombre = <MdVisibility />
           } else if (ico.nombre === "<MdMonetizationOn/>") {
             ico.nombre = <MdMonetizationOn />
-          } else {
-            ico.nombre = null
+            // } else {
+            //   ico.nombre = null
           }
         });
 
@@ -222,13 +207,9 @@ class ParalizacionObra extends Component {
       })
       .catch((err) => {
         console.log("errores al realizar la peticion de iconos", err);
-
       })
-
   }
-
   Tabs(tab, id_componente, nombComp) {
-
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab,
@@ -238,47 +219,54 @@ class ParalizacionObra extends Component {
         collapse: -1,
         BuscaPartida: null,
         PaginaActual: 1
-
       });
     }
-
+    this.getPartidas(id_componente)
+  }
+  async getPartidas(id_componente) {
     // get partidas -----------------------------------------------------------------
-    axios.post(`${UrlServer}${this.props.rutas.Partidas}`, {
+    var partidas_request = await axios.post(`${UrlServer}${this.props.rutas.Partidas}`, {
       id_componente: id_componente
     })
-      .then((res) => {
-        // console.log('getPartidas>>', res.data);
+    console.log('getPartidas>>', partidas_request.data);
+    var partidas = partidas_request.data
+    // seteando la data que se me envia del api- agrega un icono
+    for (let i = 0; i < partidas.length; i++) {
+      // console.log("partida",  partidas[i].iconocategoria_nombre)
+      var iconoA = partidas[i].iconocategoria_nombre.split('<').join("")
+      var iconoB = iconoA.split('/>').join("")
 
-        var partidas = res.data
-        // seteando la data que se me envia del api- agrega un icono
-        for (let i = 0; i < partidas.length; i++) {
-          // console.log("partida",  partidas[i].iconocategoria_nombre)
-          if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
-            partidas[i].iconocategoria_nombre = <FaSuperpowers />
-          } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
-            partidas[i].iconocategoria_nombre = <MdLibraryBooks />
-          } else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
-            partidas[i].iconocategoria_nombre = <TiWarning />
-          } else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
-            partidas[i].iconocategoria_nombre = <MdWatch />
-          } else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
-            partidas[i].iconocategoria_nombre = <MdVisibility />
-          } else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
-            partidas[i].iconocategoria_nombre = <MdMonetizationOn />
-          } else {
-            partidas[i].iconocategoria_nombre = null
-          }
-        }
-        // console.log("dsds", partidas);
-
-        this.setState({
-          DataPartidas: partidas,
-        })
-      })
-      .catch((error) => {
-        toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
-        // console.error('algo salio mal verifique el',error);
-      })
+      Object.assign(partidas[i], { icono: iconoB })
+      if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
+        partidas[i].iconocategoria_nombre = <FaSuperpowers />
+      } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
+        partidas[i].iconocategoria_nombre = <MdLibraryBooks />
+      } else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
+        partidas[i].iconocategoria_nombre = <TiWarning />
+      } else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
+        partidas[i].iconocategoria_nombre = <MdWatch />
+      } else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
+        partidas[i].iconocategoria_nombre = <MdVisibility />
+      } else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
+        partidas[i].iconocategoria_nombre = <MdMonetizationOn />
+      } else {
+        partidas[i].iconocategoria_nombre = null
+      }
+    }
+    await this.setState({
+      DataPartidas: partidas,
+    })
+    this.getCantidadComentarios(id_componente)
+  }
+  async getCantidadComentarios(id_componente) {
+    //cargando la cantidad de comentarios no vistos
+    var partidaComentarios_request = await axios.post(`${UrlServer}/getPartidacomentariosNoVistos`, {
+      id_componente: id_componente
+    })
+    console.log(partidaComentarios_request);
+    this.setState({
+      partidaComentarios: partidaComentarios_request.data
+    })
   }
 
   CapturarID(id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo) {
