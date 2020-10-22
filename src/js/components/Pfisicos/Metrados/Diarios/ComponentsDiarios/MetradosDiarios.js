@@ -99,9 +99,12 @@ class MetradosDiarios extends Component {
     PaginaActual: 1,
     CantidadRows: 40,
     modalComentarios: false,
-    PartidaSeleccionada: null
-  }
+    PartidaSeleccionada: null,
+    id_partidaSeleccionada: 1000,
 
+    //comentarios
+    partidaComentarios: [],
+  }
   componentDidMount() {
     document.title = "Metrados Diarios"
     axios.post(`${UrlServer}${this.props.rutas.Componentes}`, {
@@ -112,39 +115,11 @@ class MetradosDiarios extends Component {
         // console.time("tiempo");
 
         if (res.data !== "vacio") {
-          var partidas = res.data[0].partidas
-          // seteando la data que se me envia del api- agrega un icono
-          for (let i = 0; i < partidas.length; i++) {
-            var iconoA = partidas[i].iconocategoria_nombre.split('<').join("")
-          var iconoB = iconoA.split('/>').join("")
-
-          Object.assign(partidas[i], { icono: iconoB })
-            // console.log("partida",  partidas[i].iconocategoria_nombre)
-            if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
-              partidas[i].iconocategoria_nombre = <FaSuperpowers />
-            } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
-              partidas[i].iconocategoria_nombre = <MdLibraryBooks />
-            } else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
-              partidas[i].iconocategoria_nombre = <TiWarning />
-            } else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
-              partidas[i].iconocategoria_nombre = <MdWatch />
-            } else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
-              partidas[i].iconocategoria_nombre = <MdVisibility />
-            } else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
-              partidas[i].iconocategoria_nombre = <MdMonetizationOn />
-            } else {
-              partidas[i].iconocategoria_nombre = null
-            }
-          }
-
-          // console.log(partidas)
-          // console.timeEnd("tiempo");
-
           this.setState({
             DataComponentes: res.data,
-            DataPartidas: res.data[0].partidas,
             nombreComponente: res.data[0].nombre,
           })
+          this.getPartidas(res.data[0].id_componente);
         }
       })
       .catch(() => {
@@ -207,13 +182,9 @@ class MetradosDiarios extends Component {
       })
       .catch((err) => {
         console.log("errores al realizar la peticion de iconos", err);
-
       })
-
   }
-
-  Tabs = (tab, id_componente, nombComp) => {
-
+  Tabs(tab, id_componente, nombComp) {
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab,
@@ -223,57 +194,57 @@ class MetradosDiarios extends Component {
         collapse: -1,
         BuscaPartida: null,
         PaginaActual: 1
-
       });
     }
-
+    this.getPartidas(id_componente)
+  }
+  async getPartidas(id_componente) {
     // get partidas -----------------------------------------------------------------
-    axios.post(`${UrlServer}${this.props.rutas.Partidas}`, {
+    var partidas_request = await axios.post(`${UrlServer}${this.props.rutas.Partidas}`, {
       id_componente: id_componente
     })
-      .then((res) => {
-        console.log('getPartidas>>', res.data);
+    console.log('getPartidas>>', partidas_request.data);
+    var partidas = partidas_request.data
+    // seteando la data que se me envia del api- agrega un icono
+    for (let i = 0; i < partidas.length; i++) {
+      // console.log("partida",  partidas[i].iconocategoria_nombre)
+      var iconoA = partidas[i].iconocategoria_nombre.split('<').join("")
+      var iconoB = iconoA.split('/>').join("")
 
-        var partidas = res.data
-        // seteando la data que se me envia del api- agrega un icono
-        for (let i = 0; i < partidas.length; i++) {
-          // console.log("partida",  partidas[i].iconocategoria_nombre)
-          var iconoA = partidas[i].iconocategoria_nombre.split('<').join("")
-          var iconoB = iconoA.split('/>').join("")
-
-          Object.assign(partidas[i], { icono: iconoB })
-          if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
-            partidas[i].iconocategoria_nombre = <FaSuperpowers />
-          } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
-            partidas[i].iconocategoria_nombre = <MdLibraryBooks />
-          } else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
-            partidas[i].iconocategoria_nombre = <TiWarning />
-          } else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
-            partidas[i].iconocategoria_nombre = <MdWatch />
-          } else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
-            partidas[i].iconocategoria_nombre = <MdVisibility />
-          } else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
-            partidas[i].iconocategoria_nombre = <MdMonetizationOn />
-          } else {
-            partidas[i].iconocategoria_nombre = null
-          }
-        }
-        // console.log("dsds", partidas);
-
-        this.setState({
-          DataPartidas: partidas,
-        })
-      })
-      .catch(() => {
-        toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
-        // console.error('algo salio mal verifique el',error);
-      })
+      Object.assign(partidas[i], { icono: iconoB })
+      if (partidas[i].iconocategoria_nombre === "<FaSuperpowers/>") {
+        partidas[i].iconocategoria_nombre = <FaSuperpowers />
+      } else if (partidas[i].iconocategoria_nombre === "<MdLibraryBooks/>") {
+        partidas[i].iconocategoria_nombre = <MdLibraryBooks />
+      } else if (partidas[i].iconocategoria_nombre === "<TiWarning/>") {
+        partidas[i].iconocategoria_nombre = <TiWarning />
+      } else if (partidas[i].iconocategoria_nombre === "<MdWatch/>") {
+        partidas[i].iconocategoria_nombre = <MdWatch />
+      } else if (partidas[i].iconocategoria_nombre === "<MdVisibility/>") {
+        partidas[i].iconocategoria_nombre = <MdVisibility />
+      } else if (partidas[i].iconocategoria_nombre === "<MdMonetizationOn/>") {
+        partidas[i].iconocategoria_nombre = <MdMonetizationOn />
+      } else {
+        partidas[i].iconocategoria_nombre = null
+      }
+    }
+    await this.setState({
+      DataPartidas: partidas,
+    })
+    this.getCantidadComentarios(id_componente)
   }
-
+  async getCantidadComentarios(id_componente) {
+    //cargando la cantidad de comentarios no vistos
+    var partidaComentarios_request = await axios.post(`${UrlServer}/getPartidacomentariosNoVistos`, {
+      id_componente: id_componente
+    })
+    console.log(partidaComentarios_request);
+    this.setState({
+      partidaComentarios: partidaComentarios_request.data
+    })
+  }
   CapturarID = (id_actividad, nombre_actividad, unidad_medida, costo_unitario, actividad_metrados_saldo, indexComp, actividad_porcentaje, actividad_avance_metrado, metrado_actividad, viewIndex, parcial_actividad, descripcion, metrado, parcial, porcentaje_negativo, rendimiento) => {
-
     // console.log('porcentaje_negatividad', porcentaje_negativo)
-
     this.modalMetrar();
     this.setState({
       modal: !this.state.modal,
@@ -298,21 +269,17 @@ class MetradosDiarios extends Component {
       UrlImagen: "",
       file: null,
     })
-
   }
-
   modalMetrar = () => {
     this.setState({
       modal: !this.state.modal
     });
   }
-
   modalMayorMetrado = () => {
     this.setState({
       modalMm: !this.state.modalMm
     });
   }
-
   onChangeImgMetrado = (e) => {
 
     var inputValueImg = e.target.files[0]
@@ -336,8 +303,6 @@ class MetradosDiarios extends Component {
       file: null
     })
   }
-
-  // FUNCIONES DE ESTADOS DE OBRA  =====================================================
   EnviarMetrado_EJECUCION = (e) => {
 
     e.preventDefault()
@@ -429,7 +394,6 @@ class MetradosDiarios extends Component {
       }
     }
   }
-
   EnviarMetrado_CORTE = (e) => {
 
     e.preventDefault()
@@ -524,7 +488,6 @@ class MetradosDiarios extends Component {
 
     }
   }
-
   EnviarMetrado_ACTUALIZACION = (e) => {
 
     e.preventDefault()
@@ -630,7 +593,6 @@ class MetradosDiarios extends Component {
       }
     }
   }
-
   capturaidMM = (partidas_id_partida, indexComp, indexPartida, descripcion) => {
     this.setState({
       modalMm: !this.state.modalMm,
@@ -641,7 +603,6 @@ class MetradosDiarios extends Component {
       OpcionMostrarMM: ''
     })
   }
-
   EnviarMayorMetrado = (e) => {
     e.preventDefault()
 
@@ -719,8 +680,6 @@ class MetradosDiarios extends Component {
         })
     }
   }
-
-  // mas funciones para metrados
   CollapseItem = (valor, id_partida) => {
     console.log("demo entre")
     if (valor !== -1 && id_partida !== -1) {
@@ -754,7 +713,6 @@ class MetradosDiarios extends Component {
 
     }
   }
-
   Filtrador = (e) => {
     // console.log("datos ", e)
     this.setState({
@@ -816,20 +774,17 @@ class MetradosDiarios extends Component {
 
     }
   }
-
   toggleDropDown = () => {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen
     });
   }
-
   Prioridad = (i) => {
     console.log("cambia >>", i)
     this.setState({
       mostrarIconos: this.state.mostrarIconos === i ? -1 : i
     })
   }
-
   UpdatePrioridadIcono = (idPartida, id_icono, index) => {
     // console.log("index", index);
 
@@ -876,7 +831,6 @@ class MetradosDiarios extends Component {
         console.error("error", err);
       })
   }
-
   UpdatePrioridadColor = (idPartida, prioridad, index) => {
 
     var partidas = this.state.DataPartidas
@@ -901,7 +855,6 @@ class MetradosDiarios extends Component {
         console.error("error", err);
       })
   }
-
   clearImg = () => {
     this.setState({
       UrlImagen: "",
@@ -910,13 +863,11 @@ class MetradosDiarios extends Component {
     })
     document.getElementById("myImage").value = "";
   }
-
   modalImgPartida = () => {
     this.setState(prevState => ({
       modalImgPartida: !prevState.modalImgPartida,
     }));
   }
-
   capturaDatosCrearImgPartida = (id_partida, Ruta, variable) => {
     console.log("id_partida", id_partida, "Ruta", Ruta, "variable", variable);
 
@@ -930,7 +881,6 @@ class MetradosDiarios extends Component {
       EnvioImgObsApiRuta: Ruta
     })
   }
-
   EnviaImgPartida = (e) => {
     e.preventDefault();
     var { partidas_id_partida, file, ObservacionMetrado, Id_Partida_O_Actividad, EnvioImgObsApiRuta } = this.state
@@ -974,7 +924,6 @@ class MetradosDiarios extends Component {
       return
     }
   }
-
   PaginaActual = (event) => {
     // console.log("PaginaActual ", Number(event))
     this.setState({
@@ -982,33 +931,35 @@ class MetradosDiarios extends Component {
       collapse: -1,
     });
   }
-
   SelectCantidadRows = (e) => {
     // console.log("SelectCantidadRows ", e.target.value)
     this.setState({ CantidadRows: Number(e.target.value) })
   }
-
   modalComentarios = () => {
     this.setState(prevState => ({
       modalComentarios: !prevState.modalComentarios
     }));
   }
-
-
+  async onClickMensajes(metrados) {
+    this.setState({
+      PartidaSeleccionada: metrados.descripcion,
+      id_partidaSeleccionada: metrados.id_partida,
+      modalComentarios: true
+    })
+    await axios.post(`${UrlServer}/postComentariosVistos`, {
+      "id_partida": metrados.id_partida,
+      "id_acceso": sessionStorage.getItem('idacceso')
+    })
+    this.getCantidadComentarios()
+  }
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
-      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp } = this.state
+      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp, partidaComentarios } = this.state
     var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado
 
     var DatosPartidasFiltrado = DataPartidas
     var BuscaPartida = this.state.BuscaPartida
-
-    // console.log("BuscaPartida", BuscaPartida);
-    // console.log("DatosPartidasFiltrado", DatosPartidasFiltrado);
-
-
-
     if (BuscaPartida !== null) {
 
       if (typeof BuscaPartida === "number") {
@@ -1042,10 +993,10 @@ class MetradosDiarios extends Component {
           }
 
           // filtro de prioridades por icono
-          else if (filtrado.icono === BuscaPartida){
+          else if (filtrado.icono === BuscaPartida) {
             // console.log(">>", filtrado.icono , BuscaPartida);
             return filtrado.icono === BuscaPartida
-          } 
+          }
 
 
 
@@ -1065,11 +1016,6 @@ class MetradosDiarios extends Component {
       }
 
     }
-
-
-
-    // paginacion 
-
     // obtener indices para paginar 
     const indexOfUltimo = PaginaActual * CantidadRows;
     // console.log("INDEX OF ULTIMO ", indexOfUltimo)
@@ -1208,6 +1154,7 @@ class MetradosDiarios extends Component {
 
                             </UncontrolledPopover>
                           </th>
+                          <th></th>
                           <th>ITEM</th>
                           <th>DESCRIPCIÓN</th>
                           <th>METRADO</th>
@@ -1266,18 +1213,50 @@ class MetradosDiarios extends Component {
 
 
                               </td>
+                              <td>
+                                {
+                                  metrados.tipo === "titulo" ? "" :
+                                    <div
+                                      className="align-center position-relative"
+                                      onClick={() => this.onClickMensajes(metrados)}
+                                    >
+                                      {partidaComentarios[i] && partidaComentarios[i].mensajes ?
+                                        <div style={{
+                                          background: "red",
+                                          borderRadius: "50%",
+                                          textAlign: "center",
+                                          position: "absolute",
+                                          left: "-6px",
+                                          top: "1px",
+                                          padding: "1px 4px",
+                                          zIndex: "20",
+                                          fontSize: "9px",
+                                          fontWeight: "bold"
+                                        }}>
+                                          {partidaComentarios[i].mensajes}
+                                        </div>
+                                        : ""}
+                                      <div style={{
+                                        position: "absolute",
+                                        top: "6px",
+                                        left: "-13px",
+                                        zIndex: "10"
+                                      }}>
+                                        <MdComment size={17} />
+                                      </div>
+                                    </div>
+                                }
+                              </td>
                               <td className={metrados.tipo === "titulo" ? '' : collapse === i ? "tdData1" : metrados.mayorMetrado === 0 ? "tdData" : "FondMM tdData"} onClick={metrados.tipo === "titulo" ? () => this.CollapseItem(-1, -1) : () => this.CollapseItem(i, metrados.id_partida)} data-event={i} >
                                 {metrados.item}
                               </td>
                               <td>
                                 {metrados.descripcion}
-
                               </td>
                               <td>{metrados.metrado} {metrados.unidad_medida} </td>
                               <td>{metrados.costo_unitario}</td>
                               <td>{metrados.parcial}</td>
                               <td className="small border border-left border-right-0 border-bottom-0 border-top-0" >
-
                                 <div className={(metrados.tipo === "titulo" ? 'd-none' : '')}>
                                   <div className="clearfix">
                                     <span className="float-left text-warning">Avance: {metrados.avance_metrado} {metrados.unidad_medida}</span>
@@ -1289,7 +1268,6 @@ class MetradosDiarios extends Component {
                                     width: '100%',
                                     background: '#c3bbbb',
                                   }}
-
                                   >
                                     <div
                                       style={{
@@ -1307,7 +1285,6 @@ class MetradosDiarios extends Component {
                                     <span className="float-right text-info">S/. {metrados.metrados_costo_saldo}</span>
                                   </div>
                                 </div>
-
                               </td>
                               <td className="text-center">
 
@@ -1323,62 +1300,22 @@ class MetradosDiarios extends Component {
                                     : ""
                                 }
                               </td>
-                              <td>
-                                {
-                                  metrados.tipo === "titulo" ? "" :
-                                    <div
-                                      className="align-center position-relative"
-                                      onClick={() => this.setState({
-                                        PartidaSeleccionada: metrados.descripcion,
-                                        modalComentarios: true
-                                      })}
-                                    >
-                                      <div style={{
-                                        background: "red",
-                                        borderRadius: "50%",
-                                        textAlign: "center",
-                                        position: "absolute",
-                                        left: "9px",
-                                        top: "1px",
-                                        padding: "1px 4px",
-                                        zIndex: "20",
-                                        fontSize: "9px",
-                                        fontWeight: "bold"
-                                      }}>12</div>
-                                      <div style={{
-                                        position: "absolute",
-                                        top: "10px",
-                                        zIndex: "10"
-                                      }}>
-                                        <MdComment size={17} />
-                                      </div>
-                                    </div>
-                                }
-                              </td>
                             </tr>
-
                             <tr className={collapse === i ? "resplandPartidabottom" : "d-none"}>
                               <td colSpan="8">
                                 <Collapse isOpen={collapse === i}>
                                   <div className="p-1">
                                     <div className="row">
-
                                       <div className="col-sm-7 text-info">
-
                                         {metrados.descripcion} <MdFlashOn size={20} className="text-danger" />rendimiento: {metrados.rendimiento} {metrados.unidad_medida}
-
-
                                       </div>
-
                                       <div className="col-sm-2">
                                         {
                                           Number(DataMayorMetrado.mm_avance_costo) > 0 ? 'MAYOR METRADO' : ''
                                         }
                                       </div>
-
                                       <div className="col-sm-2">
                                         {/* datos de mayor metrado ------------------ */}
-
                                         {
                                           Number(DataMayorMetrado.mm_avance_costo) > 0 ?
                                             <div className="small">
@@ -1398,10 +1335,7 @@ class MetradosDiarios extends Component {
                                               </div>
                                             </div> : ''
                                         }
-
-
                                       </div>
-
                                       <div className="col-sm-1">
                                         <button className="btn btn-outline-danger btn-xs p-1 mb-1 fsize" title="Ingreso de mayores metrados sólo con autorización del supervisor" onClick={() => this.capturaidMM(metrados.id_partida, this.state.id_componente, i, metrados.descripcion)}>MM</button>
                                       </div>
@@ -1848,7 +1782,7 @@ class MetradosDiarios extends Component {
 
                         <div className="form-group">
                           <label htmlFor="fehca">FECHA :</label>
-                          <input type="date" min={PrimerDiaDelMesActual()-1} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
+                          <input type="date" min={PrimerDiaDelMesActual() - 1} max={FechaActual()} onChange={e => this.setState({ fecha_actualizacion: e.target.value })} className="form-control form-control-sm" />
                           <div className="texto-rojo mb-0"> <b> {this.state.smsValidaFecha}</b></div>
                         </div>
 
@@ -2026,7 +1960,7 @@ class MetradosDiarios extends Component {
               </ModalFooter>
             </form>
           </Modal>
-          {/* //MODAL INSERTA IMAGEN DE PARTIDA Y ACTIVIDAD */}
+         
 
           {/* MODAL COMENTARIOS */}
           <Modal isOpen={this.state.modalComentarios} fade={false} toggle={this.modalComentarios} size="sm">
@@ -2049,9 +1983,8 @@ class MetradosDiarios extends Component {
                 </div>
               </div>
             </ModalHeader>
-            <Comentarios />
+            <Comentarios id_partida={this.state.id_partidaSeleccionada} />
           </Modal>
-          {/* //MODAL COMENTARIOS */}
         </div>
     );
   }
