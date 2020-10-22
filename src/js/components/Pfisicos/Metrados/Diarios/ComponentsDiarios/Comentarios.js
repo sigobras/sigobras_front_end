@@ -1,102 +1,88 @@
-import React, { Component, useState } from 'react';
-import { ModalBody, ModalFooter, Button } from 'reactstrap';
+import React, { useEffect, useState, useRef } from 'react';
+import { ModalBody, Button } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
-
-function Comentarios() {
-    const [DataReqCie10, setDataReqCie10] = useState([])
-
-    const CapturarTxtComentario = async (e) => {
-        // e.preventDefault()
-        // console.log("ss", e.target.elements.Usuario.value);
-        console.log("ss", e.target.value);
-        // try {
-        //     var ReqBuscar = await Axios.post("/Cie10/Buscar", {
-        //         "valor": e.target.elements.Usuario.value
-        //     })
-        //     console.log("ReqBuscar ", ReqBuscar);
-        //     setDataReqCie10(ReqBuscar.data)
-        // } catch (error) {
-        //     console.error("erroes al buscar el cie  10", error);
-        // }
+import axios from 'axios';
+import { UrlServer } from '../../../../Utils/ServerUrlConfig';
+// import './mystyle.css';
+function Comentarios({ id_partida }) {
+    const messagesEndRef = useRef(null);
+    const scrollToBottom = () => {
+        console.log("scroll to bottom");
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    };
+    const [Data, setData] = useState([])
+    const [Comentario, setComentario] = useState([])
+    useEffect(() => {
+        fetchComentario()
+        scrollToBottom()
+    }, []);
+    async function fetchComentario() {
+        const request = await axios.post(`${UrlServer}/getPartidaComentarios`, {
+            "id_partida": id_partida
+        })
+        await setData(request.data);
+        scrollToBottom()
     }
+    async function saveComentario() {
+        const request = await axios.post(`${UrlServer}/postPartidaComentarios`, {
+            "comentario": Comentario,
+            "id_partida": id_partida,
+            "id_acceso": sessionStorage.getItem('idacceso')
+        })
+        console.log(request);
+        await fetchComentario()
+
+        axios.post(`${UrlServer}/postComentariosVistos`, {
+            "id_partida": id_partida,
+            "id_acceso": sessionStorage.getItem('idacceso')
+        })
+    }
+  
+
     return (
-
-        <ModalBody>
-            <form>
-                <div className="form-group mt-2">
-                    <label htmlFor="comment"> EN DESARROLLO...(DESCRIPCIÓN / OBSERVACIÓN / CONSULTA)</label>
-                    <DebounceInput
-                        placeholder="Escribe un comentario"
-                        minLength={1}
-                        debounceTimeout={1000}
-                        onChange={e => CapturarTxtComentario(e)}
-                        className="form-control"
-                    />
-                </div>
-            </form>
-
+        <ModalBody style={{ 'maxHeight': 'calc(100vh - 210px)', 'overflowY': 'auto' }}>
             <div>
-                <div className="comentario mb-3">
-                    <div>
+                {Data.map((item, i) =>
+                    <div className="comentario mb-3" key={i}>
                         <div>
-                            <div className="float-left small"><b>RESIDENTE: </b><em>NOMBRE DEL RESIDENTE</em> </div>
-                            <div className="float-right small">12 agosto 2020</div>
-                        </div>
-                        <br />
-                    Comentario realizado en función a la partida
+                            <div>
+                                <div className="float-left small"><b>{item.cargo_nombre} </b><em>{item.usuario_nombre}</em> </div>
+                                <div className="float-right small">{item.fecha}</div>
+                            </div>
+                            <br />
+                            {item.comentario}
 
-                    <div style={{
-                            position: "absolute",
-                            left: "-67px",
-                            top: "2px"
-                        }}>
-                            <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" width="44px" height="44px" className="rounded-circle" />
-                        </div>
+                            <div style={{
+                                position: "absolute",
+                                left: "-67px",
+                                top: "2px"
+                            }}>
+                                {/* <img src={item.cargo_imagen} width="44px" height="44px" className="rounded-circle" /> */}
+                                <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" width="44px" height="44px" className="rounded-circle" />
+                            </div>
 
+                        </div>
                     </div>
-                </div>
+                )}
 
-                <div className="comentario mb-3">
-                    <div>
-                        <div>
-                            <div className="float-left small"><b>SUPERVISOR: </b><em>NOMBRE DEL SUPERVISOR</em> </div>
-                            <div className="float-right small">12 agosto 2020</div>
-                        </div>
-                        <br />
-                        Respuesta a la consulta realizada sobre la partida
-
-                    <div style={{
-                            position: "absolute",
-                            left: "-67px",
-                            top: "2px"
-                        }}>
-                            <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" width="44px" height="44px" className="rounded-circle" />
-                        </div>
-
-                    </div>
-                </div>
-
-                <div className="comentario mb-3">
-                    <div>
-                        <div>
-                            <div className="float-left small"><b>GERENTE: </b><em>NOMBRE DEL GERENTE</em> </div>
-                            <div className="float-right small">12 agosto 2020</div>
-                        </div>
-                        <br />
-                    Observacion hecha a la consulta de los ejecutores, respuesta rápida
-
-                    <div style={{
-                            position: "absolute",
-                            left: "-67px",
-                            top: "2px"
-                        }}>
-                            <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" width="44px" height="44px" className="rounded-circle" />
-                        </div>
-
-                    </div>
+            </div>
+            <div className="input-group mt-2">
+                <DebounceInput
+                    placeholder="Escribe un comentario"
+                    minLength={1}
+                    debounceTimeout={1000}
+                    onChange={e => setComentario(e.target.value)}
+                    className="form-control"
+                />
+                <div class="input-group-append">
+                    <Button
+                        color="primary"
+                        onClick={() => saveComentario()}
+                    >Guardar
+                    </Button>
                 </div>
             </div>
-
+            <div ref={messagesEndRef} />
         </ModalBody>
     );
 }
