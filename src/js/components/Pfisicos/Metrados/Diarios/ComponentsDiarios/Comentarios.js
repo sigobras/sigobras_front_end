@@ -31,7 +31,7 @@ function Comentarios({ id_partida }) {
         })
         console.log(request);
         await fetchComentario()
-
+        setComentario("")
         axios.post(`${UrlServer}/postComentariosVistos`, {
             "id_partida": id_partida,
             "id_acceso": sessionStorage.getItem('idacceso')
@@ -72,9 +72,10 @@ function Comentarios({ id_partida }) {
                     minLength={1}
                     debounceTimeout={1000}
                     onChange={e => setComentario(e.target.value)}
+                    value={Comentario}
                     className="form-control"
                 />
-                <div class="input-group-append">
+                <div className="input-group-append">
                     <Button
                         color="primary"
                         onClick={() => saveComentario()}
