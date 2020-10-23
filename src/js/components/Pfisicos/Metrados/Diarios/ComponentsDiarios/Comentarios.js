@@ -3,8 +3,27 @@ import { ModalBody, Button } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
-// import './mystyle.css';
+import socket from 'socket.io-client';
+
+// Use socket to fetch request to data 
+// Socket server's url and topic in which data is sent
+// const useSocket = ( topic) => {
+//     const [temp, setTemp] = useState(0);
+//     const [isConnected, setConnected] = useState(false);
+
+//     useEffect(() => {
+//         const client = socket.connect(UrlServer);
+//         client.on("connect", () => setConnected(true));
+//         client.on("disconnect", () => setConnected(false));
+//         client.on(topic, (data) => {
+//             setTemp(data);
+//         })
+//     }, [UrlServer, topic, isConnected]);
+//     return { temp };
+// }
+
 function Comentarios({ id_partida }) {
+    const client = socket.connect(UrlServer);
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
         console.log("scroll to bottom");
@@ -12,9 +31,13 @@ function Comentarios({ id_partida }) {
     };
     const [Data, setData] = useState([])
     const [Comentario, setComentario] = useState([])
+
+    const [temp, setTemp] = useState(0);
+    const [isConnected, setConnected] = useState(false);
     useEffect(() => {
         fetchComentario()
         scrollToBottom()
+        socketIni()
     }, []);
     async function fetchComentario() {
         const request = await axios.post(`${UrlServer}/getPartidaComentarios`, {
@@ -36,8 +59,20 @@ function Comentarios({ id_partida }) {
             "id_partida": id_partida,
             "id_acceso": sessionStorage.getItem('idacceso')
         })
+        //socket test
+        client.emit("partidas_comentarios_post",
+            {
+                id_partida
+            }
+        )
     }
-  
+    function socketIni() {
+        client.on("partidas_comentarios_get-" + id_partida, (data) => {
+            console.log("llegada de mensaje");
+            fetchComentario()
+        })
+    }
+
 
     return (
         <ModalBody style={{ 'maxHeight': 'calc(100vh - 210px)', 'overflowY': 'auto' }}>
