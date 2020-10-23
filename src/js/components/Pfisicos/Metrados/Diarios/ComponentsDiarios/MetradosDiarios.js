@@ -118,6 +118,7 @@ class MetradosDiarios extends Component {
           this.setState({
             DataComponentes: res.data,
             nombreComponente: res.data[0].nombre,
+            id_componente:res.data[0].id_componente
           })
           this.getPartidas(res.data[0].id_componente);
         }
@@ -236,9 +237,10 @@ class MetradosDiarios extends Component {
   async getCantidadComentarios(id_componente) {
     //cargando la cantidad de comentarios no vistos
     var partidaComentarios_request = await axios.post(`${UrlServer}/getPartidacomentariosNoVistos`, {
-      id_componente: id_componente
+      id_componente: id_componente,
+      id_acceso:sessionStorage.getItem('idacceso')
     })
-    console.log(partidaComentarios_request);
+    console.log("partidaComentarios_request",partidaComentarios_request);
     this.setState({
       partidaComentarios: partidaComentarios_request.data
     })
@@ -950,7 +952,9 @@ class MetradosDiarios extends Component {
       "id_partida": metrados.id_partida,
       "id_acceso": sessionStorage.getItem('idacceso')
     })
-    this.getCantidadComentarios()
+    console.log(sessionStorage.getItem('idacceso'));
+    console.log("id componentes",this.state.id_componente);
+    this.getCantidadComentarios(this.state.id_componente)
   }
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
