@@ -104,6 +104,7 @@ class MetradosDiarios extends Component {
 
     //comentarios
     partidaComentarios: [],
+    componentesComentarios:[]
   }
   componentDidMount() {
     document.title = "Metrados Diarios"
@@ -111,32 +112,28 @@ class MetradosDiarios extends Component {
       id_ficha: sessionStorage.getItem('idobra')
     })
       .then((res) => {
-        //console.log(" data componentes primera carga ", res.data);
-        // console.time("tiempo");
-
         if (res.data !== "vacio") {
           this.setState({
             DataComponentes: res.data,
             nombreComponente: res.data[0].nombre,
-            id_componente:res.data[0].id_componente
+            id_componente: res.data[0].id_componente
           })
           this.getPartidas(res.data[0].id_componente);
         }
       })
       .catch(() => {
         toast.error('No es posible conectar al sistema. Comprueba tu conexión a internet.', { position: "top-right", autoClose: 5000 });
-        // console.error('algo salio mal verifique el',error);
       })
       .finally(() => {
         this.setState({
           CargandoComp: false
         })
       })
+    this.getComponentesComentarios()
 
     // axios consulta al api de  prioridades ====================================
     axios.get(`${UrlServer}/getPrioridades`)
       .then((res) => {
-        // console.log("datos", res.data);
         this.setState({
           DataPrioridadesApi: res.data
         })
@@ -149,10 +146,7 @@ class MetradosDiarios extends Component {
 
     axios.get(`${UrlServer}/getIconoscategorias`)
       .then((res) => {
-        // console.log("datos", res.data);
-
         var CategoriasIconos = res.data
-
         CategoriasIconos.forEach(ico => {
           var iconoA = ico.nombre.split('<').join("")
           var iconoB = iconoA.split('/>').join("")
@@ -170,13 +164,8 @@ class MetradosDiarios extends Component {
             ico.nombre = <MdVisibility />
           } else if (ico.nombre === "<MdMonetizationOn/>") {
             ico.nombre = <MdMonetizationOn />
-            // } else {
-            //   ico.nombre = null
           }
         });
-
-        // console.log("CategoriasIconos", CategoriasIconos);
-
         this.setState({
           DataIconosCategoriaApi: CategoriasIconos
         })
@@ -184,6 +173,14 @@ class MetradosDiarios extends Component {
       .catch((err) => {
         console.log("errores al realizar la peticion de iconos", err);
       })
+  }
+  async getComponentesComentarios() {
+    var req_componentesComentario = await axios.post(`${UrlServer}/getComponentesComentarios`, {
+      "id_acceso": sessionStorage.getItem('idacceso'),
+      "id_ficha": sessionStorage.getItem('idobra'),
+    })
+    console.log("req_componentesComentario",req_componentesComentario.data);
+    this.setState({componentesComentarios:req_componentesComentario.data})
   }
   Tabs(tab, id_componente, nombComp) {
     if (this.state.activeTab !== tab) {
@@ -238,9 +235,9 @@ class MetradosDiarios extends Component {
     //cargando la cantidad de comentarios no vistos
     var partidaComentarios_request = await axios.post(`${UrlServer}/getPartidacomentariosNoVistos`, {
       id_componente: id_componente,
-      id_acceso:sessionStorage.getItem('idacceso')
+      id_acceso: sessionStorage.getItem('idacceso')
     })
-    console.log("partidaComentarios_request",partidaComentarios_request);
+    console.log("partidaComentarios_request", partidaComentarios_request);
     this.setState({
       partidaComentarios: partidaComentarios_request.data
     })
@@ -953,13 +950,14 @@ class MetradosDiarios extends Component {
       "id_acceso": sessionStorage.getItem('idacceso')
     })
     console.log(sessionStorage.getItem('idacceso'));
-    console.log("id componentes",this.state.id_componente);
+    console.log("id componentes", this.state.id_componente);
     this.getCantidadComentarios(this.state.id_componente)
+    this.getComponentesComentarios()
   }
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
-      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp, partidaComentarios } = this.state
+      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp, partidaComentarios,componentesComentarios } = this.state
     var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado
 
     var DatosPartidasFiltrado = DataPartidas
@@ -1051,10 +1049,26 @@ class MetradosDiarios extends Component {
               <Card>
                 <Nav tabs>
                   {DataComponentes.length === 0 ? <Spinner color="primary" size="sm" /> : DataComponentes.map((comp, indexComp) =>
-                    <NavItem key={indexComp}>
+                    <NavItem key={indexComp} style={{ position: "relative" }}>
                       <NavLink className={classnames({ active: this.state.activeTab === indexComp.toString() })} onClick={() => this.Tabs(indexComp.toString(), comp.id_componente, comp.nombre)}>
                         COMP {comp.numero}
                       </NavLink>
+                      {componentesComentarios[indexComp] && componentesComentarios[indexComp].mensajes ?
+                      <div style={{
+                        background: "red",
+                        borderRadius: "50%",
+                        textAlign: "center",
+                        position: "absolute",
+                        right: "-11px",
+                        top: "-5px",
+                        padding: "1px 4px",
+                        zIndex: "20",
+                        fontSize: "9px",
+                        fontWeight: "bold"
+                      }}>
+                        {componentesComentarios[indexComp].mensajes}
+                      </div>
+                      :""}
                     </NavItem>
                   )}
                 </Nav>
@@ -1964,7 +1978,7 @@ class MetradosDiarios extends Component {
               </ModalFooter>
             </form>
           </Modal>
-         
+
 
           {/* MODAL COMENTARIOS */}
           <Modal isOpen={this.state.modalComentarios} fade={false} toggle={this.modalComentarios} size="sm">
