@@ -15,9 +15,11 @@ import LogoSigobras from './../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
 import Comentarios from './Comentarios';
+import socket from 'socket.io-client';
 
 
 class MetradosDiarios extends Component {
+  client = socket.connect(UrlServer);
   state = {
     DataComponentes: [],
     DataPartidas: [],
@@ -104,11 +106,11 @@ class MetradosDiarios extends Component {
 
     //comentarios
     partidaComentarios: [],
-    componentesComentarios:[]
+    componentesComentarios: []
   }
-  componentDidMount() {
+  async componentDidMount() {
     document.title = "Metrados Diarios"
-    axios.post(`${UrlServer}${this.props.rutas.Componentes}`, {
+    await axios.post(`${UrlServer}${this.props.rutas.Componentes}`, {
       id_ficha: sessionStorage.getItem('idobra')
     })
       .then((res) => {
@@ -173,18 +175,30 @@ class MetradosDiarios extends Component {
       .catch((err) => {
         console.log("errores al realizar la peticion de iconos", err);
       })
+      this.getDataSocketComponente()
+  }
+  getDataSocketComponente() {
+    // sockets
+    this.client.on("partidas_comentarios_notificacion_get-" + this.state.id_componente, (data) => {
+      console.log("llegada de mensaje idcomponente");
+      this.getCantidadComentarios(this.state.id_componente)
+    })
+    this.client.on("componentes_comentarios_notificacion_get-" + sessionStorage.getItem('idobra'), (data) => {
+      console.log("llegada de mensaje idobra");
+      this.getComponentesComentarios()
+    })
   }
   async getComponentesComentarios() {
     var req_componentesComentario = await axios.post(`${UrlServer}/getComponentesComentarios`, {
       "id_acceso": sessionStorage.getItem('idacceso'),
       "id_ficha": sessionStorage.getItem('idobra'),
     })
-    console.log("req_componentesComentario",req_componentesComentario.data);
-    this.setState({componentesComentarios:req_componentesComentario.data})
+    console.log("req_componentesComentario", req_componentesComentario.data);
+    this.setState({ componentesComentarios: req_componentesComentario.data })
   }
-  Tabs(tab, id_componente, nombComp) {
+  async Tabs(tab, id_componente, nombComp) {
     if (this.state.activeTab !== tab) {
-      this.setState({
+      await this.setState({
         activeTab: tab,
         nombreComponente: nombComp,
         DataPartidas: [],
@@ -195,6 +209,7 @@ class MetradosDiarios extends Component {
       });
     }
     this.getPartidas(id_componente)
+    this.getDataSocketComponente()
   }
   async getPartidas(id_componente) {
     // get partidas -----------------------------------------------------------------
@@ -957,7 +972,7 @@ class MetradosDiarios extends Component {
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
-      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp, partidaComentarios,componentesComentarios } = this.state
+      nombreComponente, OpcionMostrarMM, SMSinputTypeImg, PaginaActual, CantidadRows, CargandoComp, partidaComentarios, componentesComentarios } = this.state
     var restaResultado = this.state.ValorMetrado - this.state.actividad_avance_metrado
 
     var DatosPartidasFiltrado = DataPartidas
@@ -1054,21 +1069,21 @@ class MetradosDiarios extends Component {
                         COMP {comp.numero}
                       </NavLink>
                       {componentesComentarios[indexComp] && componentesComentarios[indexComp].mensajes ?
-                      <div style={{
-                        background: "red",
-                        borderRadius: "50%",
-                        textAlign: "center",
-                        position: "absolute",
-                        right: "-11px",
-                        top: "-5px",
-                        padding: "1px 4px",
-                        zIndex: "20",
-                        fontSize: "9px",
-                        fontWeight: "bold"
-                      }}>
-                        {componentesComentarios[indexComp].mensajes}
-                      </div>
-                      :""}
+                        <div style={{
+                          background: "red",
+                          borderRadius: "50%",
+                          textAlign: "center",
+                          position: "absolute",
+                          right: "-11px",
+                          top: "-5px",
+                          padding: "1px 4px",
+                          zIndex: "20",
+                          fontSize: "9px",
+                          fontWeight: "bold"
+                        }}>
+                          {componentesComentarios[indexComp].mensajes}
+                        </div>
+                        : ""}
                     </NavItem>
                   )}
                 </Nav>
@@ -2001,7 +2016,7 @@ class MetradosDiarios extends Component {
                 </div>
               </div>
             </ModalHeader>
-            <Comentarios id_partida={this.state.id_partidaSeleccionada} />
+            <Comentarios id_partida={this.state.id_partidaSeleccionada} id_componente={this.state.id_componente}/>
           </Modal>
         </div>
     );
