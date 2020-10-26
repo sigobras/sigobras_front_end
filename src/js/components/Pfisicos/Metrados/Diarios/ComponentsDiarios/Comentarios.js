@@ -5,24 +5,7 @@ import axios from 'axios';
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import socket from 'socket.io-client';
 
-// Use socket to fetch request to data 
-// Socket server's url and topic in which data is sent
-// const useSocket = ( topic) => {
-//     const [temp, setTemp] = useState(0);
-//     const [isConnected, setConnected] = useState(false);
-
-//     useEffect(() => {
-//         const client = socket.connect(UrlServer);
-//         client.on("connect", () => setConnected(true));
-//         client.on("disconnect", () => setConnected(false));
-//         client.on(topic, (data) => {
-//             setTemp(data);
-//         })
-//     }, [UrlServer, topic, isConnected]);
-//     return { temp };
-// }
-
-function Comentarios({ id_partida }) {
+function Comentarios({ id_partida, id_componente }) {
     const client = socket.connect(UrlServer);
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
@@ -55,7 +38,7 @@ function Comentarios({ id_partida }) {
         console.log(request);
         await fetchComentario()
         setComentario("")
-        axios.post(`${UrlServer}/postComentariosVistos`, {
+        await axios.post(`${UrlServer}/postComentariosVistos`, {
             "id_partida": id_partida,
             "id_acceso": sessionStorage.getItem('idacceso')
         })
@@ -63,6 +46,17 @@ function Comentarios({ id_partida }) {
         client.emit("partidas_comentarios_post",
             {
                 id_partida
+            }
+        )
+        //test de socket
+        client.emit("partidas_comentarios_notificacion_post",
+            {
+                id_componente: id_componente
+            }
+        )
+        client.emit("componentes_comentarios_notificacion_post",
+            {
+                id_ficha: sessionStorage.getItem('idobra')
             }
         )
     }
