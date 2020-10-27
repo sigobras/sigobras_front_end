@@ -11,21 +11,42 @@ function HistorialObservaciones(params) {
         background: "danger",
         popoverOpen: false
     })
-
-    const [Data, setData] = useState([])
-    const [Files, setFiles] = useState([])
     useEffect(() => {
-        fetchDificultad()
+        fetchDificultades()
+        fetchConsultas()
+        fetchObservaciones()
     }, []);
-    async function fetchDificultad() {
+    //files 
+    const [Files, setFiles] = useState([])
+    function onChangeInputFile(e, i) {
+        var Dataclonado = [...Files]
+        Dataclonado[i] = e.target.files[0]
+        setFiles(Dataclonado)
+    }
+    const hiddenFileInput = useRef(null);
+    const uploadFile = event => {
+        hiddenFileInput.current.click();
+    };
+    function DescargarArchivo(data) {
+        var tipoArchivo = Extension(data)
+        const url = data
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', data, "target", "_blank");
+        link.setAttribute("target", "_blank");
+        link.click();
+    }
+    //dificultades
+    const [Dificultades, setDificultades] = useState([])
+    async function fetchDificultades() {
         const request = await axios.post(`${UrlServer}/getDificultades`, {
             id_ficha: sessionStorage.getItem('idobra')
         })
-        setData(request.data);
+        setDificultades(request.data);
         return request
     }
     function onchangeDificultades(i, value, name) {
-        var Dataclonado = [...Data]
+        var Dataclonado = [...Dificultades]
         Dataclonado[i][name] = value
         if (name == "residente_fechaInicio" || name == "residente_duracion" || name == "residente_tipoDuracion" || name == "residente_fechaFinal") {
             var dias = Dataclonado[i].residente_duracion
@@ -45,7 +66,7 @@ function HistorialObservaciones(params) {
             Dataclonado[i].supervisor_fechaVisto = currentDate
         }
         console.log("capturar datos", Dataclonado);
-        setData(Dataclonado)
+        setDificultades(Dataclonado)
     }
     function addDificultad() {
         var datosAdd =
@@ -64,76 +85,176 @@ function HistorialObservaciones(params) {
             fichas_id_ficha: sessionStorage.getItem('idobra'),
             habilitado: 1
         }
-        var empuje = [...Data, datosAdd]
+        var empuje = [...Dificultades, datosAdd]
 
-        setData(empuje)
+        setDificultades(empuje)
         var filesTemp = [...Files, ""]
         setFiles(filesTemp)
     }
     async function saveDificultad(i) {
-        console.log(Data[i]);
-
+        console.log(Dificultades[i]);
+        const formData = new FormData();
+        formData.append('id', Dificultades[i].id)
+        formData.append('residente_descripcion', Dificultades[i].residente_descripcion)
+        formData.append('residente_documento', Dificultades[i].residente_documento)
+        formData.append('residente_fechaInicio', Dificultades[i].residente_fechaInicio)
+        formData.append('residente_duracion', Dificultades[i].residente_duracion)
+        formData.append('residente_tipoDuracion', Dificultades[i].residente_tipoDuracion)
+        formData.append('residente_fechaFinal', Dificultades[i].residente_fechaFinal)
+        formData.append('supervisor_fechaVisto', Dificultades[i].supervisor_fechaVisto)
+        formData.append('supervisor_visto', Dificultades[i].supervisor_visto)
+        formData.append('supervisor_comentario', Dificultades[i].supervisor_comentario)
+        formData.append('fichas_id_ficha', Dificultades[i].fichas_id_ficha)
+        formData.append('residente_archivo', Files[i])
+        formData.append('obra_codigo', sessionStorage.getItem("codigoObra"))
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        }
         if (sessionStorage.getItem('cargo') == "RESIDENTE") {
             if (confirm("Los datos ingresados se guardaran, esta seguro?")) {
-                const formData = new FormData();
-                formData.append('id', Data[i].id)
-                formData.append('residente_descripcion', Data[i].residente_descripcion)
-                formData.append('residente_documento', Data[i].residente_documento)
-                formData.append('residente_fechaInicio', Data[i].residente_fechaInicio)
-                formData.append('residente_duracion', Data[i].residente_duracion)
-                formData.append('residente_tipoDuracion', Data[i].residente_tipoDuracion)
-                formData.append('residente_fechaFinal', Data[i].residente_fechaFinal)
-                formData.append('supervisor_fechaVisto', Data[i].residente_tipoDuracion)
-                formData.append('supervisor_visto', Data[i].supervisor_visto)
-                formData.append('supervisor_comentario', Data[i].supervisor_comentario)
-                formData.append('fichas_id_ficha', Data[i].fichas_id_ficha)
-                formData.append('residente_archivo', Files[i])
-                formData.append('obra_codigo', sessionStorage.getItem("codigoObra"))
-                const config = {
-                    headers: {
-                        'content-type': 'multipart/form-data'
-                    }
-                }
+
 
                 const request = await axios.post(`${UrlServer}/postDificultadesResidente`,
                     formData,
                     config
                 )
-                // const request = await axios.post(`${UrlServer}/postDificultadesResidente`, Data[i])
-                // console.log(request);
                 alert("Datos guardados con exito")
             }
         } else if (sessionStorage.getItem('cargo') == "SUPERVISOR") {
             if (confirm("Esta accion no es reversible , esta seguro?")) {
-                const request = await axios.post(`${UrlServer}/postDificultadesSupervisor`, Data[i])
-                console.log(request);
+                const request = await axios.post(`${UrlServer}/postDificultadesSupervisor`,
+                    formData,
+                    config
+                )
                 alert("Datos guardados con exito")
             }
         }
-        fetchDificultad()
+        fetchDificultades()
     }
-    function DescargarArchivo(data) {
-        var tipoArchivo = Extension(data)
-        console.log("ulr ", data, "tipo archivo ", tipoArchivo)
-        const url = data
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', data, "target", "_blank");
-        console.log("es una imagen")
-        link.setAttribute("target", "_blank");
-        document.body.appendChild(link);
-        link.click();
+    //Consultas
+    const [Consultas, setConsultas] = useState([])
+    async function fetchConsultas() {
+        const request = await axios.post(`${UrlServer}/getConsultas`, {
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        console.log("consultas", request.data);
+        setConsultas(request.data);
+        return request
     }
-    function onChange(e, i) {
-        var Dataclonado = [...Files]
-        Dataclonado[i] = e.target.files[0]
-        setFiles(Dataclonado)
+    function onchangeConsultas(i, value, name) {
+        var Dataclonado = [...Consultas]
+        Dataclonado[i][name] = value
+        if (name == "supervisor_respuesta") {
+            console.log("checked");
+            var currentDate = new Date().toLocaleDateString("fr-CA");
+            Dataclonado[i].supervisor_fechaVisto = currentDate
+        }
+        setConsultas(Dataclonado)
+        console.log("onchange ", Dataclonado);
     }
-    const hiddenFileInput = React.useRef(null);
+    function addConsulta() {
+        var datosAdd =
+        {
+            "id": null,
+            "fecha": "",
+            "residente_descripcion": "",
+            "supervisor_fechaVisto": "",
+            "supervisor_respuesta": "",
+            "supervisor_comentario": "",
+            "habilitado": 1,
+            "fichas_id_ficha": sessionStorage.getItem('idobra')
+        }
+        var empuje = [...Consultas, datosAdd]
+        setConsultas(empuje)
+    }
+    async function saveConsulta(i) {
+        if (sessionStorage.getItem('cargo') == "RESIDENTE") {
+            if (confirm("Los datos ingresados se guardaran, esta seguro?")) {
+                const request = await axios.post(`${UrlServer}/postConsultaResidente`,
+                    Consultas[i]
+                )
+                alert("Datos guardados con exito")
+            }
+        } else if (sessionStorage.getItem('cargo') == "SUPERVISOR") {
+            if (confirm("Esta accion no es reversible , esta seguro?")) {
+                const request = await axios.post(`${UrlServer}/postConsultaSupervisor`,
+                    Consultas[i]
+                )
+                alert("Datos guardados con exito")
+            }
+        }
+        fetchConsultas()
+    }
+    //observaciones
+    const [Observaciones, setObservaciones] = useState([])
+    async function fetchObservaciones() {
+        const request = await axios.post(`${UrlServer}/getObservaciones`, {
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        console.log("Observaciones", request.data);
+        setObservaciones(request.data);
+        return request
+    }
+    function onchangeObservaciones(i, value, name) {
+        var Dataclonado = [...Observaciones]
+        Dataclonado[i][name] = value
+        if (name == "supervisor_respuesta") {
+            console.log("checked");
+            var currentDate = new Date().toLocaleDateString("fr-CA");
+            Dataclonado[i].supervisor_fechaVisto = currentDate
+        }
+        if (name == "descripcion") {
+            console.log("checked");
+            var currentDate = new Date().toLocaleDateString("fr-CA");
+            Dataclonado[i].fecha = currentDate
+        }
+        if (name == "respuesta") {
+            console.log("checked");
+            var currentDate = new Date().toLocaleDateString("fr-CA");
+            Dataclonado[i].respuesta_fecha = currentDate
+        }
+        setObservaciones(Dataclonado)
+        console.log("onchange ", Dataclonado);
+    }
+    function addObservacion() {
+        var datosAdd =
+        {
+            "id": null,
+            "autor": sessionStorage.getItem('idacceso'),
+            "cargo": sessionStorage.getItem('cargo'),
+            "fecha": "",
+            "descripcion": "",
+            "respuesta": null,
+            "respuesta_fecha": null,
+            "respuesta_autor": null,
+            "fichas_id_ficha": sessionStorage.getItem('idobra'),
+            "habilitado": 1
+        }
+        var empuje = [...Observaciones, datosAdd]
+        setObservaciones(empuje)
+    }
+    async function saveObservacion(i) {
+        if (sessionStorage.getItem('cargo') == Observaciones[i].cargo) {
+            if (confirm("Los datos ingresados se guardaran, esta seguro?")) {
+                const request = await axios.post(`${UrlServer}/postObservacionesResidente`,
+                    Observaciones[i]
+                )
+                alert("Datos guardados con exito")
+            }
+        } else {
+            if (confirm("Esta accion no es reversible , esta seguro?")) {
+                const request = await axios.post(`${UrlServer}/postObservacionesSupervisor`,
+                    Observaciones[i]
+                )
+                alert("Datos guardados con exito")
+            }
+        }
+        fetchObservaciones()
+    }
 
-    const handleClick = event => {
-        hiddenFileInput.current.click();
-    };
+
     return (
         <div>
             <Input type="select"
@@ -144,7 +265,7 @@ function HistorialObservaciones(params) {
                 <option disabled hidden>SELECCIONE</option>
                 <option>DIFICULTADES</option>
                 <option>CONSULTAS</option>
-                <option>PENDIENTES</option>
+                <option>OBSERVACIONES</option>
             </Input>
             <Collapse isOpen={(Option == "DIFICULTADES") ? true : false}>
                 {
@@ -166,43 +287,43 @@ function HistorialObservaciones(params) {
                     </thead>
                     <tbody>
                         {
-                            Data.map((obs, i) =>
+                            Dificultades.map((item, i) =>
                                 [
                                     <tr key={"1." + i} className="d-flex">
                                         {/* residente_descripcion */}
                                         <td className="col-4">
                                             <DebounceInput
-                                                value={obs.residente_descripcion}
+                                                value={item.residente_descripcion}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "residente_descripcion")}
                                                 type="text"
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
                                         {/* residente_documento */}
                                         <td className="col-1">
                                             <DebounceInput
-                                                value={obs.residente_documento}
+                                                value={item.residente_documento}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "residente_documento")}
                                                 type="text"
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             />
 
                                         </td>
                                         {/* residente_documentoLink */}
                                         <td className="col-1">
 
-                                            <div className="text-primary" title="descargar archivo" onClick={() => DescargarArchivo(`${UrlServer}${obs.residente_documentoLink}`)} ><FaFileDownload /></div>
+                                            <div className="text-primary" title="descargar archivo" onClick={() => DescargarArchivo(`${UrlServer}${item.residente_documentoLink}`)} ><FaFileDownload /></div>
                                             <Button
                                                 color="primary"
-                                                onClick={handleClick}>
+                                                onClick={uploadFile}>
                                                 Upload
                                             </Button>
                                             <input type="file"
-                                                onChange={(e) => onChange(e, i)}
+                                                onChange={(e) => onChangeInputFile(e, i)}
                                                 ref={hiddenFileInput}
                                                 style={{ display: 'none' }}
                                             />
@@ -211,31 +332,31 @@ function HistorialObservaciones(params) {
                                         <td className="col-2">
                                             <DebounceInput
                                                 type="date"
-                                                value={obs.residente_fechaInicio}
+                                                value={item.residente_fechaInicio}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "residente_fechaInicio")}
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
                                         {/* residente_duracion */}
                                         <td className="col-1">
                                             <DebounceInput
-                                                value={obs.residente_duracion}
+                                                value={item.residente_duracion}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "residente_duracion")}
                                                 type="number"
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
                                         {/* residente_tipoDuracion */}
                                         <td className="col-1">
                                             <Input type="select"
-                                                value={obs.residente_tipoDuracion}
+                                                value={item.residente_tipoDuracion}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "residente_tipoDuracion")}
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             >
                                                 <option>dias</option>
                                                 <option>horas</option>
@@ -245,12 +366,12 @@ function HistorialObservaciones(params) {
                                         <td className="col-2">
                                             <DebounceInput
                                                 type="date"
-                                                value={obs.residente_fechaFinal}
+                                                value={item.residente_fechaFinal}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "residente_fechaFinal")}
                                                 className="form-control"
                                                 readOnly={true}
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
 
@@ -259,38 +380,38 @@ function HistorialObservaciones(params) {
                                     <tr key={"2." + i} className="d-flex" >
                                         <td className="col-2">
                                             <DebounceInput
-                                                value={obs.supervisor_fechaVisto}
+                                                value={item.supervisor_fechaVisto}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "supervisor_fechaVisto")}
                                                 type="date"
                                                 className="form-control"
                                                 readOnly={true}
-                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
                                         <td className="col-1">
                                             <Input
                                                 type="checkbox"
-                                                defaultChecked={obs.supervisor_visto}
+                                                defaultChecked={item.supervisor_visto}
                                                 onClick={e => onchangeDificultades(i, e.target.checked, "supervisor_visto")}
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
                                         <td className="col-6">
                                             <DebounceInput
-                                                value={obs.supervisor_comentario}
+                                                value={item.supervisor_comentario}
                                                 debounceTimeout={300}
                                                 onChange={e => onchangeDificultades(i, e.target.value, "supervisor_comentario")}
                                                 type="text"
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
                                         <td><Button
                                             color="primary"
                                             onClick={() => saveDificultad(i)}
-                                            disabled={obs.habilitado ? false : true}
+                                            disabled={item.habilitado ? false : true}
                                         >Guardar</Button></td>
                                     </tr>
                                 ]
@@ -305,100 +426,88 @@ function HistorialObservaciones(params) {
                 {
                     sessionStorage.getItem('cargo') == "RESIDENTE"
                         ?
-                        <button onClick={() => addDificultad()}> + </button>
+                        <button onClick={() => addConsulta()}> + </button>
                         : ""
                 }
                 <table className="table">
                     <thead>
                         <tr className="d-flex">
-                            <th className="col-4">fecha consulta</th>
-                            <th className="col-2">descripcion</th>
+                            <th className="col-2">fecha consulta</th>
+                            <th className="col-4">descripcion</th>
                             <th className="col-2">fecha de visto</th>
                             <th className="col-1">check</th>
-                            <th className="col-1">COMENTARIO</th>
+                            <th className="col-4">COMENTARIO</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            Data.map((obs, i) =>
+                            Consultas.map((item, i) =>
                                 [
-                                    <tr key={"1." + i} className="d-flex">
+                                    <tr key={"2." + i} className="d-flex">
+                                        {/* fecha */}
+                                        <td className="col-2">
+                                            <DebounceInput
+                                                value={item.fecha}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeConsultas(i, e.target.value, "fecha")}
+                                                type="date"
+                                                className="form-control"
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
+                                            />
+                                        </td>
                                         {/* residente_descripcion */}
                                         <td className="col-4">
                                             <DebounceInput
-                                                value={obs.residente_descripcion}
+                                                value={item.residente_descripcion}
                                                 debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_descripcion")}
+                                                onChange={e => onchangeConsultas(i, e.target.value, "residente_descripcion")}
                                                 type="text"
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            />
-                                        </td>
-                                        {/* residente_documento */}
-                                        <td className="col-1">
-                                            <DebounceInput
-                                                value={obs.residente_documento}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_documento")}
-                                                type="text"
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                             />
 
                                         </td>
-                                        {/* residente_documentoLink */}
-                                        <td className="col-1">
-                                            <a href={obs.residente_documentoLink} download>
-                                                <FaFileDownload size={20} />
-                                            </a>
-                                        </td>
-                                        {/* residente_fechaInicio */}
+                                        {/* supervisor_fechaVisto */}
                                         <td className="col-2">
                                             <DebounceInput
+                                                readOnly={true}
+                                                value={item.supervisor_fechaVisto}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeConsultas(i, e.target.value, "supervisor_fechaVisto")}
                                                 type="date"
-                                                value={obs.residente_fechaInicio}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_fechaInicio")}
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && item.habilitado ? "" : "disabled"}
                                             />
+
                                         </td>
-                                        {/* residente_duracion */}
-                                        <td className="col-1">
-                                            <DebounceInput
-                                                value={obs.residente_duracion}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_duracion")}
-                                                type="number"
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            />
-                                        </td>
-                                        {/* residente_tipoDuracion */}
+                                        {/* supervisor_respuesta */}
                                         <td className="col-1">
                                             <Input type="select"
-                                                value={obs.residente_tipoDuracion}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_tipoDuracion")}
+                                                value={item.supervisor_respuesta}
+                                                onChange={e => onchangeConsultas(i, e.target.value, "supervisor_respuesta")}
                                                 className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && item.habilitado ? "" : "disabled"}
                                             >
-                                                <option>dias</option>
-                                                <option>horas</option>
+                                                <option>SI</option>
+                                                <option>NO</option>
                                             </Input>
                                         </td>
-                                        {/* residente_fechaFinal */}
+                                        {/* supervisor_comentario */}
                                         <td className="col-2">
                                             <DebounceInput
-                                                type="date"
-                                                value={obs.residente_fechaFinal}
+                                                value={item.supervisor_comentario}
                                                 debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_fechaFinal")}
+                                                onChange={e => onchangeConsultas(i, e.target.value, "supervisor_comentario")}
+                                                type="text"
                                                 className="form-control"
-                                                readOnly={true}
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                disabled={(sessionStorage.getItem('cargo') == "SUPERVISOR") && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
-
+                                        <td><Button
+                                            color="primary"
+                                            onClick={() => saveConsulta(i)}
+                                            disabled={item.habilitado ? false : true}
+                                        >Guardar</Button></td>
                                     </tr>
                                 ]
                             )
@@ -407,99 +516,87 @@ function HistorialObservaciones(params) {
                 </table>
 
             </Collapse>
-            <Collapse isOpen={(Option == "PENDIENTES") ? true : false}>
-                <button onClick={() => addDificultad()}> + </button>
+            <Collapse isOpen={(Option == "OBSERVACIONES") ? true : false}>
+                <button onClick={() => addObservacion()}> + </button>
                 <table className="table">
                     <thead>
                         <tr className="d-flex">
-                            <th className="col-4">CARGO</th>
+                            <th className="col-1">CARGO</th>
                             <th className="col-2" >FECHA</th>
-                            <th className="col-2">DESCRIPCION</th>
-                            <th className="col-1">FECHA VISTO</th>
-                            <th className="col-1">COMENTARIO</th>
+                            <th className="col-3">DESCRIPCION</th>
+                            <th className="col-2">FECHA VISTO</th>
+                            <th className="col-3">COMENTARIO</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            Data.map((obs, i) =>
+                            Observaciones.map((item, i) =>
                                 [
                                     <tr key={"1." + i} className="d-flex">
-                                        {/* residente_descripcion */}
-                                        <td className="col-4">
-                                            <DebounceInput
-                                                value={obs.residente_descripcion}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_descripcion")}
-                                                type="text"
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            />
-                                        </td>
-                                        {/* residente_documento */}
+                                        {/* cargo */}
                                         <td className="col-1">
                                             <DebounceInput
-                                                value={obs.residente_documento}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_documento")}
-                                                type="text"
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            />
-
-                                        </td>
-                                        {/* residente_documentoLink */}
-                                        <td className="col-1">
-                                            <a href={obs.residente_documentoLink} download>
-                                                <FaFileDownload size={20} />
-                                            </a>
-                                        </td>
-                                        {/* residente_fechaInicio */}
-                                        <td className="col-2">
-                                            <DebounceInput
-                                                type="date"
-                                                value={obs.residente_fechaInicio}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_fechaInicio")}
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            />
-                                        </td>
-                                        {/* residente_duracion */}
-                                        <td className="col-1">
-                                            <DebounceInput
-                                                value={obs.residente_duracion}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_duracion")}
-                                                type="number"
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            />
-                                        </td>
-                                        {/* residente_tipoDuracion */}
-                                        <td className="col-1">
-                                            <Input type="select"
-                                                value={obs.residente_tipoDuracion}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_tipoDuracion")}
-                                                className="form-control"
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
-                                            >
-                                                <option>dias</option>
-                                                <option>horas</option>
-                                            </Input>
-                                        </td>
-                                        {/* residente_fechaFinal */}
-                                        <td className="col-2">
-                                            <DebounceInput
-                                                type="date"
-                                                value={obs.residente_fechaFinal}
-                                                debounceTimeout={300}
-                                                onChange={e => onchangeDificultades(i, e.target.value, "residente_fechaFinal")}
-                                                className="form-control"
                                                 readOnly={true}
-                                                disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && obs.habilitado ? "" : "disabled"}
+                                                value={item.cargo}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeObservaciones(i, e.target.value, "cargo")}
+                                                type="text"
+                                                className="form-control"
+                                                disabled={(sessionStorage.getItem('cargo') == item.cargo) && item.habilitado ? "" : "disabled"}
                                             />
                                         </td>
+                                        {/* fecha */}
+                                        <td className="col-2">
+                                            <DebounceInput
+                                                readOnly={true}
+                                                value={item.fecha}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeObservaciones(i, e.target.value, "fecha")}
+                                                type="date"
+                                                className="form-control"
+                                                disabled={(sessionStorage.getItem('cargo') == item.cargo) && item.habilitado ? "" : "disabled"}
+                                            />
 
+                                        </td>
+                                        {/* descripcion */}
+                                        <td className="col-3">
+                                            <DebounceInput
+                                                type="text"
+                                                value={item.descripcion}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeObservaciones(i, e.target.value, "descripcion")}
+                                                className="form-control"
+                                                disabled={(sessionStorage.getItem('cargo') == item.cargo) && item.habilitado ? "" : "disabled"}
+                                            />
+                                        </td>
+                                        {/* respuesta_fecha */}
+                                        <td className="col-2">
+                                            <DebounceInput
+                                                readOnly={true}
+                                                value={item.respuesta_fecha}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeObservaciones(i, e.target.value, "respuesta_fecha")}
+                                                type="date"
+                                                className="form-control"
+                                                disabled={(sessionStorage.getItem('cargo') != item.cargo) && item.habilitado ? "" : "disabled"}
+                                            />
+                                        </td>
+                                        {/* respuesta */}
+                                        <td className="col-3">
+                                            <DebounceInput
+                                                value={item.respuesta}
+                                                debounceTimeout={300}
+                                                onChange={e => onchangeObservaciones(i, e.target.value, "respuesta")}
+                                                type="text"
+                                                className="form-control"
+                                                disabled={(sessionStorage.getItem('cargo') != item.cargo) && item.habilitado ? "" : "disabled"}
+                                            />
+                                        </td>
+                                        <td><Button
+                                            color="primary"
+                                            onClick={() => saveObservacion(i)}
+                                            disabled={item.habilitado ? false : true}
+                                        >Guardar</Button></td>
                                     </tr>
                                 ]
                             )
@@ -508,29 +605,8 @@ function HistorialObservaciones(params) {
                 </table>
 
             </Collapse>
-            <UserForm />
         </div>
     )
 }
-function UserForm() {
-    const form = useRef(null)
-    const submit = e => {
-        e.preventDefault()
-        const data = new FormData(form.current)
-        fetch('/api', { method: 'POST', body: data })
-            .then(res => res.json())
-            .then(json => setUser(json.user))
-    }
-    return (
-        <form ref={form} onSubmit={submit}>
-            <input type="text" name="user[name]" />
-            test
-            <input type="email" name="user[email]" />
-            test2
-            <input type="submit" name="Sign Up" />
-        </form>
-    )
-}
-
 
 export default HistorialObservaciones;

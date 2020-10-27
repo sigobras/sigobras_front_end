@@ -15,11 +15,8 @@ import LogoSigobras from './../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
 import Comentarios from './Comentarios';
-import socket from 'socket.io-client';
-
-
+import {socket} from "../../../../Utils/socket";
 class MetradosDiarios extends Component {
-  client = socket.connect(UrlServer);
   state = {
     DataComponentes: [],
     DataPartidas: [],
@@ -175,15 +172,15 @@ class MetradosDiarios extends Component {
       .catch((err) => {
         console.log("errores al realizar la peticion de iconos", err);
       })
-      this.getDataSocketComponente()
+    this.getDataSocketComponente()
   }
   getDataSocketComponente() {
     // sockets
-    this.client.on("partidas_comentarios_notificacion_get-" + this.state.id_componente, (data) => {
+    socket.on("partidas_comentarios_notificacion_get-" + this.state.id_componente, (data) => {
       console.log("llegada de mensaje idcomponente");
       this.getCantidadComentarios(this.state.id_componente)
     })
-    this.client.on("componentes_comentarios_notificacion_get-" + sessionStorage.getItem('idobra'), (data) => {
+    socket.on("componentes_comentarios_notificacion_get-" + sessionStorage.getItem('idobra'), (data) => {
       console.log("llegada de mensaje idobra");
       this.getComponentesComentarios()
     })
@@ -969,6 +966,19 @@ class MetradosDiarios extends Component {
     this.getCantidadComentarios(this.state.id_componente)
     this.getComponentesComentarios()
   }
+  disconnectSocket() {
+    console.log("funcion de desconexion");
+    if (socket != undefined) {
+      console.log("if adentro");
+      // socket.disconnect();
+      // socket.close();
+      // socket.close()
+      // socket.disconnect()
+    }
+    // socket.disconnect()
+    // socket.close()
+    // socket.conn.close();
+  }
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
@@ -1074,8 +1084,8 @@ class MetradosDiarios extends Component {
                           borderRadius: "50%",
                           textAlign: "center",
                           position: "absolute",
-                          right: "-11px",
-                          top: "-5px",
+                          right: "0px",
+                          top: "-3px",
                           padding: "1px 4px",
                           zIndex: "20",
                           fontSize: "9px",
@@ -1996,8 +2006,14 @@ class MetradosDiarios extends Component {
 
 
           {/* MODAL COMENTARIOS */}
-          <Modal isOpen={this.state.modalComentarios} fade={false} toggle={this.modalComentarios} size="sm">
-            <ModalHeader toggle={this.modalComentarios}>
+          <Modal
+            isOpen={this.state.modalComentarios}
+            fade={false}
+            toggle={this.modalComentarios}
+            size="sm"
+            onClosed={this.disconnectSocket()}
+          >
+            <ModalHeader>
               <div className="d-flex">
                 <img src={LogoSigobras} width="30px" alt="logo sigobras"
                   style={{
@@ -2016,7 +2032,7 @@ class MetradosDiarios extends Component {
                 </div>
               </div>
             </ModalHeader>
-            <Comentarios id_partida={this.state.id_partidaSeleccionada} id_componente={this.state.id_componente}/>
+            <Comentarios id_partida={this.state.id_partidaSeleccionada} id_componente={this.state.id_componente} />
           </Modal>
         </div>
     );

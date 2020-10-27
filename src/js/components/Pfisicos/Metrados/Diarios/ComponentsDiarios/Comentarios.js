@@ -3,10 +3,8 @@ import { ModalBody, Button } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
-import socket from 'socket.io-client';
-
+import {socket} from "../../../../Utils/socket";
 function Comentarios({ id_partida, id_componente }) {
-    const client = socket.connect(UrlServer);
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
         console.log("scroll to bottom");
@@ -43,31 +41,29 @@ function Comentarios({ id_partida, id_componente }) {
             "id_acceso": sessionStorage.getItem('idacceso')
         })
         //socket test
-        client.emit("partidas_comentarios_post",
+        socket.emit("partidas_comentarios_post",
             {
                 id_partida
             }
         )
         //test de socket
-        client.emit("partidas_comentarios_notificacion_post",
+        socket.emit("partidas_comentarios_notificacion_post",
             {
                 id_componente: id_componente
             }
         )
-        client.emit("componentes_comentarios_notificacion_post",
+        socket.emit("componentes_comentarios_notificacion_post",
             {
                 id_ficha: sessionStorage.getItem('idobra')
             }
         )
     }
     function socketIni() {
-        client.on("partidas_comentarios_get-" + id_partida, (data) => {
+        socket.on("partidas_comentarios_get-" + id_partida, (data) => {
             console.log("llegada de mensaje");
             fetchComentario()
         })
     }
-
-
     return (
         <ModalBody style={{ 'maxHeight': 'calc(100vh - 210px)', 'overflowY': 'auto' }}>
             <div>
