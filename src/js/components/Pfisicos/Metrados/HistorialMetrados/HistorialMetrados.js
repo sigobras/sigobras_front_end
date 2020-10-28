@@ -657,7 +657,7 @@ class HistorialMetrados extends Component {
                                                                             </tfoot>
 
                                                                         </table>
-                                                                        <HistorialObservaciones />
+                                                                        {/* <HistorialObservaciones /> */}
                                                                     </div>
                                                                 </Collapse>
                                                             </fieldset>
@@ -671,7 +671,7 @@ class HistorialMetrados extends Component {
                     }
 
                 </CardBody>
-                <HistorialObservaciones />
+                {/* <HistorialObservaciones /> */}
             </div>
         )
     }
