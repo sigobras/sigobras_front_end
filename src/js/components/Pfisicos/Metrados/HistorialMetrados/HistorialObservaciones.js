@@ -136,14 +136,25 @@ function HistorialObservaciones() {
                     <thead>
                         <tr >
                             <th></th>
-                            <th></th>
+                            {/* <th></th> */}
 
-                            <th>asiento obra</th>
-                            <th>fecha registro</th>
-                            <th>descripcion</th>
+                            <th>asiento de obra N°</th>
+                            {/* {Option == "DIFICULTAD" ?
+                                <th>fecha</th>
+                                : ""} */}
                             {Option == "DIFICULTAD" ?
-                                <th>inicio</th>
+                                <th>fecha</th>
                                 : ""}
+                            {Option == "DIFICULTAD" ?
+                                <th>dificultad</th>
+                                : ""}
+                            {Option == "CONSULTA" ?
+                                <th>consulta</th>
+                                : ""}
+                            {Option == "OBSERVACION" ?
+                                <th>observacion</th>
+                                : ""}
+
                             {Option == "DIFICULTAD" ?
                                 <th>duracion</th>
                                 : ""}
@@ -157,7 +168,7 @@ function HistorialObservaciones() {
                             Dificultades.map((item, i) =>
                                 <tr key={"1." + i} >
                                     {/* botones */}
-                                    <td >
+                                    {/* <td >
                                         <div className="align-center position-relative"
                                         // onClick={() => modalFoto(metrados)}
                                         >
@@ -183,6 +194,7 @@ function HistorialObservaciones() {
 
 
                                     </td>
+                                     */}
                                     <td>
                                         <div className="align-center position-relative"
                                             onClick={() => toggleComentarios2(item.id)}
@@ -212,20 +224,21 @@ function HistorialObservaciones() {
                                     <td>
                                         {item.asiento_obra}
                                     </td>
-                                    {/* fecha_registro */}
-                                    <td >
-                                        {item.fecha_registro}
-                                    </td>
-                                    {/* descripcion */}
-                                    <td >
-                                        {item.descripcion}
-                                    </td>
                                     {/* fecha_inicio */}
                                     {Option == "DIFICULTAD" ?
                                         <td >
                                             {item.fecha_inicio}
                                         </td>
                                         : ""}
+                                    {/* fecha_registro */}
+                                    {/* <td >
+                                        {item.fecha_registro}
+                                    </td> */}
+                                    {/* descripcion */}
+                                    <td >
+                                        {item.descripcion}
+                                    </td>
+
 
                                     {/* duracion */}
 
@@ -259,12 +272,12 @@ function HistorialObservaciones() {
                         <Col md={6}>
                             <FormGroup>
                                 {/* asiento_obra */}
-                                <Label >asiento_obra</Label>
+                                <Label >asiento de obra</Label>
                                 <DebounceInput
                                     value={newDificultad.asiento_obra}
                                     debounceTimeout={300}
                                     onChange={e => onchangeDificultades(e.target.value, "asiento_obra")}
-                                    type="text"
+                                    type="number"
                                     className="form-control"
                                 // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                 />
@@ -274,7 +287,7 @@ function HistorialObservaciones() {
                         <Col md={6}>
                             <FormGroup>
                                 {/* fecha_inicio */}
-                                <Label >fecha_inicio</Label>
+                                <Label >fecha</Label>
                                 <DebounceInput
                                     type="date"
                                     value={newDificultad.fecha_inicio}
@@ -292,7 +305,16 @@ function HistorialObservaciones() {
                             <FormGroup>
 
                                 {/* descripcion */}
-                                <Label >descripcion</Label>
+                                {Option == "DIFICULTAD" ?
+                                <Label >dificultad</Label>
+                                : ""}
+                                {Option == "CONSULTA" ?
+                                <Label >consulta</Label>
+                                : ""}
+                                {Option == "OBSERVACION" ?
+                                <Label >observacion</Label>
+                                : ""}
+                                
                                 <DebounceInput
                                     value={newDificultad.descripcion}
                                     debounceTimeout={300}
@@ -309,7 +331,7 @@ function HistorialObservaciones() {
                             <Col md={6}>
                                 <FormGroup>
                                     {/* duracion */}
-                                    <Label >duracion</Label>
+                                    <Label >tiempo perdido</Label>
                                     {/* {console.log("new dificultad", newDificultad.duracion)} */}
                                     <DebounceInput
                                         value={newDificultad.duracion}
@@ -324,7 +346,7 @@ function HistorialObservaciones() {
                             <Col md={6}>
                                 <FormGroup>
                                     {/* duracion_tipo */}
-                                    <Label >duracion_tipo</Label>
+                                    <Label >diás/horas</Label>
                                     <Input type="select"
                                         value={newDificultad.duracion_tipo}
                                         onChange={e => onchangeDificultades(e.target.value, "duracion_tipo")}
