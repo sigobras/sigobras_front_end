@@ -12,8 +12,8 @@ import { GoSignIn, GoSignOut, GoOrganization } from "react-icons/go";
 import { DebounceInput } from 'react-debounce-input';
 import { toast } from "react-toastify";
 
-import Picky from "react-picky";
-import "react-picky/dist/picky.css";
+import { Picky } from 'react-picky';
+import 'react-picky/dist/picky.css'; 
 import "../../../css/GTareas.css"
 
 import { FechaActual, Extension } from "../Utils/Funciones"
