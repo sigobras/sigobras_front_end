@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 // import Circle from 'react-circle';
-import { FaList, FaClock } from "react-icons/fa";
+import { FaList, FaChartLine } from "react-icons/fa";
 
 import 'jspdf-autotable';
 
@@ -240,7 +240,7 @@ class ListaObras extends Component {
                                     title="Avance Componentes"
                                     onClick={() => {this.modalCurvaS(), this.setState({id_ficha_seleccionado:Obras.id_ficha})}}
                                     data-event={IndexObras} >
-                                    <FaList />
+                                    <FaChartLine />
                                 </button>
 
                             </td>
