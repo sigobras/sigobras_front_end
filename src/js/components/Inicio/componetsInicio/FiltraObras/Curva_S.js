@@ -5,6 +5,8 @@ import { Redondea, mesesShort } from './../../../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 import { Line } from 'react-chartjs-2';
+import { FaList, FaChartLine } from "react-icons/fa";
+import { MdSave, MdClose, MdModeEdit } from "react-icons/md";
 
 function Curva_S({ id_ficha }) {
     function getMesfromDate(date) {
@@ -14,6 +16,44 @@ function Curva_S({ id_ficha }) {
     function getAnyofromDate(date) {
         date = date.split("-")
         return Number(date[0])
+    }
+    function mesActual() {
+        var fecha = new Date();
+
+        var anio = fecha.getFullYear();
+        var mes = fecha.getMonth() + 1;
+        var dia = fecha.getDate();
+
+
+        if (dia < 10) {
+            dia = "0" + dia
+        }
+        if (mes < 10) {
+            mes = "0" + mes
+        }
+
+        return anio + '-' + mes
+    }
+    function anyoMesActual() {
+        var fecha = new Date()
+
+        var anio = fecha.getFullYear();
+        var mes = fecha.getMonth() + 1;
+        var dia = fecha.getDate();
+
+
+        if (dia < 10) {
+            dia = "0" + dia
+        }
+        if (mes < 10) {
+            mes = "0" + mes
+        }
+
+        return anio + '-' + mes
+    }
+    function anyoMes(dateText) {
+        var anyoMes = dateText.substring(0, 7)
+        return anyoMes
     }
     // modal
     const [modal, setModal] = useState(false);
@@ -71,6 +111,20 @@ function Curva_S({ id_ficha }) {
                 "id_ficha": id_ficha
             }
         )
+        //actualizacion de monto ejecutado
+        for (let i = 0; i < request.data.length; i++) {
+            const element = request.data[i];
+            console.log("foreach");
+            console.log(anyoMes(element.fecha_inicial), anyoMesActual());
+            if (anyoMes(element.fecha_inicial) == anyoMesActual()) {
+                console.log("fecha_inicial", element.fecha_inicial, i);
+                var ejecutado_monto = await updateEjecutado(element.fecha_inicial)
+                console.log("ejecutado monto actualizado", ejecutado_monto);
+                element.ejecutado_monto = ejecutado_monto
+                break;
+            }
+        }
+
         setDataCurvaS(request.data)
         createDataChart(request.data)
     }
@@ -114,6 +168,16 @@ function Curva_S({ id_ficha }) {
     function onChangeAnyo(value) {
         fetchPeriodosEjecutados(value)
         setAnyoSeleccionado(value)
+    }
+    //actualizar monto ejecutado
+    async function updateEjecutado(fecha_inicial) {
+        const request = await axios.post(`${UrlServer}/putEjecutadoMonto`,
+            {
+                "fecha_inicial": fecha_inicial,
+                "id_ficha": id_ficha
+            }
+        )
+        return request.data.ejecutado_monto
     }
     //chart
     const [DataChart, setDataChart] = useState({});
@@ -168,6 +232,28 @@ function Curva_S({ id_ficha }) {
         });
 
 
+    }
+    //update financiero 
+    async function updateFinanciero(id, i) {
+        const request = await axios.post(`${UrlServer}/putFinancieroCurvaS`,
+            {
+                "id": id,
+                "financiero_monto": ValueInputFinanciero[i]
+            })
+        console.log(request.data)
+        fetchDataCurvaS()
+        toggleInputFinanciero(-1)
+    }
+    const [EstadoInputFinanciero, setEstadoInputFinanciero] = useState(-1);
+    function toggleInputFinanciero(index) {
+        console.log("toggleInputFinanciero", index);
+        setEstadoInputFinanciero(index);
+    }
+    const [ValueInputFinanciero, setValueInputFinanciero] = useState([]);
+    function onChangeInputFinanciero(value, i) {
+        var dataTemp = [...ValueInputFinanciero]
+        dataTemp[i] = value
+        setValueInputFinanciero(dataTemp)
     }
 
 
@@ -224,7 +310,45 @@ function Curva_S({ id_ficha }) {
                         </th>
                             {
                                 DataCurvaS.map((item, i) =>
-                                    <td key={i}>{Redondea(item.financiero_monto)}</td>
+                                    <td key={i}>
+                                        <div>
+                                            {
+                                                EstadoInputFinanciero == i ?
+
+                                                    <div
+                                                        className="d-flex"
+                                                    >
+                                                        <DebounceInput
+                                                            value={item.financiero_monto}
+                                                            debounceTimeout={300}
+                                                            onChange={e => onChangeInputFinanciero(e.target.value, i)}
+                                                            type="number"
+                                                        />
+                                                        <div
+                                                            onClick={() => updateFinanciero(item.id, i)}
+                                                        >
+                                                            <MdSave />
+                                                        </div>
+                                                        <div
+                                                            onClick={() => toggleInputFinanciero(-1)}
+                                                        >
+                                                            <MdClose />
+                                                        </div>
+                                                    </div>
+                                                    :
+                                                    <div
+                                                        className="d-flex"
+                                                    >
+                                                        {Redondea(item.financiero_monto)}
+                                                        <div
+                                                            onClick={() => toggleInputFinanciero(i)}
+                                                        >
+                                                            <MdModeEdit />
+                                                        </div>
+                                                    </div>
+                                            }
+                                        </div>
+                                    </td>
                                 )
                             }
                         </tr>
@@ -241,7 +365,6 @@ function Curva_S({ id_ficha }) {
                         value={AnyoSeleccionado}
                         onChange={e => onChangeAnyo(e.target.value)}
                         className="form-control"
-                    // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                     >
                         <option disabled hidden>SELECCIONE</option>
                         {
@@ -271,15 +394,16 @@ function Curva_S({ id_ficha }) {
                                                 "CORTE-" : ""
                                             }{mesesShort[item.mes - 1]}
                                         </td>
-                                        <td>{item.programado_monto}</td>
-                                        <td>{item.ejecutado_monto}</td>
+                                        <td>{Redondea(item.programado_monto)}</td>
+                                        <td>{Redondea(item.ejecutado_monto)}</td>
                                         <td><DebounceInput
                                             value={item.financiero_monto}
                                             debounceTimeout={300}
                                             onChange={e => onChangePeriodosData(e.target.value, "financiero_monto", i)}
                                             type="number"
                                             className="form-control"
-                                        /></td>
+                                        />
+                                        </td>
                                         <td><DebounceInput
                                             value={item.observacion}
                                             debounceTimeout={300}
@@ -303,7 +427,7 @@ function Curva_S({ id_ficha }) {
                                                 debounceTimeout={300}
                                                 onChange={e => onChangeModalData(e.target.value, "anyoMes", i)}
                                                 type="month"
-                                                // min={MesActual()}
+                                                min={mesActual()}
                                                 className="form-control"
                                             />
                                         </td>
