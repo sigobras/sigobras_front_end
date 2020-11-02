@@ -3,12 +3,16 @@ import { ModalBody, Button } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
-import {socket} from "../../../../Utils/socket";
+import { socket } from "../../../../Utils/socket";
+import "../ComponentsDiarios/Comentarios.css";
+
+import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
+import LogoSigobras from './../../../../../../images/logoSigobras.png'
 function Comentarios({ id_partida, id_componente }) {
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
         console.log("scroll to bottom");
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        // messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     };
     const [Data, setData] = useState([])
     const [Comentario, setComentario] = useState([])
@@ -21,9 +25,13 @@ function Comentarios({ id_partida, id_componente }) {
         socketIni()
     }, []);
     async function fetchComentario() {
+
         const request = await axios.post(`${UrlServer}/getPartidaComentarios`, {
-            "id_partida": id_partida
+            "id_partida": id_partida,          
+
         })
+        console.log("id_patrida", id_partida);
+        console.log("id_acceso", sessionStorage.getItem('idacceso'));
         await setData(request.data);
         scrollToBottom()
     }
@@ -65,51 +73,81 @@ function Comentarios({ id_partida, id_componente }) {
         })
     }
     return (
-        <ModalBody style={{ 'maxHeight': 'calc(100vh - 210px)', 'overflowY': 'auto' }}>
-            <div>
-                {Data.map((item, i) =>
-                    <div className="comentario mb-3" key={i}>
-                        <div>
-                            <div>
-                                <div className="float-left small"><b>{item.cargo_nombre} </b><em>{item.usuario_nombre}</em> </div>
-                                <div className="float-right small">{item.fecha}</div>
-                            </div>
-                            <br />
-                            {item.comentario}
+        <ModalBody >
+            <div class="container">
+                <div class="message-page">
+                    <div class="message-index">
+                        <div class="messages">
+                            <div class="msg-page">
+                                {
+                                    Data.map((item, i) =>
+                                        (sessionStorage.getItem('idacceso') == item.id_acceso) ?
+                                            <div class="recived-chat">
+                                                <div class="recived-chat-img">
+                                                    <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" />
+                                                </div>
+                                                <div class="recived-msg">
 
-                            <div style={{
-                                position: "absolute",
-                                left: "-67px",
-                                top: "2px"
-                            }}>
-                                {/* <img src={item.cargo_imagen} width="44px" height="44px" className="rounded-circle" /> */}
-                                <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" width="44px" height="44px" className="rounded-circle" />
-                            </div>
+                                                    <div class="recived-msg-inbox">
+                                                        <span class="time"><b>{item.cargo_nombre} </b><em>{item.usuario_nombre}</em> </span>
+                                                        <p>{item.comentario}</p>
+                                                        <span class="time">{item.fecha}</span>
 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            :
+                                            <div class="outgoing-chat">
+                                                <div class="outgoing-chat-msg">
+                                                    <span class="time"><b>{item.cargo_nombre} </b><em>{item.usuario_nombre}</em> </span>
+                                                    <p>{item.comentario}</p>
+                                                    <span class="time">{item.fecha}</span>
+                                                </div>
+
+                                                <div class="outgoing-chat-img">
+                                                    <img src="https://www.shareicon.net/data/2016/09/01/822762_user_512x512.png" />
+                                                </div>
+                                            </div>
+                                    )
+                                }
+
+                            </div>
                         </div>
                     </div>
-                )}
+
+
+                    <div class="msg-bottom">
+                        <div class="bottom-icons">
+                            {/* <i class="fa"> <FaPlusCircle></FaPlusCircle></i> */}
+                            {/* <i class="fa fa-plus-circle"></i> */}
+                            {/* <i class="fa"><FaCamera></FaCamera> </i> */}
+                            {/* <i class="fa fa-camera"></i> */}
+                            <i class="fa fa-microphone"></i>
+                            <i class="fa fa-smile-o"></i>
+                        </div>
+                        <div class="input-group">
+                            <DebounceInput
+                                
+                                placeholder="Escribe un comentario"
+                                minLength={1}
+                                debounceTimeout={1000}
+                                onChange={e => setComentario(e.target.value)}
+                                value={Comentario}
+                                className="form-control"
+                            />
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <FaPaperPlane onClick={() => saveComentario()}></FaPaperPlane>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
 
             </div>
-            <div className="input-group mt-2">
-                <DebounceInput
-                    placeholder="Escribe un comentario"
-                    minLength={1}
-                    debounceTimeout={1000}
-                    onChange={e => setComentario(e.target.value)}
-                    value={Comentario}
-                    className="form-control"
-                />
-                <div className="input-group-append">
-                    <Button
-                        color="primary"
-                        onClick={() => saveComentario()}
-                    >Guardar
-                    </Button>
-                </div>
-            </div>
-            <div ref={messagesEndRef} />
-        </ModalBody>
+        </ModalBody >
     );
 }
 

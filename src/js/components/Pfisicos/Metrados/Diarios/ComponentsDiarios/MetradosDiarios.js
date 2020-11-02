@@ -1076,7 +1076,8 @@ class MetradosDiarios extends Component {
                           padding: "1px 4px",
                           zIndex: "20",
                           fontSize: "9px",
-                          fontWeight: "bold"
+                          fontWeight: "bold",
+                          
                         }}>
                           {componentesComentarios[indexComp].mensajes}
                         </div>
@@ -1261,7 +1262,8 @@ class MetradosDiarios extends Component {
                                           padding: "1px 4px",
                                           zIndex: "20",
                                           fontSize: "9px",
-                                          fontWeight: "bold"
+                                          fontWeight: "bold",
+                                          
                                         }}>
                                           {partidaComentarios[i].mensajes}
                                         </div>
@@ -1995,9 +1997,11 @@ class MetradosDiarios extends Component {
           {/* MODAL COMENTARIOS */}
           <Modal
             isOpen={this.state.modalComentarios}
-            fade={false}
+            //  fade={false}
             toggle={this.modalComentarios}
-            size="sm"
+            // size="sm"
+            //onClosed={this.disconnectSocket()}
+            //size="sm"
           >
             <ModalHeader>
               <div className="d-flex">
@@ -2009,10 +2013,11 @@ class MetradosDiarios extends Component {
                   }} />
                 <div style={{
                   whiteSpace: "nowrap",
-                  width: "340px",
+                  width: "600px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  marginLeft: "4px"
+                  marginLeft: "4px",
+                  float: "right",
                 }}>
                   {this.state.PartidaSeleccionada}
                 </div>
