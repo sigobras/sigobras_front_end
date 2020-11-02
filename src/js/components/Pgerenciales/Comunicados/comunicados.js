@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Container, Nav, NavItem, NavLink, Button, Row, Col, Form, FormGroup, Label, Input, Collapse, InputGroup, InputGroupAddon, InputGroupText, Modal, InputGroupButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, } from 'reactstrap';
 import axios from 'axios';
-import Picky from "react-picky";
+import {Picky} from "react-picky";
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import "../Comunicados/comunicados.css"
 

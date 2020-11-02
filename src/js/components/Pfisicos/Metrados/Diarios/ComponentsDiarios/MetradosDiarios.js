@@ -966,19 +966,6 @@ class MetradosDiarios extends Component {
     this.getCantidadComentarios(this.state.id_componente)
     this.getComponentesComentarios()
   }
-  disconnectSocket() {
-    console.log("funcion de desconexion");
-    if (socket != undefined) {
-      console.log("if adentro");
-      // socket.disconnect();
-      // socket.close();
-      // socket.close()
-      // socket.disconnect()
-    }
-    // socket.disconnect()
-    // socket.close()
-    // socket.conn.close();
-  }
   render() {
     var { DataPrioridadesApi, DataIconosCategoriaApi, DataComponentes, DataPartidas, DataActividades,
       DataMayorMetrado, debounceTimeout, descripcion, smsValidaMetrado, collapse, rendimiento,
@@ -2013,7 +2000,8 @@ class MetradosDiarios extends Component {
             //  fade={false}
             toggle={this.modalComentarios}
             // size="sm"
-            onClosed={this.disconnectSocket()}
+            //onClosed={this.disconnectSocket()}
+            //size="sm"
           >
             <ModalHeader>
               <div className="d-flex">
