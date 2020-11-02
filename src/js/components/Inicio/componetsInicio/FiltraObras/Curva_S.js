@@ -75,7 +75,7 @@ function Curva_S({ id_ficha }) {
                 "ejecutado_monto": 0,
                 "observacion": "",
                 "estado_codigo": "E",
-                "fichas_id_ficha": sessionStorage.getItem('idobra'),
+                "fichas_id_ficha": id_ficha,
             },
         )
         setMesesModal(dataClonado);
@@ -156,7 +156,7 @@ function Curva_S({ id_ficha }) {
             element.programado_monto = element.ejecutado_monto
             element.financiero_monto = 0
             element.observacion = ""
-            element.fichas_id_ficha = sessionStorage.getItem('idobra')
+            element.fichas_id_ficha = id_ficha
         });
         setPeriodosEjecutados(tempData)
     }
