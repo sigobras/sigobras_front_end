@@ -6,7 +6,7 @@ import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 import { Line } from 'react-chartjs-2';
 import { MdSave, MdClose, MdModeEdit } from "react-icons/md";
-import './Curva_s.css'
+import '../FiltraObras/Curva_s.css'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
