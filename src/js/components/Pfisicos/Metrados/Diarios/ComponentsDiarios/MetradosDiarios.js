@@ -2003,7 +2003,7 @@ class MetradosDiarios extends Component {
             //onClosed={this.disconnectSocket()}
             //size="sm"
           >
-            <ModalHeader>
+            {/* <ModalHeader>
               <div className="d-flex">
                 <img src={LogoSigobras} width="30px" alt="logo sigobras"
                   style={{
@@ -2022,7 +2022,7 @@ class MetradosDiarios extends Component {
                   {this.state.PartidaSeleccionada}
                 </div>
               </div>
-            </ModalHeader>
+            </ModalHeader> */}
             <Comentarios id_partida={this.state.id_partidaSeleccionada} id_componente={this.state.id_componente} />
           </Modal>
         </div>
