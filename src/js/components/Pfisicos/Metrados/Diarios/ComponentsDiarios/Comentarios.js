@@ -9,6 +9,11 @@ import "../ComponentsDiarios/Comentarios.css";
 import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
 import LogoSigobras from './../../../../../../images/logoSigobras.png'
 function Comentarios({ id_partida, id_componente }) {
+    // constructor(props) {
+    //     super(props)
+    //     this.state = { PartidaSeleccionada: metrados.descripcion,}
+        
+    //   }   
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
         console.log("scroll to bottom");
@@ -27,7 +32,7 @@ function Comentarios({ id_partida, id_componente }) {
     async function fetchComentario() {
 
         const request = await axios.post(`${UrlServer}/getPartidaComentarios`, {
-            "id_partida": id_partida,          
+            "id_partida": id_partida,
 
         })
         console.log("id_patrida", id_partida);
@@ -73,8 +78,30 @@ function Comentarios({ id_partida, id_componente }) {
         })
     }
     return (
-        <ModalBody >
+        <ModalBody style = {{ maxheight : 'calc(90vh-1000px)'}}>
             <div class="container">
+                
+                    <div class="message-header">
+                        <div class="message-header-img">
+                            <img src={LogoSigobras} width="30px" alt="logo sigobras"
+                                style={{
+                                    height: "22px",
+                                    top: "1px",
+                                    position: "inherit"
+                                }} />
+                        </div>
+                        <div class="active_state">
+                            {/* {PartidaSeleccionada[i] == ?<h4>{this.state.PartidaSeleccionada}</h4>:""} */}
+                            
+                            <h6>OFICINAS</h6>
+                        </div>
+                        <div class="header-icons">
+                            <i class="fa fa-phone"></i>
+                            <i class="fa fa-video-camera"></i>
+                            <i class="fa fa-info-circle"></i>
+                        </div>
+                    </div>
+                
                 <div class="message-page">
                     <div class="message-index">
                         <div class="messages">
@@ -120,14 +147,10 @@ function Comentarios({ id_partida, id_componente }) {
                         <div class="bottom-icons">
                             {/* <i class="fa"> <FaPlusCircle></FaPlusCircle></i> */}
                             {/* <i class="fa fa-plus-circle"></i> */}
-                            {/* <i class="fa"><FaCamera></FaCamera> </i> */}
-                            {/* <i class="fa fa-camera"></i> */}
-                            <i class="fa fa-microphone"></i>
-                            <i class="fa fa-smile-o"></i>
                         </div>
                         <div class="input-group">
                             <DebounceInput
-                                
+
                                 placeholder="Escribe un comentario"
                                 minLength={1}
                                 debounceTimeout={1000}
