@@ -146,7 +146,7 @@ function Curva_S({ id_ficha }) {
     }
     //cargar anyos data select
     const [AnyosEjecutados, setAnyosEjecutados] = useState([]);
-    const [AnyoSeleccionado, setAnyoSeleccionado] = useState(0);
+    const [AnyoSeleccionado, setAnyoSeleccionado] = useState("SELECCIONE");
     async function fetchAnyosEjecutados() {
         const request = await axios.post(`${UrlServer}/getAnyosNoRegistradosCurvaS`,
             {
@@ -154,8 +154,9 @@ function Curva_S({ id_ficha }) {
             }
         )
         setAnyosEjecutados(request.data)
-        fetchPeriodosEjecutados(request.data[request.data.length - 1].anyo)
-        setAnyoSeleccionado(request.data[request.data.length - 1].anyo)
+        //comentado debido a error desconocido de no recarga de interfaz
+        // fetchPeriodosEjecutados(request.data[request.data.length - 1].anyo)
+        // setAnyoSeleccionado(request.data[request.data.length - 1].anyo)
     }
     //periodos ejecutados
     const [PeriodosEjecutados, setPeriodosEjecutados] = useState([]);
