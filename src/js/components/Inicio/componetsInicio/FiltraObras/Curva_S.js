@@ -528,7 +528,7 @@ function Curva_S({ id_ficha }) {
                                         DataCurvaS.map((item, i) =>
                                             <td key={i}>
                                                 {
-                                                    item.ejecutado_monto == 0 && EstadoInputProgramado == i ?
+                                                    (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
 
                                                         <div
                                                             className="d-flex"
@@ -555,7 +555,7 @@ function Curva_S({ id_ficha }) {
                                                             className="d-flex"
                                                         >
                                                             {Redondea(item.programado_monto)}
-                                                            {(item.ejecutado_monto == 0 ||anyoMes(item.fecha_inicial) == anyoMesActual()) &&
+                                                            {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
                                                                 <div
                                                                     onClick={() => toggleInputProgramado(i)}
                                                                 >
