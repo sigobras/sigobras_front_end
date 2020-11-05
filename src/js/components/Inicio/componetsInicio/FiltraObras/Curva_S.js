@@ -555,7 +555,7 @@ function Curva_S({ id_ficha }) {
                                                             className="d-flex"
                                                         >
                                                             {Redondea(item.programado_monto)}
-                                                            {item.ejecutado_monto == 0 &&
+                                                            {(item.ejecutado_monto == 0 ||anyoMes(item.fecha_inicial) == anyoMesActual()) &&
                                                                 <div
                                                                     onClick={() => toggleInputProgramado(i)}
                                                                 >
