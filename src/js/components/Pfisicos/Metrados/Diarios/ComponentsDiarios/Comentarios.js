@@ -93,7 +93,7 @@ function Comentarios({ id_partida, id_componente }) {
                         <div class="active_state">
                             {/* {PartidaSeleccionada[i] == ?<h4>{this.state.PartidaSeleccionada}</h4>:""} */}
                             
-                            <h6>OFICINAS</h6>
+                            <h4>OFICINAS</h4>
                         </div>
                         <div class="header-icons">
                             <i class="fa fa-phone"></i>
