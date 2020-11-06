@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Alert } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Alert ,Collapse} from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import { Redondea, mesesShort } from './../../../Utils/Funciones';
 import axios from 'axios';
@@ -40,6 +40,9 @@ function Curva_S({ id_ficha }) {
         var anyoMes = dateText.substring(0, 7)
         return anyoMes
     }
+    function redondeo(num) {
+        return Math.round((num + Number.EPSILON) * 100) / 100
+    }
     //verificar historial incompleto de hitos
 
     const [RegistroNoUbicados, setRegistroNoUbicados] = useState({});
@@ -49,6 +52,28 @@ function Curva_S({ id_ficha }) {
         })
         console.log(request.data);
         setRegistroNoUbicados(request.data[0])
+    }
+    //get costo diresto y presupuesto total
+    const [DataObra, setDataObra] = useState({});
+    async function fetchDataObra() {
+        const request = await axios.post(`${UrlServer}/getDataObra`, {
+            id_ficha
+        })
+        console.log("data de obra :", request.data)
+        setDataObra(request.data)
+        return request.data
+    }
+    const [ToggleSoles, setToggleSoles] = useState(true);
+    function onChangeToggleSoles() {
+        if (ToggleSoles) {
+            console.log("soles");
+            setDataCurvaSTemp(DataCurvaSPorcentaje)
+
+        } else {
+            console.log("porcentaje");
+            setDataCurvaSTemp(DataCurvaS)
+        }
+        setToggleSoles(!ToggleSoles)
     }
     // modal
     const [modal, setModal] = useState(false);
@@ -64,6 +89,7 @@ function Curva_S({ id_ficha }) {
         fetchAnyosEjecutados()
         fetchDataCurvaS()
         fetchYearsModal()
+
     }, []);
     //modal data
     const [MesesModal, setMesesModal] = useState([
@@ -125,7 +151,9 @@ function Curva_S({ id_ficha }) {
     }
     //data de curva s
     const [DataCurvaS, setDataCurvaS] = useState([]);
+    const [DataCurvaSTemp, setDataCurvaSTemp] = useState([]);
     async function fetchDataCurvaS() {
+
         const request = await axios.post(`${UrlServer}/getDataCurvaS`,
             {
                 "id_ficha": id_ficha
@@ -140,10 +168,41 @@ function Curva_S({ id_ficha }) {
                 break;
             }
         }
+        var temp2 = [...request.data]
+        setDataCurvaS(temp2)
+        //chart
+        createDataChart(temp2)
+        createDataChartPorcentaje(temp2)
+        const request2 = await axios.post(`${UrlServer}/getDataCurvaS`,
+            {
+                "id_ficha": id_ficha
+            }
+        )
+        var temp = [...request2.data]
+        solesToPorcentajeCurvaS(temp)
 
-        setDataCurvaS(request.data)
-        createDataChart(request.data)
+        if (ToggleSoles) {
+            setDataCurvaSTemp(temp2)
+        } else {
+            setDataCurvaSTemp(temp)
+        }
     }
+    //data curva s porcentaje
+    const [DataCurvaSPorcentaje, setDataCurvaSPorcentaje] = useState([]);
+    async function solesToPorcentajeCurvaS(test) {
+        var tempDataObra = await fetchDataObra()
+        let cloneDataCurvaS = test.concat()
+        console.log("solesToPorcentajeCurvaS ", cloneDataCurvaS);
+        console.log("DataObra", tempDataObra);
+        cloneDataCurvaS.forEach((item, i) => {
+            item.programado_monto = redondeo(item.programado_monto / tempDataObra.costo_directo * 100, 2)
+            item.ejecutado_monto = redondeo(item.ejecutado_monto / tempDataObra.costo_directo * 100, 2)
+            item.financiero_monto = redondeo(item.financiero_monto / tempDataObra.g_total_presu * 100, 2)
+        });
+        console.log("test ", cloneDataCurvaS);
+        setDataCurvaSPorcentaje(cloneDataCurvaS)
+    }
+
     //cargar anyos data select
     const [AnyosEjecutados, setAnyosEjecutados] = useState([]);
     const [AnyoSeleccionado, setAnyoSeleccionado] = useState("SELECCIONE");
@@ -197,6 +256,7 @@ function Curva_S({ id_ficha }) {
         return request.data.ejecutado_monto
     }
     //chart
+    const [DataChartTemp, setDataChartTemp] = useState({});
     const [DataChart, setDataChart] = useState({});
     function createDataChart(dataCurvaS) {
 
@@ -245,7 +305,86 @@ function Curva_S({ id_ficha }) {
                 programado_monto_break = false
             }
         }
-        setDataChart({
+        var dataChart = {
+
+            labels: labels,
+            datasets: [
+                {
+                    name: 'PROGRAMADO',
+                    data: programado,
+                    // backgroundColor: "#0080ff",
+                    color: "#0080ff",
+                    // fill: false,
+                }
+                ,
+                {
+                    name: 'EJECUTADO',
+                    data: ejecutado,
+                    // backgroundColor: "#fd7e14",
+                    color: "#fd7e14",
+                    // fill: false,
+                }
+                ,
+                {
+                    name: 'FINANCIERO',
+                    data: financiero,
+                    // backgroundColor: "#ffc107",
+                    color: "#ffc107",
+                    // fill: false,
+                }
+            ]
+        }
+        setDataChart(dataChart)
+    }
+    const [DataChartPorcentaje, setDataChartPorcentaje] = useState({});
+    async function createDataChartPorcentaje(dataCurvaS) {
+        var tempDataObra = await fetchDataObra()
+        var labels = []
+        var programado = []
+        var ejecutado = []
+        var financiero = []
+
+        var programado_acumulado = 0
+        var ejecutado_acumulado = 0
+        var financiero_acumulado = 0
+
+        dataCurvaS.forEach((item, i) => {
+            if (item.tipo == "PERIODO") {
+                var label = mesesShort[getMesfromDate(item.fecha_inicial) - 1] + " - " + getAnyofromDate(item.fecha_inicial)
+                labels.push(label)
+                programado_acumulado += item.programado_monto
+                programado.push(redondeo(programado_acumulado / tempDataObra.costo_directo * 100, 2))
+
+                ejecutado_acumulado += item.ejecutado_monto
+                ejecutado.push(redondeo(ejecutado_acumulado / tempDataObra.costo_directo * 100, 2))
+
+                financiero_acumulado += item.financiero_monto
+                financiero.push(redondeo(financiero_acumulado / tempDataObra.g_total_presu * 100, 2))
+            }
+        })
+        //clean ejecutado
+        var ejecutado_monto_break = true
+        var financiero_monto_break = true
+        var programado_monto_break = true
+        for (let i = dataCurvaS.length - 1; i > 0; i--) {
+            var item = dataCurvaS[i]
+            if (ejecutado_monto_break && (item.ejecutado_monto == 0 || item.ejecutado_monto == null)) {
+                ejecutado.pop()
+            } else {
+                ejecutado_monto_break = false
+            }
+            if (financiero_monto_break && (item.financiero_monto == 0 || item.financiero_monto == null)) {
+                financiero.pop()
+            } else {
+                financiero_monto_break = false
+            }
+            if (programado_monto_break && (item.programado_monto == 0 || item.programado_monto == null)) {
+                programado.pop()
+            } else {
+                programado_monto_break = false
+            }
+        }
+        setDataChartPorcentaje({
 
             labels: labels,
             datasets: [
@@ -324,7 +463,7 @@ function Curva_S({ id_ficha }) {
         },
         tooltip: {
             split: true,
-            valueSuffix: ' Soles'
+            valueSuffix: ToggleSoles ? ' Soles' : ' %'
         },
         xAxis: {
             categories: DataChart.labels,
@@ -363,6 +502,75 @@ function Curva_S({ id_ficha }) {
             }
         },
         series: DataChart.datasets
+    }
+    const options2 = {
+        chart: {
+            // type: 'area',
+            "backgroundColor": "#242526",
+            "style": {
+                "fontFamily": "Roboto",
+                "color": "#666666"
+            }
+        },
+        title: {
+            text: 'CURVA S',
+            "align": "center",
+            "style": {
+                "fontFamily": "Roboto Condensed",
+                "fontWeight": "bold",
+                "color": "#666666"
+            }
+        },
+
+        // subtitle: {
+        //     text: 'Source: thesolarfoundation.com'
+        // },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        tooltip: {
+            split: true,
+            valueSuffix: ToggleSoles ? ' Soles' : ' %'
+        },
+        xAxis: {
+            categories: DataChart.labels,
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'SOLES'
+            },
+            labels: {
+                formatter: function () {
+                    return this.value / 1000;
+                },
+
+            },
+            "gridLineColor": "#424242",
+            "ridLineWidth": 1,
+            "minorGridLineColor": "#424242",
+            "inoGridLineWidth": 0.5,
+            "tickColor": "#424242",
+            "minorTickColor": "#424242",
+            "lineColor": "#424242"
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true,
+                    color: 'white',
+                    style: {
+                        textOutline: false
+                    }
+                },
+            }
+        },
+        series: DataChartPorcentaje.datasets
     }
     //actualizar programado
     const [ValueInputProgramado, setValueInputProgramado] = useState([]);
@@ -465,7 +673,7 @@ function Curva_S({ id_ficha }) {
                 // maxWidth: "600px",
                 // maxHeight: "600px",
             }}>
-                {DataCurvaS.length > 0 ?
+                {DataCurvaSTemp.length > 0 ?
                     [
                         <div
                             key={0}
@@ -477,20 +685,38 @@ function Curva_S({ id_ficha }) {
                                 maxWidth: "600px",
                                 maxHeight: "1000px",
                             }}>
-                            <HighchartsReact
-                                highcharts={Highcharts}
-                                // constructorType={'stockChart'}
-                                options={options}
-                            />
+                            <Collapse isOpen={ToggleSoles}>
+                                <HighchartsReact
+                                    highcharts={Highcharts}
+                                    // constructorType={'stockChart'}
+                                    options={options}
+                                />
+                            </Collapse>
+                            <Collapse isOpen={!ToggleSoles}>
+                                <HighchartsReact
+                                    highcharts={Highcharts}
+                                    // constructorType={'stockChart'}
+                                    options={options2}
+                                />
+                            </Collapse>
+
+
                             {/* <Line data={DataChart} options={opt} /> */}
                         </div>,
 
                         (
                             sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                            <Button
-                                key={1}
-                                color="danger"
-                                onClick={toggle}>+</Button>
+                            [
+                                <Button
+                                    key={1}
+                                    color="danger"
+                                    onClick={toggle}>+</Button>
+                                ,
+                                <Button
+                                    key={1}
+                                    color="primary"
+                                    onClick={() => onChangeToggleSoles()}>+</Button>
+                            ]
                         )
                         ,
                         <table
@@ -502,7 +728,7 @@ function Curva_S({ id_ficha }) {
                                         MES
                                     </th>
                                     {
-                                        DataCurvaS.map((item, i) =>
+                                        DataCurvaSTemp.map((item, i) =>
                                             <th
                                                 key={i}
                                                 style={
@@ -525,7 +751,7 @@ function Curva_S({ id_ficha }) {
                                         PROGRAMADO
                         </th>
                                     {
-                                        DataCurvaS.map((item, i) =>
+                                        DataCurvaSTemp.map((item, i) =>
                                             <td key={i}>
                                                 {
                                                     (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
@@ -573,7 +799,7 @@ function Curva_S({ id_ficha }) {
                                         EJECUTADO
                         </th>
                                     {
-                                        DataCurvaS.map((item, i) =>
+                                        DataCurvaSTemp.map((item, i) =>
                                             <td key={i}>{Redondea(item.ejecutado_monto)}</td>
                                         )
                                     }
@@ -583,7 +809,7 @@ function Curva_S({ id_ficha }) {
                                         FINANCIERO
                                     </th>
                                     {
-                                        DataCurvaS.map((item, i) =>
+                                        DataCurvaSTemp.map((item, i) =>
                                             <td key={i}>
                                                 {
                                                     EstadoInputFinanciero == i ?
