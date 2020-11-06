@@ -15,7 +15,7 @@ import LogoSigobras from './../../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../../Utils/ServerUrlConfig';
 import { ConvertFormatStringNumber, PrimerDiaDelMesActual, FechaActual } from '../../../../Utils/Funciones'
 import Comentarios from './Comentarios';
-import {socket} from "../../../../Utils/socket";
+import { socket } from "../../../../Utils/socket";
 class MetradosDiarios extends Component {
   state = {
     DataComponentes: [],
@@ -1077,7 +1077,7 @@ class MetradosDiarios extends Component {
                           zIndex: "20",
                           fontSize: "9px",
                           fontWeight: "bold",
-                          
+
                         }}>
                           {componentesComentarios[indexComp].mensajes}
                         </div>
@@ -1263,7 +1263,7 @@ class MetradosDiarios extends Component {
                                           zIndex: "20",
                                           fontSize: "9px",
                                           fontWeight: "bold",
-                                          
+
                                         }}>
                                           {partidaComentarios[i].mensajes}
                                         </div>
@@ -1997,33 +1997,16 @@ class MetradosDiarios extends Component {
           {/* MODAL COMENTARIOS */}
           <Modal
             isOpen={this.state.modalComentarios}
-            //  fade={false}
+
             toggle={this.modalComentarios}
-            // size="sm"
-            //onClosed={this.disconnectSocket()}
-            //size="sm"
+            centered={true}
           >
-            {/* <ModalHeader>
-              <div className="d-flex">
-                <img src={LogoSigobras} width="30px" alt="logo sigobras"
-                  style={{
-                    height: "22px",
-                    top: "1px",
-                    position: "inherit"
-                  }} />
-                <div style={{
-                  whiteSpace: "nowrap",
-                  width: "600px",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  marginLeft: "4px",
-                  float: "right",
-                }}>
-                  {this.state.PartidaSeleccionada}
-                </div>
-              </div>
-            </ModalHeader> */}
-            <Comentarios id_partida={this.state.id_partidaSeleccionada} id_componente={this.state.id_componente} />
+
+            <Comentarios 
+            id_partida={this.state.id_partidaSeleccionada} 
+            id_componente={this.state.id_componente} 
+            titulo = {this.state.PartidaSeleccionada}
+            />
           </Modal>
         </div>
     );

@@ -8,16 +8,16 @@ import "../ComponentsDiarios/Comentarios.css";
 
 import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
 import LogoSigobras from './../../../../../../images/logoSigobras.png'
-function Comentarios({ id_partida, id_componente }) {
+function Comentarios({ id_partida, id_componente ,titulo}) {
     // constructor(props) {
     //     super(props)
     //     this.state = { PartidaSeleccionada: metrados.descripcion,}
-        
+
     //   }   
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
         console.log("scroll to bottom");
-        // messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     };
     const [Data, setData] = useState([])
     const [Comentario, setComentario] = useState([])
@@ -78,30 +78,29 @@ function Comentarios({ id_partida, id_componente }) {
         })
     }
     return (
-        <ModalBody style = {{ maxheight : 'calc(90vh-1000px)'}}>
-            <div class="container">
-                
-                    <div class="message-header">
-                        <div class="message-header-img">
-                            <img src={LogoSigobras} width="30px" alt="logo sigobras"
-                                style={{
-                                    height: "22px",
-                                    top: "1px",
-                                    position: "inherit"
-                                }} />
-                        </div>
-                        <div class="active_state">
-                            {/* {PartidaSeleccionada[i] == ?<h4>{this.state.PartidaSeleccionada}</h4>:""} */}
-                            
-                            <h4>OFICINAS</h4>
-                        </div>
-                        <div class="header-icons">
-                            <i class="fa fa-phone"></i>
-                            <i class="fa fa-video-camera"></i>
-                            <i class="fa fa-info-circle"></i>
-                        </div>
+        <ModalBody style={{ maxheight: 'calc(90vh-1000px)' }}>
+            <div class="container container-chat">
+
+                <div class="message-header">
+                    <div class="message-header-img">
+                        <img src={LogoSigobras} width="30px" alt="logo sigobras"
+                            style={{
+                                height: "22px",
+                                top: "1px",
+                                position: "inherit"
+                            }} />
                     </div>
-                
+                    <div class="active_state">
+                        {/* {PartidaSeleccionada[i] == ?<h4>{this.state.PartidaSeleccionada}</h4>:""} */}
+                        <h4>{titulo}</h4>
+                    </div>
+                    <div class="header-icons">
+                        <i class="fa fa-phone"></i>
+                        <i class="fa fa-video-camera"></i>
+                        <i class="fa fa-info-circle"></i>
+                    </div>
+                </div>
+
                 <div class="message-page">
                     <div class="message-index">
                         <div class="messages">
@@ -111,7 +110,7 @@ function Comentarios({ id_partida, id_componente }) {
                                         (sessionStorage.getItem('idacceso') == item.id_acceso) ?
                                             <div class="recived-chat">
                                                 <div class="recived-chat-img">
-                                                    <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" />
+                                                    <img class="img-chat" src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" />
                                                 </div>
                                                 <div class="recived-msg">
 
@@ -132,11 +131,12 @@ function Comentarios({ id_partida, id_componente }) {
                                                 </div>
 
                                                 <div class="outgoing-chat-img">
-                                                    <img src="https://www.shareicon.net/data/2016/09/01/822762_user_512x512.png" />
+                                                    <img class="img-chat" src="https://www.shareicon.net/data/2016/09/01/822762_user_512x512.png" />
                                                 </div>
                                             </div>
                                     )
                                 }
+                                <div ref={messagesEndRef} />
 
                             </div>
                         </div>
@@ -144,11 +144,11 @@ function Comentarios({ id_partida, id_componente }) {
 
 
                     <div class="msg-bottom">
-                        <div class="bottom-icons">
+                        <div class="bottom-icons-chat">
                             {/* <i class="fa"> <FaPlusCircle></FaPlusCircle></i> */}
                             {/* <i class="fa fa-plus-circle"></i> */}
                         </div>
-                        <div class="input-group">
+                        <div class="input-group input-group-chat">
                             <DebounceInput
 
                                 placeholder="Escribe un comentario"
@@ -156,10 +156,10 @@ function Comentarios({ id_partida, id_componente }) {
                                 debounceTimeout={1000}
                                 onChange={e => setComentario(e.target.value)}
                                 value={Comentario}
-                                className="form-control"
+                                className="form-control form-control-chat"
                             />
                             <div class="input-group-append">
-                                <span class="input-group-text">
+                                <span class="input-group-text input-group-text-chat">
                                     <FaPaperPlane onClick={() => saveComentario()}></FaPaperPlane>
                                 </span>
                             </div>
