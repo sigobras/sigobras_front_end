@@ -2,11 +2,11 @@
 
 // const UrlServer = "http://190.117.94.80:9002";
 // para desarrollo con el backend local
-const UrlServer = "http://localhost:9000";
+// const UrlServer = "http://localhost:9000";
 
 // //para git pull cambiar a este modo
 // const UrlServer = "http://190.117.94.80:9000";
-// const UrlServer = "http://api.sigobras.com";
+const UrlServer = "http://api.sigobras.com";
 
 const Id_Acceso = sessionStorage.getItem("idacceso")
 const ImgAccesoSS = sessionStorage.getItem("imgUsuario")
