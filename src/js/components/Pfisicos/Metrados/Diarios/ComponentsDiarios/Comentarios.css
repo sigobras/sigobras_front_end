@@ -1,10 +1,10 @@
-.container{
+.container-chat{
     margin:-10px -1px -55px 1px !important;
     font-family: sans-serif;
     letter-spacing: 0.5px;
     padding: 0 !important;
 }
-img{
+.img-chat{
     max-width: 40px;
     border-radius: 50%;
     margin-bottom: 10px;
@@ -144,7 +144,7 @@ img{
     height: 70px;
     background-color: #2555af;
 }
-.input-group{
+.input-group-chat{
     float: right;
     margin-top: 25px;
     margin-right: 20px;
@@ -153,19 +153,21 @@ img{
     width: 50% !important;
     background: #fff;
 }
-.form-control{
+
+.form-control-chat{
     border: none !important;
     border-radius: 20px !important;
 }
-.input-group-text{
+
+.input-group-text-chat{
     background: transparent !important;
     border: none !important;
 }
-.input-group .fa{
+.input-group-chat .fa{
     color: #9ACD32;
     float: right;
 }
-.bottom-icons{
+.bottom-icons-chat{
     float: left;
     margin-top: 28px;
     width: 30% !important;
@@ -173,13 +175,14 @@ img{
     font-size: 20px;
     cursor: pointer;
 }
-.bottom-icons .fa{
+
+.bottom-icons-chat .fa{
     color: #fff;
     padding: 8px;
     font-size: 20px;
 }
-.form-control:focus{
+.form-control-chat:focus{
     border-color: none !important;
     box-shadow: none !important;
     border-radius: 20px;
-}
+} 

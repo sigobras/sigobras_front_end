@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Alert ,Collapse} from 'reactstrap';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Alert, Collapse } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import { Redondea, mesesShort } from './../../../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 import { Line } from 'react-chartjs-2';
-import { MdSave, MdClose, MdModeEdit } from "react-icons/md";
+import { MdSave, MdClose, MdModeEdit, MdSettings } from "react-icons/md";
 import './Curva_S.css'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -274,13 +274,13 @@ function Curva_S({ id_ficha }) {
                 var label = mesesShort[getMesfromDate(item.fecha_inicial) - 1] + " - " + getAnyofromDate(item.fecha_inicial)
                 labels.push(label)
                 programado_acumulado += item.programado_monto
-                programado.push(programado_acumulado)
+                programado.push(redondeo(programado_acumulado))
 
                 ejecutado_acumulado += item.ejecutado_monto
-                ejecutado.push(ejecutado_acumulado)
+                ejecutado.push(redondeo(ejecutado_acumulado))
 
                 financiero_acumulado += item.financiero_monto
-                financiero.push(financiero_acumulado)
+                financiero.push(redondeo(financiero_acumulado))
             }
         })
         //clean ejecutado
@@ -416,10 +416,14 @@ function Curva_S({ id_ficha }) {
     }
     //update financiero 
     async function updateFinanciero(id, i) {
+        var tempFinanciero = ValueInputFinanciero[i]
+        if(!ToggleSoles){
+            tempFinanciero = tempFinanciero*DataObra.g_total_presu /100
+        }
         const request = await axios.post(`${UrlServer}/putFinancieroCurvaS`,
             {
                 "id": id,
-                "financiero_monto": ValueInputFinanciero[i]
+                "financiero_monto": tempFinanciero
             })
         fetchDataCurvaS()
         toggleInputFinanciero(-1)
@@ -457,9 +461,9 @@ function Curva_S({ id_ficha }) {
         //     text: 'Source: thesolarfoundation.com'
         // },
         legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
+            // layout: 'vertical',
+            "align": "center",
+            "verticalAlign": "bottom",
         },
         tooltip: {
             split: true,
@@ -497,7 +501,8 @@ function Curva_S({ id_ficha }) {
                     color: 'white',
                     style: {
                         textOutline: false
-                    }
+                    },
+
                 },
             }
         },
@@ -510,7 +515,8 @@ function Curva_S({ id_ficha }) {
             "style": {
                 "fontFamily": "Roboto",
                 "color": "#666666"
-            }
+            },
+            with: "2000"
         },
         title: {
             text: 'CURVA S',
@@ -526,9 +532,9 @@ function Curva_S({ id_ficha }) {
         //     text: 'Source: thesolarfoundation.com'
         // },
         legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
+            // layout: 'vertical',
+            "align": "center",
+            "verticalAlign": "bottom",
         },
         tooltip: {
             split: true,
@@ -566,6 +572,11 @@ function Curva_S({ id_ficha }) {
                     color: 'white',
                     style: {
                         textOutline: false
+                    },
+                    formatter: function () {
+                        console.log("test ", this);
+
+                        return this.y + "%";
                     }
                 },
             }
@@ -580,10 +591,14 @@ function Curva_S({ id_ficha }) {
         setValueInputProgramado(dataTemp)
     }
     async function updateProgramado(id, i) {
+        var temp = ValueInputProgramado[i]
+        if(!ToggleSoles){
+            temp = temp*DataObra.costo_directo /100
+        }
         const request = await axios.post(`${UrlServer}/putProgramadoCurvaSbyId`,
             {
                 "id": id,
-                "programado_monto": ValueInputProgramado[i]
+                "programado_monto": temp
             })
         fetchDataCurvaS()
         toggleInputProgramado(-1)
@@ -679,11 +694,11 @@ function Curva_S({ id_ficha }) {
                             key={0}
                             style={{
                                 // overflowY: "auto",
-                                position: "relative",
+                                // position: "relative",
                                 // textAlign: "center",
                                 // color: "white",
-                                maxWidth: "600px",
-                                maxHeight: "1000px",
+                                // maxWidth: "600px",
+                                // maxHeight: "1000px",
                             }}>
                             <Collapse isOpen={ToggleSoles}>
                                 <HighchartsReact
@@ -699,23 +714,31 @@ function Curva_S({ id_ficha }) {
                                     options={options2}
                                 />
                             </Collapse>
-
-
-                            {/* <Line data={DataChart} options={opt} /> */}
                         </div>,
 
                         (
                             sessionStorage.getItem("cargo") == "RESIDENTE" &&
                             [
-                                <Button
-                                    key={1}
-                                    color="danger"
-                                    onClick={toggle}>+</Button>
-                                ,
-                                <Button
-                                    key={1}
-                                    color="primary"
-                                    onClick={() => onChangeToggleSoles()}>+</Button>
+                                <div
+                                    className="d-flex"
+                                >
+                                    <div onClick={toggle} style={{ color: '#676767' }}>
+                                        <MdSettings className="icon" size={32} />
+                                    </div>
+                                {
+                                    !ToggleSoles?
+                                    <Button
+                                        key={1}
+                                        color="primary"
+                                        onClick={() => onChangeToggleSoles()}>S/.</Button>:
+                                    <Button
+                                        key={1}
+                                        color="primary"
+                                        onClick={() => onChangeToggleSoles()}>%</Button>
+                                }
+                                </div>
+
+
                             ]
                         )
                         ,
@@ -749,7 +772,7 @@ function Curva_S({ id_ficha }) {
                                 <tr >
                                     <th>
                                         PROGRAMADO
-                        </th>
+                                    </th>
                                     {
                                         DataCurvaSTemp.map((item, i) =>
                                             <td key={i}>
@@ -780,7 +803,7 @@ function Curva_S({ id_ficha }) {
                                                         <div
                                                             className="d-flex"
                                                         >
-                                                            {Redondea(item.programado_monto)}
+                                                            {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
                                                             {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
                                                                 <div
                                                                     onClick={() => toggleInputProgramado(i)}
@@ -800,7 +823,9 @@ function Curva_S({ id_ficha }) {
                         </th>
                                     {
                                         DataCurvaSTemp.map((item, i) =>
-                                            <td key={i}>{Redondea(item.ejecutado_monto)}</td>
+                                            <td key={i}>
+                                                {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} {}
+                                            </td>
                                         )
                                     }
                                 </tr>
@@ -838,7 +863,7 @@ function Curva_S({ id_ficha }) {
                                                         <div
                                                             className="d-flex"
                                                         >
-                                                            {Redondea(item.financiero_monto)}
+                                                            {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
                                                             <div
                                                                 onClick={() => toggleInputFinanciero(i)}
                                                             >
@@ -879,7 +904,7 @@ function Curva_S({ id_ficha }) {
 
             </div>
             {/* modal de periodos ejecutados */}
-            <Modal isOpen={modal} toggle={toggle} >
+            < Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>
                     {
                         RegistroNoUbicados.registros > 0 ?
