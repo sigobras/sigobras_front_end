@@ -4,13 +4,12 @@ import { DebounceInput } from 'react-debounce-input';
 import { Redondea, mesesShort } from './../../../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
-import { Line } from 'react-chartjs-2';
 import { MdSave, MdClose, MdModeEdit, MdSettings } from "react-icons/md";
 import './Curva_S.css'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-function Curva_S({ id_ficha }) {
+function Curva_S({ id_ficha, nombreObra }) {
     function getMesfromDate(date) {
         date = date.split("-")
         return Number(date[1])
@@ -50,7 +49,6 @@ function Curva_S({ id_ficha }) {
         const request = await axios.post(`${UrlServer}/getRegistroNoUbicados`, {
             "id_ficha": id_ficha
         })
-        console.log(request.data);
         setRegistroNoUbicados(request.data[0])
     }
     //get costo diresto y presupuesto total
@@ -59,18 +57,15 @@ function Curva_S({ id_ficha }) {
         const request = await axios.post(`${UrlServer}/getDataObra`, {
             id_ficha
         })
-        console.log("data de obra :", request.data)
         setDataObra(request.data)
         return request.data
     }
     const [ToggleSoles, setToggleSoles] = useState(true);
     function onChangeToggleSoles() {
         if (ToggleSoles) {
-            console.log("soles");
             setDataCurvaSTemp(DataCurvaSPorcentaje)
 
         } else {
-            console.log("porcentaje");
             setDataCurvaSTemp(DataCurvaS)
         }
         setToggleSoles(!ToggleSoles)
@@ -169,6 +164,7 @@ function Curva_S({ id_ficha }) {
             }
         }
         var temp2 = [...request.data]
+        calcularSaldo(temp2)
         setDataCurvaS(temp2)
         //chart
         createDataChart(temp2)
@@ -192,14 +188,11 @@ function Curva_S({ id_ficha }) {
     async function solesToPorcentajeCurvaS(test) {
         var tempDataObra = await fetchDataObra()
         let cloneDataCurvaS = test.concat()
-        console.log("solesToPorcentajeCurvaS ", cloneDataCurvaS);
-        console.log("DataObra", tempDataObra);
         cloneDataCurvaS.forEach((item, i) => {
             item.programado_monto = redondeo(item.programado_monto / tempDataObra.costo_directo * 100, 2)
             item.ejecutado_monto = redondeo(item.ejecutado_monto / tempDataObra.costo_directo * 100, 2)
             item.financiero_monto = redondeo(item.financiero_monto / tempDataObra.g_total_presu * 100, 2)
         });
-        console.log("test ", cloneDataCurvaS);
         setDataCurvaSPorcentaje(cloneDataCurvaS)
     }
 
@@ -417,8 +410,8 @@ function Curva_S({ id_ficha }) {
     //update financiero 
     async function updateFinanciero(id, i) {
         var tempFinanciero = ValueInputFinanciero[i]
-        if(!ToggleSoles){
-            tempFinanciero = tempFinanciero*DataObra.g_total_presu /100
+        if (!ToggleSoles) {
+            tempFinanciero = tempFinanciero * DataObra.g_total_presu / 100
         }
         const request = await axios.post(`${UrlServer}/putFinancieroCurvaS`,
             {
@@ -457,9 +450,9 @@ function Curva_S({ id_ficha }) {
             }
         },
 
-        // subtitle: {
-        //     text: 'Source: thesolarfoundation.com'
-        // },
+        subtitle: {
+            text: nombreObra
+        },
         legend: {
             // layout: 'vertical',
             "align": "center",
@@ -574,8 +567,6 @@ function Curva_S({ id_ficha }) {
                         textOutline: false
                     },
                     formatter: function () {
-                        console.log("test ", this);
-
                         return this.y + "%";
                     }
                 },
@@ -592,8 +583,8 @@ function Curva_S({ id_ficha }) {
     }
     async function updateProgramado(id, i) {
         var temp = ValueInputProgramado[i]
-        if(!ToggleSoles){
-            temp = temp*DataObra.costo_directo /100
+        if (!ToggleSoles) {
+            temp = temp * DataObra.costo_directo / 100
         }
         const request = await axios.post(`${UrlServer}/putProgramadoCurvaSbyId`,
             {
@@ -646,7 +637,6 @@ function Curva_S({ id_ficha }) {
             Dataclonado[i].ejecutado_monto = sumatoriaAnyo(value, "ejecutado_monto")
         }
         setYearsModalData(Dataclonado)
-        console.log(Dataclonado);
     }
     function addYearModalYears() {
         var dataClonado = [...YearsModalData]
@@ -670,13 +660,38 @@ function Curva_S({ id_ficha }) {
     //calcular sumatoria de un anyo
     function sumatoriaAnyo(anyo, name) {
         var sumatoria = DataCurvaS.reduce((total, item) => {
-            // console.log(getAnyofromDate(item.fecha_inicial), anyo,getAnyofromDate(item.fecha_inicial) == anyo);
             if (getAnyofromDate(item.fecha_inicial) == anyo) {
                 total += Number(item[name])
             }
             return total
         }, 0)
         return sumatoria
+    }
+    //calcular saldo
+    const [Saldo, setSaldo] = useState({
+        programado: 0,
+        ejecutado: 0,
+        financiero: 0
+    });
+    async function calcularSaldo(dataCurvaS) {
+        var tempDataObra = await fetchDataObra()
+        console.log("calcularSaldo", dataCurvaS);
+        var clonDataObra = {}
+        clonDataObra.programado = tempDataObra.costo_directo
+        clonDataObra.ejecutado = tempDataObra.costo_directo
+        clonDataObra.financiero = tempDataObra.g_total_presu
+        console.log("clonDataObra", clonDataObra);
+        for (let i = 0; i < dataCurvaS.length; i++) {
+            const element = dataCurvaS[i];
+            if (element.tipo != "TOTAL") {
+                clonDataObra.programado -= element.programado_monto
+                clonDataObra.ejecutado -= element.ejecutado_monto
+                clonDataObra.financiero -= element.financiero_monto
+            }
+
+        }
+        console.log("clonDataObra", clonDataObra);
+        setSaldo(clonDataObra)
     }
     return (
         <div>
@@ -699,7 +714,74 @@ function Curva_S({ id_ficha }) {
                                 // color: "white",
                                 // maxWidth: "600px",
                                 // maxHeight: "1000px",
+                                position: "fixed",
+                                width: "800px",
+                                zIndex: 1
                             }}>
+                            <div
+                                className="d-flex"
+                                style={{
+                                    // right: "261px",
+                                    // position: "fixed",
+                                    // top: "107px",
+                                    // zIndex: 1
+
+
+                                }}
+                            >
+                                <Alert color="primary">
+                                    <div style={{ fontWeight: 700 }}>
+                                        S/.{Redondea(Saldo.programado)}
+                                    </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        SALDO PROGRAMADO
+                                    </div>
+                                </Alert>
+                                &nbsp;&nbsp;
+                                <Alert color="warning">
+                                    <div style={{ fontWeight: 700 }}>
+                                        S/.{Redondea(Saldo.ejecutado)}
+                                    </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        SALDO EJECUTADO
+                                    </div>
+                                </Alert>
+                                &nbsp;&nbsp;
+                                <Alert color="light">
+                                    <div style={{ fontWeight: 700 }}>
+                                        S/.{Redondea(Saldo.financiero)}
+                                    </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        SALDO FINANCIERO
+                                    </div>
+                                </Alert>
+                                <div class="mr-auto p-2"></div>
+                                {
+                                    !ToggleSoles ?
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary"
+                                            style={{ height: "32px" }}
+                                            onClick={() => onChangeToggleSoles()}
+                                        >S/.</button> :
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary"
+                                            style={{ height: "32px" }}
+                                            onClick={() => onChangeToggleSoles()}
+                                        >%</button>
+                                }
+                                {
+                                    sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                    [
+
+
+                                        <div onClick={toggle} style={{ color: '#676767' }}>
+                                            <MdSettings className="icon" size={32} />
+                                        </div>
+                                    ]
+                                }
+                            </div>
                             <Collapse isOpen={ToggleSoles}>
                                 <HighchartsReact
                                     highcharts={Highcharts}
@@ -716,35 +798,105 @@ function Curva_S({ id_ficha }) {
                             </Collapse>
                         </div>,
 
-                        (
-                            sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                            [
-                                <div
-                                    className="d-flex"
-                                >
-                                    <div onClick={toggle} style={{ color: '#676767' }}>
-                                        <MdSettings className="icon" size={32} />
+                        <div
+                            key={0}
+                            style={{
+                                // overflowY: "auto",
+                                // position: "relative",
+                                // textAlign: "center",
+                                // color: "white",
+                                // maxWidth: "600px",
+                                // maxHeight: "1000px",
+                                // position: "fixed",
+                                width: "800px",
+                                zIndex: 1,
+                                visibility: "hidden"
+                            }}>
+                            <div
+                                className="d-flex"
+                                style={{
+                                    // right: "261px",
+                                    // position: "fixed",
+                                    // top: "107px",
+                                    // zIndex: 1
+
+
+                                }}
+                            >
+                                <Alert color="primary">
+                                    <div style={{ fontWeight: 700 }}>
+                                        S/.{Redondea(Saldo.programado)}
                                     </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        SALDO PROGRAMADO
+                                    </div>
+                                </Alert>
+                                    &nbsp;&nbsp;
+                                <Alert color="warning">
+                                    <div style={{ fontWeight: 700 }}>
+                                        S/.{Redondea(Saldo.ejecutado)}
+                                    </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        SALDO EJECUTADO
+                                    </div>
+                                </Alert>
+                                    &nbsp;&nbsp;
+                                <Alert color="light">
+                                    <div style={{ fontWeight: 700 }}>
+                                        S/.{Redondea(Saldo.financiero)}
+                                    </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        SALDO FINANCIERO
+                                    </div>
+                                </Alert>
+                                <div class="mr-auto p-2"></div>
                                 {
-                                    !ToggleSoles?
-                                    <Button
-                                        key={1}
-                                        color="primary"
-                                        onClick={() => onChangeToggleSoles()}>S/.</Button>:
-                                    <Button
-                                        key={1}
-                                        color="primary"
-                                        onClick={() => onChangeToggleSoles()}>%</Button>
+                                    sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                    [
+
+                                        (
+                                            !ToggleSoles ?
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-primary"
+                                                    style={{ height: "32px" }}
+                                                    onClick={() => onChangeToggleSoles()}
+                                                >S/.</button> :
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-primary"
+                                                    style={{ height: "32px" }}
+                                                    onClick={() => onChangeToggleSoles()}
+                                                >%</button>
+                                        ),
+                                        <div onClick={toggle} style={{ color: '#676767' }}>
+                                            <MdSettings className="icon" size={32} />
+                                        </div>
+                                    ]
                                 }
-                                </div>
+                            </div>
+                            <Collapse isOpen={ToggleSoles}>
+                                <HighchartsReact
+                                    highcharts={Highcharts}
+                                    // constructorType={'stockChart'}
+                                    options={options}
+                                />
+                            </Collapse>
+                            <Collapse isOpen={!ToggleSoles}>
+                                <HighchartsReact
+                                    highcharts={Highcharts}
+                                    // constructorType={'stockChart'}
+                                    options={options2}
+                                />
+                            </Collapse>
+                        </div>,
 
 
-                            ]
-                        )
-                        ,
                         <table
                             key={2}
-                            className="table table-sm small">
+                            className="table table-sm small"
+
+                        >
                             <thead>
                                 <tr>
                                     <th>
@@ -805,11 +957,13 @@ function Curva_S({ id_ficha }) {
                                                         >
                                                             {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
                                                             {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                <div
-                                                                    onClick={() => toggleInputProgramado(i)}
-                                                                >
-                                                                    <MdModeEdit className="icon" />
-                                                                </div>
+                                                                (sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                    <div
+                                                                        onClick={() => toggleInputProgramado(i)}
+                                                                    >
+                                                                        <MdModeEdit className="icon" />
+                                                                    </div>
+                                                                )
                                                             }
                                                         </div>
                                                 }
@@ -864,11 +1018,13 @@ function Curva_S({ id_ficha }) {
                                                             className="d-flex"
                                                         >
                                                             {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
-                                                            <div
-                                                                onClick={() => toggleInputFinanciero(i)}
-                                                            >
-                                                                <MdModeEdit className="icon" />
-                                                            </div>
+                                                            {sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                <div
+                                                                    onClick={() => toggleInputFinanciero(i)}
+                                                                >
+                                                                    <MdModeEdit className="icon" />
+                                                                </div>
+                                                            }
                                                         </div>
                                                 }
                                             </td>

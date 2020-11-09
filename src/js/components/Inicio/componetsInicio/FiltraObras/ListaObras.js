@@ -28,6 +28,7 @@ class ListaObras extends Component {
             DataComponente: [],
             modalCurvaS:false,
             id_ficha_seleccionado:-1,
+            nombreObra_seleccionado:-1,
 
         }
 
@@ -238,7 +239,7 @@ class ListaObras extends Component {
                                 <button
                                     className="btn btn-outline-info btn-sm mr-1"
                                     title="Avance Componentes"
-                                    onClick={() => {this.modalCurvaS(), this.setState({id_ficha_seleccionado:Obras.id_ficha})}}
+                                    onClick={() => {this.modalCurvaS(), this.setState({id_ficha_seleccionado:Obras.id_ficha, nombreObra_seleccionado:Obras.codigo})}}
                                     data-event={IndexObras} >
                                     <FaChartLine />
                                 </button>
@@ -274,7 +275,7 @@ class ListaObras extends Component {
                     toggle={()=>this.modalCurvaS()}
                     size="lg"
                 >
-                    <Curva_S id_ficha={this.state.id_ficha_seleccionado}/>
+                    <Curva_S id_ficha={this.state.id_ficha_seleccionado} nombreObra={this.state.nombreObra_seleccionado}/>
                 </Modal>
                 ]
         )
