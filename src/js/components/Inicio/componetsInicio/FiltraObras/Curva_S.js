@@ -4,7 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import { Redondea, mesesShort } from './../../../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
-import { MdSave, MdClose, MdModeEdit, MdSettings } from "react-icons/md";
+import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever } from "react-icons/md";
 import './Curva_S.css'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -693,6 +693,19 @@ function Curva_S({ id_ficha, nombreObra }) {
         console.log("clonDataObra", clonDataObra);
         setSaldo(clonDataObra)
     }
+    async function deletePeriodoCurvaS(id) {
+        if(confirm("Esta seguro que desea eliminar esete periodo?")){
+            const request = await axios.post(`${UrlServer}/deletePeriodoCurvaS`, {
+                "id": id
+            })
+            alert("se elimino registro con exito")
+            setModal(false)
+            fetchDataCurvaS()
+            fetchAnyosEjecutados()
+            setMesesModal([])
+        }
+       
+    }
     return (
         <div>
             <div style={{
@@ -912,8 +925,23 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                         : {}
                                                 }
                                             >
-                                                {item.estado_codigo == 'C' ? "CORTE " : ""}
-                                                {mesesShort[getMesfromDate(item.fecha_inicial) - 1]} - {getAnyofromDate(item.fecha_inicial)}
+                                                <div
+                                                    className="d-flex"
+                                                >
+                                                    {item.estado_codigo == 'C' ? "CORTE " : ""}
+                                                    {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
+                                                    {
+                                                        item.ejecutado_monto == 0 &&
+                                                        <div
+                                                            onClick={() => deletePeriodoCurvaS(item.id)}
+                                                        >
+                                                            <MdDeleteForever className="icon" />
+                                                        </div>
+                                                    }
+
+                                                </div>
+
+
                                             </th>
                                         )
                                     }
@@ -978,7 +1006,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                     {
                                         DataCurvaSTemp.map((item, i) =>
                                             <td key={i}>
-                                                {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} {}
+                                                {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} { }
                                             </td>
                                         )
                                     }
