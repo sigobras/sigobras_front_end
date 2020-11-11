@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-// import Circle from 'react-circle';
 import { FaList, FaChartLine } from "react-icons/fa";
-
 import 'jspdf-autotable';
-
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 import { Modal, Collapse, Spinner } from 'reactstrap';
-
 import Componentes from './Componentes'
-import CronogramaAvance from '../CronogramaAvance';
-// import Galeria from '../GaleriaImagenes/Galeria';
-// import CtrladminDirecta from '../../Reportes/CtrladminDirecta'
-
+import { Redondea } from "../../../Utils/Funciones"
 import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from '../../../Pgerenciales/InformacionObras/InformacionObra'
 import Curva_S from './Curva_S'
+import FinancieroBarraPorcentaje from './FinancieroBarraPorcentaje'
 
 
 
@@ -26,9 +20,9 @@ class ListaObras extends Component {
             collapse: 95,
             collapseCrono: 56,
             DataComponente: [],
-            modalCurvaS:false,
-            id_ficha_seleccionado:-1,
-            nombreObra_seleccionado:-1,
+            modalCurvaS: false,
+            id_ficha_seleccionado: -1,
+            nombreObra_seleccionado: -1,
 
         }
 
@@ -85,7 +79,6 @@ class ListaObras extends Component {
                 id_ficha: id_ficha
             })
                 .then((res) => {
-                    // console.log('DataObraComp', res.data);
                     this.setState({
                         DataComponente: res.data
                     })
@@ -108,18 +101,16 @@ class ListaObras extends Component {
 
     }
     calcular_dias(fecha_inicio, fecha_final) {
-        console.log(fecha_inicio, fecha_final);
         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
         const firstDate = new Date(fecha_inicio);
         const secondDate = new Date(fecha_final);
         var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
         return days || 0
-
     }
-    modalCurvaS(){
+    modalCurvaS() {
         this.setState(prevState => ({
             modalCurvaS: !prevState.modalCurvaS
-          }));
+        }));
     }
 
     render() {
@@ -172,7 +163,7 @@ class ListaObras extends Component {
 
 
                                             }}
-                                        /><span style={{ position: 'inherit', fontSize: '0.8rem', top: '6px' }}>Físico ({Obras.porcentaje_avance} %)</span>
+                                        /><span style={{ position: 'inherit', fontSize: '0.8rem', top: '6px' }}>Físico ({Redondea(Obras.porcentaje_avance)} %)</span>
                                     </div>
 
 
@@ -180,38 +171,7 @@ class ListaObras extends Component {
 
                                 </div>
                                 {/* porcentaje_financiero */}
-                                {/* <div style={{
-                                width: '100%',
-                                height: '20px',
-                                textAlign: 'center'
-                                }}
-                            >
-
-                                <div style={{
-                                    height: '5px',
-                                    backgroundColor: '#4a4b4c',
-                                    borderRadius: '5px',
-                                    position: 'relative'
-                                    }}
-                                >
-                                <div
-                                    style={{
-                                    width: `${Obras.porcentaje_financiero}%`,
-                                    height: '100%',
-                                    boxShadow:'0 0 12px #ff7400',
-                                    backgroundColor: Obras.porcentaje_financiero > 85 ? '#ff7400'
-                                        : Obras.porcentaje_financiero > 30 ? '#fb8420'
-                                        :  '#f3984b',
-                                    borderRadius: '5px',
-                                    transition: 'all .9s ease-in',
-                                    position: 'absolute',
-                                   
-                                    }}
-                                /><span style={{ position:'inherit', fontSize:'0.7rem', top: '6px', color:'#8caeda' }}>Financiero ({Obras.porcentaje_financiero} %)</span>
-                                </div>
-
-                            </div>  */}
-
+                                <FinancieroBarraPorcentaje id_ficha={Obras.id_ficha}/>
                             </td>
                             <td style={{
                                 color: '#8caeda',
@@ -233,21 +193,18 @@ class ListaObras extends Component {
                                     data-event={IndexObras} >
                                     <FaList />
                                 </button>
-                                {/* <button className="btn btn-outline-info btn-sm mr-1" title="Cronograma" onClick={()=> this.CollapseCronograma(IndexObras, Obras.id_ficha) } data-event={IndexObras}><FaClock /></button> */}
-                                <ModalListaPersonal idobraSeleccionada={Obras.id_ficha} />
+                                <ModalListaPersonal id_ficha={Obras.id_ficha} codigo_obra ={Obras.codigo}/>
                                 <ModalInformacionObras idobraSeleccionada={Obras.id_ficha} />
                                 <button
                                     className="btn btn-outline-info btn-sm mr-1"
                                     title="Avance Componentes"
-                                    onClick={() => {this.modalCurvaS(), this.setState({id_ficha_seleccionado:Obras.id_ficha, nombreObra_seleccionado:Obras.codigo})}}
+                                    onClick={() => { this.modalCurvaS(), this.setState({ id_ficha_seleccionado: Obras.id_ficha, nombreObra_seleccionado: Obras.codigo }) }}
                                     data-event={IndexObras} >
                                     <FaChartLine />
                                 </button>
 
                             </td>
                         </tr>
-
-
                         <tr>
 
                             <td colSpan="6">
@@ -256,26 +213,17 @@ class ListaObras extends Component {
                                         <Componentes DataComponente={this.state.DataComponente} />
                                     </Collapse>
                                     : ''}
-
-                                {collapseCrono === IndexObras ?
-                                    <Collapse isOpen={collapseCrono === IndexObras}>
-                                        <CronogramaAvance fichaId={Obras.id_ficha} costoDirecto={Obras.costo_directo} />
-                                    </Collapse>
-                                    : ''}
                             </td>
-
                         </tr>
-
-
                     </tbody>
                 ),
                 <Modal
                     isOpen={this.state.modalCurvaS}
                     fade={false}
-                    toggle={()=>this.modalCurvaS()}
+                    toggle={() => this.modalCurvaS()}
                     size="lg"
                 >
-                    <Curva_S id_ficha={this.state.id_ficha_seleccionado} nombreObra={this.state.nombreObra_seleccionado}/>
+                    <Curva_S id_ficha={this.state.id_ficha_seleccionado} nombreObra={this.state.nombreObra_seleccionado} />
                 </Modal>
                 ]
         )

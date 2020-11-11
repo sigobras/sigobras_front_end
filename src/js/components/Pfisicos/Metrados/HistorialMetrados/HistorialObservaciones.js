@@ -5,7 +5,7 @@ import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
 import { MdComment, MdAddAPhoto } from 'react-icons/md';
 import LogoSigobras from './../../../../../images/logoSigobras.png'
-import Comentarios from './Comentarios'
+import Comentarios from './ComentariosObservaciones'
 function HistorialObservaciones() {
     const [DificultadComentariosNoVistos, setDificultadComentariosNoVistos] = useState([])
     const [Option, setOption] = useState()
