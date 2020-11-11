@@ -245,7 +245,7 @@ class MetradosDiarios extends Component {
   }
   async getCantidadComentarios(id_componente) {
     //cargando la cantidad de comentarios no vistos
-    var partidaComentarios_request = await axios.post(`${UrlServer}/getPartidacomentariosNoVistos`, {
+    var partidaComentarios_request = await axios.post(`${UrlServer}/getComponenteComentariosNoVistos`, {
       id_componente: id_componente,
       id_acceso: sessionStorage.getItem('idacceso')
     })
