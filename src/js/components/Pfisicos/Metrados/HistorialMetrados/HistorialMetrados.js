@@ -636,7 +636,8 @@ class HistorialMetrados extends Component {
                         </NavLink>
                     </NavItem>
                     <NavItem>
-                        <Button
+                        {/* comentario  de button temporal */}
+                        {/* <Button
                             onClick={this.toggleHistorialSemanal}
                             //  outline 
                             color="primary">
@@ -644,7 +645,7 @@ class HistorialMetrados extends Component {
                                 !this.state.toggleHistorial_semanal ?
                                     "semanal" : "componentes"
                             }
-                        </Button>
+                        </Button> */}
                     </NavItem>
                 </Nav>
 
