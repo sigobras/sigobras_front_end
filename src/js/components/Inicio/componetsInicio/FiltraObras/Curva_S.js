@@ -158,7 +158,9 @@ function Curva_S({ id_ficha, nombreObra }) {
         for (let i = 0; i < request.data.length; i++) {
             const element = request.data[i];
             if (anyoMes(element.fecha_inicial) == anyoMesActual()) {
+                console.log("actualizando",element.fecha_inicial);
                 var ejecutado_monto = await updateEjecutado(element.fecha_inicial)
+                console.log("respuesta de actualizacion ",ejecutado_monto);
                 element.ejecutado_monto = ejecutado_monto
                 break;
             }
@@ -680,21 +682,31 @@ function Curva_S({ id_ficha, nombreObra }) {
         clonDataObra.programado = tempDataObra.costo_directo
         clonDataObra.ejecutado = tempDataObra.costo_directo
         clonDataObra.financiero = tempDataObra.g_total_presu
+
         console.log("clonDataObra", clonDataObra);
+        var ultimoProgramado = 0
+        var ultimoEjecutado = 0
         for (let i = 0; i < dataCurvaS.length; i++) {
             const element = dataCurvaS[i];
             if (element.tipo != "TOTAL") {
                 clonDataObra.programado -= element.programado_monto
                 clonDataObra.ejecutado -= element.ejecutado_monto
                 clonDataObra.financiero -= element.financiero_monto
+                if (element.ejecutado_monto > 0) {
+                    ultimoProgramado = element.programado_monto
+                    ultimoEjecutado = element.ejecutado_monto
+                }
             }
 
+
         }
-        console.log("clonDataObra", clonDataObra);
+        clonDataObra.delta = ultimoProgramado - ultimoEjecutado
+        clonDataObra.deltaPorcentaje = ultimoEjecutado / ultimoProgramado * 100
+        console.log("clonDataObra", ultimoProgramado, ultimoEjecutado, clonDataObra);
         setSaldo(clonDataObra)
     }
     async function deletePeriodoCurvaS(id) {
-        if(confirm("Esta seguro que desea eliminar esete periodo?")){
+        if (confirm("Esta seguro que desea eliminar esete periodo?")) {
             const request = await axios.post(`${UrlServer}/deletePeriodoCurvaS`, {
                 "id": id
             })
@@ -704,7 +716,7 @@ function Curva_S({ id_ficha, nombreObra }) {
             fetchAnyosEjecutados()
             setMesesModal([])
         }
-       
+
     }
     return (
         <div>
@@ -766,6 +778,15 @@ function Curva_S({ id_ficha, nombreObra }) {
                                     </div>
                                     <div style={{ fontSize: "11px" }}>
                                         SALDO FINANCIERO
+                                    </div>
+                                </Alert>
+                                &nbsp;&nbsp;
+                                <Alert color="danger">
+                                    <div style={{ fontWeight: 700 }}>
+                                        {Redondea(Saldo.deltaPorcentaje)}%
+                                    </div>
+                                    <div style={{ fontSize: "11px" }}>
+                                        DELTA
                                     </div>
                                 </Alert>
                                 <div class="mr-auto p-2"></div>
@@ -931,7 +952,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                     {item.estado_codigo == 'C' ? "CORTE " : ""}
                                                     {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
                                                     {
-                                                        item.ejecutado_monto == 0 &&
+                                                        (item.ejecutado_monto == 0 && sessionStorage.getItem("cargo") == "RESIDENTE") &&
                                                         <div
                                                             onClick={() => deletePeriodoCurvaS(item.id)}
                                                         >
