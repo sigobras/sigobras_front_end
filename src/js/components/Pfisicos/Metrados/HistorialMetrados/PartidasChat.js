@@ -18,8 +18,6 @@ function Comentarios({ id_partida, titulo }) {
     };
     const [Comentario, setComentario] = useState([])
     useEffect(() => {
-        fetchComentario()
-        scrollToBottom()
         socketIni()
     }, []);
     const [Data, setData] = useState([])
