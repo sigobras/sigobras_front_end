@@ -19,7 +19,7 @@ export default ({ id_ficha, codigo_obra }) => {
     setModalPersonal(!ModalPersonal);
     if (!ModalPersonal) {
       fetchCargosPersonal()
-      fetchUsuariosPersonal(7)
+      fetchUsuariosPersonal(0)
       getCargos()
     }
   }
@@ -31,7 +31,6 @@ export default ({ id_ficha, codigo_obra }) => {
         "id_ficha": id_ficha
       }
     )
-    console.log("fetchCargosPersonal",request.data);
     setCargosPersonal(request.data)
   }
   //get usuarios
@@ -45,9 +44,16 @@ export default ({ id_ficha, codigo_obra }) => {
         "estado": true
       }
     )
+    
     setUsuariosPersonal(request.data)
     setIdCargoSeleccionado(id_cargo)
     fetchUsuariosPersonalInactivos(id_cargo)
+    if (id_cargo == 0) {
+      setUsuariosPersonalInactivos([])
+      setTabUsuariosPersonalTotal(true)
+    }else{
+      setTabUsuariosPersonalTotal(false)
+    }
   }
   //input file
   const [idAccesoInputFile, setidAccesoInputFile] = useState(0);
@@ -56,9 +62,10 @@ export default ({ id_ficha, codigo_obra }) => {
     hiddenFileInput.current.click();
   };
   async function onChangeInputFile(e) {
-    if (confirm("desea subir el archivo seleccionado?")) {
+    if (confirm("desea subir el memorandum seleccionado?")) {
       const formData = new FormData();
       formData.append('memorandum', e.target.files[0]);
+      e.target.value = null;
       formData.append('obra_codigo', codigo_obra);
       formData.append('id_acceso', idAccesoInputFile);
       formData.append('id_ficha', id_ficha);
@@ -72,6 +79,8 @@ export default ({ id_ficha, codigo_obra }) => {
         config
       )
       fetchUsuariosPersonal(IdCargoSeleccionado)
+    }else{
+      e.target.value = null;
     }
 
   }
@@ -168,6 +177,8 @@ export default ({ id_ficha, codigo_obra }) => {
     setModalPersonalInactivo(!ModalPersonalInactivo)
 
   }
+  //PERSONAL DE OBRA
+  const [TabUsuariosPersonalTotal, setTabUsuariosPersonalTotal] = useState(false);
   return (
     [
       <button className="btn btn-outline-info btn-sm mr-1" title="Personal" onClick={() => toggleModalPersonal()} ><FaUserFriends />
@@ -183,107 +194,240 @@ export default ({ id_ficha, codigo_obra }) => {
           <div className="card" >
             <Nav tabs>
               {CargosPersonal &&
-                (CargosPersonal.map((item, i) =>
-                  <NavItem key={i}>
+                [
+                  (CargosPersonal.map((item, i) =>
+                    <NavItem key={i}>
+                      <NavLink
+                        className={classnames({ active: IdCargoSeleccionado === item.id_cargo })}
+                        onClick={() => { fetchUsuariosPersonal(item.id_cargo) }}
+                      >
+                        {item.cargo_nombre.toUpperCase()}
+                      </NavLink>
+                    </NavItem>
+                  )),
+                  <NavItem >
                     <NavLink
-                      className={classnames({ active: IdCargoSeleccionado === item.id_cargo })}
-                      onClick={() => { fetchUsuariosPersonal(item.id_cargo) }}
+                      className={classnames({ active: IdCargoSeleccionado == 0 })}
+                      onClick={() => { fetchUsuariosPersonal(0) }}
                     >
-                      {item.cargo_nombre.toUpperCase()}
-                    </NavLink>
+                      LISTA PERSONAL
+                  </NavLink>
                   </NavItem>
-                ))
+                ]
 
               }
+
 
               <Button outline color="primary"
                 onClick={() => toggleModalFormulario()}
               >Agregar Personal</Button>
             </Nav>
-            <TabPane
-              style={{
-                maxHeight: '250px',
-                overflowY: "auto"
-              }}
-            >
-              {
-                UsuariosPersonal.map((usuarios, IdUsuario) =>
-                  <div className="row no-gutters position-relative" key={IdUsuario}>
-                    <div className="col-md-3 mb-md-0 p-md-4">
-                      <div
-                        style={{
-                          textAlign: "center",
-                          cursor: "pointer"
-                        }}
-                      >
-                        <img src={Usuario} className="w-75" alt="users sigobras" />
-                      </div>
-                      <div>
-                        {
-                          usuarios.memorandum !== null &&
-                          <div
-                            className="text-primary"
-                            title="descargar memorandum"
-                            onClick={() => DescargarArchivo(`${UrlServer}${usuarios.memorandum}`)}
-                            style={{
-                              position: "absolute",
-                              top: "12px",
-                              right: "29px",
-                              cursor: "pointer"
-                            }}
-                          >
-                            <FaMediumM
-                              size={15}
-                              color={"#dc3545"}
-                            />
-                          </div>
-                        }
-                      </div>
-                      <div
-                        onClick={() => uploadFile(usuarios.id_acceso)}
-                        style={{
-                          textAlign: "center",
-                          cursor: "pointer"
-                        }}
-                      >
-                        <FaUpload
-                          size={15}
-                          color={"#dc3545"}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-9 position-static p-4 pl-md-0">
-                      <ListGroup>
-                        <b>{usuarios.nombre_usuario}</b>
-                        <b>CELULAR N° </b> <span>{usuarios.celular}</span>
-                        <b>DNI </b> <span>{usuarios.dni}</span>
-                        <b>EMAIL </b> <span>{usuarios.email}</span>
-                        <b>DIRECCION </b> <span>{usuarios.direccion}
-                        </span>
-                        <b>N° COLEGIATURA </b> <span>{usuarios.cpt}
-                        </span>
-                      </ListGroup>
-                    </div>
-                  </div>
-                )
-              }
 
-            </TabPane>
+            {
+              TabUsuariosPersonalTotal ?
+                <TabPane
+                  style={{
+                    maxHeight: '500px',
+                    overflowY: "auto"
+                  }}
+                >
+                  <table className="table table-sm small">
+                    <thead>
+                      <tr>
+                        <th>
+
+                        </th>
+                        <th>
+                          PERSONAL
+                      </th>
+                        <th>
+
+                        </th>
+                        <th>
+
+                        </th>
+                        <th>
+                          CARGO
+                      </th>
+                        <th>
+                          CELULAR
+                      </th>
+                        <th>
+                          DNI
+                      </th>
+                        <th>
+                          EMAIL
+                      </th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        UsuariosPersonal.map((item, i) =>
+                          <tr>
+                            <td>
+                              {
+                                i + 1
+                              }
+                            </td>
+                            <td>
+                              {
+                                item.nombre_usuario
+                              }
+                            </td>
+                            <td>
+                              <div
+                                onClick={() => uploadFile(item.id_acceso)}
+                                style={{
+                                  textAlign: "center",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                <FaUpload
+                                  size={10}
+                                  color={"#ffffff"}
+                                />
+                              </div>
+                            </td>
+                            <td>
+                              {
+                                item.memorandum !== null &&
+                                <div
+                                  className="text-primary"
+                                  title="descargar memorandum"
+                                  onClick={() => DescargarArchivo(`${UrlServer}${item.memorandum}`)}
+                                  style={{
+                                    // position: "absolute",
+                                    // top: "12px",
+                                    // right: "29px",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  <FaMediumM
+                                    size={15}
+                                    color={"#2676bb"}
+                                  />
+                                </div>
+                              }
+                            </td>
+                            <td>
+                              {
+                                item.cargo_nombre
+                              }
+                            </td>
+                            <td>
+                              {
+                                item.celular
+                              }
+                            </td>
+                            <td>
+                              {
+                                item.dni
+                              }
+                            </td>
+                            <td>
+                              {
+                                item.email
+                              }
+                            </td>
+
+                          </tr>
+                        )
+                      }
+
+
+                    </tbody>
+                  </table>
+
+                </TabPane>
+
+                :
+                <TabPane
+                  style={{
+                    maxHeight: '250px',
+                    overflowY: "auto"
+                  }}
+                >
+                  {UsuariosPersonal.map((usuarios, IdUsuario) =>
+                    <div className="row no-gutters position-relative" key={IdUsuario}>
+                      <div className="col-md-3 mb-md-0 p-md-4">
+                        <div
+                          style={{
+                            textAlign: "center",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <img src={Usuario} className="w-75" alt="users sigobras" />
+                        </div>
+                        <div>
+                          {
+                            usuarios.memorandum !== null &&
+                            <div
+                              className="text-primary"
+                              title="descargar memorandum"
+                              onClick={() => DescargarArchivo(`${UrlServer}${usuarios.memorandum}`)}
+                              style={{
+                                position: "absolute",
+                                top: "12px",
+                                right: "29px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              <FaMediumM
+                                size={15}
+                                color={"#2676bb"}
+                              />
+                            </div>
+                          }
+                        </div>
+                        <div
+                          onClick={() => uploadFile(usuarios.id_acceso)}
+                          style={{
+                            textAlign: "center",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <FaUpload
+                            size={15}
+                            color={"#dc3545"}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-9 position-static p-4 pl-md-0">
+                        <ListGroup>
+                          <b>{usuarios.nombre_usuario}</b>
+                          <b>CELULAR N° </b> <span>{usuarios.celular}</span>
+                          <b>DNI </b> <span>{usuarios.dni}</span>
+                          <b>EMAIL </b> <span>{usuarios.email}</span>
+                          <b>DIRECCION </b> <span>{usuarios.direccion}
+                          </span>
+                          <b>N° COLEGIATURA </b> <span>{usuarios.cpt}
+                          </span>
+                        </ListGroup>
+                      </div>
+                    </div>
+                  )
+                  }
+                </TabPane>
+            }
+
             <TabPane
-              style={{
-                maxHeight: '250px',
-                overflowY: "auto"
-              }}
+
             >
               {
-                UsuariosPersonalInactivos.length > 0 &&
+                ( IdCargoSeleccionado != 0 &&UsuariosPersonalInactivos.length > 0) &&
                 <Button
                   color="primary"
                   onClick={() => toggleModalPersonalInactivo()}
                   style={{ marginBottom: '1rem' }}>PERSONAL INACTIVO</Button>
               }
 
-              <Collapse isOpen={ModalPersonalInactivo}>
+              <Collapse isOpen={ModalPersonalInactivo}
+                style={{
+                  maxHeight: '250px',
+                  overflowY: "auto"
+                }}
+              >
                 {
                   UsuariosPersonalInactivos.map((usuarios, IdUsuario) =>
                     <div className="row no-gutters position-relative" key={IdUsuario}>
