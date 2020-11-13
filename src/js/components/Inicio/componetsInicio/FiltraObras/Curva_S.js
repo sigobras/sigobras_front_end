@@ -77,6 +77,7 @@ function Curva_S({ id_ficha, nombreObra }) {
         setMesesModal([])
         setYearsModalData([])
         setModal(!modal)
+        setAnyoSeleccionado("SELECCIONE")
     };
     //datas por defecto
     useEffect(() => {
@@ -1335,7 +1336,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                         <Button color="primary" onClick={saveModalData}>Guardar</Button>
                     }
                     {' '}
-                    <Button color="secondary" onClick={toggle}>Cancel</Button>
+                    <Button color="secondary" onClick={toggle}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
         </div >
