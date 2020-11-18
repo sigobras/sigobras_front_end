@@ -7,15 +7,30 @@ import { Modal, ModalHeader, ModalBody, Row, Col, Button, ButtonGroup, Spinner }
 import { FaBlackTie, FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
-import { logoSigobras, logoGRPuno,ImgDelta } from '../Complementos/ImgB64'
+import { logoSigobras, logoGRPuno, ImgDelta } from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-const { Redondea, mesesShort,meses } = require('../../Utils/Funciones');
+const { Redondea, mesesShort, meses } = require('../../Utils/Funciones');
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 require("highcharts/modules/exporting")(Highcharts);
+// var request = require('request').defaults({ encoding: null });
 
 function Report_curva_s() {
+
+  //   function RequestB64(){
+  //     request.get('http://tinypng.org/images/example-shrunk-8cadd4c7.png', function (error, response, body) {
+  //     if (!error && response.statusCode == 200) {
+  //         data = "data:" + response.headers["content-type"] + ";base64," + Buffer.from(body).toString('base64');
+  //         console.log("RequestB64",data);
+  //     }
+  // });
+  //   }
+  useEffect(() => {
+    // ImagenesDB()
+    // RequestB64()
+  }, []);
+
   const [ImagenToShow, setImagenToShow] = useState();
 
   const canvas = useRef(null);
@@ -43,6 +58,7 @@ function Report_curva_s() {
       0, 0, 900, 900);
 
     var dataImg = canvas.current.toDataURL();
+    // ctx.crossOrigin = '';
     ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
     return dataImg
   }
@@ -83,6 +99,19 @@ function Report_curva_s() {
     return request.data
   }
 
+
+  // Obteniendo imagenes de la base de datos
+  const [Imagen1, setImagen1] = useState("");
+  const [Imagen2, setImagen2] = useState("");
+
+  async function ImagenesDB() {
+    const request = await axios.post(`${UrlServer}/getImagenesCurvaS`, {
+      id_ficha: sessionStorage.getItem('idobra')
+    })
+    // console.log("request.dataaaa", request.data);
+    return request.data
+  }
+
   async function createDataChartPorcentaje(dataCurvaS) {
     var tempDataObra = await fetchDataObra()
     var labels = []
@@ -99,13 +128,15 @@ function Report_curva_s() {
     var Delta = 0;
     // console.log("Year",year);
     // console.log("month",month);
+    var programado_saldo = 0
+    var ejecutado_saldo = 0
+    var financiero_saldo = 0
     dataCurvaS.forEach((item, i) => {
       if (item.tipo == "PERIODO") {
-      //  console.log("MEs",item.fecha_inicial.substr(5,2));
-        if (year == item.fecha_inicial.substr(0,4) && month == item.fecha_inicial.substr(5,2)) {
-          Delta = item.ejecutado_monto / item.programado_monto * 100
-          // console.log("Delta dento del if ",item.ejecutado_monto / item.programado_monto * 100);
-
+        //  console.log("MEs",item.fecha_inicial.substr(5,2));
+        if (year == item.fecha_inicial.substr(0, 4)  && item.ejecutado_monto != 0 && item.ejecutado_monto != null){
+          Delta = (item.ejecutado_monto / item.programado_monto) * 100
+          //&& month == item.fecha_inicial.substr(5, 2)
         }
         var label = mesesShort[getMesfromDate(item.fecha_inicial) - 1] + " - " + getAnyofromDate(item.fecha_inicial)
         labels.push(label)
@@ -117,6 +148,13 @@ function Report_curva_s() {
 
         financiero_acumulado += item.financiero_monto
         financiero.push(redondeo(financiero_acumulado / tempDataObra.g_total_presu * 100, 2))
+
+        programado_saldo = tempDataObra.costo_directo  - programado_acumulado
+        // console.log("programado_saldo",programado_saldo);
+        ejecutado_saldo = tempDataObra.costo_directo  - ejecutado_acumulado
+        // console.log("ejecutado_saldo",ejecutado_saldo);
+        financiero_saldo = tempDataObra.g_total_presu  - financiero_acumulado
+        // console.log("financiero_saldo",financiero_saldo);
       }
     })
     //clean ejecutado
@@ -143,7 +181,13 @@ function Report_curva_s() {
     }
     // console.log("Delta",Delta);
     return {
+      programado_acumulado,
+      ejecutado_acumulado,
+      financiero_acumulado,
       Delta,
+      programado_saldo,
+      ejecutado_saldo,
+      financiero_saldo,
       labels: labels,
       datasets: [
         {
@@ -450,9 +494,9 @@ function Report_curva_s() {
     series: DataChart
   }
   async function generatePdf() {
-    var ImagenBase64 = await ImagenToBase64(ImagenPDF.current)
-    var ImagenBase64_2 = await ImagenToBase64(ImagenPDF2.current)
-    // console.log("ImagenBase64", ImagenBase64);
+    // var ImagenBase64 = await ImagenToBase64(ImagenPDF.current)
+    // var ImagenBase64_2 = await ImagenToBase64(ImagenPDF2.current)
+    // // console.log("ImagenBase64", ImagenBase64);
     // console.log("ImagenBase64_2", ImagenBase64_2);
 
     //conseguir informacion de la cabezera
@@ -476,7 +520,6 @@ function Report_curva_s() {
     var temp = await createDataChartPorcentaje(dataChartTable)
     // console.log("temp", temp);
     var dataChart = temp.datasets
-
     var categories = temp.labels
 
     setDataChart(dataChart)
@@ -517,7 +560,7 @@ function Report_curva_s() {
         style: "TableMontosInforme",
         alignment: "center",
         fontSize: 5,
-       
+
       }]
       var programado = [{ text: 'PROGRAMADO', color: "#17202A", fontSize: 5 }]
       var ejecutado = [{ text: 'EJECUTADO', color: "#17202A", fontSize: 5 }]
@@ -548,7 +591,7 @@ function Report_curva_s() {
       var today = new Date();
       var year = today.getFullYear();
       // console.log("Lista",Lista[0].fecha_inicial.substr(0, 4));
-      if (year == Lista[0].fecha_inicial.substr(0, 4) || year-1 == Lista[0].fecha_inicial.substr(0, 4) || year+1 == Lista[0].fecha_inicial.substr(0, 4)) {
+      if (year == Lista[0].fecha_inicial.substr(0, 4) || year - 1 == Lista[0].fecha_inicial.substr(0, 4) || year + 1 == Lista[0].fecha_inicial.substr(0, 4)) {
         // console.log("Año ingresado",Lista[0].fecha_inicial.substr(0, 4));
         DatosCurvaTotal.push(
           {
@@ -568,7 +611,7 @@ function Report_curva_s() {
         )
       }
 
-      
+
     }
 
     // console.log("DatosCurvaTotal", DatosCurvaTotal);
@@ -579,20 +622,20 @@ function Report_curva_s() {
     var svg = chartRef.current.chart.getSVG();
 
     //Se consigue el link de las imagenes
-
+    var Imagenes_en_base_64 = await ImagenesDB()
     var imagenesParaPdf = [
       {
         columns: [
           {
-            image: ImagenBase64_2,
-            fit: [140, 140],
+            image: Imagenes_en_base_64[0].imgb64,
+            fit: [245, 245],
             margin: [0, 0, 0, 0],
             alignment: "center",
           },
           {
             // alignment: 'right',
-            image: ImagenBase64,
-            fit: [140, 140],
+            image: Imagenes_en_base_64[1].imgb64,
+            fit: [245, 245],
             // width: 48,
             // height: 30,
             margin: [10, 0, 0, 0],
@@ -607,15 +650,16 @@ function Report_curva_s() {
       {
         columns: [
           {
-            text: "Descripcion de la imagen 1 y fecha de la imagen, para verificar la informacion",
-            margin: [0, 0, 10, 0],
+            text: Imagenes_en_base_64[0].descripcion,
+            margin: [0, 5, 10, 0],
             alignment: 'justify',
+            fontSize: 6.5,
           },
           {
-            text: "Descripcion de la imagen 2 y fecha de la imagen, para verificar la informacion",
-            margin: [10, 0, 0, 0],
+            text: Imagenes_en_base_64[1].descripcion,
+            margin: [10, 5, 0, 0],
             alignment: 'justify',
-
+            fontSize: 6.5,
           }
         ],
 
@@ -650,11 +694,12 @@ function Report_curva_s() {
         alignment: 'right',
         italics: true,
         margin: [20, 10, 10, 0],
+        fontSize: 6.5,
       },
       content: [
         cabezera2,
         {
-          margin: [0, -28, 0, -18],
+          margin: [0, -28, 0, -15],
           table: {
             widths: ['*'],
             body: [[" "], [" "]]
@@ -669,32 +714,85 @@ function Report_curva_s() {
           }
         },
         {
-
           svg: svg,
-          // width: 600,
+          // width: 550,
           // height: 350,
-          fit: [440, 440],
+          fit: [558, 333],
           alignment: 'center',
         },
         // Ejecutado / Programado *100
         {
           style: 'tableExample',
-          layout: 'noBorders',
+          // layout: 'noBorders',
           italics: true,
-          // margin:[0,-10,0,10],
+          margin:[0,-10,0,10],
           table: {
             body: [
               [
-                {image: ImgDelta, width: 20,height: 20,alignment: 'center', margin:[0,-10,0,0],}, {text:' = ' + Redondea(temp.Delta) + "%", alignment: 'justify',rowSpan: 2,}
+                {
+                  text: "S/."+Redondea(temp.programado_acumulado) + "\nPROGRAMADO ACUMULADO",
+                  alignment: 'center',
+                  fontSize: 5,
+                  // margin: [0, 0, 0, -10],
+                },
+                {
+                  text: "S/."+Redondea(temp.ejecutado_acumulado) +"\nEJECUTADO ACUMULADO",
+                  alignment: 'center',
+                  fontSize: 5,
+                  // margin: [0, 0, 0, -10],
+                },
+                {
+                  text: "S/."+Redondea(temp.financiero_acumulado) +"\nFINANCIERO ACUMULADO",
+                  alignment: 'center',
+                  fontSize: 5,
+                  // margin: [0, 0, 0, -10],
+                },
+                {
+                  image: ImgDelta, width: 15, height: 15,
+                  alignment: 'center',
+                  // margin: [0, -10, 0, 0],
+                  border: [false, false, false, false],
+                },
+                {
+                  text: ' = ' + Redondea(temp.Delta) + "%", alignment: 'justify',
+                  rowSpan: 2,
+                  border: [false, false, false, false],
+                }
               ],
               [
-                {text:meses[new Date().getMonth()],alignment: 'center',margin:[0,-8,0,-1], fontSize: 9, }, ''
+                {
+                  text: "S/."+Redondea(temp.programado_saldo) + "\nPROGRAMADO SALDO",
+                  fontSize: 5,
+                  alignment: 'center',
+                  // margin: [0, -10, 0, 0],
+                },
+                {
+                  text: "S/."+Redondea(temp.ejecutado_saldo) + "\nEJECUTADO SALDO",
+                  fontSize: 5,
+                  alignment: 'center',
+                },
+                {
+                  text: "S/."+Redondea(temp.financiero_saldo) + "\nFINANCIERO SALDO",
+                  fontSize: 5,
+                  alignment: 'center',
+                },
+                {
+                  text: meses[new Date().getMonth()],
+                  alignment: 'center',
+                  // margin: [0, -8, 0, -1], 
+                  fontSize: 9,
+                  border: [false, false, false, false],
+
+                },
+                {
+                  text: ''
+                },
               ]
             ]
           }
         },
         {
-          margin: [0,-30, 0, -18],
+          margin: [0, -30, 0, -18],
           table: {
             widths: ['*'],
             body: [[" "], [" "]]
@@ -710,7 +808,7 @@ function Report_curva_s() {
           }
         },
       ].concat(DatosCurvaTotal, {
-        margin: [0, -17, 0, -10],
+        margin: [0, -17, 0, -16],
         table: {
           widths: ['*'],
           body: [[" "], [" "]]
@@ -816,10 +914,19 @@ function Report_curva_s() {
           ref={chartRef}
         />
       </div>
-      <canvas ref={canvas} width={200} height={200}> </canvas>
 
-      <img ref={ImagenPDF} src="http://localhost:3000/images/3c1b0fa3e7a0c6ed1164b91c7b4c83cc.png" />
-      <img ref={ImagenPDF2} src="http://localhost:3000/images/a959ca9a16991215e472c8fcc77f4d76.jpg" />
+      {/* <canvas ref={canvas} width={200} height={200} style={{ display: 'none' }} > </canvas>
+
+      <img
+        style={{ display: 'none' }} 
+        ref={ImagenPDF}
+        // { useCORS:true}
+        src={`${UrlServer}${Imagen1}`} />
+
+      <img
+        style={{ display: 'none' }} 
+        ref={ImagenPDF2}
+        src={`${UrlServer}${Imagen2}`} crossOrigin="anonymous"/> */}
     </div>
   );
 }
