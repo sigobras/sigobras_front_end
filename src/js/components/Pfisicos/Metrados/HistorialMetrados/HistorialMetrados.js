@@ -1,370 +1,409 @@
-import React, { Component, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Spinner, Collapse, Row, Col, Button } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig'
-import { ConvertFormatStringNumber, Redondea } from "../../../Utils/Funciones"
+import { Redondea, mesesShort } from "../../../Utils/Funciones"
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HistorialObservaciones from './HistorialObservaciones';
 import { MdComment } from 'react-icons/md';
+import { DebounceInput } from 'react-debounce-input';
+import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever } from "react-icons/md";
 
 import PartidasChat from './PartidasChat'
-function monthFromDate(fecha) {
-    var d = fecha.split("-")
-    return d[1]
-}
+import CheckDate from './CheckDate';
 
-class HistorialMetrados extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            DataAniosApi: [],
-            DataMesesApi: [],
-            DataResumenApi: [],
-            DataComponentesApi: [],
-            DataFechasApi: [],
-            DataPartidas: [],
-            DataChartDiasComponente: [],
 
-            activeTabMes: '',
-            activeTabComp: "resumen",
-            // inputs
-            anyoSeleccionado: "",
-            mesSeleccionado: -1,
-            fecha: "",
-            idComponete: null,
-            nombreComponente: "",
-            componenteTotalSoles: "",
-            componenteTotalPorcentaje: "",
 
-            collapseDate: null,
+export default () => {
+    useEffect(() => {
+        fetchAnyos()
 
-            totalResumenComponenteLeyenda: {},
-            //historial semanal
-            toggleHistorial_semanal: false,
-            semanasData: [],
-            semanasFechas: [],
-            semanasFechasCollapse: -1,
-            semanasComponentes: [],
-            semanaFechaSeleccionada: -1,
-            activeTabSemanas: -1
-        };
-    }
-    async componentDidMount() {
-
-        var request = await axios.post(`${UrlServer}/getHistorialAnyos`, {
+    }, []);
+    //get data de anyos
+    const [Anyos, setAnyos] = useState([]);
+    async function fetchAnyos() {
+        var request = await axios.post(`${UrlServer}/getHistorialAnyos2`, {
             id_ficha: sessionStorage.getItem('idobra')
         })
-        var tamanioAnios = request.data.length - 1
-        var tamanioMeses = request.data[tamanioAnios].meses.length - 1
-        this.setState({
-            DataAniosApi: request.data,
-            DataMesesApi: request.data[tamanioAnios].meses,
-            DataResumenApi: request.data[tamanioAnios].meses[tamanioMeses].resumen,
-            activeTabMes: "resAnual",
-            anyoSeleccionado: request.data[tamanioAnios].anyo,
-            fecha: request.data[tamanioAnios].meses[tamanioMeses].fecha,
-            mesSeleccionado: monthFromDate(request.data[tamanioAnios].meses[tamanioMeses].fecha),
-        })
-
-        this.ObtieneTotalesLeyenda(request.data[tamanioAnios].meses[tamanioMeses].resumen)
-        console.log("fecha test", request.data[tamanioAnios].meses[tamanioMeses].fecha);
-        this.getHistorialSemanas(monthFromDate(request.data[tamanioAnios].meses[tamanioMeses].fecha))
+        setAnyos(request.data)
+        var ultimoAnyo = request.data[request.data.length - 1].anyo
+        onChangeAnyoSeleccionado(ultimoAnyo)
     }
-
-    SeleccionaAnio = (e) => {
-        // console.log("año ", e.target.value)
-        this.setState({
-            anyoSeleccionado: e.target.value
-        })
-        this.reqAnual(e.target.value)
-        this.MesesRequest(e.target.value)
+    //anyo seleccionado
+    const [AnyoSeleccionado, setAnyoSeleccionado] = useState(0);
+    function onChangeAnyoSeleccionado(anyo) {
+        setAnyoSeleccionado(anyo)
+        fetchMeses(anyo)
+        setMesSeleccionado(0)
+        fetchResumenAnualData(anyo)
+        setResumenAnualDataChart([])
+        setResumenAnualDataChartCategories([])
     }
-
-    TabMeses = (tab, fecha) => {
-        if (!this.state.toggleHistorial_semanal) {
-            console.log("tab meses diario");
-            // console.log("api de algo " , tab, "anyoSeleccionado ", this.state.anyoSeleccionado )
-            if (this.state.activeTabMes !== tab) {
-                this.setState({
-                    activeTabMes: tab,
-                    fecha: fecha,
-                    mesSeleccionado: monthFromDate(fecha),
-                    collapseDate: null,
-                    // activeTabComp:"0"
-
-                });
-                if (tab === "resAnual") {
-                    this.setState({ DataComponentesApi: [], activeTabComp: "resumen" })
-                    this.reqAnual(this.state.anyoSeleccionado)
-                    return
-                }
-                //   carga resumen de componentes
-                this.ResumenRequest(fecha)
-
-                //   cargamos datos de componentes
-                this.ComponentesRequest(fecha)
-                this.FechaAvancePartidas(fecha, this.state.idComponete)
-                this.chartValDiaRequest(this.state.idComponete, fecha)
+    //get data de meses
+    const [Meses, setMeses] = useState([]);
+    async function fetchMeses(anyo) {
+        var request = await axios.post(`${UrlServer}/getHistorialMeses2`, {
+            id_ficha: sessionStorage.getItem('idobra'),
+            anyo: anyo
+        })
+        setMeses(request.data)
+    }
+    //mes seleccionado
+    const [MesSeleccionado, setMesSeleccionado] = useState(-1);
+    function onChangeMesSeleccionado(mes) {
+        if (mes != 0) {
+            if (toggleHistorialSemanal) {
+                setSemanas([])
+                fetchSemanas(mes)
+            } else {
+                fetchComponentes(mes)
+                fetchResumenMensualData(mes)
             }
         } else {
-            //historial semanal
-            console.log("tab meses semanal");
-            this.getHistorialSemanas(monthFromDate(fecha))
-            this.setState({
-                activeTabMes: tab,
-                // fecha: fecha,
-                // mesSeleccionado: monthFromDate(fecha),
-                // collapseDate: null,
-                // activeTabComp:"0"
-
-            });
+            fetchResumenAnualData()
         }
+        setMesSeleccionado(mes)
+        //reset active comp
+        setComponenteSeleccionado({ numero: 0 })
+        //reset fechas
+        setFechas([])
+        //reset semana
+        setSemanaSeleccionada(-1)
+        setSemanaFechas([])
     }
-
-    TabComponentes = (tab, idComp, nombreComp, solesTotal, TotalPorcentaje) => {
-        // console.log("idComp",idComp)
-
-        if (this.state.activeTabComp !== tab) {
-            this.setState({
-                activeTabComp: tab,
-                idComponete: idComp,
-                nombreComponente: nombreComp,
-                componenteTotalSoles: solesTotal,
-                componenteTotalPorcentaje: TotalPorcentaje,
-                collapseDate: null
-            });
-
-            if (tab === "resumen") {
-
-                this.ResumenRequest(this.state.fecha)
-                return
+    //get data de componentes
+    const [Componentes, setComponentes] = useState([]);
+    async function fetchComponentes(mes) {
+        var request = await axios.post(`${UrlServer}/getHistorialComponentes2`,
+            {
+                id_ficha: sessionStorage.getItem('idobra'),
+                anyo: AnyoSeleccionado,
+                mes: mes
             }
-
-            // FECHA  DE ( PARTIDAS EJECUTADAS )
-            this.FechaAvancePartidas(this.state.fecha, idComp)
-
-
-            // HISTORIAL DE DIAS PARTIDAS CHART----------------------------
-            this.chartValDiaRequest(idComp, this.state.fecha)
-
-        }
+        )
+        setComponentes(request.data)
     }
-
-    collapseFechas = (e, fecha) => {
-        let event = Number(e);
-        if (event !== this.state.collapseDate) {
-            this.setState({ collapseDate: event });
-
-            // HISTORIAL DE DIAS PARTIDAS-------------------------------
-            axios.post(`${UrlServer}/getHistorialDias`, {
-                id_componente: this.state.idComponete,
-                fecha: fecha
-            })
-                .then((res) => {
-                    // console.log("response data PARTIDAS ", res.data)
-                    this.setState({
-                        DataPartidas: res.data,
-                        // nombreComponente:nombreComp
-                    })
-
-                })
-                .catch((err) => {
-                    console.log("errores al conectar el api", err)
-                })
-            return
-        }
-        this.setState({ collapseDate: null })
-    }
-    //------------------------------ peticiones tipo http con axios ---------------------------------------------------
-
-    MesesRequest = (anio) => {
-
-        // console.log("anio que llega ", anio)
-        //   llamamos el api de meses5
-        axios.post(`${UrlServer}/getHistorialMeses`, {
-            id_ficha: sessionStorage.getItem('idobra'),
-            anyo: anio
-        })
-            .then((res) => {
-                // console.log("response data meses ", res.data)
-
-                var ultimoMes = res.data.length - 1
-
-                this.setState({
-                    DataMesesApi: res.data,
-                    activeTabMes: "resAnual",
-                    activeTabComp: "resumen",
-                    fecha: res.data[ultimoMes].fecha
-                })
-
-                // console.log("ultima fecha", res.data[ultimoMes])
-                // this.ResumenRequest(res.data[ultimoMes].fecha)
-                // this.ComponentesRequest(res.data[ultimoMes].fecha)
-
-            })
-            .catch((err) => {
-                console.log("errores al conectar el api", err)
-            })
-    }
-
-    ResumenRequest = (ultimafecha) => {
-        console.log("fecha", ultimafecha)
-        this.setState({ totalResumenComponenteLeyenda: {}, DataResumenApi: [] })
-        axios.post(`${UrlServer}/getHistorialResumen`, {
-            id_ficha: sessionStorage.getItem('idobra'),
-            fecha: ultimafecha
-        })
-            .then((res) => {
-                // console.log("response data resumen ", res.data)
-                this.setState({
-                    DataResumenApi: res.data
-                })
-                this.ObtieneTotalesLeyenda(res.data)
-
-            })
-            .catch((err) => {
-                console.log("errores al conectar el api", err)
-            })
-    }
-
-    reqAnual = (anio) => {
-
-        axios.post(`${UrlServer}/getHistorialAnyosResumen`, {
-            id_ficha: sessionStorage.getItem('idobra'),
-            anyo: anio
-        })
-            .then((res) => {
-                // console.log("response data resumen anual ", res.data)
-                this.setState({
-                    DataResumenApi: res.data
-                })
-
-            })
-            .catch((err) => {
-                console.log("errores al conectar el api", err)
-            })
-    }
-
-    ComponentesRequest = (fecha) => {
-        // console.log("fecha de datos ", fecha)
-        axios.post(`${UrlServer}/getHistorialComponentes`, {
-            id_ficha: sessionStorage.getItem('idobra'),
-            fecha: fecha
-        })
-            .then((res) => {
-                // console.log("response data Componentes ", res.data)
-                this.setState({
-                    DataComponentesApi: res.data
-                })
-
-            })
-            .catch((err) => {
-                console.log("errores al conectar el api", err)
-            })
-    }
-
-    chartValDiaRequest = (idComp, Fecha) => {
-
-        axios.post(`${UrlServer}/getHistorialComponenteChart`, {
-            id_componente: idComp,
-            fecha: Fecha
-        })
-            .then((res) => {
-                // console.log("response data DIAS CHART ", res.data)
-                if (res.data !== "vacio") {
-                    this.setState({
-                        DataChartDiasComponente: res.data,
-                    })
-                    return
-                } else {
-                    this.setState({
-                        DataChartDiasComponente: []
-                    })
-                }
-
-
-            })
-            .catch((err) => {
-                console.log("errores al conectar el api", err)
-            })
-
-    }
-
-    FechaAvancePartidas = (fecha, idComp) => {
-        console.log("partidas fecha>>>>", fecha, "id componente ", idComp);
-
-        axios.post(`${UrlServer}/getHistorialFechas`, {
-            id_componente: idComp,
-            fecha: fecha
-        })
-            .then((res) => {
-                // console.log("response data FechaAvancePartidas ", res.data)
-                if (res.data !== "vacio") {
-                    this.setState({
-                        DataFechasApi: res.data,
-                    })
-                    return
-                }
-                this.setState({
-                    DataFechasApi: [],
-                })
-
-
-            })
-            .catch((err) => {
-                console.log("errores al conectar el api", err)
-            })
-
-    }
-
-    ObtieneTotalesLeyenda = (data) => {
-        // console.log(data)
-        var total = data.leyenda.reduce((anterior, actual) => {
-            anterior.presupuesto = anterior.presupuesto + ConvertFormatStringNumber(actual.presupuesto)
-            anterior.presupuesto = +Redondea(anterior.presupuesto)
-
-            anterior.avance = anterior.avance + ConvertFormatStringNumber(actual.valor)
-            anterior.avance = +Redondea(anterior.avance)
-
-            anterior.porcentaje_avance = anterior.porcentaje_avance + ConvertFormatStringNumber(actual.porcentaje)
-            anterior.porcentaje_avance = +Redondea(anterior.porcentaje_avance)
-            return anterior
-
-        }, { presupuesto: 0, avance: 0, porcentaje_avance: 0 })
-        // anterior.presupuesto =  anterior.presupuesto.toLocaleString("es-PE")
-        total.presupuesto = total.presupuesto.toLocaleString("es-PE")
-        total.avance = total.avance.toLocaleString("es-PE")
-        total.porcentaje_avance = total.porcentaje_avance.toLocaleString("es-PE")
-
-        this.setState({ totalResumenComponenteLeyenda: total })
-    }
-    //historial semanal
-    toggleHistorialSemanal = () => {
-        console.log("toggling", this.state.toggleHistorial_semanal);
-        this.setState(prevState => ({
-            toggleHistorial_semanal: !prevState.toggleHistorial_semanal
-        }));
-    }
-    getHistorialSemanas = async (mes) => {
-        console.log("mes", mes);
-        console.log("getHistorialSemanas");
-        var request = await axios.post(`${UrlServer}/getHistorialSemanas`,
+    //resumen anual
+    const [ResumenAnualData, setResumenAnualData] = useState({ data: [] });
+    async function fetchResumenAnualData(anyo) {
+        var request = await axios.post(`${UrlServer}/getHistorialAnyosResumen2`,
             {
                 "id_ficha": sessionStorage.getItem('idobra'),
-                "anyo": this.state.anyoSeleccionado,
+                "anyo": anyo
+            }
+        )
+        setResumenAnualData(request.data)
+        fetchResumenAnualDataChart(request.data)
+    }
+    const [ResumenAnualDataChart, setResumenAnualDataChart] = useState();
+    const [ResumenAnualDataChartCategories, setResumenAnualDataChartCategories] = useState();
+    async function fetchResumenAnualDataChart(data) {
+        var mes_inicial = data.mes_inicial
+        var mes_final = data.mes_final
+        var series = []
+        var categories = []
+        data.data.forEach((item, i) => {
+            var data = []
+            for (let i = mes_inicial; i <= mes_final; i++) {
+                data.push(Number(Number(item["m" + i]).toFixed(2)))
+            }
+            series.push(
+                {
+                    "name": item.numero,
+                    "data": data
+                },
+            )
+        });
+        for (let i = mes_inicial; i <= mes_final; i++) {
+            categories.push(mesesShort[i - 1])
+        }
+        setResumenAnualDataChart(series)
+        setResumenAnualDataChartCategories(categories)
+    }
+    const OptionsResumenAnualDataChart = {
+        "colors": [
+            "#0080ff",
+            "#d35400",
+            "#2980b9",
+            "#2ecc71",
+            "#f1c40f",
+            "#2c3e50",
+            "#7f8c8d",
+            "#cc00ff",
+            "#dc3545",
+            "#289ba7",
+            "#2855a7"
+        ],
+        chart: {
+            type: 'area',
+            "backgroundColor": "#242526",
+            "style": {
+                "fontFamily": "Roboto",
+                "color": "#666666"
+            }
+        },
+        title: {
+            text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN MENSUAL',
+            "align": "center",
+            "style": {
+                "fontFamily": "Roboto Condensed",
+                "fontWeight": "bold",
+                "color": "#666666"
+            }
+        },
+        "legend": {
+            "align": "center",
+            "verticalAlign": "bottom",
+            "itemStyle": {
+                "color":
+                    "#424242",
+                "color": "#ffffff"
+            }
+        },
+        subtitle: {
+            text: 'General'
+        },
+        xAxis: {
+            categories: ResumenAnualDataChartCategories,
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'SOLES'
+            },
+            labels: {
+                formatter: function () {
+                    return this.value / 1000;
+                }
+            },
+            "gridLineColor": "#424242",
+            "ridLineWidth": 1,
+            "minorGridLineColor": "#424242",
+            "inoGridLineWidth": 0.5,
+            "tickColor": "#424242",
+            "minorTickColor": "#424242",
+            "lineColor": "#424242"
+        },
+        tooltip: {
+            split: true,
+            valueSuffix: ' Soles'
+        },
+        plotOptions: {
+            area: {
+                stacking: 'normal',
+                lineColor: '#666666',
+                lineWidth: 1,
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#666666'
+                }
+            }
+        },
+        series: ResumenAnualDataChart
+    }
+    //resumen mensual
+    const [ResumenMensualData, setResumenMensualData] = useState([]);
+    async function fetchResumenMensualData(mes) {
+        var request = await axios.post(`${UrlServer}/getHistorialResumenMensual`,
+            {
+                "id_ficha": sessionStorage.getItem('idobra'),
+                "anyo": AnyoSeleccionado,
                 "mes": mes
             }
         )
-        console.log("getHistorialSemanas", request.data);
-        this.setState(
+        setResumenMensualData(request.data.componentes)
+        fetchResumenMensualDataChart(request.data.componentes, request.data.diasEjecutados)
+    }
+    const [ResumenMensualDataChart, setResumenMensualDataChart] = useState();
+    const [ResumenMensualDataChartCategories, setResumenMensualDataChartCategories] = useState();
+    async function fetchResumenMensualDataChart(componentes, diasEjecutados) {
+        var series = []
+        var categories = []
+        componentes.forEach((item, i) => {
+            var data = []
+            for (let i = diasEjecutados[0].dia; i <= diasEjecutados[diasEjecutados.length - 1].dia; i++) {
+                data.push(Number(Number(item["d" + i]).toFixed(2)))
+            };
+            series.push(
+                {
+                    "name": item.numero,
+                    "data": data
+                },
+            )
+        });
+        for (let i = diasEjecutados[0].dia; i <= diasEjecutados[diasEjecutados.length - 1].dia; i++) {
+            categories.push(i)
+        }
+        setResumenMensualDataChart(series)
+        setResumenMensualDataChartCategories(categories)
+    }
+    const OptionsResumenMensualDataChart = {
+        "colors": [
+            "#0080ff",
+            "#d35400",
+            "#2980b9",
+            "#2ecc71",
+            "#f1c40f",
+            "#2c3e50",
+            "#7f8c8d",
+            "#cc00ff",
+            "#dc3545",
+            "#289ba7",
+            "#2855a7"
+        ],
+        chart: {
+            type: 'area',
+            "backgroundColor": "#242526",
+            "style": {
+                "fontFamily": "Roboto",
+                "color": "#666666"
+            }
+        },
+        title: {
+            text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN MENSUAL',
+            "align": "center",
+            "style": {
+                "fontFamily": "Roboto Condensed",
+                "fontWeight": "bold",
+                "color": "#666666"
+            }
+        },
+        "legend": {
+            "align": "center",
+            "verticalAlign": "bottom",
+            "itemStyle": {
+                "color":
+                    "#424242",
+                "color": "#ffffff"
+            }
+        },
+        subtitle: {
+            text: 'General'
+        },
+        xAxis: {
+            categories: ResumenMensualDataChartCategories,
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'SOLES'
+            },
+            labels: {
+                formatter: function () {
+                    return this.value / 1000;
+                }
+            },
+            "gridLineColor": "#424242",
+            "ridLineWidth": 1,
+            "minorGridLineColor": "#424242",
+            "inoGridLineWidth": 0.5,
+            "tickColor": "#424242",
+            "minorTickColor": "#424242",
+            "lineColor": "#424242"
+        },
+        tooltip: {
+            split: true,
+            valueSuffix: ' Soles'
+        },
+        plotOptions: {
+            area: {
+                stacking: 'normal',
+                lineColor: '#666666',
+                lineWidth: 1,
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#666666'
+                }
+            }
+        },
+        series: ResumenMensualDataChart
+    }
+    //mes seleccionado
+    const [ComponenteSeleccionado, setComponenteSeleccionado] = useState({});
+    function onChangeComponenteSeleccionado(componente) {
+        if (componente.numero != 0) {
+            fetchFechas(componente.id_componente)
+        } else {
+            fetchResumenMensualData(MesSeleccionado)
+        }
+        setComponenteSeleccionado(componente)
+        //reset fechas
+        setFechasSeleccionada({})
+    }
+    //get data de fechas
+    const [Fechas, setFechas] = useState([]);
+    async function fetchFechas(id_componente) {
+        var request = await axios.post(`${UrlServer}/getHistorialFechas2`, {
+            id_ficha: sessionStorage.getItem('idobra'),
+            anyo: AnyoSeleccionado,
+            mes: MesSeleccionado,
+            id_componente: id_componente
+        })
+        setFechas(request.data)
+    }
+    const [FechasSeleccionada, setFechasSeleccionada] = useState({});
+    function onChangeFechasSeleccionada(fecha) {
+        setFechasAvance([])
+        fetchFechasAvance(fecha)
+        if (fecha == FechasSeleccionada) {
+            setFechasSeleccionada("")
+        } else {
+            setFechasSeleccionada(fecha)
+        }
+    }
+    //get data de fechas
+    const [FechasAvance, setFechasAvance] = useState([]);
+    async function fetchFechasAvance(fecha) {
+        var request = await axios.post(`${UrlServer}/getHistorialDias2`, {
+            id_componente: ComponenteSeleccionado.id_componente,
+            fecha: fecha
+        })
+        setFechasAvance(request.data)
+    }
+    ////////////////////////////////////////////////////////////////////
+    // historial semanal
+    const [toggleHistorialSemanal, settoggleHistorialSemanal] = useState(false);
+    function onChangeToggleHistorialSemanal() {
+        if (!toggleHistorialSemanal) {
+            fetchSemanas(MesSeleccionado)
+        }
+        settoggleHistorialSemanal(!toggleHistorialSemanal)
+    }
+    const [Semanas, setSemanas] = useState([]);
+    async function fetchSemanas(mes) {
+        var request = await axios.post(`${UrlServer}/getHistorialSemanas`,
             {
-                semanasData: request.data
+                "id_ficha": sessionStorage.getItem('idobra'),
+                "anyo": AnyoSeleccionado,
+                "mes": mes
             }
         )
+        setSemanas(request.data)
     }
-    getHistorialSemanalFechas = async (fecha_inicial, fecha_final) => {
+    const [SemanaSeleccionada, setSemanaSeleccionada] = useState(-1);
+    function onChangeSemana(semana) {
+        setSemanaFechas([])
+        setFechasActivas([])
+        setSemanaFechaSeleccionada(-1)
+
+        if (semana != 0) {
+            fetchSemanaFechas(semana.fecha_inicial, semana.fecha_final)
+        } else {
+            // fetchResumenMensualData(MesSeleccionado)
+        }
+        setSemanaSeleccionada(semana.semana)
+
+    }
+    const [SemanaFechas, setSemanaFechas] = useState([]);
+    async function fetchSemanaFechas(fecha_inicial, fecha_final) {
         console.log("getHistorialSemanalFechas");
         var request = await axios.post(`${UrlServer}/getHistorialSemanalFechas`,
             {
@@ -373,553 +412,720 @@ class HistorialMetrados extends Component {
                 "fecha_final": fecha_final
             }
         )
-        console.log("getHistorialSemanalFechas", request.data);
-        this.setState(
-            {
-                semanasFechas: request.data
-            }
-        )
+        console.log("setSemanaFechas", request.data);
+        setSemanaFechas(request.data)
     }
-    getHistorialSemanalComponentes = async (fecha) => {
-        console.log("getHistorialSemanalComponentes");
+    const [SemanaFechaSeleccionada, setSemanaFechaSeleccionada] = useState(-1);
+    const [SpinnerSemanaFechaSeleccionada, setSpinnerSemanaFechaSeleccionada] = useState(false);
+    function onChangeSemanaFecha(fecha) {
+        if (fecha == SemanaFechaSeleccionada) {
+            setSemanaFechaSeleccionada(-1)
+        } else {
+            setSpinnerSemanaFechaSeleccionada(true)
+            setSemanaFechaSeleccionada(fecha)
+            setSemanasComponentes([])
+            fetchSemanasComponentes(fecha)
+            fetchFechaRevisado(fecha)
+        }
+
+    }
+    const [SemanasComponentes, setSemanasComponentes] = useState([]);
+    async function fetchSemanasComponentes(fecha) {
         var request = await axios.post(`${UrlServer}/getHistorialSemanalComponentes`,
             {
                 "id_ficha": sessionStorage.getItem('idobra'),
                 "fecha": fecha
-            }
+            },
         )
-        console.log("getHistorialSemanalComponentes", request.data);
-        //consulta por cada componente
         var semanasComponentes = [...request.data]
         for (let i = 0; i < semanasComponentes.length; i++) {
             const item = semanasComponentes[i];
-            semanasComponentes[i].diasData = await this.getHistorialSemanalDias(item.id_componente)
+            semanasComponentes[i].diasData = await getHistorialSemanalDias(item.id_componente, fecha)
         }
-        console.log("semanasComponentes", semanasComponentes);
-        this.setState(
-            {
-                semanasComponentes
-            }
-        )
 
+        setSemanasComponentes(semanasComponentes)
+        setSpinnerSemanaFechaSeleccionada(false)
     }
-    getHistorialSemanalDias = async (id_componente) => {
+    async function getHistorialSemanalDias(id_componente, fecha) {
         var request = await axios.post(`${UrlServer}/getHistorialSemanalDias`,
             {
                 "id_componente": id_componente,
-                "fecha": this.state.semanaFechaSeleccionada
+                "fecha": fecha
             }
         )
-        console.log("getHistorialSemanalDias", request.data);
         return request.data
     }
-    tabSemanas = (i) => {
-        console.log(i);
-        var semanasData = this.state.semanasData[i]
-        console.log("semanasData", semanasData);
-        this.getHistorialSemanalFechas(semanasData.fecha_inicial, semanasData.fecha_final)
-        this.setState({
-            semanasFechasCollapse: -1,
-            activeTabSemanas: i
-        })
+    //edicion de avance actividades
+    const [InputAvanceActividadIndex, setInputAvanceActividadIndex] = useState(-1);
+    const [InputAvanceActividadData, setInputAvanceActividadData] = useState(null);
+    async function updateAvanceActividad(id_AvanceActividades) {
+        if (confirm("La siguiente operacion es irreversible, esta seguro de proceder?")) {
+            console.log("getHistorialSemanalFechas");
+            var request = await axios.post(`${UrlServer}/putAvanceActividades`,
+                {
+                    "id_acceso": sessionStorage.getItem('idacceso'),
+                    "id_AvanceActividades": id_AvanceActividades,
+                    "valor": InputAvanceActividadData
+                }
+            )
+            console.log("updateAvanceActividad", request.data);
+            fetchSemanasComponentes(SemanaFechaSeleccionada)
+        }
+        setInputAvanceActividadIndex(-1)
+        setInputAvanceActividadData(null)
     }
-    semanasFechasCollapse = (i) => {
-        if (i != this.state.semanasFechasCollapse) {
-            var semanasFechas = this.state.semanasFechas[i]
-            this.getHistorialSemanalComponentes(semanasFechas.fecha)
-            this.setState({
-                semanasFechasCollapse: i,
-                semanaFechaSeleccionada: semanasFechas.fecha
-            })
-        } else {
-            this.setState({
-                semanasFechasCollapse: -1,
-            })
+    //function inside hook
+    const [FechasActivas, setFechasActivas] = useState([]);
+    function callback(fecha) {
+        // console.log("FechasActivas", FechasActivas);
+        // var clone = [...FechasActivas]
+        // // do something with value in parent component, like save to state
+        // console.log("clone", clone);
+        // clone.push(fecha)
+        // setFechasActivas(clone)
+    }
+    const [FechaActiva, setFechaActiva] = useState(0);
+    async function fetchFechaRevisado(fecha) {
+        const request = await axios.post(`${UrlServer}/getEstadoRevisadoFecha`,
+            {
+                "fecha": fecha,
+                "id_ficha": sessionStorage.getItem('idobra')
+            }
+        )
+        console.log("re temp ", request.data);
+        if (request.data.revisado == 0) {
+            console.log("activo");
+            setFechaActiva(1)
+        }else{
+            setFechaActiva(0)
         }
 
     }
-    render() {
-        const { DataAniosApi, DataMesesApi, DataResumenApi, DataComponentesApi, anyoSeleccionado, nombreComponente, DataFechasApi, collapseDate,
-            DataPartidas, DataChartDiasComponente, componenteTotalSoles, componenteTotalPorcentaje, totalResumenComponenteLeyenda } = this.state
-        const options = {
-            "colors": [
-                "#0080ff",
-                "#d35400",
-                "#2980b9",
-                "#2ecc71",
-                "#f1c40f",
-                "#2c3e50",
-                "#7f8c8d",
-                "#cc00ff",
-                "#dc3545",
-                "#289ba7",
-                "#2855a7"
-            ],
-            chart: {
-                type: 'area',
-                "backgroundColor": "#242526",
-                "style": {
-                    "fontFamily": "Roboto",
-                    "color": "#666666"
+    return (
+        <div>
+            <Nav tabs>
+                <NavItem>
+                    <select
+                        value={AnyoSeleccionado}
+                        className="form-control form-control-sm"
+                        onChange={e => onChangeAnyoSeleccionado(e.target.value)}
+                    >
+                        {
+                            Anyos.map((item, i) =>
+                                <option key={i} value={item.anyo} >{item.anyo}</option>
+                            )
+                        }
+                    </select>
+                </NavItem>
+                {
+                    Meses.map((item, i) =>
+                        <NavItem key={i}>
+                            <NavLink
+                                className={classnames({ active: item.mes == MesSeleccionado })}
+                                onClick={() => { onChangeMesSeleccionado(item.mes) }}
+                            >
+                                {mesesShort[item.mes - 1]}
+                            </NavLink>
+                        </NavItem>
+                    )
                 }
-            },
-            title: {
-                text: 'RESUMEN ESTADISTICO DE VALORIZACIÓN MENSUAL',
-                "align": "center",
-                "style": {
-                    "fontFamily": "Roboto Condensed",
-                    "fontWeight": "bold",
-                    "color": "#666666"
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: 0 == MesSeleccionado })}
+                        onClick={() => { onChangeMesSeleccionado(0) }}
+                    >
+                        RESUMEN ANUAL
+                    </NavLink>
+                </NavItem>
+                {
+                    MesSeleccionado > 0 &&
+                    <Button
+                        onClick={() => { onChangeToggleHistorialSemanal() }}
+                        //  outline 
+                        color={
+                            toggleHistorialSemanal ?
+                                "warning"
+                                : "danger"
+                        }>
+                        {
+                            toggleHistorialSemanal ?
+                                "componentes"
+                                : "semanal"
+                        }
+                    </Button>
                 }
-            },
-            "legend": {
-                "align": "center",
-                "verticalAlign": "bottom",
-                "itemStyle": {
-                    "color":
-                        "#424242",
-                    "color": "#ffffff"
-                }
-            },
-            subtitle: {
-                text: 'General'
-            },
-            xAxis: {
-                categories: DataResumenApi.categories,
-                tickmarkPlacement: 'on',
-                title: {
-                    enabled: false
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'SOLES'
-                },
-                labels: {
-                    formatter: function () {
-                        return this.value / 1000;
-                    }
-                },
-                "gridLineColor": "#424242",
-                "ridLineWidth": 1,
-                "minorGridLineColor": "#424242",
-                "inoGridLineWidth": 0.5,
-                "tickColor": "#424242",
-                "minorTickColor": "#424242",
-                "lineColor": "#424242"
-            },
-            tooltip: {
-                split: true,
-                valueSuffix: ' Soles'
-            },
-            plotOptions: {
-                area: {
-                    stacking: 'normal',
-                    lineColor: '#666666',
-                    lineWidth: 1,
-                    marker: {
-                        lineWidth: 1,
-                        lineColor: '#666666'
-                    }
-                }
-            },
-            series: DataResumenApi.series
-        }
-
-        const Partidas = {
-            "colors": [
-                "#0080ff",
-                "#d35400",
-                "#2980b9",
-                "#2ecc71",
-                "#f1c40f",
-                "#2c3e50",
-                "#7f8c8d",
-                "#cc00ff",
-                "#dc3545",
-                "#289ba7",
-                "#2855a7"
 
 
+            </Nav>
+            {
+                MesSeleccionado > 0
+                &&
+                (
+                    !toggleHistorialSemanal ?
+                        <Nav tabs>
 
-            ],
-            chart: {
-                type: 'area',
-                "backgroundColor": "#242526",
-                "style": {
-                    "fontFamily": "Roboto",
-                    "color": "#2ecc71"
-                }
-            },
-            title: {
-                text: 'VALORIZACIÓN DIARIA POR COMPONENTE',
-
-            },
-            subtitle: {
-                text: 'Componente'
-            },
-            "legend": {
-                "align": "center",
-                "verticalAlign": "bottom",
-                "itemStyle": {
-                    "color":
-                        "#2ecc71",
-                    "color": "#ffffff"
-                }
-            },
-            xAxis: {
-                categories: DataChartDiasComponente.categories,
-                tickmarkPlacement: 'on',
-                title: {
-                    enabled: false
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Soles'
-                },
-                labels: {
-                    formatter: function () {
-                        return this.value / 1000;
-                    }
-                },
-                "gridLineColor": "#424242",
-                "ridLineWidth": 1,
-                "minorGridLineColor": "#424242",
-                "inoGridLineWidth": 0.5,
-                "tickColor": "#424242",
-                "minorTickColor": "#424242",
-                "lineColor": "#424242"
-            },
-            tooltip: {
-                split: true,
-                valueSuffix: ' Soles'
-            },
-            plotOptions: {
-                area: {
-                    stacking: 'normal',
-                    lineColor: '#666666',
-                    lineWidth: 1,
-                    marker: {
-                        lineWidth: 1,
-                        lineColor: '#666666'
-                    }
-                }
-            },
-            series: DataChartDiasComponente.series
-        }
-
-        return (
-            <div>
-                <Nav tabs>
-                    <NavItem>
-                        <select className="form-control form-control-sm" onChange={this.SeleccionaAnio} value={anyoSeleccionado}>
-                            {
-                                DataAniosApi.map((anio, indexA) =>
-                                    <option key={indexA} value={anio.anyo} >{anio.anyo}</option>
-                                )
-                            }
-                        </select>
-                    </NavItem>
-                    {
-                        DataMesesApi.map((mes, indexM) =>
-                            <NavItem key={indexM}>
-                                <NavLink className={classnames({ active: this.state.activeTabMes === indexM.toString() })} onClick={() => { this.TabMeses(indexM.toString(), mes.fecha); }}>
-                                    {mes.mes}
+                            <NavItem>
+                                <NavLink
+                                    className={classnames({ active: 0 == ComponenteSeleccionado.numero })}
+                                    onClick={() => onChangeComponenteSeleccionado({ numero: 0 })}
+                                >
+                                    RESUMEN
                                 </NavLink>
                             </NavItem>
-                        )
-                    }
-                    <NavItem>
-                        <NavLink className={classnames({ active: this.state.activeTabMes === "resAnual" })} onClick={() => { this.TabMeses("resAnual", "mes.fecha"); }}>
-                            {/* {mes.mes} */} RESUMEN ANUAL
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        {/* comentario  de button temporal */}
-                        {/* <Button
-                            onClick={this.toggleHistorialSemanal}
-                            //  outline 
-                            color="primary">
                             {
-                                !this.state.toggleHistorial_semanal ?
-                                    "semanal" : "componentes"
-                            }
-                        </Button> */}
-                    </NavItem>
-                </Nav>
-
-                {
-                    !this.state.toggleHistorial_semanal ?
-                        [
-                            <Nav tabs>
-
-                                <NavItem>
-                                    <NavLink className={classnames({ active: this.state.activeTabComp === 'resumen' })} onClick={() => { this.TabComponentes('resumen', "", "") }}>
-                                        RESUMEN
-                                    </NavLink>
-                                </NavItem>
-                                {
-                                    DataComponentesApi.map((comp, indecC) =>
-                                        <NavItem key={indecC}>
-                                            <NavLink className={classnames({ active: this.state.activeTabComp === indecC.toString() })} onClick={() => { this.TabComponentes(indecC.toString(), comp.id_componente, comp.nombre_componente, comp.componente_total_soles, comp.componente_total_porcentaje); }}>
-                                                C-{comp.numero}
-                                            </NavLink>
-                                        </NavItem>
-                                    )
-                                }
-
-                            </Nav>
-                            ,
-                            <CardBody className="p-2">
-                                {
-                                    this.state.activeTabComp === "resumen"
-                                        ?
-                                        <div className="table-responsive card">
-                                            <HighchartsReact
-                                                highcharts={Highcharts}
-                                                // constructorType={'stockChart'}
-                                                options={options}
-                                            />
-                                            <br />
-                                            <table className="table table-sm small">
-                                                <thead>
-                                                    <tr>
-                                                        <th>N°</th>
-                                                        <th>NOMBRE</th>
-                                                        <th>PRESUPUESTO</th>
-                                                        <th>AVANCE</th>
-                                                        <th>% AVANCE</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        DataResumenApi.leyenda !== undefined ?
-                                                            DataResumenApi.leyenda.map((comp, iComp) =>
-                                                                <tr key={iComp}>
-                                                                    <td>{comp.numero}</td>
-                                                                    <td>{comp.componente_nombre}</td>
-                                                                    <td>{comp.presupuesto}</td>
-                                                                    <td>{comp.valor} </td>
-                                                                    <td className="text-right">{comp.porcentaje}%</td>
-                                                                </tr>
-                                                            ) : <tr><td colSpan="5"><div className="text-center" > <Spinner color="primary" type="grow" /></div></td></tr>
-                                                    }
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th colSpan="2">TOTAL</th>
-                                                        <th>{totalResumenComponenteLeyenda.presupuesto}</th>
-                                                        <th>{totalResumenComponenteLeyenda.avance}</th>
-                                                        <th className="text-right">{totalResumenComponenteLeyenda.porcentaje_avance}%</th>
-                                                    </tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                        :
-                                        <Card>
-                                            <CardHeader>
-                                                {nombreComponente}
-                                                <div className="float-right">
-                                                    S/. {componenteTotalSoles} {" 〰 "}{componenteTotalPorcentaje} %
-                                    </div>
-                                            </CardHeader>
-                                            <CardBody className="p-2">
-                                                {
-                                                    DataChartDiasComponente.length <= 0 ? <div className="text-center h4">Seleccione un componete</div> :
-                                                        <Row>
-                                                            <Col sm="5">
-
-                                                                <HighchartsReact
-                                                                    highcharts={Highcharts}
-                                                                    // constructorType={'stockChart'}
-                                                                    options={Partidas}
-                                                                />
-                                                            </Col>
-                                                            <Col sm="7">
-                                                                {
-                                                                    DataFechasApi.map((fecha, indexF) =>
-                                                                        <fieldset key={indexF} className="mt-2">
-                                                                            <legend className="prioridad" onClick={() => this.collapseFechas(indexF, fecha.fecha)} >  <b>FECHA: </b>{fecha.fecha_larga}  - <b> S/.</b> {fecha.fecha_total_soles}  - <b> {fecha.fecha_total_porcentaje} %</b></legend>
-                                                                            <Collapse isOpen={collapseDate === indexF}>
-                                                                                <div className="table-responsive">
-                                                                                    <table className="table table-sm small table-hover">
-                                                                                        <thead>
-                                                                                            <tr>
-                                                                                                <th>ITEM</th>
-                                                                                                <th>PARTIDA</th>
-                                                                                                <th>ACTIVIDAD </th>
-                                                                                                <th> DESCRIPCIÓN</th>
-
-                                                                                                <th>A. FISICO</th>
-                                                                                                <th>C. U.</th>
-                                                                                                <th>C. P.</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                            {DataPartidas.map((hist, indexHist) =>
-                                                                                                <tr key={indexHist}>
-                                                                                                    <td>{hist.item}</td>
-                                                                                                    <td>{hist.descripcion_partida}</td>
-
-                                                                                                    <td>{hist.nombre_actividad}</td>
-                                                                                                    <td>{hist.descripcion_actividad}</td>
-
-                                                                                                    <td>{hist.valor} {hist.unidad_medida}</td>
-                                                                                                    <td>{hist.costo_unitario}</td>
-                                                                                                    <td>{hist.parcial}</td>
-                                                                                                </tr>
-                                                                                            )}
-                                                                                        </tbody>
-                                                                                        <tfoot>
-                                                                                            <tr>
-                                                                                                <td colSpan="8">
-                                                                                                    {DataPartidas.map((hist, indexHist) =>
-                                                                                                        <tr key={indexHist}>
-                                                                                                            <td> {hist.observacion}</td>
-                                                                                                        </tr>
-                                                                                                    )}
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        </tfoot>
-
-                                                                                    </table>
-                                                                                    <HistorialObservaciones />
-                                                                                </div>
-                                                                            </Collapse>
-                                                                        </fieldset>
-                                                                    )
-                                                                }
-                                                            </Col>
-                                                        </Row>
-                                                }
-                                            </CardBody>
-                                        </Card>
-                                }
-
-                            </CardBody>,
-                            <HistorialObservaciones />
-                        ]
-                        :
-                        //historial semanal
-                        [
-                            <Nav tabs>
-                                {this.state.semanasData.map((item, i) =>
+                                Componentes.map((item, i) =>
                                     <NavItem key={i}>
                                         <NavLink
-                                            onClick={() => this.tabSemanas(i)}
-                                            className={classnames({ active: this.state.activeTabSemanas == i })}
+                                            className={classnames({ active: item.numero == ComponenteSeleccionado.numero })}
+                                            onClick={() => onChangeComponenteSeleccionado(item)}
                                         >
-                                            S-{item.semana}
+                                            C-{item.numero}
                                         </NavLink>
                                     </NavItem>
-                                )}
-                            </Nav>,
-                            <CardBody className="p-2">
-                                <Card>
-                                    {/* <CardHeader>
-                                        {nombreComponente}
-                                        <div className="float-right">
-                                            S/. {componenteTotalSoles} {" 〰 "}{componenteTotalPorcentaje} %
-                                                </div>
-                                    </CardHeader> */}
-                                    <CardBody className="p-2">
-                                        <Row>
-                                            {/* <Col sm="5">
-                                                <HighchartsReact
-                                                    highcharts={Highcharts}
-                                                    options={Partidas}
-                                                />
-                                            </Col> */}
-                                            <Col sm="12">
+                                )
+                            }
+
+                        </Nav>
+                        :
+                        <Nav tabs>
+                            {Semanas.map((item, i) =>
+                                <NavItem key={i}>
+                                    <NavLink
+                                        onClick={() => onChangeSemana(item)}
+                                        className={classnames({ active: item.semana == SemanaSeleccionada })}
+                                    >
+                                        S-{item.semana}
+                                    </NavLink>
+                                </NavItem>
+                            )}
+                        </Nav>
+                )
+
+            }
+            <CardBody className="p-2">
+                {
+                    MesSeleccionado > 0
+                        ?
+                        (
+                            !toggleHistorialSemanal ?
+                                (ComponenteSeleccionado.numero != 0
+                                    ?
+                                    <Card>
+                                        <CardHeader>
+                                            {ComponenteSeleccionado.nombre_componente}
+                                            <div className="float-right">
+                                                S/. {Redondea(ComponenteSeleccionado.componente_total_soles)} {" 〰 "}{Redondea(ComponenteSeleccionado.componente_total_porcentaje)} %
+                                            </div>
+                                        </CardHeader>
+                                        <CardBody className="p-2">
+                                            <Row>
+                                                <Col sm="12">
+                                                    {
+                                                        Fechas.map((item, i) =>
+                                                            <fieldset key={i} className="mt-2">
+                                                                <legend
+                                                                    className="prioridad"
+                                                                    onClick={() => onChangeFechasSeleccionada(item.fecha)}
+                                                                >
+                                                                    <b>FECHA: </b>{item.fecha}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
+
+                                                                </legend>
+                                                                <Collapse isOpen={FechasSeleccionada == item.fecha}>
+                                                                    <div className="table-responsive">
+                                                                        <table className="table table-sm small table-hover">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>ITEM</th>
+                                                                                    <th>PARTIDA</th>
+                                                                                    <th>ACTIVIDAD </th>
+                                                                                    <th> DESCRIPCIÓN</th>
+
+                                                                                    <th>A. FISICO</th>
+                                                                                    <th>C. U.</th>
+                                                                                    <th>C. P.</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {FechasAvance.map((item, i) =>
+                                                                                    <tr key={i}>
+                                                                                        <td>{item.item}</td>
+                                                                                        <td>{item.descripcion_partida}</td>
+
+                                                                                        <td>{item.nombre_actividad}</td>
+                                                                                        <td>{item.descripcion_actividad}</td>
+
+                                                                                        <td>{item.valor} {item.unidad_medida}</td>
+                                                                                        <td>{item.costo_unitario}</td>
+                                                                                        <td>{Redondea(item.parcial)}</td>
+                                                                                    </tr>
+                                                                                )}
+                                                                            </tbody>
+                                                                            <tfoot>
+                                                                                {FechasAvance.map((item, i) =>
+                                                                                    item.observacion &&
+                                                                                    <tr key={i}>
+                                                                                        <td colSpan={8}> {item.observacion}</td>
+                                                                                    </tr>
+                                                                                )}
+                                                                            </tfoot>
+
+                                                                        </table>
+                                                                    </div>
+                                                                </Collapse>
+                                                            </fieldset>
+                                                        )
+                                                    }
+                                                </Col>
+                                            </Row>
+                                        </CardBody>
+
+                                    </Card>
+                                    :
+                                    [
+                                        <HighchartsReact
+                                            highcharts={Highcharts}
+                                            options={OptionsResumenMensualDataChart}
+                                        />,
+                                        <table className="table table-sm small table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        N°
+                                            </th>
+                                                    <th>
+                                                        NOMBRE
+                                            </th>
+                                                    <th>
+                                                        PRESUPUESTO
+                                            </th>
+                                                    <th>
+                                                        AVANCE
+                                            </th>
+                                                    <th>
+                                                        AVANCE%
+                                            </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                                 {
-                                                    this.state.semanasFechas.map((item, i) =>
-                                                        <fieldset key={i} className="mt-2">
-                                                            <legend className="prioridad" onClick={() => this.semanasFechasCollapse(i)} >
-                                                                <b>FECHA: </b>{item.fecha}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
-                                                            </legend>
-                                                            <Collapse isOpen={this.state.semanasFechasCollapse == i}>
-                                                                <div className="table-responsive">
-                                                                    {
-                                                                        this.state.semanasComponentes.map((item2, i2) =>
-                                                                            [
-                                                                                <div className="float-left" style={{ color: "#97ffb1", fontSize: "12px" }}><b>{item2.numero + " " + item2.nombre}</b></div>,
-                                                                                <div className="float-right" style={{ color: "#97ffb1" }}>
-                                                                                    S/. {Redondea(item2.componente_total_soles)} {" 〰 "}{Redondea(item2.componente_total_porcentaje)} %
-                                                                                </div>,
-                                                                                <table className="table table-sm small table-hover">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th></th>
-                                                                                            <th>ITEM</th>
-                                                                                            <th>PARTIDA</th>
-                                                                                            <th>ACTIVIDAD </th>
-                                                                                            <th> DESCRIPCIÓN</th>
-                                                                                            <th> RENDIMIENTO</th>
-                                                                                            <th>A. FISICO</th>
-                                                                                            <th>C. U.</th>
-                                                                                            <th>C. P.</th>
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        {item2.diasData &&
-                                                                                            item2.diasData.map(
-                                                                                                (item3, i3) =>
-                                                                                                    <tr key={i3}>
-                                                                                                        <td>
-                                                                                                            <PartidasChat id_partida={item3.id_partida} titulo={item3.descripcion_partida} />
-                                                                                                        </td>
-                                                                                                        <td>{item3.item}</td>
-                                                                                                        <td>{item3.descripcion_partida}</td>
+                                                    ResumenMensualData.map((item, i) =>
+                                                        <tr key={i}>
+                                                            <td>
+                                                                {item.numero}
+                                                            </td>
+                                                            <td>
+                                                                {item.nombre}
+                                                            </td>
+                                                            <td>
+                                                                {Redondea(item.presupuesto)}
 
-                                                                                                        <td>{item3.nombre_actividad}</td>
-                                                                                                        <td>{item3.descripcion_actividad}</td>
-                                                                                                        <td>{item3.rendimiento}</td>
+                                                            </td>
 
-                                                                                                        <td>{item3.valor} {item3.unidad_medida}</td>
-                                                                                                        <td>{item3.costo_unitario}</td>
-                                                                                                        <td>{item3.parcial}</td>
-                                                                                                    </tr>
-                                                                                            )
-                                                                                        }
+                                                            <td>
+                                                                {Redondea(item.valor)}
 
-                                                                                    </tbody>
-                                                                                    {/* <tfoot>
-                                                                                        <tr>
-                                                                                            <td colSpan="8">
-                                                                                                {DataPartidas.map((hist, indexHist) =>
-                                                                                                    <tr key={indexHist}>
-                                                                                                        <td> {hist.observacion}</td>
-                                                                                                    </tr>
-                                                                                                )}
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tfoot> */}
+                                                            </td>
+                                                            <td>
+                                                                {Redondea(item.valor / item.presupuesto * 100)}
+                                                            </td>
 
-                                                                                </table>
-
-                                                                            ]
-
-                                                                        )
-                                                                    }
-
-                                                                </div>
-                                                            </Collapse>
-                                                        </fieldset>
+                                                        </tr>
                                                     )
                                                 }
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                </Card>
+                                                <tr className="resplandPartida font-weight-bolder">
+                                                    <td>
 
-                            </CardBody>]
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            (() => {
+                                                                var presupuesto_total = 0
+                                                                ResumenMensualData.forEach((item, i) => {
+                                                                    presupuesto_total += item.presupuesto
+                                                                });
+                                                                return Redondea(presupuesto_total)
+                                                            })()
+                                                        }
+
+                                                    </td>
+
+                                                    <td>
+                                                        {
+                                                            (() => {
+                                                                var valor_total = 0
+                                                                ResumenMensualData.forEach((item, i) => {
+                                                                    valor_total += item.valor
+                                                                });
+                                                                return Redondea(valor_total)
+                                                            })()
+                                                        }
+
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            (() => {
+                                                                var valor_total = 0
+                                                                ResumenMensualData.forEach((item, i) => {
+                                                                    valor_total += item.valor / item.presupuesto
+                                                                });
+                                                                return Redondea(valor_total * 100)
+                                                            })()
+                                                        }
+                                                        {/* {Redondea(item.valor / item.presupuesto * 100)} */}
+                                                    </td>
+
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    ]
+                                )
+                                :
+                                // historial semanal data de semanas
+                                [
+                                    <CardBody className="p-2">
+                                        <Card>
+
+                                            <CardBody className="p-2">
+                                                <Row>
+
+                                                    <Col sm="12">
+                                                        {
+                                                            SemanaFechas.map((item, i) =>
+                                                                <fieldset key={i} className="mt-2">
+                                                                    <div className="d-flex">
+                                                                        <legend
+                                                                            className="prioridad"
+                                                                            onClick={() => onChangeSemanaFecha(item.fecha)}
+                                                                        >
+                                                                            <b>FECHA: </b>{item.fecha}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
+                                                                            <Spinner
+                                                                                size="sm"
+                                                                                color="primary"
+                                                                                type="grow"
+                                                                                style={(SemanaFechaSeleccionada == item.fecha && SpinnerSemanaFechaSeleccionada) ? {
+                                                                                }
+                                                                                    :
+                                                                                    { display: "none" }}
+                                                                            />
+                                                                        </legend>
+                                                                        <div>
+                                                                            <CheckDate fecha={item.fecha} parentCallback={callback} />
+                                                                        </div>
+                                                                    </div>
 
 
+
+                                                                    <Collapse isOpen={SemanaFechaSeleccionada == item.fecha}>
+                                                                        <div className="table-responsive">
+                                                                            {
+                                                                                SemanasComponentes.map((item2, i2) =>
+                                                                                    [
+                                                                                        <div className="float-left"
+                                                                                            style={{
+                                                                                                color: "#171819",
+                                                                                                fontSize: "12px",
+                                                                                                backgroundColor: "#ffc107",
+                                                                                                width: "100%"
+                                                                                            }}>
+                                                                                            <b>{item2.numero + " " + item2.nombre}</b>
+                                                                                            <div className="float-right" style={{ color: "#171819", fontSize: "12px", }}>
+                                                                                                S/. {Redondea(item2.componente_total_soles)} {" 〰 "}{Redondea(item2.componente_total_porcentaje)} %
+                                                                                            </div>
+                                                                                        </div>,
+                                                                                        <table className="table table-sm small table-hover">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th></th>
+                                                                                                    <th>ITEM</th>
+                                                                                                    <th>PARTIDA</th>
+                                                                                                    <th>ACTIVIDAD </th>
+                                                                                                    <th> DESCRIPCIÓN</th>
+                                                                                                    <th> RENDIMIENTO</th>
+                                                                                                    <th>A. FISICO</th>
+                                                                                                    <th>C. U.</th>
+                                                                                                    <th>C. P.</th>
+                                                                                                    <th></th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                {item2.diasData &&
+                                                                                                    item2.diasData.map(
+                                                                                                        (item3, i3) =>
+                                                                                                            <tr key={i3}>
+                                                                                                                <td>
+                                                                                                                    <PartidasChat id_partida={item3.id_partida} titulo={item3.descripcion_partida} />
+                                                                                                                </td>
+                                                                                                                <td>{item3.item}</td>
+                                                                                                                <td>{item3.descripcion_partida}</td>
+
+                                                                                                                <td>{item3.nombre_actividad}</td>
+                                                                                                                <td>{item3.descripcion_actividad}</td>
+                                                                                                                <td>{Redondea(item3.rendimiento)}</td>
+                                                                                                                <td>
+                                                                                                                    {
+                                                                                                                        InputAvanceActividadIndex != i3 ?
+                                                                                                                            <div
+                                                                                                                                className="d-flex"
+                                                                                                                            >
+                                                                                                                                {Redondea(item3.valor)} {item3.unidad_medida}
+                                                                                                                                {FechaActiva && sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                                                                                    <div
+                                                                                                                                        onClick={() => setInputAvanceActividadIndex(i3)}
+                                                                                                                                    >
+                                                                                                                                        <MdModeEdit className="icon" />
+                                                                                                                                    </div>
+                                                                                                                                }
+                                                                                                                            </div>
+                                                                                                                            :
+                                                                                                                            <div
+                                                                                                                                className="d-flex"
+                                                                                                                            >
+                                                                                                                                <DebounceInput
+                                                                                                                                    value={item3.valor}
+                                                                                                                                    debounceTimeout={300}
+                                                                                                                                    onChange={e => setInputAvanceActividadData(e.target.value)}
+                                                                                                                                    type="number"
+                                                                                                                                />
+                                                                                                                                <div
+                                                                                                                                    onClick={() => updateAvanceActividad(item3.id_AvanceActividades)}
+                                                                                                                                >
+                                                                                                                                    <MdSave className="icon" />
+                                                                                                                                </div>
+                                                                                                                                <div
+                                                                                                                                    onClick={() => setInputAvanceActividadIndex(-1)}
+                                                                                                                                >
+                                                                                                                                    <MdClose className="icon" />
+                                                                                                                                </div>
+                                                                                                                            </div>
+
+
+                                                                                                                    }
+                                                                                                                </td>
+                                                                                                                <td>{item3.costo_unitario}</td>
+                                                                                                                <td>{Redondea(item3.parcial)}</td>
+                                                                                                                <td>
+                                                                                                                    {(FechaActiva && sessionStorage.getItem("cargo") == "RESIDENTE" )?
+                                                                                                                        <div
+                                                                                                                            onClick={() => updateAvanceActividad(item3.id_AvanceActividades)}
+                                                                                                                        >
+                                                                                                                            <MdDeleteForever className="icon" />
+                                                                                                                        </div>
+                                                                                                                        :""
+                                                                                                                    }
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                    )
+                                                                                                }
+
+                                                                                            </tbody>
+
+                                                                                        </table>
+
+                                                                                    ]
+
+                                                                                )
+                                                                            }
+
+                                                                        </div>
+                                                                    </Collapse>
+                                                                </fieldset>
+                                                            )
+                                                        }
+                                                    </Col>
+                                                </Row>
+                                            </CardBody>
+                                        </Card>
+
+                                    </CardBody>]
+
+                        )
+                        :
+                        [
+                            <HighchartsReact
+                                highcharts={Highcharts}
+                                options={OptionsResumenAnualDataChart}
+                            />,
+                            <table className="table table-sm small table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            N°
+                                        </th>
+                                        <th>
+                                            NOMBRE
+                                        </th>
+                                        <th>
+                                            PRESUPUESTO
+                                        </th>
+                                        {
+                                            (
+                                                () => {
+                                                    var rows = [];
+                                                    for (var i = ResumenAnualData.mes_inicial; i <= ResumenAnualData.mes_final; i++) {
+
+                                                        rows.push(
+                                                            <th >
+                                                                {mesesShort[i - 1]}
+                                                            </th>
+                                                        );
+                                                    }
+                                                    return rows;
+                                                }
+                                            )()
+                                        }
+                                        <th>
+                                            AVANCE
+                                        </th>
+                                        <th>
+                                            SALDO
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        ResumenAnualData.data.map((item, i) =>
+                                            <tr key={i}>
+                                                <td>
+                                                    {item.numero}
+                                                </td>
+                                                <td>
+                                                    {item.nombre}
+                                                </td>
+                                                <td>
+                                                    {Redondea(item.presupuesto)}
+
+                                                </td>
+                                                {
+                                                    (
+                                                        () => {
+                                                            var rows = [];
+                                                            for (var i = ResumenAnualData.mes_inicial; i <= ResumenAnualData.mes_final; i++) {
+
+                                                                rows.push(
+                                                                    <td >
+                                                                        {Redondea(item["m" + i])}
+                                                                    </td>
+                                                                );
+                                                            }
+                                                            return rows;
+                                                        }
+                                                    )()
+                                                }
+
+
+                                                <td>
+                                                    {Redondea(item.valor)}
+
+                                                </td>
+                                                <td>
+                                                    {/* se calcula saldo */}
+                                                    {
+                                                        (
+                                                            () => {
+                                                                var saldo = item.presupuesto
+                                                                for (var i = ResumenAnualData.mes_inicial; i <= ResumenAnualData.mes_final; i++) {
+                                                                    saldo -= item["m" + i]
+                                                                }
+                                                                return Redondea(saldo);
+                                                            }
+                                                        )()
+                                                    }
+
+                                                </td>
+
+                                            </tr>
+
+                                        )
+                                    }
+                                    <tr className="resplandPartida font-weight-bolder">
+                                        <td>
+
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <td>
+                                            {
+                                                (() => {
+                                                    var presupuesto_total = 0
+                                                    ResumenAnualData.data.forEach((item, i) => {
+                                                        presupuesto_total += item.presupuesto
+                                                    });
+                                                    return Redondea(presupuesto_total)
+                                                })()
+                                            }
+
+                                        </td>
+                                        {
+                                            (
+                                                () => {
+                                                    var rows = [];
+                                                    for (var i = ResumenAnualData.mes_inicial; i <= ResumenAnualData.mes_final; i++) {
+                                                        var presupuesto_total = 0
+                                                        ResumenAnualData.data.forEach((item, j) => {
+                                                            presupuesto_total += item["m" + i]
+                                                        });
+                                                        rows.push(
+                                                            <td >
+                                                                {Redondea(presupuesto_total)}
+                                                            </td>
+                                                        );
+                                                    }
+                                                    return rows;
+                                                }
+                                            )()
+                                        }
+                                        <td>
+                                            {
+                                                (() => {
+                                                    var presupuesto_total = 0
+                                                    ResumenAnualData.data.forEach((item, i) => {
+                                                        presupuesto_total += item.valor
+                                                    });
+                                                    return Redondea(presupuesto_total)
+                                                })()
+                                            }
+
+                                        </td>
+                                        <td>
+                                            {/* se calcula saldo */}
+                                            {
+                                                (
+                                                    () => {
+                                                        var saldo_total = 0;
+                                                        ResumenAnualData.data.forEach((item, i) => {
+                                                            var presupuesto = item.presupuesto
+                                                            for (var i = ResumenAnualData.mes_inicial; i <= ResumenAnualData.mes_final; i++) {
+                                                                presupuesto -= item["m" + i]
+                                                            }
+                                                            saldo_total += presupuesto
+                                                        });
+
+                                                        return Redondea(saldo_total);
+                                                    }
+                                                )()
+                                            }
+
+                                        </td>
+
+
+
+
+                                    </tr>
+
+
+                                </tbody>
+
+                            </table>
+                        ]
                 }
-            </div>
-        )
-    }
-}
 
-export default HistorialMetrados;
+            </CardBody>
+            <HistorialObservaciones />
+
+        </div>
+    );
+}

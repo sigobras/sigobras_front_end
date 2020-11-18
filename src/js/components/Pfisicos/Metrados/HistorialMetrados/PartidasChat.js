@@ -11,49 +11,65 @@ import { MdComment } from 'react-icons/md';
 import LogoSigobras from './../../../../../images/logoSigobras.png'
 
 function Comentarios({ id_partida, titulo }) {
+
+    useEffect(() => {
+        fetchComentariosNoVistos()
+        socketIni()
+    }, []);
+    const [ComentarioNoVistos, setComentarioNoVistos] = useState(0)
+    async function fetchComentariosNoVistos() {
+        const request = await axios.post(`${UrlServer}/getPartidaComentariosNoVistos`, {
+            "id_partida": id_partida,
+            "id_acceso": sessionStorage.getItem('idacceso')
+        })
+        setComentarioNoVistos(request.data.comentarios_novistos)
+    }
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
         console.log("scroll to bottom");
-        // messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     };
     const [Comentario, setComentario] = useState([])
-    useEffect(() => {
-        socketIni()
-    }, []);
     const [Data, setData] = useState([])
     async function fetchComentario() {
         const request = await axios.post(`${UrlServer}/getPartidaComentarios`, {
             "id_partida": id_partida,
+            "id_acceso": sessionStorage.getItem('idacceso')
 
         })
         await setData(request.data);
+        fetchComentariosNoVistos()
         scrollToBottom()
     }
     async function saveComentario() {
-        const request = await axios.post(`${UrlServer}/postPartidaComentarios`, {
-            "comentario": Comentario,
-            "id_partida": id_partida,
-            "id_acceso": sessionStorage.getItem('idacceso')
-        })
-        await fetchComentario()
-        setComentario("")
-        await axios.post(`${UrlServer}/postComentariosVistos`, {
-            "id_partida": id_partida,
-            "id_acceso": sessionStorage.getItem('idacceso')
-        })
-        //socket 
-        socket.emit("partidas_comentarios_post",
-            {
-                id_partida
-            }
-        )
-        socket.emit("componentes_comentarios_notificacion_post",
-            {
-                id_ficha: sessionStorage.getItem('idobra')
-            }
-        )
+        if (Comentario) {
+            const request = await axios.post(`${UrlServer}/postPartidaComentarios`, {
+                "comentario": Comentario,
+                "id_partida": id_partida,
+                "id_acceso": sessionStorage.getItem('idacceso')
+            })
+            await fetchComentario()
+            setComentario("")
+            //socket 
+            socket.emit("partidas_comentarios_post",
+                {
+                    id_partida
+                }
+            )
+            socket.emit("componentes_comentarios_notificacion_post",
+                {
+                    id_ficha: sessionStorage.getItem('idobra')
+                }
+            )
+        }
     }
     function socketIni() {
+        socket.on("partidas_comentarios_novistos_get-" + id_partida, (data) => {
+            console.log("llegada de mensaje no visto");
+            fetchComentariosNoVistos()
+        })
+    }
+    function socketIniChat() {
         socket.on("partidas_comentarios_get-" + id_partida, (data) => {
             console.log("llegada de mensaje");
             fetchComentario()
@@ -63,6 +79,10 @@ function Comentarios({ id_partida, titulo }) {
     const [modal, setModal] = useState(false);
 
     const toggle = () => {
+        if (!modal) {
+            socketIniChat()
+            fetchComentario()
+        }
         console.log("toggle modal chat");
         setModal(!modal)
     };
@@ -72,7 +92,7 @@ function Comentarios({ id_partida, titulo }) {
                 className="align-center position-relative"
                 onClick={toggle}
             >
-                {true &&
+                {ComentarioNoVistos >0 &&
                     <div style={{
                         background: "red",
                         borderRadius: "50%",
@@ -86,7 +106,7 @@ function Comentarios({ id_partida, titulo }) {
                         fontWeight: "bold",
 
                     }}>
-                        {12}
+                        {ComentarioNoVistos}
                     </div>
                 }
                 <div
@@ -164,12 +184,9 @@ function Comentarios({ id_partida, titulo }) {
 
                             <div className="msg-bottom">
                                 <div className="bottom-icons-chat">
-                                    {/* <i className="fa"> <FaPlusCircle></FaPlusCircle></i> */}
-                                    {/* <i className="fa fa-plus-circle"></i> */}
                                 </div>
                                 <div className="input-group input-group-chat">
                                     <DebounceInput
-
                                         placeholder="Escribe un comentario"
                                         minLength={1}
                                         debounceTimeout={1000}

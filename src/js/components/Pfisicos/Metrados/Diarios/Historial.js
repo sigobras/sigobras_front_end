@@ -33,7 +33,7 @@ function MDHistorial() {
                         </CardBody>
                     </Collapse>
                 </Card>
-
+{/* 
                 <Card className="mt-2">
                     <a href="#" className="text-white text-decoration-none">
                         <CardHeader onClick={() => CollapsCard(2)} >
@@ -64,7 +64,7 @@ function MDHistorial() {
                             {Collaps === 3 ? <HistorialMetrados rutas={MayoresMet} /> : null}
                         </CardBody>
                     </Collapse>
-                </Card>
+                </Card> */}
 
             </div>
         );
