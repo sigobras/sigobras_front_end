@@ -85,6 +85,8 @@ function Curva_S({ id_ficha, nombreObra }) {
         fetchAnyosEjecutados()
         fetchDataCurvaS()
         fetchYearsModal()
+        fetchYearsModalPIM()
+        getPinData()
 
     }, []);
     //modal data
@@ -159,9 +161,9 @@ function Curva_S({ id_ficha, nombreObra }) {
         for (let i = 0; i < request.data.length; i++) {
             const element = request.data[i];
             if (anyoMes(element.fecha_inicial) == anyoMesActual()) {
-                console.log("actualizando",element.fecha_inicial);
+                console.log("actualizando", element.fecha_inicial);
                 var ejecutado_monto = await updateEjecutado(element.fecha_inicial)
-                console.log("respuesta de actualizacion ",ejecutado_monto);
+                console.log("respuesta de actualizacion ", ejecutado_monto);
                 element.ejecutado_monto = ejecutado_monto
                 break;
             }
@@ -614,6 +616,18 @@ function Curva_S({ id_ficha, nombreObra }) {
         }
         setYearsModal(years)
     }
+    //para pim
+    const [YearsModalPIM, setYearsModalPIM] = useState([]);
+    function fetchYearsModalPIM() {
+        var actualYear = new Date().getFullYear()
+        actualYear -= 3
+        var years = []
+        for (let i = 0; i < 6; i++) {
+            years.push(actualYear)
+            actualYear++
+        }
+        setYearsModalPIM(years)
+    }
     const [YearsModalData, setYearsModalData] = useState(
         [
             {
@@ -676,6 +690,7 @@ function Curva_S({ id_ficha, nombreObra }) {
         ejecutado: 0,
         financiero: 0
     });
+    const [FinancieroAcumuladoAnyoActual, setFinancieroAcumuladoAnyoActual] = useState(0);
     async function calcularSaldo(dataCurvaS) {
         var tempDataObra = await fetchDataObra()
         console.log("calcularSaldo", dataCurvaS);
@@ -687,6 +702,7 @@ function Curva_S({ id_ficha, nombreObra }) {
         console.log("clonDataObra", clonDataObra);
         var ultimoProgramado = 0
         var ultimoEjecutado = 0
+        var financieroAcumuladoAnyoActual = 0
         for (let i = 0; i < dataCurvaS.length; i++) {
             const element = dataCurvaS[i];
             if (element.tipo != "TOTAL") {
@@ -697,14 +713,22 @@ function Curva_S({ id_ficha, nombreObra }) {
                     ultimoProgramado = element.programado_monto
                     ultimoEjecutado = element.ejecutado_monto
                 }
+                console.log("fecha test", element.fecha_inicial.substring(0, 4));
+                if (element.fecha_inicial.substring(0, 4) == new Date().getFullYear()) {
+                    financieroAcumuladoAnyoActual += element.financiero_monto
+                }
             }
 
 
         }
+        clonDataObra.programado_acumulado = tempDataObra.costo_directo - clonDataObra.programado
+        clonDataObra.ejecutado_acumulado = tempDataObra.costo_directo - clonDataObra.ejecutado
+        clonDataObra.financiero_acumulado = tempDataObra.g_total_presu - clonDataObra.financiero
         clonDataObra.delta = ultimoProgramado - ultimoEjecutado
         clonDataObra.deltaPorcentaje = ultimoEjecutado / ultimoProgramado * 100
         console.log("clonDataObra", ultimoProgramado, ultimoEjecutado, clonDataObra);
         setSaldo(clonDataObra)
+        setFinancieroAcumuladoAnyoActual(financieroAcumuladoAnyoActual)
     }
     async function deletePeriodoCurvaS(id) {
         if (confirm("Esta seguro que desea eliminar esete periodo?")) {
@@ -719,15 +743,56 @@ function Curva_S({ id_ficha, nombreObra }) {
         }
 
     }
+    // ingreso de pin
+    const [PinData, setPinData] = useState([
+        {
+            "monto": 0,
+            "anyo": "SELECCIONE",
+            "id_ficha": id_ficha
+        }
+    ]);
+    function addPinData() {
+        var clon = [...PinData]
+        clon.push({
+            "monto": 0,
+            "anyo": "SELECCIONE",
+            "id_ficha": id_ficha
+        })
+        setPinData(clon)
+        console.log(clon);
+    }
+    function onChangePinData(i, name, value) {
+        var clon = [...PinData]
+        clon[i][name] = value
+        setPinData(clon)
+        console.log(clon);
+    }
+    async function savePinData() {
+        if (confirm("Esta seguro de ingresar estos datos?")) {
+            const request = await axios.post(`${UrlServer}/postCurvaSPin`,
+                PinData
+            )
+            console.log(request);
+            setModal(false)
+            setPinData([])
+            getPinData()
+        }
+    }
+    const [PinDataMonto, setPinDataMonto] = useState(0)
+    async function getPinData() {
+        const request = await axios.post(`${UrlServer}/getCurvaSPin`,
+            {
+                "id_ficha": id_ficha,
+                "anyo": new Date().getFullYear()
+            }
+        )
+        console.log("getPinData", request);
+        setPinDataMonto(request.data.monto)
+    }
     return (
         <div>
             <div style={{
                 overflowY: "auto",
-                // position: "relative",
-                // textAlign: "center",
-                // color: "white",
-                // maxWidth: "600px",
-                // maxHeight: "600px",
             }}>
                 {DataCurvaSTemp.length > 0 ?
                     [
@@ -755,41 +820,185 @@ function Curva_S({ id_ficha, nombreObra }) {
 
                                 }}
                             >
-                                <Alert color="primary">
-                                    <div style={{ fontWeight: 700 }}>
-                                        S/.{Redondea(Saldo.programado)}
+                                <div>
+                                    <Alert color="primary"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 700 }}>
+                                            S/.{Redondea(Saldo.programado_acumulado)}
+                                        </div>
+                                        <div style={{ fontSize: "9px" }}>
+                                            PROGRAMADO ACUMULADO
+                                        </div>
+                                    </Alert>
+                                    <Alert color="primary"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 700 }}>
+                                            S/.{Redondea(Saldo.programado)}
+                                        </div>
+                                        <div style={{ fontSize: "9px" }}>
+                                            PROGRAMADO SALDO
+                                        </div>
+                                    </Alert>
+
+                                </div>
+                                &nbsp;&nbsp;
+                                <div>
+
+                                    <Alert color="warning"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 700 }}>
+                                            S/.{Redondea(Saldo.ejecutado_acumulado)}
+                                        </div>
+                                        <div style={{ fontSize: "9px" }}>
+                                            EJECUTADO ACUMULADO
+                                        </div>
+                                    </Alert>
+                                    <Alert color="warning"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 700 }}>
+                                            S/.{Redondea(Saldo.ejecutado)}
+                                        </div>
+                                        <div style={{ fontSize: "9px" }}>
+                                            EJECUTADO SALDO
+                                        </div>
+                                    </Alert>
+                                </div>
+
+                                &nbsp;&nbsp;
+                                <div>
+
+                                    <Alert color="light"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 700 }}>
+                                            S/.{Redondea(Saldo.financiero_acumulado)}
+                                        </div>
+                                        <div style={{ fontSize: "9px" }}>
+                                            FINANCIERO ACUMULADO
+                                        </div>
+                                    </Alert>
+                                    <Alert color="light"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+
+                                        }}
+                                    >
+                                        <div style={{ fontWeight: 700 }}>
+                                            S/.{Redondea(Saldo.financiero)}
+                                        </div>
+                                        <div style={{ fontSize: "9px" }}>
+                                            FINANCIERO SALDO
+                                        </div>
+
+                                    </Alert>
+                                </div>
+
+                                &nbsp;&nbsp;
+                                <Alert color="danger"
+                                    style={{
+                                        textAlign: "center",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        height: "83px"
+                                    }}
+                                >
+                                    <div>
+                                        <div style={{ fontWeight: 700 }}>
+                                            {Redondea(Saldo.deltaPorcentaje)}%
+                                        </div>
+                                        <div style={{ fontSize: "11px" }}>
+                                            DELTA
+                                        </div>
                                     </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        SALDO PROGRAMADO
-                                    </div>
+
                                 </Alert>
                                 &nbsp;&nbsp;
-                                <Alert color="warning">
-                                    <div style={{ fontWeight: 700 }}>
-                                        S/.{Redondea(Saldo.ejecutado)}
-                                    </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        SALDO EJECUTADO
-                                    </div>
-                                </Alert>
-                                &nbsp;&nbsp;
-                                <Alert color="light">
-                                    <div style={{ fontWeight: 700 }}>
-                                        S/.{Redondea(Saldo.financiero)}
-                                    </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        SALDO FINANCIERO
-                                    </div>
-                                </Alert>
-                                &nbsp;&nbsp;
-                                <Alert color="danger">
-                                    <div style={{ fontWeight: 700 }}>
-                                        {Redondea(Saldo.deltaPorcentaje)}%
-                                    </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        DELTA
-                                    </div>
-                                </Alert>
+                                <div>
+                                    <Alert color="success"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+                                        }}
+                                    >
+                                        <div
+                                            className="d-flex">
+                                            <div style={{ fontSize: "13px" }}>
+                                                PIM {new Date().getFullYear()}
+                                            </div>
+                                            &nbsp;
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(PinDataMonto)}
+                                            </div>
+                                        </div>
+                                    </Alert>
+                                    <Alert color="success"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+
+                                        }}
+                                    >
+                                        <div
+                                            className="d-flex">
+                                            <div style={{ fontSize: "13px" }}>
+                                                ACUMULADO {new Date().getFullYear()}
+                                            </div>
+                                            &nbsp;
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(FinancieroAcumuladoAnyoActual)}
+                                            </div>
+                                        </div>
+                                    </Alert>
+                                    <Alert color="success"
+                                        style={{
+                                            marginBottom: "2px",
+                                            padding: "3px 7px",
+                                            textAlign: "center"
+
+                                        }}
+                                    >
+                                        <div
+                                            className="d-flex">
+                                            <div style={{ fontSize: "13px" }}>
+                                                SALDO PIM
+                                            </div>
+                                            &nbsp;
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(PinDataMonto - FinancieroAcumuladoAnyoActual)}
+                                            </div>
+                                        </div>
+
+                                    </Alert>
+                                </div>
                                 <div class="mr-auto p-2"></div>
                                 {
                                     !ToggleSoles ?
@@ -1136,7 +1345,8 @@ function Curva_S({ id_ficha, nombreObra }) {
                                         :
                                         [
                                             <option value="nuevo">Programar mes</option>,
-                                            <option value="total">Ingresar Acumulados</option>
+                                            <option value="total">Ingresar Acumulados</option>,
+                                            <option value="ingreso-pin">Ingresar/Actualizar PIM</option>
                                         ]
                                     }
 
@@ -1329,12 +1539,62 @@ function Curva_S({ id_ficha, nombreObra }) {
                                 </tr>
                             </tbody>
                         }
+                        {FormularioOpcion == "ingreso-pin" &&
+                            <tbody>
+                                {
+                                    PinData.map((item, i) =>
+                                        <tr key={i}>
+                                            <td>
+                                                <Input type="select"
+                                                    value={item.anyo}
+                                                    onChange={e => onChangePinData(i, "anyo", e.target.value)}
+                                                    className="form-control"
+                                                >
+                                                    <option disabled hidden>SELECCIONE</option>
+                                                    {
+                                                        YearsModalPIM.map((item, i) =>
+                                                            <option key={i}>{item}</option>
+                                                        )
+                                                    }
+                                                </Input>
+                                            </td>
+                                            <td>
+                                                <DebounceInput
+                                                    value={item.monto}
+                                                    debounceTimeout={300}
+                                                    onChange={e => onChangePinData(i, "monto", e.target.value)}
+                                                    type="number"
+                                                    className="form-control"
+                                                />
+                                            </td>
+                                        </tr>
+
+                                    )
+                                }
+                                <tr>
+                                    <td colSpan={5}></td>
+                                    <td>
+                                        <Button color="danger" onClick={addPinData}>+</Button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        }
                     </table>
                 </ModalBody>
                 <ModalFooter>
-                    {RegistroNoUbicados.registros == 0 &&
-                        <Button color="primary" onClick={saveModalData}>Guardar</Button>
+                    {
+                        RegistroNoUbicados.registros == 0 &&
+                        [
+
+                            (FormularioOpcion == "nuevo" || FormularioOpcion == "total") &&
+                            <Button color="primary" onClick={saveModalData}>Guardar</Button>
+                            ,
+                            (FormularioOpcion == "ingreso-pin") &&
+                            <Button color="primary" onClick={savePinData}>Guardar</Button>
+
+                        ]
                     }
+
                     {' '}
                     <Button color="secondary" onClick={toggle}>Cancelar</Button>
                 </ModalFooter>
