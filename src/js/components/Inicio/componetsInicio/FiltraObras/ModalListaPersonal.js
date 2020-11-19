@@ -47,12 +47,12 @@ export default ({ id_ficha, codigo_obra }) => {
     
     setUsuariosPersonal(request.data)
     setIdCargoSeleccionado(id_cargo)
-    fetchUsuariosPersonalInactivos(id_cargo)
     if (id_cargo == 0) {
       setUsuariosPersonalInactivos([])
       setTabUsuariosPersonalTotal(true)
     }else{
       setTabUsuariosPersonalTotal(false)
+      fetchUsuariosPersonalInactivos(id_cargo)
     }
   }
   //input file

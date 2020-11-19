@@ -60,7 +60,7 @@ function Curva_S({ id_ficha, nombreObra }) {
         setDataObra(request.data)
         return request.data
     }
-    const [ToggleSoles, setToggleSoles] = useState(true);
+    const [ToggleSoles, setToggleSoles] = useState(false);
     function onChangeToggleSoles() {
         if (ToggleSoles) {
             setDataCurvaSTemp(DataCurvaSPorcentaje)
@@ -805,9 +805,9 @@ function Curva_S({ id_ficha, nombreObra }) {
                                 // color: "white",
                                 // maxWidth: "600px",
                                 // maxHeight: "1000px",
-                                position: "fixed",
-                                width: "800px",
-                                zIndex: 1
+                                // position: "fixed",
+                                // width: "800px",
+                                // zIndex: 1
                             }}>
                             <div
                                 className="d-flex"
@@ -1041,257 +1041,170 @@ function Curva_S({ id_ficha, nombreObra }) {
                                 />
                             </Collapse>
                         </div>,
-
                         <div
-                            key={0}
                             style={{
-                                // overflowY: "auto",
-                                // position: "relative",
-                                // textAlign: "center",
-                                // color: "white",
-                                // maxWidth: "600px",
-                                // maxHeight: "1000px",
-                                // position: "fixed",
-                                width: "800px",
-                                zIndex: 1,
-                                visibility: "hidden"
-                            }}>
-                            <div
-                                className="d-flex"
-                                style={{
-                                    // right: "261px",
-                                    // position: "fixed",
-                                    // top: "107px",
-                                    // zIndex: 1
-
-
-                                }}
-                            >
-                                <Alert color="primary">
-                                    <div style={{ fontWeight: 700 }}>
-                                        S/.{Redondea(Saldo.programado)}
-                                    </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        SALDO PROGRAMADO
-                                    </div>
-                                </Alert>
-                                    &nbsp;&nbsp;
-                                <Alert color="warning">
-                                    <div style={{ fontWeight: 700 }}>
-                                        S/.{Redondea(Saldo.ejecutado)}
-                                    </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        SALDO EJECUTADO
-                                    </div>
-                                </Alert>
-                                    &nbsp;&nbsp;
-                                <Alert color="light">
-                                    <div style={{ fontWeight: 700 }}>
-                                        S/.{Redondea(Saldo.financiero)}
-                                    </div>
-                                    <div style={{ fontSize: "11px" }}>
-                                        SALDO FINANCIERO
-                                    </div>
-                                </Alert>
-                                <div class="mr-auto p-2"></div>
-                                {
-                                    sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                                    [
-
-                                        (
-                                            !ToggleSoles ?
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-primary"
-                                                    style={{ height: "32px" }}
-                                                    onClick={() => onChangeToggleSoles()}
-                                                >S/.</button> :
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-primary"
-                                                    style={{ height: "32px" }}
-                                                    onClick={() => onChangeToggleSoles()}
-                                                >%</button>
-                                        ),
-                                        <div onClick={toggle} style={{ color: '#676767' }}>
-                                            <MdSettings className="icon" size={32} />
-                                        </div>
-                                    ]
-                                }
-                            </div>
-                            <Collapse isOpen={ToggleSoles}>
-                                <HighchartsReact
-                                    highcharts={Highcharts}
-                                    // constructorType={'stockChart'}
-                                    options={options}
-                                />
-                            </Collapse>
-                            <Collapse isOpen={!ToggleSoles}>
-                                <HighchartsReact
-                                    highcharts={Highcharts}
-                                    // constructorType={'stockChart'}
-                                    options={options2}
-                                />
-                            </Collapse>
-                        </div>,
-
-
-                        <table
-                            key={2}
-                            className="table table-sm small"
-
+                                overflowX: "auto"
+                            }}
                         >
-                            <thead>
-                                <tr>
-                                    <th>
-                                        MES
+                            <table
+                                key={2}
+                                className="table table-sm small"
+
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            MES
                                     </th>
-                                    {
-                                        DataCurvaSTemp.map((item, i) =>
-                                            <th
-                                                key={i}
-                                                style={
-                                                    item.tipo == "TOTAL" ?
-                                                        { background: "#9a0000" }
-                                                        : {}
-                                                }
-                                            >
-                                                <div
-                                                    className="d-flex"
-                                                >
-                                                    {item.estado_codigo == 'C' ? "CORTE " : ""}
-                                                    {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
-                                                    {
-                                                        (item.ejecutado_monto == 0 && sessionStorage.getItem("cargo") == "RESIDENTE") &&
-                                                        <div
-                                                            onClick={() => deletePeriodoCurvaS(item.id)}
-                                                        >
-                                                            <MdDeleteForever className="icon" />
-                                                        </div>
+                                        {
+                                            DataCurvaSTemp.map((item, i) =>
+                                                <th
+                                                    key={i}
+                                                    style={
+                                                        item.tipo == "TOTAL" ?
+                                                            { background: "#9a0000" }
+                                                            : {}
                                                     }
+                                                >
+                                                    <div
+                                                        className="d-flex"
+                                                    >
+                                                        {item.estado_codigo == 'C' ? "CORTE " : ""}
+                                                        {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
+                                                        {
+                                                            (item.ejecutado_monto == 0 && sessionStorage.getItem("cargo") == "RESIDENTE") &&
+                                                            <div
+                                                                onClick={() => deletePeriodoCurvaS(item.id)}
+                                                            >
+                                                                <MdDeleteForever className="icon" />
+                                                            </div>
+                                                        }
 
-                                                </div>
+                                                    </div>
 
 
-                                            </th>
-                                        )
-                                    }
+                                                </th>
+                                            )
+                                        }
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr >
-                                    <th>
-                                        PROGRAMADO
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr >
+                                        <th>
+                                            PROGRAMADO
                                     </th>
-                                    {
-                                        DataCurvaSTemp.map((item, i) =>
-                                            <td key={i}>
-                                                {
-                                                    (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
+                                        {
+                                            DataCurvaSTemp.map((item, i) =>
+                                                <td key={i}>
+                                                    {
+                                                        (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
 
-                                                        <div
-                                                            className="d-flex"
-                                                        >
-                                                            <DebounceInput
-                                                                value={item.Programado_monto}
-                                                                debounceTimeout={300}
-                                                                onChange={e => onChangeInputProgramado(e.target.value, i)}
-                                                                type="number"
-                                                            />
                                                             <div
-                                                                onClick={() => updateProgramado(item.id, i)}
+                                                                className="d-flex"
                                                             >
-                                                                <MdSave className="icon" />
+                                                                <DebounceInput
+                                                                    value={item.Programado_monto}
+                                                                    debounceTimeout={300}
+                                                                    onChange={e => onChangeInputProgramado(e.target.value, i)}
+                                                                    type="number"
+                                                                />
+                                                                <div
+                                                                    onClick={() => updateProgramado(item.id, i)}
+                                                                >
+                                                                    <MdSave className="icon" />
+                                                                </div>
+                                                                <div
+                                                                    onClick={() => toggleInputProgramado(-1)}
+                                                                >
+                                                                    <MdClose className="icon" />
+                                                                </div>
                                                             </div>
+                                                            :
                                                             <div
-                                                                onClick={() => toggleInputProgramado(-1)}
+                                                                className="d-flex"
                                                             >
-                                                                <MdClose className="icon" />
+                                                                {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
+                                                                {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
+                                                                    (sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                        <div
+                                                                            onClick={() => toggleInputProgramado(i)}
+                                                                        >
+                                                                            <MdModeEdit className="icon" />
+                                                                        </div>
+                                                                    )
+                                                                }
                                                             </div>
-                                                        </div>
-                                                        :
-                                                        <div
-                                                            className="d-flex"
-                                                        >
-                                                            {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
-                                                            {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                (sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                    }
+                                                </td>
+                                            )
+                                        }
+                                    </tr>
+                                    <tr >
+                                        <th>
+                                            EJECUTADO
+                                    </th>
+                                        {
+                                            DataCurvaSTemp.map((item, i) =>
+                                                <td key={i}>
+                                                    {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} { }
+                                                </td>
+                                            )
+                                        }
+                                    </tr>
+                                    <tr >
+                                        <th>
+                                            FINANCIERO
+                                    </th>
+                                        {
+                                            DataCurvaSTemp.map((item, i) =>
+                                                <td key={i}>
+                                                    {
+                                                        EstadoInputFinanciero == i ?
+
+                                                            <div
+                                                                className="d-flex"
+                                                            >
+                                                                <DebounceInput
+                                                                    value={item.financiero_monto}
+                                                                    debounceTimeout={300}
+                                                                    onChange={e => onChangeInputFinanciero(e.target.value, i)}
+                                                                    type="number"
+                                                                />
+                                                                <div
+                                                                    onClick={() => updateFinanciero(item.id, i)}
+                                                                >
+                                                                    <MdSave className="icon" />
+                                                                </div>
+                                                                <div
+                                                                    onClick={() => toggleInputFinanciero(-1)}
+                                                                >
+                                                                    <MdClose className="icon" />
+                                                                </div>
+                                                            </div>
+                                                            :
+                                                            <div
+                                                                className="d-flex"
+                                                            >
+                                                                {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
+                                                                {sessionStorage.getItem("cargo") == "RESIDENTE" &&
                                                                     <div
-                                                                        onClick={() => toggleInputProgramado(i)}
+                                                                        onClick={() => toggleInputFinanciero(i)}
                                                                     >
                                                                         <MdModeEdit className="icon" />
                                                                     </div>
-                                                                )
-                                                            }
-                                                        </div>
-                                                }
-                                            </td>
-                                        )
-                                    }
-                                </tr>
-                                <tr >
-                                    <th>
-                                        EJECUTADO
-                        </th>
-                                    {
-                                        DataCurvaSTemp.map((item, i) =>
-                                            <td key={i}>
-                                                {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} { }
-                                            </td>
-                                        )
-                                    }
-                                </tr>
-                                <tr >
-                                    <th>
-                                        FINANCIERO
-                                    </th>
-                                    {
-                                        DataCurvaSTemp.map((item, i) =>
-                                            <td key={i}>
-                                                {
-                                                    EstadoInputFinanciero == i ?
+                                                                }
+                                                            </div>
+                                                    }
+                                                </td>
+                                            )
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                                                        <div
-                                                            className="d-flex"
-                                                        >
-                                                            <DebounceInput
-                                                                value={item.financiero_monto}
-                                                                debounceTimeout={300}
-                                                                onChange={e => onChangeInputFinanciero(e.target.value, i)}
-                                                                type="number"
-                                                            />
-                                                            <div
-                                                                onClick={() => updateFinanciero(item.id, i)}
-                                                            >
-                                                                <MdSave className="icon" />
-                                                            </div>
-                                                            <div
-                                                                onClick={() => toggleInputFinanciero(-1)}
-                                                            >
-                                                                <MdClose className="icon" />
-                                                            </div>
-                                                        </div>
-                                                        :
-                                                        <div
-                                                            className="d-flex"
-                                                        >
-                                                            {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
-                                                            {sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                                                                <div
-                                                                    onClick={() => toggleInputFinanciero(i)}
-                                                                >
-                                                                    <MdModeEdit className="icon" />
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                }
-                                            </td>
-                                        )
-                                    }
-                                </tr>
-                            </tbody>
-                        </table>
+                        </div>
+
                     ]
                     : [<img key={0}
                         style={{ width: "300px" }}
