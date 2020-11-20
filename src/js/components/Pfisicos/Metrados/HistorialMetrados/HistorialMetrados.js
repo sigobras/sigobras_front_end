@@ -834,7 +834,8 @@ export default () => {
                                                                                                 color: "#171819",
                                                                                                 fontSize: "12px",
                                                                                                 backgroundColor: "#ffc107",
-                                                                                                width: "100%"
+                                                                                                width: "100%",
+                                                                                                padding:"3px",
                                                                                             }}>
                                                                                             <b>{item2.numero + " " + item2.nombre}</b>
                                                                                             <div className="float-right" style={{ color: "#171819", fontSize: "12px", }}>
