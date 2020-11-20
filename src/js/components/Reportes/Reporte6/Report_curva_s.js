@@ -16,8 +16,20 @@ import HighchartsReact from 'highcharts-react-official';
 require("highcharts/modules/exporting")(Highcharts);
 // var request = require('request').defaults({ encoding: null });
 
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+// import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+
 function Report_curva_s() {
   const [Loading, setLoading] = useState(false);
+  const useStyles = makeStyles((theme) => ({
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+    },
+  }));
+  const classes = useStyles();
   //   function RequestB64(){
   //     request.get('http://tinypng.org/images/example-shrunk-8cadd4c7.png', function (error, response, body) {
   //     if (!error && response.statusCode == 200) {
@@ -645,17 +657,19 @@ function Report_curva_s() {
           columns: [
             {
               image: Imagenes_en_base_64[0].imgb64,
-              fit: [245, 245],
-              margin: [0, 0, 0, 0],
-              alignment: "center",
+              // fit: [220, 220],
+              width: 250,
+              height: 180,
+              margin: [1, 0, 0, 0],
+              // alignment: "center",
             },
             {
               // alignment: 'right',
               image: Imagenes_en_base_64[1].imgb64,
-              fit: [245, 245],
-              // width: 48,
-              // height: 30,
-              margin: [10, 0, 0, 0],
+              // fit: [220, 220],
+              width: 250,
+              height: 180,
+              margin: [0, 0, -16, 0],
               alignment: "center",
 
             }
@@ -668,15 +682,15 @@ function Report_curva_s() {
           columns: [
             {
               text: Imagenes_en_base_64[0].descripcion,
-              margin: [0, 5, 10, 0],
+              margin: [0, 5, 0, 0],
               alignment: 'justify',
-              fontSize: 6.5,
+              fontSize: 5.9,
             },
             {
               text: Imagenes_en_base_64[1].descripcion,
               margin: [10, 5, 0, 0],
               alignment: 'justify',
-              fontSize: 6.5,
+              fontSize: 5.9,
             }
           ],
 
@@ -936,7 +950,9 @@ function Report_curva_s() {
           <a href="#"
             onClick={() => generatePdf()}
           ><FaFilePdf className="text-danger" /> Curva S ✔</a>
-          {Loading && <Spinner size="sm" color="primary" /> }
+          {Loading && <Backdrop className={classes.backdrop} open>
+        <CircularProgress color="inherit" />
+      </Backdrop> }
         </div>
       </li>
       {/* </Container> */}
