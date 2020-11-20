@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, Row, Col, Button, ButtonGroup, Spinner } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Row, Col, Button, ButtonGroup, Spinner, Container } from 'reactstrap';
 import { FaBlackTie, FaFilePdf } from "react-icons/fa";
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
@@ -17,7 +17,7 @@ require("highcharts/modules/exporting")(Highcharts);
 // var request = require('request').defaults({ encoding: null });
 
 function Report_curva_s() {
-
+  const [Loading, setLoading] = useState(false);
   //   function RequestB64(){
   //     request.get('http://tinypng.org/images/example-shrunk-8cadd4c7.png', function (error, response, body) {
   //     if (!error && response.statusCode == 200) {
@@ -96,6 +96,9 @@ function Report_curva_s() {
     const request = await axios.post(`${UrlServer}/getDataObra`, {
       id_ficha: sessionStorage.getItem('idobra')
     })
+    setLoading(true);
+    console.log("request", request);
+
     return request.data
   }
 
@@ -103,13 +106,20 @@ function Report_curva_s() {
   // Obteniendo imagenes de la base de datos
   const [Imagen1, setImagen1] = useState("");
   const [Imagen2, setImagen2] = useState("");
+  const [Existe_Imagen, setExiste_Imagen] = useState(false);
 
   async function ImagenesDB() {
-    const request = await axios.post(`${UrlServer}/getImagenesCurvaS`, {
-      id_ficha: sessionStorage.getItem('idobra')
-    })
-    // console.log("request.dataaaa", request.data);
-    return request.data
+    try {
+      const request = await axios.post(`${UrlServer}/getImagenesCurvaS`, {
+        id_ficha: sessionStorage.getItem('idobra')
+      })
+      console.log("request.dataaaa", request);
+
+      return request.data
+    } catch (error) {
+      setLoading(false)
+      alert("No hay imagenes registradas")
+    }
   }
 
   async function createDataChartPorcentaje(dataCurvaS) {
@@ -134,7 +144,7 @@ function Report_curva_s() {
     dataCurvaS.forEach((item, i) => {
       if (item.tipo == "PERIODO") {
         //  console.log("MEs",item.fecha_inicial.substr(5,2));
-        if (year == item.fecha_inicial.substr(0, 4)  && item.ejecutado_monto != 0 && item.ejecutado_monto != null){
+        if (year == item.fecha_inicial.substr(0, 4) && item.ejecutado_monto != 0 && item.ejecutado_monto != null) {
           Delta = (item.ejecutado_monto / item.programado_monto) * 100
           //&& month == item.fecha_inicial.substr(5, 2)
         }
@@ -149,11 +159,11 @@ function Report_curva_s() {
         financiero_acumulado += item.financiero_monto
         financiero.push(redondeo(financiero_acumulado / tempDataObra.g_total_presu * 100, 2))
 
-        programado_saldo = tempDataObra.costo_directo  - programado_acumulado
+        programado_saldo = tempDataObra.costo_directo - programado_acumulado
         // console.log("programado_saldo",programado_saldo);
-        ejecutado_saldo = tempDataObra.costo_directo  - ejecutado_acumulado
+        ejecutado_saldo = tempDataObra.costo_directo - ejecutado_acumulado
         // console.log("ejecutado_saldo",ejecutado_saldo);
-        financiero_saldo = tempDataObra.g_total_presu  - financiero_acumulado
+        financiero_saldo = tempDataObra.g_total_presu - financiero_acumulado
         // console.log("financiero_saldo",financiero_saldo);
       }
     })
@@ -399,13 +409,12 @@ function Report_curva_s() {
 
   async function getDataChart() {
     // console.log("getDataChart");
-
     var request = await axios.post(`${UrlServer}/getDataCurvaS`, {
       "id_ficha": sessionStorage.getItem("idobra"),
-
     })
+    console.log("request.dataaaaaaaaaa", request.data);
     return request.data
-    // console.log("request.data", request.data);
+
 
   }
 
@@ -531,24 +540,28 @@ function Report_curva_s() {
 
     var ListaTablas = []
     var ListaTemporal = []
-    var AnyoActual = dataChartTablePorcentajes[0].fecha_inicial.substr(0, 4)
 
-    for (let i = 0; i < dataChartTablePorcentajes.length; i++) {
-      const element = dataChartTablePorcentajes[i];
-      // console.log("element.anyo", element.fecha_inicial.substr(0, 4));
+    if (dataChartTablePorcentajes.length != 0) {
 
-      //Aqui se cumple una condicion
-      if (AnyoActual != element.fecha_inicial.substr(0, 4)) {
-        ListaTablas.push(ListaTemporal)
-        ListaTemporal = []
-        ListaTemporal.push(element)
-        AnyoActual = element.fecha_inicial.substr(0, 4)
-      } else {
-        ListaTemporal.push(element)
+      var AnyoActual = dataChartTablePorcentajes[0].fecha_inicial.substr(0, 4)
+
+      for (let i = 0; i < dataChartTablePorcentajes.length; i++) {
+        const element = dataChartTablePorcentajes[i];
+        // console.log("element.anyo", element.fecha_inicial.substr(0, 4));
+
+        //Aqui se cumple una condicion
+        if (AnyoActual != element.fecha_inicial.substr(0, 4)) {
+          ListaTablas.push(ListaTemporal)
+          ListaTemporal = []
+          ListaTemporal.push(element)
+          AnyoActual = element.fecha_inicial.substr(0, 4)
+        } else {
+          ListaTemporal.push(element)
+        }
       }
+      ListaTablas.push(ListaTemporal)
+      // console.log("ListaTablas", ListaTablas);
     }
-    ListaTablas.push(ListaTemporal)
-    // console.log("ListaTablas", ListaTablas);
 
     var DatosCurvaTotal = []
 
@@ -623,48 +636,57 @@ function Report_curva_s() {
 
     //Se consigue el link de las imagenes
     var Imagenes_en_base_64 = await ImagenesDB()
-    var imagenesParaPdf = [
-      {
-        columns: [
-          {
-            image: Imagenes_en_base_64[0].imgb64,
-            fit: [245, 245],
-            margin: [0, 0, 0, 0],
-            alignment: "center",
-          },
-          {
-            // alignment: 'right',
-            image: Imagenes_en_base_64[1].imgb64,
-            fit: [245, 245],
-            // width: 48,
-            // height: 30,
-            margin: [10, 0, 0, 0],
-            alignment: "center",
+    var imagenesParaPdf = ""
+    var DescripcionImagenesParaPdf = []
+    if (Imagenes_en_base_64) {
+      console.log("Procesando imagenes");
+      imagenesParaPdf = [
+        {
+          columns: [
+            {
+              image: Imagenes_en_base_64[0].imgb64,
+              fit: [245, 245],
+              margin: [0, 0, 0, 0],
+              alignment: "center",
+            },
+            {
+              // alignment: 'right',
+              image: Imagenes_en_base_64[1].imgb64,
+              fit: [245, 245],
+              // width: 48,
+              // height: 30,
+              margin: [10, 0, 0, 0],
+              alignment: "center",
 
-          }
-        ],
+            }
+          ],
 
-      },
-    ]
-    var DescripcionImagenesParaPdf = [
-      {
-        columns: [
-          {
-            text: Imagenes_en_base_64[0].descripcion,
-            margin: [0, 5, 10, 0],
-            alignment: 'justify',
-            fontSize: 6.5,
-          },
-          {
-            text: Imagenes_en_base_64[1].descripcion,
-            margin: [10, 5, 0, 0],
-            alignment: 'justify',
-            fontSize: 6.5,
-          }
-        ],
+        },
+      ]
+      DescripcionImagenesParaPdf = [
+        {
+          columns: [
+            {
+              text: Imagenes_en_base_64[0].descripcion,
+              margin: [0, 5, 10, 0],
+              alignment: 'justify',
+              fontSize: 6.5,
+            },
+            {
+              text: Imagenes_en_base_64[1].descripcion,
+              margin: [10, 5, 0, 0],
+              alignment: 'justify',
+              fontSize: 6.5,
+            }
+          ],
 
-      },
-    ]
+        },
+      ]
+    }
+
+    console.log("Imagenes_en_base_64", Imagenes_en_base_64);
+
+
 
     //Aqui se genera el PDF
 
@@ -725,24 +747,24 @@ function Report_curva_s() {
           style: 'tableExample',
           // layout: 'noBorders',
           italics: true,
-          margin:[0,-10,0,10],
+          margin: [0, -10, 0, 10],
           table: {
             body: [
               [
                 {
-                  text: "S/."+Redondea(temp.programado_acumulado) + "\nPROGRAMADO ACUMULADO",
+                  text: "S/." + Redondea(temp.programado_acumulado) + "\nPROGRAMADO ACUMULADO",
                   alignment: 'center',
                   fontSize: 5,
                   // margin: [0, 0, 0, -10],
                 },
                 {
-                  text: "S/."+Redondea(temp.ejecutado_acumulado) +"\nEJECUTADO ACUMULADO",
+                  text: "S/." + Redondea(temp.ejecutado_acumulado) + "\nEJECUTADO ACUMULADO",
                   alignment: 'center',
                   fontSize: 5,
                   // margin: [0, 0, 0, -10],
                 },
                 {
-                  text: "S/."+Redondea(temp.financiero_acumulado) +"\nFINANCIERO ACUMULADO",
+                  text: "S/." + Redondea(temp.financiero_acumulado) + "\nFINANCIERO ACUMULADO",
                   alignment: 'center',
                   fontSize: 5,
                   // margin: [0, 0, 0, -10],
@@ -761,18 +783,18 @@ function Report_curva_s() {
               ],
               [
                 {
-                  text: "S/."+Redondea(temp.programado_saldo) + "\nPROGRAMADO SALDO",
+                  text: "S/." + Redondea(temp.programado_saldo) + "\nPROGRAMADO SALDO",
                   fontSize: 5,
                   alignment: 'center',
                   // margin: [0, -10, 0, 0],
                 },
                 {
-                  text: "S/."+Redondea(temp.ejecutado_saldo) + "\nEJECUTADO SALDO",
+                  text: "S/." + Redondea(temp.ejecutado_saldo) + "\nEJECUTADO SALDO",
                   fontSize: 5,
                   alignment: 'center',
                 },
                 {
-                  text: "S/."+Redondea(temp.financiero_saldo) + "\nFINANCIERO SALDO",
+                  text: "S/." + Redondea(temp.financiero_saldo) + "\nFINANCIERO SALDO",
                   fontSize: 5,
                   alignment: 'center',
                 },
@@ -822,7 +844,10 @@ function Report_curva_s() {
             return 0;
           },
         }
-      }, imagenesParaPdf, DescripcionImagenesParaPdf),
+      }
+        , Imagenes_en_base_64 ? imagenesParaPdf : " "
+        , Imagenes_en_base_64 ? DescripcionImagenesParaPdf : " "
+      ),
 
 
       styles: {
@@ -892,19 +917,32 @@ function Report_curva_s() {
 
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
 
-    var pdfDocGenerator = pdfmake.createPdf(dd);
+    var pdfDocGenerator = await pdfmake.createPdf(dd);
     pdfDocGenerator.open()
-
+    setLoading(false);
 
   }
 
   return (
     <div >
+
+      {/* <Container> */}
       <li className="lii">
-        <a href="#"
-          onClick={() => generatePdf()}
-        ><FaFilePdf className="text-danger" /> Curva S ✔</a>
+        <div className="d-flex"
+          style={{            
+            alignItems: "center",            
+          }}
+        >
+          <a href="#"
+            onClick={() => generatePdf()}
+          ><FaFilePdf className="text-danger" /> Curva S ✔</a>
+          {Loading && <Spinner size="sm" color="primary" /> }
+        </div>
       </li>
+      {/* </Container> */}
+
+
+
       <div
         style={{ display: 'none' }}
       >
