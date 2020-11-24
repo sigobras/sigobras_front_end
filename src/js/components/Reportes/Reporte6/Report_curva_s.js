@@ -654,6 +654,33 @@ function Report_curva_s() {
       // console.log("Procesando imagenes");
       imagenesParaPdf = [
         {
+          // style: 'tableExample',
+          // layout: 'noBorders',
+          // table: {
+          //   widths: ['*', '*'],
+          //   body: [
+          //     [
+          //       {
+          //         image: Imagenes_en_base_64[0].imgb64,
+          //             fit: [170, 170],
+          //         // width: 250,
+          //         // height: 160,
+          //             margin: [1, -8, 0, -10],
+          //             alignment: "center",
+          //       },
+          //       {
+          //         // alignment: 'right',
+          //         image: Imagenes_en_base_64[1].imgb64,
+          //             fit: [170, 170],
+          //         // width: 250,
+          //         // height: 160,
+          //             margin: [0, -8, -16, -10],
+          //             alignment: "center",
+          //       },
+          //     ],
+          //   ]
+          // }
+
           columns: [
             {
               image: Imagenes_en_base_64[0].imgb64,
@@ -688,6 +715,7 @@ function Report_curva_s() {
                 {
                   text: Imagenes_en_base_64[0].descripcion,
                   // noWrap: true,
+                  // margin: [0, -7, 0, 0], Con tabla
                   margin: [0, 0, 0, 0],
                   alignment: 'justify',
                   fontSize: 5.9,
@@ -695,7 +723,26 @@ function Report_curva_s() {
                 {
                   text: Imagenes_en_base_64[1].descripcion,
                   // noWrap: true,
+                  // margin: [5, -7, 0, 0], Con tabla
+                  margin: [5, 0, 0, 0],
+                  alignment: 'justify',
+                  fontSize: 5.9,
+                },
+              ],
+              [
+                {
+                  text: Imagenes_en_base_64[0].fecha,
+                  // noWrap: true,
+                  // margin: [0, -5, 0, 0], COn tabla
                   margin: [0, 0, 0, 0],
+                  alignment: 'justify',
+                  fontSize: 5.9,
+                },
+                {
+                  text: Imagenes_en_base_64[1].fecha,
+                  // noWrap: true,
+                  // margin: [5, -5, 0, 0], COn tabla
+                  margin: [5, 0, 0, 0],
                   alignment: 'justify',
                   fontSize: 5.9,
                 },
