@@ -4,7 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import { Redondea, mesesShort } from './../../../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
-import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever } from "react-icons/md";
+import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever,MdSystemUpdateAlt } from "react-icons/md";
 import './Curva_S.css'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
@@ -158,16 +158,16 @@ function Curva_S({ id_ficha, nombreObra }) {
             }
         )
         //actualizacion de monto ejecutado
-        for (let i = 0; i < request.data.length; i++) {
-            const element = request.data[i];
-            if (anyoMes(element.fecha_inicial) == anyoMesActual()) {
-                console.log("actualizando", element.fecha_inicial);
-                var ejecutado_monto = await updateEjecutado(element.fecha_inicial)
-                console.log("respuesta de actualizacion ", ejecutado_monto);
-                element.ejecutado_monto = ejecutado_monto
-                break;
-            }
-        }
+        // for (let i = 0; i < request.data.length; i++) {
+        //     const element = request.data[i];
+        //     if (anyoMes(element.fecha_inicial) == anyoMesActual()) {
+        //         console.log("actualizando", element.fecha_inicial);
+        //         var ejecutado_monto = await updateEjecutado(element.fecha_inicial)
+        //         console.log("respuesta de actualizacion ", ejecutado_monto);
+        //         element.ejecutado_monto = ejecutado_monto
+        //         break;
+        //     }
+        // }
         var temp2 = [...request.data]
         calcularSaldo(temp2)
         setDataCurvaS(temp2)
@@ -251,6 +251,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                 "id_ficha": id_ficha
             }
         )
+        fetchDataCurvaS()
         return request.data.ejecutado_monto
     }
     //chart
@@ -1055,7 +1056,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                     <tr>
                                         <th>
                                             MES
-                                    </th>
+                                        </th>
                                         {
                                             DataCurvaSTemp.map((item, i) =>
                                                 <th
@@ -1069,6 +1070,12 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                     <div
                                                         className="d-flex"
                                                     >
+                                                        <div
+                                                            onClick={() => updateEjecutado(item.fecha_inicial)}
+                                                        >
+                                                            <MdSystemUpdateAlt className="icon" />
+                                                        </div>
+                                                        {" "}
                                                         {item.estado_codigo == 'C' ? "CORTE " : ""}
                                                         {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
                                                         {
