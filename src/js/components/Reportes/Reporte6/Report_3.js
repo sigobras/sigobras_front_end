@@ -14,7 +14,22 @@ import { UrlServer } from '../../Utils/ServerUrlConfig'
 
 import { Redondea1, Redondea, Money_to_float } from '../../Utils/Funciones';
 
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+// import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+
+var useStyles = makeStyles((theme) => ({
+    backdrop: {
+      zIndex: theme.xIndex.drawer + 1,
+      color: '#EF1',
+    },
+  }));
+  
+    
+
 class Report_3 extends Component {
+
     constructor() {
         super();
         this.state = {
@@ -22,12 +37,14 @@ class Report_3 extends Component {
             DataApiResumenVal: [],
             DataAniosApi: [],
             DataMesesApi: [],
-
+            classes: useStyles,
             modal: false,
 
             urlPdf: '',
             anioSeleccionado: '',
             mesActual: '',
+
+            Loading: false,
         }
         this.ModalReportes = this.ModalReportes.bind(this)
         this.ResEstructarData = this.ResEstructarData.bind(this)
@@ -35,9 +52,7 @@ class Report_3 extends Component {
         this.seleccionaAnios = this.seleccionaAnios.bind(this)
         this.seleccionaMeses = this.seleccionaMeses.bind(this)
     }
-
-
-
+    
 
     ModalReportes() {
         this.setState(prevState => ({
@@ -48,7 +63,7 @@ class Report_3 extends Component {
             "id_ficha": sessionStorage.getItem("idobra")
         })
             .then((res) => {
-                console.log('res ANIOS', res.data)
+                // console.log('res ANIOS', res.data)
                 this.setState({
                     DataAniosApi: res.data
                 })
@@ -56,6 +71,7 @@ class Report_3 extends Component {
             .catch((err) => {
                 console.log('ERROR ANG al obtener datos ❌' + err);
             });
+
     }
 
     seleccionaAnios(e) {
@@ -70,11 +86,14 @@ class Report_3 extends Component {
             "anyo": e.target.value
         })
             .then((res) => {
-                 console.log('res Meses', res.data)
+                // console.log('res Meses', res.data)
                 this.setState({
-                    DataMesesApi: res.data
+                    DataMesesApi: res.data,
+
                 })
+
             })
+            // setLoading(true)
             .catch((err) => {
                 console.log('ERROR ANG al obtener datos ❌' + err);
             });
@@ -94,12 +113,15 @@ class Report_3 extends Component {
             "fecha_final": fecha_final,
         })
             .then((res) => {
-                console.log('res resumenValorizacionPrincipal', res.data)
+                // console.log('res resumenValorizacionPrincipal', res.data)
                 this.setState({
                     DataApiResumenVal: res.data,
-                    DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final)
-
+                    DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final),
+                    Loading: true,
                 })
+                // setTimeout(() => {
+                //     this.setState({ Loading: false });
+                // }, 2000);
             })
             .catch((err) => {
                 console.log('ERROR ANG al obtener datos ❌' + err);
@@ -111,7 +133,7 @@ class Report_3 extends Component {
             "fecha_final": fecha_final,
         })
             .then((res) => {
-                console.log('res costos indirectos', res.data)
+                // console.log('res costos indirectos', res.data)
                 var costos_indirectos = res.data
                 var suma_presupuesto = 0;
                 var suma_avance_anterior = 0;
@@ -122,7 +144,7 @@ class Report_3 extends Component {
                 var porcentaje_actual_total = this.state.DataApiResumenVal.porcentaje_actual;
                 var porcentaje_total_total = this.state.DataApiResumenVal.porcentaje_total;
                 var porcentaje_saldo_total = this.state.DataApiResumenVal.porcentaje_saldo;
-                
+
                 for (let index = 0; index < costos_indirectos.length; index++) {
                     const item = costos_indirectos[index];
                     item.avance_anterior = Redondea(item.monto * this.state.DataApiResumenVal.porcentaje_anterior / 100)
@@ -138,10 +160,10 @@ class Report_3 extends Component {
                     suma_avance_actual += item.monto * this.state.DataApiResumenVal.porcentaje_actual / 100
                     suma_avance_total += item.monto * this.state.DataApiResumenVal.porcentaje_total / 100
                     suma_avance_saldo += item.monto * this.state.DataApiResumenVal.porcentaje_saldo / 100
-                    
+
                 }
                 var presupuesto_total = suma_presupuesto + Money_to_float(this.state.DataApiResumenVal.presupuesto)
-                console.log("Presupuesto total" , suma_presupuesto,Money_to_float(this.state.DataApiResumenVal.presupuesto));
+                // console.log("Presupuesto total", suma_presupuesto, Money_to_float(this.state.DataApiResumenVal.presupuesto));
                 presupuesto_total = Redondea(presupuesto_total)
 
                 var presupuesto_total_avance_anterior = suma_avance_anterior + Money_to_float(this.state.DataApiResumenVal.valor_anterior)
@@ -160,17 +182,17 @@ class Report_3 extends Component {
                 //console.log("Presupuesto total" , suma_presupuesto,Money_to_float(this.state.DataApiResumenVal.presupuesto));
                 presupuesto_total_avance_saldo = Redondea(presupuesto_total_avance_saldo)
 
-                suma_presupuesto = Redondea(suma_presupuesto )
-                suma_avance_anterior = Redondea(suma_avance_anterior )
-                suma_avance_actual = Redondea(suma_avance_actual )
-                suma_avance_total = Redondea(suma_avance_total )
-                suma_avance_saldo = Redondea(suma_avance_saldo )
-                porcentaje_anterior_total = Redondea(porcentaje_anterior_total )
-                porcentaje_actual_total = Redondea(porcentaje_actual_total )
-                porcentaje_total_total = Redondea(porcentaje_total_total )
-                porcentaje_saldo_total = Redondea(porcentaje_saldo_total )
+                suma_presupuesto = Redondea(suma_presupuesto)
+                suma_avance_anterior = Redondea(suma_avance_anterior)
+                suma_avance_actual = Redondea(suma_avance_actual)
+                suma_avance_total = Redondea(suma_avance_total)
+                suma_avance_saldo = Redondea(suma_avance_saldo)
+                porcentaje_anterior_total = Redondea(porcentaje_anterior_total)
+                porcentaje_actual_total = Redondea(porcentaje_actual_total)
+                porcentaje_total_total = Redondea(porcentaje_total_total)
+                porcentaje_saldo_total = Redondea(porcentaje_saldo_total)
 
-                console.log('costos_indirectos', costos_indirectos);
+                // console.log('costos_indirectos', costos_indirectos);
                 this.setState({
                     costos_indirectos,
                     suma_presupuesto,
@@ -186,25 +208,29 @@ class Report_3 extends Component {
                     presupuesto_total_avance_anterior,
                     presupuesto_total_avance_actual,
                     presupuesto_total_avance_total,
-                    presupuesto_total_avance_saldo
+                    presupuesto_total_avance_saldo,
+                    Loading: false,
                 })
             })
             .catch((err) => {
                 console.log('ERROR ANG al obtener datos ❌' + err);
             });
+            
     }
 
 
+
     ResEstructarData() {
+        
 
         var { DataEncabezado } = this.state
 
 
         var DataHist = this.state.DataApiResumenVal
         var costosIndirectos = this.state.costos_indirectos
-        console.log('Esta es DataHIst', DataHist.componentes)
-        console.log('DH', DataHist.componentes)
-        console.log('costosIndirectos', costosIndirectos)
+        // console.log('Esta es DataHIst', DataHist.componentes)
+        // console.log('DH', DataHist.componentes)
+        // console.log('costosIndirectos', costosIndirectos)
 
 
         var DataRestructurado = []
@@ -217,16 +243,16 @@ class Report_3 extends Component {
                 // color: '#ff0707',
                 layout: {
                     hLineWidth: function (i, node) {
-                      return (i === 0 || i === node.table.body.length) ? 0.1 : 0.1;
+                        return (i === 0 || i === node.table.body.length) ? 0.1 : 0.1;
                     },
                     vLineWidth: function (i, node) {
-                      return (i === 0 || i === node.table.widths.length) ? 0.5 : 0.5;
+                        return (i === 0 || i === node.table.widths.length) ? 0.5 : 0.5;
                     },
                     hLineColor: function (i, node) {
-                      return (i === 0 || i === node.table.body.length) ? '#030027' : '#001638';
+                        return (i === 0 || i === node.table.body.length) ? '#030027' : '#001638';
                     },
                     vLineColor: function (i, node) {
-                      return (i === 0 || i === node.table.widths.length) ? '#030027' : '#001638';
+                        return (i === 0 || i === node.table.widths.length) ? '#030027' : '#001638';
                     },
                     //hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
                     //vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
@@ -235,7 +261,7 @@ class Report_3 extends Component {
                     //paddingTop: function(i, node) { return 2; },
                     //paddingBottom: function(i, node) { return 2; },
                     //fillColor: function (rowIndex, node, columnIndex) { return null; }
-                  },
+                },
 
                 table: {
                     widths: [20, 200, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
@@ -769,7 +795,7 @@ class Report_3 extends Component {
                     margin: [0, 2, 0, 0]
                 },
                 {
-                
+
                 },
                 {
                     text: "S/. " + this.state.suma_presupuesto,
@@ -788,7 +814,7 @@ class Report_3 extends Component {
                     alignment: "right",
                 },
                 {
-                    text:"S/. " + this.state.suma_avance_actual,
+                    text: "S/. " + this.state.suma_avance_actual,
                     style: "TableTotalesInforme",
                     alignment: "right",
                     //colSpan: 2,
@@ -799,7 +825,7 @@ class Report_3 extends Component {
                     alignment: "right",
                 },
                 {
-                    text:"S/. " + this.state.suma_avance_total,
+                    text: "S/. " + this.state.suma_avance_total,
                     style: "TableTotalesInforme",
                     alignment: "right",
                     //colSpan: 2,
@@ -834,34 +860,34 @@ class Report_3 extends Component {
                     margin: [0, 2, 0, 0]
                 },
                 {
-                
+
                 },
                 {
-                    
+
                 },
                 {
-                    
+
                 },
                 {
-                   
+
                 },
                 {
-                    
+
                 },
                 {
-                    
+
                 },
                 {
-                    
+
                 },
                 {
-                    
+
                 },
                 {
-                    
+
                 },
                 {
-                    
+
                 },
             ]
         )
@@ -877,17 +903,17 @@ class Report_3 extends Component {
                     margin: [0, 2, 0, 0]
                 },
                 {
-                
+
                 },
                 {
                     text: this.state.presupuesto_total,
                     style: "TableTotalesInforme",
-                    alignment: "center", 
+                    alignment: "center",
                 },
                 {
                     text: this.state.presupuesto_total_avance_anterior,
                     style: "TableTotalesInforme",
-                    alignment: "center",  
+                    alignment: "center",
                 },
                 {
                     text: `${DataHist.porcentaje_anterior}` + " %",
@@ -1288,7 +1314,7 @@ class Report_3 extends Component {
                     fillColor: '#c5d5ea',
                 },
 
-                
+
             },
             defaultStyle: {
                 // alignment: 'justify'
@@ -1300,7 +1326,10 @@ class Report_3 extends Component {
         // pdfmake.createPdf(docDefinition)
         var pdfDocGenerator = pdfmake.createPdf(docDefinition);
         pdfDocGenerator.open()
+        // this.setState({
 
+        //     Loading: false,
+        // })
         // pdfDocGenerator.getDataUrl((dataUrl) => {
         // this.setState({
         //     urlPdf:dataUrl
@@ -1311,11 +1340,9 @@ class Report_3 extends Component {
 
     }
 
-
-
-
     render() {
-        const { DataApiResumenVal, DataAniosApi, DataMesesApi, urlPdf } = this.state
+        const { DataApiResumenVal, DataAniosApi, DataMesesApi, urlPdf, Loading,classes } = this.state
+        // const classes = useStyles();
         return (
             <div>
                 <li className="lii">
@@ -1357,6 +1384,11 @@ class Report_3 extends Component {
                                     </fieldset>
                                 }
                             </Col>
+
+                            {Loading && <Spinner color="primary" />}
+                            {/* {Loading && <Backdrop className={classes.backdrop} open>
+                                <CircularProgress color="inherit" />
+                            </Backdrop>} */}
 
                             <Col sm="1">
                                 {

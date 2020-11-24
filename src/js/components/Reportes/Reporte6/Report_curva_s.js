@@ -109,7 +109,7 @@ function Report_curva_s() {
       id_ficha: sessionStorage.getItem('idobra')
     })
     setLoading(true);
-    console.log("request", request);
+    // console.log("request", request);
 
     return request.data
   }
@@ -125,7 +125,7 @@ function Report_curva_s() {
       const request = await axios.post(`${UrlServer}/getImagenesCurvaS`, {
         id_ficha: sessionStorage.getItem('idobra')
       })
-      console.log("request.dataaaa", request);
+      // console.log("request.dataaaa", request);
 
       return request.data
     } catch (error) {
@@ -424,7 +424,7 @@ function Report_curva_s() {
     var request = await axios.post(`${UrlServer}/getDataCurvaS`, {
       "id_ficha": sessionStorage.getItem("idobra"),
     })
-    console.log("request.dataaaaaaaaaa", request.data);
+    // console.log("request.dataaaaaaaaaa", request.data);
     return request.data
 
 
@@ -651,7 +651,7 @@ function Report_curva_s() {
     var imagenesParaPdf = ""
     var DescripcionImagenesParaPdf = []
     if (Imagenes_en_base_64) {
-      console.log("Procesando imagenes");
+      // console.log("Procesando imagenes");
       imagenesParaPdf = [
         {
           columns: [
@@ -659,7 +659,7 @@ function Report_curva_s() {
               image: Imagenes_en_base_64[0].imgb64,
               // fit: [220, 220],
               width: 250,
-              height: 180,
+              height: 160,
               margin: [1, 0, 0, 0],
               // alignment: "center",
             },
@@ -668,7 +668,7 @@ function Report_curva_s() {
               image: Imagenes_en_base_64[1].imgb64,
               // fit: [220, 220],
               width: 250,
-              height: 180,
+              height: 160,
               margin: [0, 0, -16, 0],
               alignment: "center",
 
@@ -679,26 +679,53 @@ function Report_curva_s() {
       ]
       DescripcionImagenesParaPdf = [
         {
-          columns: [
-            {
-              text: Imagenes_en_base_64[0].descripcion,
-              margin: [0, 5, 0, 0],
-              alignment: 'justify',
-              fontSize: 5.9,
-            },
-            {
-              text: Imagenes_en_base_64[1].descripcion,
-              margin: [10, 5, 0, 0],
-              alignment: 'justify',
-              fontSize: 5.9,
-            }
-          ],
-
+          style: 'tableExample',
+          layout: 'noBorders',
+          table: {
+            widths: ['*', '*'],
+            body: [
+              [
+                {
+                  text: Imagenes_en_base_64[0].descripcion,
+                  // noWrap: true,
+                  margin: [0, 0, 0, 0],
+                  alignment: 'justify',
+                  fontSize: 5.9,
+                },
+                {
+                  text: Imagenes_en_base_64[1].descripcion,
+                  // noWrap: true,
+                  margin: [0, 0, 0, 0],
+                  alignment: 'justify',
+                  fontSize: 5.9,
+                },
+              ],
+            ]
+          }
         },
+        // {
+        //   columns: [
+        //     {
+        //       text: Imagenes_en_base_64[0].descripcion + '\n' +Imagenes_en_base_64[0].descripcion,
+        //       // noWrap: true,
+        //       margin: [0, 5, 0, 0],
+        //       alignment: 'justify',
+        //       fontSize: 5.9,
+        //     },
+        //     {
+        //       text: Imagenes_en_base_64[1].descripcion,
+        //       // noWrap: true,
+        //       margin: [10, 5, 0, 0],
+        //       alignment: 'justify',
+        //       fontSize: 5.9,
+        //     }
+        //   ],
+
+        // },
       ]
     }
 
-    console.log("Imagenes_en_base_64", Imagenes_en_base_64);
+    // console.log("Imagenes_en_base_64", Imagenes_en_base_64);
 
 
 
@@ -943,16 +970,16 @@ function Report_curva_s() {
       {/* <Container> */}
       <li className="lii">
         <div className="d-flex"
-          style={{            
-            alignItems: "center",            
+          style={{
+            alignItems: "center",
           }}
         >
           <a href="#"
             onClick={() => generatePdf()}
           ><FaFilePdf className="text-danger" /> Curva S ✔</a>
           {Loading && <Backdrop className={classes.backdrop} open>
-        <CircularProgress color="inherit" />
-      </Backdrop> }
+            <CircularProgress color="inherit" />
+          </Backdrop>}
         </div>
       </li>
       {/* </Container> */}
