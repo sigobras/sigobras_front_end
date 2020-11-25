@@ -104,6 +104,7 @@ class Report_3 extends Component {
 
         this.setState({
             mesActual: mes_act,
+            Loading: true,
         })
 
         await axios.post(`${UrlServer}/getValGeneralResumenPeriodo`, {
@@ -117,7 +118,6 @@ class Report_3 extends Component {
                 this.setState({
                     DataApiResumenVal: res.data,
                     DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final),
-                    Loading: true,
                 })
                 // setTimeout(() => {
                 //     this.setState({ Loading: false });
@@ -1385,17 +1385,17 @@ class Report_3 extends Component {
                                 }
                             </Col>
 
-                            {Loading && <Spinner color="primary" />}
                             {/* {Loading && <Backdrop className={classes.backdrop} open>
                                 <CircularProgress color="inherit" />
                             </Backdrop>} */}
+                            {Loading ? <Spinner color="primary" />:
 
                             <Col sm="1">
                                 {
                                     DataApiResumenVal.length <= 0 ? "" :
                                         <button className="btn btn-outline-success" onClick={this.ResEstructarData}>PDF</button>
                                 }
-                            </Col>
+                            </Col>}
                         </Row>
                         {/* {
                         urlPdf.length <= 0 ?<Spinner color="primary" />:
