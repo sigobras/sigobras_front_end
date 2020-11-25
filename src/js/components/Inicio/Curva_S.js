@@ -158,17 +158,6 @@ function Curva_S({ id_ficha, nombreObra }) {
                 "id_ficha": id_ficha
             }
         )
-        //actualizacion de monto ejecutado
-        // for (let i = 0; i < request.data.length; i++) {
-        //     const element = request.data[i];
-        //     if (anyoMes(element.fecha_inicial) == anyoMesActual()) {
-        //         console.log("actualizando", element.fecha_inicial);
-        //         var ejecutado_monto = await updateEjecutado(element.fecha_inicial)
-        //         console.log("respuesta de actualizacion ", ejecutado_monto);
-        //         element.ejecutado_monto = ejecutado_monto
-        //         break;
-        //     }
-        // }
         var temp2 = [...request.data]
         calcularSaldo(temp2)
         setDataCurvaS(temp2)
@@ -212,9 +201,6 @@ function Curva_S({ id_ficha, nombreObra }) {
             }
         )
         setAnyosEjecutados(request.data)
-        //comentado debido a error desconocido de no recarga de interfaz
-        // fetchPeriodosEjecutados(request.data[request.data.length - 1].anyo)
-        // setAnyoSeleccionado(request.data[request.data.length - 1].anyo)
     }
     //periodos ejecutados
     const [PeriodosEjecutados, setPeriodosEjecutados] = useState([]);
@@ -253,7 +239,6 @@ function Curva_S({ id_ficha, nombreObra }) {
             }
         )
         fetchDataCurvaS()
-        return request.data.ejecutado_monto
     }
     //chart
     const [DataChartTemp, setDataChartTemp] = useState({});
@@ -1026,7 +1011,7 @@ function Curva_S({ id_ficha, nombreObra }) {
 
 
                                             <div onClick={toggle} style={{ color: '#676767' }}>
-                                                <MdSettings className="icon" size={32} />
+                                                <MdSettings style={{ cursor: "pointer" }} size={32} />
                                             </div>
                                         ]
                                     }
@@ -1074,11 +1059,23 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                         <div
                                                             className="d-flex"
                                                         >
-                                                            <div
-                                                                onClick={() => updateEjecutado(item.fecha_inicial)}
-                                                            >
-                                                                <MdSystemUpdateAlt className="icon" />
-                                                            </div>
+                                                            {(() => {
+
+                                                                var myDate = new Date(item.fecha_inicial);
+                                                                var today = new Date();
+                                                                return (
+                                                                    myDate < today &&
+                                                                    <div
+                                                                        onClick={() => updateEjecutado(item.fecha_inicial)}
+                                                                    >
+                                                                        <MdSystemUpdateAlt title={"ActualizarEjecutado"} style={{ cursor: "pointer" }} />
+                                                                    </div>
+
+                                                                )
+                                                            })()
+
+                                                            }
+
                                                             {" "}
                                                             {item.estado_codigo == 'C' ? "CORTE " : ""}
                                                             {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
@@ -1087,7 +1084,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                 <div
                                                                     onClick={() => deletePeriodoCurvaS(item.id)}
                                                                 >
-                                                                    <MdDeleteForever className="icon" />
+                                                                    <MdDeleteForever title={"eliminiar periodo"} style={{ cursor: "pointer" }} />
                                                                 </div>
                                                             }
 
@@ -1123,12 +1120,12 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                     <div
                                                                         onClick={() => updateProgramado(item.id, i)}
                                                                     >
-                                                                        <MdSave className="icon" />
+                                                                        <MdSave style={{ cursor: "pointer" }} />
                                                                     </div>
                                                                     <div
                                                                         onClick={() => toggleInputProgramado(-1)}
                                                                     >
-                                                                        <MdClose className="icon" />
+                                                                        <MdClose style={{ cursor: "pointer" }} />
                                                                     </div>
                                                                 </div>
                                                                 :
@@ -1141,7 +1138,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                             <div
                                                                                 onClick={() => toggleInputProgramado(i)}
                                                                             >
-                                                                                <MdModeEdit className="icon" />
+                                                                                <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
                                                                             </div>
                                                                         )
                                                                     }
@@ -1185,12 +1182,12 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                     <div
                                                                         onClick={() => updateFinanciero(item.id, i)}
                                                                     >
-                                                                        <MdSave className="icon" />
+                                                                        <MdSave style={{ cursor: "pointer" }} />
                                                                     </div>
                                                                     <div
                                                                         onClick={() => toggleInputFinanciero(-1)}
                                                                     >
-                                                                        <MdClose className="icon" />
+                                                                        <MdClose style={{ cursor: "pointer" }} />
                                                                     </div>
                                                                 </div>
                                                                 :
@@ -1202,7 +1199,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                         <div
                                                                             onClick={() => toggleInputFinanciero(i)}
                                                                         >
-                                                                            <MdModeEdit className="icon" />
+                                                                            <MdModeEdit style={{ cursor: "pointer" }} />
                                                                         </div>
                                                                     }
                                                                 </div>
