@@ -95,10 +95,9 @@ export default () => {
         setnavbarExpland(!navbarExpland)
         localStorage.setItem('opcionBtnToogle', navbarExpland);
     }
-    const [collapse, setcollapse] = useState([]);
-    function CollapseMenu(e) {
-        let event = Number(e);
-        setcollapse(collapse !== event ? event : null)
+    const [collapse, setcollapse] = useState(-1);
+    function CollapseMenu(index) {
+        setcollapse(index != collapse ? index : -1)
     }
     const [EstadoObra, setEstadoObra] = useState("")
     async function fetchEstadoObra(id_ficha) {
@@ -167,7 +166,6 @@ export default () => {
                                         DataMenus.map((menus, index) =>
                                             <li className="lii" key={index}>
                                                 <a
-                                                    href="#"
                                                     className="nav-link"
                                                     onClick={() => CollapseMenu(index)}
                                                 >

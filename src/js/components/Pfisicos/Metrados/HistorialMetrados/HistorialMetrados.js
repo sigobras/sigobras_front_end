@@ -25,7 +25,7 @@ export default () => {
     
     useEffect(() => {
         fetchAnyos()
-
+        fetchUsuarioData()
     }, []);
     //get data de anyos
     const [Anyos, setAnyos] = useState([]);
@@ -502,10 +502,19 @@ export default () => {
         if (request.data.revisado == 0) {
             console.log("activo");
             setFechaActiva(1)
-        }else{
+        } else {
             setFechaActiva(0)
         }
 
+    }
+    //usuaio data
+    const [UsuarioData, setUsuarioData] = useState({});
+    async function fetchUsuarioData() {
+        const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+            id_acceso: sessionStorage.getItem('idacceso')
+        })
+        console.log("cargando usuario data", request.data);
+        await setUsuarioData(request.data)
     }
     return (
         <div>
@@ -818,7 +827,7 @@ export default () => {
                                                                             />
                                                                         </legend>
                                                                         <div>
-                                                                            <CheckDate fecha={item.fecha} parentCallback={callback} />
+                                                                            <CheckDate fecha={item.fecha} parentCallback={callback} UsuarioData={UsuarioData} />
                                                                         </div>
                                                                     </div>
 
@@ -878,11 +887,11 @@ export default () => {
                                                                                                                                 className="d-flex"
                                                                                                                             >
                                                                                                                                 {Redondea(item3.valor)} {item3.unidad_medida}
-                                                                                                                                {FechaActiva && sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                                                                                {FechaActiva && UsuarioData.cargo_nombre == "RESIDENTE" &&
                                                                                                                                     <div
                                                                                                                                         onClick={() => setInputAvanceActividadIndex(i3)}
                                                                                                                                     >
-                                                                                                                                        <MdModeEdit className="icon" />
+                                                                                                                                        <MdModeEdit style={{cursor:"pointer"}} />
                                                                                                                                     </div>
                                                                                                                                 }
                                                                                                                             </div>
@@ -899,12 +908,12 @@ export default () => {
                                                                                                                                 <div
                                                                                                                                     onClick={() => updateAvanceActividad(item3.id_AvanceActividades)}
                                                                                                                                 >
-                                                                                                                                    <MdSave className="icon" />
+                                                                                                                                    <MdSave style={{cursor:"pointer"}} />
                                                                                                                                 </div>
                                                                                                                                 <div
                                                                                                                                     onClick={() => setInputAvanceActividadIndex(-1)}
                                                                                                                                 >
-                                                                                                                                    <MdClose className="icon" />
+                                                                                                                                    <MdClose style={{cursor:"pointer"}} />
                                                                                                                                 </div>
                                                                                                                             </div>
 
@@ -914,13 +923,13 @@ export default () => {
                                                                                                                 <td>{item3.costo_unitario}</td>
                                                                                                                 <td>{Redondea(item3.parcial)}</td>
                                                                                                                 <td>
-                                                                                                                    {(FechaActiva && sessionStorage.getItem("cargo") == "RESIDENTE" )?
+                                                                                                                    {(FechaActiva && UsuarioData.cargo_nombre == "RESIDENTE") ?
                                                                                                                         <div
                                                                                                                             onClick={() => updateAvanceActividad(item3.id_AvanceActividades)}
                                                                                                                         >
-                                                                                                                            <MdDeleteForever className="icon" />
+                                                                                                                            <MdDeleteForever style={{cursor:"pointer"}} />
                                                                                                                         </div>
-                                                                                                                        :""
+                                                                                                                        : ""
                                                                                                                     }
                                                                                                                 </td>
                                                                                                             </tr>
