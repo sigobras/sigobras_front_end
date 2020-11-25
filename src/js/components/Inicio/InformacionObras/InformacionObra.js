@@ -3,8 +3,7 @@ import axios from 'axios'
 import { Nav, NavItem, TabContent, NavLink, TabPane, ListGroup, Modal, ModalHeader, ModalBody, Table, Container, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import { FaEarlybirds } from "react-icons/fa";
-// import Usuario from '../../../../../images/usuario.png'
-import "../InformacionObras/infobras.css";
+import "./infobras.css";
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import { Redondea} from '../../Utils/Funciones'
 import { color } from 'highcharts';
@@ -33,7 +32,7 @@ class ModalInformacionObras extends Component {
 
     if (this.state.infoObras === false) {
       axios.post(`${UrlServer}/infobras`, {
-        "id_ficha": this.props.idobraSeleccionada
+        "id_ficha": this.props.id_ficha
       })
         .then((res) => {
           console.log('res', res.data)

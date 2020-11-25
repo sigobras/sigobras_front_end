@@ -24,72 +24,28 @@ class Login extends Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-
   }
 
   handleChange(e) {
     this.setState({ [e.target.name]: e.target.value });
-    //  console.log(sessionStorage.getItem("api"));	
-    // console.log(window.location.port)
   }
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
-
     this.setState({ isLoading: true });
-    axios.post(UrlServer + '/login', {
-      usuario: this.state.user,
-      password: this.state.pass
-    })
-      .then((res) => {
-        // console.log('DATA', res.data);
-
-        if (res.status === 204) {
-          toast.error('Usuario o contraseña incorrectos');
-          this.setState({
-            isLoading: false
-          })
-        } else {
-          var resUsuario = res.data.usuario
-          if (resUsuario !== undefined) {
-            if (resUsuario === this.state.user && this.state.pass.length > 0) {
-              sessionStorage.setItem("idobra", res.data.id_ficha)
-              // sessionStorage.setItem("codigoObra", "");
-
-              sessionStorage.setItem("cargo", res.data.nombre_cargo);
-              sessionStorage.setItem("nombre", res.data.nombre_usuario);
-              sessionStorage.setItem("idacceso", res.data.id_acceso);
-              sessionStorage.setItem("usuario", res.data.usuario);
-              sessionStorage.setItem("imgUsuario", `${UrlServer}${res.data.imagen}`);
-
-              // setTimeout(()=>{ 	
-
-              window.location.href = '/inicio'
-
-              // },10);
-
-            } else {
-              toast.error('Usuario o contraseña incorrectos');
-              this.setState({
-                // Loginsms: 'Usuario o contraseña incorrectos',
-                // alert: 'alert text-danger',
-                isLoading: false
-              })
-            }
-          }
-        }
+    try {
+      var res = await axios.post(UrlServer + '/login2', {
+        usuario: this.state.user,
+        password: this.state.pass
       })
-      .catch((error) => {
-        toast.error('Usuario o contraseña incorrectos');
-        this.setState({
-          // Loginsms: 'Usuario o contraseña incorrectos',
-          // alert: 'alert alert-danger alert-dismissible fade show text-danger',
-          isLoading: false
-        })
-        // console.log('tu error ',error);
-      });
-
-
+      toast.success('USUARIO CORRECTO');
+      sessionStorage.setItem("idacceso", res.data.id_acceso);
+      window.location.href = '/'
+    } catch (error) {
+      console.log("error",error);
+       toast.error('Usuario o contraseña incorrectos');
+    }
+    this.setState({ isLoading: false });
   }
   render() {
     const enabled = this.state.user.length > 0 && this.state.pass.length > 0;
@@ -98,7 +54,7 @@ class Login extends Component {
       <div className="container mt-2">
         <ToastContainer
           position="top-right"
-          autoClose={4000}
+          autoClose={1000}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick

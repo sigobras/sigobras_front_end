@@ -2,13 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ModalBody, Button, Modal } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
-import { socket } from "../../../Utils/socket";
-import "./PartidasChat.css";
+import { UrlServer } from '../Utils/ServerUrlConfig';
+import { socket } from "../Utils/socket";
+// import "./PartidasChat.css";
 
 import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
 import { MdComment } from 'react-icons/md';
-import LogoSigobras from './../../../../../images/logoSigobras.png'
+import LogoSigobras from './../../../images/logoSigobras.png'
 
 function Comentarios({ id_partida, titulo }) {
 
@@ -89,10 +89,11 @@ function Comentarios({ id_partida, titulo }) {
     return (
         [
             <div
+                key={0}
                 className="align-center position-relative"
                 onClick={toggle}
             >
-                {ComentarioNoVistos >0 &&
+                {ComentarioNoVistos > 0 &&
                     <div style={{
                         background: "red",
                         borderRadius: "50%",
@@ -114,7 +115,9 @@ function Comentarios({ id_partida, titulo }) {
                     <MdComment size={17} />
                 </div>
             </div>,
-            <Modal isOpen={modal}
+            <Modal
+                key={1}
+                isOpen={modal}
                 toggle={toggle}
             >
                 < ModalBody style={{ maxheight: 'calc(90vh-1000px)' }
@@ -147,7 +150,9 @@ function Comentarios({ id_partida, titulo }) {
                                         {
                                             Data.map((item, i) =>
                                                 (sessionStorage.getItem('idacceso') == item.id_acceso) ?
-                                                    <div className="recived-chat">
+                                                    <div
+                                                        key={i}
+                                                        className="recived-chat">
                                                         <div className="recived-chat-img">
                                                             <img className="img-chat" src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png" />
                                                         </div>
@@ -162,7 +167,9 @@ function Comentarios({ id_partida, titulo }) {
                                                         </div>
                                                     </div>
                                                     :
-                                                    <div className="outgoing-chat">
+                                                    <div
+                                                        key={i}
+                                                        className="outgoing-chat">
                                                         <div className="outgoing-chat-msg">
                                                             <span className="time"><b>{item.cargo_nombre} </b><em>{item.usuario_nombre}</em> </span>
                                                             <p>{item.comentario}</p>

@@ -11,7 +11,7 @@ import { MdComment } from 'react-icons/md';
 import { DebounceInput } from 'react-debounce-input';
 import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever } from "react-icons/md";
 
-import PartidasChat from './PartidasChat'
+import PartidasChat from '../../../libs/PartidasChat'
 import CheckDate from './CheckDate';
 
 

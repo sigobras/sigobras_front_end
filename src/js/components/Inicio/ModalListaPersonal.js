@@ -3,10 +3,10 @@ import axios from 'axios'
 import { Collapse, Nav, NavItem, TabContent, NavLink, TabPane, ListGroup, Modal, ModalHeader, ModalBody, ModalFooter, Row, Col, FormGroup, Label, Input, Button, FormFeedback, FormText } from 'reactstrap';
 import classnames from 'classnames';
 import { FaUserFriends, FaMediumM, FaUpload } from "react-icons/fa";
-import Usuario from '../../../../../images/usuario.png'
-import { UrlServer } from '../../../Utils/ServerUrlConfig'
+import Usuario from '../../../images/usuario.png'
+import { UrlServer } from '../Utils/ServerUrlConfig'
 import { DebounceInput } from 'react-debounce-input';
-import { Extension } from "../../../Utils/Funciones"
+import { Extension } from "../Utils/Funciones"
 
 export default ({ id_ficha, codigo_obra }) => {
   const hiddenFileInput = useRef(null);
@@ -44,13 +44,13 @@ export default ({ id_ficha, codigo_obra }) => {
         "estado": true
       }
     )
-    
+
     setUsuariosPersonal(request.data)
     setIdCargoSeleccionado(id_cargo)
     if (id_cargo == 0) {
       setUsuariosPersonalInactivos([])
       setTabUsuariosPersonalTotal(true)
-    }else{
+    } else {
       setTabUsuariosPersonalTotal(false)
       fetchUsuariosPersonalInactivos(id_cargo)
     }
@@ -79,7 +79,7 @@ export default ({ id_ficha, codigo_obra }) => {
         config
       )
       fetchUsuariosPersonal(IdCargoSeleccionado)
-    }else{
+    } else {
       e.target.value = null;
     }
 
@@ -181,7 +181,11 @@ export default ({ id_ficha, codigo_obra }) => {
   const [TabUsuariosPersonalTotal, setTabUsuariosPersonalTotal] = useState(false);
   return (
     [
-      <button className="btn btn-outline-info btn-sm mr-1" title="Personal" onClick={() => toggleModalPersonal()} ><FaUserFriends />
+      <button
+        className="btn btn-outline-info btn-sm mr-1"
+        title="Personal"
+        onClick={() => toggleModalPersonal()}
+      ><FaUserFriends />
       </button>,
       <Modal isOpen={ModalPersonal} toggle={toggleModalPersonal}
 
@@ -264,7 +268,7 @@ export default ({ id_ficha, codigo_obra }) => {
                     <tbody>
                       {
                         UsuariosPersonal.map((item, i) =>
-                          <tr>
+                          <tr key={i}>
                             <td>
                               {
                                 i + 1
@@ -415,7 +419,7 @@ export default ({ id_ficha, codigo_obra }) => {
 
             >
               {
-                ( IdCargoSeleccionado != 0 &&UsuariosPersonalInactivos.length > 0) &&
+                (IdCargoSeleccionado != 0 && UsuariosPersonalInactivos.length > 0) &&
                 <Button
                   color="primary"
                   onClick={() => toggleModalPersonalInactivo()}
@@ -524,7 +528,7 @@ export default ({ id_ficha, codigo_obra }) => {
                 >
                   <option disabled hidden>SELECCIONE</option>
                   {CargosLimitados.map((item, i) =>
-                    <option value={item.id_Cargo}>{item.nombre}</option>
+                    <option key={i} value={item.id_Cargo}>{item.nombre}</option>
                   )}
                 </Input>
 
