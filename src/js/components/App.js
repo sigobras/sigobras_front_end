@@ -283,6 +283,7 @@ export default () => {
                                     <Route path="/Inicio" component={() => <Inicio recargar={recargar} />} />
                                     <Route path="/MDdiario" component={MDdiario} />
                                     <Route path="/MDHistorial" component={MDHistorial} />
+                                    <Redirect exact from="/ParalizacionObra" to="MDdiario" />
                                     <Route path="/ParalizacionObra" component={Paralizacion} />
                                     <Route path="/RecursosObra" component={RecursosObra} />
                                     <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
