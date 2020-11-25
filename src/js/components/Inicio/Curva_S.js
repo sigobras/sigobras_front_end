@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Alert, Collapse } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
-import { Redondea, mesesShort } from './../../../Utils/Funciones';
+import { Redondea, mesesShort } from '../Utils/Funciones';
 import axios from 'axios';
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
-import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever,MdSystemUpdateAlt } from "react-icons/md";
-import './Curva_S.css'
+import { UrlServer } from '../Utils/ServerUrlConfig';
+import { FaChartLine } from "react-icons/fa";
+import { MdSettings, MdSystemUpdateAlt, MdDeleteForever, MdModeEdit } from "react-icons/md";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
@@ -81,12 +81,7 @@ function Curva_S({ id_ficha, nombreObra }) {
     };
     //datas por defecto
     useEffect(() => {
-        fetchRegistrosNoUbicados()
-        fetchAnyosEjecutados()
-        fetchDataCurvaS()
-        fetchYearsModal()
-        fetchYearsModalPIM()
-        getPinData()
+
 
     }, []);
     //modal data
@@ -790,457 +785,465 @@ function Curva_S({ id_ficha, nombreObra }) {
         console.log("getPinData", request);
         setPinDataMonto(request.data.monto)
     }
+    //MODAL PRINCIPAL
+    const [ModalPrincipal, setModalPrincipal] = useState(false);
+
+    function toggleModalPrincipal() {
+        if (!ModalPrincipal) {
+            fetchRegistrosNoUbicados()
+            fetchAnyosEjecutados()
+            fetchDataCurvaS()
+            fetchYearsModal()
+            fetchYearsModalPIM()
+            getPinData()
+        }
+        setModalPrincipal(!ModalPrincipal);
+    }
+
     return (
-        <div>
-            <div style={{
-                overflowY: "auto",
-            }}>
-                {DataCurvaSTemp.length > 0 ?
-                    [
-                        <div
-                            key={0}
-                            style={{
-                                // overflowY: "auto",
-                                // position: "relative",
-                                // textAlign: "center",
-                                // color: "white",
-                                // maxWidth: "600px",
-                                // maxHeight: "1000px",
-                                // position: "fixed",
-                                // width: "800px",
-                                // zIndex: 1
-                            }}>
+        [
+            <button
+                className="btn btn-outline-info btn-sm mr-1"
+                title="CURVA S"
+                onClick={toggleModalPrincipal}
+            ><FaChartLine />
+            </button>,
+            <Modal isOpen={ModalPrincipal} toggle={toggleModalPrincipal}>
+                <div style={{
+                    overflowY: "auto",
+                }}>
+                    {DataCurvaSTemp.length > 0 ?
+                        [
                             <div
-                                className="d-flex"
+                                key={0}
                                 style={{
-                                    // right: "261px",
-                                    // position: "fixed",
-                                    // top: "107px",
-                                    // zIndex: 1
 
-
-                                }}
-                            >
-                                <div>
-                                    <Alert color="primary"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 700 }}>
-                                            S/.{Redondea(Saldo.programado_acumulado)}
-                                        </div>
-                                        <div style={{ fontSize: "9px" }}>
-                                            PROGRAMADO ACUMULADO
-                                        </div>
-                                    </Alert>
-                                    <Alert color="primary"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 700 }}>
-                                            S/.{Redondea(Saldo.programado)}
-                                        </div>
-                                        <div style={{ fontSize: "9px" }}>
-                                            PROGRAMADO SALDO
-                                        </div>
-                                    </Alert>
-
-                                </div>
-                                &nbsp;&nbsp;
-                                <div>
-
-                                    <Alert color="warning"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 700 }}>
-                                            S/.{Redondea(Saldo.ejecutado_acumulado)}
-                                        </div>
-                                        <div style={{ fontSize: "9px" }}>
-                                            EJECUTADO ACUMULADO
-                                        </div>
-                                    </Alert>
-                                    <Alert color="warning"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 700 }}>
-                                            S/.{Redondea(Saldo.ejecutado)}
-                                        </div>
-                                        <div style={{ fontSize: "9px" }}>
-                                            EJECUTADO SALDO
-                                        </div>
-                                    </Alert>
-                                </div>
-
-                                &nbsp;&nbsp;
-                                <div>
-
-                                    <Alert color="light"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 700 }}>
-                                            S/.{Redondea(Saldo.financiero_acumulado)}
-                                        </div>
-                                        <div style={{ fontSize: "9px" }}>
-                                            FINANCIERO ACUMULADO
-                                        </div>
-                                    </Alert>
-                                    <Alert color="light"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-
-                                        }}
-                                    >
-                                        <div style={{ fontWeight: 700 }}>
-                                            S/.{Redondea(Saldo.financiero)}
-                                        </div>
-                                        <div style={{ fontSize: "9px" }}>
-                                            FINANCIERO SALDO
-                                        </div>
-
-                                    </Alert>
-                                </div>
-
-                                &nbsp;&nbsp;
-                                <Alert color="danger"
-                                    style={{
-                                        textAlign: "center",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        height: "83px"
-                                    }}
+                                }}>
+                                <div
+                                    className="d-flex"
                                 >
                                     <div>
-                                        <div style={{ fontWeight: 700 }}>
-                                            {Redondea(Saldo.deltaPorcentaje)}%
-                                        </div>
-                                        <div style={{ fontSize: "11px" }}>
-                                            DELTA
-                                        </div>
+                                        <Alert color="primary"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(Saldo.programado_acumulado)}
+                                            </div>
+                                            <div style={{ fontSize: "9px" }}>
+                                                PROGRAMADO ACUMULADO
+                            </div>
+                                        </Alert>
+                                        <Alert color="primary"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(Saldo.programado)}
+                                            </div>
+                                            <div style={{ fontSize: "9px" }}>
+                                                PROGRAMADO SALDO
+                            </div>
+                                        </Alert>
+
+                                    </div>
+                    &nbsp;&nbsp;
+                    <div>
+
+                                        <Alert color="warning"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(Saldo.ejecutado_acumulado)}
+                                            </div>
+                                            <div style={{ fontSize: "9px" }}>
+                                                EJECUTADO ACUMULADO
+                            </div>
+                                        </Alert>
+                                        <Alert color="warning"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(Saldo.ejecutado)}
+                                            </div>
+                                            <div style={{ fontSize: "9px" }}>
+                                                EJECUTADO SALDO
+                            </div>
+                                        </Alert>
                                     </div>
 
-                                </Alert>
-                                &nbsp;&nbsp;
-                                <div>
-                                    <Alert color="success"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        <div
-                                            className="d-flex">
-                                            <div style={{ fontSize: "13px" }}>
-                                                PIM {new Date().getFullYear()}
-                                            </div>
-                                            &nbsp;
+                    &nbsp;&nbsp;
+                    <div>
+
+                                        <Alert color="light"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+                                            }}
+                                        >
                                             <div style={{ fontWeight: 700 }}>
-                                                S/.{Redondea(PinDataMonto)}
+                                                S/.{Redondea(Saldo.financiero_acumulado)}
                                             </div>
-                                        </div>
-                                    </Alert>
-                                    <Alert color="success"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-
-                                        }}
-                                    >
-                                        <div
-                                            className="d-flex">
-                                            <div style={{ fontSize: "13px" }}>
-                                                ACUMULADO {new Date().getFullYear()}
-                                            </div>
-                                            &nbsp;
-                                            <div style={{ fontWeight: 700 }}>
-                                                S/.{Redondea(FinancieroAcumuladoAnyoActual)}
-                                            </div>
-                                        </div>
-                                    </Alert>
-                                    <Alert color="success"
-                                        style={{
-                                            marginBottom: "2px",
-                                            padding: "3px 7px",
-                                            textAlign: "center"
-
-                                        }}
-                                    >
-                                        <div
-                                            className="d-flex">
-                                            <div style={{ fontSize: "13px" }}>
-                                                SALDO PIM
-                                            </div>
-                                            &nbsp;
-                                            <div style={{ fontWeight: 700 }}>
-                                                S/.{Redondea(PinDataMonto - FinancieroAcumuladoAnyoActual)}
-                                            </div>
-                                        </div>
-
-                                    </Alert>
-                                </div>
-                                <div class="mr-auto p-2"></div>
-                                {
-                                    !ToggleSoles ?
-                                        <button
-                                            type="button"
-                                            class="btn btn-primary"
-                                            style={{ height: "32px" }}
-                                            onClick={() => onChangeToggleSoles()}
-                                        >S/.</button> :
-                                        <button
-                                            type="button"
-                                            class="btn btn-primary"
-                                            style={{ height: "32px" }}
-                                            onClick={() => onChangeToggleSoles()}
-                                        >%</button>
-                                }
-                                {
-                                    sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                                    [
-
-
-                                        <div onClick={toggle} style={{ color: '#676767' }}>
-                                            <MdSettings className="icon" size={32} />
-                                        </div>
-                                    ]
-                                }
+                                            <div style={{ fontSize: "9px" }}>
+                                                FINANCIERO ACUMULADO
                             </div>
-                            <Collapse isOpen={ToggleSoles}>
-                                <HighchartsReact
-                                    highcharts={Highcharts}
-                                    // constructorType={'stockChart'}
-                                    options={options}
-                                />
-                            </Collapse>
-                            <Collapse isOpen={!ToggleSoles}>
-                                <HighchartsReact
-                                    highcharts={Highcharts}
-                                    // constructorType={'stockChart'}
-                                    options={options2}
-                                />
-                            </Collapse>
-                        </div>,
-                        <div
-                            style={{
-                                overflowX: "auto"
-                            }}
-                        >
-                            <table
-                                key={2}
-                                className="table table-sm small"
+                                        </Alert>
+                                        <Alert color="light"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
 
+                                            }}
+                                        >
+                                            <div style={{ fontWeight: 700 }}>
+                                                S/.{Redondea(Saldo.financiero)}
+                                            </div>
+                                            <div style={{ fontSize: "9px" }}>
+                                                FINANCIERO SALDO
+                            </div>
+
+                                        </Alert>
+                                    </div>
+
+                    &nbsp;&nbsp;
+                    <Alert color="danger"
+                                        style={{
+                                            textAlign: "center",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            height: "83px"
+                                        }}
+                                    >
+                                        <div>
+                                            <div style={{ fontWeight: 700 }}>
+                                                {Redondea(Saldo.deltaPorcentaje)}%
+                                        </div>
+                                            <div style={{ fontSize: "11px" }}>
+                                                DELTA
+                                        </div>
+                                        </div>
+
+                                    </Alert>
+                                    &nbsp;&nbsp;
+                                    <div>
+                                        <Alert color="success"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            <div
+                                                className="d-flex">
+                                                <div style={{ fontSize: "13px" }}>
+                                                    PIM {new Date().getFullYear()}
+                                                </div>
+                                            &nbsp;
+                                            <div style={{ fontWeight: 700 }}>
+                                                    S/.{Redondea(PinDataMonto)}
+                                                </div>
+                                            </div>
+                                        </Alert>
+                                        <Alert color="success"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+
+                                            }}
+                                        >
+                                            <div
+                                                className="d-flex">
+                                                <div style={{ fontSize: "13px" }}>
+                                                    ACUMULADO {new Date().getFullYear()}
+                                                </div>
+                                                &nbsp;
+                                                <div style={{ fontWeight: 700 }}>
+                                                    S/.{Redondea(FinancieroAcumuladoAnyoActual)}
+                                                </div>
+                                            </div>
+                                        </Alert>
+                                        <Alert color="success"
+                                            style={{
+                                                marginBottom: "2px",
+                                                padding: "3px 7px",
+                                                textAlign: "center"
+
+                                            }}
+                                        >
+                                            <div
+                                                className="d-flex">
+                                                <div style={{ fontSize: "13px" }}>
+                                                    SALDO PIM
+                                            </div>
+                                            &nbsp;
+                                            <div style={{ fontWeight: 700 }}>
+                                                    S/.{Redondea(PinDataMonto - FinancieroAcumuladoAnyoActual)}
+                                                </div>
+                                            </div>
+
+                                        </Alert>
+                                    </div>
+                                    <div class="mr-auto p-2"></div>
+                                    {
+                                        !ToggleSoles ?
+                                            <button
+                                                type="button"
+                                                class="btn btn-primary"
+                                                style={{ height: "32px" }}
+                                                onClick={() => onChangeToggleSoles()}
+                                            >S/.</button> :
+                                            <button
+                                                type="button"
+                                                class="btn btn-primary"
+                                                style={{ height: "32px" }}
+                                                onClick={() => onChangeToggleSoles()}
+                                            >%</button>
+                                    }
+                                    {
+                                        sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                        [
+
+
+                                            <div onClick={toggle} style={{ color: '#676767' }}>
+                                                <MdSettings className="icon" size={32} />
+                                            </div>
+                                        ]
+                                    }
+                                </div>
+                                <Collapse isOpen={ToggleSoles}>
+                                    <HighchartsReact
+                                        highcharts={Highcharts}
+                                        // constructorType={'stockChart'}
+                                        options={options}
+                                    />
+                                </Collapse>
+                                <Collapse isOpen={!ToggleSoles}>
+                                    <HighchartsReact
+                                        highcharts={Highcharts}
+                                        // constructorType={'stockChart'}
+                                        options={options2}
+                                    />
+                                </Collapse>
+                            </div>,
+                            <div
+                                style={{
+                                    overflowX: "auto"
+                                }}
                             >
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            MES
-                                        </th>
-                                        {
-                                            DataCurvaSTemp.map((item, i) =>
-                                                <th
-                                                    key={i}
-                                                    style={
-                                                        item.tipo == "TOTAL" ?
-                                                            { background: "#9a0000" }
-                                                            : {}
-                                                    }
-                                                >
-                                                    <div
-                                                        className="d-flex"
+                                <table
+                                    key={2}
+                                    className="table table-sm small"
+
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                MES
+                            </th>
+                                            {
+                                                DataCurvaSTemp.map((item, i) =>
+                                                    <th
+                                                        key={i}
+                                                        style={
+                                                            item.tipo == "TOTAL" ?
+                                                                { background: "#9a0000" }
+                                                                : {}
+                                                        }
                                                     >
                                                         <div
-                                                            onClick={() => updateEjecutado(item.fecha_inicial)}
+                                                            className="d-flex"
                                                         >
-                                                            <MdSystemUpdateAlt className="icon" />
+                                                            <div
+                                                                onClick={() => updateEjecutado(item.fecha_inicial)}
+                                                            >
+                                                                <MdSystemUpdateAlt className="icon" />
+                                                            </div>
+                                                            {" "}
+                                                            {item.estado_codigo == 'C' ? "CORTE " : ""}
+                                                            {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
+                                                            {
+                                                                (item.ejecutado_monto == 0 && sessionStorage.getItem("cargo") == "RESIDENTE") &&
+                                                                <div
+                                                                    onClick={() => deletePeriodoCurvaS(item.id)}
+                                                                >
+                                                                    <MdDeleteForever className="icon" />
+                                                                </div>
+                                                            }
+
                                                         </div>
-                                                        {" "}
-                                                        {item.estado_codigo == 'C' ? "CORTE " : ""}
-                                                        {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
+
+
+                                                    </th>
+                                                )
+                                            }
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr >
+                                            <th>
+                                                PROGRAMADO
+                        </th>
+                                            {
+                                                DataCurvaSTemp.map((item, i) =>
+                                                    <td key={i}>
                                                         {
-                                                            (item.ejecutado_monto == 0 && sessionStorage.getItem("cargo") == "RESIDENTE") &&
-                                                            <div
-                                                                onClick={() => deletePeriodoCurvaS(item.id)}
-                                                            >
-                                                                <MdDeleteForever className="icon" />
-                                                            </div>
+                                                            (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
+
+                                                                <div
+                                                                    className="d-flex"
+                                                                >
+                                                                    <DebounceInput
+                                                                        value={item.Programado_monto}
+                                                                        debounceTimeout={300}
+                                                                        onChange={e => onChangeInputProgramado(e.target.value, i)}
+                                                                        type="number"
+                                                                    />
+                                                                    <div
+                                                                        onClick={() => updateProgramado(item.id, i)}
+                                                                    >
+                                                                        <MdSave className="icon" />
+                                                                    </div>
+                                                                    <div
+                                                                        onClick={() => toggleInputProgramado(-1)}
+                                                                    >
+                                                                        <MdClose className="icon" />
+                                                                    </div>
+                                                                </div>
+                                                                :
+                                                                <div
+                                                                    className="d-flex"
+                                                                >
+                                                                    {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
+                                                                    {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
+                                                                        (sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                            <div
+                                                                                onClick={() => toggleInputProgramado(i)}
+                                                                            >
+                                                                                <MdModeEdit className="icon" />
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                </div>
                                                         }
+                                                    </td>
+                                                )
+                                            }
+                                        </tr>
+                                        <tr >
+                                            <th>
+                                                EJECUTADO
+                        </th>
+                                            {
+                                                DataCurvaSTemp.map((item, i) =>
+                                                    <td key={i}>
+                                                        {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} { }
+                                                    </td>
+                                                )
+                                            }
+                                        </tr>
+                                        <tr >
+                                            <th>
+                                                FINANCIERO
+                                            </th>
+                                            {
+                                                DataCurvaSTemp.map((item, i) =>
+                                                    <td key={i}>
+                                                        {
+                                                            EstadoInputFinanciero == i ?
 
-                                                    </div>
-
-
-                                                </th>
-                                            )
-                                        }
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr >
-                                        <th>
-                                            PROGRAMADO
-                                    </th>
-                                        {
-                                            DataCurvaSTemp.map((item, i) =>
-                                                <td key={i}>
-                                                    {
-                                                        (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
-
-                                                            <div
-                                                                className="d-flex"
-                                                            >
-                                                                <DebounceInput
-                                                                    value={item.Programado_monto}
-                                                                    debounceTimeout={300}
-                                                                    onChange={e => onChangeInputProgramado(e.target.value, i)}
-                                                                    type="number"
-                                                                />
                                                                 <div
-                                                                    onClick={() => updateProgramado(item.id, i)}
+                                                                    className="d-flex"
                                                                 >
-                                                                    <MdSave className="icon" />
+                                                                    <DebounceInput
+                                                                        value={item.financiero_monto}
+                                                                        debounceTimeout={300}
+                                                                        onChange={e => onChangeInputFinanciero(e.target.value, i)}
+                                                                        type="number"
+                                                                    />
+                                                                    <div
+                                                                        onClick={() => updateFinanciero(item.id, i)}
+                                                                    >
+                                                                        <MdSave className="icon" />
+                                                                    </div>
+                                                                    <div
+                                                                        onClick={() => toggleInputFinanciero(-1)}
+                                                                    >
+                                                                        <MdClose className="icon" />
+                                                                    </div>
                                                                 </div>
+                                                                :
                                                                 <div
-                                                                    onClick={() => toggleInputProgramado(-1)}
+                                                                    className="d-flex"
                                                                 >
-                                                                    <MdClose className="icon" />
-                                                                </div>
-                                                            </div>
-                                                            :
-                                                            <div
-                                                                className="d-flex"
-                                                            >
-                                                                {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
-                                                                {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                    (sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                    {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
+                                                                    {sessionStorage.getItem("cargo") == "RESIDENTE" &&
                                                                         <div
-                                                                            onClick={() => toggleInputProgramado(i)}
+                                                                            onClick={() => toggleInputFinanciero(i)}
                                                                         >
                                                                             <MdModeEdit className="icon" />
                                                                         </div>
-                                                                    )
-                                                                }
-                                                            </div>
-                                                    }
-                                                </td>
-                                            )
-                                        }
-                                    </tr>
-                                    <tr >
-                                        <th>
-                                            EJECUTADO
-                                    </th>
-                                        {
-                                            DataCurvaSTemp.map((item, i) =>
-                                                <td key={i}>
-                                                    {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} { }
-                                                </td>
-                                            )
-                                        }
-                                    </tr>
-                                    <tr >
-                                        <th>
-                                            FINANCIERO
-                                    </th>
-                                        {
-                                            DataCurvaSTemp.map((item, i) =>
-                                                <td key={i}>
-                                                    {
-                                                        EstadoInputFinanciero == i ?
-
-                                                            <div
-                                                                className="d-flex"
-                                                            >
-                                                                <DebounceInput
-                                                                    value={item.financiero_monto}
-                                                                    debounceTimeout={300}
-                                                                    onChange={e => onChangeInputFinanciero(e.target.value, i)}
-                                                                    type="number"
-                                                                />
-                                                                <div
-                                                                    onClick={() => updateFinanciero(item.id, i)}
-                                                                >
-                                                                    <MdSave className="icon" />
+                                                                    }
                                                                 </div>
-                                                                <div
-                                                                    onClick={() => toggleInputFinanciero(-1)}
-                                                                >
-                                                                    <MdClose className="icon" />
-                                                                </div>
-                                                            </div>
-                                                            :
-                                                            <div
-                                                                className="d-flex"
-                                                            >
-                                                                {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
-                                                                {sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                                                                    <div
-                                                                        onClick={() => toggleInputFinanciero(i)}
-                                                                    >
-                                                                        <MdModeEdit className="icon" />
-                                                                    </div>
-                                                                }
-                                                            </div>
-                                                    }
-                                                </td>
-                                            )
-                                        }
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                        }
+                                                    </td>
+                                                )
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                        </div>
+                            </div>
 
-                    ]
-                    : [<img key={0}
-                        style={{ width: "300px" }}
-                        src={"https://www.jonmgomes.com/wp-content/uploads/2020/03/Pie_Chart_GIF_5_Seconds.gif?fbclid=IwAR34o4wzp3DOEtf1rKKG72-5bXCkXyuk7utSXYWmnB_k34XqnkPLPphmFio"}
-                    />,
-                    (
-                        sessionStorage.getItem("cargo") == "RESIDENTE" &&
-                        <Button
-                            key={1}
-                            color="danger"
-                            onClick={toggle}
-                            style={{
-                                position: " absolute",
-                                bottom: " -7%",
-                                left: " 50%",
-                                transform: " translate(-50%, -50%)",
-                                width: " 50px",
-                                height: " 50px",
-                            }}
-                        >+</Button>
-                    ),
+                        ]
+                        : [<img key={0}
+                            style={{ width: "300px" }}
+                            src={"https://www.jonmgomes.com/wp-content/uploads/2020/03/Pie_Chart_GIF_5_Seconds.gif?fbclid=IwAR34o4wzp3DOEtf1rKKG72-5bXCkXyuk7utSXYWmnB_k34XqnkPLPphmFio"}
+                        />,
+                        (
+                            sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                            <Button
+                                key={1}
+                                color="danger"
+                                onClick={toggle}
+                                style={{
+                                    position: " absolute",
+                                    bottom: " -7%",
+                                    left: " 50%",
+                                    transform: " translate(-50%, -50%)",
+                                    width: " 50px",
+                                    height: " 50px",
+                                }}
+                            >+</Button>
+                        ),
 
-                    ]
-                }
-
-            </div>
-            {/* modal de periodos ejecutados */}
+                        ]
+                    }
+                </div>
+            </Modal>,
             < Modal isOpen={modal} toggle={toggle} >
-                <ModalHeader toggle={toggle}>
+                <ModalBody>
+                    {
+
+                    }
                     {
                         RegistroNoUbicados.registros > 0 ?
                             <Alert color="danger">
@@ -1250,11 +1253,11 @@ function Curva_S({ id_ficha, nombreObra }) {
                             [
 
                                 (AnyosEjecutados.length > 0 &&
-                                    <Alert color="warning">
+                                    <Alert key={1} color="warning">
                                         Completar el registro de todos los años para poder ingresar nuevos financieros
                                     </Alert>
                                 ),
-                                <Input type="select"
+                                <Input key={2} type="select"
                                     value={FormularioOpcion}
                                     onChange={e => setFormularioOpcion(e.target.value)}
                                     className="form-control"
@@ -1264,9 +1267,9 @@ function Curva_S({ id_ficha, nombreObra }) {
                                         <option value="ejecutado">Crear curva S</option>
                                         :
                                         [
-                                            <option value="nuevo">Programar mes</option>,
-                                            <option value="total">Ingresar Acumulados</option>,
-                                            <option value="ingreso-pin">Ingresar/Actualizar PIM</option>
+                                            <option key={1} value="nuevo">Programar mes</option>,
+                                            <option key={2} value="total">Ingresar Acumulados</option>,
+                                            <option key={3} value="ingreso-pin">Ingresar/Actualizar PIM</option>
                                         ]
                                     }
 
@@ -1274,19 +1277,17 @@ function Curva_S({ id_ficha, nombreObra }) {
                             ]
                     }
 
-                </ModalHeader>
-                <ModalBody>
                     <table>
                         <thead>
                             <tr>
                                 {
                                     (FormularioOpcion == "ejecutado" || FormularioOpcion == "nuevo" || FormularioOpcion == "total") &&
                                     [
-                                        <th className="text-center">PERIODO</th>,
-                                        <th className="text-center">PROGRAMADO</th>,
-                                        <th className="text-center">EJECUTADO</th>,
-                                        <th className="text-center">FINANCIERO</th>,
-                                        <th className="text-center">OBSERVACION</th>,
+                                        <th key={1} className="text-center">PERIODO</th>,
+                                        <th key={2} className="text-center">PROGRAMADO</th>,
+                                        <th key={3} className="text-center">EJECUTADO</th>,
+                                        <th key={4} className="text-center">FINANCIERO</th>,
+                                        <th key={5} className="text-center">OBSERVACION</th>,
                                     ]
                                 }
                                 <th>
@@ -1412,8 +1413,8 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                 >
                                                     <option disabled hidden>SELECCIONE</option>
                                                     {
-                                                        YearsModal.map((item, i) =>
-                                                            <option key={i}>{item}</option>
+                                                        YearsModal.map((item, j) =>
+                                                            <option key={i + "." + j}>{item}</option>
                                                         )
                                                     }
 
@@ -1472,8 +1473,8 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                 >
                                                     <option disabled hidden>SELECCIONE</option>
                                                     {
-                                                        YearsModalPIM.map((item, i) =>
-                                                            <option key={i}>{item}</option>
+                                                        YearsModalPIM.map((item, j) =>
+                                                            <option key={j}>{item}</option>
                                                         )
                                                     }
                                                 </Input>
@@ -1507,10 +1508,10 @@ function Curva_S({ id_ficha, nombreObra }) {
                         [
 
                             (FormularioOpcion == "nuevo" || FormularioOpcion == "total") &&
-                            <Button color="primary" onClick={saveModalData}>Guardar</Button>
+                            <Button key={1} color="primary" onClick={saveModalData}>Guardar</Button>
                             ,
                             (FormularioOpcion == "ingreso-pin") &&
-                            <Button color="primary" onClick={savePinData}>Guardar</Button>
+                            <Button key={2} color="primary" onClick={savePinData}>Guardar</Button>
 
                         ]
                     }
@@ -1519,7 +1520,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                     <Button color="secondary" onClick={toggle}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
-        </div >
+        ]
     );
 }
 export default Curva_S

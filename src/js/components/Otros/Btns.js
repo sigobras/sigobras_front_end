@@ -9,16 +9,16 @@ import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup } from 'reactstrap';
 
 class Btns extends Component {
-    constructor(){
+    constructor() {
         super()
-        this.state={
-            DataEstadosObra:[],
+        this.state = {
+            DataEstadosObra: [],
             modal: false,
             modalClave: false,
-            DataSegunEstado:[],
-            IdEstado:'',
-            pass:'',
-            mensajes:''
+            DataSegunEstado: [],
+            IdEstado: '',
+            pass: '',
+            mensajes: ''
         }
         this.CambiaEstadoObra = this.CambiaEstadoObra.bind(this)
         this.ModalEstadoObra = this.ModalEstadoObra.bind(this)
@@ -26,50 +26,50 @@ class Btns extends Component {
         this.SubmitEsadoObra = this.SubmitEsadoObra.bind(this)
     }
 
-    componentDidMount(){
+    componentDidMount() {
         axios.get(`${UrlServer}/listaestados`)
-        .then((res)=>{
-            // console.log('data ', res.data)
-            this.setState({
-                DataEstadosObra: res.data
+            .then((res) => {
+                // console.log('data ', res.data)
+                this.setState({
+                    DataEstadosObra: res.data
+                })
             })
-        })
-        .catch((err)=>
-            console.error('falló al obtener datos ❌',err)
-        )
+            .catch((err) =>
+                console.error('falló al obtener datos ❌', err)
+            )
     }
-    
+
     ModalEstadoObra() {
         this.setState(prevState => ({
-          modal: !prevState.modal
+            modal: !prevState.modal
         }));
     }
 
     ModalPassword() {
         this.setState(prevState => ({
-          modalClave: !prevState.modalClave
+            modalClave: !prevState.modalClave
         }));
     }
-    
-    CambiaEstadoObra(){
-        
+
+    CambiaEstadoObra() {
+
         this.ModalEstadoObra()
         var dataEstadosObra = this.state.DataEstadosObra
         var SituacionActualObra = sessionStorage.getItem("estadoObra")
 
         var DataSegunEstado = []
-        
+
         switch (SituacionActualObra) {
             case "Ejecucion":
                 DataSegunEstado.push(dataEstadosObra[3])
                 break;
-            
+
             case "Corte":
-                DataSegunEstado.push(dataEstadosObra[0],dataEstadosObra[2],dataEstadosObra[3])
+                DataSegunEstado.push(dataEstadosObra[0], dataEstadosObra[2], dataEstadosObra[3])
                 break;
 
             case "Actualizacion":
-                DataSegunEstado.push(dataEstadosObra[0],dataEstadosObra[3])
+                DataSegunEstado.push(dataEstadosObra[0], dataEstadosObra[3])
                 break;
 
             case "Paralizado":
@@ -82,104 +82,114 @@ class Btns extends Component {
 
         }
         // console.log('>', DataSegunEstado);
-        
+
         this.setState({
             DataSegunEstado
         })
 
     }
 
-    
 
-    SubmitEsadoObra(e){
-        
+
+    SubmitEsadoObra(e) {
+
         e.preventDefault()
-            // this.ModalPassword()
-            
-        if(this.state.pass.length >0){
-            if(confirm('¿cambiar situación de la obra?')){
-                axios.post(UrlServer+'/login',{
+        // this.ModalPassword()
+
+        if (this.state.pass.length > 0) {
+            if (confirm('¿cambiar situación de la obra?')) {
+                axios.post(UrlServer + '/login', {
                     usuario: sessionStorage.getItem("usuario"),
                     password: this.state.pass
                 })
-                .then((res)=> {
-                    // console.log(res.data)
+                    .then((res) => {
+                        // console.log(res.data)
 
-                    if(sessionStorage.getItem("usuario") === res.data.usuario){
+                        if (sessionStorage.getItem("usuario") === res.data.usuario) {
 
-                        axios.post(`${UrlServer}/ActualizarEstado`,{
-                            "Fichas_id_ficha":sessionStorage.getItem('idobra'),
-                            "Estados_id_estado":this.state.IdEstado
-                        })
-                        .then((res)=>{
-                            // console.log('res>',res.data.nombre);
-            
-                            if(res.data){
-                                toast.success('✔ situación actual de la obra actualizada ');
-                                sessionStorage.setItem('estadoObra',res.data.nombre)                
-            
-                                setTimeout(()=>{ 
-                                    window.location.href= '/inicio' 
-                                }, 50);
-                            }else{
-                                toast.error('❌ errores en cambiar la situacion actual de la obra');
-                            }
-                        })
-                        .catch((err)=>{
-                            toast.error('❌ errores en cambiar la situacion actual de la obra');
-                            console.log('hubo errores >>', err)
-                        })
-                    }else{
-                        this.setState({mensajes:"¡Contraseña incorrecta! se esta registrando sus datos"})
-                        // console.log('la contraseña es incorrecta')
+                            axios.post(`${UrlServer}/ActualizarEstado`, {
+                                "Fichas_id_ficha": sessionStorage.getItem('idobra'),
+                                "Estados_id_estado": this.state.IdEstado
+                            })
+                                .then((res) => {
+                                    // console.log('res>',res.data.nombre);
 
-                    }
-                })
-                .catch((err)=>{
-                    console.error('error' , err);
-                    
-                })
+                                    if (res.data) {
+                                        toast.success('✔ situación actual de la obra actualizada ');
+                                        sessionStorage.setItem('estadoObra', res.data.nombre)
+
+                                        setTimeout(() => {
+                                            window.location.href = '/inicio'
+                                        }, 50);
+                                    } else {
+                                        toast.error('❌ errores en cambiar la situacion actual de la obra');
+                                    }
+                                })
+                                .catch((err) => {
+                                    toast.error('❌ errores en cambiar la situacion actual de la obra');
+                                    console.log('hubo errores >>', err)
+                                })
+                        } else {
+                            this.setState({ mensajes: "¡Contraseña incorrecta! se esta registrando sus datos" })
+                            // console.log('la contraseña es incorrecta')
+
+                        }
+                    })
+                    .catch((err) => {
+                        console.error('error', err);
+
+                    })
             }
 
-        }else{
-            this.setState({mensajes:"¡Ingrese su contraseña¡"})
+        } else {
+            this.setState({ mensajes: "¡Ingrese su contraseña¡" })
 
         }
     }
 
-    
+
     render() {
         const { DataSegunEstado } = this.state
         return (
             <div>
-               
-                
-                <button className={ sessionStorage.getItem('estadoObra') === "Ejecucion"? "btn btn-outline-success  p-1 mt-1": sessionStorage.getItem('estadoObra') === "Paralizado" ? "btn btn-outline-warning  p-1 mt-1" : sessionStorage.getItem('estadoObra') === "Corte"? "btn btn-outline-danger  p-1 mt-1":  sessionStorage.getItem('estadoObra')=== "Actualizacion"? "btn btn-outline-primary  p-1 mt-1": "btn btn-outline-info  p-1 mt-1"} title={`situación de la obra ${sessionStorage.getItem('estadoObra') }`} onClick={ this.CambiaEstadoObra }  ><span className="textSigobras">situación actual:</span> { sessionStorage.getItem('estadoObra') }</button>
-
-
+                <button
+                    className={this.props.EstadoObra === "Ejecucion"
+                        ? "btn btn-outline-success  p-1 mt-1" :
+                        this.props.EstadoObra === "Paralizado"
+                            ? "btn btn-outline-warning  p-1 mt-1" :
+                            this.props.EstadoObra === "Corte" ?
+                                "btn btn-outline-danger  p-1 mt-1" :
+                                this.props.EstadoObra === "Actualizacion" ?
+                                    "btn btn-outline-primary  p-1 mt-1" :
+                                    "btn btn-outline-info  p-1 mt-1"}
+                    title={`situación de la obra ${this.props.EstadoObra}`}
+                    onClick={this.CambiaEstadoObra}  >
+                    <span className="textSigobras">situación actual:</span>
+                    {this.props.EstadoObra}
+                </button>
                 <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalEstadoObra} backdrop="static">
                     <ModalHeader toggle={this.ModalEstadoObra}>Cambiar situación de la obra</ModalHeader>
                     <ModalBody>
                         <Row>
                             <Col sm="6">
-                               <span className="h4 text-center">situación actual:<br/> {sessionStorage.getItem("estadoObra")}</span> 
+                                <span className="h4 text-center">situación actual:<br />{this.props.EstadoObra}</span>
                             </Col>
                             <Col sm="6">
                                 <FormGroup>
                                     <Label >Cambiar a:</Label>
-                                    <Input type="select" className="form-control-sm" onChange={ e=> this.setState({IdEstado: e.target.value})}>
+                                    <Input type="select" className="form-control-sm" onChange={e => this.setState({ IdEstado: e.target.value })}>
                                         <option>Seleccione </option>
-                                        {DataSegunEstado.length === 0 ?'no hay datos':  DataSegunEstado.map((EstadoObra, IndexObra)=>
-                                            <option value={ EstadoObra.id_Estado } key={ IndexObra }>
-                                                { EstadoObra.nombre }
-                                            </option>                                
+                                        {DataSegunEstado.length === 0 ? 'no hay datos' : DataSegunEstado.map((EstadoObra, IndexObra) =>
+                                            <option value={EstadoObra.id_Estado} key={IndexObra}>
+                                                {EstadoObra.nombre}
+                                            </option>
                                         )}
-                                        
+
                                     </Input>
                                 </FormGroup>
-                            </Col>                            
+                            </Col>
                         </Row>
-                            
+
                     </ModalBody>
                     <ModalFooter>
                         <Button color="success" onClick={this.ModalPassword}>Cambiar estado</Button>{' '}
@@ -195,17 +205,17 @@ class Btns extends Component {
                     <ModalHeader toggle={this.ModalPassword}>Ingrese su contraseña</ModalHeader>
                     <ModalBody>
                         <InputGroup>
-                            <DebounceInput debounceTimeout={200} onChange={e => this.setState({pass: e.target.value})} type="password" className="form-control" autoFocus/>  
-                            
-                            
-                            
+                            <DebounceInput debounceTimeout={200} onChange={e => this.setState({ pass: e.target.value })} type="password" className="form-control" autoFocus />
+
+
+
                         </InputGroup>
-                        {this.state.mensajes}<br/><br/>
+                        {this.state.mensajes}<br /><br />
 
                         <Button color="success" onClick={this.SubmitEsadoObra}>Confirmar </Button>{' '}
                         <Button color="danger" onClick={this.ModalPassword}>Cancelar</Button>
                     </ModalBody>
-                    
+
                 </Modal>
             </div>
         );

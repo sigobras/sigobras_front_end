@@ -38,6 +38,23 @@ function FechaActual() {
 
     return anio + '-' + mes + '-' + dia
 }
+function FechaActual2Meses() {
+    var fecha = new Date();
+
+    var anio = fecha.getFullYear();
+    var mes = fecha.getMonth() -1;
+    var dia = fecha.getDate();
+
+
+    if (dia < 10) {
+        dia = "0" + dia
+    }
+    if (mes < 10) {
+        mes = "0" + mes
+    }
+
+    return anio + '-' + mes + '-' + dia
+}
 
 // CALCULA EL PRIMER DIA DEL MES ACTUAL
 function PrimerDiaDelMesActual() {
@@ -167,6 +184,7 @@ module.exports = {
     Redondea2,
     Money_to_float,
     meses,
-    mesesShort
+    mesesShort,
+    FechaActual2Meses
 
 } 
