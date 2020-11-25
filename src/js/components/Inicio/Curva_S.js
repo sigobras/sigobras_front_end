@@ -5,7 +5,7 @@ import { Redondea, mesesShort } from '../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import { FaChartLine } from "react-icons/fa";
-import { MdSettings, MdSystemUpdateAlt, MdDeleteForever, MdModeEdit } from "react-icons/md";
+import { MdSettings, MdSystemUpdateAlt, MdDeleteForever, MdModeEdit,MdSave,MdClose  } from "react-icons/md";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
