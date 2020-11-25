@@ -5,7 +5,7 @@ import { Redondea, mesesShort } from '../Utils/Funciones';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import { FaChartLine } from "react-icons/fa";
-import { MdSettings, MdSystemUpdateAlt, MdDeleteForever, MdModeEdit,MdSave,MdClose  } from "react-icons/md";
+import { MdSettings, MdSystemUpdateAlt, MdDeleteForever, MdModeEdit, MdSave, MdClose } from "react-icons/md";
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
@@ -49,6 +49,7 @@ function Curva_S({ id_ficha, nombreObra }) {
         const request = await axios.post(`${UrlServer}/getRegistroNoUbicados`, {
             "id_ficha": id_ficha
         })
+        console.log("registro", request.data);
         setRegistroNoUbicados(request.data[0])
     }
     //get costo diresto y presupuesto total
@@ -1507,7 +1508,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                         RegistroNoUbicados.registros == 0 &&
                         [
 
-                            (FormularioOpcion == "nuevo" || FormularioOpcion == "total") &&
+                            (FormularioOpcion == "nuevo" || FormularioOpcion == "total" ||FormularioOpcion =="ejecutado") &&
                             <Button key={1} color="primary" onClick={saveModalData}>Guardar</Button>
                             ,
                             (FormularioOpcion == "ingreso-pin") &&
