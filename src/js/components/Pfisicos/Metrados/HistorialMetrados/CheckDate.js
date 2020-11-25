@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 import { RiEyeOffFill, RiShieldCheckFill } from 'react-icons/ri';
-export default ({ fecha, parentCallback }) => {
+export default ({ fecha, parentCallback,UsuarioData }) => {
     useEffect(() => {
         fetchFechaRevisado()
     }, []);
@@ -30,6 +30,7 @@ export default ({ fecha, parentCallback }) => {
             fetchFechaRevisado()
         }
     }
+  
     return (
         <div
         >
@@ -42,7 +43,7 @@ export default ({ fecha, parentCallback }) => {
 
                     </div>
                     :
-                    (sessionStorage.getItem("cargo") == "SUPERVISOR" ?
+                    (UsuarioData.cargo_nombre == "SUPERVISOR" ?
                         <div
                             onClick={() => revisarFecha()}
                             style={{ color: '#676767' }}

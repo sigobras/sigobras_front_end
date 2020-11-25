@@ -79,10 +79,16 @@ function Curva_S({ id_ficha, nombreObra }) {
         setModal(!modal)
         setAnyoSeleccionado("SELECCIONE")
     };
+    //get datos de usuario
+    const [UsuarioData, setUsuarioData] = useState({});
+    async function fetchUsuarioData() {
+        const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+            id_acceso: sessionStorage.getItem('idacceso')
+        })
+        setUsuarioData(request.data)
+    }
     //datas por defecto
     useEffect(() => {
-
-
     }, []);
     //modal data
     const [MesesModal, setMesesModal] = useState([
@@ -796,6 +802,7 @@ function Curva_S({ id_ficha, nombreObra }) {
             fetchYearsModal()
             fetchYearsModalPIM()
             getPinData()
+            fetchUsuarioData()
         }
         setModalPrincipal(!ModalPrincipal);
     }
@@ -835,7 +842,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </div>
                                             <div style={{ fontSize: "9px" }}>
                                                 PROGRAMADO ACUMULADO
-                            </div>
+                                            </div>
                                         </Alert>
                                         <Alert color="primary"
                                             style={{
@@ -849,13 +856,12 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </div>
                                             <div style={{ fontSize: "9px" }}>
                                                 PROGRAMADO SALDO
-                            </div>
+                                            </div>
                                         </Alert>
 
                                     </div>
-                    &nbsp;&nbsp;
-                    <div>
-
+                                    &nbsp;&nbsp;
+                                    <div>
                                         <Alert color="warning"
                                             style={{
                                                 marginBottom: "2px",
@@ -868,7 +874,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </div>
                                             <div style={{ fontSize: "9px" }}>
                                                 EJECUTADO ACUMULADO
-                            </div>
+                                            </div>
                                         </Alert>
                                         <Alert color="warning"
                                             style={{
@@ -882,13 +888,11 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </div>
                                             <div style={{ fontSize: "9px" }}>
                                                 EJECUTADO SALDO
-                            </div>
+                                            </div>
                                         </Alert>
                                     </div>
-
-                    &nbsp;&nbsp;
-                    <div>
-
+                                    &nbsp;&nbsp;
+                                    <div>
                                         <Alert color="light"
                                             style={{
                                                 marginBottom: "2px",
@@ -901,7 +905,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </div>
                                             <div style={{ fontSize: "9px" }}>
                                                 FINANCIERO ACUMULADO
-                            </div>
+                                            </div>
                                         </Alert>
                                         <Alert color="light"
                                             style={{
@@ -916,13 +920,12 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </div>
                                             <div style={{ fontSize: "9px" }}>
                                                 FINANCIERO SALDO
-                            </div>
+                                            </div>
 
                                         </Alert>
                                     </div>
-
-                    &nbsp;&nbsp;
-                    <Alert color="danger"
+                                    &nbsp;&nbsp;
+                                    <Alert color="danger"
                                         style={{
                                             textAlign: "center",
                                             display: "flex",
@@ -1018,7 +1021,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             >%</button>
                                     }
                                     {
-                                        sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                        UsuarioData.cargo_nombre == "RESIDENTE" &&
                                         [
 
 
@@ -1080,7 +1083,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                             {item.estado_codigo == 'C' ? "CORTE " : ""}
                                                             {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
                                                             {
-                                                                (item.ejecutado_monto == 0 && sessionStorage.getItem("cargo") == "RESIDENTE") &&
+                                                                (item.ejecutado_monto == 0 && UsuarioData.cargo_nombre == "RESIDENTE") &&
                                                                 <div
                                                                     onClick={() => deletePeriodoCurvaS(item.id)}
                                                                 >
@@ -1134,7 +1137,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                 >
                                                                     {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
                                                                     {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                        (sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                        (UsuarioData.cargo_nombre == "RESIDENTE" &&
                                                                             <div
                                                                                 onClick={() => toggleInputProgramado(i)}
                                                                             >
@@ -1195,7 +1198,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                     className="d-flex"
                                                                 >
                                                                     {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
-                                                                    {sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                                                                    {UsuarioData.cargo_nombre == "RESIDENTE" &&
                                                                         <div
                                                                             onClick={() => toggleInputFinanciero(i)}
                                                                         >
@@ -1219,7 +1222,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                             src={"https://www.jonmgomes.com/wp-content/uploads/2020/03/Pie_Chart_GIF_5_Seconds.gif?fbclid=IwAR34o4wzp3DOEtf1rKKG72-5bXCkXyuk7utSXYWmnB_k34XqnkPLPphmFio"}
                         />,
                         (
-                            sessionStorage.getItem("cargo") == "RESIDENTE" &&
+                            UsuarioData.cargo_nombre == "RESIDENTE" &&
                             <Button
                                 key={1}
                                 color="danger"

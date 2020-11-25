@@ -15,12 +15,23 @@ function HistorialObservaciones() {
         setOption(opcion)
     }
     useEffect(() => {
+        fetchUsuarioData()
     }, []);
+    //usuaio data
+    const [UsuarioData, setUsuarioData] = useState({});
+    async function fetchUsuarioData() {
+        const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+            id_acceso: sessionStorage.getItem('idacceso')
+        })
+        console.log("cargando usuario data");
+        await setUsuarioData(request.data)
+    }
     //modal dificultades
     const [modalDificultad, setModalDificultad] = useState(false);
 
-    const toggleDificultad = () => {
+    const toggleDificultad = async() => {
         if (!modalDificultad) {
+           
             setNewDificultad(
                 {
                     "asiento_obra": "",
@@ -32,9 +43,10 @@ function HistorialObservaciones() {
                     "fichas_id_ficha": sessionStorage.getItem('idobra'),
                     "tipo": Option,
                     "autor": sessionStorage.getItem('idacceso'),
-                    "cargo": sessionStorage.getItem('cargo'),
+                    "cargo": UsuarioData.cargo_nombre,
                 }
             )
+            
 
         }
         setModalDificultad(!modalDificultad);
@@ -127,7 +139,7 @@ function HistorialObservaciones() {
             </Input>
             <Collapse isOpen={(Option == "DIFICULTAD" || Option == "CONSULTA" || Option == "OBSERVACION") ? true : false}>
                 {
-                    sessionStorage.getItem('cargo') == "RESIDENTE"
+                    UsuarioData.cargo_nombre == "RESIDENTE"
                         ?
                         <Button color="danger" onClick={toggleDificultad}>+</Button>
                         : ""
@@ -279,7 +291,7 @@ function HistorialObservaciones() {
                                     onChange={e => onchangeDificultades(e.target.value, "asiento_obra")}
                                     type="number"
                                     className="form-control"
-                                // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
+                                // disabled={(UsuarioData.cargo_nombre == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                 />
                             </FormGroup>
 
@@ -294,7 +306,7 @@ function HistorialObservaciones() {
                                     debounceTimeout={300}
                                     onChange={e => onchangeDificultades(e.target.value, "fecha_inicio")}
                                     className="form-control"
-                                // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
+                                // disabled={(UsuarioData.cargo_nombre == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                 />
                             </FormGroup>
 
@@ -321,7 +333,7 @@ function HistorialObservaciones() {
                                     onChange={e => onchangeDificultades(e.target.value, "descripcion")}
                                     type="text"
                                     className="form-control"
-                                // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
+                                // disabled={(UsuarioData.cargo_nombre == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                 />
                             </FormGroup>
                         </Col>
@@ -339,7 +351,7 @@ function HistorialObservaciones() {
                                         onChange={e => onchangeDificultades(e.target.value, "duracion")}
                                         type="number"
                                         className="form-control"
-                                    // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
+                                    // disabled={(UsuarioData.cargo_nombre == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                     />
                                 </FormGroup>
                             </Col>
@@ -351,7 +363,7 @@ function HistorialObservaciones() {
                                         value={newDificultad.duracion_tipo}
                                         onChange={e => onchangeDificultades(e.target.value, "duracion_tipo")}
                                         className="form-control"
-                                    // disabled={(sessionStorage.getItem('cargo') == "RESIDENTE") && item.habilitado ? "" : "disabled"}
+                                    // disabled={(UsuarioData.cargo_nombre == "RESIDENTE") && item.habilitado ? "" : "disabled"}
                                     >
                                         <option disabled hidden>SELECCIONE</option>
                                         <option>dias</option>
