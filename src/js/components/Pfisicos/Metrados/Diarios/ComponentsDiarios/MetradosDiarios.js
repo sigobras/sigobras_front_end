@@ -99,7 +99,7 @@ export default () => {
     <div>
       <Nav tabs>
         {Componentes.map((item, i) =>
-          <NavItem key={i}>
+          <NavItem key={item.id_componente}>
             <NavLink
               className={classnames({ active: item.numero === ComponenteSelecccionado.numero })}
               onClick={() => onChangeComponentesSeleccion(item)}
@@ -412,21 +412,16 @@ export default () => {
 
               <InputGroup size="sm">
                 <InputGroupAddon addonType="prepend">
+
                   <Button className="btn btn-light pt-0"
-                  // onClick={() => this.PaginaActual(1)}
-                  // disabled={PaginaActual === 1}
-                  >
-                    <MdFirstPage />
-                  </Button>
-                  <Button className="btn btn-light pt-0"
-                  // onClick={() => this.PaginaActual(PaginaActual - 1)}
-                  // disabled={PaginaActual === 1}
+                    onClick={() => onChangePaginaActual(PaginaActual - 1)}
+                    disabled={PaginaActual <= 1}
                   >
                     <MdChevronLeft />
                   </Button>
                   <input type="text" style={{ width: "30px" }}
                     value={PaginaActual}
-                    onChange={e => onChangePaginaActual(e.target.value)}
+                    disabled
                   />
                   <InputGroupText>
                     {`de  ${Math.ceil(ConteoPartidas / CantidadPaginasPartidas)}`}
@@ -435,15 +430,10 @@ export default () => {
 
                 <InputGroupAddon addonType="append">
                   <Button className="btn btn-light pt-0"
-                  // onClick={() => this.PaginaActual(PaginaActual + 1)}
-                  // disabled={PaginaActual === NumeroPaginas.length}
+                    onClick={() => onChangePaginaActual(PaginaActual + 1)}
+                    disabled={PaginaActual >= Math.ceil(ConteoPartidas / CantidadPaginasPartidas)}
                   >
-                    <MdChevronRight /></Button>
-                  <Button className="btn btn-light pt-0"
-                  // onClick={() => this.PaginaActual(NumeroPaginas.pop())}
-                  // disabled={PaginaActual === NumeroPaginas.length}
-                  >
-                    <MdLastPage />
+                    <MdChevronRight />
                   </Button>
                 </InputGroupAddon>
               </InputGroup>
