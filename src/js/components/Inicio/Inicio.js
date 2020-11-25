@@ -66,7 +66,6 @@ export default ({ recargar }) => {
     }
     const [TipoObraSeleccionado, setTipoObraSeleccionado] = useState(0)
     function onChangeTipoObra(id_tipo) {
-        console.log("tipo", id_tipo);
         setTipoObraSeleccionado(id_tipo)
         fetchObras(id_tipo)
     }
