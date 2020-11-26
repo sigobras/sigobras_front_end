@@ -165,6 +165,7 @@ class MetradosDiarios extends Component {
                         ico.nombre = <MdMonetizationOn />
                     }
                 });
+               
                 this.setState({
                     DataIconosCategoriaApi: CategoriasIconos
                 })

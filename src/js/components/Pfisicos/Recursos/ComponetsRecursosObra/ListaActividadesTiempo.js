@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import ReactTable from "react-table";
 
-import { UrlServer } from '../../../../Utils/ServerUrlConfig'
+import { UrlServer } from '../../../Utils/ServerUrlConfig'
 
 class ListaActividadesTiempo extends Component {
     constructor(){

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios';
-import { UrlServer } from '../../../../Utils/ServerUrlConfig';
-import { Redondea, Redondea1 } from '../../../../Utils/Funciones';
+import { UrlServer } from '../../../Utils/ServerUrlConfig';
+import { Redondea, Redondea1 } from '../../../Utils/Funciones';
 export default forwardRef(({ id_partida }, ref) => {
     useEffect(() => {
         fectchAvancePartida()

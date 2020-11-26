@@ -115,20 +115,20 @@ class TblResumenCompDrag extends Component {
 
   }
 
-  ModalVermasRecursoAgrupado(codigo, idDocumento, nombreDocumento, nombreCod ) {
+  ModalVermasRecursoAgrupado(codigo, idDocumento, nombreDocumento, nombreCod) {
     // console.log("codigo ", codigo)
     this.setState(prevState => ({
       modalMostrarMasCodigo: !prevState.modalMostrarMasCodigo,
       CodigoSeleccionado: { codigo },
       idDocumento: { idDocumento },
-      nombreDocumento: {nombreDocumento},
+      nombreDocumento: { nombreDocumento },
       nombreCodigoDocumento: { nombreCod }
     }));
   }
 
   render() {
     const { DataRecursoAgrupadoApi, DataCodigosAgrupado, CodigoSeleccionado, idDocumento, nombreCodigoDocumento, nombreDocumento } = this.state
-    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '8px', right: '19.5%', color:"red" }} onClick={this.ModalVermasRecursoAgrupado.bind(this, "", "", "", "")}>&times;</button>;
+    const externalCloseBtn = <button className="close" style={{ position: 'absolute', top: '8px', right: '19.5%', color: "red" }} onClick={this.ModalVermasRecursoAgrupado.bind(this, "", "", "", "")}>&times;</button>;
     return (
       <div>
         <Row>
@@ -137,7 +137,7 @@ class TblResumenCompDrag extends Component {
               <table className="table table-sm table-hover">
                 <thead>
                   <tr>
-                    <th colSpan="8" > RECURSOS GASTADOS HASTA LA FECHA ( HOY FechaActual()} )</th>
+                    <th colSpan="8" > RECURSOS GASTADOS HASTA LA FECHA  HOY {FechaActual()} )</th>
                   </tr>
                   <tr>
                     <th>N° O/C - O/S</th>
@@ -184,9 +184,9 @@ class TblResumenCompDrag extends Component {
                       {
                         tipoDoc.codigos.map((codigo, icodi) =>
                           <div
-                          
+
                             className="divCodigoRecur" key={icodi}
-                            onDragOver={ codigo.bloqueado !== 1 ? (e) => this.onDragOver(e) : ""} 
+                            onDragOver={codigo.bloqueado !== 1 ? (e) => this.onDragOver(e) : ""}
                             onDrop={(e) => { this.onDrop(e, "completado", codigo.codigo, indexC, icodi, tipoDoc.idDocumento) }}
 
                             onClick={this.ModalVermasRecursoAgrupado.bind(this, codigo.codigo, tipoDoc.idDocumento, tipoDoc.tipoDocumento, tipoDoc.nombre)}
@@ -205,7 +205,7 @@ class TblResumenCompDrag extends Component {
         </Row>
 
         {/* { console.log("DataTipoRecursoResumen  ", DataTipoRecursoResumen)} */}
-        <Modal isOpen={this.state.modalMostrarMasCodigo} toggle={this.ModalVermasRecursoAgrupado.bind(this, "", "", "","")} external={externalCloseBtn} size="lg">
+        <Modal isOpen={this.state.modalMostrarMasCodigo} toggle={this.ModalVermasRecursoAgrupado.bind(this, "", "", "", "")} external={externalCloseBtn} size="lg">
           <DataSegunCodigoSelect DataConsumir={Object.assign(this.props.ConfigData, CodigoSeleccionado, idDocumento, nombreCodigoDocumento, nombreDocumento)} />
         </Modal>
       </div>

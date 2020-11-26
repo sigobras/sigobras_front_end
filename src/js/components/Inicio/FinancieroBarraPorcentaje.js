@@ -8,7 +8,7 @@ export default ({ id_ficha }) => {
 
     }, []);
 
-    const [FinancieroAvance, setFinancieroAvance] = useState({});
+    const [FinancieroAvance, setFinancieroAvance] = useState({financiero_avance_porcentaje:0});
     async function fetchFinancieroAvance() {
         const request = await axios.post(`${UrlServer}/getFinanciero`, {
             "id_ficha": id_ficha

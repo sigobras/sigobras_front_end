@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Nav, NavItem, NavLink, Card, CardHeader, CardBody, Spinner, Collapse, Row, Col, Button } from 'reactstrap';
 import classnames from 'classnames';
-import { UrlServer } from '../../../Utils/ServerUrlConfig'
-import { Redondea, mesesShort } from "../../../Utils/Funciones"
+import { UrlServer } from '../../Utils/ServerUrlConfig'
+import { Redondea, mesesShort } from "../../Utils/Funciones"
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import HistorialObservaciones from './HistorialObservaciones';
@@ -11,7 +11,7 @@ import { MdComment } from 'react-icons/md';
 import { DebounceInput } from 'react-debounce-input';
 import { MdSave, MdClose, MdModeEdit, MdSettings, MdDeleteForever } from "react-icons/md";
 
-import PartidasChat from '../../../libs/PartidasChat'
+import PartidasChat from '../../libs/PartidasChat'
 import CheckDate from './CheckDate';
 
 

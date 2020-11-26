@@ -8,7 +8,7 @@ export default ({ id_ficha }) => {
 
     }, []);
 
-    const [FisicoAvance, setFisicoAvance] = useState({});
+    const [FisicoAvance, setFisicoAvance] = useState({fisico_avance_porcentaje:0});
     async function fetchFisicoAvance() {
         const request = await axios.post(`${UrlServer}/getFisico`, {
             "id_ficha": id_ficha

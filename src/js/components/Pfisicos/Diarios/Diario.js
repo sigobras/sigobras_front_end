@@ -8,11 +8,6 @@ class MDdiario extends Component {
     super();
     this.state = {
       collapse: 1,
-      Pn: {
-        Componentes: "/getComponentesPNuevas",
-        Partidas: "/getPartidasPNuevas",
-        Actividades: "/getActividadesPNuevas"
-      },
     }
   }
 
@@ -36,25 +31,8 @@ class MDdiario extends Component {
             </CardHeader>
           </a>
           <Collapse isOpen={collapse === 1}>
-              <MetradosDiarios />
+            <MetradosDiarios />
           </Collapse>
-
-          {/* <Card className="mt-2">
-            <a href="#" className="text-white text-decoration-none">
-              <CardHeader onClick={()=>this.CollapseCard(2)} > 
-                <b>PARTIDAS NUEVAS</b>
-                <div className="float-right"> 
-                  {collapse === 2 ?<MdRemove size={20} />:<MdAdd size={20} />}
-                </div>
-              </CardHeader>
-            </a>
-              <Collapse isOpen={ collapse === 2 }>
-                  <CardBody>
-                    {collapse === 2 ? <MetradosDiarios  rutas={ Pn } /> : '' }
-                  </CardBody>                   
-              </Collapse>
-          </Card> */}
-
         </div>
       );
     } else {

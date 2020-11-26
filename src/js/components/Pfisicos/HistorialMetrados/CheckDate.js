@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
+import { UrlServer } from '../../Utils/ServerUrlConfig';
 import { RiEyeOffFill, RiShieldCheckFill } from 'react-icons/ri';
 export default ({ fecha, parentCallback,UsuarioData }) => {
     useEffect(() => {

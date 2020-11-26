@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ModalBody, Button } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
-import { UrlServer } from '../../../Utils/ServerUrlConfig';
-import { socket } from "../../../Utils/socket";
+import { UrlServer } from '../../Utils/ServerUrlConfig';
+import { socket } from "../../Utils/socket";
 function Comentarios({ dificultades_id }) {
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {

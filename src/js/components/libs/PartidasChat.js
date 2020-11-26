@@ -4,7 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import { socket } from "../Utils/socket";
-// import "./PartidasChat.css";
+import "./PartidasChat.css";
 
 import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
 import { MdComment } from 'react-icons/md';
