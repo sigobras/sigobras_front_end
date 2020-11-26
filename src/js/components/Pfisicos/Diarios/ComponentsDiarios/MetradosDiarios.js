@@ -33,7 +33,7 @@ export default () => {
   //paginacion
   const [CantidadPaginasPartidas, setCantidadPaginasPartidas] = useState(15);
   async function onChangeCantidadPaginasPartidas(value) {
-    await setCantidadPaginasPartidas(value)
+    setCantidadPaginasPartidas(value)
   }
   const [PaginaActual, setPaginaActual] = useState(1);
   function onChangePaginaActual(pagina) {
@@ -58,7 +58,7 @@ export default () => {
       {
         id_componente: ComponenteSelecccionado.id_componente,
         inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
-        fin: CantidadPaginasPartidas,
+        fin: Number(CantidadPaginasPartidas),
         id_iconoCategoria: MenuCategoriasSeleccionado.id_iconoCategoria,
         id_prioridad: MenuPrioridadesSeleccionado.id_prioridad,
         texto_buscar: TextoBuscado
@@ -174,7 +174,7 @@ export default () => {
   const [TextoBuscado, setTextoBuscado] = useState("");
   useEffect(() => {
     fectchConteoPartidas()
-  }, [ComponenteSelecccionado, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
+  }, [ComponenteSelecccionado,CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
   useEffect(() => {
     setPaginaActual(1)
   }, [ComponenteSelecccionado, CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
