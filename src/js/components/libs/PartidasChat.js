@@ -7,7 +7,7 @@ import { socket } from "../Utils/socket";
 // import "./PartidasChat.css";
 
 import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
-import { MdComment } from 'react-icons/md';
+import { MdComment, IconContext } from 'react-icons/md';
 import LogoSigobras from './../../../images/logoSigobras.png'
 
 function Comentarios({ id_partida, titulo }) {
@@ -102,18 +102,31 @@ function Comentarios({ id_partida, titulo }) {
                         left: "-6px",
                         top: "1px",
                         padding: "1px 4px",
-                        zIndex: "20",
-                        fontSize: "9px",
+                        zIndex: "18",
+                        fontSize: "7px",
                         fontWeight: "bold",
 
                     }}>
                         {ComentarioNoVistos}
                     </div>
                 }
-                <div
-                >
-                    <MdComment size={17} />
-                </div>
+                
+                {
+                    (ComentarioNoVistos > 0 && ComentarioNoVistos <10) ? <div 
+                    >
+                        <MdComment size={17} color= {"white"} />
+                    </div>: (ComentarioNoVistos >= 10 && ComentarioNoVistos <25) ? <div 
+                    >
+                        <MdComment size={17} color= {"yellow"} />
+                    </div> : (ComentarioNoVistos >= 25 && ComentarioNoVistos <50) ? <div 
+                    >
+                        <MdComment size={17} color= {"orange"} />
+                    </div> : ComentarioNoVistos >= 50 && <div 
+                    >
+                        <MdComment size={17} color= {"red"} />
+                    </div>
+                }
+                
             </div>,
             <Modal
                 key={1}
