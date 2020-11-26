@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { InputGroup, InputGroupAddon, InputGroupText, Input, Button } from 'reactstrap';
 import axios from "axios"
 
-import { ConvertFormatStringNumber, Redondea } from "../../../../../Utils/Funciones"
+import { ConvertFormatStringNumber, Redondea } from "../../../../Utils/Funciones"
 
 class DataSegunCodigoSelect extends Component {
   constructor() {

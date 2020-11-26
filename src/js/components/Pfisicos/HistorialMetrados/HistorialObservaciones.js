@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Row, Button, Input, Collapse, Modal, ModalHeader, ModalBody, ModalFooter, Label, FormGroup, Col } from 'reactstrap';
 import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
-import { UrlServer } from '../../../Utils/ServerUrlConfig'
+import { UrlServer } from '../../Utils/ServerUrlConfig'
 import { MdComment, MdAddAPhoto } from 'react-icons/md';
-import LogoSigobras from './../../../../../images/logoSigobras.png'
+import LogoSigobras from './../../../../images/logoSigobras.png'
 import Comentarios from './ComentariosObservaciones'
 function HistorialObservaciones() {
     const [DificultadComentariosNoVistos, setDificultadComentariosNoVistos] = useState([])

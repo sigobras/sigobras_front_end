@@ -11,8 +11,8 @@ import classnames from 'classnames';
 
 import { toast } from "react-toastify";
 
-import { UrlServer, Id_Obra } from '../../../../Utils/ServerUrlConfig';
-import { ConvertFormatStringNumber, FechaActual, Redondea } from '../../../../Utils/Funciones'
+import { UrlServer, Id_Obra } from '../../../Utils/ServerUrlConfig';
+import { ConvertFormatStringNumber, FechaActual, Redondea } from '../../../Utils/Funciones'
 import TblResumenCompDrag from './ResumenCostoDirecto/TblResumenCompDrag'
 // import { inflateRaw } from 'zlib';
 

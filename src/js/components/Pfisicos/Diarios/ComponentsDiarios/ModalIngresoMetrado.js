@@ -1,25 +1,14 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
-import { FaPlus, FaCheck, FaSuperpowers, FaFilter, FaCircle } from 'react-icons/fa';
-import { MdFlashOn, MdClose, MdPerson, MdSearch, MdComment, MdFirstPage, MdLastPage, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdAddAPhoto } from 'react-icons/md';
-import { TiWarning } from "react-icons/ti";
+import { FaPlus, FaCheck } from 'react-icons/fa';
 
-import { InputGroupAddon, InputGroupText, CustomInput, InputGroup, Spinner, Nav, NavItem, NavLink, Card, CardHeader, CardBody, Button, Modal, ModalHeader, ModalBody, ModalFooter, Collapse, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover, PopoverHeader, PopoverBody, Table } from 'reactstrap';
-import classnames from 'classnames';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-import { toast } from "react-toastify";
-import * as Icos from './index';
 
-import LogoSigobras from './../../../../../../images/logoSigobras.png'
-import { UrlServer } from '../../../../Utils/ServerUrlConfig';
-import { ConvertFormatStringNumber, FechaActual2Meses, FechaActual, Redondea } from '../../../../Utils/Funciones'
-import Comentarios from './Comentarios';
-import { socket } from "../../../../Utils/socket";
-import BarraPorcentajeAvancePartida from './BarraPorcentajeAvancePartida';
-import PartidasChat from '../../../../libs/PartidasChat'
-import BarraPorcentajeAvanceActividad from './BarraPorcentajeAvanceActividad';
-import ModalIngresoMetrado from './ModalIngresoMetrado';
+import LogoSigobras from './../../../../../images/logoSigobras.png'
+import { UrlServer } from '../../../Utils/ServerUrlConfig';
+import { FechaActual2Meses, FechaActual, Redondea } from '../../../Utils/Funciones'
 export default ({ Partida, Actividad, recargaActividad }) => {
     useEffect(() => {
         fectchAvanceActividad()

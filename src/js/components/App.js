@@ -22,15 +22,11 @@ import Btns from './Otros/Btns'
 
 // procesos fiscos
 import Inicio from './Inicio/Inicio'
-import MDdiario from "./Pfisicos/Metrados/Diarios/Diario"
-import MDHistorial from './Pfisicos/Metrados/Diarios/Historial'
-
-import RecursosObra from './Pfisicos/Metrados/Diarios/RecursosObra'
+import MDdiario from "./Pfisicos/Diarios/Diario"
+import MDHistorial from './Pfisicos/HistorialMetrados/Historial'
+import RecursosObra from './Pfisicos/Recursos/RecursosObra'
 import HistorialImagenesObra from './Pfisicos/HistorialImagenes/HistorialImagenesObra'
-import Paralizacion from './Pfisicos/Metrados/Diarios/Paralizacion'
-
 import General from '../components/Pfisicos/Valorizaciones/General'
-
 // proceso gerenciales 
 import InterfazGerencial from './Inicio2/InterfazGerencial'
 import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
@@ -47,7 +43,9 @@ import GestionTareas from "./GestionTareas/GestionTareas"
 
 // PROCESOS DOCUMENTOS 
 import Index from "./Pdocumentarios/Index"
-import { Redondea } from './Utils/Funciones';
+import { Redondea, meses } from './Utils/Funciones';
+import FinancieroBarraPorcentaje from './Inicio/FinancieroBarraPorcentaje';
+import FisicoBarraPorcentaje from './Inicio/FisicoBarraPorcentaje';
 export default () => {
 
     useEffect(() => {
@@ -115,6 +113,7 @@ export default () => {
         fetchPresupuestoCostoDirecto(sessionStorage.getItem("idobra"))
         fetchDataDelta(sessionStorage.getItem("idobra"))
         fetchEstadoObra(sessionStorage.getItem("idobra"))
+        setDataObra(ficha)
     }
 
     return (
@@ -199,18 +198,7 @@ export default () => {
                                         </li>
                                     }
                                 </ul>
-                                <div className="detallesObra pl-2 pr-2"
-                                    style={{
-                                        paddingBottom: "15px"
-                                    }}
-                                >
-                                    <div className="codigoObra">{DataObra.codigo}</div>
-                                    <div className="ContentpresupuestoObra">
-                                        <div className="PresuObra mr-2"> TOTAL S/. {Redondea(DataObra.g_total_presu)}</div>
-                                        <div className="PresuObra"> CD . S/. {Redondea(CostoDirecto)}</div>
-                                    </div>
 
-                                </div>
                                 <div className="abajoCirculos pl-2 pr-2"
                                     style={{
                                         paddingTop: "5px",
@@ -237,7 +225,7 @@ export default () => {
                                                     bgColor="whitesmoke"
                                                     textColor="orange"
                                                 />
-                                                <label className="text-center">DELTA</label>
+                                                <label className="text-center">DELTA {meses[DataDelta.mes - 1] && meses[DataDelta.mes - 1].toUpperCase()}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -264,6 +252,39 @@ export default () => {
                                         > EJECUTADO {Redondea(DataDelta.ejecutado_monto)}</div>
                                     </div>
                                 </div>
+                                {
+                                    DataObra.id_ficha &&
+                                    <div
+                                        style={{
+                                            marginTop: "10px",
+                                            marginLeft: "8px",
+                                            marginRight: "8px",
+                                        }}
+                                    >
+                                        <  FisicoBarraPorcentaje key={DataObra.id_ficha} id_ficha={DataObra.id_ficha} />
+                                    </div>
+                                }
+
+                                <div
+                                    style={{
+                                        marginTop: "10px",
+                                        marginLeft: "8px",
+                                        marginRight: "8px",
+                                    }}
+                                >
+                                    <FinancieroBarraPorcentaje key={DataObra.id_ficha} id_ficha={DataObra.id_ficha} />
+                                </div>
+                                <div className="detallesObra pl-2 pr-2"
+                                    style={{
+                                        paddingBottom: "15px"
+                                    }}
+                                >
+                                    <div className="ContentpresupuestoObra">
+                                        <div className="PresuObra mr-2"> TOTAL S/. {Redondea(DataObra.g_total_presu)}</div>
+                                        <div className="PresuObra"> CD . S/. {Redondea(CostoDirecto)}</div>
+                                    </div>
+
+                                </div>
                             </div>
                         </nav>
                         <main role="main" className="col ml-sm-auto col-lg px-0">
@@ -271,7 +292,7 @@ export default () => {
                                 <div>
                                     <b>
                                         {DataObra.g_meta &&
-                                            DataObra.g_meta.toUpperCase()}
+                                            DataObra.codigo + " - " + DataObra.g_meta.toUpperCase()}
                                     </b>
                                 </div>
                             </div>
@@ -282,7 +303,6 @@ export default () => {
                                     <Route path="/MDdiario" component={MDdiario} />
                                     <Route path="/MDHistorial" component={MDHistorial} />
                                     <Redirect exact from="/ParalizacionObra" to="MDdiario" />
-                                    <Route path="/ParalizacionObra" component={Paralizacion} />
                                     <Route path="/RecursosObra" component={RecursosObra} />
                                     <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
                                     <Route path="/General" component={General} />
