@@ -1,5 +1,5 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const PORT = process.env.PORT || '80';
+const PORT = process.env.PORT || '3000';
 var path = require('path');
 
 module.exports = {
@@ -61,7 +61,8 @@ module.exports = {
         //     'https://sigobras.com/'
 
         // ],
-        filename: 'main.js'
+        filename: 'main.js',
+        disableHostCheck: true,
     },
         performance: {
             hints: false,

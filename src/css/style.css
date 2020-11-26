@@ -327,7 +327,7 @@ body {
   /* /* bottom: 0px;
   position: absolute; */
   width: 100%;
-  padding-top: 30%;
+  padding-top: 15px;
 }
 
 .ContentpresupuestoObra {
@@ -715,7 +715,7 @@ table.table thead th {
   display: none;
 }
 
-.contentDataTd:hover .ContIcon {
+.ContIcon:hover {
   display: block;
   /* right: 47px; */
   position: relative;

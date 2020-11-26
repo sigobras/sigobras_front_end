@@ -27,6 +27,8 @@ class Report_2 extends Component {
       anioSeleccionado: '',
       mesActual: '',
 
+      Loading: false,
+
     }
 
     this.ModalReportes = this.ModalReportes.bind(this)
@@ -46,9 +48,10 @@ class Report_2 extends Component {
       "id_ficha": sessionStorage.getItem("idobra")
     })
       .then((res) => {
-        console.log('res ANIOS', res.data)
+        // console.log('res ANIOS', res.data)
         this.setState({
-          DataAniosApi: res.data
+          DataAniosApi: res.data,
+          
         })
       })
       .catch((err) => {
@@ -68,9 +71,10 @@ class Report_2 extends Component {
       "anyo": e.target.value
     })
       .then((res) => {
-        console.log('res Meses', res.data)
+        // console.log('res Meses', res.data)
         this.setState({
-          DataMesesApi: res.data
+          DataMesesApi: res.data,
+
         })
       })
       .catch((err) => {
@@ -82,6 +86,7 @@ class Report_2 extends Component {
     // LLAMA AL API DE MESES
     this.setState({
       mesActual: mes_act,
+      Loading:true,
     })
     //console.log('Fecha',Mes);
 
@@ -91,8 +96,8 @@ class Report_2 extends Component {
       "fecha_inicial": fecha_inicial,
       "fecha_final": fecha_final,
     })
-
-    console.log("Componentes1", res.data);
+    
+    // console.log("Componentes1", res.data);
 
     var Componentes = res.data
     for (let index = 0; index < Componentes.length; index++) {
@@ -121,11 +126,12 @@ class Report_2 extends Component {
       } else {
         element = Object.assign(element, res2.data)
       }
-      console.log("Seguimiento  ",element.presupuesto,element.valor_actual,element.valor_anterior);
-      console.log("Seguimiento Total ",element.presupuesto-element.valor_actual-element.valor_anterior);
+      // console.log("Seguimiento  ",element.presupuesto,element.valor_actual,element.valor_anterior);
+      // console.log("Seguimiento Total ",element.presupuesto-element.valor_actual-element.valor_anterior);
       element.valor_saldo = element.presupuesto-element.valor_actual-element.valor_anterior
     }
-    console.log("Componenetes modificcados", Componentes);
+    // console.log("Componenetes modificcados", Componentes);
+    
     var CD_porcentaje_anterior = 0;
     var CD_porcentaje_actual = 0;
     var CD_porcentaje_total = 0;
@@ -178,9 +184,9 @@ class Report_2 extends Component {
         //"historialestados_id_historialestado":id_historial,
         "fecha_inicial": fecha_inicial,
         "fecha_final": fecha_final,
-    })
+    })    
         .then((res3) => {
-            console.log('res costos indirectos', res3.data)
+            // console.log('res costos indirectos', res3.data)
             var costos_indirectos = res3.data
             var CI_total_presupuesto = 0;
             var CI_total_avance_anterior = 0;
@@ -206,6 +212,7 @@ class Report_2 extends Component {
                 CI_total_avance_saldo += item.monto * CD_porcentaje_saldo / 100
 
             }
+            
             var CT_presupuesto = CI_total_presupuesto + CD_presupuesto
             //console.log("Presupuesto total" , CI_total_presupuesto,Money_to_float(this.state.DataValGeneralAPI.presupuesto));
             CT_presupuesto = Redondea(CT_presupuesto)
@@ -233,7 +240,7 @@ class Report_2 extends Component {
             CI_total_avance_saldo = Redondea(CI_total_avance_saldo )
            
 
-            console.log('costos_indirectos', costos_indirectos);
+            // console.log('costos_indirectos', costos_indirectos);
             this.setState({
                 DataValGeneralAPI: Componentes,
                 DataEncabezado: encabezadoInforme(fecha_inicial, fecha_final),
@@ -247,7 +254,8 @@ class Report_2 extends Component {
                 CT_avance_anterior,
                 CT_avance_actual,
                 CT_avance_total,
-                CT_avance_saldo
+                CT_avance_saldo,
+                Loading:false,
             })
         })
         .catch((err) => {
@@ -263,7 +271,7 @@ class Report_2 extends Component {
     var { DataEncabezado } = this.state
 
     var DataHist = this.state.DataValGeneralAPI
-    console.log('DH', DataHist)
+    // console.log('DH', DataHist)
 
 
     var ValPresupuesto = []
@@ -1204,7 +1212,7 @@ class Report_2 extends Component {
       }
     )
     //TABLITA DEL COSTO DIRECTO 
-    console.log("ValPresupuesto",ValPresupuesto);
+    // console.log("ValPresupuesto",ValPresupuesto);
     costosIndirectos.forEach((CDirecto, j) => {
       
       ValPresupuesto[ValPresupuesto.length - 1].table.body.push( 
@@ -1440,7 +1448,7 @@ class Report_2 extends Component {
 )
     
     //console.log('data push' ,DataRestructurado);
-    console.log('data push' ,ValPresupuesto);
+    // console.log('data push' ,ValPresupuesto);
 
   
     var ultimoElemento = ValPresupuesto.length - 1
@@ -1634,7 +1642,7 @@ class Report_2 extends Component {
 
 
   render() {
-    const { DataValGeneralAPI, DataAniosApi, DataMesesApi, urlPdf } = this.state
+    const { DataValGeneralAPI, DataAniosApi, DataMesesApi, urlPdf, Loading } = this.state
 
     return (
       <div>
@@ -1676,13 +1684,13 @@ class Report_2 extends Component {
                   </fieldset>
                 }
               </Col>
-
+              {Loading ? <Spinner color="primary" />:
               <Col sm="1">
                 {
                   DataValGeneralAPI.length <= 0 ? "" :
                     <button className="btn btn-outline-success" onClick={this.PruebaDatos}>PDF</button>
                 }
-              </Col>
+              </Col>}
             </Row>
 
             {/* { 
