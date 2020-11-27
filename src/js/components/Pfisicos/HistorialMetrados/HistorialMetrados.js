@@ -17,6 +17,12 @@ import CheckDate from './CheckDate';
 
 
 export default () => {
+    function FechaLarga(fecha){
+        var ShortDate = new Date(fecha);
+        var options = { year: 'numeric', month: 'long', day: 'numeric',weekday: "long"};
+        return ShortDate.toLocaleDateString("es-ES", options)
+    }
+    
     useEffect(() => {
         fetchAnyos()
         fetchUsuarioData()
@@ -636,7 +642,7 @@ export default () => {
                                                                     className="prioridad"
                                                                     onClick={() => onChangeFechasSeleccionada(item.fecha)}
                                                                 >
-                                                                    <b>FECHA: </b>{item.fecha}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
+                                                                    <b>FECHA: </b>{FechaLarga(item.fecha)}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
 
                                                                 </legend>
                                                                 <Collapse isOpen={FechasSeleccionada == item.fecha}>
@@ -809,7 +815,7 @@ export default () => {
                                                                             className="prioridad"
                                                                             onClick={() => onChangeSemanaFecha(item.fecha)}
                                                                         >
-                                                                            <b>FECHA: </b>{item.fecha}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
+                                                                            <b>FECHA: </b>{FechaLarga(item.fecha)}  - <b> S/.</b> {Redondea(item.fecha_total_soles)}  - <b> {Redondea(item.fecha_total_porcentaje)} %</b>
                                                                             <Spinner
                                                                                 size="sm"
                                                                                 color="primary"
@@ -837,7 +843,8 @@ export default () => {
                                                                                                 color: "#171819",
                                                                                                 fontSize: "12px",
                                                                                                 backgroundColor: "#ffc107",
-                                                                                                width: "100%"
+                                                                                                width: "100%",
+                                                                                                padding:"3px",
                                                                                             }}>
                                                                                             <b>{item2.numero + " " + item2.nombre}</b>
                                                                                             <div className="float-right" style={{ color: "#171819", fontSize: "12px", }}>

@@ -12,6 +12,7 @@ import Report_7 from './Reporte6/Report_7'
 import Report_8 from './Reporte6/Report_8'
 import Report_9 from './Reporte6/Report_9'
 import Report_10 from './Reporte6/Report_10'
+import Report_curva_s from './Reporte6/Report_curva_s';
 
 
 
@@ -52,6 +53,7 @@ class ReportesGenerales extends Component {
                                 <Report_3 />
                                 
                                 {/* 6.4 */}
+                                <Report_curva_s/>
                                 {/* <Report_4 /> */}
                                 
                                 {/* 6.5 */}
