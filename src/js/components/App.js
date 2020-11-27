@@ -1,11 +1,10 @@
 // libraris
-import React, { Component, useState, useEffect } from 'react';
-import { FaChevronRight, FaChevronUp, FaHouseDamage, FaFile, FaSuperscript, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
-import { MdFullscreen, MdFullscreenExit, MdDehaze } from "react-icons/md";
+import React, { useState, useEffect } from 'react';
+import { FaChevronRight, FaChevronUp } from 'react-icons/fa';
+import { MdDehaze } from "react-icons/md";
 
-import { Spinner, Collapse, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
+import { Collapse } from 'reactstrap';
 import { BrowserRouter as Router, Route, NavLink, Switch, Redirect } from "react-router-dom";
-import Fullscreen from "react-full-screen";
 import Circle from 'react-circle';
 import { ToastContainer } from "react-toastify";
 
@@ -59,7 +58,6 @@ export default () => {
     }, []);
     const [DataObra, setDataObra] = useState([]);
     async function fetchDatosGenerales(id_ficha) {
-        console.log("datos generales");
         var res = await axios.post(`${UrlServer}/getDatosGenerales2`, {
             id_ficha
         })
@@ -78,7 +76,6 @@ export default () => {
             id_ficha,
             id_acceso: sessionStorage.getItem('idacceso')
         })
-        console.log("fetchMenu", res.data);
         setDataMenus(res.data)
     }
     const [DataDelta, setDataDelta] = useState({ ejecutado_monto: 1, programado_monto: 1 });
@@ -299,7 +296,11 @@ export default () => {
                             <div className="scroll_contenido">
                                 <Switch>
                                     <Redirect exact from="/" to="Inicio" />
-                                    <Route path="/Inicio" component={() => <Inicio recargar={recargar} />} />
+                                    <Route path="/Inicio"
+                                        render={(props) => (
+                                            <Inicio {...props} recargar={recargar} />
+                                        )}
+                                    />
                                     <Route path="/MDdiario" component={MDdiario} />
                                     <Route path="/MDHistorial" component={MDHistorial} />
                                     <Redirect exact from="/ParalizacionObra" to="MDdiario" />
