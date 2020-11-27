@@ -14,6 +14,7 @@ function Comentarios({ id_partida, titulo }) {
 
     useEffect(() => {
         fetchComentariosNoVistos()
+        comentarioTotales()
         socketIni()
     }, []);
     const [ComentarioNoVistos, setComentarioNoVistos] = useState(0)
@@ -24,9 +25,17 @@ function Comentarios({ id_partida, titulo }) {
         })
         setComentarioNoVistos(request.data.comentarios_novistos)
     }
+    const [ComentarioTotales, setComentarioTotales] = useState(0)
+    async function comentarioTotales() {
+        const request = await axios.post(`${UrlServer}/getPartidaComentariosTotales`, {
+            "id_partida": id_partida,
+        })
+        setComentarioTotales(request.data.comentarios_total)
+        // console.log("request.data.comentarios_total", request.data.comentarios_total);
+    }
     const messagesEndRef = useRef(null);
     const scrollToBottom = () => {
-        console.log("scroll to bottom");
+        // console.log("scroll to bottom");
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     };
     const [Comentario, setComentario] = useState([])
@@ -39,6 +48,7 @@ function Comentarios({ id_partida, titulo }) {
         })
         await setData(request.data);
         fetchComentariosNoVistos()
+        comentarioTotales()
         scrollToBottom()
     }
     async function saveComentario() {
@@ -65,13 +75,14 @@ function Comentarios({ id_partida, titulo }) {
     }
     function socketIni() {
         socket.on("partidas_comentarios_novistos_get-" + id_partida, (data) => {
-            console.log("llegada de mensaje no visto");
+            // console.log("llegada de mensaje no visto");
             fetchComentariosNoVistos()
+            comentarioTotales()
         })
     }
     function socketIniChat() {
         socket.on("partidas_comentarios_get-" + id_partida, (data) => {
-            console.log("llegada de mensaje");
+            // console.log("llegada de mensaje");
             fetchComentario()
         })
     }
@@ -83,7 +94,7 @@ function Comentarios({ id_partida, titulo }) {
             socketIniChat()
             fetchComentario()
         }
-        console.log("toggle modal chat");
+        // console.log("toggle modal chat");
         setModal(!modal)
     };
     return (
@@ -110,23 +121,24 @@ function Comentarios({ id_partida, titulo }) {
                         {ComentarioNoVistos}
                     </div>
                 }
-                
+
                 {
-                    (ComentarioNoVistos >= 0 && ComentarioNoVistos <10) ? <div 
+                    
+                    (ComentarioTotales >= 0 && ComentarioTotales < 10) ? <div
                     >
-                        <MdComment size={17} color= {"white"} />
-                    </div>: (ComentarioNoVistos >= 10 && ComentarioNoVistos <25) ? <div 
+                        <MdComment size={17} color={"white"} />
+                    </div> : (ComentarioTotales >= 10 && ComentarioTotales < 25) ? <div
                     >
-                        <MdComment size={17} color= {"yellow"} />
-                    </div> : (ComentarioNoVistos >= 25 && ComentarioNoVistos <50) ? <div 
+                        <MdComment size={17} color={"yellow"} />
+                    </div> : (ComentarioTotales >= 25 && ComentarioTotales < 50) ? <div
                     >
-                        <MdComment size={17} color= {"orange"} />
-                    </div> : ComentarioNoVistos >= 50 && <div 
+                        <MdComment size={17} color={"orange"} />
+                    </div> : ComentarioTotales >= 50 && <div
                     >
-                        <MdComment size={17} color= {"red"} />
+                        <MdComment size={17} color={"red"} />
                     </div>
                 }
-                
+
             </div>,
             <Modal
                 key={1}
