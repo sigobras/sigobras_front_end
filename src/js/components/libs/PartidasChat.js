@@ -112,7 +112,7 @@ function Comentarios({ id_partida, titulo }) {
                 }
                 
                 {
-                    (ComentarioNoVistos > 0 && ComentarioNoVistos <10) ? <div 
+                    (ComentarioNoVistos >= 0 && ComentarioNoVistos <10) ? <div 
                     >
                         <MdComment size={17} color= {"white"} />
                     </div>: (ComentarioNoVistos >= 10 && ComentarioNoVistos <25) ? <div 
