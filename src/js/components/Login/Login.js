@@ -38,12 +38,16 @@ class Login extends Component {
         usuario: this.state.user,
         password: this.state.pass
       })
-      toast.success('USUARIO CORRECTO');
-      sessionStorage.setItem("idacceso", res.data.id_acceso);
-      window.location.href = '/'
+      if (res.status == 200) {
+        toast.success('USUARIO CORRECTO');
+        sessionStorage.setItem("idacceso", res.data.id_acceso);
+        window.location.href = '/'
+      } else {
+        toast.error('Usuario o contraseña incorrectos');
+      }
+
     } catch (error) {
-      console.log("error",error);
-       toast.error('Usuario o contraseña incorrectos');
+      toast.error('Usuario o contraseña incorrectos');
     }
     this.setState({ isLoading: false });
   }
@@ -68,7 +72,7 @@ class Login extends Component {
             <div className="h4">SISTEMA DE INFORMACÍON GERENCIAL DE OBRAS</div>
           </div>
           <div className="col-sm-4">
-            <div className="float-right"> 
+            <div className="float-right">
 
               <Button id="contactos" outline color="warning" className="mr-2">Contacténos <TiArrowSortedDown /></Button>
               <UncontrolledPopover placement="bottom" target="contactos">
@@ -78,9 +82,9 @@ class Login extends Component {
                     <b>Celular N° : </b><br /><span>951 396 279</span>
                   </p>
                   <p>
-                   <b>Email :</b><br /> <span> manager@sigobras.com</span>
+                    <b>Email :</b><br /> <span> manager@sigobras.com</span>
                   </p>
-                  
+
                 </PopoverBody>
               </UncontrolledPopover>
 
@@ -101,7 +105,7 @@ class Login extends Component {
                     <div className="form-group">
                       <div className={this.state.alert}>{this.state.Loginsms}</div>
 
-                      <button type="submit" disabled={!enabled}  className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" type="grow" /> : 'INGRESAR'}</button>
+                      <button type="submit" disabled={!enabled} className="btn btn-primary btn-lg btn-block">{isLoading ? <Spinner color="warnnig" type="grow" /> : 'INGRESAR'}</button>
                     </div>
                   </form>
                 </PopoverBody>
@@ -147,7 +151,7 @@ class Login extends Component {
             <div className="contentLemas">
               <label><b>VISIÓN</b></label>
               <div>
-                 Nos orientaremos a crear un sistema INTELIGENTE utilizando tecnologías de desarrollo de vanguardia.
+                Nos orientaremos a crear un sistema INTELIGENTE utilizando tecnologías de desarrollo de vanguardia.
                   {/* Utilizando y aplicando los más altos estándares de calidad y confidencialidad.                 */}
               </div>
             </div>

@@ -69,6 +69,7 @@ export default () => {
     )
   );
   async function fectchPartidas() {
+    // setTogglePartidasEstilo(false)
     const request = await axios.post(`${UrlServer}/getPartidas2`,
       {
         id_componente: ComponenteSelecccionado.id_componente,
