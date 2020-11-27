@@ -37,6 +37,7 @@ export default ({ recargar }) => {
             id_tipoObra
         })
         setObras(request.data)
+        recargar(request.data[0])
     }
     const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] = useState({})
     async function onChangeObraComponentesSeleccionada(id_ficha) {
