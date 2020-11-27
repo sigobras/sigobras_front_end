@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaSuperpowers, FaFilter, FaCircle } from 'react-icons/fa';
+import { FaSuperpowers, FaCircle } from 'react-icons/fa';
 import { MdFlashOn, MdSearch, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdCancel, MdArrowDropDownCircle } from 'react-icons/md';
 import { TiWarning } from 'react-icons/ti';
-import { InputGroupAddon, InputGroupText, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, Button, InputGroupButtonDropdown, Input, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledPopover } from 'reactstrap';
+import { InputGroupAddon, InputGroupText, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
 import classnames from 'classnames';
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 import { Redondea } from '../../../Utils/Funciones'
@@ -18,7 +18,14 @@ export default () => {
     fetchCategorias()
   }, []);
   // componentes
-  const [Componentes, setComponentes] = useState([]);
+  const [Componentes, setComponentes] = useState(
+    [
+      {
+        "id_componente": 0,
+        "numero": "...",
+      }
+    ]
+  );
   async function fectchComponentes() {
     const request = await axios.post(`${UrlServer}/getComponentes`, {
       id_ficha: sessionStorage.getItem('idobra')
@@ -26,14 +33,14 @@ export default () => {
     setComponentes(request.data)
     onChangeComponentesSeleccion(request.data[0])
   }
-  const [ComponenteSelecccionado, setComponenteSelecccionado] = useState({ numero: 0, nombre: "" });
+  const [ComponenteSelecccionado, setComponenteSelecccionado] = useState({ numero: 0, nombre: "Cargando..." });
   function onChangeComponentesSeleccion(componente) {
     setComponenteSelecccionado(componente)
   }
   //paginacion
   const [CantidadPaginasPartidas, setCantidadPaginasPartidas] = useState(15);
   async function onChangeCantidadPaginasPartidas(value) {
-    await setCantidadPaginasPartidas(value)
+    setCantidadPaginasPartidas(value)
   }
   const [PaginaActual, setPaginaActual] = useState(1);
   function onChangePaginaActual(pagina) {
@@ -52,26 +59,40 @@ export default () => {
     setConteoPartidas(request.data.total)
   }
   //partidas
-  const [Partidas, setPartidas] = useState([]);
+  const [TogglePartidasEstilo, setTogglePartidasEstilo] = useState(false)
+  const [Partidas, setPartidas] = useState(
+    new Array(15).fill(
+      {
+        "id_partida": -2,
+        "item": "--"
+      }
+    )
+  );
   async function fectchPartidas() {
     const request = await axios.post(`${UrlServer}/getPartidas2`,
       {
         id_componente: ComponenteSelecccionado.id_componente,
         inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
-        fin: CantidadPaginasPartidas,
+        fin: Number(CantidadPaginasPartidas),
         id_iconoCategoria: MenuCategoriasSeleccionado.id_iconoCategoria,
         id_prioridad: MenuPrioridadesSeleccionado.id_prioridad,
         texto_buscar: TextoBuscado
       }
     )
     setPartidas(request.data)
+
+    if (!TogglePartidasEstilo) {
+      setTimeout(() => {
+        setTogglePartidasEstilo(true)
+      }, 500)
+    }
   }
-  const [PartidaSelecccionado, setPartidaSelecccionado] = useState({ numero: 0, nombre: "" });
+  const [PartidaSelecccionado, setPartidaSelecccionado] = useState({ numero: 0, nombre: "", item: "-" });
   function onChangePartidasSeleccion(Partida) {
-    if(Partida.id_partida != PartidaSelecccionado.id_partida){
+    if (Partida.id_partida != PartidaSelecccionado.id_partida) {
       setPartidaSelecccionado(Partida)
       fectchActividades(Partida.id_partida)
-    }else{
+    } else {
       setPartidaSelecccionado({ numero: 0, nombre: "" })
     }
   }
@@ -174,7 +195,7 @@ export default () => {
   const [TextoBuscado, setTextoBuscado] = useState("");
   useEffect(() => {
     fectchConteoPartidas()
-  }, [ComponenteSelecccionado, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
+  }, [ComponenteSelecccionado, CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
   useEffect(() => {
     setPaginaActual(1)
   }, [ComponenteSelecccionado, CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
@@ -229,7 +250,20 @@ export default () => {
         </div>
       </CardHeader>
       <CardBody>
-        <table className="table table-sm">
+        <table
+          className="table table-sm"
+          style={!TogglePartidasEstilo ?
+            {
+              opacity: 0,
+              pointerEvents: "none"
+            }
+            :
+            {
+              transition: "opacity 0.5s",
+              opacity: 1
+            }
+          }
+        >
           <thead className="resplandPartida">
             <tr>
               <th style={{ width: "39px" }}>
@@ -327,7 +361,9 @@ export default () => {
               <th style={{ width: "32px" }}></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+
+          >
             {Array.isArray(Partidas) &&
               Partidas.map((item) =>
                 [
@@ -336,8 +372,12 @@ export default () => {
                     className={item.tipo === "titulo"
                       &&
                       "font-weight-bold text-info icoVer"
-                    }>
-                    <td>
+                    }
+
+                  >
+                    <td
+
+                    >
                       {
                         item.tipo === "partida" &&
                         <div title="prioridad"
@@ -492,7 +532,20 @@ export default () => {
           </tbody>
 
         </table>
-        <div className="clearfix">
+        <div
+          className="clearfix"
+          style={!TogglePartidasEstilo ?
+            {
+              opacity: 0,
+              pointerEvents: "none"
+            }
+            :
+            {
+              transition: "opacity 0.5s",
+              opacity: 1
+            }
+          }
+        >
           <div className="float-left">
             <select
               onChange={(e) => onChangeCantidadPaginasPartidas(e.target.value)}
@@ -590,10 +643,7 @@ function IconosPartidas({ Id_partida, Id_iconoCategoria, Id_prioridad, Categoria
   }
   //toogle Prioridades
   const [MenuPrioridades, setMenuPrioridades] = useState(false);
-  const tooglePrioridades = () => {
-    setMenuPrioridades(!MenuPrioridades);
-  }
-  const [PrioridadSeleccionada, setPrioridadSeleccionada] = useState(0);
+  const [, setPrioridadSeleccionada] = useState(0);
   function onChangePrioridadSeleccionada(id_prioridad) {
     setPrioridadSeleccionada(id_prioridad)
     setMenuPrioridades(false)
