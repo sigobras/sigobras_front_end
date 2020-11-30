@@ -3,10 +3,8 @@ import axios from 'axios';
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, Row, Col, Button, ButtonGroup, Spinner, Container } from 'reactstrap';
-import { FaBlackTie, FaFilePdf } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 
-import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno, ImgDelta } from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 const { Redondea, mesesShort, meses } = require('../../Utils/Funciones');
@@ -20,6 +18,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 // import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import { toast } from "react-toastify";
 
 function Report_curva_s() {
   const [Loading, setLoading] = useState(false);
@@ -30,24 +29,14 @@ function Report_curva_s() {
     },
   }));
   const classes = useStyles();
-  //   function RequestB64(){
-  //     request.get('http://tinypng.org/images/example-shrunk-8cadd4c7.png', function (error, response, body) {
-  //     if (!error && response.statusCode == 200) {
-  //         data = "data:" + response.headers["content-type"] + ";base64," + Buffer.from(body).toString('base64');
-  //         console.log("RequestB64",data);
-  //     }
-  // });
-  //   }
+
   useEffect(() => {
-    // ImagenesDB()
-    // RequestB64()
+
   }, []);
 
-  const [ImagenToShow, setImagenToShow] = useState();
+  const [] = useState();
 
   const canvas = useRef(null);
-  const ImagenPDF = useRef(null);
-  const ImagenPDF2 = useRef(null);
 
   function GenerateFechaPdf() {
     var n = new Date();
@@ -62,24 +51,25 @@ function Report_curva_s() {
     var date = d + "/" + m + "/" + y;
     return date
   }
+  async function ImagenToBase64(url) {
+    var urlFinal = UrlServer + url;
+    let image = await axios.get(urlFinal,
+      {
+        responseType: 'arraybuffer',
+      });
 
-  async function ImagenToBase64(img) {
-    var clearCanvas = false;
-    var ctx = canvas.current.getContext('2d');
-    ctx.drawImage(img, 0, 0, 700, 700,       // `this` is now image
-      0, 0, 900, 900);
-
-    var dataImg = canvas.current.toDataURL();
-    // ctx.crossOrigin = '';
-    ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
-    return dataImg
+    // raw[0] = Buffer.from(image.data, 'binary').toString('base64');
+    var raw = Buffer.from(image.data).toString('base64');
+    var imgb64 = "data:" + image.headers["content-type"] + ";base64," + raw;
+    return imgb64;
+    // console.log(imagenBase64);
   }
 
   //data curva s porcentaje
   async function solesToPorcentajeCurvaS(test) {
     var tempDataObra = await fetchDataObra()
     let cloneDataCurvaS = test.concat()
-    cloneDataCurvaS.forEach((item, i) => {
+    cloneDataCurvaS.forEach((item) => {
       item.programado_monto = redondeo(item.programado_monto / tempDataObra.costo_directo * 100, 2)
       item.ejecutado_monto = redondeo(item.ejecutado_monto / tempDataObra.costo_directo * 100, 2)
       item.financiero_monto = redondeo(item.financiero_monto / tempDataObra.g_total_presu * 100, 2)
@@ -116,21 +106,22 @@ function Report_curva_s() {
 
 
   // Obteniendo imagenes de la base de datos
-  const [Imagen1, setImagen1] = useState("");
-  const [Imagen2, setImagen2] = useState("");
-  const [Existe_Imagen, setExiste_Imagen] = useState(false);
+  const [] = useState("");
+  const [] = useState("");
+  const [] = useState(false);
 
   async function ImagenesDB() {
     try {
       const request = await axios.post(`${UrlServer}/getImagenesCurvaS`, {
-        id_ficha: sessionStorage.getItem('idobra')
+        id_ficha: sessionStorage.getItem('idobra'),
+        cantidad: 8,
       })
       // console.log("request.dataaaa", request);
-
       return request.data
     } catch (error) {
       setLoading(false)
-      alert("No hay imagenes registradas")
+      toast.error("❌ No hay imagenes registradas ")
+      // alert("No hay imagenes registradas")
     }
   }
 
@@ -146,14 +137,13 @@ function Report_curva_s() {
     var financiero_acumulado = 0
     var today = new Date();
     var year = today.getFullYear();
-    var month = today.getMonth() + 1;
     var Delta = 0;
     // console.log("Year",year);
     // console.log("month",month);
     var programado_saldo = 0
     var ejecutado_saldo = 0
     var financiero_saldo = 0
-    dataCurvaS.forEach((item, i) => {
+    dataCurvaS.forEach((item) => {
       if (item.tipo == "PERIODO") {
         //  console.log("MEs",item.fecha_inicial.substr(5,2));
         if (year == item.fecha_inicial.substr(0, 4) && item.ejecutado_monto != 0 && item.ejecutado_monto != null) {
@@ -648,10 +638,43 @@ function Report_curva_s() {
 
     //Se consigue el link de las imagenes
     var Imagenes_en_base_64 = await ImagenesDB()
+    for (let i = 0; i < Imagenes_en_base_64.length; i++) {
+      const element = Imagenes_en_base_64[i];
+      Imagenes_en_base_64[i].ImagenB64 = await ImagenToBase64(element.imagen)
+    }
+    console.log("Imagenes_en_base_64", Imagenes_en_base_64);
     var imagenesParaPdf = ""
     var DescripcionImagenesParaPdf = []
-    if (Imagenes_en_base_64) {
+    var DescripcionPartida = []
+    if (Imagenes_en_base_64.length) {
       // console.log("Procesando imagenes");
+      DescripcionPartida = [
+        {
+          columns: [
+            {
+              text: Imagenes_en_base_64[0].item + '/ ' + Imagenes_en_base_64[0].partida_descripcion,
+              // fit: [220, 220],
+              // width: 250,
+              // height: 160,
+              // margin: [1, 0, 0, 0],
+              alignment: "left",
+              fontSize: 5.9,
+            },
+            Imagenes_en_base_64[1] &&
+            {
+              // alignment: 'right',
+              text: Imagenes_en_base_64[1].item + '/ ' + Imagenes_en_base_64[1].partida_descripcion,
+              // fit: [220, 220],
+              // width: 250,
+              // height: 160,
+              margin: [8, 0, 0, 0],
+              // alignment: "left",
+              fontSize: 5.9,
+
+            }
+          ],
+        },
+      ]
       imagenesParaPdf = [
         {
           // style: 'tableExample',
@@ -683,25 +706,25 @@ function Report_curva_s() {
 
           columns: [
             {
-              image: Imagenes_en_base_64[0].imgb64,
+              image: Imagenes_en_base_64[0].ImagenB64,
               // fit: [220, 220],
               width: 250,
-              height: 160,
+              height: 150,
               margin: [1, 0, 0, 0],
               // alignment: "center",
             },
+            Imagenes_en_base_64[1] &&
             {
               // alignment: 'right',
-              image: Imagenes_en_base_64[1].imgb64,
+              image: Imagenes_en_base_64[1].ImagenB64,
               // fit: [220, 220],
               width: 250,
-              height: 160,
+              height: 150,
               margin: [0, 0, -16, 0],
               alignment: "center",
 
             }
           ],
-
         },
       ]
       DescripcionImagenesParaPdf = [
@@ -716,15 +739,17 @@ function Report_curva_s() {
                   text: Imagenes_en_base_64[0].descripcion,
                   // noWrap: true,
                   // margin: [0, -7, 0, 0], Con tabla
-                  margin: [0, 0, 0, 0],
+                  margin: [0, -5, 0, 0],
                   alignment: 'justify',
                   fontSize: 5.9,
+                  colSpan: Imagenes_en_base_64[1] ? 1 : 2
                 },
+                Imagenes_en_base_64[1] &&
                 {
                   text: Imagenes_en_base_64[1].descripcion,
                   // noWrap: true,
                   // margin: [5, -7, 0, 0], Con tabla
-                  margin: [5, 0, 0, 0],
+                  margin: [5, -5, 0, 0],
                   alignment: 'justify',
                   fontSize: 5.9,
                 },
@@ -734,44 +759,137 @@ function Report_curva_s() {
                   text: Imagenes_en_base_64[0].fecha,
                   // noWrap: true,
                   // margin: [0, -5, 0, 0], COn tabla
-                  margin: [0, 0, 0, 0],
+                  margin: [0, -5, 0, 0],
                   alignment: 'justify',
                   fontSize: 5.9,
+                  colSpan: Imagenes_en_base_64[1] ? 1 : 2
                 },
+                Imagenes_en_base_64[1] &&
                 {
                   text: Imagenes_en_base_64[1].fecha,
                   // noWrap: true,
                   // margin: [5, -5, 0, 0], COn tabla
-                  margin: [5, 0, 0, 0],
+                  margin: [5, -5, 0, 0],
                   alignment: 'justify',
                   fontSize: 5.9,
+                  pageBreak: 'after',
                 },
               ],
             ]
           }
         },
-        // {
-        //   columns: [
-        //     {
-        //       text: Imagenes_en_base_64[0].descripcion + '\n' +Imagenes_en_base_64[0].descripcion,
-        //       // noWrap: true,
-        //       margin: [0, 5, 0, 0],
-        //       alignment: 'justify',
-        //       fontSize: 5.9,
-        //     },
-        //     {
-        //       text: Imagenes_en_base_64[1].descripcion,
-        //       // noWrap: true,
-        //       margin: [10, 5, 0, 0],
-        //       alignment: 'justify',
-        //       fontSize: 5.9,
-        //     }
-        //   ],
-
-        // },
       ]
     }
+    
+    var body = [
+      Imagenes_en_base_64.length >2 &&
+      [
+        {
+          text: "PANEL FOTOGRAFICO DEL AVANZE DE OBRA",
+          border: [false, false, false, false],
+          colSpan: 3,
+          alignment: 'center',
+          margin: [0,-18,0,0],
+        },
+        {
 
+        },
+        {
+
+        }
+      ]
+    ]
+    for (let i = 2; i < Imagenes_en_base_64.length; i += 2) {
+      const element = Imagenes_en_base_64[i];
+      const element2 = Imagenes_en_base_64[i+1];
+      body.push(
+        [
+          {
+            image: element.ImagenB64,
+            // noWrap: true,
+            // margin: [0, -7, 0, 0], Con tabla
+            margin: [0, 0, 0, 0],
+            alignment: 'justify',
+            // fit: [250, 160],
+            width: 250,
+              height: 180,
+          },
+          {
+            text: "",
+            border: [true, false, element2 ? true : false, false],
+            // margin: [5,0,-15,0],
+          },
+          element2 ?
+          {
+            // image: Imagenes_en_base_64[1].imgb64,
+            image: element2.ImagenB64,
+            // noWrap: true,
+            // margin: [5, -7, 0, 0], Con tabla
+            margin: [5, 0, 0, 0],
+            alignment: 'justify',
+            // fit: [250, 160],
+            width: 250,
+            height: 180,
+          }:
+          {
+            text: "",
+            border: [false, false, false, false],
+          },
+        ],
+      )
+      body.push(
+        [
+          {
+            text: element.item + " - " +element.partida_descripcion + " DESC: " + element.descripcion + " " + element.fecha,
+            alignment: 'justify',
+            fontSize: 6.5,
+          },
+          {
+            text: "",
+            border: [true, false, element2 ? true : false, false],
+            // margin: [5,0,-15,0],
+          },
+          element2 ?
+          {
+            text: element2.item + " - " +element2.partida_descripcion + " DESC: " + element2.descripcion + " " + element2.fecha,
+            alignment: 'justify',
+            fontSize: 6.5,
+          }:
+          {
+            text: "",
+            border: [false, false, false, false],
+          },
+        ]
+      )
+      body.push(
+        [
+          {
+            text: " ",
+            colSpan: 3,
+            border: [false, false, false, false],
+            margin: [0,-10,0,-10],
+          },
+          {
+
+          },
+          {
+
+          },
+        ]
+      )
+    }
+    var SegundoEsquemaImagenes = [
+      {
+        style: 'tableExample',
+        // layout: 'noBorders',
+        pageMargins: [0, 0, 0, 0],
+
+        table: {
+          widths: ['*', 'auto', '*'],
+          body: body
+        }
+      },
+    ]
     // console.log("Imagenes_en_base_64", Imagenes_en_base_64);
 
 
@@ -818,7 +936,7 @@ function Report_curva_s() {
             hLineWidth: function (i, node) {
               return (i === 0 || i === node.table.body.length) ? 0 : 1;
             },
-            vLineWidth: function (i, node) {
+            vLineWidth: function () {
               return 0;
             },
           }
@@ -912,7 +1030,7 @@ function Report_curva_s() {
             hLineWidth: function (i, node) {
               return (i === 0 || i === node.table.body.length) ? 0 : 1;
             },
-            vLineWidth: function (i, node) {
+            vLineWidth: function () {
               return 0;
             },
           }
@@ -928,13 +1046,15 @@ function Report_curva_s() {
           hLineWidth: function (i, node) {
             return (i === 0 || i === node.table.body.length) ? 0 : 1;
           },
-          vLineWidth: function (i, node) {
+          vLineWidth: function () {
             return 0;
           },
         }
       }
+        , Imagenes_en_base_64 ? DescripcionPartida : " "
         , Imagenes_en_base_64 ? imagenesParaPdf : " "
         , Imagenes_en_base_64 ? DescripcionImagenesParaPdf : " "
+        , SegundoEsquemaImagenes
       ),
 
 
