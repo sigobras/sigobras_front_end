@@ -169,7 +169,7 @@ class ListaMateriales extends Component {
       })
 
     // solicita el resumen general por apis
-    this.reqChartResumenGeneral(Id_Obra)
+    this.reqChartResumenGeneral(sessionStorage.getItem('idobra'))
 
     // axios consulta al api de  prioridades ====================================
     axios.get(`${UrlServer}/getPrioridades`)
@@ -267,7 +267,7 @@ class ListaMateriales extends Component {
     }
     // consulta al resumen
     if ("RESUMEN" === tab) {
-      this.reqChartResumenGeneral(Id_Obra)
+      this.reqChartResumenGeneral(sessionStorage.getItem('idobra'))
       return
     }
     this.reqChartResumenComponente(id_componente)
@@ -496,7 +496,7 @@ class ListaMateriales extends Component {
   }
 
   tabResumenTipoRecurso(index, TipoRecurso) {
-    // console.log("index",index,  " TipoRecurso ", TipoRecurso);
+    console.log("index",index,  " TipoRecurso ", TipoRecurso);
     if (this.state.activeTabResumen !== index) {
       this.setState({
         activeTabResumen: index,
@@ -505,11 +505,13 @@ class ListaMateriales extends Component {
         CamviarTipoVistaDrag: false
 
       });
-      this.reqResumen(Id_Obra, TipoRecurso, "/getmaterialesResumen")
+      this.reqResumen(sessionStorage.getItem('idobra'), TipoRecurso, "/getmaterialesResumen")
     }
+    console.log("Paso? 1",sessionStorage.getItem('idobra'),TipoRecurso) ;
   }
 
   Ver_No() {
+    console.log("Paso? 2");
     this.setState({
       tipoEjecucion: !this.state.tipoEjecucion,
       DataRecursosListaApi: []
@@ -518,10 +520,10 @@ class ListaMateriales extends Component {
       if (this.state.tipoEjecucion === true) {
         // console.log("ejecuntando true")
 
-        this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal")
+        this.reqResumen(sessionStorage.getItem('idobra'), this.state.TipoRecursoResumen, "/getmaterialesResumenEjecucionReal")
         return
       }
-      this.reqResumen(Id_Obra, this.state.TipoRecursoResumen, "/getmaterialesResumen")
+      this.reqResumen(sessionStorage.getItem('idobra'), this.state.TipoRecursoResumen, "/getmaterialesResumen")
     });
   }
 
@@ -627,7 +629,7 @@ class ListaMateriales extends Component {
       {
         "tipo": tipo,
         "data": [
-          [Id_Obra, this.state.TipoRecursoResumen, descripcion, e.target.value, this.state.selectTipoDocumento]
+          [sessionStorage.getItem('idobra'), this.state.TipoRecursoResumen, descripcion, e.target.value, this.state.selectTipoDocumento]
         ]
       }
     } else {
@@ -635,7 +637,7 @@ class ListaMateriales extends Component {
       {
         "tipo": tipo,
         "data": [
-          [Id_Obra, this.state.TipoRecursoResumen, descripcion, e.target.value]
+          [sessionStorage.getItem('idobra'), this.state.TipoRecursoResumen, descripcion, e.target.value]
         ]
       }
     }
@@ -783,7 +785,7 @@ class ListaMateriales extends Component {
       "unidad": undMedida,
       "cantidad": cantidad,
       "precio": precio,
-      "fichas_id_ficha": Id_Obra,
+      "fichas_id_ficha": sessionStorage.getItem('idobra'),
       "tipoDocumentoAdquisicion_id_tipoDocumentoAdquisicion": idCompraTipo
     })
       .then((res) => {
@@ -873,7 +875,7 @@ class ListaMateriales extends Component {
 
   reqChartResumenGeneral(IdObra) {
     axios.post(`${UrlServer}/getmaterialesResumenChart`, {
-      "id_ficha": IdObra
+      "id_ficha": sessionStorage.getItem('idobra')
     })
       .then((res) => {
         // console.log("res data reqChartResumenGeneral", res)
@@ -904,7 +906,8 @@ class ListaMateriales extends Component {
   }
 
   reqResumenXComponente(index, idComponente, tipoRecurso) {
-    // console.log("tipo recurso ", tipoRecurso)
+    console.log("tipo recurso ", tipoRecurso)
+    console.log("idComponente",idComponente);
     if (this.state.activeTabResumen !== index) {
       this.setState({
         activeTabResumen: index
@@ -915,10 +918,11 @@ class ListaMateriales extends Component {
       "tipo": tipoRecurso
     })
       .then((res) => {
-        // console.log("resumen de componentes dddd>>> ", res.data)
+        console.log("resumen de componentes dddd>>> ", res.data)
+        res.data != "vacio" ?
         this.setState({
           DataRecursosListaApi: res.data
-        })
+        }):toast.error('No hay datos para mostrar', { position: "top-right", autoClose: 5000 });
       })
       .catch((err) => {
         console.error("error al consultar al api ", err)
@@ -1191,7 +1195,7 @@ class ListaMateriales extends Component {
                           {
                             this.state.CamviarTipoVistaDrag === true
                               ?
-                              <TblResumenCompDrag ConfigData={{ UrlServer: UrlServer, IdObra: Id_Obra, tipoRecurso: this.state.TipoRecursoResumen }} />
+                              <TblResumenCompDrag ConfigData={{ UrlServer: UrlServer, IdObra: sessionStorage.getItem('idobra'), tipoRecurso: this.state.TipoRecursoResumen }} />
                               :
                               <div>
                                 <table className="table table-sm table-hover">
