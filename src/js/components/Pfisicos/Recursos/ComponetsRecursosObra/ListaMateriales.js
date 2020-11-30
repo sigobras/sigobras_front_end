@@ -125,7 +125,8 @@ class ListaMateriales extends Component {
   componentDidMount() {
     document.title = "Metrados Diarios"
     axios.post(`${UrlServer}/getmaterialescomponentes`, {
-      id_ficha: Id_Obra
+      // id_ficha: Id_Obra
+      id_ficha: sessionStorage.getItem('idobra')
     })
       .then((res) => {
         // console.log(res.data);
@@ -221,7 +222,8 @@ class ListaMateriales extends Component {
 
     // axios consulta al api de  RECURSOS =================================================================================
     axios.post(`${UrlServer}/getmaterialesResumenTipos`, {
-      "id_ficha": Id_Obra
+      // "id_ficha": Id_Obra
+      "id_ficha": sessionStorage.getItem('idobra')
     })
       .then((res) => {
         // console.log("datos", res.data);
@@ -250,7 +252,7 @@ class ListaMateriales extends Component {
   }
 
   Tabs(tab, id_componente, nombComp) {
-    console.log("tab ", tab)
+    // console.log("tab ", tab)
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab,
@@ -326,13 +328,13 @@ class ListaMateriales extends Component {
           id_partida: id_partida
         })
           .then((res) => {
-            console.log('data tipos recursos >>', res.data);
+            // console.log('data tipos recursos >>', res.data);
 
             this.setState({
               DataRecursosCdAPI: res.data,
               // DataListaRecursoDetallado:res.data.mayor_metrado
             })
-            console.log("res data prueba ", res.data[0]["tipo"])
+            // console.log("res data prueba ", res.data[0]["tipo"])
             this.reqListaRecursos(id_partida, res.data[0]["tipo"])
 
           })
@@ -396,7 +398,7 @@ class ListaMateriales extends Component {
   }
 
   Prioridad(i) {
-    console.log("cambia", i)
+    // console.log("cambia", i)
     this.setState({
       mostrarIconos: this.state.mostrarIconos === i ? -1 : i
     })
@@ -475,14 +477,14 @@ class ListaMateriales extends Component {
   }
 
   CollapseResumenTabla(index) {
-    console.log("index ", index)
+    // console.log("index ", index)
     this.setState({
       CollapseResumenTabla: this.state.CollapseResumenTabla === index ? "" : index,
     });
   }
 
   TabRecurso(index, tipoRecurso, idPartida) {
-    console.log("index ", index, "tipoRecurso", tipoRecurso, "idPartida ", idPartida)
+    // console.log("index ", index, "tipoRecurso", tipoRecurso, "idPartida ", idPartida)
 
     if (this.state.activeTabRecusoCd !== index) {
       this.setState({
@@ -543,9 +545,9 @@ class ListaMateriales extends Component {
   }
 
   activaEditable(index, CantPrecio, selectTipoDocumento) {
-    console.log("activando", index, "CantPrecio ", CantPrecio , "selectTipoDocumento ", selectTipoDocumento)
+    // console.log("activando", index, "CantPrecio ", CantPrecio , "selectTipoDocumento ", selectTipoDocumento)
 
-    console.log("DataTipoDocAdquisicionApi ", this.state.DataTipoDocAdquisicionApi)
+    // console.log("DataTipoDocAdquisicionApi ", this.state.DataTipoDocAdquisicionApi)
 
     this.setState({ Editable: index, precioCantidad: CantPrecio, selectTipoDocumento })
 
@@ -560,7 +562,7 @@ class ListaMateriales extends Component {
           this.state.DataGuardarInput
         )
           .then((res) => {
-            console.log("response recurso real ✔", res.data)
+            // console.log("response recurso real ✔", res.data)
             var DataRecursosListaApi = this.state.DataRecursosListaApi
 
             var EncuentraTipoOrdenCompra = DataRecursosListaApi[index].tipodocumentoadquisicion_nombre
@@ -618,7 +620,7 @@ class ListaMateriales extends Component {
 
   inputeable(index, tipo, descripcion, e) {
 
-    console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
+    // console.log("index ", index, "valor ", e.target.value, "tipo", tipo, "this.state.selectTipoDocumento ", this.state.selectTipoDocumento)
 
     if (tipo === "codigo") {
       var demoArray =
@@ -641,7 +643,7 @@ class ListaMateriales extends Component {
 
     this.setState({ DataGuardarInput: demoArray })
 
-    console.log("demoArray ", demoArray)
+    // console.log("demoArray ", demoArray)
   }
 
   // ===================================== activa editable de nueva orden de compra
@@ -819,7 +821,7 @@ class ListaMateriales extends Component {
         console.error("errores al guardar el nuevo recurso", err)
       })
       .finally(() => {
-        console.log("guardando ..... por favor espere")
+        // console.log("guardando ..... por favor espere")
       })
   }
 
@@ -830,7 +832,7 @@ class ListaMateriales extends Component {
   // requests al api======================================================================
 
   reqListaRecursos(idPartida, tipo) {
-    console.log("reqListaRecursos ", "idPartida", idPartida, "tipo ", tipo)
+    // console.log("reqListaRecursos ", "idPartida", idPartida, "tipo ", tipo)
     axios.post(`${UrlServer}/getmaterialespartidaTiposLista`,
       {
         "id_partida": idPartida,
@@ -838,7 +840,7 @@ class ListaMateriales extends Component {
       }
     )
       .then((res) => {
-        console.log("response partidas lista de recursos ", res)
+        // console.log("response partidas lista de recursos ", res)
         this.setState({
           DataListaRecursoDetallado: res.data
         })
@@ -857,7 +859,7 @@ class ListaMateriales extends Component {
       "tipo": tipoRecurso
     })
       .then((res) => {
-        console.log("resumen de componentes 😍", res.data)
+        // console.log("resumen de componentes 😍", res.data)
         this.setState({
           DataRecursosListaApi: res.data
         })
@@ -902,7 +904,7 @@ class ListaMateriales extends Component {
   }
 
   reqResumenXComponente(index, idComponente, tipoRecurso) {
-    console.log("tipo recurso ", tipoRecurso)
+    // console.log("tipo recurso ", tipoRecurso)
     if (this.state.activeTabResumen !== index) {
       this.setState({
         activeTabResumen: index
@@ -913,7 +915,7 @@ class ListaMateriales extends Component {
       "tipo": tipoRecurso
     })
       .then((res) => {
-        console.log("resumen de componentes dddd>>> ", res.data)
+        // console.log("resumen de componentes dddd>>> ", res.data)
         this.setState({
           DataRecursosListaApi: res.data
         })
@@ -926,7 +928,7 @@ class ListaMateriales extends Component {
   // ====================================================== PARA PGINACION ===================
 
   PaginaActual(event) {
-    console.log("PaginaActual ", Number(event))
+    // console.log("PaginaActual ", Number(event))
     this.setState({
       PaginaActual: Number(event)
     });
