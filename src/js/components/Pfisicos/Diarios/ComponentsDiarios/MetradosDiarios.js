@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios';
 import { FaSuperpowers, FaCircle } from 'react-icons/fa';
-import { MdFlashOn, MdSearch, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdCancel, MdArrowDropDownCircle } from 'react-icons/md';
+import { MdFlashOn, MdSearch, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdCancel, MdArrowDropDownCircle, MdAddAPhoto } from 'react-icons/md';
 import { TiWarning } from 'react-icons/ti';
 import { InputGroupAddon, InputGroupText, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
 import classnames from 'classnames';
@@ -11,6 +11,8 @@ import BarraPorcentajeAvancePartida from './BarraPorcentajeAvancePartida';
 import PartidasChat from '../../../libs/PartidasChat'
 import BarraPorcentajeAvanceActividad from './BarraPorcentajeAvanceActividad';
 import ModalIngresoMetrado from './ModalIngresoMetrado';
+import ModalPartidaFoto from './ModalPartidaFoto';
+import { socket } from "../../../Utils/socket";
 export default () => {
   useEffect(() => {
     fectchComponentes()
@@ -112,6 +114,11 @@ export default () => {
     RefPartidas[id_partida].recarga()
     RefActividades[id_actividad].recarga()
   }
+  //recarga de mensajes de componentes
+  const [RefComponentes, setRefComponentes] = useState([]);
+  function recargaComponenteMensajes(id_componente) {
+    RefComponentes[id_componente].recarga()
+  }
   //prioridades
   const [Prioridades, setPrioridades] = useState([]);
   async function fectchPrioridades() {
@@ -207,30 +214,21 @@ export default () => {
     <div>
       <Nav tabs>
         {Componentes.map((item) =>
-          <NavItem key={item.id_componente}>
+          <NavItem key={item.id_componente} style={{ position: "relative" }}>
             <NavLink
               className={classnames({ active: item.numero === ComponenteSelecccionado.numero })}
               onClick={() => onChangeComponentesSeleccion(item)}
             >
               COMP {item.numero}
             </NavLink>
-            {/* {componentesComentarios[i] && componentesComentarios[i].mensajes ?
-                <div style={{
-                  background: "red",
-                  borderRadius: "50%",
-                  textAlign: "center",
-                  position: "absolute",
-                  right: "0px",
-                  top: "-3px",
-                  padding: "1px 4px",
-                  zIndex: "20",
-                  fontSize: "9px",
-                  fontWeight: "bold",
-
-                }}>
-                  {componentesComentarios[i].mensajes}
-                </div>
-                : ""} */}
+            <ComponentesMensajes
+              id_componente={item.id_componente}
+              ref={(ref) => {
+                var clone = RefComponentes
+                clone[item.id_componente] = ref
+                setRefComponentes(clone)
+              }}
+            />
           </NavItem>
         )}
       </Nav>
@@ -371,10 +369,13 @@ export default () => {
                   <tr
                     key={item.id_partida}
                     className={item.tipo === "titulo"
-                      &&
+                      ?
                       "font-weight-bold text-info icoVer"
-                    }
-
+                      : PartidaSelecccionado.item === item.item
+                        ?
+                        "font-weight-light resplandPartida icoVer"
+                        :
+                        "font-weight-light icoVer"}
                   >
                     <td
 
@@ -403,7 +404,11 @@ export default () => {
                     </td>
                     <td>
                       {item.tipo == "partida" &&
-                        <PartidasChat id_partida={item.id_partida} />
+                        <PartidasChat
+                          id_partida={item.id_partida}
+                          id_componente={ComponenteSelecccionado.id_componente}
+                          recargaComponenteMensajes={recargaComponenteMensajes}
+                        />
                       }
                     </td>
                     {
@@ -451,6 +456,19 @@ export default () => {
                             setRefPartidas(clone)
                           }}
                         />
+                      }
+                    </td>
+                    <td className="text-center">
+                      {
+                        item.tipo == "partida"
+                        &&
+                        <div className="aprecerIcon">
+                          <span
+                            className="prioridad iconoTr"
+                          >
+                            <ModalPartidaFoto id_partida={item.id_partida} />
+                          </span>
+                        </div>
                       }
                     </td>
                   </tr>
@@ -713,3 +731,51 @@ function IconosPartidas({ Id_partida, Id_iconoCategoria, Id_prioridad, Categoria
 
   )
 }
+
+const ComponentesMensajes = forwardRef(({ id_componente }, ref) => {
+  useEffect(() => {
+    getComponentesComentarios()
+    socketIni()
+  }, []);
+  //socket
+  function socketIni() {
+    socket.on("componentes_comentarios_notificacion_get-" + sessionStorage.getItem('idobra'), (data) => {
+      getComponentesComentarios()
+    })
+  }
+  //mensajes
+  const [Mensajes, setMensajes] = useState(0)
+  async function getComponentesComentarios() {
+    var res = await axios.post(`${UrlServer}/getComponentesComentarios`, {
+      "id_acceso": sessionStorage.getItem('idacceso'),
+      id_componente: id_componente
+    })
+    setMensajes(res.data.mensajes)
+  }
+  useImperativeHandle(ref, () => ({
+    recarga() {
+      getComponentesComentarios()
+    }
+  }));
+
+  return (
+    Mensajes ?
+      <div style={{
+        background: "red",
+        borderRadius: "50%",
+        textAlign: "center",
+        position: "absolute",
+        right: "0px",
+        top: "-3px",
+        padding: "1px 4px",
+        zIndex: "20",
+        fontSize: "9px",
+        fontWeight: "bold",
+      }}>
+        {Mensajes}
+      </div>
+      :
+      <div></div>
+  )
+}
+)

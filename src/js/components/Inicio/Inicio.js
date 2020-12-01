@@ -1,16 +1,15 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'jspdf-autotable';
-import { toast } from "react-toastify";
 import "../../../css/inicio.css"
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import FinancieroBarraPorcentaje from './FinancieroBarraPorcentaje'
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Alert, Collapse } from 'reactstrap';
+import { Button } from 'reactstrap';
 import FisicoBarraPorcentaje from './FisicoBarraPorcentaje';
 import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from './InformacionObras/InformacionObra'
 import Curva_S from './Curva_S'
-import { FaList, FaChartLine } from "react-icons/fa";
+import { FaList } from "react-icons/fa";
 import { Redondea } from '../Utils/Funciones';
 export default ({ recargar }) => {
     useEffect(() => {
@@ -18,6 +17,14 @@ export default ({ recargar }) => {
         fetchComunicados()
         fetchTipoObras()
     }, []);
+    //funciones
+    function calcular_dias(fecha_inicio, fecha_final) {
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const firstDate = new Date(fecha_inicio);
+        const secondDate = new Date(fecha_final);
+        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+        return days || 0
+    }
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
     async function fetchComunicados() {
@@ -37,7 +44,9 @@ export default ({ recargar }) => {
             id_tipoObra
         })
         setObras(request.data)
-        recargar(request.data[0])
+        if (!sessionStorage.getItem('idobra')) {
+            recargar(request.data[0])
+        }
     }
     const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] = useState({})
     async function onChangeObraComponentesSeleccionada(id_ficha) {
@@ -65,7 +74,7 @@ export default ({ recargar }) => {
         })
         setTipoObras(request.data)
     }
-    const [TipoObraSeleccionado, setTipoObraSeleccionado] = useState(0)
+    const [, setTipoObraSeleccionado] = useState(0)
     function onChangeTipoObra(id_tipo) {
         setTipoObraSeleccionado(id_tipo)
         fetchObras(id_tipo)
@@ -86,7 +95,7 @@ export default ({ recargar }) => {
                     >
                         <option value={0}>Todo</option>
                         {
-                            TipoObras.map((item, i) =>
+                            TipoObras.map((item) =>
                                 <option value={item.id_tipoObra}>{item.nombre}</option>
                             )
                         }
@@ -125,7 +134,7 @@ export default ({ recargar }) => {
                                     <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
                                 </td>
                                 <td >
-                                    <FetchUltimoDiaMetrado id_ficha={item.id_ficha} />
+                                    {calcular_dias(item.ultima_fecha, new Date()) - 1} días sin reportar
 
                                 </td>
                                 <td>
@@ -176,7 +185,7 @@ export default ({ recargar }) => {
                                             </thead>
                                             <tbody style={{ backgroundColor: '#333333' }}>
                                                 {
-                                                    Componentes.map((item, i) =>
+                                                    Componentes.map((item) =>
 
                                                         <tr key={Componentes.id_componente} >
                                                             <td>{item.numero}</td>
@@ -218,37 +227,6 @@ export default ({ recargar }) => {
     );
 }
 //componente de ulti dia metrado
-function FetchUltimoDiaMetrado({ id_ficha }) {
-    useEffect(() => {
-        fetchData()
-    }, []);
-    const [UltimoDiaEjecutado, setUltimoDiaEjecutado] = useState("")
-    async function fetchData() {
-        var request = await axios.post(`${UrlServer}/getUltimoDiaMetrado`, {
-            id_ficha: id_ficha
-        })
-        setUltimoDiaEjecutado(request.data.fecha)
-    }
-    function calcular_dias(fecha_inicio, fecha_final) {
-        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        const firstDate = new Date(fecha_inicio);
-        const secondDate = new Date(fecha_final);
-        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-        return days || 0
-    }
-    return (
-        <div
-            style={{
-                color: '#8caeda',
-                background: '#242526',
-                fontSize: '0.8rem'
-
-            }}
-        >
-            {calcular_dias(UltimoDiaEjecutado, new Date()) - 1} días sin reportar
-        </div>
-    );
-}
 //componente de estado de obra
 function EstadoObra({ id_ficha }) {
     useEffect(() => {
