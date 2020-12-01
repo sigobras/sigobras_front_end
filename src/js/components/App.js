@@ -72,7 +72,7 @@ export default () => {
     }
     const [DataMenus, setDataMenus] = useState([]);
     async function fetchMenu(id_ficha) {
-        var res = await axios.post(`${UrlServer}/getMenu`, {
+        var res = await axios.post(`${UrlServer}/getMenu2`, {
             id_ficha,
             id_acceso: sessionStorage.getItem('idacceso')
         })

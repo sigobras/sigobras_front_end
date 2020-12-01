@@ -10,7 +10,7 @@ import { FaPaperPlane, FaPlusCircle, FaCamera } from 'react-icons/fa';
 import { MdComment, IconContext } from 'react-icons/md';
 import LogoSigobras from './../../../images/logoSigobras.png'
 
-function Comentarios({ id_partida, titulo }) {
+function Comentarios({ id_partida, titulo, id_componente, recargaComponenteMensajes }) {
 
     useEffect(() => {
         fetchComentariosNoVistos()
@@ -50,6 +50,7 @@ function Comentarios({ id_partida, titulo }) {
         fetchComentariosNoVistos()
         comentarioTotales()
         scrollToBottom()
+        recargaComponenteMensajes(id_componente)
     }
     async function saveComentario() {
         if (Comentario) {
