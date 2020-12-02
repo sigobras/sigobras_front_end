@@ -702,7 +702,7 @@ function Report_curva_s() {
 
     // ---------------------------> Tabla Compomentes
     var body = [
-      [{text:'N°',fontSize: 7,style: "TableMontosInforme",}, {text:'Componente',fontSize: 7,style: "TableMontosInforme",}, {text:'Presupuesto CD',fontSize: 7,style: "TableMontosInforme",},{text:'Ejecucion Fisica',fontSize: 7,style: "TableMontosInforme",}, {text:'Barra porcentual',fontSize: 7,style: "TableMontosInforme",}]
+      [{text:'N°',fontSize: 7,style: "TableMontosInforme",}, {text:'Componente',fontSize: 7,style: "TableMontosInforme",}, {text:'Presupuesto CD',fontSize: 7,style: "TableMontosInforme",},{text:'Ejecucion Fisica',fontSize: 7,style: "TableMontosInforme",}, {text:'% de avance',fontSize: 7,style: "TableMontosInforme",}]
     ]
     for (let i = 0; i < ComponentesPdf.length; i++) {
       const element = ComponentesPdf[i];
@@ -712,7 +712,7 @@ function Report_curva_s() {
           {text:ComponentesPdf[i].nombre, fontSize: 6.5,}, 
           {text:Redondea(ComponentesPdf[i].presupuesto), fontSize: 6.5,}, 
           {text:Redondea(ComponentesPdf[i].avance), fontSize: 6.5,}, 
-          {text:Redondea((ComponentesPdf[i].avance /ComponentesPdf[i].presupuesto)*100), fontSize: 6.5,}]
+          {text:Redondea((ComponentesPdf[i].avance /ComponentesPdf[i].presupuesto)*100) + " %", fontSize: 6.5,}]
       )
     }
 
@@ -720,7 +720,7 @@ function Report_curva_s() {
       {
         style: 'tableExample',
         layout: 'lightHorizontalLines',
-        // pageBreak: 'after',
+        pageBreak: 'after',
         table: {
           body: body
         }
@@ -1115,7 +1115,7 @@ function Report_curva_s() {
           }
         },
         {
-          margin: [0, -30, 0, -18],
+          margin: [0, -28, 0, -18],
           table: {
             widths: ['*'],
             body: [[" "], [" "]]
