@@ -1006,7 +1006,7 @@ function Report_curva_s() {
                   alignment: 'center',
                 },
                 {
-                  text: meses[new Date().getMonth()],
+                  text: meses[new Date().getMonth()-1],
                   alignment: 'center',
                   // margin: [0, -8, 0, -1], 
                   fontSize: 9,
