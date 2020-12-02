@@ -549,16 +549,17 @@ function Report_curva_s() {
 
       for (let i = 0; i < dataChartTablePorcentajes.length; i++) {
         const element = dataChartTablePorcentajes[i];
-        // console.log("element.anyo", element.fecha_inicial.substr(0, 4));
-
-        //Aqui se cumple una condicion
-        if (AnyoActual != element.fecha_inicial.substr(0, 4)) {
-          ListaTablas.push(ListaTemporal)
-          ListaTemporal = []
-          ListaTemporal.push(element)
-          AnyoActual = element.fecha_inicial.substr(0, 4)
-        } else {
-          ListaTemporal.push(element)
+        console.log("element.anyo", element);
+        if (element.tipo == "PERIODO") {
+          //Aqui se cumple una condicion
+          if (AnyoActual != element.fecha_inicial.substr(0, 4)) {
+            ListaTablas.push(ListaTemporal)
+            ListaTemporal = []
+            ListaTemporal.push(element)
+            AnyoActual = element.fecha_inicial.substr(0, 4)
+          } else {
+            ListaTemporal.push(element)
+          }
         }
       }
       ListaTablas.push(ListaTemporal)
@@ -780,16 +781,16 @@ function Report_curva_s() {
         },
       ]
     }
-    
+
     var body = [
-      Imagenes_en_base_64.length >2 &&
+      Imagenes_en_base_64.length > 2 &&
       [
         {
           text: "PANEL FOTOGRAFICO DEL AVANZE DE OBRA",
           border: [false, false, false, false],
           colSpan: 3,
           alignment: 'center',
-          margin: [0,-18,0,0],
+          margin: [0, -18, 0, 0],
         },
         {
 
@@ -801,7 +802,7 @@ function Report_curva_s() {
     ]
     for (let i = 2; i < Imagenes_en_base_64.length; i += 2) {
       const element = Imagenes_en_base_64[i];
-      const element2 = Imagenes_en_base_64[i+1];
+      const element2 = Imagenes_en_base_64[i + 1];
       body.push(
         [
           {
@@ -812,7 +813,7 @@ function Report_curva_s() {
             alignment: 'justify',
             // fit: [250, 160],
             width: 250,
-              height: 180,
+            height: 180,
           },
           {
             text: "",
@@ -820,27 +821,27 @@ function Report_curva_s() {
             // margin: [5,0,-15,0],
           },
           element2 ?
-          {
-            // image: Imagenes_en_base_64[1].imgb64,
-            image: element2.ImagenB64,
-            // noWrap: true,
-            // margin: [5, -7, 0, 0], Con tabla
-            margin: [5, 0, 0, 0],
-            alignment: 'justify',
-            // fit: [250, 160],
-            width: 250,
-            height: 180,
-          }:
-          {
-            text: "",
-            border: [false, false, false, false],
-          },
+            {
+              // image: Imagenes_en_base_64[1].imgb64,
+              image: element2.ImagenB64,
+              // noWrap: true,
+              // margin: [5, -7, 0, 0], Con tabla
+              margin: [5, 0, 0, 0],
+              alignment: 'justify',
+              // fit: [250, 160],
+              width: 250,
+              height: 180,
+            } :
+            {
+              text: "",
+              border: [false, false, false, false],
+            },
         ],
       )
       body.push(
         [
           {
-            text: element.item + " - " +element.partida_descripcion + " DESC: " + element.descripcion + " " + element.fecha,
+            text: element.item + " - " + element.partida_descripcion + " DESC: " + element.descripcion + " " + element.fecha,
             alignment: 'justify',
             fontSize: 6.5,
           },
@@ -850,15 +851,15 @@ function Report_curva_s() {
             // margin: [5,0,-15,0],
           },
           element2 ?
-          {
-            text: element2.item + " - " +element2.partida_descripcion + " DESC: " + element2.descripcion + " " + element2.fecha,
-            alignment: 'justify',
-            fontSize: 6.5,
-          }:
-          {
-            text: "",
-            border: [false, false, false, false],
-          },
+            {
+              text: element2.item + " - " + element2.partida_descripcion + " DESC: " + element2.descripcion + " " + element2.fecha,
+              alignment: 'justify',
+              fontSize: 6.5,
+            } :
+            {
+              text: "",
+              border: [false, false, false, false],
+            },
         ]
       )
       body.push(
@@ -867,7 +868,7 @@ function Report_curva_s() {
             text: " ",
             colSpan: 3,
             border: [false, false, false, false],
-            margin: [0,-10,0,-10],
+            margin: [0, -10, 0, -10],
           },
           {
 
