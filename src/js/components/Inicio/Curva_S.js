@@ -1007,7 +1007,8 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             >%</button>
                                     }
                                     {
-                                        UsuarioData.cargo_nombre == "RESIDENTE" &&
+                                        
+                                        UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" &&
                                         [
 
 
@@ -1081,7 +1082,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                             {item.estado_codigo == 'C' ? "CORTE " : ""}
                                                             {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
                                                             {
-                                                                (item.ejecutado_monto == 0 && UsuarioData.cargo_nombre == "RESIDENTE") &&
+                                                                (item.ejecutado_monto == 0 && UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
                                                                 <div
                                                                     onClick={() => deletePeriodoCurvaS(item.id)}
                                                                 >
@@ -1135,7 +1136,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                 >
                                                                     {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
                                                                     {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                        (UsuarioData.cargo_nombre == "RESIDENTE" &&
+                                                                        (UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" &&
                                                                             <div
                                                                                 onClick={() => toggleInputProgramado(i)}
                                                                             >
@@ -1196,7 +1197,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                     className="d-flex"
                                                                 >
                                                                     {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
-                                                                    {UsuarioData.cargo_nombre == "RESIDENTE" &&
+                                                                    {UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" &&
                                                                         <div
                                                                             onClick={() => toggleInputFinanciero(i)}
                                                                         >
@@ -1220,7 +1221,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                             src={"https://www.jonmgomes.com/wp-content/uploads/2020/03/Pie_Chart_GIF_5_Seconds.gif?fbclid=IwAR34o4wzp3DOEtf1rKKG72-5bXCkXyuk7utSXYWmnB_k34XqnkPLPphmFio"}
                         />,
                         (
-                            UsuarioData.cargo_nombre == "RESIDENTE" &&
+                            UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" &&
                             <Button
                                 key={1}
                                 color="danger"
