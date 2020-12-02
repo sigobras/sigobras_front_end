@@ -21,6 +21,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import { toast } from "react-toastify";
 
 function Report_curva_s() {
+
+
+
+  function FechaLarga(fecha) {
+    var fechaTemp = fecha.split('-')
+    var ShortDate = new Date(fechaTemp[0], fechaTemp[1] - 1, [fechaTemp[2]]);
+    var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: "long" };
+    return ShortDate.toLocaleDateString("es-ES", options)
+  }
+
   const [Loading, setLoading] = useState(false);
   const useStyles = makeStyles((theme) => ({
     backdrop: {
@@ -102,6 +112,45 @@ function Report_curva_s() {
     // console.log("request", request);
 
     return request.data
+  }
+
+  // Obtenemos la data del ultimo deia de metrado
+  async function fetchUltimoDiaMetrado() {
+    const request = await axios.post(`${UrlServer}/getUltimoDiaMetrado`, {
+      id_ficha: sessionStorage.getItem('idobra')
+    })
+    // console.log("requestULtimo dia metrado", request.data);
+    return request.data
+
+  }
+  // async function test() {
+  //   const request = await axios.post(`${UrlServer}/getFisicoComponente`, {
+  //     "id_componente": 1259
+  //   })
+  //   console.log("Data", request.data);
+  //   return request.data
+  // }
+
+  // obenemos la data de los compomnetes
+  async function fetchComponentes() {
+    const request = await axios.post(`${UrlServer}/getComponentes`, {
+      id_ficha: sessionStorage.getItem('idobra')
+    })
+    console.log("request get compomentes", request.data);
+    var CompomentesRecibidos = request.data
+    console.log("Compomentes.....", CompomentesRecibidos);
+    // Obtenemos la data de los compomnetes fisicos
+    for (let i = 0; i < CompomentesRecibidos.length; i++) {
+      const element = CompomentesRecibidos[i];
+      console.log("element", element.id_componente);
+      const request2 = await axios.post(`${UrlServer}/getFisicoComponente`, {
+        "id_componente": element.id_componente
+      })
+      element.avance = request2.data.avance
+      console.log("request Fisico Compomente", element.avance);
+    }
+    console.log("Compomentes...", CompomentesRecibidos);
+    return CompomentesRecibidos
   }
 
 
@@ -416,8 +465,6 @@ function Report_curva_s() {
     })
     // console.log("request.dataaaaaaaaaa", request.data);
     return request.data
-
-
   }
 
 
@@ -637,150 +684,188 @@ function Report_curva_s() {
     // console.log("chartRef", chartRef);
     var svg = chartRef.current.chart.getSVG();
 
+    //SE guarda el ultimo dia de metrado
+    var UltimoDiaMetrado = await fetchUltimoDiaMetrado()
+    // console.log("UltimoDiaMetrado",UltimoDiaMetrado);
+
+    // Guardamos compomentes en  una variable temporal
+    var ComponentesPdf = await fetchComponentes()
+    console.log("CompomentesPdf", ComponentesPdf);
+    console.log("CompomentesPdf.numero", ComponentesPdf[0].numero);
+
     //Se consigue el link de las imagenes
     var Imagenes_en_base_64 = await ImagenesDB()
     for (let i = 0; i < Imagenes_en_base_64.length; i++) {
       const element = Imagenes_en_base_64[i];
       Imagenes_en_base_64[i].ImagenB64 = await ImagenToBase64(element.imagen)
     }
-    console.log("Imagenes_en_base_64", Imagenes_en_base_64);
-    var imagenesParaPdf = ""
-    var DescripcionImagenesParaPdf = []
-    var DescripcionPartida = []
-    if (Imagenes_en_base_64.length) {
-      // console.log("Procesando imagenes");
-      DescripcionPartida = [
-        {
-          columns: [
-            {
-              text: Imagenes_en_base_64[0].item + '/ ' + Imagenes_en_base_64[0].partida_descripcion,
-              // fit: [220, 220],
-              // width: 250,
-              // height: 160,
-              // margin: [1, 0, 0, 0],
-              alignment: "left",
-              fontSize: 5.9,
-            },
-            Imagenes_en_base_64[1] &&
-            {
-              // alignment: 'right',
-              text: Imagenes_en_base_64[1].item + '/ ' + Imagenes_en_base_64[1].partida_descripcion,
-              // fit: [220, 220],
-              // width: 250,
-              // height: 160,
-              margin: [8, 0, 0, 0],
-              // alignment: "left",
-              fontSize: 5.9,
+    // console.log("Imagenes_en_base_64", Imagenes_en_base_64);
 
-            }
-          ],
-        },
-      ]
-      imagenesParaPdf = [
-        {
-          // style: 'tableExample',
-          // layout: 'noBorders',
-          // table: {
-          //   widths: ['*', '*'],
-          //   body: [
-          //     [
-          //       {
-          //         image: Imagenes_en_base_64[0].imgb64,
-          //             fit: [170, 170],
-          //         // width: 250,
-          //         // height: 160,
-          //             margin: [1, -8, 0, -10],
-          //             alignment: "center",
-          //       },
-          //       {
-          //         // alignment: 'right',
-          //         image: Imagenes_en_base_64[1].imgb64,
-          //             fit: [170, 170],
-          //         // width: 250,
-          //         // height: 160,
-          //             margin: [0, -8, -16, -10],
-          //             alignment: "center",
-          //       },
-          //     ],
-          //   ]
-          // }
-
-          columns: [
-            {
-              image: Imagenes_en_base_64[0].ImagenB64,
-              // fit: [220, 220],
-              width: 250,
-              height: 150,
-              margin: [1, 0, 0, 0],
-              // alignment: "center",
-            },
-            Imagenes_en_base_64[1] &&
-            {
-              // alignment: 'right',
-              image: Imagenes_en_base_64[1].ImagenB64,
-              // fit: [220, 220],
-              width: 250,
-              height: 150,
-              margin: [0, 0, -16, 0],
-              alignment: "center",
-
-            }
-          ],
-        },
-      ]
-      DescripcionImagenesParaPdf = [
-        {
-          style: 'tableExample',
-          layout: 'noBorders',
-          table: {
-            widths: ['*', '*'],
-            body: [
-              [
-                {
-                  text: Imagenes_en_base_64[0].descripcion,
-                  // noWrap: true,
-                  // margin: [0, -7, 0, 0], Con tabla
-                  margin: [0, -5, 0, 0],
-                  alignment: 'justify',
-                  fontSize: 5.9,
-                  colSpan: Imagenes_en_base_64[1] ? 1 : 2
-                },
-                Imagenes_en_base_64[1] &&
-                {
-                  text: Imagenes_en_base_64[1].descripcion,
-                  // noWrap: true,
-                  // margin: [5, -7, 0, 0], Con tabla
-                  margin: [5, -5, 0, 0],
-                  alignment: 'justify',
-                  fontSize: 5.9,
-                },
-              ],
-              [
-                {
-                  text: Imagenes_en_base_64[0].fecha,
-                  // noWrap: true,
-                  // margin: [0, -5, 0, 0], COn tabla
-                  margin: [0, -5, 0, 0],
-                  alignment: 'justify',
-                  fontSize: 5.9,
-                  colSpan: Imagenes_en_base_64[1] ? 1 : 2
-                },
-                Imagenes_en_base_64[1] &&
-                {
-                  text: Imagenes_en_base_64[1].fecha,
-                  // noWrap: true,
-                  // margin: [5, -5, 0, 0], COn tabla
-                  margin: [5, -5, 0, 0],
-                  alignment: 'justify',
-                  fontSize: 5.9,
-                  pageBreak: 'after',
-                },
-              ],
-            ]
-          }
-        },
-      ]
+    // ---------------------------> Tabla Compomentes
+    var body = [
+      [{text:'N°',fontSize: 7,style: "TableMontosInforme",}, {text:'Componente',fontSize: 7,style: "TableMontosInforme",}, {text:'Presupuesto CD',fontSize: 7,style: "TableMontosInforme",},{text:'Ejecucion Fisica',fontSize: 7,style: "TableMontosInforme",}, {text:'Barra porcentual',fontSize: 7,style: "TableMontosInforme",}]
+    ]
+    for (let i = 0; i < ComponentesPdf.length; i++) {
+      const element = ComponentesPdf[i];
+      body.push(
+        [
+          {text:ComponentesPdf[i].numero, fontSize: 6.5,}, 
+          {text:ComponentesPdf[i].nombre, fontSize: 6.5,}, 
+          {text:Redondea(ComponentesPdf[i].presupuesto), fontSize: 6.5,}, 
+          {text:Redondea(ComponentesPdf[i].avance), fontSize: 6.5,}, 
+          {text:Redondea((ComponentesPdf[i].avance /ComponentesPdf[i].presupuesto)*100), fontSize: 6.5,}]
+      )
     }
+
+    var TablaCompomentes = [
+      {
+        style: 'tableExample',
+        layout: 'lightHorizontalLines',
+        // pageBreak: 'after',
+        table: {
+          body: body
+        }
+      }
+    ]
+
+    //Imagenes
+    // var imagenesParaPdf = ""
+    // var DescripcionImagenesParaPdf = []
+    // var DescripcionPartida = []
+    // if (Imagenes_en_base_64.length) {
+    //   // console.log("Procesando imagenes");
+    //   DescripcionPartida = [
+    //     {
+    //       columns: [
+    //         {
+    //           text: Imagenes_en_base_64[0].item + '/ ' + Imagenes_en_base_64[0].partida_descripcion,
+    //           // fit: [220, 220],
+    //           // width: 250,
+    //           // height: 160,
+    //           // margin: [1, 0, 0, 0],
+    //           alignment: "left",
+    //           fontSize: 5.9,
+    //         },
+    //         Imagenes_en_base_64[1] &&
+    //         {
+    //           // alignment: 'right',
+    //           text: Imagenes_en_base_64[1].item + '/ ' + Imagenes_en_base_64[1].partida_descripcion,
+    //           // fit: [220, 220],
+    //           // width: 250,
+    //           // height: 160,
+    //           margin: [8, 0, 0, 0],
+    //           // alignment: "left",
+    //           fontSize: 5.9,
+
+    //         }
+    //       ],
+    //     },
+    //   ]
+    //   imagenesParaPdf = [
+    //     {
+    //       // style: 'tableExample',
+    //       // layout: 'noBorders',
+    //       // table: {
+    //       //   widths: ['*', '*'],
+    //       //   body: [
+    //       //     [
+    //       //       {
+    //       //         image: Imagenes_en_base_64[0].imgb64,
+    //       //             fit: [170, 170],
+    //       //         // width: 250,
+    //       //         // height: 160,
+    //       //             margin: [1, -8, 0, -10],
+    //       //             alignment: "center",
+    //       //       },
+    //       //       {
+    //       //         // alignment: 'right',
+    //       //         image: Imagenes_en_base_64[1].imgb64,
+    //       //             fit: [170, 170],
+    //       //         // width: 250,
+    //       //         // height: 160,
+    //       //             margin: [0, -8, -16, -10],
+    //       //             alignment: "center",
+    //       //       },
+    //       //     ],
+    //       //   ]
+    //       // }
+
+    //       columns: [
+    //         {
+    //           image: Imagenes_en_base_64[0].ImagenB64,
+    //           // fit: [220, 220],
+    //           width: 250,
+    //           height: 150,
+    //           margin: [1, 0, 0, 0],
+    //           // alignment: "center",
+    //         },
+    //         Imagenes_en_base_64[1] &&
+    //         {
+    //           // alignment: 'right',
+    //           image: Imagenes_en_base_64[1].ImagenB64,
+    //           // fit: [220, 220],
+    //           width: 250,
+    //           height: 150,
+    //           margin: [0, 0, -16, 0],
+    //           alignment: "center",
+
+    //         }
+    //       ],
+    //     },
+    //   ]
+    //   DescripcionImagenesParaPdf = [
+    //     {
+    //       style: 'tableExample',
+    //       layout: 'noBorders',
+    //       table: {
+    //         widths: ['*', '*'],
+    //         body: [
+    //           [
+    //             {
+    //               text: Imagenes_en_base_64[0].descripcion,
+    //               // noWrap: true,
+    //               // margin: [0, -7, 0, 0], Con tabla
+    //               margin: [0, -5, 0, 0],
+    //               alignment: 'justify',
+    //               fontSize: 5.9,
+    //               colSpan: Imagenes_en_base_64[1] ? 1 : 2
+    //             },
+    //             Imagenes_en_base_64[1] &&
+    //             {
+    //               text: Imagenes_en_base_64[1].descripcion,
+    //               // noWrap: true,
+    //               // margin: [5, -7, 0, 0], Con tabla
+    //               margin: [5, -5, 0, 0],
+    //               alignment: 'justify',
+    //               fontSize: 5.9,
+    //             },
+    //           ],
+    //           [
+    //             {
+    //               text: Imagenes_en_base_64[0].fecha,
+    //               // noWrap: true,
+    //               // margin: [0, -5, 0, 0], COn tabla
+    //               margin: [0, -5, 0, 0],
+    //               alignment: 'justify',
+    //               fontSize: 5.9,
+    //               colSpan: Imagenes_en_base_64[1] ? 1 : 2
+    //             },
+    //             Imagenes_en_base_64[1] &&
+    //             {
+    //               text: Imagenes_en_base_64[1].fecha,
+    //               // noWrap: true,
+    //               // margin: [5, -5, 0, 0], COn tabla
+    //               margin: [5, -5, 0, 0],
+    //               alignment: 'justify',
+    //               fontSize: 5.9,
+    //               pageBreak: 'after',
+    //             },
+    //           ],
+    //         ]
+    //       }
+    //     },
+    //   ]
+    // }
 
     var body = [
       Imagenes_en_base_64.length > 2 &&
@@ -790,7 +875,7 @@ function Report_curva_s() {
           border: [false, false, false, false],
           colSpan: 3,
           alignment: 'center',
-          margin: [0, -18, 0, 0],
+          margin: [0, 0, 0, 0],
         },
         {
 
@@ -986,6 +1071,13 @@ function Report_curva_s() {
                   text: ' = ' + Redondea(temp.Delta) + "%", alignment: 'justify',
                   rowSpan: 2,
                   border: [false, false, false, false],
+                },
+                {
+                  text: "UDM: " + FechaLarga(UltimoDiaMetrado.fecha),
+                  rowSpan: 2,
+                  border: [false, false, false, false],
+                  fontSize: 8,
+                  alignment: 'center',
                 }
               ],
               [
@@ -1015,6 +1107,9 @@ function Report_curva_s() {
                 },
                 {
                   text: ''
+                },
+                {
+                  text: ""
                 },
               ]
             ]
@@ -1052,9 +1147,10 @@ function Report_curva_s() {
           },
         }
       }
-        , Imagenes_en_base_64 ? DescripcionPartida : " "
-        , Imagenes_en_base_64 ? imagenesParaPdf : " "
-        , Imagenes_en_base_64 ? DescripcionImagenesParaPdf : " "
+        // , Imagenes_en_base_64 ? DescripcionPartida : " "
+        // , Imagenes_en_base_64 ? imagenesParaPdf : " "
+        // , Imagenes_en_base_64 ? DescripcionImagenesParaPdf : " "
+        , TablaCompomentes
         , SegundoEsquemaImagenes
       ),
 
