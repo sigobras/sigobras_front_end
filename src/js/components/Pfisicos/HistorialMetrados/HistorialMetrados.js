@@ -18,7 +18,8 @@ import CheckDate from './CheckDate';
 
 export default () => {
     function FechaLarga(fecha){
-        var ShortDate = new Date(fecha);
+        var fechaTemp = fecha.split("-")
+        var ShortDate = new Date(fechaTemp[0],fechaTemp[1]-1,[fechaTemp[2]]);
         var options = { year: 'numeric', month: 'long', day: 'numeric',weekday: "long"};
         return ShortDate.toLocaleDateString("es-ES", options)
     }
