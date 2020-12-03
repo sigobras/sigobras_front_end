@@ -218,6 +218,7 @@ export default () => {
     setPaginaActual(1)
   }, [ComponenteSelecccionado, CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
   useEffect(() => {
+    setPartidas([])
     fectchPartidas()
   }, [ComponenteSelecccionado, PaginaActual, CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
   return (
