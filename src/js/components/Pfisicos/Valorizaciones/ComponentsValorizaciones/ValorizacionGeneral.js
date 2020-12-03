@@ -520,7 +520,7 @@ class ValorizacionGeneral extends Component {
                                                         <td>S/. {DataResumenApi.valor_anterior}</td>
                                                         <td>{Redondea(DataResumenApi.porcentaje_anterior)} %</td>
 
-                                                        <td>S/. {DataResumenApi.valor_actual}</td>
+                                                        <td>S/. {Redondea(DataResumenApi.valor_actual )}</td>
                                                         <td>{Redondea(DataResumenApi.porcentaje_actual)} %</td>
 
                                                         <td>S/. {DataResumenApi.valor_total}</td>
