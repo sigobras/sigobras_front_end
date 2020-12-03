@@ -17,7 +17,8 @@ import 'react-picky/dist/picky.css';
 import "../../../css/GTareas.css"
 
 import { FechaActual, Extension } from "../Utils/Funciones"
-import { UrlServer, Id_Acceso, ImgAccesoSS, Id_Obra, CargoAccesoSS } from "../Utils/ServerUrlConfig"
+import { UrlServer} from "../Utils/ServerUrlConfig"
+import LogoSigobras from './../../../images/logoSigobras.png'
 
 
 
@@ -143,12 +144,12 @@ class GestionTareas extends Component {
     document.title = "GESTIÓN DE TAREAS 🎁"
     // llama api de tareas pendientes
 
-    this.reqProyectos(Id_Acceso, "0", "0", "", "0")
-    this.reqTareasEmitidos(Id_Acceso, "0", "0")
-    // this.reqTareasEmitidos(id_acceso, inicio, fin)
+    this.reqProyectos(sessionStorage.getItem('idacceso'), "0", "0", "", "0")
+    this.reqTareasEmitidos(sessionStorage.getItem('idacceso'), "0", "0")
+    // this.reqTareasEmitidos(sessionStorage.getItem('idacceso'), inicio, fin)
 
     // API DE SUBORDINADOS
-    this.reqSubordinados(Id_Acceso)
+    this.reqSubordinados(sessionStorage.getItem('idacceso'))
     // API PROYECTOS---------------------------------------------
     axios.get(`${UrlServer}/getTareaProyectos`)
       .then((res) => {
@@ -167,7 +168,7 @@ class GestionTareas extends Component {
 
     // CARGOS API---------------------------------------------
     axios.post(`${UrlServer}/getTareaCargos`, {
-      id_acceso: Id_Acceso
+      id_acceso: sessionStorage.getItem('idacceso')
     })
       .then((res) => {
         // console.log("datos de cargos ", res.data)
@@ -245,11 +246,11 @@ class GestionTareas extends Component {
     formData.append('fecha_inicial', fechaInicio);
     formData.append('fecha_final', resultado);
     formData.append('proyectos_id_proyecto', ProyectoId);
-    formData.append('emisor', Id_Acceso);
+    formData.append('emisor', sessionStorage.getItem('idacceso'));
     formData.append('receptor', Personal);
     formData.append('archivo', file);
     formData.append('extension', tamanioImagenUrl);
-    formData.append('codigo_obra', Id_Obra);
+    formData.append('codigo_obra', sessionStorage.getItem('idobra'));
     formData.append('tareas_id_tarea', idTarea);
 
     const config = {
@@ -277,9 +278,9 @@ class GestionTareas extends Component {
           // document.getElementById("descripcion").value = "";
           document.getElementById("formAgregarTarea").reset();
 
-          this.reqProyectos(Id_Acceso, "0", "0", "", "0")
-          this.reqTareasEmitidos(Id_Acceso, "0", "0")
-          this.reqSubordinados(Id_Acceso)
+          this.reqProyectos(sessionStorage.getItem('idacceso'), "0", "0", "", "0")
+          this.reqTareasEmitidos(sessionStorage.getItem('idacceso'), "0", "0")
+          this.reqSubordinados(sessionStorage.getItem('idacceso'))
 
           toast.success("✔ Tarea Agregada al sistema ")
           return
@@ -340,7 +341,7 @@ class GestionTareas extends Component {
 
     axios.post(`${UrlServer}/getTareaUsuariosPorCargo`,
       {
-        "id_acceso": Id_Acceso,
+        "id_acceso": sessionStorage.getItem('idacceso'),
         "id_Cargo": value.id_Cargo
       }
     )
@@ -454,7 +455,7 @@ class GestionTareas extends Component {
       IdProyecto
     });
     if (this.state.collapseProyecto !== index) {
-      this.reqTareasRecibidas(Id_Acceso, this.state.Inicio, this.state.Fin, IdProyecto)
+      this.reqTareasRecibidas(sessionStorage.getItem('idacceso'), this.state.Inicio, this.state.Fin, IdProyecto)
       return
     }
     this.setState({ PositsFiltrado: [] })
@@ -533,7 +534,7 @@ class GestionTareas extends Component {
       axios.post(`${UrlServer}/postTareaComentario`, {
         "mensaje": valueInputComentario,
         "tareas_id_tarea": this.state.PositsFiltrado.id_tarea,
-        "accesos_id_acceso": Id_Acceso
+        "accesos_id_acceso": sessionStorage.getItem('idacceso')
       })
         .then((res) => {
           // console.log("data enviado ", res)
@@ -1051,7 +1052,7 @@ class GestionTareas extends Component {
                           <Col md="6 mb-2" key={iS} style={{ marginRight: "-5px" }}>
                             <div className="containerTarea" onDragStart={(e) => this.onDragStart(e, TareasEmit.id_tarea, iS)} draggable>
                               <div className="d-flex justify-content-between headerTarea p-1" onClick={() => this.MostrasMasTarea(TareasEmit.id_tarea)}>
-                                <img src={ImgAccesoSS} alt="sigobras" className="imgCircular" width="20%" height="20%" />
+                                <img src={LogoSigobras} alt="sigobras" className="imgCircular" width="20%" height="20%" />
 
                                 <div className="m-0 h5">{`${TareasEmit.tipo_tarea}-${iS + 1}`}</div>
 
@@ -1139,7 +1140,10 @@ class GestionTareas extends Component {
                   <div className="fondoSubord">
                     <div className="text-center">
                       <b> JEFES DE AREA  </b>
-                      <img src={ImgAccesoSS} className="imgCircular float-right prioridad" alt="perfil sigobras " width="25px" height="25px" onClick={() => this.ModalDetallesUsuario(Id_Acceso)} />
+                      <img 
+                      src={LogoSigobras} 
+                      className="imgCircular float-right prioridad" alt="perfil sigobras " width="25px" height="25px" 
+                      onClick={() => this.ModalDetallesUsuario(Id_Acceso)} />
                     </div>
                     {
                       DatSubordinadospi !== undefined ?
