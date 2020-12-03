@@ -15,10 +15,20 @@ import ModalPartidaFoto from './ModalPartidaFoto';
 import { socket } from "../../../Utils/socket";
 export default () => {
   useEffect(() => {
+    fetchUsuarioData()
     fectchComponentes()
     fectchPrioridades()
     fetchCategorias()
   }, []);
+  //usuario data
+  //get datos de usuario
+  const [UsuarioData, setUsuarioData] = useState({});
+  async function fetchUsuarioData() {
+    const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+      id_acceso: sessionStorage.getItem('idacceso')
+    })
+    setUsuarioData(request.data)
+  }
   // componentes
   const [Componentes, setComponentes] = useState(
     [
@@ -527,11 +537,14 @@ export default () => {
                                       />
                                     </td>
                                     <td>
-                                      <ModalIngresoMetrado
-                                        Partida={PartidaSelecccionado}
-                                        Actividad={item}
-                                        recargaActividad={onSaveMetrado}
-                                      />
+                                      {UsuarioData.cargo_nombre == "RESIDENTE" &&
+                                        <ModalIngresoMetrado
+                                          Partida={PartidaSelecccionado}
+                                          Actividad={item}
+                                          recargaActividad={onSaveMetrado}
+                                        />
+                                      }
+
                                     </td>
                                   </tr>
                                 )
