@@ -136,20 +136,20 @@ function Report_curva_s() {
     const request = await axios.post(`${UrlServer}/getComponentes`, {
       id_ficha: sessionStorage.getItem('idobra')
     })
-    console.log("request get compomentes", request.data);
+    // console.log("request get compomentes", request.data);
     var CompomentesRecibidos = request.data
-    console.log("Compomentes.....", CompomentesRecibidos);
+    
     // Obtenemos la data de los compomnetes fisicos
     for (let i = 0; i < CompomentesRecibidos.length; i++) {
       const element = CompomentesRecibidos[i];
-      console.log("element", element.id_componente);
+      
       const request2 = await axios.post(`${UrlServer}/getFisicoComponente`, {
         "id_componente": element.id_componente
       })
       element.avance = request2.data.avance
-      console.log("request Fisico Compomente", element.avance);
+      // console.log("request Fisico Compomente", element.avance);
     }
-    console.log("Compomentes...", CompomentesRecibidos);
+    // console.log("Compomentes...", CompomentesRecibidos);
     return CompomentesRecibidos
   }
 
@@ -690,8 +690,8 @@ function Report_curva_s() {
 
     // Guardamos compomentes en  una variable temporal
     var ComponentesPdf = await fetchComponentes()
-    console.log("CompomentesPdf", ComponentesPdf);
-    console.log("CompomentesPdf.numero", ComponentesPdf[0].numero);
+    // console.log("CompomentesPdf", ComponentesPdf);
+    // console.log("CompomentesPdf.numero", ComponentesPdf[0].numero);
 
     //Se consigue el link de las imagenes
     var Imagenes_en_base_64 = await ImagenesDB()
@@ -713,7 +713,8 @@ function Report_curva_s() {
           {text:ComponentesPdf[i].nombre, fontSize: 6.5,}, 
           {text:Redondea(ComponentesPdf[i].presupuesto), fontSize: 6.5,}, 
           {text:Redondea(ComponentesPdf[i].avance), fontSize: 6.5,}, 
-          {text:Redondea((ComponentesPdf[i].avance /ComponentesPdf[i].presupuesto)*100) + " %", fontSize: 6.5,}]
+          {text:Redondea((ComponentesPdf[i].avance /ComponentesPdf[i].presupuesto)*100) + " %", fontSize: 6.5,}
+        ]
       )
     }
 
@@ -762,33 +763,6 @@ function Report_curva_s() {
     //     },
     //   ]
     //   imagenesParaPdf = [
-    //     {
-    //       // style: 'tableExample',
-    //       // layout: 'noBorders',
-    //       // table: {
-    //       //   widths: ['*', '*'],
-    //       //   body: [
-    //       //     [
-    //       //       {
-    //       //         image: Imagenes_en_base_64[0].imgb64,
-    //       //             fit: [170, 170],
-    //       //         // width: 250,
-    //       //         // height: 160,
-    //       //             margin: [1, -8, 0, -10],
-    //       //             alignment: "center",
-    //       //       },
-    //       //       {
-    //       //         // alignment: 'right',
-    //       //         image: Imagenes_en_base_64[1].imgb64,
-    //       //             fit: [170, 170],
-    //       //         // width: 250,
-    //       //         // height: 160,
-    //       //             margin: [0, -8, -16, -10],
-    //       //             alignment: "center",
-    //       //       },
-    //       //     ],
-    //       //   ]
-    //       // }
 
     //       columns: [
     //         {
@@ -1223,7 +1197,10 @@ function Report_curva_s() {
     pdfmake.vfs = pdfFonts.pdfMake.vfs;
 
     var pdfDocGenerator = await pdfmake.createPdf(dd);
-    pdfDocGenerator.open()
+    var win = window.open('', '_blank');
+    (pdfDocGenerator).open({}, win);
+    // (pdfDocGenerator as any).open({}, win);
+    // pdfDocGenerator.open()
     setLoading(false);
 
   }
@@ -1260,18 +1237,6 @@ function Report_curva_s() {
         />
       </div>
 
-      {/* <canvas ref={canvas} width={200} height={200} style={{ display: 'none' }} > </canvas>
-
-      <img
-        style={{ display: 'none' }} 
-        ref={ImagenPDF}
-        // { useCORS:true}
-        src={`${UrlServer}${Imagen1}`} />
-
-      <img
-        style={{ display: 'none' }} 
-        ref={ImagenPDF2}
-        src={`${UrlServer}${Imagen2}`} crossOrigin="anonymous"/> */}
     </div>
   );
 }
