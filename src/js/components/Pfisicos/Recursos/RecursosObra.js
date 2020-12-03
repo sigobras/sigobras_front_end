@@ -1,55 +1,93 @@
-import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
-import classnames from 'classnames';
+import React, { useEffect, useState } from 'react';
+import { Nav, NavItem, NavLink, CardHeader, Button } from 'reactstrap';
+import axios from 'axios';
+import { UrlServer } from '../../Utils/ServerUrlConfig';
+import RecursosObraResumen from './RecursosObraResumen';
+import RecursosComponenteResumen from './RecursosComponenteResumen';
+import RecursosComponentePartidas from './RecursosComponentePartidas';
 
-import ListaActividadesTiempo from './ComponetsRecursosObra/ListaActividadesTiempo'
-import ListaMateriales from './ComponetsRecursosObra/ListaMateriales'
+export default () => {
 
-class RecursosObra extends Component {
-    constructor(){
-        super()
-        this.TabRecursos = this.TabRecursos.bind(this);
-        this.state = {
-            activeTab: '2'
-        };
+    useEffect(() => {
+        fectchComponentes()
+    }, []);
+
+    // -------------------> Componentes
+    const [Componentes, setComponentes] = useState([]);
+    async function fectchComponentes() {
+        const res = await axios.post(`${UrlServer}/getComponentes`, {
+            id_ficha: sessionStorage.getItem('idobra')
+        })
+        setComponentes(res.data)
+        // console.log("res.data", res.data);
+    }
+    const [ComponenteSelecccionado, setComponenteSelecccionado] = useState({ numero: 0, nombre: "RESUMEN" });
+    function onChangeComponentesSeleccionado(componente) {
+        setComponenteSelecccionado(componente)
     }
 
-    TabRecursos(tab) {
-        if (this.state.activeTab !== tab) {
-          this.setState({
-            activeTab: tab
-          });
-        }
-    }
+    const [ComponenteInterfaz,setComponenteInterfaz] = useState('RESUMEN')
 
-    render() {
-        return (
-            <Card>
-                <Nav tabs>
-                    <NavItem>
-                        <NavLink className={classnames({ active: this.state.activeTab === '1' })} onClick={() => { this.TabRecursos('1'); }} >
-                            RECURSOS POR TIEMPO
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink className={classnames({ active: this.state.activeTab === '2' })} onClick={() => { this.TabRecursos('2'); }} >
-                            RECURSOS A COSTO DIRECTO
-                        </NavLink>
-                    </NavItem>
-                </Nav>
+    return (
+        <div>
 
-                <TabContent activeTab={this.state.activeTab}>
-                    <TabPane tabId="1">
-                        <ListaActividadesTiempo />
-                    </TabPane>
+            <Nav tabs>
+                <NavItem>
+                    <NavLink
+                        className={ComponenteSelecccionado.numero == 0 && 'active'}
+                        onClick={() => onChangeComponentesSeleccionado({ numero: 0, nombre: "RESUMEN" })}
+                    >
+                        RESUMEN
+              </NavLink>
+                </NavItem>
+                {
+                    Componentes.map((item, i) =>
+                        <NavItem key={i}>
+                            <NavLink
+                                className={ComponenteSelecccionado.numero == item.numero && 'active'}
+                                onClick={() => onChangeComponentesSeleccionado(item)}
+                            >
+                                C-{item.numero}
+                            </NavLink>
+                        </NavItem>
+                    )}
+            </Nav>
 
-                    <TabPane tabId="2">
-                        <ListaMateriales />
-                    </TabPane>
-                </TabContent>
-            </Card>
-        );
-    }
+            {
+                ComponenteSelecccionado.numero == 0 ?
+                    <RecursosObraResumen />
+                    :
+                    <div>
+                        <CardHeader> {ComponenteSelecccionado.nombre} </CardHeader>
+                        <Nav tabs className="float-right">
+                            <NavItem>
+                                <NavLink 
+                                // className={classnames({ "bg-warning text-dark": this.state.CollapseResumenTabla === 'resumenRecursos' })} 
+                                onClick={() => {setComponenteInterfaz('RESUMEN')}} 
+                                >
+                                    MOSTRAR RESUMEN  
+                                </NavLink>
+                            </NavItem>
+
+                            <NavItem>
+                                <NavLink 
+                                // className={classnames({ "bg-warning text-dark": this.state.CollapseResumenTabla === 'tablaPartidas' })} 
+                                onClick={() => {setComponenteInterfaz('PARTIDAS')}}  
+                                >
+                                    MOSTRAR POR PARTIDA 
+                                </NavLink>
+                            </NavItem>
+                        </Nav>
+                        {
+                            ComponenteInterfaz == 'RESUMEN' ? 
+                            <RecursosComponenteResumen /> :
+                            <RecursosComponentePartidas /> 
+                        }
+                    </div>
+
+            }
+
+        </div>
+    );
 }
 
-export default RecursosObra;
