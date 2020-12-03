@@ -921,7 +921,7 @@ export default () => {
 
                                                                                                                     }
                                                                                                                 </td>
-                                                                                                                <td>{item3.costo_unitario}</td>
+                                                                                                                <td>{Redondea(item3.costo_unitario)}</td>
                                                                                                                 <td>{Redondea(item3.parcial)}</td>
                                                                                                                 <td>
                                                                                                                     {(FechaActiva && UsuarioData.cargo_nombre == "RESIDENTE") ?
