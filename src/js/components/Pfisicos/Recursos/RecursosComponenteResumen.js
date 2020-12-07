@@ -6,6 +6,7 @@ import RecursosObraResumen from './RecursosObraResumen';
 import RecursosComponenteResumen from './RecursosComponenteResumen';
 import RecursosComponentePartidas from './RecursosComponentePartidas';
 import { FechaActual, Redondea } from '../../Utils/Funciones'
+
 export default () => {
 
     return (

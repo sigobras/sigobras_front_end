@@ -40,7 +40,7 @@ export default () => {
                         RESUMEN
               </NavLink>
                 </NavItem>
-                {
+                {/* {
                     Componentes.map((item, i) =>
                         <NavItem key={i}>
                             <NavLink
@@ -50,7 +50,7 @@ export default () => {
                                 C-{item.numero}
                             </NavLink>
                         </NavItem>
-                    )}
+                    )} */}
             </Nav>
 
             {
@@ -80,8 +80,8 @@ export default () => {
                         </Nav>
                         {
                             ComponenteInterfaz == 'RESUMEN' ? 
-                            <RecursosComponenteResumen /> :
-                            <RecursosComponentePartidas /> 
+                            <RecursosComponenteResumen /> : ""
+                            // <RecursosComponentePartidas /> 
                         }
                     </div>
 
