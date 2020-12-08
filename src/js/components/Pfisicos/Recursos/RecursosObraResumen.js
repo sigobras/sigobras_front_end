@@ -7,6 +7,7 @@ import { MdFirstPage, MdChevronLeft, MdChevronRight, MdLastPage, MdCompareArrows
 import { FaSuperpowers, FaPlus } from 'react-icons/fa';
 import { DebounceInput } from 'react-debounce-input';
 import DocumentoAdquisicion from './DocumentoAdquisicion';
+import './RecursosObraResumen.css'
 
 export default () => {
     useEffect(() => {
@@ -260,59 +261,12 @@ export default () => {
                                                 <td className="bordeDerecho"> {Redondea(item.recurso_cantidad * (item.unidad == '%MO' || item.unidad == '%PU' ? 0 : item.precio))}</td>
                                             ]
                                         }
+                                        <CantidadAvanzada
+                                            ModoEditar={ModoEditar}
+                                            RecursoTipoSelecccionado={RecursoTipoSelecccionado}
+                                            recurso={item}
+                                        />
 
-
-                                        <td>
-                                            <CantidadAvanzada
-                                                descripcion={item.descripcion}
-                                                ModoEditar={ModoEditar}
-                                                RecursoTipoSelecccionado={RecursoTipoSelecccionado}
-                                                activeChildFunctions={activeChildFunctions}
-                                            />
-                                        </td>
-                                        <td>
-                                            <Precio
-                                                recurso={item}
-                                                ModoEditar={ModoEditar}
-                                                RecursoTipoSelecccionado={RecursoTipoSelecccionado}
-                                                activeChildFunctions={activeChildFunctions}
-                                            />
-
-                                        </td>
-                                        <td>
-                                            <Parcial
-                                                recurso={item}
-                                                ModoEditar={ModoEditar}
-                                                ref={(ref) => {
-                                                    var clone = RefParcial
-                                                    clone[item.descripcion] = ref
-                                                    setRefParcial(clone)
-                                                }}
-                                            />
-                                        </td>
-                                        <td>
-                                            <Diferencia
-                                                recurso={item}
-                                                ModoEditar={ModoEditar}
-                                                ref={(ref) => {
-                                                    var clone = RefDiferencia
-                                                    clone[item.descripcion] = ref
-                                                    setRefDiferencia(clone)
-                                                }}
-                                            />
-                                        </td>
-                                        <td>
-                                            <DiferenciaPorcentaje
-                                                recurso={item}
-                                                ModoEditar={ModoEditar}
-                                                ref={(ref) => {
-                                                    var clone = RefPorcentaje
-                                                    clone[item.descripcion] = ref
-                                                    setRefPorcentaje(clone)
-                                                }}
-                                            />
-
-                                        </td>
                                     </tr>
                                 )
                             }
@@ -456,7 +410,9 @@ function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTip
             </div>
             :
 
-            <div>
+            <div className="d-flex showhim" 
+            // style={ModoEditar ? {backgroundColor: '#63637d'}: {}}
+            >
 
                 {
                     TipoDocumentoAdquisicion.find(item2 => item2.id_tipoDocumentoAdquisicion === DocumentoAdquisicion.tipoDocumentoAdquisicion_id_tipoDocumentoAdquisicion) &&
@@ -465,25 +421,30 @@ function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTip
                 {" - "}
                 {DocumentoAdquisicion.codigo}
                 {ModoEditar &&
-
-                    <MdModeEdit onClick={() => setToggleInput(!ToggleInput)} />
+                    <MdModeEdit
+                        className="showme"
+                        onClick={() => setToggleInput(!ToggleInput)}
+                    />
                 }
             </div>
     )
 }
 
-function CantidadAvanzada({ descripcion, ModoEditar, RecursoTipoSelecccionado, activeChildFunctions }) {
+const CantidadAvanzada = forwardRef(({ ModoEditar, RecursoTipoSelecccionado, recurso }, ref) => {
+
     useEffect(() => {
         fectchAvance()
     }, [])
 
+    // Seccion de Avanze
     const [Avance, setAvance] = useState(0);
+    const [Precio, setPrecio] = useState(0);
 
     async function fectchAvance() {
         const ejecucionReal = await axios.post(`${UrlServer}/getResumenRecursosRealesByDescripcion`,
             {
                 "id_ficha": sessionStorage.getItem('idobra'),
-                "descripcion": descripcion
+                "descripcion": recurso.descripcion
             }
         )
 
@@ -498,86 +459,40 @@ function CantidadAvanzada({ descripcion, ModoEditar, RecursoTipoSelecccionado, a
             const res3 = await axios.post(`${UrlServer}/getResumenRecursosCantidadByDescripcion`,
                 {
                     "id_ficha": sessionStorage.getItem('idobra'),
-                    "descripcion": descripcion
+                    "descripcion": recurso.descripcion
                 }
             )
             avance = res3.data.avance
         }
         setAvance(avance)
-    }
-    const [ToggleInput, setToggleInput] = useState(false)
-    const [Input, setInput] = useState();
-    async function updateRecursoAvance() {
-        const res = await axios.post(`${UrlServer}/updateRecursoAvance`,
-            {
-                "id_ficha": sessionStorage.getItem('idobra'),
-                "tipo": RecursoTipoSelecccionado.tipo,
-                "descripcion": descripcion,
-                "cantidad": Input
-            }
-        )
 
-        setToggleInput(!ToggleInput)
-        fectchAvance()
-        activeChildFunctions(descripcion)
-    }
-
-    return (
-        ToggleInput ?
-            <div
-                className="d-flex"
-            >
-                <DebounceInput
-                    value={Avance}
-                    debounceTimeout={300}
-                    onChange={e => setInput(e.target.value)}
-                    type="number"
-                />
-                <div
-                    onClick={() => updateRecursoAvance()}
-                >
-                    <MdSave style={{ cursor: "pointer" }} />
-                </div>
-                <div
-                    onClick={() => setToggleInput(!ToggleInput)}
-                >
-                    <MdClose style={{ cursor: "pointer" }} />
-                </div>
-            </div>
-            :
-
-            <div>
-                {Redondea(Avance)}
-                {
-                    ModoEditar &&
-                    <MdModeEdit onClick={() => setToggleInput(!ToggleInput)} />
-                }
-            </div>
-
-    )
-}
-
-function Precio({ recurso, ModoEditar, RecursoTipoSelecccionado, activeChildFunctions }) {
-    useEffect(() => {
-        fetchPrecio()
-    }, []);
-
-    const [Precio, setPrecio] = useState(0);
-    async function fetchPrecio() {
-        const ejecucionReal = await axios.post(`${UrlServer}/getResumenRecursosRealesByDescripcion`,
-            {
-                "id_ficha": sessionStorage.getItem('idobra'),
-                "descripcion": recurso.descripcion
-            }
-        )
         var precio = recurso.precio
         if (ModoEditar && ejecucionReal.data.precio != null) {
             precio = ejecucionReal.data.precio
         }
         setPrecio(precio)
     }
-    const [ToggleInput, setToggleInput] = useState(false)
-    const [Input, setInput] = useState();
+
+    //Edicion de avance
+
+    const [ToggleInputAvance, setToggleInputAvance] = useState(false)
+    const [InputAvance, setInputAvance] = useState();
+    async function updateRecursoAvance() {
+        const res = await axios.post(`${UrlServer}/updateRecursoAvance`,
+            {
+                "id_ficha": sessionStorage.getItem('idobra'),
+                "tipo": RecursoTipoSelecccionado.tipo,
+                "descripcion": recurso.descripcion,
+                "cantidad": InputAvance
+            }
+        )
+
+        setToggleInputAvance(!ToggleInputAvance)
+        fectchAvance()
+    }
+
+    const [ToggleInputPrecio, setToggleInputPrecio] = useState(false)
+    const [InputPrecio, setInputPrecio] = useState();
 
     async function updateRecursoPrecio() {
         const res = await axios.post(`${UrlServer}/updateRecursoPrecio`,
@@ -585,233 +500,131 @@ function Precio({ recurso, ModoEditar, RecursoTipoSelecccionado, activeChildFunc
                 "id_ficha": sessionStorage.getItem('idobra'),
                 "tipo": RecursoTipoSelecccionado.tipo,
                 "descripcion": recurso.descripcion,
-                "precio": Input,
+                "precio": InputPrecio,
             }
         )
-        setToggleInput(!ToggleInput)
-        fetchPrecio()
-        activeChildFunctions(recurso.descripcion)
-    }
-    return (
-
-        ToggleInput ?
-            <div
-                className="d-flex"
-            >
-                <DebounceInput
-                    value={Precio}
-                    debounceTimeout={300}
-                    onChange={e => setInput(e.target.value)}
-                    type="number"
-                />
-                <div
-                    onClick={() => updateRecursoPrecio()}
-                >
-                    <MdSave style={{ cursor: "pointer" }} />
-                </div>
-                <div
-                    onClick={() => setToggleInput(!ToggleInput)}
-                >
-                    <MdClose style={{ cursor: "pointer" }} />
-                </div>
-            </div>
-            :
-
-            <div>
-                {recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio}
-                {
-                    ModoEditar &&
-                    <MdModeEdit onClick={() => setToggleInput(!ToggleInput)} />
-                }
-            </div>
-
-    )
-}
-
-const Parcial = forwardRef(
-    ({ recurso, ModoEditar }, ref) => {
-
-        useEffect(() => {
-            fectchAvance()
-        }, []);
-        const [Precio, setPrecio] = useState(0);
-        const [Avance, setAvance] = useState(0);
-
-        async function fectchAvance() {
-            const ejecucionReal = await axios.post(`${UrlServer}/getResumenRecursosRealesByDescripcion`,
-                {
-                    "id_ficha": sessionStorage.getItem('idobra'),
-                    "descripcion": recurso.descripcion
-                }
-            )
-
-            // console.log("res.dataAvance", res.data);
-            var avance = null;
-            var precio = recurso.precio
-            if (ModoEditar) {
-
-                avance = ejecucionReal.data.cantidad
-                if (ejecucionReal.data.precio != null) {
-                    precio = ejecucionReal.data.precio
-                }
-            }
-
-            if (avance == null) {
-                const res3 = await axios.post(`${UrlServer}/getResumenRecursosCantidadByDescripcion`,
-                    {
-                        "id_ficha": sessionStorage.getItem('idobra'),
-                        "descripcion": recurso.descripcion
-                    }
-                )
-                avance = res3.data.avance
-            }
-            setAvance(avance)
-            setPrecio(precio)
-        }
-        useImperativeHandle(ref, () => ({
-            recarga() {
-                fectchAvance()
-            }
-        }));
-
-        return (
-            Redondea(Avance * (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio))
-        )
-    }
-)
-
-const Diferencia = forwardRef(({ recurso, ModoEditar }, ref) => {
-
-    useEffect(() => {
+        setToggleInputPrecio(!ToggleInputPrecio)
         fectchAvance()
-    }, []);
-    const [Precio, setPrecio] = useState(0);
-    const [Avance, setAvance] = useState(0);
-
-    async function fectchAvance() {
-        const ejecucionReal = await axios.post(`${UrlServer}/getResumenRecursosRealesByDescripcion`,
-            {
-                "id_ficha": sessionStorage.getItem('idobra'),
-                "descripcion": recurso.descripcion
-            }
-        )
-
-        // console.log("res.dataAvance", res.data);
-        var avance = null;
-        var precio = recurso.precio
-        if (ModoEditar) {
-
-            avance = ejecucionReal.data.cantidad
-            if (ejecucionReal.data.precio != null) {
-                precio = ejecucionReal.data.precio
-            }
-        }
-
-        if (avance == null) {
-            const res3 = await axios.post(`${UrlServer}/getResumenRecursosCantidadByDescripcion`,
-                {
-                    "id_ficha": sessionStorage.getItem('idobra'),
-                    "descripcion": recurso.descripcion
-                }
-            )
-            avance = res3.data.avance
-        }
-        setAvance(avance)
-        setPrecio(precio)
     }
-    useImperativeHandle(ref, () => ({
-        recarga() {
-            fectchAvance()
-        }
-    }));
-    return (
-        Redondea(
-            (recurso.recurso_cantidad
-                *
-                (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio)
-            )
-            -
-            (Avance
-                *
-                (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio)
-            )
-        )
-    )
-}
-)
-const DiferenciaPorcentaje = forwardRef(({ recurso, ModoEditar }, ref) => {
-
-    useEffect(() => {
-        fectchAvance()
-    }, []);
-    const [Precio, setPrecio] = useState(0);
-    const [Avance, setAvance] = useState(0);
-
-    async function fectchAvance() {
-        const ejecucionReal = await axios.post(`${UrlServer}/getResumenRecursosRealesByDescripcion`,
-            {
-                "id_ficha": sessionStorage.getItem('idobra'),
-                "descripcion": recurso.descripcion
-            }
-        )
-
-        // console.log("res.dataAvance", res.data);
-        var avance = null;
-        var precio = recurso.precio
-        if (ModoEditar) {
-
-            avance = ejecucionReal.data.cantidad
-            if (ejecucionReal.data.precio != null) {
-                precio = ejecucionReal.data.precio
-            }
-        }
-
-        if (avance == null) {
-            const res3 = await axios.post(`${UrlServer}/getResumenRecursosCantidadByDescripcion`,
-                {
-                    "id_ficha": sessionStorage.getItem('idobra'),
-                    "descripcion": recurso.descripcion
-                }
-            )
-            avance = res3.data.avance
-        }
-        setAvance(avance)
-        setPrecio(precio)
-    }
-    useImperativeHandle(ref, () => ({
-        recarga() {
-            fectchAvance()
-        }
-    }));
 
     return (
+        [
+            <td>
+                {ToggleInputAvance ?
 
-        Redondea
-            (
-                (
-                    (
-                        recurso.recurso_cantidad
-                        *
-                        (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio)
-                    )
-                    -
-                    (
-                        Avance
-                        *
-                        (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio)
-                    )
-                )
-                /
-                (
-                    recurso.recurso_cantidad
-                    *
-                    (
-                        recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio
-                    )
-                )
-                * 100
-            )
+                    <div
+                        className="d-flex"
+                    >
+                        <DebounceInput
+                            value={Avance}
+                            debounceTimeout={300}
+                            onChange={e => setInputAvance(e.target.value)}
+                            type="number"
+                        />
+                        <div
+                            onClick={() => updateRecursoAvance()}
+                        >
+                            <MdSave style={{ cursor: "pointer" }} />
+                        </div>
+                        <div
+                            onClick={() => setToggleInputAvance(!ToggleInputAvance)}
+                        >
+                            <MdClose style={{ cursor: "pointer" }} />
+                        </div>
+                    </div>
+                    :
 
+                    <div className="d-flex showhim">
+                        {Redondea(Avance)}
+                        {
+                            ModoEditar &&
+                            <MdModeEdit 
+                            className="showme"
+                            onClick={() => setToggleInputAvance(!ToggleInputAvance)} 
+                            />
+                        }
+                    </div>
+                }
+            </td>,
+            <td>
+                {ToggleInputPrecio ?
+                    <div
+                        className="d-flex"
+                    >
+                        <DebounceInput
+                            value={Precio}
+                            debounceTimeout={300}
+                            onChange={e => setInputPrecio(e.target.value)}
+                            type="number"
+                        />
+                        <div
+                            onClick={() => updateRecursoPrecio()}
+                        >
+                            <MdSave style={{ cursor: "pointer" }} />
+                        </div>
+                        <div
+                            onClick={() => setToggleInputPrecio(!ToggleInputPrecio)}
+                        >
+                            <MdClose style={{ cursor: "pointer" }} />
+                        </div>
+                    </div>
+                    :
+
+                    <div className="d-flex showhim">
+                        {recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio}
+                        {
+                            ModoEditar &&
+                            <MdModeEdit 
+                            className="showme"
+                            onClick={() => setToggleInputPrecio(!ToggleInputPrecio)} 
+                            />
+                        }
+                    </div>}
+            </td>,
+            <td>
+                {Redondea(Avance * (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio))}
+            </td>,
+            <td>
+                {
+                    Redondea((recurso.recurso_cantidad
+                        *
+                        (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : recurso.precio)
+                    )
+                        -
+                        (Avance
+                            *
+                            (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio)
+                        ))
+                }
+            </td>,
+            <td>
+                {Redondea
+                    (
+                        (
+                            (
+                                recurso.recurso_cantidad
+                                *
+                                (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : recurso.precio)
+                            )
+                            -
+                            (
+                                Avance
+                                *
+                                (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio)
+                            )
+                        )
+                        /
+                        (
+                            recurso.recurso_cantidad
+                            *
+                            (
+                                recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : recurso.precio
+                            )
+                        )
+                        * 100
+                    )}
+            </td>
+        ]
     )
 }
 )
