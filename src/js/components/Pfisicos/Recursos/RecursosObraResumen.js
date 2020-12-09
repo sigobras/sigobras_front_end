@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 import { InputGroupAddon, InputGroupText, InputGroup, Nav, NavItem, NavLink, Button, Input, Row, Col } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
@@ -8,6 +8,8 @@ import { FaSuperpowers, FaPlus } from 'react-icons/fa';
 import { DebounceInput } from 'react-debounce-input';
 import DocumentoAdquisicion from './DocumentoAdquisicion';
 import './RecursosObraResumen.css'
+import { ToastContainer, toast } from "react-toastify";
+
 
 export default () => {
     useEffect(() => {
@@ -36,7 +38,6 @@ export default () => {
     const [Recursos, setRecursos] = useState([]);
 
     async function fectchRecursos() {
-        console.log("Activandose");
         const res = await axios.post(`${UrlServer}/getResumenRecursos`,
             {
                 "id_ficha": sessionStorage.getItem('idobra'),
@@ -114,22 +115,187 @@ export default () => {
     }, [RecursoTipoSelecccionado, TextoBuscado]);
     useEffect(() => {
         fectchRecursos()
-    }, [ModoEditar, CantidadPaginasRecursos, RecursoTipoSelecccionado, PaginaActual, TextoBuscado,]);
+        fetchRecursosNuevos()
+    }, [ModoEditar, CantidadPaginasRecursos, RecursoTipoSelecccionado, PaginaActual, TextoBuscado]);
 
     //Activar funciones de hermanitos
-    const [RefParcial, setRefParcial] = useState([]);
-    const [RefDiferencia, setRefDiferencia] = useState([]);
-    const [RefPorcentaje, setRefPorcentaje] = useState([]);
+    const [RefComprobante, setRefComprobante] = useState([]);
 
     function activeChildFunctions(descripcion) {
-        console.log("Activando");
-        RefParcial[descripcion].recarga()
-        RefDiferencia[descripcion].recarga()
-        RefPorcentaje[descripcion].recarga()
+        console.log("Activando---->");
+        RefComprobante[descripcion].recarga()
     }
+
     const [InterfazDocumentoAdquisicion, setInterfazDocumentoAdquisicion] = useState(false)
+
+    /// COmponente para formulario de recursos nuevos 
+    const refRecursoFormulario = useRef(null)
+    const RecursoFormulario = forwardRef(({ ToggleFormularioRecursoNuevo, fetchRecursosNuevos }, ref) => {
+
+        useImperativeHandle(ref, () => ({
+            save() {
+                updateRecursosFormulario()
+            }
+        }));
+
+        const [NuevoComprobante, setNuevoComprobante] = useState('')
+        const [NuevoRecurso, setNuevoRecurso] = useState('')
+        const [NuevoUnidad, setNuevoUnidad] = useState('')
+        const [NuevoCantidad, setNuevoCantidad] = useState(0)
+        const [NuevoPrecio, setNuevoPrecio] = useState(0)
+        const [NuevoParcial, setNuevoParcial] = useState('')
+        const [NuevoDiferencia, setNuevoDiferencia] = useState('')
+        const [NuevoDiferenciaPorcentaje, setNuevoDiferenciaPorcentaje] = useState('')
+
+        const [NuevoSelectRecursosFormulario, setNuevoSelectRecursosFormulario] = useState('SELECCIONE')
+
+        // const [UpdateRecursosFormulario, setUpdateRecursosFormulario] = useState([])
+        async function updateRecursosFormulario() {
+            try {
+                const res = await axios.post(`${UrlServer}/postNuevoRecursoReal`,
+                    {
+                        "fichas_id_ficha": sessionStorage.getItem('idobra'),
+                        "tipo": RecursoTipoSelecccionado.tipo,
+                        "id_tipoDocumentoAdquisicion": NuevoSelectRecursosFormulario,
+                        "codigo": NuevoComprobante,
+                        "descripcion": NuevoRecurso,
+                        "unidad": NuevoUnidad,
+                        "cantidad": NuevoCantidad,
+                        "precio": NuevoPrecio
+                    }
+
+                )
+                // setUpdateRecursosFormulario(res.data)
+                console.log("updateRecursosFormulario", res.data);
+                ToggleFormularioRecursoNuevo(false)
+                fetchRecursosNuevos()
+            } catch (error) {
+                toast.error('No se pudo realizar el ingreso del nuevo recurso',{position: "top-right",autoClose: 5000});
+            }
+        }
+
+        return (
+            <tr>
+                <td>
+                    <div
+                        className="d-flex"
+                    >
+                        <DebounceInput
+                            // value={DocumentoAdquisicion.codigo}
+                            debounceTimeout={300}
+                            onChange={e => setNuevoComprobante(e.target.value)}
+                            type="text"
+
+                        />
+
+                        <select
+                            onChange={e => setNuevoSelectRecursosFormulario(e.target.value)}
+                            value={NuevoSelectRecursosFormulario}
+                            className="form-control form-control-sm"
+                            style={{ width: '120px' }}
+
+
+                        >
+                            <option disabled hidden>SELECCIONE</option>
+                            {
+                                TipoDocumentoAdquisicion.map((item, i) =>
+                                    <option value={item.id_tipoDocumentoAdquisicion}>{item.nombre}</option>
+                                )
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="RECURSO"
+                        onChange={e => setNuevoRecurso(e.target.value)}
+                        value={NuevoRecurso}
+                    />
+
+                </td>
+                <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="UNIDAD"
+                        onChange={e => setNuevoUnidad(e.target.value)}
+                        value={NuevoUnidad}
+                    />
+                </td>
+                <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="CANTIDAD"
+                        onChange={e => setNuevoCantidad(e.target.value)}
+                        value={NuevoCantidad}
+                    />
+                </td>
+                <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="PRECIO"
+                        onChange={e => setNuevoPrecio(e.target.value)}
+                        value={NuevoPrecio}
+                    />
+                </td>
+                {/* <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="PARCIAL"
+                        onChange={e => setNuevoParcial(e.target.value)}
+                        value={NuevoParcial}
+                    />
+                </td>
+                <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="DIFERENCIA"
+                        onChange={e => setNuevoDiferencia(e.target.value)}
+                        value={NuevoDiferencia}
+                    />
+                </td>
+                <td>
+                    <Input
+                        size="sm" className="mb-2 px-1"
+                        placeholder="%"
+                        onChange={e => setNuevoDiferenciaPorcentaje(e.target.value)}
+                        value={NuevoDiferenciaPorcentaje}
+                    />
+                </td> */}
+            </tr>
+
+        )
+    }
+    )
+
+    // Recursos nuevos
+    const [RecursosNuevos, setRecursosNuevos] = useState([])
+    async function fetchRecursosNuevos() {
+        console.log("Axios", {
+            "id_ficha": sessionStorage.getItem('idobra'),
+            "tipo": RecursoTipoSelecccionado.tipo,
+            "texto_buscar": TextoBuscado,
+            "inicio": (PaginaActual - 1) * CantidadPaginasRecursos,
+            "cantidad_datos": Number(CantidadPaginasRecursos),
+        });
+        const res = await axios.post(`${UrlServer}/getResumenRecursosNuevos`,
+            {
+                "id_ficha": sessionStorage.getItem('idobra'),
+                "tipo": RecursoTipoSelecccionado.tipo,
+                "texto_buscar": TextoBuscado,
+                "inicio": (PaginaActual - 1) * CantidadPaginasRecursos,
+                "cantidad_datos": Number(CantidadPaginasRecursos),
+            }
+        )
+        setRecursosNuevos(res.data)
+        console.log("fetchRecursosNuevos", res.data);
+    }
+
+    const [ToggleFormularioRecursoNuevo, setToggleFormularioRecursoNuevo] = useState(false)
+
     return (
         <div>
+
             <Nav tabs>
                 {
                     RecursosTipo.map((item, i) =>
@@ -153,25 +319,33 @@ export default () => {
                         <InputGroup size="sm">
                             <InputGroupAddon addonType="prepend">
                                 {
-                                    // this.state.tipoEjecucion === true ?
+                                    ModoEditar &&
                                     <Fragment>
-                                        {/* { */}
-                                        {/* AgregaNuevaOC === false ? */}
+                                        {
+                                            ToggleFormularioRecursoNuevo &&
+                                            <Button outline color="success"
+                                                onClick={() => {
+                                                    console.log("refRecursoFormulario", refRecursoFormulario);
+                                                    refRecursoFormulario.current.save()
+                                                }}
+                                            >
+                                                <MdSave />
+                                            </Button>
+                                        }
+
                                         <Button outline color="info"
-                                        // onClick={this.agregaRecursoNuevo.bind(this, "agregar")}
-                                        ><FaPlus /> </Button>
-                                        {/* : */}
-                                        <Button outline color="success"
-                                        // onClick={this.GuardaNuevoRecursoApi.bind(this)}
-                                        > <MdSave /></Button>
-                                        {/* } */}
+                                            onClick={() => setToggleFormularioRecursoNuevo(!ToggleFormularioRecursoNuevo)}
+                                        >
+                                            <FaPlus />
+                                        </Button>
+
+
+
                                     </Fragment>
-                                    // : ""
                                 }
 
                                 <Button outline color="primary"
-                                    // active={this.state.tipoEjecucion === true} 
-                                    // disabled={this.state.CamviarTipoVistaDrag === true} 
+
                                     onClick={() => {
                                         if (ModoEditar) {
                                             setInterfazDocumentoAdquisicion(false)
@@ -187,7 +361,7 @@ export default () => {
                                 {
                                     ModoEditar &&
                                     <Button outline color="info"
-                                        // active={this.state.CamviarTipoVistaDrag === true} 
+
                                         onClick={() => setInterfazDocumentoAdquisicion(!InterfazDocumentoAdquisicion)}
                                         title="organizar">
                                         <MdExtension />
@@ -231,10 +405,66 @@ export default () => {
                             </tr>
                         </thead>
                         <tbody>
+
+                            {
+                                ModoEditar &&
+                                ToggleFormularioRecursoNuevo &&
+                                <RecursoFormulario
+                                    ref={refRecursoFormulario}
+                                    ToggleFormularioRecursoNuevo={setToggleFormularioRecursoNuevo}
+                                    fetchRecursosNuevos={fetchRecursosNuevos}
+                                />
+                            }
+                            {
+                                RecursosNuevos.map((item, i) =>
+                                    <tr
+                                        key={item.descripcion}
+                                        draggable
+                                        onDragStart={(e) => {
+                                            e.dataTransfer.setData("descripcion", item.descripcion);
+                                            e.dataTransfer.setData("tipo", RecursoTipoSelecccionado);
+
+                                        }}
+                                    >
+                                        <td>
+                                            <Comprobante
+                                                ModoEditar={ModoEditar}
+                                                TipoDocumentoAdquisicion={TipoDocumentoAdquisicion}
+                                                recurso={item}
+                                                RecursoTipoSelecccionado={RecursoTipoSelecccionado}
+                                                ref={(ref) => {
+                                                    var clone = RefComprobante
+                                                    clone[item.descripcion] = ref
+                                                    setRefComprobante(clone)
+                                                }}
+                                            />
+                                        </td>
+
+                                        <EditarRecursoNuevo
+                                            recurso={item}
+                                            ModoEditar={ModoEditar}
+                                        />
+
+                                        {/* <td> 
+                                            {item.unidad} </td>
+                                        {
+                                            !InterfazDocumentoAdquisicion &&
+                                            [
+                                                <td> {Redondea(item.cantidad)}</td>,
+                                                <td> {item.precio}</td>,
+                                                <td className="bordeDerecho"> {Redondea(item.cantidad * item.precio)}</td>
+                                            ]
+                                        }
+                                        <td> {item.unidad} </td> */}
+
+                                    </tr>
+
+                                )
+                            }
                             {
                                 Recursos.map((item, i) =>
                                     <tr
-                                        key={item.descripcion + ModoEditar}
+                                        key={item.descripcion}
                                         draggable
                                         onDragStart={(e) => {
                                             console.log("item.descripcion", item.descripcion);
@@ -249,6 +479,11 @@ export default () => {
                                                 TipoDocumentoAdquisicion={TipoDocumentoAdquisicion}
                                                 recurso={item}
                                                 RecursoTipoSelecccionado={RecursoTipoSelecccionado}
+                                                ref={(ref) => {
+                                                    var clone = RefComprobante
+                                                    clone[item.descripcion] = ref
+                                                    setRefComprobante(clone)
+                                                }}
                                             />
                                         </td>
                                         <td> {item.descripcion} </td>
@@ -262,12 +497,14 @@ export default () => {
                                             ]
                                         }
                                         <CantidadAvanzada
+                                            key={item.descripcion + ModoEditar}
                                             ModoEditar={ModoEditar}
                                             RecursoTipoSelecccionado={RecursoTipoSelecccionado}
                                             recurso={item}
                                         />
 
                                     </tr>
+
                                 )
                             }
                         </tbody>
@@ -278,7 +515,7 @@ export default () => {
                     InterfazDocumentoAdquisicion &&
                     <Col xs="3">
 
-                        <DocumentoAdquisicion fectchRecursos={fectchRecursos2} />
+                        <DocumentoAdquisicion recarga={activeChildFunctions} />
                     </Col>
                 }
 
@@ -335,10 +572,16 @@ export default () => {
 }
 //Destructuracion 
 
-function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTipoSelecccionado }) {
+const Comprobante = forwardRef(({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTipoSelecccionado }, ref) => {
     useEffect(() => {
         fectchDocumentoAdquisicion()
     }, [])
+
+    useImperativeHandle(ref, () => ({
+        recarga() {
+            fectchDocumentoAdquisicion()
+        }
+    }));
 
     const [DocumentoAdquisicion, setDocumentoAdquisicion] = useState({});
 
@@ -351,7 +594,8 @@ function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTip
         )
         setDocumentoAdquisicion(ejecucionReal.data)
         if (ejecucionReal.data) {
-            setInput2(ejecucionReal.data.tipoDocumentoAdquisicion_id_tipoDocumentoAdquisicion)
+            // console.log("setInput2", ejecucionReal.data);
+            setInput2(ejecucionReal.data.id_tipoDocumentoAdquisicion)
         }
     }
 
@@ -386,10 +630,14 @@ function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTip
                     onChange={e => setInput(e.target.value)}
                     type="text"
                 />
+
                 <select
                     onChange={e => setInput2(e.target.value)}
                     value={Input2}
-                    className="form-control form-control-sm" >
+                    className="form-control form-control-sm"
+                    style={{ width: '120px' }}
+
+                >
                     <option disabled hidden>SELECCIONE</option>
                     {
                         TipoDocumentoAdquisicion.map((item, i) =>
@@ -410,13 +658,13 @@ function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTip
             </div>
             :
 
-            <div className="d-flex showhim" 
+            <div className="d-flex showhim"
             // style={ModoEditar ? {backgroundColor: '#63637d'}: {}}
             >
 
                 {
-                    TipoDocumentoAdquisicion.find(item2 => item2.id_tipoDocumentoAdquisicion === DocumentoAdquisicion.tipoDocumentoAdquisicion_id_tipoDocumentoAdquisicion) &&
-                    TipoDocumentoAdquisicion.find(item2 => item2.id_tipoDocumentoAdquisicion === DocumentoAdquisicion.tipoDocumentoAdquisicion_id_tipoDocumentoAdquisicion).nombre
+                    TipoDocumentoAdquisicion.find(item2 => item2.id_tipoDocumentoAdquisicion === DocumentoAdquisicion.id_tipoDocumentoAdquisicion) &&
+                    TipoDocumentoAdquisicion.find(item2 => item2.id_tipoDocumentoAdquisicion === DocumentoAdquisicion.id_tipoDocumentoAdquisicion).nombre
                 }
                 {" - "}
                 {DocumentoAdquisicion.codigo}
@@ -427,6 +675,216 @@ function Comprobante({ ModoEditar, TipoDocumentoAdquisicion, recurso, RecursoTip
                     />
                 }
             </div>
+    )
+})
+
+function EditarRecursoNuevo({ recurso, ModoEditar }) {
+
+    async function updateRecursoNuevo() {
+        const res = await axios.post(`${UrlServer}/postNuevoRecursoReal`,
+            InputRecursoNuevo
+        )
+        console.log(res.data);
+        setToggleInputDescripcionNuevo(false)
+        setToggleInputUnidadNuevo(false)
+        setToggleInputCantidadNuevo(false)
+        setToggleInputPrecioNuevo(false)
+        if (res.data.message == "ingreso exitoso") {
+            setInputRecursoNuevoOriginal(InputRecursoNuevo)
+
+        }
+    }
+
+    //Descripcion
+    const [InputRecursoNuevoOriginal, setInputRecursoNuevoOriginal] = useState({ ...recurso })
+    const [InputRecursoNuevo, setInputRecursoNuevo] = useState({ ...recurso })
+    const [ToggleInputDescripcionNuevo, setToggleInputDescripcionNuevo] = useState(false)
+    const [ToggleInputUnidadNuevo, setToggleInputUnidadNuevo] = useState(false)
+    const [ToggleInputCantidadNuevo, setToggleInputCantidadNuevo] = useState(false)
+    const [ToggleInputPrecioNuevo, setToggleInputPrecioNuevo] = useState(false)
+
+    //Unidad
+    return (
+
+        [
+            <td>
+                {
+                    ModoEditar &&
+                        ToggleInputDescripcionNuevo ?
+                        <div
+                            className="d-flex"
+                        >
+                            <DebounceInput
+                                value={InputRecursoNuevo.descripcion}
+                                debounceTimeout={300}
+                                onChange={e => {
+                                    var clone = { ...InputRecursoNuevo }
+                                    clone.descripcion = e.target.value
+                                    setInputRecursoNuevo(clone)
+                                }}
+                                type="text"
+                            />
+                            <div
+                                onClick={() => updateRecursoNuevo()}
+                            >
+                                <MdSave style={{ cursor: "pointer" }} />
+                            </div>
+                            <div
+                                onClick={() => setToggleInputDescripcionNuevo(!ToggleInputDescripcionNuevo)}
+                            >
+                                <MdClose style={{ cursor: "pointer" }} />
+                            </div>
+                        </div>
+                        :
+
+                        <div className="d-flex showhim">
+                            {InputRecursoNuevoOriginal.descripcion}
+                            {
+                                ModoEditar &&
+                                <MdModeEdit
+                                    className="showme"
+                                    onClick={() => {
+                                        if (confirm("La edicion de descripcion conllevara a la creacion de un nuevo recurso, manteniendo el creado originalmente, esta Ud. seguro de continuar ?")) {
+                                            setToggleInputDescripcionNuevo(!ToggleInputDescripcionNuevo)
+                                        }
+                                    }}
+                                />
+                            }
+                        </div>
+                }
+            </td>,
+            <td>
+                {
+                    ModoEditar &&
+                        ToggleInputUnidadNuevo ?
+                        <div
+                            className="d-flex"
+                        >
+                            <DebounceInput
+                                value={InputRecursoNuevo.unidad}
+                                debounceTimeout={300}
+                                onChange={e => {
+                                    var clone = { ...InputRecursoNuevo }
+                                    clone.unidad = e.target.value
+                                    setInputRecursoNuevo(clone)
+                                }}
+                                type="text"
+                            />
+                            <div
+                                onClick={() => updateRecursoNuevo()}
+                            >
+                                <MdSave style={{ cursor: "pointer" }} />
+                            </div>
+                            <div
+                                onClick={() => setToggleInputUnidadNuevo(!ToggleInputUnidadNuevo)}
+                            >
+                                <MdClose style={{ cursor: "pointer" }} />
+                            </div>
+                        </div>
+                        :
+
+                        <div className="d-flex showhim">
+                            {InputRecursoNuevoOriginal.unidad}
+                            {
+                                ModoEditar &&
+                                <MdModeEdit
+                                    className="showme"
+                                    onClick={() => setToggleInputUnidadNuevo(!ToggleInputUnidadNuevo)}
+                                />
+                            }
+                        </div>
+                }
+            </td>,
+            <td>
+                {
+                    ModoEditar &&
+                        ToggleInputCantidadNuevo ?
+                        <div
+                            className="d-flex"
+                        >
+                            <DebounceInput
+                                value={InputRecursoNuevo.cantidad}
+                                debounceTimeout={300}
+                                onChange={e => {
+                                    var clone = { ...InputRecursoNuevo }
+                                    clone.cantidad = e.target.value
+                                    setInputRecursoNuevo(clone)
+                                }}
+                                type="text"
+                            />
+                            <div
+                                onClick={() => updateRecursoNuevo()}
+                            >
+                                <MdSave style={{ cursor: "pointer" }} />
+                            </div>
+                            <div
+                                onClick={() => setToggleInputCantidadNuevo(!ToggleInputCantidadNuevo)}
+                            >
+                                <MdClose style={{ cursor: "pointer" }} />
+                            </div>
+                        </div>
+                        :
+
+                        <div className="d-flex showhim">
+                            {InputRecursoNuevoOriginal.cantidad}
+                            {
+                                ModoEditar &&
+                                <MdModeEdit
+                                    className="showme"
+                                    onClick={() => setToggleInputCantidadNuevo(!ToggleInputCantidadNuevo)}
+                                />
+                            }
+                        </div>
+                }
+            </td>,
+            <td>
+                {
+                    ModoEditar &&
+                        ToggleInputPrecioNuevo ?
+                        <div
+                            className="d-flex"
+                        >
+                            <DebounceInput
+                                value={InputRecursoNuevo.precio}
+                                debounceTimeout={300}
+                                onChange={e => {
+                                    var clone = { ...InputRecursoNuevo }
+                                    clone.precio = e.target.value
+                                    setInputRecursoNuevo(clone)
+                                }}
+                                type="text"
+                            />
+                            <div
+                                onClick={() => updateRecursoNuevo()}
+                            >
+                                <MdSave style={{ cursor: "pointer" }} />
+                            </div>
+                            <div
+                                onClick={() => setToggleInputPrecioNuevo(!ToggleInputPrecioNuevo)}
+                            >
+                                <MdClose style={{ cursor: "pointer" }} />
+                            </div>
+                        </div>
+                        :
+
+                        <div className="d-flex showhim">
+                            {InputRecursoNuevoOriginal.precio}
+                            {
+                                ModoEditar &&
+                                <MdModeEdit
+                                    className="showme"
+                                    onClick={() => setToggleInputPrecioNuevo(!ToggleInputPrecioNuevo)}
+                                />
+                            }
+                        </div>
+                }
+            </td>,
+            <td>
+                {
+                    Redondea(InputRecursoNuevoOriginal.cantidad * InputRecursoNuevoOriginal.precio)
+                }
+            </td>
+        ]
     )
 }
 
@@ -538,48 +996,50 @@ const CantidadAvanzada = forwardRef(({ ModoEditar, RecursoTipoSelecccionado, rec
                         {Redondea(Avance)}
                         {
                             ModoEditar &&
-                            <MdModeEdit 
-                            className="showme"
-                            onClick={() => setToggleInputAvance(!ToggleInputAvance)} 
+                            <MdModeEdit
+                                className="showme"
+                                onClick={() => setToggleInputAvance(!ToggleInputAvance)}
                             />
                         }
                     </div>
                 }
             </td>,
             <td>
-                {ToggleInputPrecio ?
-                    <div
-                        className="d-flex"
-                    >
-                        <DebounceInput
-                            value={Precio}
-                            debounceTimeout={300}
-                            onChange={e => setInputPrecio(e.target.value)}
-                            type="number"
-                        />
+                {
+                    ToggleInputPrecio ?
                         <div
-                            onClick={() => updateRecursoPrecio()}
+                            className="d-flex"
                         >
-                            <MdSave style={{ cursor: "pointer" }} />
-                        </div>
-                        <div
-                            onClick={() => setToggleInputPrecio(!ToggleInputPrecio)}
-                        >
-                            <MdClose style={{ cursor: "pointer" }} />
-                        </div>
-                    </div>
-                    :
-
-                    <div className="d-flex showhim">
-                        {recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio}
-                        {
-                            ModoEditar &&
-                            <MdModeEdit 
-                            className="showme"
-                            onClick={() => setToggleInputPrecio(!ToggleInputPrecio)} 
+                            <DebounceInput
+                                value={Precio}
+                                debounceTimeout={300}
+                                onChange={e => setInputPrecio(e.target.value)}
+                                type="number"
                             />
-                        }
-                    </div>}
+                            <div
+                                onClick={() => updateRecursoPrecio()}
+                            >
+                                <MdSave style={{ cursor: "pointer" }} />
+                            </div>
+                            <div
+                                onClick={() => setToggleInputPrecio(!ToggleInputPrecio)}
+                            >
+                                <MdClose style={{ cursor: "pointer" }} />
+                            </div>
+                        </div>
+                        :
+
+                        <div className="d-flex showhim">
+                            {recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio}
+                            {
+                                ModoEditar &&
+                                <MdModeEdit
+                                    className="showme"
+                                    onClick={() => setToggleInputPrecio(!ToggleInputPrecio)}
+                                />
+                            }
+                        </div>
+                }
             </td>,
             <td>
                 {Redondea(Avance * (recurso.unidad == '%MO' || recurso.unidad == '%PU' ? 0 : Precio))}

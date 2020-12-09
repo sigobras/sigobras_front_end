@@ -6,7 +6,7 @@ import { Card, CardHeader, CardBody, Col, Row, Modal, InputGroup, InputGroupAddo
 import { blue } from '@material-ui/core/colors';
 import { DebounceInput } from 'react-debounce-input';
 
-export default ({ fectchRecursos }) => {
+export default ({ recarga }) => {
 
     useEffect(() => {
         fetchDocumentosAdquisicion()
@@ -15,6 +15,14 @@ export default ({ fectchRecursos }) => {
     const [DocumentosAdquisicion, setDocumentosAdquisicion] = useState([])
 
     async function fetchDocumentosAdquisicion() {
+        const res = await axios.get(`${UrlServer}/gettipodocumentoAdquisicion`)
+        console.log("-------->", res.data);
+        if (Array.isArray(res.data)) {
+            setDocumentosAdquisicion(res.data)
+        }
+    }
+    async function fetchDocumentosAdquisicion2() {
+        setDocumentosAdquisicion([])
         const res = await axios.get(`${UrlServer}/gettipodocumentoAdquisicion`)
         console.log("-------->", res.data);
         if (Array.isArray(res.data)) {
@@ -37,11 +45,7 @@ export default ({ fectchRecursos }) => {
         )
         fetchDocumentosAdquisicion()
         toggle()
-        fectchRecursos()
-        // fetchRecursosByTipoData()
-        // fectchRecursos()
-        // setToggleInput(!ToggleInput)
-        // fectchDocumentoAdquisicion()
+        recarga(ModalSaveDescripcion)
     }
 
     const [modal, setModal] = useState(false);
@@ -97,7 +101,12 @@ export default ({ fectchRecursos }) => {
 
                         <CardBody>
                             <div className="p-1 d-flex flex-wrap">
-                                <RecursosByTipo id_tipoDocumentoAdquisicion={item.id_tipoDocumentoAdquisicion} documentoAdquision_nombre={item.nombre} fectchRecursos={fectchRecursos} />
+                                <RecursosByTipo 
+                                id_tipoDocumentoAdquisicion={item.id_tipoDocumentoAdquisicion} 
+                                documentoAdquision_nombre={item.nombre} 
+                                recarga={recarga}
+                                fetchDocumentosAdquisicion2 = {fetchDocumentosAdquisicion2} 
+                                />
                             </div>
                         </CardBody>
                     </Card>
@@ -152,7 +161,7 @@ function DocumentosAdquisicionTipoCantidad({ id_tipoDocumentoAdquisicion }) {
     )
 }
 
-function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre, fectchRecursos }) {
+function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre, recarga, fetchDocumentosAdquisicion2 }) {
     useEffect(() => {
         fetchRecursosByTipoData()
         return () => {
@@ -170,7 +179,7 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
             }
         )
         setRecursosByTipoData(res.data)
-        console.log("res.data", res.data);
+        console.log("res.data---->", res.data);
     }
     // Secccion Modal
     const [modal, setModal] = useState(false);
@@ -179,6 +188,7 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
         if (!modal) {
             fetchModalRecursosDetalle(codigo)
             fetchDocumentoAdquisicionData(codigo)
+            fetchModalRecursosNuevosDetalle(codigo)
         }
         setModal(!modal)
         setCodigoSeleccionado(codigo)
@@ -212,9 +222,10 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
             }
         )
         fetchRecursosByTipoData()
-        fectchRecursos()
+        recarga(descripcion)
+        fetchDocumentosAdquisicion2()
         // setToggleInput(!ToggleInput)
-        fectchDocumentoAdquisicion()
+        // fectchDocumentoAdquisicion()
     }
 
     const [CodigoSeleccionado, setCodigoSeleccionado] = useState(0)
@@ -230,18 +241,6 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
     const [SaveNumeroCP, setSaveNumeroCP] = useState('')
 
     async function SaveData() {
-        console.log('SAve data antes ',
-        {
-            "razonSocial": SaveRazonSocial,
-            "RUC": SaveRuc,
-            "fecha": SaveFecha,
-            "SIAF": SaveSiaf,
-            "NCP": SaveNumeroCP,
-            "id_clasificador_presupuestario": null,
-            "id_tipoDocumentoAdquisicion": id_tipoDocumentoAdquisicion,
-            "fichas_id_ficha": sessionStorage.getItem('idobra'),
-            "codigo": CodigoSeleccionado
-        });
         const res = await axios.post(`${UrlServer}/postDocumentoAdquisicionDetalles`,
         {
             "razonSocial": SaveRazonSocial,
@@ -260,11 +259,6 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
 
     const [DocumentoAdquisicionData, setDocumentoAdquisicionData] = useState({})
     async function fetchDocumentoAdquisicionData(codigo) {
-        console.log("Funcion",{
-            "id_ficha": sessionStorage.getItem('idobra'),
-            "id_tipoDocumentoAdquisicion": id_tipoDocumentoAdquisicion,
-            "codigo": codigo
-        });
         const res = await axios.post(`${UrlServer}/getDocumentoAdquisicionDetalles`,
         {
             "id_ficha": sessionStorage.getItem('idobra'),
@@ -278,6 +272,22 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
         setSaveSiaf(res.data.SIAF)
         setSaveNumeroCP(res.data.NCP)
 
+    }
+
+    // Mostrando nuevos recursos en el modal 
+
+    const [ModalRecursosNuevosDetalle, setModalRecursosNuevosDetalle] = useState([])
+
+    async function fetchModalRecursosNuevosDetalle(codigo) {
+        const res = await axios.post(`${UrlServer}/getRecursosEjecucionRealNuevosByTipoAndCodigo`,
+            {
+                "id_ficha": sessionStorage.getItem('idobra'),
+                "id_tipoDocumentoAdquisicion": id_tipoDocumentoAdquisicion,
+                codigo: codigo
+            }
+        )
+        setModalRecursosNuevosDetalle(res.data)
+        // console.log("res.data fetchModalRecursosNuevosDetalle", res.data);
     }
 
     return (
@@ -301,9 +311,9 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
                         }}
                         onDrop={(e) => {
                             setOnHoverCodigo("")
-                            console.log("SetOnHover");
+                            // console.log("SetOnHover");
                             var descripcion = e.dataTransfer.getData("descripcion")
-                            console.log("descripcion", descripcion);
+                            // console.log("descripcion", descripcion);
                             var tipo = e.dataTransfer.getData("tipo")
                             updateRecursoDocumentoAdquisicion(tipo, descripcion, item.codigo)
                         }}
@@ -388,6 +398,7 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
                         </InputGroup>
                     </div>
 
+
                     <div className="d-flex">
 
                         <InputGroup size="sm" className="mb-2 px-1">
@@ -461,6 +472,18 @@ function RecursosByTipo({ id_tipoDocumentoAdquisicion, documentoAdquision_nombre
                             </tr>
                         </thead>
                         <tbody>
+                            {
+                                ModalRecursosNuevosDetalle.map((item, i) =>
+                                <tr key={i}>
+                                    <td>{"N:" + (i + 1)}</td>
+                                    <td> {item.descripcion} </td>
+                                    <td> {item.unidad} </td>
+                                    <td> {item.cantidad} </td>
+                                    <td> {item.precio} </td>
+                                    <td> {item.cantidad * item.precio} </td>                                    
+                                </tr>
+                            )
+                            }
                             {
                                 ModalRecursosDetalle.map((item, i) =>
                                     <tr key={i}>
