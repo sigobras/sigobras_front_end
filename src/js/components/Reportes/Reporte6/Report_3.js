@@ -264,7 +264,7 @@ class Report_3 extends Component {
                 },
 
                 table: {
-                    widths: [20, 200, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+                    widths: [20, 200, 65, 65, 35, 65, 35, 65, 35, 65, 35],
                     body: [
                         [
                             {
