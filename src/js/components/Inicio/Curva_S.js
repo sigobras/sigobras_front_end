@@ -1008,7 +1008,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                     }
                                     {
                                         
-                                        ((UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO")) &&
+                                        (UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
                                         [
 
 
@@ -1136,7 +1136,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                 >
                                                                     {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
                                                                     {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                        (UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" &&
+                                                                        ((UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" )&&
                                                                             <div
                                                                                 onClick={() => toggleInputProgramado(i)}
                                                                             >
