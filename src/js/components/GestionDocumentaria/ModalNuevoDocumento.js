@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Nav, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Spinner, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Picky } from 'react-picky';
@@ -73,7 +73,8 @@ export default () => {
     const [FormularioDescripcion, setFormularioDescripcion] = useState("");
     async function FormularioEnviar() {
         try {
-            if (FormularioArchivoAdjunto &&TipoArchivoSSeleccionado != "SELECCIONE") {
+            if (FormularioArchivoAdjunto && TipoArchivoSSeleccionado != "SELECCIONE") {
+                setLoaderShow(true)
                 var usuariosSeleccionadosProcesados = []
                 UsuariosSeleccionados.forEach(item => {
                     usuariosSeleccionadosProcesados.push([item.id])
@@ -106,13 +107,16 @@ export default () => {
                         }
                     )
                     console.log("archivo adjunto ", response);
+                    setLoaderShow(false)
                     alert("registro exitoso")
                 } else {
                     console.log(res.data);
+                    setLoaderShow(false)
                     alert("hubo un problema")
                 }
                 toggle()
                 setTipoArchivoSSeleccionado("SELECCIONE")
+                
             }
             else {
                 alert("falta seleccionar algunos campos")
@@ -138,6 +142,7 @@ export default () => {
         setTipoArchivoS(res.data)
     }
     const [TipoArchivoSSeleccionado, setTipoArchivoSSeleccionado] = useState("SELECCIONE")
+    const [LoaderShow, setLoaderShow] = useState(false)
     return (
         <div>
 
@@ -149,7 +154,7 @@ export default () => {
                 Nuevo Documento
             </Button>
             <Modal isOpen={modal} toggle={toggle} >
-                <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+                <ModalHeader toggle={toggle}>Nuevo Documento</ModalHeader>
                 <ModalBody>
                     <FormGroup row>
                         <Label sm={2}>Obras</Label>
@@ -236,7 +241,7 @@ export default () => {
                         </Col>
                     </FormGroup>
                     <FormGroup row>
-                        <Label sm={2}>TIPO ARCHIVO</Label>
+                        <Label sm={2}>Tipo de archivo</Label>
                         <Col sm={10}>
                             <select
                                 onChange={(e) => {
@@ -267,6 +272,10 @@ export default () => {
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>
+                    {LoaderShow &&
+                        <Spinner type="grow" color="primary" />
+                    }
+
                     <Button color="primary" onClick={() => FormularioEnviar()}>GUARDAR</Button>{' '}
                     <Button color="secondary" onClick={toggle}>Cancel</Button>
                 </ModalFooter>

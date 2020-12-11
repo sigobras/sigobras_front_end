@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Card, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, CardFooter, Button, Input, UncontrolledPopover } from 'reactstrap';
+import { Modal, Card, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, CardFooter, Button, Input, UncontrolledPopover, ModalHeader, ModalBody } from 'reactstrap';
 import ModalNuevoDocumento from './ModalNuevoDocumento';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
@@ -112,11 +112,26 @@ export default () => {
     const [modal, setModal] = useState(false);
     const [ModalIdEmisor, setModalIdEmisor] = useState(0);
     const [ModalIdMensaje, setModalIdMensaje] = useState(0);
-    const toggleModal = (id_mensaje, id_emisor) => {
+    const [ModalIdUsuario, setModalIdUsuario] = useState(0);
+    const toggleModal = (id_mensaje, id_emisor, usuario_nombre) => {
         setModalIdEmisor(id_emisor)
         setModalIdMensaje(id_mensaje)
+        setModalIdUsuario(usuario_nombre)
         setModal(!modal)
     };
+    function fechaFormatoClasico(fecha) {
+        var fechaTemp = ""
+        if (fecha) {
+            fechaTemp = fecha.split("-")
+        } else {
+            return fecha
+        }
+        if (fechaTemp.length == 3) {
+            return fechaTemp[2] + "-" + fechaTemp[1] + "-" + fechaTemp[0]
+        } else {
+            return fecha
+        }
+    }
     return (
         <div>
             <ModalNuevoDocumento />
@@ -144,12 +159,20 @@ export default () => {
                     <thead>
                         <tr>
                             <th>
+                                EMISOR CARGO
+                            </th>
+                            <th>
+                                EMISOR
+                            </th>
+                            <th>
                                 ASUNTO
                             </th>
                             <th>
                                 DESCRIPCION
                             </th>
-                            <th>
+                            <th
+                                style={{ width: "10%" }}
+                            >
                                 FECHA
                             </th>
                             <th>
@@ -170,13 +193,19 @@ export default () => {
                                         {item.id}
                                     </td> */}
                                     <td>
+                                        {item.emisor_cargo}
+                                    </td>
+                                    <td>
+                                        {item.emisor_nombre}
+                                    </td>
+                                    <td>
                                         {item.asunto}
                                     </td>
                                     <td>
                                         {item.descripcion}
                                     </td>
                                     <td>
-                                        {item.fecha}
+                                        {fechaFormatoClasico(item.fecha)}
                                     </td>
                                     <td>
                                         <FaCloudDownloadAlt
@@ -237,7 +266,7 @@ export default () => {
                                             {item.descripcion}
                                         </td>
                                         <td>
-                                            {item.fecha}
+                                            {fechaFormatoClasico(item.fecha)}
                                         </td>
                                         <td>
                                             <FaCloudDownloadAlt
@@ -283,8 +312,7 @@ export default () => {
                                                                     [
                                                                         <tr key={i2}>
                                                                             <td
-                                                                                onClick={() => toggleModal(item.id, item2.id)}
-                                                                                style={{ cursor: "pointer" }}
+
                                                                             >
                                                                                 {item2.codigo}
                                                                             </td>
@@ -305,7 +333,10 @@ export default () => {
                                                                                     />
                                                                                 }
                                                                             </td>
-                                                                            <td>
+                                                                            <td
+                                                                                onClick={() => toggleModal(item.id, item2.id, item2.usuario_nombre)}
+                                                                                style={{ cursor: "pointer" }}
+                                                                            >
                                                                                 <RespuestasUsuariosEnviadosCantidad
                                                                                     emisor_id={item2.id}
                                                                                     mensaje_id={item.id}
@@ -333,18 +364,22 @@ export default () => {
                 </table>
             }
             <Modal isOpen={modal} toggle={toggleModal} >
-                <Card>
+                <ModalHeader>
+                    {ModalIdUsuario}
+                </ModalHeader>
+                <ModalBody>
                     <RespuestasUsuariosEnviados
                         emisor_id={ModalIdEmisor}
                         mensaje_id={ModalIdMensaje}
                         DescargarArchivoEnviado={DescargarArchivoEnviado}
+                        fechaFormatoClasico={fechaFormatoClasico}
                     />
-                </Card>
+                </ModalBody>
             </Modal>
         </div >
     );
 }
-function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnviado }) {
+function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnviado, fechaFormatoClasico }) {
     useEffect(() => {
         fetchDocumentosRecibidosRespuestas()
     }, [])
@@ -361,6 +396,7 @@ function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnv
         )
         if (Array.isArray(res.data)) {
             setDocumentosRecibidosRespuestas(res.data)
+            console.log(res.data);
 
         }
     }
@@ -395,7 +431,7 @@ function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnv
                                     {item.descripcion}
                                 </td>
                                 <td>
-                                    {item.fecha}
+                                    {fechaFormatoClasico(item.fecha)}
                                 </td>
                                 <td>
                                     {item.documento_link &&
