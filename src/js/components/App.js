@@ -29,7 +29,7 @@ import MDHistorial from './Pfisicos/HistorialMetrados/Historial'
 import RecursosObra from './Pfisicos/Recursos/RecursosObra'
 import HistorialImagenesObra from './Pfisicos/HistorialImagenes/HistorialImagenesObra'
 import General from '../components/Pfisicos/Valorizaciones/General'
-import Valorizaciones2 from './Pfisicos/Valorizaciones/Valorizaciones2'
+// import Valorizaciones2 from './Pfisicos/Valorizaciones/Valorizaciones2'
 // proceso gerenciales 
 import InterfazGerencial from './Inicio2/InterfazGerencial'
 import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
@@ -319,7 +319,7 @@ export default () => {
                                     <Route path="/RecursosObra" component={RecursosObra} />
                                     <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
                                     <Route path="/General" component={General} />
-                                    <Route path="/Valorizaciones2" component={Valorizaciones2} />
+                                    {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
                                     <Route path="/Proyectos" component={Proyectos} />
                                     {/* PROCESOS GERENCIALES            */}
                                     <Route path="/InterfazGerencial" component={InterfazGerencial} />
