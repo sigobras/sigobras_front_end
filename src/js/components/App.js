@@ -9,6 +9,9 @@ import Circle from 'react-circle';
 import { ToastContainer } from "react-toastify";
 
 import axios from 'axios';
+import { Redondea, meses } from './Utils/Funciones';
+import FinancieroBarraPorcentaje from './Inicio/FinancieroBarraPorcentaje';
+import FisicoBarraPorcentaje from './Inicio/FisicoBarraPorcentaje';
 // app assets
 import LogoSigobras from '../../images/logoSigobras.png';
 import { UrlServer } from './Utils/ServerUrlConfig'
@@ -26,6 +29,7 @@ import MDHistorial from './Pfisicos/HistorialMetrados/Historial'
 import RecursosObra from './Pfisicos/Recursos/RecursosObra'
 import HistorialImagenesObra from './Pfisicos/HistorialImagenes/HistorialImagenesObra'
 import General from '../components/Pfisicos/Valorizaciones/General'
+import Valorizaciones2 from './Pfisicos/Valorizaciones/Valorizaciones2'
 // proceso gerenciales 
 import InterfazGerencial from './Inicio2/InterfazGerencial'
 import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
@@ -38,13 +42,16 @@ import ReportesGenerales from './Reportes/ReportesGenerales'
 
 // GESTION DE TAREAS
 import GestionTareas from "./GestionTareas/GestionTareas"
+//PROYECTOS
+import Proyectos from "./Proyectos/index"
 
 
 // PROCESOS DOCUMENTOS 
 import Index from "./Pdocumentarios/Index"
-import { Redondea, meses } from './Utils/Funciones';
-import FinancieroBarraPorcentaje from './Inicio/FinancieroBarraPorcentaje';
-import FisicoBarraPorcentaje from './Inicio/FisicoBarraPorcentaje';
+import GestionDocumentaria from "./GestionDocumentaria/index"
+
+
+
 export default () => {
 
     useEffect(() => {
@@ -307,6 +314,8 @@ export default () => {
                                     <Route path="/RecursosObra" component={RecursosObra} />
                                     <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
                                     <Route path="/General" component={General} />
+                                    <Route path="/Valorizaciones2" component={Valorizaciones2} />
+                                    <Route path="/Proyectos" component={Proyectos} />
                                     {/* PROCESOS GERENCIALES            */}
                                     <Route path="/InterfazGerencial" component={InterfazGerencial} />
                                     <Route path="/ReportesGenerales" component={ReportesGenerales} />
@@ -318,6 +327,7 @@ export default () => {
                                     <Route path="/GestionTareas" component={GestionTareas} />
                                     {/* PROCESOS DOCUMENTARIOS */}
                                     <Route path="/DOCUEMENTOS" component={Index} />
+                                    <Route path="/GestionDocumentaria" component={GestionDocumentaria} />
                                 </Switch>
                             </div>
                         </main>
