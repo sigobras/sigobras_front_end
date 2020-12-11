@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Nav, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Spinner, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Picky } from 'react-picky';
@@ -13,6 +13,7 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
     const [FormularioDescripcion, setFormularioDescripcion] = useState("");
     async function FormularioEnviar() {
         try {
+            setLoaderShow(true)
             var res1 = await axios.get(`${UrlServer}/fichas_has_accesosId`,
                 {
                     params: {
@@ -53,13 +54,14 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
                     console.log("archivo adjunto ", response);
                     
                 }
+                setLoaderShow(false)
                 alert("registro exitoso")
             } else {
                 console.log(res.data);
+                setLoaderShow(false)
                 alert("hubo un problema")
             }
             toggle()
-
         } catch (error) {
             console.log(error.response);
             alert("hubo un problema")
@@ -71,6 +73,7 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
         console.log("onChangeInputFile");
         setFormularioArchivoAdjunto(e.target.files[0])
     }
+    const [LoaderShow, setLoaderShow] = useState(false)
     return (
         <div>
 
@@ -110,6 +113,9 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>
+                {LoaderShow &&
+                        <Spinner type="grow" color="primary" />
+                    }
                     <Button color="primary" onClick={() => FormularioEnviar()}>GUARDAR</Button>{' '}
                     <Button color="secondary" onClick={toggle}>Cancel</Button>
                 </ModalFooter>
