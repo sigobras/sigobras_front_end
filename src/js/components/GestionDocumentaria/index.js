@@ -3,9 +3,9 @@ import { Modal, Card, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, C
 import ModalNuevoDocumento from './ModalNuevoDocumento';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
-import { FaCloudDownloadAlt, FaCheckCircle, FaRegWindowClose } from "react-icons/fa";
+import { FaCloudDownloadAlt, FaCheckCircle, FaRegWindowClose, FaCloudUploadAlt } from "react-icons/fa";
 import ModalRespuesta from './ModalRespuesta';
-
+import "./index.css"
 
 export default () => {
     useEffect(() => {
@@ -112,11 +112,13 @@ export default () => {
     const [modal, setModal] = useState(false);
     const [ModalIdEmisor, setModalIdEmisor] = useState(0);
     const [ModalIdMensaje, setModalIdMensaje] = useState(0);
-    const [ModalIdUsuario, setModalIdUsuario] = useState(0);
+    const [ModalIdUsuario, setModalIdUsuario] = useState("");
     const toggleModal = (id_mensaje, id_emisor, usuario_nombre) => {
-        setModalIdEmisor(id_emisor)
-        setModalIdMensaje(id_mensaje)
-        setModalIdUsuario(usuario_nombre)
+        if (!modal) {
+            setModalIdEmisor(id_emisor)
+            setModalIdMensaje(id_mensaje)
+            setModalIdUsuario(usuario_nombre)
+        }
         setModal(!modal)
     };
     function fechaFormatoClasico(fecha) {
@@ -133,8 +135,12 @@ export default () => {
         }
     }
     return (
-        <div>
-            <ModalNuevoDocumento />
+        <div
+            style={{
+                position: "relative",
+                paddingTop: "12px"
+            }}
+        >
             <Nav tabs>
                 <NavItem>
                     <NavLink
@@ -153,219 +159,325 @@ export default () => {
                     </NavLink>
                 </NavItem>
             </Nav>
+
+            <div
+                style={{
+                    position: "absolute",
+                    right: "7px",
+                    zIndex: "1",
+                    top: "5px",
+                }}
+            >
+                <ModalNuevoDocumento />
+            </div>
+
             {
                 NavSeleccionado == "RECIBIDOS" &&
-                <table className="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>
-                                EMISOR CARGO
-                            </th>
-                            <th>
-                                EMISOR
-                            </th>
-                            <th>
-                                ASUNTO
-                            </th>
-                            <th>
-                                DESCRIPCION
-                            </th>
-                            <th
-                                style={{ width: "10%" }}
-                            >
-                                FECHA
-                            </th>
-                            <th>
-                                DESCARGA
-                            </th>
-                            <th>
-                                RESPONDER
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            DocumentosRecibidos.map((item, i) =>
-                                <tr
-                                    key={i}
+                <div class="container">
+
+                    <table className="table table-sm table-hover">
+                        <thead>
+                            <tr class="row">
+                                <th
+                                    className="col-md-2"
                                 >
-                                    {/* <td>
+                                    EMISOR NOMBRE
+                            </th>
+                                <th
+                                    className="col-md-2"
+                                >
+                                    ASUNTO
+                            </th>
+                                <th
+                                    className="col-md-6"
+                                >
+                                    DESCRIPCION
+                            </th>
+                                <th
+                                    className="col-md-2"
+                                >
+                                    FECHA
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                DocumentosRecibidos.map((item, i) =>
+                                    <tr
+                                        key={i}
+                                        className={"showhim row"}
+                                    >
+                                        {/* <td>
                                         {item.id}
                                     </td> */}
-                                    <td>
-                                        {item.emisor_cargo}
-                                    </td>
-                                    <td>
-                                        {item.emisor_nombre}
-                                    </td>
-                                    <td>
-                                        {item.asunto}
-                                    </td>
-                                    <td>
-                                        {item.descripcion}
-                                    </td>
-                                    <td>
-                                        {fechaFormatoClasico(item.fecha)}
-                                    </td>
-                                    <td>
-                                        <FaCloudDownloadAlt
-                                            size={15}
-                                            color={"#2676bb"}
-                                            onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id)}
-                                            style={{
-                                                cursor: "pointer"
-                                            }}
-                                        />
-                                    </td>
-                                    <td>
-                                        <ModalRespuesta
-                                            receptor_id={item.emisor_id}
-                                            mensaje_id={item.id}
-                                            archivoAdjunto_id={item.archivoAdjunto_id}
-                                            archivoAdjunto_tipo={item.archivoAdjunto_tipo}
-                                        />
-                                    </td>
-                                </tr>
-                            )
-                        }
-
-                    </tbody>
-                </table>
-            }
-            {
-                NavSeleccionado == "ENVIADOS" &&
-                <table className="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>
-                                ASUNTO
-                            </th>
-                            <th>
-                                DESCRIPCION
-                            </th>
-                            <th>
-                                FECHA
-                            </th>
-                            <th>
-                                DESCARGA
-                            </th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            DocumentosEnviados.map((item, i) =>
-                                [
-                                    <tr key={i}>
                                         <td
-                                            onClick={() => { onChangeDocumentosEnviados(item) }}
+                                            className="col-md-2"
+                                        >
+                                            {item.emisor_cargo + " - " + item.emisor_nombre}
+                                        </td>
+                                        <td
+                                            className="col-md-2"
                                         >
                                             {item.asunto}
                                         </td>
-                                        <td>
-                                            {item.descripcion}
+                                        <td
+                                            className="col-md-6"
+                                            style={{ position: "relative" }}
+                                        >
+                                            <div
+                                            >
+                                                {item.descripcion}
+                                            </div>
+
+
+                                            <div className={"showme "}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "0",
+                                                    right: "0",
+                                                    background: "#242526"
+                                                }}
+                                            >
+                                                <div
+                                                >
+                                                    <div
+                                                        style={{
+                                                            float: "left",
+                                                            paddingRight: "5px"
+                                                        }}
+                                                    >
+                                                        <FaCloudDownloadAlt
+                                                            size={20}
+                                                            color={"#2676bb"}
+                                                            onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id)}
+                                                            style={{
+                                                                cursor: "pointer",
+                                                            }}
+                                                            title={"Descargar archivo"}
+                                                        />
+
+                                                    </div>
+                                                    <div
+                                                        style={{ float: "left" }}
+                                                    >
+                                                        <ModalRespuesta
+                                                            receptor_id={item.emisor_id}
+                                                            mensaje_id={item.id}
+                                                            archivoAdjunto_id={item.archivoAdjunto_id}
+                                                            archivoAdjunto_tipo={item.archivoAdjunto_tipo}
+                                                            style={{
+                                                                cursor: "pointer",
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </td>
-                                        <td>
+                                        <td
+                                            className="col-md-2"
+                                        >
                                             {fechaFormatoClasico(item.fecha)}
                                         </td>
-                                        <td>
-                                            <FaCloudDownloadAlt
-                                                size={15}
-                                                color={"#2676bb"}
-                                                onClick={() => DescargarArchivoEnviado(`${UrlServer}${item.documento_link}`)}
-                                                style={{
-                                                    cursor: "pointer"
-                                                }}
-                                            />
-                                        </td>
+                                    </tr>
+                                )
+                            }
 
-                                    </tr>,
-                                    ,
-                                    (
-                                        DocumentoEnviadoSeleccionado.id == item.id &&
-                                        <tr className="resplandPartidabottom">
-                                            <td colSpan="8">
-                                                <div >
-                                                    <table className="table table-sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>
-                                                                    OBRA
-                                                                 </th>
-                                                                <th>
-                                                                    CARGO
-                                                                </th>
-                                                                <th>
-                                                                    USUARIO
-                                                                </th>
-                                                                <th>
-                                                                    ESTADO VISTO
-                                                                </th>
-                                                                <th>
-                                                                    CANTIDAD RESPUESTAS
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {
-                                                                DocumentosEnviadosUsuarios.map((item2, i2) =>
-                                                                    [
-                                                                        <tr key={i2}>
-                                                                            <td
-
-                                                                            >
-                                                                                {item2.codigo}
-                                                                            </td>
-                                                                            <td>
-                                                                                {item2.cargo_nombre}
-                                                                            </td>
-                                                                            <td>
-                                                                                {item2.usuario_nombre}
-                                                                            </td>
-                                                                            <td>
-                                                                                {item2.mensaje_visto ?
-                                                                                    <FaCheckCircle
-                                                                                        color={"green"}
-                                                                                    />
-                                                                                    :
-                                                                                    <FaRegWindowClose
-                                                                                        color={"red"}
-                                                                                    />
-                                                                                }
-                                                                            </td>
-                                                                            <td
-                                                                                onClick={() => toggleModal(item.id, item2.id, item2.usuario_nombre)}
-                                                                                style={{ cursor: "pointer" }}
-                                                                            >
-                                                                                <RespuestasUsuariosEnviadosCantidad
-                                                                                    emisor_id={item2.id}
-                                                                                    mensaje_id={item.id}
-                                                                                />
-                                                                            </td>
-                                                                        </tr>
-
-                                                                    ]
-
-                                                                )
-                                                            }
-
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            {
+                NavSeleccionado == "ENVIADOS" &&
+                <div className="container">
+                    <table className="table table-sm  ">
+                        <thead>
+                            <tr class="row">
+                                <th
+                                    className="col-md-2"
+                                >
+                                    DESTINATARIO
+                            </th>
+                                <th
+                                    className="col-md-2"
+                                >
+                                    ASUNTO
+                            </th>
+                                <th
+                                    className="col-md-6"
+                                >
+                                    DESCRIPCION
+                            </th>
+                                <th
+                                    className="col-md-2"
+                                >
+                                    FECHA
+                            </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                DocumentosEnviados.map((item, i) =>
+                                    [
+                                        <tr key={i}
+                                            className={"showhim row"}
+                                            onClick={() => { onChangeDocumentosEnviados(item) }}
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            <td
+                                                className="col-md-2"
+                                            >
+                                                <Destinatarios id={item.id} />
                                             </td>
-                                        </tr>
-                                    )
+                                            <td
+                                                className="col-md-2"
 
-                                ]
-                            )
-                        }
+                                            >
+                                                {item.asunto}
+                                            </td>
+                                            <td
+                                                className="col-md-6"
+                                                style={{ position: "relative" }}
+                                            >
+                                                <div
+                                                >
+                                                    {item.descripcion}
+                                                </div>
+                                                <div className={"showme "}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "0",
+                                                        right: "0",
+                                                        background: "#242526"
+                                                    }}
+                                                >
+                                                    <div
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                float: "left",
+                                                                paddingRight: "5px"
+                                                            }}
+                                                        >
+                                                            <FaCloudDownloadAlt
+                                                                size={20}
+                                                                color={"#2676bb"}
+                                                                onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id)}
+                                                                style={{
+                                                                    cursor: "pointer",
+                                                                }}
+                                                                title={"Descargar archivo"}
+                                                            />
 
-                    </tbody>
-                </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                            <td
+                                                className="col-md-2"
+                                            >
+                                                {fechaFormatoClasico(item.fecha)}
+                                            </td>
+                                        </tr>,
+                                        ,
+                                        (
+                                            DocumentoEnviadoSeleccionado.id == item.id &&
+                                            <tr
+                                                className={"row"}
+                                            >
+                                                <td colSpan="8" className="col-md-12">
+                                                    <div >
+                                                        <table className="table table-dark table-hover"
+                                                            style={{
+                                                                textAlign: "center"
+                                                            }}
+                                                        >
+                                                            <thead>
+                                                                <tr>
+                                                                <th>
+                                                                        N°
+                                                                 </th>
+                                                                    <th>
+                                                                        OBRA
+                                                                 </th>
+                                                                    <th>
+                                                                        USUARIO
+                                                                </th>
+                                                                    <th>
+                                                                        REVISADO
+                                                                </th>
+                                                                    <th>
+                                                                        RESPUESTAS
+                                                                </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {
+                                                                    DocumentosEnviadosUsuarios.map((item2, i2) =>
+                                                                        [
+                                                                            <tr key={i2}>
+                                                                                <td>
+                                                                                    {i2+1}
+                                                                                </td>
+                                                                                <td
+
+                                                                                >
+                                                                                    {item2.codigo}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {item2.cargo_nombre + " - " + item2.usuario_nombre}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {item2.mensaje_visto ?
+                                                                                        <FaCheckCircle
+                                                                                            color={"#0080ff"}
+                                                                                            size={20}
+                                                                                        />
+                                                                                        :
+                                                                                        <FaRegWindowClose
+                                                                                            color={"red"}
+                                                                                            size={20}
+                                                                                        />
+                                                                                    }
+                                                                                </td>
+                                                                                <td
+                                                                                    onClick={() => toggleModal(item.id, item2.id, item2.usuario_nombre)}
+                                                                                    style={{ cursor: "pointer" }}
+                                                                                >
+                                                                                    <RespuestasUsuariosEnviadosCantidad
+                                                                                        emisor_id={item2.id}
+                                                                                        mensaje_id={item.id}
+                                                                                    />
+                                                                                </td>
+                                                                            </tr>
+
+                                                                        ]
+
+                                                                    )
+                                                                }
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+
+                                    ]
+                                )
+                            }
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+
             }
             <Modal isOpen={modal} toggle={toggleModal} >
                 <ModalHeader>
-                    {ModalIdUsuario}
+                    {"REMITENTE: " + ModalIdUsuario.toUpperCase()}
                 </ModalHeader>
                 <ModalBody>
                     <RespuestasUsuariosEnviados
@@ -477,6 +589,40 @@ function RespuestasUsuariosEnviadosCantidad({ emisor_id, mensaje_id, DescargarAr
     return (
         <div >
             {DocumentosRecibidosRespuestas.cantidad}
+        </div>
+    )
+}
+function Destinatarios({ id }) {
+    useEffect(() => {
+        fetchDocumentosEnviadosUsuarios()
+
+    }, [])
+    const [Destinatarios, setDestinatarios] = useState([])
+    async function fetchDocumentosEnviadosUsuarios() {
+        var res = await axios.get(`${UrlServer}/gestiondocumentaria_enviados_usuarios`,
+            {
+                params: {
+                    id
+                }
+            }
+        )
+        setDestinatarios(res.data)
+    }
+    return (
+        <div>
+            {
+                Destinatarios.length > 3 ?
+                    <div>
+                        {Destinatarios.length + " personas"}
+                    </div> :
+                    <div>
+                        {
+                            Destinatarios.map((item, i) =>
+                                <div>{item.usuario_nombre}</div>
+                            )
+                        }
+                    </div>
+            }
         </div>
     )
 }

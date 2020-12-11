@@ -3,6 +3,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Spin
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Picky } from 'react-picky';
+import { BsPlusCircleFill } from "react-icons/bs";
+
 export default () => {
     const [modal, setModal] = useState(false);
     const toggle = () => {
@@ -116,7 +118,7 @@ export default () => {
                 }
                 toggle()
                 setTipoArchivoSSeleccionado("SELECCIONE")
-                
+
             }
             else {
                 alert("falta seleccionar algunos campos")
@@ -145,14 +147,42 @@ export default () => {
     const [LoaderShow, setLoaderShow] = useState(false)
     return (
         <div>
-
-            <Button
-                outline
-                color="danger"
+            <button
+                style={{
+                    borderRadius: "20px",
+                    height: "36px",
+                    width: "125px",
+                    position: "relative",
+                    border: "1px solid #242526"
+                }}
                 onClick={toggle}
             >
-                Nuevo Documento
-            </Button>
+                <div
+                    style={{
+                        fontWeight: " 700",
+                        color: " #242526",
+                        position: "absolute",
+                        top: "6px",
+                        right: "49px",
+                        fontSize: "15px"
+                    }}
+                >
+                    NUEVO
+                </div>
+                <div>
+                    <BsPlusCircleFill
+                        color="#0080ff"
+                        size={20}
+                        style={{
+                            position: "absolute",
+                            top: "7px",
+                            right: "9px",
+                        }}
+                    />
+                </div>
+
+            </button>
+
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>Nuevo Documento</ModalHeader>
                 <ModalBody>

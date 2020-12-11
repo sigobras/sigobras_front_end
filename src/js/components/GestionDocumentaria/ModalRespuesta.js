@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Spinner, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
+import { FaCloudUploadAlt, FaCheckCircle, FaRegWindowClose } from "react-icons/fa";
 import { Picky } from 'react-picky';
 export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tipo }) => {
     const [modal, setModal] = useState(false);
@@ -52,7 +53,7 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
                         }
                     )
                     console.log("archivo adjunto ", response);
-                    
+
                 }
                 setLoaderShow(false)
                 alert("registro exitoso")
@@ -76,16 +77,23 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
     const [LoaderShow, setLoaderShow] = useState(false)
     return (
         <div>
-
-            <Button
+            <FaCloudUploadAlt
+               onClick={toggle}
+                style={{
+                    cursor: "pointer",
+                }}
+                title={"Responder"}
+                size={20}
+            />
+            {/* <Button
                 outline
                 color="success"
                 onClick={toggle}
             >
                 Responder
-            </Button>
+            </Button> */}
             <Modal isOpen={modal} toggle={toggle} >
-                <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+                <ModalHeader toggle={toggle}>RESPONDER</ModalHeader>
                 <ModalBody>
                     <FormGroup row>
                         <Label sm={2}>Asunto</Label>
@@ -113,7 +121,7 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>
-                {LoaderShow &&
+                    {LoaderShow &&
                         <Spinner type="grow" color="primary" />
                     }
                     <Button color="primary" onClick={() => FormularioEnviar()}>GUARDAR</Button>{' '}
