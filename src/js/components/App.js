@@ -43,7 +43,7 @@ import ReportesGenerales from './Reportes/ReportesGenerales'
 // GESTION DE TAREAS
 import GestionTareas from "./GestionTareas/GestionTareas"
 //PROYECTOS
-import Proyectos from "./Proyectos/index"
+// import Proyectos from "./Proyectos/index"
 
 
 // PROCESOS DOCUMENTOS 
@@ -320,7 +320,7 @@ export default () => {
                                     <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
                                     <Route path="/General" component={General} />
                                     {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
-                                    <Route path="/Proyectos" component={Proyectos} />
+                                    {/* <Route path="/Proyectos" component={Proyectos} /> */}
                                     {/* PROCESOS GERENCIALES            */}
                                     <Route path="/InterfazGerencial" component={InterfazGerencial} />
                                     <Route path="/ReportesGenerales" component={ReportesGenerales} />
