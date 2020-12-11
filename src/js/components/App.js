@@ -197,9 +197,14 @@ export default () => {
                                         )
                                     }
                                     {DataMenus.length > 0 &&
-                                        <li className="lii">
-                                            <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <span> REPORTES </span> </NavLink>
-                                        </li>
+                                        [
+                                            <li className="lii">
+                                                <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <span> REPORTES </span> </NavLink>
+                                            </li>,
+                                            <li className="lii">
+                                                <NavLink to="/GestionDocumentaria" activeclassname="nav-link" > <span> GESTION DOCUMENTARIA </span> </NavLink>
+                                            </li>
+                                        ]
                                     }
                                 </ul>
 
