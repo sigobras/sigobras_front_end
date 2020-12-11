@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Col, Nav, NavItem, NavLink, CardHeader, CardBody, Button, Input, UncontrolledPopover } from 'reactstrap';
-import MultiSelect from "@khanacademy/react-multi-select";
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Picky } from 'react-picky';
