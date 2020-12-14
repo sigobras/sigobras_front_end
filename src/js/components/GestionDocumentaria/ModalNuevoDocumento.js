@@ -5,7 +5,7 @@ import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Picky } from 'react-picky';
 import { BsPlusCircleFill } from "react-icons/bs";
 
-export default () => {
+export default ({recargar}) => {
     const [modal, setModal] = useState(false);
     const toggle = () => {
         if (!modal) {
@@ -32,44 +32,8 @@ export default () => {
         var res = await axios.get(`${UrlServer}/listaCargos`)
         setCargos(res.data)
     }
-    const [CargosSeleccionados, setCargosSeleccionados] = useState([]);
-    const [CargosSeleccionadosProcesado, setCargosSeleccionadosProcesado] = useState([]);
-    //usuarios
-    const [Usuarios, setUsuarios] = useState([]);
-    const [UsuariosSeleccionados, setUsuariosSeleccionados] = useState([]);
-    async function fetchUsuarios() {
-        var res = await axios.post(`${UrlServer}/getUsuariosByFichas`,
-            {
-                "id_acceso": sessionStorage.getItem('idacceso'),
-                "id_ficha": ObrasSeleccionadasProcesado,
-                "id_cargo": CargosSeleccionadosProcesado
-            }
-        )
-        if (Array.isArray(res.data)) {
-            setUsuarios(res.data)
-        }
-    }
-    useEffect(() => {
-        var clone = []
-        ObrasSeleccionadas.forEach(item => {
-            clone.push(item.id_ficha)
-        });
-        setObrasSeleccionadasProcesado(clone)
-    }, [ObrasSeleccionadas])
-    useEffect(() => {
-        fetchUsuarios()
-    }, [ObrasSeleccionadasProcesado])
-
-    useEffect(() => {
-        var clone = []
-        CargosSeleccionados.forEach(item => {
-            clone.push(item.id_Cargo)
-        });
-        setCargosSeleccionadosProcesado(clone)
-    }, [CargosSeleccionados])
-    useEffect(() => {
-        fetchUsuarios()
-    }, [CargosSeleccionadosProcesado])
+    const [CargoSeleccionado, setCargoSeleccionado] = useState("SELECCIONE");
+    
     //formulario
     const [FormularioAsunto, setFormularioAsunto] = useState("");
     const [FormularioDescripcion, setFormularioDescripcion] = useState("");
@@ -77,9 +41,17 @@ export default () => {
         try {
             if (FormularioArchivoAdjunto && TipoArchivoSSeleccionado != "SELECCIONE") {
                 setLoaderShow(true)
-                var usuariosSeleccionadosProcesados = []
-                UsuariosSeleccionados.forEach(item => {
-                    usuariosSeleccionadosProcesados.push([item.id])
+                var obrasSeleccionadasProcesadas = []
+                ObrasSeleccionadas.forEach(item => {
+                    obrasSeleccionadasProcesadas.push([item.id_ficha, CargoSeleccionado])
+                });
+                console.log({
+                    "mensaje": {
+                        "emisor_id": sessionStorage.getItem('idacceso'),
+                        "asunto": FormularioAsunto,
+                        "descripcion": FormularioDescripcion
+                    },
+                    "receptores": obrasSeleccionadasProcesadas
                 });
                 var res = await axios.post(`${UrlServer}/gestiondocumentaria_mensajes`,
                     {
@@ -88,7 +60,7 @@ export default () => {
                             "asunto": FormularioAsunto,
                             "descripcion": FormularioDescripcion
                         },
-                        "receptores": usuariosSeleccionadosProcesados
+                        "receptores": obrasSeleccionadasProcesadas
                     }
 
                 )
@@ -96,6 +68,7 @@ export default () => {
                     //adjuntamos archivo
                     const formData = new FormData();
                     formData.append('obra_codigo', sessionStorage.getItem('codigoObra'));
+                    formData.append('id_acceso', sessionStorage.getItem('idacceso'));
                     formData.append('gestiondocumentaria_mensajes_id', res.data.insertId);
                     formData.append('archivoAdjunto', FormularioArchivoAdjunto);
                     formData.append('tipoDocumento', TipoArchivoS.find(element => element.id == TipoArchivoSSeleccionado).tipo);
@@ -110,6 +83,7 @@ export default () => {
                     )
                     console.log("archivo adjunto ", response);
                     setLoaderShow(false)
+                    recargar()
                     alert("registro exitoso")
                 } else {
                     console.log(res.data);
@@ -211,48 +185,23 @@ export default () => {
                     <FormGroup row>
                         <Label sm={2}>Cargos</Label>
                         <Col sm={10}>
-                            <Picky
-                                options={Cargos}
-                                value={CargosSeleccionados}
-                                onChange={setCargosSeleccionados}
-                                open={false}
-                                valueKey="id_Cargo"
-                                labelKey="nombre"
-                                multiple={true}
-                                includeSelectAll={true}
-                                includeFilter={true}
-                                dropdownHeight={200}
-                                placeholder={"No hay datos seleccionados"}
-                                allSelectedPlaceholder={"seleccionaste todo"}
-                                manySelectedPlaceholder={"tienes %s seleccionados"}
-                                className="text-dark"
-                                selectAllText="Todos"
-                            />
+                            <Input
+                                type="select"
+                                onChange={(e) => {
+                                    console.log("target", e.target.value);
+                                    setCargoSeleccionado(e.target.value)
+                                }}
+                                value={CargoSeleccionado}
+                            >
+                                <option disabled hidden>SELECCIONE</option>
+                                {
+                                    Cargos.map((item, i) =>
+                                        <option value={item.id_Cargo}>{item.nombre}</option>
+                                    )
+                                }
+                            </Input>
                         </Col>
                     </FormGroup>
-                    <FormGroup row>
-                        <Label sm={2}>Usuarios</Label>
-                        <Col sm={10}>
-                            <Picky
-                                options={Usuarios}
-                                value={UsuariosSeleccionados}
-                                onChange={setUsuariosSeleccionados}
-                                open={false}
-                                valueKey="id"
-                                labelKey="nombre"
-                                multiple={true}
-                                includeSelectAll={true}
-                                includeFilter={true}
-                                dropdownHeight={200}
-                                placeholder={"No hay datos seleccionados"}
-                                allSelectedPlaceholder={"seleccionaste todo"}
-                                manySelectedPlaceholder={"tienes %s seleccionados"}
-                                className="text-dark"
-                                selectAllText="Todos"
-                            />
-                        </Col>
-                    </FormGroup>
-
 
                     <FormGroup row>
                         <Label sm={2}>Asunto</Label>
@@ -273,12 +222,14 @@ export default () => {
                     <FormGroup row>
                         <Label sm={2}>Tipo de archivo</Label>
                         <Col sm={10}>
-                            <select
+                            <Input
+                                type="select"
                                 onChange={(e) => {
                                     console.log("target", e.target.value);
                                     setTipoArchivoSSeleccionado(e.target.value)
                                 }}
                                 value={TipoArchivoSSeleccionado}
+
                             >
                                 <option disabled hidden>SELECCIONE</option>
                                 {TipoArchivoS.map((item, i) =>
@@ -288,8 +239,8 @@ export default () => {
                                         {item.tipo}
                                     </option>
                                 )}
+                            </Input>
 
-                            </select>
                         </Col>
                     </FormGroup>
                     <FormGroup row>

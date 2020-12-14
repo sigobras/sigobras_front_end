@@ -10,7 +10,15 @@ import "./index.css"
 export default () => {
     useEffect(() => {
         toggleNavSeleccionado("RECIBIDOS")
+        fetchUsuarioData()
     }, [])
+    const [UsuarioData, setUsuarioData] = useState({});
+    async function fetchUsuarioData() {
+        const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+            id_acceso: sessionStorage.getItem('idacceso')
+        })
+        setUsuarioData(request.data)
+    }
     const [NavSeleccionado, setNavSeleccionado] = useState("");
     function toggleNavSeleccionado(nav) {
         if (nav == "RECIBIDOS") {
@@ -30,9 +38,7 @@ export default () => {
                     "id_acceso": sessionStorage.getItem('idacceso'),
                     "id_ficha": sessionStorage.getItem('idobra'),
                 }
-
             }
-
         )
         if (Array.isArray(res.data)) {
             setDocumentosRecibidos(res.data)
@@ -63,6 +69,7 @@ export default () => {
 
     const [DocumentosEnviadosUsuarios, setDocumentosEnviadosUsuarios] = useState([]);
     async function fetchDocumentosEnviadosUsuarios(id) {
+        console.log("id de mensaje", id);
         var res = await axios.get(`${UrlServer}/gestiondocumentaria_enviados_usuarios`,
             {
                 params: {
@@ -82,17 +89,18 @@ export default () => {
         document.body.appendChild(link);
         link.click();
     }
-    function DescargarArchivoRecibido(data, gestiondocumentaria_mensajes_id) {
+    function DescargarArchivoRecibido(data, gestiondocumentaria_mensajes_id, receptor_cargo) {
         if (confirm("Desea descargar el archivo?")) {
-            if (actualizarVisto(gestiondocumentaria_mensajes_id)) {
-                const url = data
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', data, "target", "_blank");
-                link.setAttribute("target", "_blank");
-                document.body.appendChild(link);
-                link.click();
+            if (UsuarioData.cargo_nombre == receptor_cargo) {
+                actualizarVisto(gestiondocumentaria_mensajes_id)
             }
+            const url = data
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', data, "target", "_blank");
+            link.setAttribute("target", "_blank");
+            document.body.appendChild(link);
+            link.click();
         }
     }
     async function actualizarVisto(gestiondocumentaria_mensajes_id) {
@@ -168,20 +176,20 @@ export default () => {
                     top: "5px",
                 }}
             >
-                <ModalNuevoDocumento />
+                <ModalNuevoDocumento recargar={fetchDocumentosEnviados} />
             </div>
 
             {
                 NavSeleccionado == "RECIBIDOS" &&
-                <div class="container">
+                <div className="container">
 
                     <table className="table table-sm table-hover">
                         <thead>
-                            <tr class="row">
+                            <tr className="row">
                                 <th
                                     className="col-md-2"
                                 >
-                                    EMISOR NOMBRE
+                                    REMITE
                             </th>
                                 <th
                                     className="col-md-2"
@@ -249,7 +257,7 @@ export default () => {
                                                         <FaCloudDownloadAlt
                                                             size={20}
                                                             color={"#2676bb"}
-                                                            onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id)}
+                                                            onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id, item.receptor_cargo)}
                                                             style={{
                                                                 cursor: "pointer",
                                                             }}
@@ -395,14 +403,14 @@ export default () => {
                                                         >
                                                             <thead>
                                                                 <tr>
-                                                                <th>
+                                                                    <th>
                                                                         N°
                                                                  </th>
                                                                     <th>
                                                                         OBRA
                                                                  </th>
                                                                     <th>
-                                                                        USUARIO
+                                                                        CARGO
                                                                 </th>
                                                                     <th>
                                                                         REVISADO
@@ -418,7 +426,7 @@ export default () => {
                                                                         [
                                                                             <tr key={i2}>
                                                                                 <td>
-                                                                                    {i2+1}
+                                                                                    {i2 + 1}
                                                                                 </td>
                                                                                 <td
 
@@ -426,7 +434,7 @@ export default () => {
                                                                                     {item2.codigo}
                                                                                 </td>
                                                                                 <td>
-                                                                                    {item2.cargo_nombre + " - " + item2.usuario_nombre}
+                                                                                    {item2.cargo_nombre}
                                                                                 </td>
                                                                                 <td>
                                                                                     {item2.mensaje_visto ?
@@ -442,11 +450,11 @@ export default () => {
                                                                                     }
                                                                                 </td>
                                                                                 <td
-                                                                                    onClick={() => toggleModal(item.id, item2.id, item2.usuario_nombre)}
+                                                                                    onClick={() => toggleModal(item.id, item2.id_ficha, item2.codigo)}
                                                                                     style={{ cursor: "pointer" }}
                                                                                 >
                                                                                     <RespuestasUsuariosEnviadosCantidad
-                                                                                        emisor_id={item2.id}
+                                                                                        emisor_id={item2.id_ficha}
                                                                                         mensaje_id={item.id}
                                                                                     />
                                                                                 </td>
@@ -568,7 +576,7 @@ function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnv
         </div>
     )
 }
-function RespuestasUsuariosEnviadosCantidad({ emisor_id, mensaje_id, DescargarArchivoEnviado }) {
+function RespuestasUsuariosEnviadosCantidad({ emisor_id, mensaje_id }) {
     useEffect(() => {
         fetchDocumentosRecibidosRespuestas()
     }, [])
@@ -618,7 +626,7 @@ function Destinatarios({ id }) {
                     <div>
                         {
                             Destinatarios.map((item, i) =>
-                                <div>{item.usuario_nombre}</div>
+                                <div>{item.codigo}</div>
                             )
                         }
                     </div>
