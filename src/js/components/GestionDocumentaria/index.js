@@ -219,6 +219,7 @@ export default () => {
                                 <th
                                     className="col-md-1"
                                 >
+                                    REVISADO
                                 </th>
                                 <th
                                     className="col-md-2"
@@ -297,16 +298,19 @@ export default () => {
                                             <div
                                             >
                                                 {item.descripcion}
-                                                <FaPaperclip
-                                                    size={20}
-                                                    color={"#efefef"}
-                                                    onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id, item.receptor_cargo)}
-                                                    style={{
-                                                        cursor: "pointer",
-                                                        float: "right"
-                                                    }}
-                                                    title={"Descargar archivo"}
-                                                />
+                                                {item.documento_link &&
+                                                    <FaPaperclip
+                                                        size={20}
+                                                        color={"#efefef"}
+                                                        onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id, item.receptor_cargo)}
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            float: "right"
+                                                        }}
+                                                        title={"Descargar archivo"}
+                                                    />
+                                                }
+
                                             </div>
                                             <div className={"showme "}
                                                 style={{
@@ -402,16 +406,19 @@ export default () => {
                                                 <div
                                                 >
                                                     {item.descripcion}
-                                                    <FaPaperclip
-                                                        size={20}
-                                                        color={"#efefef"}
-                                                        onClick={() => DescargarArchivoEnviado(`${UrlServer}${item.documento_link}`)}
-                                                        style={{
-                                                            cursor: "pointer",
-                                                            float: "right"
-                                                        }}
-                                                        title={"Descargar archivo"}
-                                                    />
+                                                    {item.documento_link &&
+                                                        <FaPaperclip
+                                                            size={20}
+                                                            color={"#efefef"}
+                                                            onClick={() => DescargarArchivoEnviado(`${UrlServer}${item.documento_link}`)}
+                                                            style={{
+                                                                cursor: "pointer",
+                                                                float: "right"
+                                                            }}
+                                                            title={"Descargar archivo"}
+                                                        />
+                                                    }
+
                                                 </div>
                                             </td>
                                             <td

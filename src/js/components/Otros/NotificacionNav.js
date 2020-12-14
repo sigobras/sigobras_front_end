@@ -39,7 +39,8 @@ export default () => {
     }
     const [NotificacionesCantidad, setNotificacionesCantidad] = useState(0)
     async function fetchNotificacionesCantidad() {
-        var res = await axios.get(`${UrlServer}/FichasNotificaciones`,
+        console.log("cantidad");
+        var res = await axios.get(`${UrlServer}/FichasNotificaciones_cantidad`,
             {
                 params: {
                     "id_acceso": sessionStorage.getItem('idacceso'),
@@ -47,17 +48,14 @@ export default () => {
                 }
             }
         )
-        if (Array.isArray(res.data)) {
-            setNotificacionesCantidad(res.data.length)
-        }
+        setNotificacionesCantidad(res.data.cantidad)
     }
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const toggle = () => {
         if (!dropdownOpen) {
-            fetchNotificaciones()
             putFichasNotificaciones()
-            fetchNotificacionesCantidad()
+            fetchNotificaciones()
         }
         setDropdownOpen(!dropdownOpen);
     }
@@ -68,9 +66,7 @@ export default () => {
                 "id_ficha": sessionStorage.getItem('idobra')
             }
         )
-        if (Array.isArray(res.data)) {
-            setNotificaciones(res.data)
-        }
+        fetchNotificacionesCantidad()
     }
     return (
         <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
@@ -78,7 +74,12 @@ export default () => {
                 <FaBell />
                 {NotificacionesCantidad}
             </DropdownToggle>
-            <DropdownMenu>
+            <DropdownMenu
+                style={{
+                    maxHeight: "500px",
+                    overflowY: "auto"
+                }}
+            >
 
                 {Notificaciones.map((item, i) =>
                 (
@@ -101,6 +102,17 @@ export default () => {
                                 >
                                     {item.descripcion}
                                 </div>
+                                {
+                                    item.asunto &&
+                                    <div
+                                        style={{
+                                            color: "black",
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        ASUNTO: {item.asunto}
+                                    </div>
+                                }
                             </NavLink>
                         </DropdownItem>
                     ]

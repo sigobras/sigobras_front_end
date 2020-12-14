@@ -40,7 +40,12 @@ export default ({ recargar }) => {
     const [FormularioDescripcion, setFormularioDescripcion] = useState("");
     async function FormularioEnviar() {
         try {
-            if (TipoArchivoSSeleccionado != "SELECCIONE") {
+            if (TipoArchivoSSeleccionado != "SELECCIONE" && 
+            CargoSeleccionado != "SELECCIONE" &&
+             ObrasSeleccionadas.length > 0 &&
+             FormularioAsunto.trim() != "" &&
+             FormularioDescripcion.trim() != ""
+             ) {
                 setLoaderShow(true)
                 var obrasSeleccionadasProcesadas = []
                 ObrasSeleccionadas.forEach(item => {
@@ -65,27 +70,31 @@ export default ({ recargar }) => {
                     }
 
                 )
-                if (res.status == 200 && FormularioArchivoAdjunto) {
-                    //adjuntamos archivo
-                    const formData = new FormData();
-                    formData.append('obra_codigo', sessionStorage.getItem('codigoObra'));
-                    formData.append('id_acceso', sessionStorage.getItem('idacceso'));
-                    formData.append('gestiondocumentaria_mensajes_id', res.data.insertId);
-                    formData.append('archivoAdjunto', FormularioArchivoAdjunto);
-                    formData.append('tipoDocumento', TipoArchivoS.find(element => element.id == TipoArchivoSSeleccionado).tipo);
-                    formData.append('tipoDocumento_id', TipoArchivoSSeleccionado);
-                    var response = await axios.post(`${UrlServer}/gestiondocumentaria_mensajes_archivoAdjunto`,
-                        formData,
-                        {
-                            headers: {
-                                'content-type': 'multipart/form-data'
+                if (res.status == 200) {
+                    if (FormularioArchivoAdjunto) {
+                        //adjuntamos archivo
+                        const formData = new FormData();
+                        formData.append('obra_codigo', sessionStorage.getItem('codigoObra'));
+                        formData.append('id_acceso', sessionStorage.getItem('idacceso'));
+                        formData.append('gestiondocumentaria_mensajes_id', res.data.insertId);
+                        formData.append('archivoAdjunto', FormularioArchivoAdjunto);
+                        formData.append('tipoDocumento', TipoArchivoS.find(element => element.id == TipoArchivoSSeleccionado).tipo);
+                        formData.append('tipoDocumento_id', TipoArchivoSSeleccionado);
+                        var response = await axios.post(`${UrlServer}/gestiondocumentaria_mensajes_archivoAdjunto`,
+                            formData,
+                            {
+                                headers: {
+                                    'content-type': 'multipart/form-data'
+                                }
                             }
-                        }
-                    )
-                    console.log("archivo adjunto ", response);
+                        )
+                        console.log("archivo adjunto ", response);
+
+                    }
                     setLoaderShow(false)
                     recargar()
                     alert("registro exitoso")
+
                 } else {
                     console.log(res.data);
                     setLoaderShow(false)
