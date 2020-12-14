@@ -1,60 +1,115 @@
-import React, { Component } from 'react';
-import { Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import React, { Component, useEffect, useState } from 'react';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, NavLink } from 'reactstrap';
 import { FaBell } from "react-icons/fa";
-import LoadingXD from "../../../images/loaderXS.gif"  
-
-class NotificacionNav extends Component {
-    constructor(props) {
-        super(props);
-    
-        this.toggle = this.toggle.bind(this);
-        this.clics = this.clics.bind(this)
-        this.state = {
-          popoverOpen: false,
-          clik:false
-        };
-      }
-    
-    toggle() {
-        this.setState({
-            popoverOpen: !this.state.popoverOpen
-        });
-    }
-
-    clics(){
-        this.setState({
-            clik:!this.state.clik
+import LoadingXD from "../../../images/loaderXS.gif"
+import axios from "axios"
+import { UrlServer } from '../Utils/ServerUrlConfig'
+import { socket } from "../Utils/socket";
+export default () => {
+    useEffect(() => {
+        fetchNotificacionesCantidad()
+        fetchNotificaciones()
+        socketIni()
+    }, [])
+    function socketIni() {
+        socket.on("gestion_documentaria_" + sessionStorage.getItem('idobra'), (data) => {
+            console.log("llegada de gestion_documentaria");
+            fetchNotificacionesCantidad()
+            fetchNotificaciones()
         })
     }
-   
-    render() {
-        return (
-            <div>
-                <a href="#" id="notification" onClick={this.toggle} className="nav-link text-white">
-                    <FaBell />
-                </a>
-                <Popover placement="bottom" isOpen={this.state.popoverOpen} target="notification" toggle={this.toggle}  >
-                    <PopoverHeader>
-                        <div className="d-flex small">
-                            <div className="flex-fill pr-5"><b>Notificaciones</b> </div>
-                            <div className="flex-fill pr-2">más</div>
-                            <div className="flex-fill">Configuración</div>
-                        </div>
-                    </PopoverHeader>
-                    <PopoverBody>
-                        <div className={ this.state.clik === true ? 'd-none' : '' }>
-                            <img src={ LoadingXD } width="20px" onClick={this.clics } className="img-fluid rounded mx-auto d-block" />
-                        </div>
-                        
-
-                        <div className={ this.state.clik === true ? '' : 'd-none' }>
-                            <img src="https://source.unsplash.com/random"  className="img-fluid rounded mx-auto d-block"  onClick={this.clics }/>                        
-                        </div>
-                    </PopoverBody>
-                </Popover>
-            </div>
-        );
+    const [Notificaciones, setNotificaciones] = useState([
+        {
+            emisor: "-----",
+            descripcion: "-----",
+        }
+    ])
+    async function fetchNotificaciones() {
+        var res = await axios.get(`${UrlServer}/FichasNotificaciones`,
+            {
+                params: {
+                    "id_acceso": sessionStorage.getItem('idacceso'),
+                    "id_ficha": sessionStorage.getItem('idobra'),
+                }
+            }
+        )
+        if (Array.isArray(res.data)) {
+            setNotificaciones(res.data)
+        }
     }
-}
+    const [NotificacionesCantidad, setNotificacionesCantidad] = useState(0)
+    async function fetchNotificacionesCantidad() {
+        var res = await axios.get(`${UrlServer}/FichasNotificaciones`,
+            {
+                params: {
+                    "id_acceso": sessionStorage.getItem('idacceso'),
+                    "id_ficha": sessionStorage.getItem('idobra'),
+                }
+            }
+        )
+        if (Array.isArray(res.data)) {
+            setNotificacionesCantidad(res.data.length)
+        }
+    }
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
-export default NotificacionNav;
+    const toggle = () => {
+        if (!dropdownOpen) {
+            fetchNotificaciones()
+            putFichasNotificaciones()
+            fetchNotificacionesCantidad()
+        }
+        setDropdownOpen(!dropdownOpen);
+    }
+    async function putFichasNotificaciones() {
+        var res = await axios.put(`${UrlServer}/FichasNotificaciones`,
+            {
+                "id_acceso": sessionStorage.getItem('idacceso'),
+                "id_ficha": sessionStorage.getItem('idobra')
+            }
+        )
+        if (Array.isArray(res.data)) {
+            setNotificaciones(res.data)
+        }
+    }
+    return (
+        <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
+            <DropdownToggle>
+                <FaBell />
+                {NotificacionesCantidad}
+            </DropdownToggle>
+            <DropdownMenu>
+
+                {Notificaciones.map((item, i) =>
+                (
+                    item.fichas_notificaciones_tipo_id == 1 &&
+                    [
+                        <DropdownItem>
+                            <NavLink href={`/${item.url}`}>
+                                <div
+                                    style={{
+                                        color: "black",
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    {item.emisor}
+                                </div>
+                                <div
+                                    style={{
+                                        color: "black",
+                                    }}
+                                >
+                                    {item.descripcion}
+                                </div>
+                            </NavLink>
+                        </DropdownItem>
+                    ]
+                )
+
+                )}
+
+            </DropdownMenu>
+        </Dropdown>
+
+    )
+}
