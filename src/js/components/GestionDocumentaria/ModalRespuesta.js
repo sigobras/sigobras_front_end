@@ -7,6 +7,7 @@ import { Picky } from 'react-picky';
 export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tipo }) => {
     const [modal, setModal] = useState(false);
     const toggle = () => {
+        setLoaderShow(false)
         setModal(!modal)
     };
 
@@ -15,21 +16,12 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
     async function FormularioEnviar() {
         try {
             setLoaderShow(true)
-            var res1 = await axios.get(`${UrlServer}/fichas_has_accesosId`,
-                {
-                    params: {
-                        "id_ficha": sessionStorage.getItem('idobra'),
-                        "id_acceso": sessionStorage.getItem('idacceso')
-                    }
-                }
-            )
-            console.log("res1", res1);
-
+       
             var res = await axios.post(`${UrlServer}/gestiondocumentaria_respuestas`,
                 {
                     "asunto": FormularioAsunto,
                     "descripcion": FormularioDescripcion,
-                    "emisor_id": res1.data.id,
+                    "emisor_id": sessionStorage.getItem('idobra'),
                     "receptor_id": receptor_id,
                     "mensaje_id": mensaje_id
                 }
@@ -56,7 +48,7 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
 
                 }
                 setLoaderShow(false)
-                alert("registro exitoso")
+                alert("Mensaje enviado")
             } else {
                 console.log(res.data);
                 setLoaderShow(false)
@@ -65,6 +57,7 @@ export default ({ receptor_id, mensaje_id, archivoAdjunto_id, archivoAdjunto_tip
             toggle()
         } catch (error) {
             console.log(error.response);
+            setLoaderShow(false)
             alert("hubo un problema")
         }
 
