@@ -137,7 +137,7 @@ export default () => {
                     <div className="ml-auto">
                         <div className="float-right"><UserNav /></div>
                         <div className="float-right"><MensajeNav /></div>
-                        <div className="float-right"><NotificacionNav /></div>
+                        <div className="float-right"><NotificacionNav key={DataObra.id_ficha}/></div>
                         <div className="float-right"> {sessionStorage.getItem('estadoObra') != null && <Btns EstadoObra={EstadoObra} />} </div>
                     </div>
                 </nav>

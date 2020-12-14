@@ -4,8 +4,9 @@ import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import { Picky } from 'react-picky';
 import { BsPlusCircleFill } from "react-icons/bs";
+import { socket } from "../Utils/socket";
 
-export default ({recargar}) => {
+export default ({ recargar }) => {
     const [modal, setModal] = useState(false);
     const toggle = () => {
         if (!modal) {
@@ -33,13 +34,13 @@ export default ({recargar}) => {
         setCargos(res.data)
     }
     const [CargoSeleccionado, setCargoSeleccionado] = useState("SELECCIONE");
-    
+
     //formulario
     const [FormularioAsunto, setFormularioAsunto] = useState("");
     const [FormularioDescripcion, setFormularioDescripcion] = useState("");
     async function FormularioEnviar() {
         try {
-            if (FormularioArchivoAdjunto && TipoArchivoSSeleccionado != "SELECCIONE") {
+            if (TipoArchivoSSeleccionado != "SELECCIONE") {
                 setLoaderShow(true)
                 var obrasSeleccionadasProcesadas = []
                 ObrasSeleccionadas.forEach(item => {
@@ -64,7 +65,7 @@ export default ({recargar}) => {
                     }
 
                 )
-                if (res.status == 200) {
+                if (res.status == 200 && FormularioArchivoAdjunto) {
                     //adjuntamos archivo
                     const formData = new FormData();
                     formData.append('obra_codigo', sessionStorage.getItem('codigoObra'));
@@ -92,6 +93,12 @@ export default ({recargar}) => {
                 }
                 toggle()
                 setTipoArchivoSSeleccionado("SELECCIONE")
+                //socket
+                socket.emit("gestion_documentaria_principal",
+                    {
+                        id_ficha: + sessionStorage.getItem('idobra')
+                    }
+                )
 
             }
             else {

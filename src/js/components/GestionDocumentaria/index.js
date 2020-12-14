@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import { Modal, Card, InputGroup, Nav, NavItem, NavLink, CardHeader, CardBody, CardFooter, Button, Input, UncontrolledPopover, ModalHeader, ModalBody } from 'reactstrap';
 import ModalNuevoDocumento from './ModalNuevoDocumento';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig'
-import { FaCloudDownloadAlt, FaCheckCircle, FaRegWindowClose, FaCloudUploadAlt } from "react-icons/fa";
+import { FaCloudDownloadAlt, FaCheckCircle, FaRegWindowClose, FaCloudUploadAlt, FaPaperclip } from "react-icons/fa";
 import ModalRespuesta from './ModalRespuesta';
 import "./index.css"
+import { socket } from "../Utils/socket";
 
 export default () => {
     useEffect(() => {
         toggleNavSeleccionado("RECIBIDOS")
         fetchUsuarioData()
+        socketIni()
     }, [])
+    function socketIni() {
+        socket.on("gestion_documentaria_" + sessionStorage.getItem('idobra'), (data) => {
+            // console.log("llegada de gestion_documentaria");
+            fetchDocumentosRecibidos()
+        })
+    }
     const [UsuarioData, setUsuarioData] = useState({});
     async function fetchUsuarioData() {
         const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
@@ -62,14 +70,20 @@ export default () => {
         } else {
             setDocumentoEnviadoSeleccionado(documento)
             fetchDocumentosEnviadosUsuarios(documento.id)
+            socketMensaje(documento.id)
         }
 
+    }
+    function socketMensaje(id_mensaje) {
+        socket.on("gestion_documentaria_mensaje" + id_mensaje, (data) => {
+            console.log("llegada de gestion_documentaria_mensaje");
+            fetchDocumentosEnviadosUsuarios(id_mensaje)
+        })
     }
     const [DocumentoEnviadoSeleccionado, setDocumentoEnviadoSeleccionado] = useState(0);
 
     const [DocumentosEnviadosUsuarios, setDocumentosEnviadosUsuarios] = useState([]);
     async function fetchDocumentosEnviadosUsuarios(id) {
-        console.log("id de mensaje", id);
         var res = await axios.get(`${UrlServer}/gestiondocumentaria_enviados_usuarios`,
             {
                 params: {
@@ -89,6 +103,13 @@ export default () => {
         document.body.appendChild(link);
         link.click();
     }
+    function socketDescargarArchivoRecibido(id_mensaje) {
+        socket.emit("gestion_documentaria_mensaje_principal",
+            {
+                id_mensaje
+            }
+        )
+    }
     function DescargarArchivoRecibido(data, gestiondocumentaria_mensajes_id, receptor_cargo) {
         if (confirm("Desea descargar el archivo?")) {
             if (UsuarioData.cargo_nombre == receptor_cargo) {
@@ -101,6 +122,7 @@ export default () => {
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);
             link.click();
+            socketDescargarArchivoRecibido(gestiondocumentaria_mensajes_id)
         }
     }
     async function actualizarVisto(gestiondocumentaria_mensajes_id) {
@@ -142,6 +164,7 @@ export default () => {
             return fecha
         }
     }
+    const [RefCheckBox, setRefCheckBox] = useState([])
     return (
         <div
             style={{
@@ -183,9 +206,20 @@ export default () => {
                 NavSeleccionado == "RECIBIDOS" &&
                 <div className="container">
 
-                    <table className="table table-sm table-hover">
+                    <table className="table table-sm table-hover"
+                        style={{
+                            textAlign: "center"
+                        }}
+                    >
                         <thead>
-                            <tr className="row">
+                            <tr
+                                className="row"
+
+                            >
+                                <th
+                                    className="col-md-1"
+                                >
+                                </th>
                                 <th
                                     className="col-md-2"
                                 >
@@ -202,7 +236,7 @@ export default () => {
                                     DESCRIPCION
                             </th>
                                 <th
-                                    className="col-md-2"
+                                    className="col-md-1"
                                 >
                                     FECHA
                             </th>
@@ -214,76 +248,94 @@ export default () => {
                                     <tr
                                         key={i}
                                         className={"showhim row"}
+
                                     >
-                                        {/* <td>
-                                        {item.id}
-                                    </td> */}
+                                        <td
+                                            className="col-md-1"
+                                        >
+                                            <MensajeRevisado
+                                                id_mensaje={item.id}
+                                                ref={(ref) => {
+                                                    var clone = RefCheckBox
+                                                    clone[item.id] = ref
+                                                    setRefCheckBox(clone)
+                                                }}
+                                            />
+                                        </td>
                                         <td
                                             className="col-md-2"
+                                            onClick={() => {
+                                                RefCheckBox[item.id].recarga()
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                            }}
                                         >
                                             {item.emisor_cargo + " - " + item.emisor_nombre}
                                         </td>
                                         <td
                                             className="col-md-2"
+                                            onClick={() => {
+                                                RefCheckBox[item.id].recarga()
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                            }}
                                         >
                                             {item.asunto}
                                         </td>
                                         <td
                                             className="col-md-6"
                                             style={{ position: "relative" }}
+                                            onClick={() => {
+                                                RefCheckBox[item.id].recarga()
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                            }}
                                         >
                                             <div
                                             >
                                                 {item.descripcion}
+                                                <FaPaperclip
+                                                    size={20}
+                                                    color={"#efefef"}
+                                                    onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id, item.receptor_cargo)}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        float: "right"
+                                                    }}
+                                                    title={"Descargar archivo"}
+                                                />
                                             </div>
-
-
                                             <div className={"showme "}
                                                 style={{
                                                     position: "absolute",
                                                     top: "0",
-                                                    right: "0",
+                                                    right: "38px",
                                                     background: "#242526"
                                                 }}
                                             >
-                                                <div
-                                                >
-                                                    <div
-                                                        style={{
-                                                            float: "left",
-                                                            paddingRight: "5px"
-                                                        }}
-                                                    >
-                                                        <FaCloudDownloadAlt
-                                                            size={20}
-                                                            color={"#2676bb"}
-                                                            onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id, item.receptor_cargo)}
-                                                            style={{
-                                                                cursor: "pointer",
-                                                            }}
-                                                            title={"Descargar archivo"}
-                                                        />
-
-                                                    </div>
-                                                    <div
-                                                        style={{ float: "left" }}
-                                                    >
-                                                        <ModalRespuesta
-                                                            receptor_id={item.emisor_id}
-                                                            mensaje_id={item.id}
-                                                            archivoAdjunto_id={item.archivoAdjunto_id}
-                                                            archivoAdjunto_tipo={item.archivoAdjunto_tipo}
-                                                            style={{
-                                                                cursor: "pointer",
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </div>
+                                                <ModalRespuesta
+                                                    receptor_id={item.emisor_id}
+                                                    mensaje_id={item.id}
+                                                    archivoAdjunto_id={item.archivoAdjunto_id}
+                                                    archivoAdjunto_tipo={item.archivoAdjunto_tipo}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
                                             </div>
 
                                         </td>
                                         <td
-                                            className="col-md-2"
+                                            className="col-md-1"
+                                            onClick={() => {
+                                                RefCheckBox[item.id].recarga()
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                            }}
                                         >
                                             {fechaFormatoClasico(item.fecha)}
                                         </td>
@@ -350,37 +402,17 @@ export default () => {
                                                 <div
                                                 >
                                                     {item.descripcion}
+                                                    <FaPaperclip
+                                                        size={20}
+                                                        color={"#efefef"}
+                                                        onClick={() => DescargarArchivoEnviado(`${UrlServer}${item.documento_link}`)}
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            float: "right"
+                                                        }}
+                                                        title={"Descargar archivo"}
+                                                    />
                                                 </div>
-                                                <div className={"showme "}
-                                                    style={{
-                                                        position: "absolute",
-                                                        top: "0",
-                                                        right: "0",
-                                                        background: "#242526"
-                                                    }}
-                                                >
-                                                    <div
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                float: "left",
-                                                                paddingRight: "5px"
-                                                            }}
-                                                        >
-                                                            <FaCloudDownloadAlt
-                                                                size={20}
-                                                                color={"#2676bb"}
-                                                                onClick={() => DescargarArchivoRecibido(`${UrlServer}${item.documento_link}`, item.id)}
-                                                                style={{
-                                                                    cursor: "pointer",
-                                                                }}
-                                                                title={"Descargar archivo"}
-                                                            />
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                             </td>
                                             <td
                                                 className="col-md-2"
@@ -516,8 +548,7 @@ function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnv
         )
         if (Array.isArray(res.data)) {
             setDocumentosRecibidosRespuestas(res.data)
-            console.log(res.data);
-
+            // console.log(res.data);
         }
     }
 
@@ -555,12 +586,13 @@ function RespuestasUsuariosEnviados({ emisor_id, mensaje_id, DescargarArchivoEnv
                                 </td>
                                 <td>
                                     {item.documento_link &&
-                                        <FaCloudDownloadAlt
+                                        <FaPaperclip
                                             size={15}
-                                            color={"#2676bb"}
+                                            color={"#efefef"}
                                             onClick={() => DescargarArchivoEnviado(`${UrlServer}${item.documento_link}`)}
                                             style={{
-                                                cursor: "pointer"
+                                                cursor: "pointer",
+                                                float: "right"
                                             }}
                                         />
                                     }
@@ -634,3 +666,55 @@ function Destinatarios({ id }) {
         </div>
     )
 }
+const MensajeRevisado = forwardRef(({ id_mensaje }, ref) => {
+    useEffect(() => {
+        fetchMensajeRevisado()
+    }, [])
+    const [MensajeRevisado, setMensajeRevisado] = useState(0)
+    async function fetchMensajeRevisado() {
+        var res = await axios.get(`${UrlServer}/gestiondocumentaria_mensajes_revisado`,
+            {
+                params: {
+                    "id_acceso": sessionStorage.getItem('idacceso'),
+                    id_mensaje,
+                }
+            }
+        )
+        // console.log(res.data);
+        if (Object.keys(res.data).length == 0) {
+            setMensajeRevisado(false)
+        } else {
+            setMensajeRevisado(res.data.revisado)
+        }
+
+    }
+    async function putMensajeRevisado(revisado) {
+        var res = await axios.put(`${UrlServer}/gestiondocumentaria_mensajes_revisado`,
+            {
+                "id_acceso": sessionStorage.getItem('idacceso'),
+                id_mensaje,
+                revisado
+            }
+        )
+        fetchMensajeRevisado()
+    }
+    useImperativeHandle(ref, () => ({
+        recarga() {
+            if (!MensajeRevisado) {
+                putMensajeRevisado(true)
+            }
+        }
+    }));
+    return (
+        <div>
+            <Input
+                type="checkbox"
+                checked={MensajeRevisado}
+                onClick={() => {
+                    putMensajeRevisado(!MensajeRevisado)
+                }}
+            />
+        </div>
+    )
+}
+)
