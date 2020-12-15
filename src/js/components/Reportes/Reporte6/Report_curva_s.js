@@ -374,7 +374,7 @@ function Report_curva_s() {
 
           [
             {
-              text: 'AVANCE FISICO',
+              text: 'AVANCE FISICO ACTUAL',
               style: 'TableHeaderInforme',
               alignment: 'left',
               // border: [false, false, true, true],
@@ -385,7 +385,7 @@ function Report_curva_s() {
               alignment: 'left'
             },
             {
-              text: 'AVANCE ACUMULADO',
+              text: 'AVANCE FISICO ACUMULADO',
               style: 'TableHeaderInforme',
               alignment: 'left'
             },
@@ -395,7 +395,7 @@ function Report_curva_s() {
               alignment: 'left'
             },
             {
-              text: 'AVANCE FINANCIERO',
+              text: 'AVANCE FINANCIERO ACUMULADO',
               style: 'TableHeaderInforme',
               alignment: 'left'
             },
