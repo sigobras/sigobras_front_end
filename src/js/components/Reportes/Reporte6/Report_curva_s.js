@@ -235,12 +235,16 @@ function Report_curva_s() {
       "fecha_inicial": fecha_inicial,
       "fecha_final": fecha_final,
     })
+    var res = await axios.post(`${UrlServer}/getFinanciero`, {
+      "id_ficha": sessionStorage.getItem("idobra"),
+    })
+    console.log(res.data);
     return {
       style: 'tableExample',
       // color: '#ff0707',
       layout: 'noBorders',
       table: {
-        widths: [80, 'auto', 80, 'auto', 40, 'auto'],
+        widths: [80, 'auto', 80, 'auto', 50, 'auto'],
         body: [
           [
             {
@@ -391,12 +395,12 @@ function Report_curva_s() {
               alignment: 'left'
             },
             {
-              text: 'LUGAR',
+              text: 'AVANCE FINANCIERO',
               style: 'TableHeaderInforme',
               alignment: 'left'
             },
             {
-              text: ': ' + request.data.lugar,
+              text: ': ' + Redondea(res.data.financiero_avance_porcentaje) + "%",
               style: 'tableBodyInforme',
               alignment: 'left'
             }
@@ -1006,7 +1010,7 @@ function Report_curva_s() {
                   alignment: 'center',
                 },
                 {
-                  text: meses[new Date().getMonth()-1],
+                  text: meses[new Date().getMonth() - 1],
                   alignment: 'center',
                   // margin: [0, -8, 0, -1], 
                   fontSize: 9,
