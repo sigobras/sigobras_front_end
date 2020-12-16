@@ -1,480 +1,139 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 import axios from 'axios';
 import { BiMessageAltEdit } from "react-icons/fa";
-import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table } from 'reactstrap';
+import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table, CustomInput } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import { v4 as uuidv4 } from 'uuid';
 import "../PlazosHistorial/Plazos.css";
 import { object } from 'prop-types';
+import PlazosFormulario from './PlazosFormulario'
+import PlazosFormularioEdicion from './PlazosFormularioEdicion'
 
 
-class PlazosHistorial extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            plazosTipo_1: [],
-            plazosTipo_2: [],
-            plazosHistorial: [],
-            visible: true,
-            modalIsOpen: false,
-            descripcion: null,
-            indexDescripcion: null,
-
+export default () => {
+    useEffect(() => {
+        fetchPLazosPadres()
+        return () => {
         }
-        this.getPlazos = this.getPlazos.bind(this)
-        this.agregarPadre = this.agregarPadre.bind(this)
-        this.elminarHistorial = this.elminarHistorial.bind(this)
-        this.getPlazosTipo = this.getPlazosTipo.bind(this)
-        this.actualizarPlazo = this.actualizarPlazo.bind(this)
-        this.guardarPlazosHistoria = this.guardarPlazosHistoria.bind(this)
-        this.toggleModal = this.toggleModal.bind(this)
-    }
-    componentDidMount() {
-        this.getPlazos()
-        this.getPlazosTipo(1)
-        this.getPlazosTipo(2)
-    }
-    getPlazos() {
-        axios.post(`${UrlServer}/getPlazos`,
+    }, [])
+
+    const [PlazosPadres, setPlazosPadres] = useState([])
+    async function fetchPLazosPadres() {
+        const res = await axios.get(`${UrlServer}/plazosPadres`,
             {
-                "id_ficha": sessionStorage.getItem('idobra')
+                params:
+                {
+                    id_ficha: sessionStorage.getItem('idobra')
+                }
             }
         )
-            .then((res) => {
-                var data = res.data
-                console.log(data)
+        setPlazosPadres(res.data)
+    }
 
-                data.forEach(d => Object.assign(d, { "id_uuid": uuidv4(),"hijo_de":null }));
-                console.log("data ", data);
-                this.setState({
-                    plazosHistorial: data
-                })
-            }).catch((error) => {
-                console.log('Algo salió mal al tratar de listar los estados, error es: ', error);
-            })
-    }
-    getPlazosTipo(nivel) {
-        axios.post(`${UrlServer}/getPlazosTipo`,
-            {
-                "nivel": nivel
-            }
-        )
-            .then((res) => {
-                // console.log(res.data)
-                this.setState({
-                    ["plazosTipo_" + nivel]: res.data
-                })
-            }).catch((error) => {
-                console.log('Algo salió mal al tratar de listar los estados, error es: ', error);
-            })
-    }
-    agregarPadre() {
-        var plazosHistorial = this.state.plazosHistorial
 
-        plazosHistorial.push(
-            {
-                "id_uuid": uuidv4(),
-                "idplazos_historial": null,
-                "tipo": 0,
-                "nivel": 1,
-                "descripcion": "descripcion",
-                "fecha_inicio": null,
-                "fecha_final": null,
-                "n_dias": null,
-                "documento_resolucion_estado": "documento_resolucion_estado",
-                "imagen": "imagen",
-                "observacion": "observacion",
-                "idplazos": null,
-                "fichas_id_ficha": sessionStorage.getItem('idobra'),
-                "hijo_de":null
-            },
-        )
-        // console.log("plazosHistorial", plazosHistorial);
-        this.setState({
-            plazosHistorial: plazosHistorial
-        })
-    }
-    elminarHistorial(i) {
-        if (confirm("Estas seguro que desea eliminar")) {
-            var plazosHistorial = this.state.plazosHistorial
-            if (plazosHistorial[i].idplazos_historial != null) {
-                axios.post(`${UrlServer}/deletePlazos`,
+    return (
+
+        <div>
+            <PlazosFormulario 
+                id_padre = {null}
+            />
+
+            <Table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>TIPO/ESTADO</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>RESOLUCIÓN</th>
+                        <th>FECHA INICIAL</th>
+                        <th>FECHA FINAL</th>
+                        <th>DIAS</th>
+                        <th>PLAZO APROBADO</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
                     {
-                        "idplazos_historial": plazosHistorial[i].idplazos_historial
+                        PlazosPadres.map((item, i) =>
+                            [<tr>
+                                <th scope="row">{i + 1}</th>
+                                {/* <th scope="row">{item.id}</th> */}
+                                <td>{item.tipo_nombre}</td>
+                                <td>{item.descripcion}</td>
+                                <td>{item.documento_resolucion_estado}</td>
+                                <td>{item.fecha_inicio}</td>
+                                <td>{item.fecha_final}</td>
+                                <td>{item.n_dias}</td>
+                                <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
+                                <td>
+                                    <PlazosFormulario 
+                                        id_padre = {item.id}
+                                    />
+                                </td>
+                                <td>
+                                    <PlazosFormularioEdicion
+                                        data = {item}
+                                    />
+                                </td>
+                            </tr>,
+
+                            <PLazosHijos
+                                id_padre={item.id}
+                                count={i + 1}
+                            />
+                            ]
+                        )
                     }
-                )
-                    .then((res) => {
-                        // console.log(res.data)
-                        this.getPlazos()
-                        // console.log("Dato Eliminado");
-                    }).catch((error) => {
-                        // console.log('error al eliminar: ', error);
-                    })
-            } else {
-                plazosHistorial.splice(i, 1);
-                this.setState({
-                    plazosHistorial: plazosHistorial
-                })
-            }
-        }
+                </tbody>
+            </Table>
+
+        </div>
 
 
-    }
-    agregarHijo=(indexPadre, yo)=> {
-        console.log("yo", yo);
-        var plazosHistorial = this.state.plazosHistorial
-        var cambiarDespues = plazosHistorial.filter(s => +s.hijo_de === +yo)
-        // var pocision = plazosHistorial.findIndex(s => s.id_uuid === indexPadre)
-        var indice = cambiarDespues.length + yo
-        console.log("cambiarDespues ", cambiarDespues.length);
-        plazosHistorial.splice(indice + 1, 0,
-            {
-                "id_uuid": uuidv4(),
-                "idplazos_historial": null,
-                "tipo": 0,
-                "nivel": 2,
-                "descripcion": "descripcion",
-                "fecha_inicio": "",
-                "fecha_final": "",
-                "n_dias": "",
-                "documento_resolucion_estado": "documento_resolucion_estado",
-                "imagen": "imagen",
-                "observacion": "observacion",
-                "idplazos": null,
-                "fichas_id_ficha": sessionStorage.getItem('idobra'),
-                "hijo_de":yo
-            },
-        );
-        // console.log("plazosHistorial", plazosHistorial);
-        this.setState({ plazosHistorial })
-        // console.log("hijo agregado");
-    }
-    actualizarPlazo(index, nombre, value) {
-        // console.log(index, nombre, value);
-
-        var plazosHistorial = this.state.plazosHistorial
-        plazosHistorial[index][nombre] = value
-        // console.log("plazosHistorial", plazosHistorial);
-
-        this.setState({
-            plazosHistorial: plazosHistorial
-        })
-    }
-    guardarPlazosHistoria() {
-        var plazosHistorial = this.state.plazosHistorial
-        var plazosHistorial_procesada = []
-        var error = false;
-        for (let i = 0; i < plazosHistorial.length; i++) {
-            const plazo = plazosHistorial[i];
-            if (plazo.tipo == 0) {
-                alert("falta seleccionar el tipo de algunos plazos")
-                error = true;
-                break
-            }
-            var plazo_temp = [
-                plazo.idplazos_historial,
-                plazo.tipo,
-                plazo.nivel,
-                plazo.descripcion,
-                plazo.fecha_inicio,
-                plazo.fecha_final,
-                plazo.documento_resolucion_estado,
-                plazo.imagen,
-                plazo.observacion,
-                sessionStorage.getItem('idobra'),
-                null
-            ]
-            plazosHistorial_procesada.push(
-                plazo_temp
-            )
-
-        }
-        if (!error) {
-            // console.log("plazosHistorial_procesada", plazosHistorial_procesada);
-            axios.post(`${UrlServer}/putPlazos`,
-                plazosHistorial_procesada
-            )
-                .then((res) => {
-
-                    alert("data guardada")
-                    console.log(res.data)
-                    this.getPlazos()
-
-                }).catch((error) => {
-
-                    console.log('Algo salió mal al tratar de listar los estados, error es: ', error);
-                })
-        } else {
-            console.log("error faltan seleccionar algunos tipos");
-
-        }
-
-    }
-    calcular_dias(fecha_inicio, fecha_final) {
-        // console.log(fecha_inicio, fecha_final);
-        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        const firstDate = new Date(fecha_inicio);
-        const secondDate = new Date(fecha_final);
-        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
-        return days || 0
-
-    }
-
-
-    toggleAlert() {
-
-        this.setState({
-
-            visible: !this.state.visible,
-        })
-    }
-
-    toggleModal() {
-
-        this.setState({
-
-            modalIsOpen: !this.state.modalIsOpen,
-        })
-    }
-    //funcion flecha
-    descripcion1 = (datos, datos1, datos2, i, k) => {
-
-        // console.log("DESCRIPCION", datos);
-
-
-        this.setState({
-
-            modalIsOpen: !this.state.modalIsOpen,
-            descripcion: datos,
-            indexDescripcion: i,
-            documento_resolucion_estado: datos1,
-            observacion: datos2
-            // indexResolucion: k
-
-        })
-    }
-
-    render() {
-        var contador = 0
-        var subcontador = 0
-        // para no estar llamando cada rato en el render "DEStruCturing"
-        var { descripcion, indexDescripcion, documento_resolucion_estado, observacion } = this.state
-        return (
-            <div>
-                <Button color="primary" onClick={this.agregarPadre}>
-                    Agregar Estados
-                </Button>
-                <Table dark >
-                    <thead>
-                        <tr>
-                            <th>
-
-                            </th>
-                            <th>
-                                N°
-                            </th>
-                            <th>
-                                Tipo/Estado
-                            </th>
-                            <th>
-                                Añadir Datos
-                            </th>
-                            <th>
-                                Fecha de Inicio
-                            </th>
-                            <th>
-                                Fecha de Término
-
-                            </th>
-                            <th>
-                                Días
-                            </th>
-                            <th>
-
-                            </th>
-                            {/* <th>
-                                Resolución
-                            </th>
-
-                            <th>
-                                Observación
-                            </th> */}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            this.state.plazosHistorial.map((plazo, index) =>
-                                <tr key={plazo.id_uuid}>
-                                    <td>
-                                        {plazo.nivel == 1 ?
-                                            <button className="btn btn-outline-primary btn-sm mr-1" onClick={() => this.agregarHijo(plazo.id_uuid, index)}>
-                                                +
-                                        </button>
-                                            :
-                                            ""
-                                        }
-                                    </td>
-                                    <td style={plazo.nivel === 2 ?{paddingLeft:"20px"}:null}>
-
-                                        {plazo.nivel == 1 ?
-                                            [
-                                                ++contador,
-                                                (() => {
-                                                    subcontador = 0
-                                                })(),
-
-                                            ]
-                                            :
-                                            [
-                                                contador + "." + ++subcontador
-                                            ]
-                                        }
-                                    </td>
-                                    <td>
-                                        <select onChange={event => this.actualizarPlazo(index, "tipo", event.target.value)} required value={plazo.tipo}>
-                                            <option>Seleccionar</option>
-                                            {plazo.nivel == 1 ?
-                                                this.state.plazosTipo_1.map((plazoTipo, index) =>
-                                                    <option
-                                                        key={index}
-                                                        value={plazoTipo.idplazos_tipo}>{plazoTipo.nombre}</option>
-                                                )
-                                                :
-                                                this.state.plazosTipo_2.map((plazoTipo, index) =>
-                                                    <option
-                                                        key={index}
-                                                        value={plazoTipo.idplazos_tipo}>{plazoTipo.nombre}</option>
-                                                )
-                                            }
-                                        </select>
-                                    </td>
-                                    <td >
-                                        <button className="btn btn-outline-primary btn-sm mr-1" onClick={() => this.descripcion1(plazo.descripcion, plazo.documento_resolucion_estado, plazo.observacion, index)}> Add
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <input
-                                            className="inputplazos"
-                                            type="date"
-                                            value={plazo.fecha_inicio}
-                                            onChange={event => this.actualizarPlazo(index, "fecha_inicio", event.target.value)}
-                                        />
-                                    </td>
-
-                                    <td>
-                                        <input
-                                            className="inputplazos"
-                                            type="date"
-                                            value={plazo.fecha_final}
-                                            onChange={event => this.actualizarPlazo(index, "fecha_final", event.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            className="inputplazos"
-                                            style={{ width: "40px" }}
-                                            type="number"
-                                            value={this.calcular_dias(plazo.fecha_inicio, plazo.fecha_final)}
-                                            readOnly
-                                        />
-                                    </td>
-                                    {/* <td>
-                                        <textarea
-                                            type="text"
-                                            defaultValue={plazo.documento_resolucion_estado}
-                                            onBlur={event => this.actualizarPlazo(index, "documento_resolucion_estado", event.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <textarea
-                                            type="text"
-                                            defaultValue={plazo.observacion}
-                                            onBlur={event => this.actualizarPlazo(index, "observacion", event.target.value)}
-                                        />
-                                    </td> */}
-
-                                    <td>
-                                        <Button color="danger" onClick={() => this.elminarHistorial(index)} >
-                                            Eliminar
-                                        </Button>
-                                    </td>
-                                </tr>
-
-                            )
-                        }
-                        <tr >
-                            <td colSpan="5">
-
-                            </td>
-                            <td >
-                                TOTAL
-                            </td>
-                            <td>
-                                {
-                                    (() => {
-
-                                        {/* console.log(this.state.plazosHistorial); */ }
-                                        var TotalDiasPadre = 0
-                                        for (let i = 0; i < this.state.plazosHistorial.length; i++) {
-                                            const plazo = this.state.plazosHistorial[i];
-                                            if (plazo.nivel == 1) {
-                                                TotalDiasPadre += this.calcular_dias(plazo.fecha_inicio, plazo.fecha_final)
-                                            }
-                                        }
-                                        return TotalDiasPadre
-                                    })()
-                                }
-                            </td>
-                        </tr>
-
-                        <Modal isOpen={this.state.modalIsOpen}>
-                            <ModalHeader toggle={this.toggleModal} className="border-button center">Añadir Descripción</ModalHeader>
-                            <ModalBody>
-                                <div>
-                                    <td>DESCRIPCIÓN</td>
-                                    <Input
-
-                                        defaultValue={descripcion}
-                                        onBlur={event => this.actualizarPlazo(indexDescripcion, "descripcion", event.target.value)}>
-
-                                    </Input>
-                                </div>
-                                <div>
-                                    <td>N° DE RESOLUCIÓN</td>
-                                    <Input
-                                        defaultValue={documento_resolucion_estado}
-                                        onBlur={event => this.actualizarPlazo(indexDescripcion, "documento_resolucion_estado", event.target.value)}>
-
-                                    </Input></div>
-
-                                <div>
-                                    <td>OBSERVACIÓN</td>
-                                    <Input
-
-                                        defaultValue={observacion}
-                                        onBlur={event => this.actualizarPlazo(indexDescripcion, "observacion", event.target.value)}>
-
-                                    </Input>
-
-                                </div>
-
-
-
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button onClick={this.toggleModal} color="success"> AÑADIR</Button>
-                            </ModalFooter>
-                        </Modal>
-
-                    </tbody>
-
-                </Table><div><p>Guarde siempre que genere una nueva fila, siempre y cuando llene todos los datos de la fila, si comete algún error en el momento del llenado se puede modificar sin problema alguno, sea responsable con el uso del sistema.</p></div>
-                <br />
-                <Button color="success" type="submit" onClick={this.guardarPlazosHistoria} >
-                    Guardar Datos
-                </Button>
-            </div>
-        )
-    }
+    )
 }
-export default PlazosHistorial;
+
+function PLazosHijos({ id_padre, count }) {
+    useEffect(() => {
+        fetchCargarPlazosHijos()
+        return () => {
+
+        }
+    }, [])
+    const [CargarPlazosHijos, setCargarPlazosHijos] = useState([])
+    async function fetchCargarPlazosHijos() {
+        const res = await axios.get(`${UrlServer}/plazosHijos`,
+            {
+                params:
+                {
+                    id_ficha: sessionStorage.getItem('idobra'),
+                    id_padre: id_padre
+                }
+            }
+        )
+        setCargarPlazosHijos(res.data)
+        console.log("Mesaje solito");
+        console.log(res.data);
+    }
+    return (
+        CargarPlazosHijos.map((item, i) =>
+            <tr >
+                <th scope="row" style={{ paddingLeft: "20px" }}>{count + "." + (i + 1)}</th>
+                <td>{item.tipo_nombre}</td>
+                <td>{item.descripcion}</td>
+                <td>{item.documento_resolucion_estado}</td>
+                <td>{item.fecha_inicio}</td>
+                <td>{item.fecha_final}</td>
+                <td>{item.n_dias}</td>
+                <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
+                <td>
+                    <PlazosFormularioEdicion
+                        data = {item}
+                    />
+                </td>
+            </tr>
+        )
+    )
+}
