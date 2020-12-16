@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
 import axios from 'axios';
 import 'jspdf-autotable';
 import "../../../css/inicio.css"
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import FinancieroBarraPorcentaje from './FinancieroBarraPorcentaje'
-import { Button } from 'reactstrap';
+import { Button, Tooltip } from 'reactstrap';
 import FisicoBarraPorcentaje from './FisicoBarraPorcentaje';
 import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from './InformacionObras/InformacionObra'
 import Curva_S from './Curva_S'
 import { FaList } from "react-icons/fa";
 import { Redondea } from '../Utils/Funciones';
+import Obras_labels_edicion from './Obras_labels_edicion';
 export default ({ recargar }) => {
     useEffect(() => {
         fetchObras(0)
@@ -79,6 +80,12 @@ export default ({ recargar }) => {
         setTipoObraSeleccionado(id_tipo)
         fetchObras(id_tipo)
     }
+    //labels
+    const [RefLabels, setRefLabels] = useState([])
+    function recargarObraLabels(id_ficha) {
+        RefLabels[id_ficha].recarga()
+    }
+
     return (
         <div>
             {Comunicados.map((comunicado, index) =>
@@ -161,6 +168,24 @@ export default ({ recargar }) => {
                                     <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
                                     <ModalInformacionObras id_ficha={item.id_ficha} />
                                     <Curva_S id_ficha={item.id_ficha} />
+                                    <Obras_labels_edicion
+                                        id_ficha={item.id_ficha}
+                                        recargarObraLabels={recargarObraLabels}
+                                        codigo={item.codigo}
+                                    />
+                                </td>
+                            </tr>
+                            ,
+                            <tr>
+                                <td colSpan="8">
+                                    <Obras_labels
+                                        id_ficha={item.id_ficha}
+                                        ref={(ref) => {
+                                            var clone = RefLabels
+                                            clone[item.id_ficha] = ref
+                                            setRefLabels(clone)
+                                        }}
+                                    />
                                 </td>
                             </tr>
                             ,
@@ -328,3 +353,135 @@ function ComponenteBarraPorcentaje({ id_componente, componente }) {
 
     );
 }
+const Obras_labels = forwardRef(({ id_ficha }, ref) => {
+    useImperativeHandle(ref, () => ({
+        recarga() {
+            fetchLabels()
+        }
+    }));
+    useEffect(() => {
+        fetchLabels()
+    }, [])
+    const [Labels, setLabels] = useState([])
+    async function fetchLabels() {
+        var res = await axios.get(`${UrlServer}/FichasLabelsAsignadas`, {
+            params: {
+                id_ficha
+            }
+        })
+        if (Array.isArray(res.data))
+            setLabels(res.data)
+
+    }
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        var r = parseInt(result[1], 16);
+        var g = parseInt(result[2], 16);
+        var b = parseInt(result[3], 16);
+        r /= 255, g /= 255, b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+        if (max == min) {
+            h = s = 0; // achromatic
+        } else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+        h = Math.round(360 * h);
+        s = s * 100
+        s = Math.round(s);
+        l = l * 100;
+        l = Math.round(l);
+        var respuesta = {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16),
+            h, s, l
+        }
+        return result ? respuesta : null;
+    }
+    const [tooltipOpen, setTooltipOpen] = useState(0);
+
+    const toggle = (id) => {
+        if (id == tooltipOpen) {
+            setTooltipOpen(0)
+        } else {
+            setTooltipOpen(id)
+        }
+
+    };
+    async function quitarObraLabel(id_label) {
+        if (confirm("Esta seguro de quitar esta etiqueta?")) {
+            var res = await axios.delete(`${UrlServer}/FichasAsignarLabels`,
+                {
+                    data: {
+                        id_ficha,
+                        id_label
+                    }
+                }
+            )
+            console.log("eliminado", res.data);
+            fetchLabels(id_ficha)
+        }
+    }
+    return (
+        <div
+            style={{
+                display: "flex"
+            }}
+        >
+            {
+                Labels.map((item, i) =>
+                    [
+                        <Button
+                            type="button"
+                            style={{
+                                borderRadius: "13px",
+                                "--perceived-lightness": "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
+                                "--lightness-switch": " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
+                                padding: " 0 10px",
+                                "line-height": " 22px!important",
+                                "--lightness-threshold": " 0.6",
+                                "--background-alpha": " 0.18",
+                                "--border-alpha": " 0.3",
+                                "--lighten-by": " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
+                                "background": " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
+                                "color": " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
+                                "border-color": " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+                                "--label-r": hexToRgb(item.color).r,
+                                "--label-g": hexToRgb(item.color).g,
+                                "--label-b": hexToRgb(item.color).b,
+                                "--label-h": hexToRgb(item.color).h,
+                                "--label-s": hexToRgb(item.color).s,
+                                "--label-l": hexToRgb(item.color).l,
+                                margin: "5px",
+                            }}
+                            id={"Tooltip-" + item.id + "-" + id_ficha}
+                            onClick={() => {
+                                quitarObraLabel(item.id)
+                            }}
+                        >
+                            {item.nombre}
+                        </Button>,
+                        <Tooltip
+                            placement={"bottom"}
+                            isOpen={tooltipOpen == item.id}
+                            target={"Tooltip-" + item.id + "-" + id_ficha}
+                            toggle={() => toggle(item.id)}
+                        >
+                            {item.descripcion}
+                        </Tooltip>
+                    ]
+
+                )
+            }
+
+        </div>
+    )
+})
