@@ -4,7 +4,7 @@ import 'jspdf-autotable';
 import "../../../css/inicio.css"
 import { UrlServer } from '../Utils/ServerUrlConfig'
 import FinancieroBarraPorcentaje from './FinancieroBarraPorcentaje'
-import { Button, Tooltip } from 'reactstrap';
+import { Button, Input, Tooltip } from 'reactstrap';
 import FisicoBarraPorcentaje from './FisicoBarraPorcentaje';
 import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from './InformacionObras/InformacionObra'
@@ -17,15 +17,10 @@ export default ({ recargar }) => {
         fetchObras(0)
         fetchComunicados()
         fetchTipoObras()
+        fetchProvincias()
     }, []);
     //funciones
-    function calcular_dias(fecha_inicio, fecha_final) {
-        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        const firstDate = new Date(fecha_inicio);
-        const secondDate = new Date(fecha_final);
-        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-        return days || 0
-    }
+
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
     async function fetchComunicados() {
@@ -39,52 +34,84 @@ export default ({ recargar }) => {
     }
     //obras
     const [Obras, setObras] = useState([])
-    async function fetchObras(id_tipoObra) {
+    async function fetchObras() {
         var request = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
             id_acceso: sessionStorage.getItem("idacceso"),
-            id_tipoObra
+            // id_unidadEjecutora: ProvinciaSeleccionada,
+            // idsectores: SectoreSeleccionado,
+            // id_tipoObra: TipoObraSeleccionada,
+            // Estados_id_Estado:EstadosObraeleccionada
         })
         setObras(request.data)
         if (!sessionStorage.getItem('idobra')) {
             recargar(request.data[0])
         }
     }
-    const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] = useState({})
-    async function onChangeObraComponentesSeleccionada(id_ficha) {
-        setComponentes([])
-        if (ObraComponentesSeleccionada == id_ficha) {
-            setObraComponentesSeleccionada(-1)
+
+
+
+    // FILTROS
+    //provincias
+    const [Provincias, setProvincias] = useState([])
+    const [ProvinciasSeleccionadasInterfaz, setProvinciasSeleccionadasInterfaz] = useState([])
+    const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(0)
+    function onChangeProvincias(id_unidadEjecutora) {
+        console.log("index", id_unidadEjecutora);
+        if (id_unidadEjecutora == 0) {
+            setProvinciasSeleccionadasInterfaz(Provincias)
         } else {
-            setObraComponentesSeleccionada(id_ficha)
-            fetchComponentes(id_ficha)
+            console.log("provincias", Provincias);
+            setProvinciasSeleccionadasInterfaz([Provincias.find(item => item.id_unidadEjecutora == id_unidadEjecutora)])
         }
     }
-    //componentes
-    const [Componentes, setComponentes] = useState([])
-    async function fetchComponentes(id_ficha) {
-        var request = await axios.post(`${UrlServer}/getComponentes`, {
-            id_ficha
+    async function fetchProvincias() {
+        var res = await axios.post(`${UrlServer}/getProvincias`, {
+            id_acceso: sessionStorage.getItem("idacceso"),
+            "id_unidadEjecutora": "0"
         })
-        setComponentes(request.data)
+        setProvincias(res.data)
+        setProvinciasSeleccionadasInterfaz(res.data)
+    }
+    //sectores
+    const [Sectores, setSectores] = useState([])
+    const [SectoreSeleccionado, setSectoreSeleccionado] = useState(0)
+    async function fetchSectores() {
+        var res = await axios.post(`${UrlServer}/getSectores`, {
+            id_acceso: sessionStorage.getItem("idacceso"),
+            "id_unidadEjecutora": ProvinciaSeleccionada
+        })
+        setSectores(res.data)
     }
     //tipo de obras
     const [TipoObras, setTipoObras] = useState([])
+    const [TipoObraSeleccionada, setTipoObraSeleccionada] = useState(0)
     async function fetchTipoObras() {
         var request = await axios.post(`${UrlServer}/getTipoObras`, {
             id_acceso: sessionStorage.getItem("idacceso")
         })
         setTipoObras(request.data)
     }
-    const [, setTipoObraSeleccionado] = useState(0)
-    function onChangeTipoObra(id_tipo) {
-        setTipoObraSeleccionado(id_tipo)
-        fetchObras(id_tipo)
+    //estados
+    const [EstadosObra, setEstadosObra] = useState([])
+    const [EstadosObraeleccionada, setEstadosObraeleccionada] = useState(0)
+    async function fetchEstadosObra() {
+        var request = await axios.post(`${UrlServer}/getEstados`, {
+            id_acceso: sessionStorage.getItem("idacceso"),
+            "id_unidadEjecutora": ProvinciaSeleccionada
+        })
+        setEstadosObra(request.data)
     }
-    //labels
-    const [RefLabels, setRefLabels] = useState([])
-    function recargarObraLabels(id_ficha) {
-        RefLabels[id_ficha].recarga()
-    }
+
+    useEffect(() => {
+        fetchSectores()
+        setSectoreSeleccionado(0)
+        fetchEstadosObra()
+        setEstadosObraeleccionada(0)
+    }, [ProvinciasSeleccionadasInterfaz])
+
+    // useEffect(() => {
+    //     fetchObras()
+    // }, [ProvinciaSeleccionada, SectoreSeleccionado, TipoObraSeleccionada, EstadosObraeleccionada])
 
     return (
         <div>
@@ -96,9 +123,56 @@ export default ({ recargar }) => {
             )}
 
             <div className="fondo">
-                <div className="float-right">
-                    <select className="form-control form-control-sm"
-                        onChange={(e) => onChangeTipoObra(e.target.value)}
+                <div
+                    style={{
+                        display: "flex"
+                    }}
+                >
+                    <Input
+                        type="select"
+                        onChange={(e) => {
+                            onChangeProvincias(e.target.value)
+                            setProvinciaSeleccionada(e.target.value)
+                        }}
+                    // value={ProvinciaSeleccionada}
+                    >
+                        <option value="0">
+                            Todas las provincias
+                    </option>
+                        {Provincias.map((item, i) =>
+                            <option key={i} value={item.id_unidadEjecutora}>{item.nombre}</option>
+                        )}
+                    </Input>
+                    <Input
+                        type="select"
+                        onChange={(e) => setSectoreSeleccionado(e.target.value)}
+                        value={SectoreSeleccionado}
+                    >
+                        <option value="0">
+                            Todos los sectores
+                        </option>
+                        {Sectores.map((item, i) =>
+                            <option key={i} value={item.idsectores}>{item.nombre}</option>
+                        )}
+                    </Input>
+                    <Input
+                        type="select"
+                        onChange={(e) => setEstadosObraeleccionada(e.target.value)}
+                        value={EstadosObraeleccionada}
+                    >
+                        <option value="0">
+                            Todos los estados
+                        </option>
+                        {
+                            EstadosObra.map((item, index) =>
+                                <option key={index} value={item.id_Estado}>{item.nombre}</option>
+                            )
+                        }
+                    </Input>
+                    <Input
+                        type="select"
+                        onChange={(e) => setTipoObraSeleccionada(e.target.value)}
+                        value={TipoObraSeleccionada}
                     >
                         <option value={0}>Todo</option>
                         {
@@ -107,155 +181,39 @@ export default ({ recargar }) => {
                             )
                         }
 
-                    </select>
+                    </Input>
+
+
+
                 </div>
             </div>
-            <table className="table table-sm" >
-                <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th style={{ width: "400px", minWidth: "150px", textAlign: "center" }} >OBRA</th>
-                        <th className="text-center" >AVANCE </th>
-                        <th className="text-center" >UDM </th>
-                        <th className="text-center">IR A</th>
-                        <th className="text-center">ESTADO</th>
-                        <th className="text-center" style={{ width: "105px", minWidth: "100px" }} >OPCIONES</th>
-                    </tr>
-                </thead>
-                <tbody >
-                    {Obras.map((item, i) =>
-                        [
-                            <tr key={item.id_ficha}>
-                                <td>
-                                    {i + 1}
-                                </td>
-                                <td>
-                                    {item.g_meta}
-                                </td>
-                                <td
-                                    style={{
-                                        width: "20%"
-                                    }}
-                                >
-                                    <FisicoBarraPorcentaje id_ficha={item.id_ficha} />
-                                    <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
-                                </td>
-                                <td >
-                                    {calcular_dias(item.ultima_fecha, new Date()) - 1} días
 
-                                </td>
-                                <td>
-                                    <Button
-                                        outline={sessionStorage.getItem('idobra') != item.id_ficha}
-                                        color={sessionStorage.getItem('idobra') != item.id_ficha ? "secondary" : "primary"}
-                                        onClick={() => { recargar(item) }}
-                                        className="text-white"
-                                    >
-                                        {item.codigo}
-                                    </Button>
-                                </td>
-                                <td>
-                                    <EstadoObra id_ficha={item.id_ficha} />
-                                </td>
-                                <td className="d-flex">
-                                    <button
-                                        className="btn btn-outline-info btn-sm mr-1"
-                                        title="Avance Componentes"
-                                        onClick={() => onChangeObraComponentesSeleccionada(item.id_ficha)}
-                                    >
-                                        <FaList />
-                                    </button>
-                                    <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
-                                    <ModalInformacionObras id_ficha={item.id_ficha} />
-                                    <Curva_S id_ficha={item.id_ficha} />
-                                    <Obras_labels_edicion
-                                        id_ficha={item.id_ficha}
-                                        recargarObraLabels={recargarObraLabels}
-                                        codigo={item.codigo}
-                                    />
-                                </td>
-                            </tr>
-                            ,
-                            <tr>
-                                <td colSpan="8"
-                                style={{
-                                    "border-top": "none"
-                                }}
-                                >
-                                    <Obras_labels
-                                        id_ficha={item.id_ficha}
-                                        ref={(ref) => {
-                                            var clone = RefLabels
-                                            clone[item.id_ficha] = ref
-                                            setRefLabels(clone)
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                            ,
-                            (
-                                ObraComponentesSeleccionada == item.id_ficha
-                                &&
-                                <tr key={"1." + i}>
-                                    <td colSpan="8">
-                                        <table className="table table-bordered table-sm"
-                                            style={{
-                                                width: "100%"
-                                            }}
-                                        >
-                                            <thead>
-                                                <tr>
-                                                    <th>N°</th>
-                                                    <th>COMPONENTE</th>
-                                                    <th>PRESUPUESTO CD</th>
-                                                    <th>EJECUCIÓN FÍSICA</th>
-                                                    <th>BARRRA PORCENTUAL</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style={{ backgroundColor: '#333333' }}>
-                                                {
-                                                    Componentes.map((item) =>
+            {
+                ProvinciasSeleccionadasInterfaz.map((item, i) =>
+                    <div key={item.id_unidadEjecutora}>
+                        <div
+                            style={{
+                                color: "#8caeda",
+                                fontSize: "1.2rem",
+                                fontWeight: "700",
+                            }}
+                        >
+                            {item.nombre}
+                        </div>
+                        <ProvinciaSectores
+                            id_unidadEjecutora={item.id_unidadEjecutora}
+                            SectoreSeleccionado={SectoreSeleccionado}
+                            recargar={recargar}
+                        />
+                    </div>
 
-                                                        <tr key={Componentes.id_componente} >
-                                                            <td>{item.numero}</td>
-
-                                                            <td style={{ fontSize: '0.75rem', color: '#8caeda' }}
-                                                            >{item.nombre}</td>
-
-                                                            <td> S/. {Redondea(item.presupuesto)}</td>
-                                                            <td>
-                                                                <ComponenteAvance id_componente={item.id_componente} />
-                                                            </td>
-                                                            <td>
-                                                                <ComponenteBarraPorcentaje
-                                                                    id_componente={item.id_componente}
-                                                                    componente={item}
-                                                                />
-                                                            </td>
-
-                                                        </tr>
-
-                                                    )}
-                                            </tbody>
-                                        </table>
-
-                                    </td>
-
-                                </tr>
-                            )
-
-                        ]
-                    )}
-
-                </tbody>
-
-            </table>
+                )
+            }
 
         </div>
 
     );
 }
-//componente de ulti dia metrado
 //componente de estado de obra
 function EstadoObra({ id_ficha }) {
     useEffect(() => {
@@ -489,3 +447,232 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
         </div>
     )
 })
+function ProvinciaSectores({ id_unidadEjecutora, SectoreSeleccionado, recargar }) {
+    useEffect(() => {
+        fetchSectores()
+    }, [])
+    const [Sectores, setSectores] = useState([])
+    async function fetchSectores() {
+        var res = await axios.post(`${UrlServer}/getSectores`, {
+            id_acceso: sessionStorage.getItem("idacceso"),
+            id_unidadEjecutora,
+            idsectores: SectoreSeleccionado
+        })
+        if (Array.isArray(res.data)) {
+            setSectores(res.data)
+        }
+    }
+    return (
+        Sectores.map((item, i) =>
+            <div>
+                <div
+                    style={{
+                        color: "#e0ff97",
+                        fontSize: "1rem",
+                        fontWeight: "700",
+                    }}
+                >
+                    {item.nombre}
+                </div >
+                <SectoresObras
+                    id_unidadEjecutora={id_unidadEjecutora}
+                    idsectores={item.idsectores}
+                    recargar={recargar}
+                />
+            </div>
+
+        )
+    )
+}
+function SectoresObras({ id_unidadEjecutora, idsectores, recargar }) {
+    useEffect(() => {
+        fetchObras()
+    }, [])
+    const [Obras, setObras] = useState([])
+    async function fetchObras() {
+        var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
+            id_acceso: sessionStorage.getItem("idacceso"),
+            id_unidadEjecutora,
+            idsectores
+            // id_tipoObra: TipoObraSeleccionada,
+            // Estados_id_Estado:EstadosObraeleccionada
+        })
+        setObras(res.data)
+        if (!sessionStorage.getItem('idobra')) {
+            recargar(request.data[0])
+        }
+    }
+    function calcular_dias(fecha_inicio, fecha_final) {
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const firstDate = new Date(fecha_inicio);
+        const secondDate = new Date(fecha_final);
+        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+        return days || 0
+    }
+    //labels
+    const [RefLabels, setRefLabels] = useState([])
+    function recargarObraLabels(id_ficha) {
+        RefLabels[id_ficha].recarga()
+    }
+    //componentes
+    const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] = useState({})
+    async function onChangeObraComponentesSeleccionada(id_ficha) {
+        setComponentes([])
+        if (ObraComponentesSeleccionada == id_ficha) {
+            setObraComponentesSeleccionada(-1)
+        } else {
+            setObraComponentesSeleccionada(id_ficha)
+            fetchComponentes(id_ficha)
+        }
+    }
+    //componentes
+    const [Componentes, setComponentes] = useState([])
+    async function fetchComponentes(id_ficha) {
+        var request = await axios.post(`${UrlServer}/getComponentes`, {
+            id_ficha
+        })
+        setComponentes(request.data)
+    }
+    return (
+        <table className="table table-sm" >
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th style={{ width: "400px", minWidth: "150px", textAlign: "center" }} >OBRA</th>
+                    <th className="text-center" >AVANCE </th>
+                    <th className="text-center" >UDM </th>
+                    <th className="text-center">IR A</th>
+                    <th className="text-center">ESTADO</th>
+                    <th className="text-center" style={{ width: "105px", minWidth: "100px" }} >OPCIONES</th>
+                </tr>
+            </thead>
+            <tbody >
+                {Obras.map((item, i) =>
+                    [
+                        <tr key={item.id_ficha}>
+                            <td>
+                                {i + 1}
+                            </td>
+                            <td>
+                                {item.g_meta}
+                            </td>
+                            <td
+                                style={{
+                                    width: "20%"
+                                }}
+                            >
+                                <FisicoBarraPorcentaje id_ficha={item.id_ficha} />
+                                <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
+                            </td>
+                            <td >
+                                {calcular_dias(item.ultima_fecha, new Date()) - 1} días
+
+                            </td>
+                            <td>
+                                <Button
+                                    outline={sessionStorage.getItem('idobra') != item.id_ficha}
+                                    color={sessionStorage.getItem('idobra') != item.id_ficha ? "secondary" : "primary"}
+                                    onClick={() => { recargar(item) }}
+                                    className="text-white"
+                                >
+                                    {item.codigo}
+                                </Button>
+                            </td>
+                            <td>
+                                <EstadoObra id_ficha={item.id_ficha} />
+                            </td>
+                            <td className="d-flex">
+                                <button
+                                    className="btn btn-outline-info btn-sm mr-1"
+                                    title="Avance Componentes"
+                                    onClick={() => onChangeObraComponentesSeleccionada(item.id_ficha)}
+                                >
+                                    <FaList />
+                                </button>
+                                <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
+                                <ModalInformacionObras id_ficha={item.id_ficha} />
+                                <Curva_S id_ficha={item.id_ficha} />
+                                <Obras_labels_edicion
+                                    id_ficha={item.id_ficha}
+                                    recargarObraLabels={recargarObraLabels}
+                                    codigo={item.codigo}
+                                />
+                            </td>
+                        </tr>
+                        ,
+                        <tr>
+                            <td colSpan="8"
+                                style={{
+                                    "border-top": "none"
+                                }}
+                            >
+                                <Obras_labels
+                                    id_ficha={item.id_ficha}
+                                    ref={(ref) => {
+                                        var clone = RefLabels
+                                        clone[item.id_ficha] = ref
+                                        setRefLabels(clone)
+                                    }}
+                                />
+                            </td>
+                        </tr>
+                        ,
+                        (
+                            ObraComponentesSeleccionada == item.id_ficha
+                            &&
+                            <tr key={"1." + i}>
+                                <td colSpan="8">
+                                    <table className="table table-bordered table-sm"
+                                        style={{
+                                            width: "100%"
+                                        }}
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <th>N°</th>
+                                                <th>COMPONENTE</th>
+                                                <th>PRESUPUESTO CD</th>
+                                                <th>EJECUCIÓN FÍSICA</th>
+                                                <th>BARRRA PORCENTUAL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style={{ backgroundColor: '#333333' }}>
+                                            {
+                                                Componentes.map((item) =>
+
+                                                    <tr key={Componentes.id_componente} >
+                                                        <td>{item.numero}</td>
+
+                                                        <td style={{ fontSize: '0.75rem', color: '#8caeda' }}
+                                                        >{item.nombre}</td>
+
+                                                        <td> S/. {Redondea(item.presupuesto)}</td>
+                                                        <td>
+                                                            <ComponenteAvance id_componente={item.id_componente} />
+                                                        </td>
+                                                        <td>
+                                                            <ComponenteBarraPorcentaje
+                                                                id_componente={item.id_componente}
+                                                                componente={item}
+                                                            />
+                                                        </td>
+
+                                                    </tr>
+
+                                                )}
+                                        </tbody>
+                                    </table>
+
+                                </td>
+
+                            </tr>
+                        )
+
+                    ]
+                )}
+
+            </tbody>
+
+        </table>
+    )
+}
