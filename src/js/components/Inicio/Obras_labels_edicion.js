@@ -47,7 +47,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
             ...FormularioDatos,
             [event.target.name]: event.target.value
         })
-        console.log(event.target.name, event.target.value);
+        // console.log(event.target.name, event.target.value);
     }
     async function enviarDatos(event) {
         event.preventDefault()
@@ -65,13 +65,24 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
     }
     function hexToRgb(hex) {
         console.log(hex);
-        if(hex ==undefined){
-            hex ="#000000"
+        if (hex == undefined || hex == "") {
+            hex = "#000000"
         }
         hex = hex.replace("#", "")
         hex = hex.padStart(6, '0')
         console.log(hex);
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if(!result){
+            return {
+                r:0,
+                g:0,
+                b:0,
+                h:0,
+                s:0,
+                l:0
+            }
+        }
+        
         var r = parseInt(result[1], 16);
         var g = parseInt(result[2], 16);
         var b = parseInt(result[3], 16);
@@ -101,7 +112,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
             b: parseInt(result[3], 16),
             h, s, l
         }
-        return result ? respuesta : null;
+        return respuesta;
     }
     //asignacion de labels
     async function asignarLabel(id_label) {
@@ -234,12 +245,12 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                                         </dt>
                                         <dd>
                                             <Input
-                                                type="text"
+                                                type="textarea"
                                                 id="label-description-"
                                                 name="label[description]"
                                                 placeholder="Description (optional)"
                                                 aria-describedby="label--description-error"
-                                                maxlength="100"
+                                                maxlength="250"
                                                 onChange={handleInputChange}
                                                 name="descripcion"
                                                 style={{
@@ -270,6 +281,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                                             <div
                                             >
                                                 <Input
+                                                    maxlength="7"
                                                     id="PopoverLegacy"
                                                     type="text"
                                                     style={{
@@ -282,7 +294,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                                                     value={FormularioDatos.color}
                                                     onChange={handleInputChange}
                                                 >
-                                                    {FormularioDatos.color}
+                                                    {FormularioDatos.color||" "}
                                                 </Input>
 
                                                 <UncontrolledPopover trigger="legacy" placement="bottom" target="PopoverLegacy">

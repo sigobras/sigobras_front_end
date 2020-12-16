@@ -141,7 +141,7 @@ export default ({ recargar }) => {
                                     <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
                                 </td>
                                 <td >
-                                    {calcular_dias(item.ultima_fecha, new Date()) - 1} días sin reportar
+                                    {calcular_dias(item.ultima_fecha, new Date()) - 1} días
 
                                 </td>
                                 <td>
@@ -177,7 +177,11 @@ export default ({ recargar }) => {
                             </tr>
                             ,
                             <tr>
-                                <td colSpan="8">
+                                <td colSpan="8"
+                                style={{
+                                    "border-top": "none"
+                                }}
+                                >
                                     <Obras_labels
                                         id_ficha={item.id_ficha}
                                         ref={(ref) => {
