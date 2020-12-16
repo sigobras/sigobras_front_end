@@ -1,0 +1,11 @@
+.formulario-labels {
+    display: flex;
+}
+  
+.formulario-labels > dl {
+    margin: 10px;
+}
+.paleta-color button {
+    width: 34px;
+    height: 34px;
+}
