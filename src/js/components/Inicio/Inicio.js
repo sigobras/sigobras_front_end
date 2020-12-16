@@ -134,6 +134,9 @@ export default ({ recargar }) => {
                             onChangeProvincias(e.target.value)
                             setProvinciaSeleccionada(e.target.value)
                         }}
+                        style={{
+                            width: "400px"
+                        }}
                     // value={ProvinciaSeleccionada}
                     >
                         <option value="0">
@@ -143,7 +146,7 @@ export default ({ recargar }) => {
                             <option key={i} value={item.id_unidadEjecutora}>{item.nombre}</option>
                         )}
                     </Input>
-                    <Input
+                    {/* <Input
                         type="select"
                         onChange={(e) => setSectoreSeleccionado(e.target.value)}
                         value={SectoreSeleccionado}
@@ -181,7 +184,7 @@ export default ({ recargar }) => {
                             )
                         }
 
-                    </Input>
+                    </Input> */}
 
 
 
