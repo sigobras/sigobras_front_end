@@ -38,7 +38,19 @@ export default ({ id_ficha, codigo }) => {
             ><MdPhotoLibrary />
             </button>
             <Modal isOpen={modal} toggle={toggle} size="lg" >
-                <ModalHeader toggle={toggle}>Imagenes de {codigo}</ModalHeader>
+                <ModalHeader toggle={toggle}>
+                    <div style={{ display: "flex" }}>
+                        Imagenes de {codigo}
+                        <div
+                            style={{
+                                right: "48px",
+                                position: "absolute"
+                            }}
+                        >
+                            {ImagenesObra[ImagenActiva] && ImagenesObra[ImagenActiva].fecha}
+                        </div>
+                    </div>
+                </ModalHeader>
                 <ModalBody>
                     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                         <ol class="carousel-indicators">
@@ -94,7 +106,7 @@ export default ({ id_ficha, codigo }) => {
                             data-slide="prev"
                             onClick={() => {
                                 console.log("ImagenActiva", ImagenActiva);
-                                setImagenActiva(ImagenActiva > 0 ? ImagenActiva - 1 : ImagenActiva)
+                                setImagenActiva(ImagenActiva > 0 ? ImagenActiva - 1 : ImagenesObra.length - 1)
                             }}
                         >
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -107,7 +119,7 @@ export default ({ id_ficha, codigo }) => {
                             data-slide="next"
                             onClick={() => {
                                 console.log("ImagenActiva", ImagenActiva);
-                                setImagenActiva(ImagenActiva < ImagenesObra.length - 1 ? ImagenActiva + 1 : ImagenActiva)
+                                setImagenActiva(ImagenActiva < ImagenesObra.length - 1 ? ImagenActiva + 1 : 0)
                             }}
                         >
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>

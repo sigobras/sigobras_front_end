@@ -40,13 +40,13 @@ export default ({ recargar }) => {
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
     async function fetchComunicados() {
-        var request = await axios.post(`${UrlServer}/comunicadosInicio`,
+        var res = await axios.post(`${UrlServer}/comunicadosInicio`,
             {
                 "id_ficha": sessionStorage.getItem('idobra'),
 
             }
         )
-        setComunicados(request.data)
+        setComunicados(res.data)
     }
     //obras
     const [Obras, setObras] = useState([])
@@ -62,7 +62,7 @@ export default ({ recargar }) => {
         console.log("obras", res.data);
         setObras(res.data)
         if (!sessionStorage.getItem('idobra')) {
-            recargar(request.data[0])
+            recargar(res.data[0])
         }
     }
     function calcular_dias(fecha_inicio, fecha_final) {
@@ -91,10 +91,10 @@ export default ({ recargar }) => {
     //componentes
     const [Componentes, setComponentes] = useState([])
     async function fetchComponentes(id_ficha) {
-        var request = await axios.post(`${UrlServer}/getComponentes`, {
+        var res = await axios.post(`${UrlServer}/getComponentes`, {
             id_ficha
         })
-        setComponentes(request.data)
+        setComponentes(res.data)
     }
 
 
@@ -134,20 +134,20 @@ export default ({ recargar }) => {
     const [TipoObras, setTipoObras] = useState([])
     const [TipoObraSeleccionada, setTipoObraSeleccionada] = useState(0)
     async function fetchTipoObras() {
-        var request = await axios.post(`${UrlServer}/getTipoObras`, {
+        var res = await axios.post(`${UrlServer}/getTipoObras`, {
             id_acceso: sessionStorage.getItem("idacceso")
         })
-        setTipoObras(request.data)
+        setTipoObras(res.data)
     }
     //estados
     const [EstadosObra, setEstadosObra] = useState([])
     const [EstadosObraeleccionada, setEstadosObraeleccionada] = useState(0)
     async function fetchEstadosObra() {
-        var request = await axios.post(`${UrlServer}/getEstados`, {
+        var res = await axios.post(`${UrlServer}/getEstados`, {
             id_acceso: sessionStorage.getItem("idacceso"),
             "id_unidadEjecutora": ProvinciaSeleccionada
         })
-        setEstadosObra(request.data)
+        setEstadosObra(res.data)
     }
 
     useEffect(() => {
@@ -400,6 +400,7 @@ export default ({ recargar }) => {
                                         }}
                                     >
                                         <Obras_labels
+                                            key={item.id_ficha}
                                             id_ficha={item.id_ficha}
                                             ref={(ref) => {
                                                 var clone = RefLabels
@@ -481,10 +482,10 @@ function EstadoObra({ id_ficha }) {
     }, []);
     const [EstadoObra, setEstadoObra] = useState("")
     async function fetchData() {
-        var request = await axios.post(`${UrlServer}/getEstadoObra`, {
+        var res = await axios.post(`${UrlServer}/getEstadoObra`, {
             id_ficha: id_ficha
         })
-        setEstadoObra(request.data.nombre)
+        setEstadoObra(res.data.nombre)
     }
     return (
         <div
@@ -516,10 +517,10 @@ function ComponenteAvance({ id_componente }) {
     }, []);
     const [ComponenteAvance, setComponenteAvance] = useState(0)
     async function fetchData() {
-        var request = await axios.post(`${UrlServer}/getFisicoComponente`, {
+        var res = await axios.post(`${UrlServer}/getFisicoComponente`, {
             id_componente
         })
-        setComponenteAvance(request.data.avance)
+        setComponenteAvance(res.data.avance)
     }
     return (
         <div>
@@ -534,10 +535,10 @@ function ComponenteBarraPorcentaje({ id_componente, componente }) {
     }, []);
     const [ComponenteAvancePorcentaje, setComponenteAvancePorcentaje] = useState(0)
     async function fetchData() {
-        var request = await axios.post(`${UrlServer}/getFisicoComponente`, {
+        var res = await axios.post(`${UrlServer}/getFisicoComponente`, {
             id_componente
         })
-        setComponenteAvancePorcentaje(request.data.avance / componente.presupuesto * 100)
+        setComponenteAvancePorcentaje(res.data.avance / componente.presupuesto * 100)
     }
     return (
         <div style={{
@@ -762,7 +763,7 @@ function SectoresObras({ id_unidadEjecutora, idsectores, Estados_id_Estado, reca
         })
         setObras(res.data)
         if (!sessionStorage.getItem('idobra')) {
-            recargar(request.data[0])
+            recargar(res.data[0])
         }
     }
     function calcular_dias(fecha_inicio, fecha_final) {
@@ -791,10 +792,10 @@ function SectoresObras({ id_unidadEjecutora, idsectores, Estados_id_Estado, reca
     //componentes
     const [Componentes, setComponentes] = useState([])
     async function fetchComponentes(id_ficha) {
-        var request = await axios.post(`${UrlServer}/getComponentes`, {
+        var res = await axios.post(`${UrlServer}/getComponentes`, {
             id_ficha
         })
-        setComponentes(request.data)
+        setComponentes(res.data)
     }
     useEffect(() => {
         fetchObras()
