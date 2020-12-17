@@ -72,11 +72,11 @@ export default ({ id_ficha, codigo }) => {
                                         src={UrlServer + item.imagen}
                                         alt="First slide"
                                         style={{
-                                            height: "550px",
-                                            " max-height": " 550px",
+                                            height: "500px",
+                                            "max-height": " 500px",
                                             "margin-left": "auto",
                                             "margin-right": "auto",
-                                            width: "100%",
+                                            // width: "100%",
                                         }}
                                     />
                                     <div
@@ -96,7 +96,7 @@ export default ({ id_ficha, codigo }) => {
                         </div>
                         <a
                             class="carousel-control-prev"
-                            href="#carouselExampleIndicators"
+                            href="#"
                             role="button"
                             data-slide="prev"
                             onClick={() => {
@@ -109,7 +109,7 @@ export default ({ id_ficha, codigo }) => {
                         </a>
                         <a
                             class="carousel-control-next"
-                            href="#carouselExampleIndicators"
+                            href="#"
                             role="button"
                             data-slide="next"
                             onClick={() => {
