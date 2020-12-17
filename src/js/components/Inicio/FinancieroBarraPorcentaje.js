@@ -8,7 +8,7 @@ export default ({ id_ficha }) => {
 
     }, []);
 
-    const [FinancieroAvance, setFinancieroAvance] = useState({financiero_avance_porcentaje:0});
+    const [FinancieroAvance, setFinancieroAvance] = useState({ financiero_avance_porcentaje: 0 });
     async function fetchFinancieroAvance() {
         const request = await axios.post(`${UrlServer}/getFinanciero`, {
             "id_ficha": id_ficha
@@ -51,12 +51,23 @@ export default ({ id_ficha }) => {
                 <span
                     style={{
                         position: 'inherit',
-                        fontSize: '0.7rem',
                         top: '6px',
-                        color: '#8caeda'
+                        color: '#8caeda',
+                        "font-size": "12px",
+                        "font-weight": "700",
+                        color: "#ffffff",
+                        display:"flex",
                     }}
                 >
-                    Financiero ({Redondea(FinancieroAvance.financiero_avance_porcentaje)} %)
+                    Financiero acumulado
+                    <div
+                        style={{
+                            "font-size": "13px"
+                        }}
+                    >
+                        -({Redondea(FinancieroAvance.financiero_avance_porcentaje)} %)
+                    </div>
+
                 </span>
             </div>
 
