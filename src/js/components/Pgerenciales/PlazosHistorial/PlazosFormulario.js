@@ -158,7 +158,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                         type="text"
                                         name="descripcion"
                                         id="exampleCity"
-                                        maxlength="45"
+                                        maxlength="300"
                                         autocomplete="off"
                                         required
                                         onChange={handleInputChange}
@@ -229,30 +229,46 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
 
                         </Row>
                         <Row form>
-                            <Col md={6}>
+                            <Col md={12}>
                                 <FormGroup>
                                     <Label>OBSERVACION</Label>
                                     <Input
                                         type="text"
                                         name="observacion"
                                         className="col-12"
-                                        maxlength="45"
+                                        maxlength="300"
                                         autocomplete="off"
                                         required
                                         onChange={handleInputChange}
-
-                                    // value={FichaData.fecha_inicial}
+                                        value={FormularioDatos.observacion}
 
                                     >
                                     </Input>
                                 </FormGroup>
                             </Col>
+                            
+
+                        </Row>
+                        <Row form>
+                        <Col md={6}>
+                                <FormGroup>
+                                    <Label>FECHA APROBADA</Label>
+                                    <Input
+                                        type="date"
+                                        name="fecha_aprobada"
+                                        id="exampleCity"
+                                        onChange={handleInputChange}
+                                        value={FormularioDatos.fecha_aprobada}
+                                    >
+                                    </Input>
+                                </FormGroup>
+                            </Col>                            
                             <Col md={6}>
                                 <FormGroup>
                                     <Label>PLAZO APROBADO</Label>
                                     <input
                                         type="checkbox"
-                                        className=" form-control"
+                                        className="form-control"
                                         checked={FormularioDatos.plazo_aprobado}
                                         name="plazo_aprobado"
                                         value={FormularioDatos.plazo_aprobado}
@@ -260,6 +276,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     />
                                 </FormGroup>
                             </Col>
+                            
 
                         </Row>
                     </ModalBody>

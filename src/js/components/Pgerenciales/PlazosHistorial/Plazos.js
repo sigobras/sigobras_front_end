@@ -74,7 +74,7 @@ export default () => {
                         <th>FECHA FINAL</th>
                         <th>DIAS</th>
                         <th>PLAZO APROBADO</th>
-                        <th></th>
+                        <th>FECHA APROBADA</th>
 
                     </tr>
                 </thead>
@@ -92,6 +92,7 @@ export default () => {
                                 <td>{item.fecha_final}</td>
                                 <td>{item.n_dias}</td>
                                 <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
+                                <td>{item.fecha_aprobada }</td>
                                 <td style={{display:'flex'}}>
                                     <PlazosFormulario
                                         id_padre={item.id}
@@ -191,6 +192,7 @@ const PLazosHijos = forwardRef(({ id_padre, count }, ref) => {
                 <td>{item.fecha_final}</td>
                 <td>{item.n_dias}</td>
                 <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
+                <td>{item.fecha_aprobada }</td>
                 <td style={{display:'flex'}}>
                     <PlazosFormularioEdicion
                         data={item}
