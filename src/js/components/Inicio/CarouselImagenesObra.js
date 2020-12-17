@@ -1,13 +1,8 @@
-import React, { forwardRef, useEffect, useState, useImperativeHandle } from "react"
-import {
-    Modal, ModalBody, ModalHeader, ModalFooter, Button, Badge, UncontrolledPopover, PopoverHeader, PopoverBody, Input, Collapse, Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators,
-    CarouselCaption
-} from 'reactstrap';
+import React, { useState } from "react"
+import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
+import { fechaFormatoClasico } from '../Utils/Funciones';
 import { MdPhotoLibrary } from "react-icons/md";
 export default ({ id_ficha, codigo }) => {
     const [modal, setModal] = useState(false);
@@ -47,7 +42,7 @@ export default ({ id_ficha, codigo }) => {
                                 position: "absolute"
                             }}
                         >
-                            {ImagenesObra[ImagenActiva] && ImagenesObra[ImagenActiva].fecha}
+                            {ImagenesObra[ImagenActiva] && fechaFormatoClasico(ImagenesObra[ImagenActiva].fecha)}
                         </div>
                     </div>
                 </ModalHeader>

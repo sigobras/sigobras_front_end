@@ -168,6 +168,20 @@ function Money_to_float(money) {
     return money
 }
 
+function fechaFormatoClasico(fecha) {
+    var fechaTemp = ""
+    if (fecha) {
+        fechaTemp = fecha.split("-")
+    } else {
+        return fecha
+    }
+    if (fechaTemp.length == 3) {
+        return fechaTemp[2] + "-" + fechaTemp[1] + "-" + fechaTemp[0]
+    } else {
+        return fecha
+    }
+}
+
 
 module.exports = {
     Redondea,
@@ -185,6 +199,7 @@ module.exports = {
     Money_to_float,
     meses,
     mesesShort,
-    FechaActual2Meses
+    FechaActual2Meses,
+    fechaFormatoClasico
 
 } 
