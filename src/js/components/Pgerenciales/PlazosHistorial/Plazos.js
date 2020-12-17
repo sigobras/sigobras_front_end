@@ -1,9 +1,9 @@
 import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 import axios from 'axios';
 import { BiMessageAltEdit } from "react-icons/fa";
+import { MdEdit, MdSave, MdDeleteForever } from "react-icons/md";
 import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table, CustomInput } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
-import { v4 as uuidv4 } from 'uuid';
 import "../PlazosHistorial/Plazos.css";
 import { object } from 'prop-types';
 import PlazosFormulario from './PlazosFormulario'
@@ -11,6 +11,13 @@ import PlazosFormularioEdicion from './PlazosFormularioEdicion'
 
 
 export default () => {
+    const [RefPlazosHijos, setRefPlazosHijos] = useState([])
+
+    function activeChildFunctions(id_padre) {
+        console.log("Activando---->");
+        RefPlazosHijos[id_padre].recarga()
+    }
+
     useEffect(() => {
         fetchPLazosPadres()
         return () => {
@@ -28,14 +35,32 @@ export default () => {
             }
         )
         setPlazosPadres(res.data)
+        console.log("alguna cosa", res.data)
     }
 
+    async function deletePlazosPadre(id) {
+        console.log("idididid", id);
+        if (confirm("Esta seguro que desea eliminar este estado?")) {
+            const res = await axios.delete(`${UrlServer}/plazosPadresAndHijos`,
+                {
+                    data:
+                    {
+                        "id": id
+                    }
+                }
+            )
+            console.log(res.data);
+            alert("se elimino registro con exito")
+            fetchPLazosPadres()
+        }
+    }
 
     return (
 
         <div>
-            <PlazosFormulario 
-                id_padre = {null}
+            <PlazosFormulario
+                id_padre={null}
+                recarga={fetchPLazosPadres}
             />
 
             <Table>
@@ -50,7 +75,7 @@ export default () => {
                         <th>DIAS</th>
                         <th>PLAZO APROBADO</th>
                         <th></th>
-                        <th></th>
+
                     </tr>
                 </thead>
 
@@ -67,21 +92,37 @@ export default () => {
                                 <td>{item.fecha_final}</td>
                                 <td>{item.n_dias}</td>
                                 <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
-                                <td>
-                                    <PlazosFormulario 
-                                        id_padre = {item.id}
+                                <td style={{display:'flex'}}>
+                                    <PlazosFormulario
+                                        id_padre={item.id}
+                                        recarga={activeChildFunctions}
                                     />
-                                </td>
-                                <td>
                                     <PlazosFormularioEdicion
-                                        data = {item}
+                                        data={item}
+                                        recarga={fetchPLazosPadres}
+
+                                    />
+                                    <MdDeleteForever
+                                        color="#ff2933"
+                                        size="20"
+                                        style={{
+                                            cursor: "pointer"
+                                        }}
+                                        onClick={() => deletePlazosPadre(item.id)}
                                     />
                                 </td>
+                                
                             </tr>,
 
                             <PLazosHijos
                                 id_padre={item.id}
                                 count={i + 1}
+                                ref={(ref) => {
+                                    var clone = RefPlazosHijos
+                                    clone[item.id] = ref
+                                    setRefPlazosHijos(clone)
+                                }}
+
                             />
                             ]
                         )
@@ -94,8 +135,14 @@ export default () => {
 
     )
 }
+const PLazosHijos = forwardRef(({ id_padre, count }, ref) => {
 
-function PLazosHijos({ id_padre, count }) {
+    useImperativeHandle(ref, () => ({
+        recarga() {
+            fetchCargarPlazosHijos()
+        }
+    }));
+
     useEffect(() => {
         fetchCargarPlazosHijos()
         return () => {
@@ -115,7 +162,23 @@ function PLazosHijos({ id_padre, count }) {
         )
         setCargarPlazosHijos(res.data)
         console.log("Mesaje solito");
-        console.log(res.data);
+        console.log("que adbuifbuieuribuineoid", res.data);
+    }
+    async function deletePlazosHijos(id) {
+        console.log("idididid", id);
+        if (confirm("Esta seguro que desea eliminar este Subestado?")) {
+            const res = await axios.delete(`${UrlServer}/plazosPadresAndHijos`,
+                {
+                    data:
+                    {
+                        "id": id
+                    }
+                }
+            )
+            console.log(res.data);
+            alert("se elimino registro con exito")
+            fetchCargarPlazosHijos()
+        }
     }
     return (
         CargarPlazosHijos.map((item, i) =>
@@ -128,12 +191,22 @@ function PLazosHijos({ id_padre, count }) {
                 <td>{item.fecha_final}</td>
                 <td>{item.n_dias}</td>
                 <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
-                <td>
+                <td style={{display:'flex'}}>
                     <PlazosFormularioEdicion
-                        data = {item}
+                        data={item}
+                        recarga={fetchCargarPlazosHijos}
+                    />
+                    <MdDeleteForever
+                        color="#ff2933"
+                        size="20"
+                        style={{
+                            cursor: "pointer",
+                            
+                        }}
+                        onClick={() => deletePlazosHijos(item.id)}
                     />
                 </td>
             </tr>
         )
     )
-}
+})

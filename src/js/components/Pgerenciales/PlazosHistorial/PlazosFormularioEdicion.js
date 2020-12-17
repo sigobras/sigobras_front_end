@@ -1,14 +1,14 @@
 import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 import axios from 'axios';
 import { BiMessageAltEdit } from "react-icons/fa";
+import { MdEdit,MdSave,MdDeleteForever } from "react-icons/md";
 import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table, CustomInput, Row, Col, FormGroup, Label, Form } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
-import { v4 as uuidv4 } from 'uuid';
 import "../PlazosHistorial/Plazos.css";
 import { object } from 'prop-types';
 
 
-export default ({ data }) => {
+export default ({ data,recarga }) => {
     useEffect(() => {
         setFormularioDatos(data)
         fetchPlazosTipoPadre()
@@ -37,7 +37,7 @@ export default ({ data }) => {
         }
     )
     const handleInputChange = (event) => {
-        console.log(event.target.name, typeof event.target.value);
+        // console.log(event.target.name, typeof event.target.value);
 
         if (event.target.name == "plazo_aprobado") {
             console.log("IF");
@@ -62,9 +62,10 @@ export default ({ data }) => {
         const res = await axios.put(`${UrlServer}/plazos`,
             clone
         )
-        // console.log(res.data);
+        console.log("Que llega en plazos",res.data);
         alert(res.data.message)
         toggleModal()
+        recarga()
 
     }
 
@@ -98,13 +99,29 @@ export default ({ data }) => {
 
     }
 
+    const [AsignarFechaMenor, setAsignarFechaMenor] = useState({})
+    function asignarFechaMenor(){
+        var clone = {...FormularioDatos}
+        console.log("CLoenene",clone);
+        clone.fecha_inicio =AsignarFechaMenor
+        console.log(AsignarFechaMenor);
+        console.log("Formulario datos fecha inicial?",FormularioDatos.fecha_inicio);
+
+    }
     return (
         <div>
-            {console.log("fehca inicial",typeof FormularioDatos.fecha_final)}
+            {/* {console.log("fehca inicial",typeof FormularioDatos.fecha_final)} */}
 
             {
 
-                <Button color="danger" onClick={toggleModal}>M</Button>
+                <MdEdit 
+                color="#0080ff" 
+                onClick={toggleModal}
+                size = "20"
+                style={{
+                    cursor:"pointer"
+                }}
+                />
             }
             <Modal isOpen={modal} toggle={toggleModal} >
                 <ModalHeader toggle={toggleModal}>EDICION DE ESTADO</ModalHeader>
@@ -244,9 +261,9 @@ export default ({ data }) => {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label>PLAZO APROBADO</Label>
-                                    <Input
+                                    <input
                                         type="checkbox"
-                                        className="col-12"
+                                        className="form-control"
                                         checked={FormularioDatos.plazo_aprobado}
                                         name="plazo_aprobado"
                                         value={FormularioDatos.plazo_aprobado}
@@ -262,6 +279,7 @@ export default ({ data }) => {
                             type="submit"
                             color="primary"
                         // onClick={toggleModal}
+                        onClick = {()=>asignarFechaMenor()}
                         >Guardar</Button>{' '}
                         <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
                     </ModalFooter>
