@@ -8,6 +8,7 @@ import {
 } from 'reactstrap';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
+import { MdPhotoLibrary } from "react-icons/md";
 export default ({ id_ficha, codigo }) => {
     const [modal, setModal] = useState(false);
 
@@ -18,7 +19,6 @@ export default ({ id_ficha, codigo }) => {
         }
         setModal(!modal)
     };
-
     const [ImagenesObra, setImagenesObra] = useState([])
     async function fetchImagenesObra() {
         const res = await axios.post(`${UrlServer}/getImagenesCurvaS`, {
@@ -28,56 +28,15 @@ export default ({ id_ficha, codigo }) => {
         setImagenesObra(res.data)
         console.log(res.data);
     }
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [animating, setAnimating] = useState(false);
-
-    const next = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === ImagenesObra.length - 1 ? 0 : activeIndex + 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const previous = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === 0 ? ImagenesObra.length - 1 : activeIndex - 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const goToIndex = (newIndex) => {
-        if (animating) return;
-        setActiveIndex(newIndex);
-    }
-
-    const slides = ImagenesObra.map((item) => {
-        return (
-            <CarouselItem
-                onExiting={() => setAnimating(true)}
-                onExited={() => setAnimating(false)}
-                key={item.id_partida}
-            >
-                <img src={UrlServer + item.imagen} alt={"item.altText"} class="d-block img-fluid"
-                    style={{
-                        width: "auto",
-                        height: "550px",
-                        "max-height": "550px",
-                    }}
-                />
-
-                <div class="carousel-caption d-none d-md-block" style={{
-                    "background-color": "#0000006b",
-                    "border-radius": "12px"
-                }}>
-                    <h3 >
-                        {item.item + "-" + item.partida_descripcion}</h3>
-                    <p>{item.descripcion}</p>
-                </div>
-            </CarouselItem>
-        );
-    });
     const [ImagenActiva, setImagenActiva] = useState(0)
     return (
         <div>
-            <Button color="danger" onClick={toggle}>test</Button>
+            <button
+                className="btn btn-outline-info btn-sm mr-1"
+                title="CURVA S"
+                onClick={toggle}
+            ><MdPhotoLibrary />
+            </button>
             <Modal isOpen={modal} toggle={toggle} size="lg" >
                 <ModalHeader toggle={toggle}>Imagenes de {codigo}</ModalHeader>
                 <ModalBody>
