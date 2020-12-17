@@ -12,14 +12,30 @@ import Curva_S from './Curva_S'
 import { FaList } from "react-icons/fa";
 import { Redondea } from '../Utils/Funciones';
 import Obras_labels_edicion from './Obras_labels_edicion';
+import CarouselImagenesObra from './CarouselImagenesObra';
 export default ({ recargar }) => {
+    //funciones
+    function fechaFormatoClasico(fecha) {
+        var fechaTemp = ""
+        if (fecha) {
+            fechaTemp = fecha.split("-")
+        } else {
+            return fecha
+        }
+        if (fechaTemp.length == 3) {
+            return fechaTemp[2] + "-" + fechaTemp[1] + "-" + fechaTemp[0]
+        } else {
+            return fecha
+        }
+    }
+
     useEffect(() => {
         fetchObras(0)
         fetchComunicados()
         fetchTipoObras()
         fetchProvincias()
     }, []);
-    //funciones
+
 
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
@@ -35,19 +51,51 @@ export default ({ recargar }) => {
     //obras
     const [Obras, setObras] = useState([])
     async function fetchObras() {
-        var request = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
+        var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
             id_acceso: sessionStorage.getItem("idacceso"),
-            // id_unidadEjecutora: ProvinciaSeleccionada,
-            // idsectores: SectoreSeleccionado,
-            // id_tipoObra: TipoObraSeleccionada,
-            // Estados_id_Estado:EstadosObraeleccionada
+            id_unidadEjecutora: ProvinciaSeleccionada,
+            idsectores: SectoreSeleccionado,
+            Estados_id_Estado: EstadosObraeleccionada,
+            id_tipoObra: TipoObraSeleccionada,
+
         })
-        setObras(request.data)
+        console.log("obras", res.data);
+        setObras(res.data)
         if (!sessionStorage.getItem('idobra')) {
             recargar(request.data[0])
         }
     }
-
+    function calcular_dias(fecha_inicio, fecha_final) {
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const firstDate = new Date(fecha_inicio);
+        const secondDate = new Date(fecha_final);
+        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+        return days || 0
+    }
+    //labels
+    const [RefLabels, setRefLabels] = useState([])
+    function recargarObraLabels(id_ficha) {
+        RefLabels[id_ficha].recarga()
+    }
+    //componentes
+    const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] = useState({})
+    async function onChangeObraComponentesSeleccionada(id_ficha) {
+        setComponentes([])
+        if (ObraComponentesSeleccionada == id_ficha) {
+            setObraComponentesSeleccionada(-1)
+        } else {
+            setObraComponentesSeleccionada(id_ficha)
+            fetchComponentes(id_ficha)
+        }
+    }
+    //componentes
+    const [Componentes, setComponentes] = useState([])
+    async function fetchComponentes(id_ficha) {
+        var request = await axios.post(`${UrlServer}/getComponentes`, {
+            id_ficha
+        })
+        setComponentes(request.data)
+    }
 
 
     // FILTROS
@@ -109,9 +157,9 @@ export default ({ recargar }) => {
         setEstadosObraeleccionada(0)
     }, [ProvinciasSeleccionadasInterfaz])
 
-    // useEffect(() => {
-    //     fetchObras()
-    // }, [ProvinciaSeleccionada, SectoreSeleccionado, TipoObraSeleccionada, EstadosObraeleccionada])
+    useEffect(() => {
+        fetchObras()
+    }, [ProvinciaSeleccionada, SectoreSeleccionado, TipoObraSeleccionada, EstadosObraeleccionada])
 
     return (
         <div>
@@ -146,7 +194,7 @@ export default ({ recargar }) => {
                             <option key={i} value={item.id_unidadEjecutora}>{item.nombre}</option>
                         )}
                     </Input>
-                    {/* <Input
+                    <Input
                         type="select"
                         onChange={(e) => setSectoreSeleccionado(e.target.value)}
                         value={SectoreSeleccionado}
@@ -184,14 +232,14 @@ export default ({ recargar }) => {
                             )
                         }
 
-                    </Input> */}
+                    </Input>
 
 
 
                 </div>
             </div>
 
-            {
+            {false &&
                 ProvinciasSeleccionadasInterfaz.map((item, i) =>
                     <div key={item.id_unidadEjecutora}>
                         <div
@@ -205,15 +253,213 @@ export default ({ recargar }) => {
                         </div>
                         <ProvinciaSectores
                             id_unidadEjecutora={item.id_unidadEjecutora}
-                            SectoreSeleccionado={SectoreSeleccionado}
+                            idsectores={SectoreSeleccionado}
+                            Estados_id_Estado={EstadosObraeleccionada}
                             recargar={recargar}
                         />
                     </div>
 
                 )
             }
+            {
+                <table className="table table-sm" >
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th style={{ width: "400px", minWidth: "150px", textAlign: "center" }} >OBRA</th>
+                            <th className="text-center" >AVANCE </th>
+                            <th className="text-center" >UDM </th>
+                            <th className="text-center">IR A</th>
+                            <th className="text-center">ESTADO</th>
+                            <th className="text-center" style={{ width: "105px", minWidth: "100px" }} >OPCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        {Obras.map((item, i) =>
+                            [
+                                (
+                                    (
+                                        (i == 0)
+                                        ||
+                                        (
+                                            i > 0
+                                            &&
+                                            item.unidad_ejecutora_nombre != Obras[i - 1].unidad_ejecutora_nombre
+                                        )
+                                    )
+                                    &&
+                                    <tr>
+                                        <td
+                                            colSpan="8"
+                                            style={{
+                                                color: "#8caeda",
+                                                fontSize: "1.2rem",
+                                                fontWeight: "700",
+                                            }}
+                                        >
+                                            {item.unidad_ejecutora_nombre}
+                                        </td>
+                                    </tr>
 
-        </div>
+                                )
+                                ,
+                                (
+                                    (
+                                        (i == 0)
+                                        ||
+                                        (item.unidad_ejecutora_nombre != Obras[i - 1].unidad_ejecutora_nombre)
+                                        ||
+                                        (
+                                            i > 0
+                                            &&
+                                            item.sector_nombre != Obras[i - 1].sector_nombre
+                                        )
+                                    )
+                                    &&
+                                    <tr>
+                                        <td
+                                            colSpan="8"
+                                            style={{
+                                                color: "#e0ff97",
+                                                fontSize: "1rem",
+                                                fontWeight: "700",
+                                            }}
+                                        >
+                                            {item.sector_nombre}
+                                        </td>
+                                    </tr>
+                                )
+                                ,
+                                <tr key={item.id_ficha}>
+                                    <td>
+                                        {i + 1}
+                                    </td>
+                                    <td>
+                                        {item.g_meta}
+                                    </td>
+                                    <td
+                                        style={{
+                                            width: "20%"
+                                        }}
+                                    >
+                                        <FisicoBarraPorcentaje id_ficha={item.id_ficha} />
+                                        <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
+                                    </td>
+                                    <td >
+                                        {calcular_dias(item.ultima_fecha, new Date()) - 1} días <div>{fechaFormatoClasico(item.ultima_fecha)}</div>
+
+                                    </td>
+                                    <td>
+                                        <Button
+                                            outline={sessionStorage.getItem('idobra') != item.id_ficha}
+                                            color={sessionStorage.getItem('idobra') != item.id_ficha ? "secondary" : "primary"}
+                                            onClick={() => { recargar(item) }}
+                                            className="text-white"
+                                        >
+                                            {item.codigo}
+                                        </Button>
+                                    </td>
+                                    <td>
+                                        <EstadoObra id_ficha={item.id_ficha} />
+                                    </td>
+                                    <td className="d-flex">
+                                        <button
+                                            className="btn btn-outline-info btn-sm mr-1"
+                                            title="Avance Componentes"
+                                            onClick={() => onChangeObraComponentesSeleccionada(item.id_ficha)}
+                                        >
+                                            <FaList />
+                                        </button>
+                                        <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
+                                        <ModalInformacionObras id_ficha={item.id_ficha} />
+                                        <Curva_S id_ficha={item.id_ficha} />
+                                        <Obras_labels_edicion
+                                            id_ficha={item.id_ficha}
+                                            recargarObraLabels={recargarObraLabels}
+                                            codigo={item.codigo}
+                                        />
+                                        <CarouselImagenesObra id_ficha={item.id_ficha} codigo={item.codigo}/>
+                                    </td>
+                                </tr>
+                                ,
+                                <tr>
+                                    <td colSpan="8"
+                                        style={{
+                                            "border-top": "none"
+                                        }}
+                                    >
+                                        <Obras_labels
+                                            id_ficha={item.id_ficha}
+                                            ref={(ref) => {
+                                                var clone = RefLabels
+                                                clone[item.id_ficha] = ref
+                                                setRefLabels(clone)
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                                ,
+                                (
+                                    ObraComponentesSeleccionada == item.id_ficha
+                                    &&
+                                    <tr key={"1." + i}>
+                                        <td colSpan="8">
+                                            <table className="table table-bordered table-sm"
+                                                style={{
+                                                    width: "100%"
+                                                }}
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>COMPONENTE</th>
+                                                        <th>PRESUPUESTO CD</th>
+                                                        <th>EJECUCIÓN FÍSICA</th>
+                                                        <th>BARRRA PORCENTUAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody style={{ backgroundColor: '#333333' }}>
+                                                    {
+                                                        Componentes.map((item) =>
+
+                                                            <tr key={Componentes.id_componente} >
+                                                                <td>{item.numero}</td>
+
+                                                                <td style={{ fontSize: '0.75rem', color: '#8caeda' }}
+                                                                >{item.nombre}</td>
+
+                                                                <td> S/. {Redondea(item.presupuesto)}</td>
+                                                                <td>
+                                                                    <ComponenteAvance id_componente={item.id_componente} />
+                                                                </td>
+                                                                <td>
+                                                                    <ComponenteBarraPorcentaje
+                                                                        id_componente={item.id_componente}
+                                                                        componente={item}
+                                                                    />
+                                                                </td>
+
+                                                            </tr>
+
+                                                        )}
+                                                </tbody>
+                                            </table>
+
+                                        </td>
+
+                                    </tr>
+                                )
+
+                            ]
+                        )}
+
+                    </tbody>
+
+                </table>
+
+            }
+
+        </div >
 
     );
 }
@@ -450,21 +696,25 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
         </div>
     )
 })
-function ProvinciaSectores({ id_unidadEjecutora, SectoreSeleccionado, recargar }) {
+function ProvinciaSectores({ id_unidadEjecutora, idsectores, Estados_id_Estado, recargar }) {
     useEffect(() => {
         fetchSectores()
     }, [])
     const [Sectores, setSectores] = useState([])
     async function fetchSectores() {
+        console.log("idsectores", idsectores);
         var res = await axios.post(`${UrlServer}/getSectores`, {
             id_acceso: sessionStorage.getItem("idacceso"),
             id_unidadEjecutora,
-            idsectores: SectoreSeleccionado
+            idsectores: idsectores
         })
         if (Array.isArray(res.data)) {
             setSectores(res.data)
         }
     }
+    useEffect(() => {
+        fetchSectores()
+    }, [idsectores])
     return (
         Sectores.map((item, i) =>
             <div>
@@ -480,6 +730,7 @@ function ProvinciaSectores({ id_unidadEjecutora, SectoreSeleccionado, recargar }
                 <SectoresObras
                     id_unidadEjecutora={id_unidadEjecutora}
                     idsectores={item.idsectores}
+                    Estados_id_Estado={Estados_id_Estado}
                     recargar={recargar}
                 />
             </div>
@@ -487,7 +738,7 @@ function ProvinciaSectores({ id_unidadEjecutora, SectoreSeleccionado, recargar }
         )
     )
 }
-function SectoresObras({ id_unidadEjecutora, idsectores, recargar }) {
+function SectoresObras({ id_unidadEjecutora, idsectores, Estados_id_Estado, recargar }) {
     useEffect(() => {
         fetchObras()
     }, [])
@@ -496,9 +747,10 @@ function SectoresObras({ id_unidadEjecutora, idsectores, recargar }) {
         var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
             id_acceso: sessionStorage.getItem("idacceso"),
             id_unidadEjecutora,
-            idsectores
+            idsectores,
+            Estados_id_Estado
             // id_tipoObra: TipoObraSeleccionada,
-            // Estados_id_Estado:EstadosObraeleccionada
+
         })
         setObras(res.data)
         if (!sessionStorage.getItem('idobra')) {
@@ -536,6 +788,9 @@ function SectoresObras({ id_unidadEjecutora, idsectores, recargar }) {
         })
         setComponentes(request.data)
     }
+    useEffect(() => {
+        fetchObras()
+    }, [Estados_id_Estado])
     return (
         <table className="table table-sm" >
             <thead>
@@ -677,5 +932,6 @@ function SectoresObras({ id_unidadEjecutora, idsectores, recargar }) {
             </tbody>
 
         </table>
+
     )
 }
