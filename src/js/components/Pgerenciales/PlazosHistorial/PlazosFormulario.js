@@ -1,20 +1,22 @@
 import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 import axios from 'axios';
 import { BiMessageAltEdit } from "react-icons/fa";
+import { MdEdit,MdSave,MdDeleteForever,MdLibraryAdd } from "react-icons/md";
 import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table, CustomInput, Row, Col, FormGroup, Label, Form } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
-import { v4 as uuidv4 } from 'uuid';
 import "../PlazosHistorial/Plazos.css";
 import { object } from 'prop-types';
 
+export default forwardRef(({ id_padre,recarga }, ref) => {
 
-export default ({ id_padre }) => {
+
     useEffect(() => {
         fetchPlazosTipoPadre()
         fetchPlazosTipoHijo()
         return () => {
         }
     }, [])
+
     const [modal, setModal] = useState(false);
 
     const toggleModal = () => setModal(!modal);
@@ -36,7 +38,7 @@ export default ({ id_padre }) => {
         }
     )
     const handleInputChange = (event) => {
-        console.log(event.target.name, typeof event.target.value);
+        // console.log(event.target.name, typeof event.target.value);
 
         if (event.target.name == "plazo_aprobado") {
             console.log("IF");
@@ -55,8 +57,8 @@ export default ({ id_padre }) => {
     async function enviarDatos(event) {
         event.preventDefault()
         // console.log(FormularioDatos);
-        var clone = {...FormularioDatos}
-        clone.n_dias = calcular_dias(clone.fecha_inicio,clone.fecha_final)
+        var clone = { ...FormularioDatos }
+        clone.n_dias = calcular_dias(clone.fecha_inicio, clone.fecha_final)
 
         const res = await axios.post(`${UrlServer}/plazos`,
             clone
@@ -64,7 +66,7 @@ export default ({ id_padre }) => {
         // console.log(res.data);
         alert(res.data.message)
         toggleModal()
-        
+        recarga(id_padre)
     }
 
     const [PlazosTipoPadre, setPlazosTipoPadre] = useState([])
@@ -101,9 +103,17 @@ export default ({ id_padre }) => {
         <div>
             {
                 id_padre ?
-                    <Button color="danger" onClick={toggleModal}>+</Button>
+                    <MdLibraryAdd 
+                    color="#14b728" 
+                    onClick={toggleModal}
+                    size = "20"
+                    style={{
+                        cursor:"pointer"
+                    }}
+                    /> 
                     :
-                    <Button color="danger" onClick={toggleModal}>AGREGAR ESTADO</Button>
+                    <Button color="danger" onClick={toggleModal}>AGREGAR ESTADO</Button> 
+                    
             }
             <Modal isOpen={modal} toggle={toggleModal} >
                 <ModalHeader toggle={toggleModal}>NUEVO ESTADO</ModalHeader>
@@ -196,7 +206,7 @@ export default ({ id_padre }) => {
                                         name="n_dias"
                                         className="col-12"
                                         onChange={handleInputChange}
-                                        value={calcular_dias(FormularioDatos.fecha_inicio,FormularioDatos.fecha_final)}                                        
+                                        value={calcular_dias(FormularioDatos.fecha_inicio, FormularioDatos.fecha_final)}
                                         readonly
                                     >
                                     </Input>
@@ -240,9 +250,9 @@ export default ({ id_padre }) => {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label>PLAZO APROBADO</Label>
-                                    <Input
+                                    <input
                                         type="checkbox"
-                                        className="col-12"
+                                        className=" form-control"
                                         checked={FormularioDatos.plazo_aprobado}
                                         name="plazo_aprobado"
                                         value={FormularioDatos.plazo_aprobado}
@@ -257,7 +267,11 @@ export default ({ id_padre }) => {
                         <Button
                             type="submit"
                             color="primary"
-                        // onClick={toggleModal}
+                            // onClick={toggleModal}
+                            // onClick={
+                            //     console.log("refPlazosFormulario",refPlazosFormulario),
+                            //     refPlazosFormulario.current.save()
+                            // }
                         >Guardar</Button>{' '}
                         <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
                     </ModalFooter>
@@ -266,4 +280,4 @@ export default ({ id_padre }) => {
             </Modal>
         </div>
     )
-}
+})
