@@ -1,14 +1,14 @@
 import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
 import axios from 'axios';
 import { BiMessageAltEdit } from "react-icons/fa";
-import { MdEdit,MdSave,MdDeleteForever } from "react-icons/md";
+import { MdEdit, MdSave, MdDeleteForever } from "react-icons/md";
 import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table, CustomInput, Row, Col, FormGroup, Label, Form } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import "../PlazosHistorial/Plazos.css";
 import { object } from 'prop-types';
 
 
-export default ({ data,recarga }) => {
+export default ({ data, recarga }) => {
     useEffect(() => {
         setFormularioDatos(data)
         fetchPlazosTipoPadre()
@@ -33,7 +33,8 @@ export default ({ data,recarga }) => {
             "observacion": "",
             "id_padre": null,
             "fichas_id_ficha": sessionStorage.getItem("idobra"),
-            "plazo_aprobado": false
+            "plazo_aprobado": false,
+            "fecha_aprobada":""
         }
     )
     const handleInputChange = (event) => {
@@ -56,13 +57,13 @@ export default ({ data,recarga }) => {
     async function enviarDatos(event) {
         event.preventDefault()
         // console.log(FormularioDatos);
-        var clone = {...FormularioDatos}
-        clone.n_dias = calcular_dias(clone.fecha_inicio,clone.fecha_final)
+        var clone = { ...FormularioDatos }
+        clone.n_dias = calcular_dias(clone.fecha_inicio, clone.fecha_final)
 
         const res = await axios.put(`${UrlServer}/plazos`,
             clone
         )
-        console.log("Que llega en plazos",res.data);
+        console.log("Que llega en plazos", res.data);
         alert(res.data.message)
         toggleModal()
         recarga()
@@ -100,12 +101,12 @@ export default ({ data,recarga }) => {
     }
 
     const [AsignarFechaMenor, setAsignarFechaMenor] = useState({})
-    function asignarFechaMenor(){
-        var clone = {...FormularioDatos}
-        console.log("CLoenene",clone);
-        clone.fecha_inicio =AsignarFechaMenor
+    function asignarFechaMenor() {
+        var clone = { ...FormularioDatos }
+        console.log("CLoenene", clone);
+        clone.fecha_inicio = AsignarFechaMenor
         console.log(AsignarFechaMenor);
-        console.log("Formulario datos fecha inicial?",FormularioDatos.fecha_inicio);
+        console.log("Formulario datos fecha inicial?", FormularioDatos.fecha_inicio);
 
     }
     return (
@@ -114,13 +115,13 @@ export default ({ data,recarga }) => {
 
             {
 
-                <MdEdit 
-                color="#0080ff" 
-                onClick={toggleModal}
-                size = "20"
-                style={{
-                    cursor:"pointer"
-                }}
+                <MdEdit
+                    color="#0080ff"
+                    onClick={toggleModal}
+                    size="20"
+                    style={{
+                        cursor: "pointer"
+                    }}
                 />
             }
             <Modal isOpen={modal} toggle={toggleModal} >
@@ -166,7 +167,7 @@ export default ({ data,recarga }) => {
                                         type="text"
                                         name="descripcion"
                                         id="exampleCity"
-                                        maxlength="45"
+                                        maxlength="300"
                                         autocomplete="off"
                                         required
                                         onChange={handleInputChange}
@@ -217,7 +218,7 @@ export default ({ data,recarga }) => {
                                         className="col-12"
                                         onChange={handleInputChange}
                                         required
-                                        value={calcular_dias(FormularioDatos.fecha_inicio,FormularioDatos.fecha_final)}
+                                        value={calcular_dias(FormularioDatos.fecha_inicio, FormularioDatos.fecha_final)}
                                         readonly
                                     >
                                     </Input>
@@ -241,14 +242,14 @@ export default ({ data,recarga }) => {
 
                         </Row>
                         <Row form>
-                            <Col md={6}>
+                            <Col md={12}>
                                 <FormGroup>
                                     <Label>OBSERVACION</Label>
                                     <Input
                                         type="text"
                                         name="observacion"
                                         className="col-12"
-                                        maxlength="45"
+                                        maxlength="300"
                                         autocomplete="off"
                                         required
                                         onChange={handleInputChange}
@@ -258,6 +259,23 @@ export default ({ data,recarga }) => {
                                     </Input>
                                 </FormGroup>
                             </Col>
+                            
+
+                        </Row>
+                        <Row form>
+                        <Col md={6}>
+                                <FormGroup>
+                                    <Label>FECHA APROBADA</Label>
+                                    <Input
+                                        type="date"
+                                        name="fecha_aprobada"
+                                        id="exampleCity"
+                                        onChange={handleInputChange}
+                                        value={FormularioDatos.fecha_aprobada}
+                                    >
+                                    </Input>
+                                </FormGroup>
+                            </Col>                            
                             <Col md={6}>
                                 <FormGroup>
                                     <Label>PLAZO APROBADO</Label>
@@ -271,6 +289,7 @@ export default ({ data,recarga }) => {
                                     />
                                 </FormGroup>
                             </Col>
+                            
 
                         </Row>
                     </ModalBody>
@@ -278,8 +297,8 @@ export default ({ data,recarga }) => {
                         <Button
                             type="submit"
                             color="primary"
-                        // onClick={toggleModal}
-                        onClick = {()=>asignarFechaMenor()}
+                            // onClick={toggleModal}
+                            onClick={() => asignarFechaMenor()}
                         >Guardar</Button>{' '}
                         <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
                     </ModalFooter>
