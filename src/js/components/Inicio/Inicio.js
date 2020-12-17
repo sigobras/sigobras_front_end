@@ -362,23 +362,34 @@ export default ({ recargar }) => {
                                     <td>
                                         <EstadoObra id_ficha={item.id_ficha} />
                                     </td>
-                                    <td className="d-flex">
-                                        <button
-                                            className="btn btn-outline-info btn-sm mr-1"
-                                            title="Avance Componentes"
-                                            onClick={() => onChangeObraComponentesSeleccionada(item.id_ficha)}
-                                        >
-                                            <FaList />
-                                        </button>
-                                        <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
-                                        <ModalInformacionObras id_ficha={item.id_ficha} />
-                                        <Curva_S id_ficha={item.id_ficha} />
-                                        <Obras_labels_edicion
-                                            id_ficha={item.id_ficha}
-                                            recargarObraLabels={recargarObraLabels}
-                                            codigo={item.codigo}
-                                        />
-                                        <CarouselImagenesObra id_ficha={item.id_ficha} codigo={item.codigo}/>
+                                    <td>
+                                        <div className="d-flex">
+                                            <button
+                                                className="btn btn-outline-info btn-sm mr-1"
+                                                title="Avance Componentes"
+                                                onClick={() => onChangeObraComponentesSeleccionada(item.id_ficha)}
+                                            >
+                                                <FaList />
+                                            </button>
+                                            <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
+
+                                        </div>
+                                        <div className="d-flex">
+                                            <ModalInformacionObras id_ficha={item.id_ficha} />
+                                            <Curva_S id_ficha={item.id_ficha} />
+
+                                        </div>
+                                        <div className="d-flex">
+                                            <Obras_labels_edicion
+                                                id_ficha={item.id_ficha}
+                                                recargarObraLabels={recargarObraLabels}
+                                                codigo={item.codigo}
+                                            />
+                                            <CarouselImagenesObra
+                                                id_ficha={item.id_ficha}
+                                                codigo={item.codigo}
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                                 ,
@@ -643,9 +654,6 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
     }
     return (
         <div
-            style={{
-                display: "flex"
-            }}
         >
             {
                 Labels.map((item, i) =>
