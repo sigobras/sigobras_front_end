@@ -444,7 +444,8 @@ function Curva_S({ id_ficha, nombreObra }) {
         },
 
         subtitle: {
-            text: nombreObra
+            // text: nombreObra
+            text: sessionStorage.getItem('codigoObra')
         },
         legend: {
             // layout: 'vertical',
@@ -514,9 +515,10 @@ function Curva_S({ id_ficha, nombreObra }) {
             }
         },
 
-        // subtitle: {
-        //     text: 'Source: thesolarfoundation.com'
-        // },
+        subtitle: {
+            // text: 'Source: thesolarfoundation.com'
+            text: sessionStorage.getItem('codigoObra')
+        },
         legend: {
             // layout: 'vertical',
             "align": "center",
