@@ -101,10 +101,12 @@ export default forwardRef(({ id_padre, recarga }) => {
         <div>
             {
                 id_padre ?
-                    <Button color="info" outline>
-                        <MdLibraryAdd
-                            onClick={toggleModal}
-                        />
+                    <Button
+                        color="info"
+                        outline
+                        onClick={toggleModal}
+                    >
+                        <MdLibraryAdd />
                     </Button>
                     :
                     <Button
@@ -176,7 +178,7 @@ export default forwardRef(({ id_padre, recarga }) => {
                                         className="input-dark"
                                         onChange={handleInputChange}
                                         required
-                                        className="input-dark"
+
 
                                     >
                                     </Input>
@@ -256,7 +258,7 @@ export default forwardRef(({ id_padre, recarga }) => {
                                         <Input
                                             type="date"
                                             name="fecha_aprobada"
-
+                                            className="input-dark"
                                             onChange={handleInputChange}
                                             value={FormularioDatos.fecha_aprobada}
                                         >
@@ -268,7 +270,7 @@ export default forwardRef(({ id_padre, recarga }) => {
                                         <Label>PLAZO APROBADO</Label>
                                         <input
                                             type="checkbox"
-                                            className="form-control"
+                                            className="form-control input-dark"
                                             checked={FormularioDatos.plazo_aprobado}
                                             name="plazo_aprobado"
                                             value={FormularioDatos.plazo_aprobado}
