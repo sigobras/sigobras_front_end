@@ -182,13 +182,11 @@ function fechaFormatoClasico(fecha) {
     }
 }
 function hexToRgb(hex) {
-    console.log(hex);
     if (hex == undefined || hex == "") {
         hex = "#000000"
     }
     hex = hex.replace("#", "")
     hex = hex.padStart(6, '0')
-    console.log(hex);
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     if (!result) {
         return {

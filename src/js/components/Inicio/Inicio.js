@@ -30,13 +30,10 @@ export default ({ recargar }) => {
     }
 
     useEffect(() => {
-        fetchObras(0)
         fetchComunicados()
-        fetchTipoObras()
         fetchProvincias()
+        fetchTipoObras()
     }, []);
-
-
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
     async function fetchComunicados() {
@@ -48,23 +45,7 @@ export default ({ recargar }) => {
         )
         setComunicados(res.data)
     }
-    //obras
-    const [Obras, setObras] = useState([])
-    async function fetchObras() {
-        var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
-            id_acceso: sessionStorage.getItem("idacceso"),
-            id_unidadEjecutora: ProvinciaSeleccionada,
-            idsectores: SectoreSeleccionado,
-            Estados_id_Estado: EstadosObraeleccionada,
-            id_tipoObra: TipoObraSeleccionada,
 
-        })
-        console.log("obras", res.data);
-        setObras(res.data)
-        if (!sessionStorage.getItem('idobra')) {
-            recargar(res.data[0])
-        }
-    }
     function calcular_dias(fecha_inicio, fecha_final) {
         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
         const firstDate = new Date(fecha_inicio);
@@ -101,25 +82,16 @@ export default ({ recargar }) => {
     // FILTROS
     //provincias
     const [Provincias, setProvincias] = useState([])
-    const [ProvinciasSeleccionadasInterfaz, setProvinciasSeleccionadasInterfaz] = useState([])
-    const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(0)
-    function onChangeProvincias(id_unidadEjecutora) {
-        console.log("index", id_unidadEjecutora);
-        if (id_unidadEjecutora == 0) {
-            setProvinciasSeleccionadasInterfaz(Provincias)
-        } else {
-            console.log("provincias", Provincias);
-            setProvinciasSeleccionadasInterfaz([Provincias.find(item => item.id_unidadEjecutora == id_unidadEjecutora)])
-        }
-    }
     async function fetchProvincias() {
         var res = await axios.post(`${UrlServer}/getProvincias`, {
             id_acceso: sessionStorage.getItem("idacceso"),
             "id_unidadEjecutora": "0"
         })
         setProvincias(res.data)
-        setProvinciasSeleccionadasInterfaz(res.data)
+        setProvinciaSeleccionada(res.data[0].id_unidadEjecutora)
     }
+    const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(-1)
+
     //sectores
     const [Sectores, setSectores] = useState([])
     const [SectoreSeleccionado, setSectoreSeleccionado] = useState(0)
@@ -149,16 +121,33 @@ export default ({ recargar }) => {
         })
         setEstadosObra(res.data)
     }
+    //obras
+    const [Obras, setObras] = useState([])
+    async function fetchObras() {
+        var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
+            id_acceso: sessionStorage.getItem("idacceso"),
+            id_unidadEjecutora: ProvinciaSeleccionada,
+            idsectores: SectoreSeleccionado,
+            Estados_id_Estado: EstadosObraeleccionada,
+            id_tipoObra: TipoObraSeleccionada,
 
+        })
+        setObras(res.data)
+        if (!sessionStorage.getItem('idobra')) {
+            recargar(res.data[0])
+        }
+    }
     useEffect(() => {
         fetchSectores()
         setSectoreSeleccionado(0)
         fetchEstadosObra()
         setEstadosObraeleccionada(0)
-    }, [ProvinciasSeleccionadasInterfaz])
+    }, [ProvinciaSeleccionada])
 
     useEffect(() => {
-        fetchObras()
+        if (ProvinciaSeleccionada != -1) {
+            fetchObras()
+        }
     }, [ProvinciaSeleccionada, SectoreSeleccionado, TipoObraSeleccionada, EstadosObraeleccionada])
 
     return (
@@ -169,74 +158,68 @@ export default ({ recargar }) => {
                     <p> -- {comunicado.texto_mensaje}</p>
                 </div>
             )}
-
             <div className="fondo">
-                <div
+            </div>
+            <div
+                style={{
+                    display: "flex"
+                }}
+            >
+                <Input
+                    type="select"
+                    onChange={(e) => {
+                        setProvinciaSeleccionada(e.target.value)
+                    }}
+                    value={ProvinciaSeleccionada}
                     style={{
-                        display: "flex"
+                        backgroundColor: "#171819",
+                        borderColor: "#171819",
+                        color: "#ffffff",
                     }}
                 >
-                    <Input
-                        type="select"
-                        onChange={(e) => {
-                            onChangeProvincias(e.target.value)
-                            setProvinciaSeleccionada(e.target.value)
-                        }}
-                        style={{
-                            width: "400px"
-                        }}
-                    // value={ProvinciaSeleccionada}
-                    >
-                        <option value="0">
-                            Todas las provincias
+                    <option value="0">
+                        Todas las provincias
                     </option>
-                        {Provincias.map((item, i) =>
-                            <option key={i} value={item.id_unidadEjecutora}>{item.nombre}</option>
-                        )}
-                    </Input>
-                    <Input
-                        type="select"
-                        onChange={(e) => setSectoreSeleccionado(e.target.value)}
-                        value={SectoreSeleccionado}
-                    >
-                        <option value="0">
-                            Todos los sectores
+                    {Provincias.map((item, i) =>
+                        <option key={i} value={item.id_unidadEjecutora}>{item.nombre}</option>
+                    )}
+                </Input>
+                <Input
+                    type="select"
+                    onChange={(e) => setSectoreSeleccionado(e.target.value)}
+                    value={SectoreSeleccionado}
+                    style={{
+                        backgroundColor: "#171819",
+                        borderColor: "#171819",
+                        color: "#ffffff",
+                    }}
+                >
+                    <option value="0">
+                        Todos los sectores
                         </option>
-                        {Sectores.map((item, i) =>
-                            <option key={i} value={item.idsectores}>{item.nombre}</option>
-                        )}
-                    </Input>
-                    <Input
-                        type="select"
-                        onChange={(e) => setEstadosObraeleccionada(e.target.value)}
-                        value={EstadosObraeleccionada}
-                    >
-                        <option value="0">
-                            Todos los estados
+                    {Sectores.map((item, i) =>
+                        <option key={i} value={item.idsectores}>{item.nombre}</option>
+                    )}
+                </Input>
+                <Input
+                    type="select"
+                    onChange={(e) => setEstadosObraeleccionada(e.target.value)}
+                    value={EstadosObraeleccionada}
+                    style={{
+                        backgroundColor: "#171819",
+                        borderColor: "#171819",
+                        color: "#ffffff",
+                    }}
+                >
+                    <option value="0">
+                        Todos los estados
                         </option>
-                        {
-                            EstadosObra.map((item, index) =>
-                                <option key={index} value={item.id_Estado}>{item.nombre}</option>
-                            )
-                        }
-                    </Input>
-                    <Input
-                        type="select"
-                        onChange={(e) => setTipoObraSeleccionada(e.target.value)}
-                        value={TipoObraSeleccionada}
-                    >
-                        <option value={0}>Todo</option>
-                        {
-                            TipoObras.map((item) =>
-                                <option value={item.id_tipoObra}>{item.nombre}</option>
-                            )
-                        }
-
-                    </Input>
-
-
-
-                </div>
+                    {
+                        EstadosObra.map((item, index) =>
+                            <option key={index} value={item.id_Estado}>{item.nombre}</option>
+                        )
+                    }
+                </Input>
             </div>
             {
                 <table className="table table-sm" >
@@ -341,6 +324,13 @@ export default ({ recargar }) => {
                                             {item.codigo}
                                         </Button>
                                         {item.g_meta}
+                                        <div
+                                            style={{
+                                                color: "#17a2b8"
+                                            }}
+                                        >
+                                            PRESUPUESTO S./{Redondea(item.g_total_presu)}
+                                        </div>
                                     </td>
                                     <td>
                                         <EstadoObra id_ficha={item.id_ficha} />
