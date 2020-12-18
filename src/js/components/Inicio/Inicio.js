@@ -162,7 +162,7 @@ export default ({ recargar }) => {
             </div>
             <div
                 style={{
-                    display: "flex"
+                    display:"flex"
                 }}
             >
                 <Input
@@ -175,6 +175,7 @@ export default ({ recargar }) => {
                         backgroundColor: "#171819",
                         borderColor: "#171819",
                         color: "#ffffff",
+                        cursor:"pointer"
                     }}
                 >
                     <option value="0">
@@ -192,6 +193,7 @@ export default ({ recargar }) => {
                         backgroundColor: "#171819",
                         borderColor: "#171819",
                         color: "#ffffff",
+                        cursor:"pointer"
                     }}
                 >
                     <option value="0">
@@ -209,6 +211,7 @@ export default ({ recargar }) => {
                         backgroundColor: "#171819",
                         borderColor: "#171819",
                         color: "#ffffff",
+                        cursor:"pointer"
                     }}
                 >
                     <option value="0">

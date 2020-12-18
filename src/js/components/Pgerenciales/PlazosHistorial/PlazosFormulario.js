@@ -1,13 +1,11 @@
-import React, { useEffect, useState, Fragment, forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import axios from 'axios';
-import { BiMessageAltEdit } from "react-icons/fa";
-import { MdEdit,MdSave,MdDeleteForever,MdLibraryAdd } from "react-icons/md";
-import { Card, Button, ButtonGroup, CardHeader, CardFooter, CardBody, CardTitle, CardText, Spinner, Input, Container, ModalBody, ModalHeader, ModalFooter, Modal, Table, CustomInput, Row, Col, FormGroup, Label, Form } from 'reactstrap';
+import { MdLibraryAdd } from "react-icons/md";
+import { Button, Input, ModalBody, ModalHeader, ModalFooter, Modal, Row, Col, FormGroup, Label } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import "../PlazosHistorial/Plazos.css";
-import { object } from 'prop-types';
-
-export default forwardRef(({ id_padre,recarga }, ref) => {
+import "./PlazosFormulario.css"
+export default forwardRef(({ id_padre, recarga }) => {
 
 
     useEffect(() => {
@@ -103,17 +101,18 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
         <div>
             {
                 id_padre ?
-                    <MdLibraryAdd 
-                    color="#14b728" 
-                    onClick={toggleModal}
-                    size = "20"
-                    style={{
-                        cursor:"pointer"
-                    }}
-                    /> 
+                    <Button color="info" outline>
+                        <MdLibraryAdd
+                            onClick={toggleModal}
+                        />
+                    </Button>
                     :
-                    <Button color="danger" onClick={toggleModal}>AGREGAR ESTADO</Button> 
-                    
+                    <Button
+                        color="danger"
+                        outline
+                        onClick={toggleModal}
+                    >AGREGAR ESTADO</Button>
+
             }
             <Modal isOpen={modal} toggle={toggleModal} >
                 <ModalHeader toggle={toggleModal}>NUEVO ESTADO</ModalHeader>
@@ -126,7 +125,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="select"
                                         name="tipo"
-                                        className="col-12"
+                                        className="input-dark"
                                         onChange={handleInputChange}
                                         required
                                     // value={FichaData.fecha_inicial}
@@ -135,14 +134,14 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                         {
                                             id_padre ?
 
-                                                PlazosTipoHijo.map((item, i) =>
+                                                PlazosTipoHijo.map((item) =>
                                                     <option
                                                         value={item.idplazos_tipo}
                                                     >{item.nombre}</option>
                                                 )
                                                 :
 
-                                                PlazosTipoPadre.map((item, i) =>
+                                                PlazosTipoPadre.map((item) =>
                                                     <option
                                                         value={item.idplazos_tipo}
                                                     >{item.nombre}</option>
@@ -157,7 +156,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="text"
                                         name="descripcion"
-                                        id="exampleCity"
+                                        className="input-dark"
                                         maxlength="300"
                                         autocomplete="off"
                                         required
@@ -174,10 +173,10 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="date"
                                         name="fecha_inicio"
-                                        className="col-12"
+                                        className="input-dark"
                                         onChange={handleInputChange}
                                         required
-                                    // value={FichaData.fecha_inicial}
+                                        className="input-dark"
 
                                     >
                                     </Input>
@@ -189,7 +188,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="date"
                                         name="fecha_final"
-                                        id="exampleCity"
+                                        className="input-dark"
                                         required
                                         onChange={handleInputChange}
                                     />
@@ -204,7 +203,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="text"
                                         name="n_dias"
-                                        className="col-12"
+                                        className="input-dark"
                                         onChange={handleInputChange}
                                         value={calcular_dias(FormularioDatos.fecha_inicio, FormularioDatos.fecha_final)}
                                         readonly
@@ -218,7 +217,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="text"
                                         name="documento_resolucion_estado"
-                                        id="exampleCity"
+                                        className="input-dark"
                                         maxlength="45"
                                         autocomplete="off"
                                         required
@@ -235,7 +234,7 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     <Input
                                         type="text"
                                         name="observacion"
-                                        className="col-12"
+                                        className="input-dark"
                                         maxlength="300"
                                         autocomplete="off"
                                         required
@@ -246,51 +245,55 @@ export default forwardRef(({ id_padre,recarga }, ref) => {
                                     </Input>
                                 </FormGroup>
                             </Col>
-                            
+
 
                         </Row>
-                        <Row form>
-                        <Col md={6}>
-                                <FormGroup>
-                                    <Label>FECHA APROBADA</Label>
-                                    <Input
-                                        type="date"
-                                        name="fecha_aprobada"
-                                        id="exampleCity"
-                                        onChange={handleInputChange}
-                                        value={FormularioDatos.fecha_aprobada}
-                                    >
-                                    </Input>
-                                </FormGroup>
-                            </Col>                            
-                            <Col md={6}>
-                                <FormGroup>
-                                    <Label>PLAZO APROBADO</Label>
-                                    <input
-                                        type="checkbox"
-                                        className="form-control"
-                                        checked={FormularioDatos.plazo_aprobado}
-                                        name="plazo_aprobado"
-                                        value={FormularioDatos.plazo_aprobado}
-                                        onClick={handleInputChange}
-                                    />
-                                </FormGroup>
-                            </Col>
-                            
+                        {!id_padre &&
+                            <Row form>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <Label>FECHA DE APROBACION</Label>
+                                        <Input
+                                            type="date"
+                                            name="fecha_aprobada"
 
-                        </Row>
+                                            onChange={handleInputChange}
+                                            value={FormularioDatos.fecha_aprobada}
+                                        >
+                                        </Input>
+                                    </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                    <FormGroup>
+                                        <Label>PLAZO APROBADO</Label>
+                                        <input
+                                            type="checkbox"
+                                            className="form-control"
+                                            checked={FormularioDatos.plazo_aprobado}
+                                            name="plazo_aprobado"
+                                            value={FormularioDatos.plazo_aprobado}
+                                            onClick={handleInputChange}
+                                        />
+                                    </FormGroup>
+                                </Col>
+
+
+                            </Row>
+
+                        }
+
                     </ModalBody>
                     <ModalFooter>
                         <Button
                             type="submit"
                             color="primary"
-                            // onClick={toggleModal}
-                            // onClick={
-                            //     console.log("refPlazosFormulario",refPlazosFormulario),
-                            //     refPlazosFormulario.current.save()
-                            // }
+                            outline
                         >Guardar</Button>{' '}
-                        <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
+                        <Button
+                            color="secondary"
+                            outline
+                            onClick={toggleModal}
+                        >Cancelar</Button>
                     </ModalFooter>
                 </form>
 

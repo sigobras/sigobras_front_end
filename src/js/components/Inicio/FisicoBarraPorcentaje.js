@@ -65,7 +65,7 @@ export default ({ id_ficha }) => {
                     >-({Redondea(FisicoAvance.fisico_avance_porcentaje)} %)</div>
                 </span>
                 <Tooltip
-                    placement={"bottom"}
+                    placement={"top"}
                     isOpen={tooltipOpen}
                     target={"FisicoBarraPorcentaje-" + id_ficha}
                     toggle={toggle}
