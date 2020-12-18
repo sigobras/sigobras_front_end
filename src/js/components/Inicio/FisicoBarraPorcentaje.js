@@ -25,7 +25,7 @@ export default ({ id_ficha }) => {
         >
             {/* {id_ficha} */}
             <div style={{
-                height: '5px',
+                height: '2px',
                 backgroundColor: '#4a4b4c',
                 borderRadius: '5px',
                 position: 'relative'
@@ -35,10 +35,11 @@ export default ({ id_ficha }) => {
                     style={{
                         width: `${FisicoAvance.fisico_avance_porcentaje}%`,
                         height: '100%',
-                        boxShadow: '0 0 12px #3578bb',
-                        backgroundColor: FisicoAvance.fisico_avance_porcentaje > 85 ? '#3578bb'
-                            : FisicoAvance.fisico_avance_porcentaje > 30 ? '#8caeda'
-                                : '#cecece',
+                        // boxShadow: '0 0 12px #3578bb',
+                        // backgroundColor: FisicoAvance.fisico_avance_porcentaje > 85 ? '#3578bb'
+                        //     : FisicoAvance.fisico_avance_porcentaje > 30 ? '#8caeda'
+                        //         : '#cecece',
+                        backgroundColor:"#17a2b8",
                         borderRadius: '5px',
                         transition: 'all .9s ease-in',
                         position: 'absolute',
@@ -50,12 +51,12 @@ export default ({ id_ficha }) => {
                         top: '6px',
                         color: '#8caeda',
                         "font-size": "12px",
-                        "font-weight": "700",
+                        // "font-weight": "700",
                         color: "#ffffff",
                         display: "flex",
                     }}
                 >
-                    Físico acumulado <div
+                    Físico <div
                         style={{
                             "font-size": "13px"
                         }}

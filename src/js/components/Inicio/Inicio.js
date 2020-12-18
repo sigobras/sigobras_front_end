@@ -10,7 +10,7 @@ import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from './InformacionObras/InformacionObra'
 import Curva_S from './Curva_S'
 import { FaList } from "react-icons/fa";
-import { Redondea } from '../Utils/Funciones';
+import { Redondea, hexToRgb } from '../Utils/Funciones';
 import Obras_labels_edicion from './Obras_labels_edicion';
 import CarouselImagenesObra from './CarouselImagenesObra';
 export default ({ recargar }) => {
@@ -238,40 +238,18 @@ export default ({ recargar }) => {
 
                 </div>
             </div>
-
-            {false &&
-                ProvinciasSeleccionadasInterfaz.map((item, i) =>
-                    <div key={item.id_unidadEjecutora}>
-                        <div
-                            style={{
-                                color: "#8caeda",
-                                fontSize: "1.2rem",
-                                fontWeight: "700",
-                            }}
-                        >
-                            {item.nombre}
-                        </div>
-                        <ProvinciaSectores
-                            id_unidadEjecutora={item.id_unidadEjecutora}
-                            idsectores={SectoreSeleccionado}
-                            Estados_id_Estado={EstadosObraeleccionada}
-                            recargar={recargar}
-                        />
-                    </div>
-
-                )
-            }
             {
                 <table className="table table-sm" >
                     <thead>
                         <tr>
-                            <th>N°</th>
-                            <th style={{ width: "400px", minWidth: "150px", textAlign: "center" }} >OBRA</th>
-                            <th className="text-center" >AVANCE </th>
-                            <th className="text-center" >UDM </th>
-                            <th className="text-center">IR A</th>
+                            <th className="text-center">N°</th>
+                            <th  >OBRA</th>
                             <th className="text-center">ESTADO</th>
-                            <th className="text-center" style={{ width: "105px", minWidth: "100px" }} >OPCIONES</th>
+                            <th
+                                style={{ width: "70px", minWidth: "50px", textAlign: "center" }}
+                            >UDM </th>
+                            <th className="text-center" >AVANCE </th>
+                            <th className="text-center" >OPCIONES</th>
                         </tr>
                     </thead>
                     <tbody >
@@ -292,7 +270,7 @@ export default ({ recargar }) => {
                                         <td
                                             colSpan="8"
                                             style={{
-                                                color: "#8caeda",
+                                                color: "#cecece",
                                                 fontSize: "1.2rem",
                                                 fontWeight: "700",
                                             }}
@@ -320,7 +298,7 @@ export default ({ recargar }) => {
                                         <td
                                             colSpan="8"
                                             style={{
-                                                color: "#e0ff97",
+                                                color: "#ffa500",
                                                 fontSize: "1rem",
                                                 fontWeight: "700",
                                             }}
@@ -330,37 +308,54 @@ export default ({ recargar }) => {
                                     </tr>
                                 )
                                 ,
-                                <tr key={item.id_ficha}>
+                                <tr key={item.id_ficha}
+                                    style={
+                                        sessionStorage.getItem('idobra') == item.id_ficha ?
+                                            {
+                                                backgroundColor: "#171819"
+                                            }
+                                            :
+                                            {}
+                                    }
+
+                                >
                                     <td>
                                         {i + 1}
                                     </td>
-                                    <td>
+                                    <td
+                                        onClick={() => { recargar(item) }}
+                                        style={{
+                                            cursor: "pointer"
+                                        }}
+                                    >
+                                        <Button
+                                            type="button"
+                                            style={{
+                                                borderRadius: "13px",
+                                                // padding: " 0 10px",
+                                                margin: "5px",
+                                                backgroundColor: "#171819"
+                                            }}
+                                        // onClick={() => { recargar(item) }}
+                                        >
+                                            {item.codigo}
+                                        </Button>
                                         {item.g_meta}
+                                    </td>
+                                    <td>
+                                        <EstadoObra id_ficha={item.id_ficha} />
+                                    </td>
+                                    <td className="text-center">
+                                        {calcular_dias(item.ultima_fecha, new Date()) - 1} días <div>{fechaFormatoClasico(item.ultima_fecha)}</div>
+
                                     </td>
                                     <td
                                         style={{
-                                            width: "20%"
+                                            width: "15%"
                                         }}
                                     >
                                         <FisicoBarraPorcentaje id_ficha={item.id_ficha} />
                                         <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
-                                    </td>
-                                    <td >
-                                        {calcular_dias(item.ultima_fecha, new Date()) - 1} días <div>{fechaFormatoClasico(item.ultima_fecha)}</div>
-
-                                    </td>
-                                    <td>
-                                        <Button
-                                            outline={sessionStorage.getItem('idobra') != item.id_ficha}
-                                            color={sessionStorage.getItem('idobra') != item.id_ficha ? "secondary" : "primary"}
-                                            onClick={() => { recargar(item) }}
-                                            className="text-white"
-                                        >
-                                            {item.codigo}
-                                        </Button>
-                                    </td>
-                                    <td>
-                                        <EstadoObra id_ficha={item.id_ficha} />
                                     </td>
                                     <td>
                                         <div className="d-flex">
@@ -372,14 +367,11 @@ export default ({ recargar }) => {
                                                 <FaList />
                                             </button>
                                             <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
-
-                                        </div>
-                                        <div className="d-flex">
                                             <ModalInformacionObras id_ficha={item.id_ficha} />
-                                            <Curva_S id_ficha={item.id_ficha} />
-
                                         </div>
                                         <div className="d-flex">
+
+                                            <Curva_S id_ficha={item.id_ficha} />
                                             <Obras_labels_edicion
                                                 id_ficha={item.id_ficha}
                                                 recargarObraLabels={recargarObraLabels}
@@ -389,11 +381,27 @@ export default ({ recargar }) => {
                                                 id_ficha={item.id_ficha}
                                                 codigo={item.codigo}
                                             />
+
                                         </div>
+
                                     </td>
                                 </tr>
                                 ,
-                                <tr>
+                                <tr
+                                    style={
+                                        sessionStorage.getItem('idobra') == item.id_ficha ?
+                                            {
+                                                backgroundColor: "#171819"
+                                            }
+                                            :
+                                            {}
+                                    }
+                                >
+                                    <td
+                                        style={{
+                                            "border-top": "none"
+                                        }}
+                                    ></td>
                                     <td colSpan="8"
                                         style={{
                                             "border-top": "none"
@@ -480,33 +488,43 @@ function EstadoObra({ id_ficha }) {
     useEffect(() => {
         fetchData()
     }, []);
-    const [EstadoObra, setEstadoObra] = useState("")
+    const [EstadoObra, setEstadoObra] = useState({})
     async function fetchData() {
         var res = await axios.post(`${UrlServer}/getEstadoObra`, {
             id_ficha: id_ficha
         })
-        setEstadoObra(res.data.nombre)
+        setEstadoObra(res.data)
     }
+
     return (
-        <div
-            className={EstadoObra === "Ejecucion"
-                ?
-                "badge badge-success p-1"
-                :
-                EstadoObra === "Paralizado"
-                    ?
-                    "badge badge-warning p-1"
-                    :
-                    EstadoObra === "Corte"
-                        ?
-                        "badge badge-danger p-1"
-                        :
-                        EstadoObra === "Actualizacion"
-                            ?
-                            "badge badge-info p-1" : "badge badge-info p-1"}
+        <Button
+            type="button"
+            style={{
+                borderRadius: "13px",
+                "--perceived-lightness": "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
+                "--lightness-switch": " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
+                padding: " 0 10px",
+                "line-height": " 22px!important",
+                "--lightness-threshold": " 0.6",
+                "--background-alpha": " 0.18",
+                "--border-alpha": " 0.3",
+                "--lighten-by": " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
+                "background": " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
+                "color": " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
+                "border-color": " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+                "--label-r": hexToRgb(EstadoObra.color).r,
+                "--label-g": hexToRgb(EstadoObra.color).g,
+                "--label-b": hexToRgb(EstadoObra.color).b,
+                "--label-h": hexToRgb(EstadoObra.color).h,
+                "--label-s": hexToRgb(EstadoObra.color).s,
+                "--label-l": hexToRgb(EstadoObra.color).l,
+                margin: "5px",
+                cursor: "default"
+            }}
         >
-            { EstadoObra}
-        </div>
+            {EstadoObra.nombre}
+        </Button>
+
 
     );
 }
@@ -705,242 +723,3 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
         </div>
     )
 })
-function ProvinciaSectores({ id_unidadEjecutora, idsectores, Estados_id_Estado, recargar }) {
-    useEffect(() => {
-        fetchSectores()
-    }, [])
-    const [Sectores, setSectores] = useState([])
-    async function fetchSectores() {
-        console.log("idsectores", idsectores);
-        var res = await axios.post(`${UrlServer}/getSectores`, {
-            id_acceso: sessionStorage.getItem("idacceso"),
-            id_unidadEjecutora,
-            idsectores: idsectores
-        })
-        if (Array.isArray(res.data)) {
-            setSectores(res.data)
-        }
-    }
-    useEffect(() => {
-        fetchSectores()
-    }, [idsectores])
-    return (
-        Sectores.map((item, i) =>
-            <div>
-                <div
-                    style={{
-                        color: "#e0ff97",
-                        fontSize: "1rem",
-                        fontWeight: "700",
-                    }}
-                >
-                    {item.nombre}
-                </div >
-                <SectoresObras
-                    id_unidadEjecutora={id_unidadEjecutora}
-                    idsectores={item.idsectores}
-                    Estados_id_Estado={Estados_id_Estado}
-                    recargar={recargar}
-                />
-            </div>
-
-        )
-    )
-}
-function SectoresObras({ id_unidadEjecutora, idsectores, Estados_id_Estado, recargar }) {
-    useEffect(() => {
-        fetchObras()
-    }, [])
-    const [Obras, setObras] = useState([])
-    async function fetchObras() {
-        var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
-            id_acceso: sessionStorage.getItem("idacceso"),
-            id_unidadEjecutora,
-            idsectores,
-            Estados_id_Estado
-            // id_tipoObra: TipoObraSeleccionada,
-
-        })
-        setObras(res.data)
-        if (!sessionStorage.getItem('idobra')) {
-            recargar(res.data[0])
-        }
-    }
-    function calcular_dias(fecha_inicio, fecha_final) {
-        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        const firstDate = new Date(fecha_inicio);
-        const secondDate = new Date(fecha_final);
-        var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-        return days || 0
-    }
-    //labels
-    const [RefLabels, setRefLabels] = useState([])
-    function recargarObraLabels(id_ficha) {
-        RefLabels[id_ficha].recarga()
-    }
-    //componentes
-    const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] = useState({})
-    async function onChangeObraComponentesSeleccionada(id_ficha) {
-        setComponentes([])
-        if (ObraComponentesSeleccionada == id_ficha) {
-            setObraComponentesSeleccionada(-1)
-        } else {
-            setObraComponentesSeleccionada(id_ficha)
-            fetchComponentes(id_ficha)
-        }
-    }
-    //componentes
-    const [Componentes, setComponentes] = useState([])
-    async function fetchComponentes(id_ficha) {
-        var res = await axios.post(`${UrlServer}/getComponentes`, {
-            id_ficha
-        })
-        setComponentes(res.data)
-    }
-    useEffect(() => {
-        fetchObras()
-    }, [Estados_id_Estado])
-    return (
-        <table className="table table-sm" >
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th style={{ width: "400px", minWidth: "150px", textAlign: "center" }} >OBRA</th>
-                    <th className="text-center" >AVANCE </th>
-                    <th className="text-center" >UDM </th>
-                    <th className="text-center">IR A</th>
-                    <th className="text-center">ESTADO</th>
-                    <th className="text-center" style={{ width: "105px", minWidth: "100px" }} >OPCIONES</th>
-                </tr>
-            </thead>
-            <tbody >
-                {Obras.map((item, i) =>
-                    [
-                        <tr key={item.id_ficha}>
-                            <td>
-                                {i + 1}
-                            </td>
-                            <td>
-                                {item.g_meta}
-                            </td>
-                            <td
-                                style={{
-                                    width: "20%"
-                                }}
-                            >
-                                <FisicoBarraPorcentaje id_ficha={item.id_ficha} />
-                                <FinancieroBarraPorcentaje id_ficha={item.id_ficha} />
-                            </td>
-                            <td >
-                                {calcular_dias(item.ultima_fecha, new Date()) - 1} días
-
-                            </td>
-                            <td>
-                                <Button
-                                    outline={sessionStorage.getItem('idobra') != item.id_ficha}
-                                    color={sessionStorage.getItem('idobra') != item.id_ficha ? "secondary" : "primary"}
-                                    onClick={() => { recargar(item) }}
-                                    className="text-white"
-                                >
-                                    {item.codigo}
-                                </Button>
-                            </td>
-                            <td>
-                                <EstadoObra id_ficha={item.id_ficha} />
-                            </td>
-                            <td className="d-flex">
-                                <button
-                                    className="btn btn-outline-info btn-sm mr-1"
-                                    title="Avance Componentes"
-                                    onClick={() => onChangeObraComponentesSeleccionada(item.id_ficha)}
-                                >
-                                    <FaList />
-                                </button>
-                                <ModalListaPersonal id_ficha={item.id_ficha} codigo_obra={item.codigo} />
-                                <ModalInformacionObras id_ficha={item.id_ficha} />
-                                <Curva_S id_ficha={item.id_ficha} />
-                                <Obras_labels_edicion
-                                    id_ficha={item.id_ficha}
-                                    recargarObraLabels={recargarObraLabels}
-                                    codigo={item.codigo}
-                                />
-                            </td>
-                        </tr>
-                        ,
-                        <tr>
-                            <td colSpan="8"
-                                style={{
-                                    "border-top": "none"
-                                }}
-                            >
-                                <Obras_labels
-                                    id_ficha={item.id_ficha}
-                                    ref={(ref) => {
-                                        var clone = RefLabels
-                                        clone[item.id_ficha] = ref
-                                        setRefLabels(clone)
-                                    }}
-                                />
-                            </td>
-                        </tr>
-                        ,
-                        (
-                            ObraComponentesSeleccionada == item.id_ficha
-                            &&
-                            <tr key={"1." + i}>
-                                <td colSpan="8">
-                                    <table className="table table-bordered table-sm"
-                                        style={{
-                                            width: "100%"
-                                        }}
-                                    >
-                                        <thead>
-                                            <tr>
-                                                <th>N°</th>
-                                                <th>COMPONENTE</th>
-                                                <th>PRESUPUESTO CD</th>
-                                                <th>EJECUCIÓN FÍSICA</th>
-                                                <th>BARRRA PORCENTUAL</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody style={{ backgroundColor: '#333333' }}>
-                                            {
-                                                Componentes.map((item) =>
-
-                                                    <tr key={Componentes.id_componente} >
-                                                        <td>{item.numero}</td>
-
-                                                        <td style={{ fontSize: '0.75rem', color: '#8caeda' }}
-                                                        >{item.nombre}</td>
-
-                                                        <td> S/. {Redondea(item.presupuesto)}</td>
-                                                        <td>
-                                                            <ComponenteAvance id_componente={item.id_componente} />
-                                                        </td>
-                                                        <td>
-                                                            <ComponenteBarraPorcentaje
-                                                                id_componente={item.id_componente}
-                                                                componente={item}
-                                                            />
-                                                        </td>
-
-                                                    </tr>
-
-                                                )}
-                                        </tbody>
-                                    </table>
-
-                                </td>
-
-                            </tr>
-                        )
-
-                    ]
-                )}
-
-            </tbody>
-
-        </table>
-
-    )
-}
