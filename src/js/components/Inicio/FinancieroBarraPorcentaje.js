@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import { Redondea } from '../Utils/Funciones';
+import { Button, Input, Tooltip } from 'reactstrap';
 export default ({ id_ficha }) => {
     useEffect(() => {
         fetchFinancieroAvance()
@@ -15,6 +16,9 @@ export default ({ id_ficha }) => {
         })
         setFinancieroAvance(request.data)
     }
+    const [tooltipOpen, setTooltipOpen] = useState(false);
+
+    const toggle = () => setTooltipOpen(!tooltipOpen);
     return (
         <div style={{
             width: '100%',
@@ -22,7 +26,6 @@ export default ({ id_ficha }) => {
             textAlign: 'center'
         }}
         >
-            {/* {id_ficha} */}
             <div style={{
                 height: '2px',
                 backgroundColor: '#4a4b4c',
@@ -34,19 +37,7 @@ export default ({ id_ficha }) => {
                     style={{
                         width: `${FinancieroAvance.financiero_avance_porcentaje}%`,
                         height: '100%',
-                        // boxShadow: '0 0 8px #ff7400',
-                        // boxShadow: '0 0 12px #3578bb',
-                        // backgroundColor: FinancieroAvance.financiero_avance_porcentaje > 85
-                        //     ?
-                        //     '#ff7400'
-                        //     :
-                        //     FinancieroAvance.financiero_avance_porcentaje > 30
-                        //         ? '#fb8420'
-                        //         : '#f3984b',
-                        // backgroundColor: FinancieroAvance.fisico_avance_porcentaje > 85 ? '#3578bb'
-                        //     : FinancieroAvance.fisico_avance_porcentaje > 30 ? '#8caeda'
-                        //         : '#cecece',
-                        backgroundColor:"#ffa500",
+                        backgroundColor: "#ffa500",
                         borderRadius: '5px',
                         transition: 'all .9s ease-in',
                         position: 'absolute',
@@ -59,10 +50,11 @@ export default ({ id_ficha }) => {
                         top: '6px',
                         color: '#8caeda',
                         "font-size": "12px",
-                        // "font-weight": "700",
                         color: "#ffffff",
                         display: "flex",
+                        justifyContent: "center"
                     }}
+                    id={"FinancieroBarraPorcentaje-" + id_ficha}
                 >
                     Financiero
                     <div
@@ -74,6 +66,14 @@ export default ({ id_ficha }) => {
                     </div>
 
                 </span>
+                <Tooltip
+                    placement={"bottom"}
+                    isOpen={tooltipOpen}
+                    target={"FinancieroBarraPorcentaje-" + id_ficha}
+                    toggle={toggle}
+                >
+                    S/.{Redondea(FinancieroAvance.financiero_avance)}
+                </Tooltip>
             </div>
 
         </div>

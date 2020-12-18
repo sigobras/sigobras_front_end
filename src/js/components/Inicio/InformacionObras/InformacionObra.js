@@ -65,7 +65,8 @@ class ModalInformacionObras extends Component {
   render() {
     const { DataInfoObra } = this.state
     return (
-      <button className="btn btn-outline-info btn-sm mr-1" title="Personal" onClick={this.ModalInfoObras} ><FaEarlybirds />
+      <button className="btn btn-outline-info btn-sm mr-1" title="Informacion" 
+      onClick={this.ModalInfoObras} ><FaEarlybirds />
         {/* toggle = es para activar y desactivar el modal */}
         <Modal className="modalinfo"  isOpen={this.state.infoObras} fade={false} toggle={this.ModalInfoObras} >
           <ModalHeader className="modalheader1" toggle={this.toggleModal}>

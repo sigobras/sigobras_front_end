@@ -28,7 +28,7 @@ export default ({ id_ficha, codigo }) => {
         <div>
             <button
                 className="btn btn-outline-info btn-sm mr-1"
-                title="CURVA S"
+                title="Imagenes"
                 onClick={toggle}
             ><MdPhotoLibrary />
             </button>

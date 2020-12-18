@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import { Redondea } from '../Utils/Funciones';
+import { Button, Input, Tooltip } from 'reactstrap';
 export default ({ id_ficha }) => {
     useEffect(() => {
         fetchFisicoAvance()
@@ -15,6 +16,9 @@ export default ({ id_ficha }) => {
         })
         setFisicoAvance(request.data)
     }
+    const [tooltipOpen, setTooltipOpen] = useState(false);
+
+    const toggle = () => setTooltipOpen(!tooltipOpen);
     return (
         <div style={{
             width: '100%',
@@ -23,7 +27,6 @@ export default ({ id_ficha }) => {
             "padding-bottom": "28px"
         }}
         >
-            {/* {id_ficha} */}
             <div style={{
                 height: '2px',
                 backgroundColor: '#4a4b4c',
@@ -35,11 +38,7 @@ export default ({ id_ficha }) => {
                     style={{
                         width: `${FisicoAvance.fisico_avance_porcentaje}%`,
                         height: '100%',
-                        // boxShadow: '0 0 12px #3578bb',
-                        // backgroundColor: FisicoAvance.fisico_avance_porcentaje > 85 ? '#3578bb'
-                        //     : FisicoAvance.fisico_avance_porcentaje > 30 ? '#8caeda'
-                        //         : '#cecece',
-                        backgroundColor:"#17a2b8",
+                        backgroundColor: "#17a2b8",
                         borderRadius: '5px',
                         transition: 'all .9s ease-in',
                         position: 'absolute',
@@ -51,17 +50,28 @@ export default ({ id_ficha }) => {
                         top: '6px',
                         color: '#8caeda',
                         "font-size": "12px",
-                        // "font-weight": "700",
                         color: "#ffffff",
+                        textAlign: "center",
                         display: "flex",
+                        justifyContent: "center"
                     }}
+                    id={"FisicoBarraPorcentaje-" + id_ficha}
                 >
-                    Físico <div
+                    Físico
+                    <div
                         style={{
                             "font-size": "13px"
                         }}
                     >-({Redondea(FisicoAvance.fisico_avance_porcentaje)} %)</div>
                 </span>
+                <Tooltip
+                    placement={"bottom"}
+                    isOpen={tooltipOpen}
+                    target={"FisicoBarraPorcentaje-" + id_ficha}
+                    toggle={toggle}
+                >
+                    S/.{Redondea(FisicoAvance.fisico_avance)}
+                </Tooltip>
             </div>
 
         </div>

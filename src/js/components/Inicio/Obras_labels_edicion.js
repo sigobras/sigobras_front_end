@@ -1,5 +1,5 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from "react";
-import { FaTag, FaCheckCircle, FaCircleNotch, FaMinus } from "react-icons/fa";
+import { FaTag, FaCheckCircle, FaCircleNotch, FaMinus, FaSearch } from "react-icons/fa";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Badge, UncontrolledPopover, PopoverHeader, PopoverBody, Input, Collapse } from 'reactstrap';
 import axios from 'axios';
@@ -18,8 +18,16 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
     const toggleFormulario = () => setFormulario(!Formulario);
 
     const [FichasLabels, setFichasLabels] = useState([])
+    const [TextoBuscar, setTextoBuscar] = useState("")
     async function fetchFichasLabels() {
-        const res = await axios.get(`${UrlServer}/FichasLabels`)
+        const res = await axios.get(`${UrlServer}/FichasLabels`,
+            {
+                params: {
+                    id_ficha,
+                    texto_buscar: TextoBuscar
+                }
+            }
+        )
         setFichasLabels(res.data)
     }
 
@@ -72,17 +80,17 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
         hex = hex.padStart(6, '0')
         console.log(hex);
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        if(!result){
+        if (!result) {
             return {
-                r:0,
-                g:0,
-                b:0,
-                h:0,
-                s:0,
-                l:0
+                r: 0,
+                g: 0,
+                b: 0,
+                h: 0,
+                s: 0,
+                l: 0
             }
         }
-        
+
         var r = parseInt(result[1], 16);
         var g = parseInt(result[2], 16);
         var b = parseInt(result[3], 16);
@@ -127,6 +135,9 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
         recargarObraLabels(id_ficha)
     }
     const [RefLabels, setRefLabels] = useState([])
+    useEffect(() => {
+        fetchFichasLabels()
+    }, [TextoBuscar])
     return (
         [
             <button
@@ -294,7 +305,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                                                     value={FormularioDatos.color}
                                                     onChange={handleInputChange}
                                                 >
-                                                    {FormularioDatos.color||" "}
+                                                    {FormularioDatos.color || " "}
                                                 </Input>
 
                                                 <UncontrolledPopover trigger="legacy" placement="bottom" target="PopoverLegacy">
@@ -343,6 +354,19 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                             </form>
                         </div>
                     }
+                    <div
+                        style={{
+                            display: "flex"
+                        }}
+                    >
+                        <Button>
+                            <FaSearch size="20" />
+                        </Button>
+                        <Input
+                            type="text"
+                            onChange={(e) => setTextoBuscar(e.target.value)}
+                        />
+                    </div>
                     <table className="table"
                         style={{
                             width: "700px"
@@ -361,12 +385,17 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                         <tbody>
                             {FichasLabels.map((item, i) =>
                                 <tr
+                                    key={item.id}
                                     onClick={() => asignarLabel(item.id)}
                                     style={{
                                         cursor: "pointer"
                                     }}
                                 >
-                                    <td>
+                                    <td
+                                        style={{
+                                            display: "flex"
+                                        }}
+                                    >
                                         <LabelAsignada
                                             id_ficha={id_ficha}
                                             id_label={item.id}
