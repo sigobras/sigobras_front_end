@@ -42,7 +42,7 @@ function FechaActual2Meses() {
     var fecha = new Date();
 
     var anio = fecha.getFullYear();
-    var mes = fecha.getMonth() -1;
+    var mes = fecha.getMonth() - 1;
     var dia = fecha.getDate();
 
 
@@ -231,6 +231,22 @@ function hexToRgb(hex) {
     return respuesta;
 }
 
+//Primer regex para convertir a numero y el segundo formatea a tipo money
+const formatMoney = (valor) => {
+    var parteDecimal = valor.split('.')[1]
+    const segundaParte = ()=>{
+        if (parteDecimal == undefined) {
+            return ""
+        }else if (parteDecimal == "") {
+            return "."
+        }else{
+            return "." + parteDecimal
+        }
+    }
+    valor = valor.split('.')[0]
+    return valor.replace(/[^0-9\.-]+/g, "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + segundaParte()
+
+}
 
 module.exports = {
     Redondea,
@@ -250,6 +266,6 @@ module.exports = {
     mesesShort,
     FechaActual2Meses,
     fechaFormatoClasico,
-    hexToRgb
-
+    hexToRgb,
+    formatMoney
 } 

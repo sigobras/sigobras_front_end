@@ -54,6 +54,20 @@ export default () => {
         return res.data
     }
 
+    // const [DatosCostosIndirectos, setDatosCostosIndirectos] = useState([])
+    async function fetchDatosCostosIndirectos() {
+        const res = await axios.get(`${UrlServer}/costosIndirectos`,
+            {
+                params: {
+                    "id_ficha": sessionStorage.getItem("idobra")
+                }
+            }
+        )
+        console.log("poropopo", res.data);
+        // setDatosCostosIndirectos(res.data)
+        return res.data
+    }
+
     function fechaLarga(fecha) {
         var fechaTemp = fecha.split('-')
         var date = new Date(fechaTemp[0], fechaTemp[1] - 1, fechaTemp[2]);
@@ -65,16 +79,16 @@ export default () => {
         var fechaTemp = fecha.split('-')
         var date = new Date(fechaTemp[0], fechaTemp[1] - 1, fechaTemp[2]);
 
-        console.log("date",date);
+        console.log("date", date);
 
         date.setDate(date.getDate() + Number(dias));
-        console.log("dias",dias);
-        
-        console.log("Date 2",date, typeof Number(dias));
+        console.log("dias", dias);
+
+        console.log("Date 2", date, typeof Number(dias));
         var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: "long" };
         return date.toLocaleDateString("es-ES", options)
     }
-    
+
     function GenerateFechaPdf() {
         var n = new Date();
         //Año
@@ -97,10 +111,11 @@ export default () => {
         // Guardamos en una variable temporal los datos del Api de plazos
         var FichaTecnicaPlazos = await fetchFichaTecnicaPlazos()
         // console.log("FichaTecnicaPlazos", FichaTecnicaPlazos);
-
+        var DatosCostosIndirectos = await fetchDatosCostosIndirectos()
+        console.log("DatosCostosIndirectos", DatosCostosIndirectos);
 
         var DatosGenerales = [
-            { text: '1.-DATOS GENERALES', style: 'header', alignment: 'left' },
+            { text: '1.-DATOS GENERALES', style: 'header', alignment: 'left',bold: true  },
             {
                 style: 'tableExample',
                 table: {
@@ -124,7 +139,7 @@ export default () => {
                         ],
                         [
                             { text: '', border: [false, false, false, false], },
-                            { text: 'COdigo unificado ', border: [false, false, false, false], },
+                            { text: 'Codigo unificado ',bold: true,  border: [false, false, false, false]},
                             { text: FichaTecnicaDatosGenerales.codigo_unificado == null ? "----" : FichaTecnicaDatosGenerales.codigo_unificado },
                             { text: '<-------------->', border: [false, false, false, false], },
                             { text: 'Codigo SNIP', border: [false, false, false, false], },
@@ -200,7 +215,7 @@ export default () => {
 
         var DatosTipo3 = [
             [
-                { text: 'Ampliacion Plazo de ejecucion aprobado inicialmente', rowSpan: LengthRowDatosTipo3.length+1, colSpan: 2 },
+                { text: 'Ampliacion Plazo de ejecucion aprobado inicialmente', rowSpan: LengthRowDatosTipo3.length + 1, colSpan: 2 },
                 { text: '', },
                 { text: 'AMP. plazo' },
                 { text: 'Resolucion de aprobacion' },
@@ -239,11 +254,11 @@ export default () => {
         }
         ItemSuma.push(
             [
-                { text: '', border: [false, true, true, false],},
+                { text: '', border: [false, true, true, false], },
                 { text: 'Total de dias aprobados' },
                 { text: total },
                 { text: 'Termino de obra Reprogramado' },
-                { text: 'Any DAT'}
+                { text: 'Any DAT' }
             ],
         )
 
@@ -264,8 +279,8 @@ export default () => {
                     [
                         { text: 'Periodo\n solicitado' },
                         { text: element.n_dias },
-                        { text: 'Situaicon del tramite'},
-                        { text: element.descripcion, colSpan:2},
+                        { text: 'Situaicon del tramite' },
+                        { text: element.descripcion, colSpan: 2 },
                         { text: '' }
                     ],
                 )
@@ -319,7 +334,7 @@ export default () => {
             {
                 style: 'tableExample',
                 table: {
-                    widths: ['auto', '*', 'auto', '*','*'],
+                    widths: ['auto', '*', 'auto', '*', '*'],
                     body:
                         DatosTipo3.concat(ItemSuma)
                 }
@@ -431,83 +446,62 @@ export default () => {
             },
         ]
 
+        var CostosIndirectos = [
+            [
+                { text: 'DESCRIPCION', colSpan: 2 },
+                { text: '' },
+                { text: 'EXP. TEC. APROB.' },
+                { text: 'ADIC. APROB.' },
+                { text: 'PARCIAL' }
+            ],
+        ]
+
+        for (let i = 0; i < DatosCostosIndirectos.length; i++) {
+            const element = DatosCostosIndirectos[i];
+            CostosIndirectos.push(
+                [
+                    { text: element.nombre, border: [true, true, false, true], },
+                    { text: 'Any Dates', border: [false, true, true, true], },
+                    { text: Redondea(element.monto_expediente) },
+                    { text: Redondea(element.monto_adicional) },
+                    { text: Redondea(element.monto_expediente + element.monto_adicional) }
+                ],
+            )
+
+        }
+
+        var totalPresupuestoAprobado = []
+        totalPresupuestoAprobado.push(
+            [
+                { text: 'TOTAL PRESUPUESTO APROBADO S/.', colSpan: 2 },
+                { text: '' },
+                {
+                    text: Redondea(DatosCostosIndirectos.reduce(
+                        (accumulator, item) => accumulator + item.monto_expediente , 0
+                    ))
+                },
+                {
+                    text: Redondea(DatosCostosIndirectos.reduce(
+                        (accumulator, item) => accumulator  + item.monto_adicional, 0
+                    ))
+                },
+                {
+                    text: Redondea(DatosCostosIndirectos.reduce(
+                        (accumulator, item) => accumulator + item.monto_expediente + item.monto_adicional, 0
+                    ))
+                }
+            ],
+        )
+
         var PresupuestoObra = [
             { text: '3.-PRESUPUESTO DE OBRA', style: 'header', alignment: 'left' },
             {
                 style: 'tableExample',
                 table: {
                     widths: ['auto', '*', '*', '*', '*'],
-                    body: [
-                        [
-                            { text: 'DESCRIPCION', colSpan: 2 },
-                            { text: '' },
-                            { text: 'EXP. TEC. APROB.' },
-                            { text: 'ADIC. APROB.' },
-                            { text: 'PARCIAL' }
-                        ],
-                        [
-                            { text: 'COSTO DIRECTO', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS GERENCIALES', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS DE SUPERVISION', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS DE GESTION DE PROYECTO', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS DE SEGUIMIENTO Y MONITOREO', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS DE LIQUIDACION DE OBRA', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' }, { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS DE EXPEDIENTE TECNICO', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'GASTOS DE EVALUACIOIN DE EXPEDIENTE TECNICO', border: [true, true, false, true], },
-                            { text: 'Any Dates', border: [false, true, true, true], },
-                            { text: 'Any Dates' },
-                            { text: 'Any dates' },
-                            { text: 'Any dates' }
-                        ],
-                        [
-                            { text: 'TOTAL PRESUPUESTO APROBADO S/.', colSpan: 2 },
-                            { text: '' },
-                            { text: 'Result dates' },
-                            { text: 'Result dates' },
-                            { text: 'Result dates' }
-                        ],
-                    ]
+                    body:
+                        CostosIndirectos.concat(totalPresupuestoAprobado)
+                   
                 }
             },
             {
@@ -589,7 +583,7 @@ export default () => {
         ]
         var dd = {
             header: {
-                style: 'tableExample',
+                // style: 'tableExample',
                 margin: [0, 2, 0, 0],
                 table: {
                     body: [
@@ -601,7 +595,7 @@ export default () => {
                                 border: [false, false, true, false]
                             },
                             {
-                                text: 'METAS +  ANY NUmber',
+                                text: 'METAS2 +  ANY NUmber',
                                 alignment: 'center',
                                 margin: [45, 4, 50, 0],
                             },
@@ -609,17 +603,17 @@ export default () => {
                     ]
                 },
                 layout: {
-                    hLineWidth: function (i, node) {
-                        return (i === 0 || i === node.table.body.length) ? 2 : 1;
+                    hLineWidth:function (i, node) {
+                        return 5;
                     },
                     vLineWidth: function (i, node) {
                         return (i === 0 || i === node.table.widths.length) ? 2 : 1;
                     },
                     hLineColor: function (i, node) {
-                        return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
+                        return 'black';
                     },
                     vLineColor: function (i, node) {
-                        return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+                        return 'black';
                     },
                 },
                 // columns: [
@@ -650,11 +644,11 @@ export default () => {
                 {
                     style: 'tableExample',
                     table: {
-                        widths: [ '*', '*', '*', '*'],
+                        widths: ['*', '*', '*', '*'],
                         body: [
                             [
                                 { text: '', border: [false, false, false, false], },
-                                { text: 'Correspondiente al ', border: [true, true, false, true], },
+                                { text: 'Correspondiente al ', border: [true, true, false, true], color: 'red',bold: true },
                                 { text: GenerateFechaPdf(), border: [false, true, true, true], },
                                 { text: '', border: [false, false, false, false], },
                             ],
@@ -662,6 +656,36 @@ export default () => {
                                 { text: FichaTecnicaDatosGenerales.g_meta, colSpan: 4 }
                             ]
                         ]
+                    },layout: {
+                        hLineWidth:function (i, node) {
+                            return 5;
+                        },
+                        vLineWidth: function (i, node) {
+                            return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+                        },
+                        hLineColor: function (i, node) {
+                            return 'black';
+                        },
+                        vLineColor: function (i, node) {
+                            return 'black';
+                        },
+                        // hLineStyle: function (i, node) {
+                        //     if (i === 0 || i === node.table.body.length) {
+                        //         return null;
+                        //     }
+                        //     return {dash: {length: 10, space: 4}};
+                        // },
+                        // vLineStyle: function (i, node) {
+                        //     if (i === 0 || i === node.table.widths.length) {
+                        //         return null;
+                        //     }
+                        //     return {dash: {length: 4}};
+                        // },
+                        // paddingLeft: function(i, node) { return 4; },
+                        // paddingRight: function(i, node) { return 4; },
+                        // paddingTop: function(i, node) { return 2; },
+                        // paddingBottom: function(i, node) { return 2; },
+                        // fillColor: function (i, node) { return null; }
                     }
                 },
                 {
@@ -679,7 +703,7 @@ export default () => {
             defaultStyle: {
                 alignment: 'justify',
                 fontSize: 9,
-                bold: true,
+                // bold: true,
             },
         }
         pdfmake.vfs = pdfFonts.pdfMake.vfs;

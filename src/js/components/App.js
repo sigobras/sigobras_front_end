@@ -50,6 +50,8 @@ import GestionTareas from "./GestionTareas/GestionTareas"
 import Index from "./Pdocumentarios/Index"
 import GestionDocumentaria from "./GestionDocumentaria/index"
 
+//COSTOS INDIRECTOS
+import index from "./CostosIndirectos/index"
 
 
 export default () => {
@@ -203,6 +205,9 @@ export default () => {
                                             </li>,
                                             <li className="lii">
                                                 <NavLink to="/GestionDocumentaria" activeclassname="nav-link" > <span> GESTION DOCUMENTARIA </span> </NavLink>
+                                            </li>,
+                                            <li className="lii">
+                                                <NavLink to="/CostosIndirectos" activeclassname="nav-link" > <span> COSTOS INDIRECTOS </span> </NavLink>
                                             </li>
                                         ]
                                     }
@@ -333,6 +338,8 @@ export default () => {
                                     {/* PROCESOS DOCUMENTARIOS */}
                                     <Route path="/DOCUEMENTOS" component={Index} />
                                     <Route path="/GestionDocumentaria" component={GestionDocumentaria} />
+                                    <Route path="/CostosIndirectos" component={index} />
+                                    
                                 </Switch>
                             </div>
                         </main>
