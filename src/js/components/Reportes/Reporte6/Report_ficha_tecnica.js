@@ -7,7 +7,7 @@ import { FaFilePdf } from "react-icons/fa";
 
 import { logoSigobras, logoGRPuno, ImgDelta } from '../Complementos/ImgB64'
 import { UrlServer } from '../../Utils/ServerUrlConfig'
-const { Redondea, mesesShort, meses } = require('../../Utils/Funciones');
+const { Redondea, mesesShort, meses, fechaFormatoClasico } = require('../../Utils/Funciones');
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -36,7 +36,6 @@ export default () => {
         const request = await axios.post(`${UrlServer}/getDatosGenerales2`, {
             id_ficha: sessionStorage.getItem('idobra')
         })
-        console.log("request getDatosGenerales2", request.data);
         setLoading(true)
         return request.data
     }
@@ -50,7 +49,6 @@ export default () => {
                 }
             }
         )
-        console.log("request plazos -->", res.data);
         return res.data
     }
 
@@ -63,8 +61,78 @@ export default () => {
                 }
             }
         )
-        console.log("poropopo", res.data);
-        // setDatosCostosIndirectos(res.data)
+        return res.data
+    }
+    async function fetchFichasMeta() {
+        const res = await axios.get(`${UrlServer}/fichasMeta`,
+            {
+                params: {
+                    "id_ficha": sessionStorage.getItem("idobra")
+                }
+            }
+        )
+        return res.data
+    }
+
+    async function fetchAmpliacionPresupuestal() {
+        const res = await axios.get(`${UrlServer}/ampliacionPresupuestal`,
+            {
+                params: {
+                    "id_ficha": sessionStorage.getItem("idobra")
+                }
+            }
+        )
+        console.log("Primer axios", res.data);
+        for (let i = 0; i < res.data.length; i++) {
+            const item = res.data[i];
+            const costoIndirectoAdicional = await axios.get(`${UrlServer}/costosIndirectosAdicionales`,
+                {
+                    params: {
+                        "fichas_ampliacionpresupuesto_id": item.id
+                    }
+                }
+            )
+            const costoDirectoAdicional = await axios.get(`${UrlServer}/costosDirectosAdicionales`,
+                {
+                    params: {
+                        "fichas_ampliacionpresupuesto_id": item.id
+                    }
+                }
+            )
+            item.costoIndirectoAdicional = costoIndirectoAdicional.data
+            item.costoDirectoAdicional = costoDirectoAdicional.data
+        }
+        return res.data
+    }
+
+    async function fetchCostoDirecto() {
+        const res = await axios.post(`${UrlServer}/getPresupuestoCostoDirecto`,
+            {
+                "id_ficha": sessionStorage.getItem("idobra")
+            }
+        )
+        return res.data
+    }
+
+    async function fetchEjecucionPresupuestal() {
+        const res = await axios.get(`${UrlServer}/ejecucionPresupuestal`,
+            {
+                params: {
+                    "id_ficha": sessionStorage.getItem("idobra"),
+                    "anyo":2019
+                }
+            }
+        )
+        return res.data
+    }
+
+    async function fetchPim() {
+        const res = await axios.post(`${UrlServer}/getCurvaSPin`,
+            {
+                "id_ficha": sessionStorage.getItem("idobra"),
+                "anyo": 2020
+            }
+        )
         return res.data
     }
 
@@ -79,12 +147,12 @@ export default () => {
         var fechaTemp = fecha.split('-')
         var date = new Date(fechaTemp[0], fechaTemp[1] - 1, fechaTemp[2]);
 
-        console.log("date", date);
+        // console.log("date", date);
 
-        date.setDate(date.getDate() + Number(dias));
-        console.log("dias", dias);
+        date.setDate(date.getDate() + Number(dias - 1));
+        // console.log("dias", dias);
 
-        console.log("Date 2", date, typeof Number(dias));
+        // console.log("Date 2", date, typeof Number(dias));
         var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: "long" };
         return date.toLocaleDateString("es-ES", options)
     }
@@ -111,11 +179,25 @@ export default () => {
         // Guardamos en una variable temporal los datos del Api de plazos
         var FichaTecnicaPlazos = await fetchFichaTecnicaPlazos()
         // console.log("FichaTecnicaPlazos", FichaTecnicaPlazos);
-        var DatosCostosIndirectos = await fetchDatosCostosIndirectos()
-        console.log("DatosCostosIndirectos", DatosCostosIndirectos);
 
+        var DatosCostosIndirectos = await fetchDatosCostosIndirectos()
+        // console.log("DatosCostosIndirectos", DatosCostosIndirectos);
+
+        var AmpliacionPresupuestal = await fetchAmpliacionPresupuestal()
+        // console.log("fetchAmpliacionPresupuestal",AmpliacionPresupuestal);
+
+        var CostoDirecto = await fetchCostoDirecto()
+        // console.log("fetchCostoDirecto", CostoDirecto);
+
+        var EjecucionPresupuestal = await fetchEjecucionPresupuestal()
+        // console.log("fetchEjecucionPresupuestal",EjecucionPresupuestal);
+
+        var Pim = await fetchPim()
+        // console.log("fetchPim",Pim);
+
+        var DatosFichasMeta = await fetchFichasMeta()
         var DatosGenerales = [
-            { text: '1.-DATOS GENERALES', style: 'header', alignment: 'left',bold: true  },
+            { text: '1.-DATOS GENERALES', style: 'header', alignment: 'left', bold: true,fontSize: 10,fillColor: '#eeeeee'},
             {
                 style: 'tableExample',
                 table: {
@@ -139,9 +221,9 @@ export default () => {
                         ],
                         [
                             { text: '', border: [false, false, false, false], },
-                            { text: 'Codigo unificado ',bold: true,  border: [false, false, false, false]},
+                            { text: 'Codigo unificado ', bold: true, border: [false, false, false, false] },
                             { text: FichaTecnicaDatosGenerales.codigo_unificado == null ? "----" : FichaTecnicaDatosGenerales.codigo_unificado },
-                            { text: '<-------------->', border: [false, false, false, false], },
+                            { text: '<-------------->', border: [false, false, false, false], alignment: 'center' },
                             { text: 'Codigo SNIP', border: [false, false, false, false], },
                             { text: FichaTecnicaDatosGenerales.g_snip }
                         ],
@@ -176,25 +258,25 @@ export default () => {
             {
                 style: 'tableExample',
                 table: {
-                    widths: ['*', 'auto', '*', 'auto', '*', 'auto', '*'],
+                    widths: [100, 'auto', 100, 'auto', 100, 'auto', 152],
                     body: [
                         [
-                            { text: 'DEPARTAMENTO', },
+                            { text: 'DEPARTAMENTO', color: "red", alignment: 'center' },
                             { text: ' ', border: [false, false, false, false], },
-                            { text: 'PROVINCIA', border: [true, true, true, true], },
+                            { text: 'PROVINCIA', border: [true, true, true, true], color: "red", alignment: 'center' },
                             { text: '', border: [false, false, false, false], },
-                            { text: 'DISTRITO' },
+                            { text: 'DISTRITO', color: "red", alignment: 'center' },
                             { text: '', border: [false, false, false, false], },
-                            { text: 'CENTRO POBLADO / DIRRECCION' }
+                            { text: 'CENTRO POBLADO / DIRRECCION', color: "red", alignment: 'center' }
                         ],
                         [
-                            { text: 'Puno', },
+                            { text: 'Puno', alignment: 'center' },
                             { text: ' ', border: [false, false, false, false], },
-                            { text: FichaTecnicaDatosGenerales.g_local_prov, border: [true, true, true, true], },
+                            { text: FichaTecnicaDatosGenerales.g_local_prov, border: [true, true, true, true], alignment: 'center' },
                             { text: '', border: [false, false, false, false], },
-                            { text: FichaTecnicaDatosGenerales.g_local_dist },
+                            { text: FichaTecnicaDatosGenerales.g_local_dist, alignment: 'center' },
                             { text: '', border: [false, false, false, false], },
-                            { text: FichaTecnicaDatosGenerales.centropoblado_direccion }
+                            { text: FichaTecnicaDatosGenerales.centropoblado_direccion, alignment: 'center' }
                         ],
                     ]
                 }
@@ -215,11 +297,11 @@ export default () => {
 
         var DatosTipo3 = [
             [
-                { text: 'Ampliacion Plazo de ejecucion aprobado inicialmente', rowSpan: LengthRowDatosTipo3.length + 1, colSpan: 2 },
+                { text: 'Ampliacion Plazo de ejecucion aprobado inicialmente', rowSpan: LengthRowDatosTipo3.length + 1, colSpan: 2, alignment: 'center' },
                 { text: '', },
-                { text: 'AMP. plazo' },
-                { text: 'Resolucion de aprobacion' },
-                { text: 'Fecha de aprobacion' }
+                { text: 'AMP. plazo', color: "red" },
+                { text: 'Resolucion de aprobacion', color: "red" },
+                { text: 'Fecha de aprobacion', color: "red" }
             ],
 
         ]
@@ -231,7 +313,7 @@ export default () => {
                     [
                         { text: '', },
                         { text: '', },
-                        { text: element.n_dias },
+                        { text: element.n_dias + " d/c" },
                         { text: element.documento_resolucion_estado },
                         { text: fechaLarga(element.fecha_aprobada) }
                     ],
@@ -244,46 +326,43 @@ export default () => {
         // console.log("---<>", LengthRowDatosTipo3);
 
         var ItemSuma = []
-        let total = 0;
-        // for (let i of FichaTecnicaPlazos.length) total += i.n_dias;
+        let totalDiasPlazo = 0;
+        // for (let i of FichaTecnicaPlazos.length) totalDiasPlazo += i.n_dias;
         for (let i = 0; i < FichaTecnicaPlazos.length; i++) {
             const element = FichaTecnicaPlazos[i];
             if (element.tipo == 3 && element.plazo_aprobado == 1) {
-                total += element.n_dias
+                totalDiasPlazo += element.n_dias
             }
         }
         ItemSuma.push(
             [
                 { text: '', border: [false, true, true, false], },
-                { text: 'Total de dias aprobados' },
-                { text: total },
-                { text: 'Termino de obra Reprogramado' },
-                { text: 'Any DAT' }
+                { text: 'Total de dias aprobados', bold: true, alignment: "center" },
+                { text: totalDiasPlazo + " d/c", bold: true },
+                { text: 'Termino de obra Reprogramado', bold: true },
+                { text: addDaysToEndDate(FichaTecnicaDatosGenerales.fecha_inicial, totalDiasPlazo + Number(FichaTecnicaDatosGenerales.tiempo_ejec)), bold: true }
             ],
         )
 
         // AMPLIACION DE PRESUPUESTO SEGUN ITEM Y .....
 
         var AmpliacionItem = [
-            // [
-            //     { text: 'Periodo solicitado' },
-            //     { text: 'Situaicon del tramite', rowSpan: 2 },
-            //     { text: '',},
-            //     { text: '' },
-            // ],
+
         ]
+        var plazosPorAprobarDias = 0
         for (let i = 0; i < FichaTecnicaPlazos.length; i++) {
             const element = FichaTecnicaPlazos[i];
-            if (element.tipo == 3 && element.plazo_aprobado == 0) {
+            if (element.tipo == 3 && (element.plazo_aprobado == 0 || element.plazo_aprobado == null)) {
                 AmpliacionItem.push(
                     [
                         { text: 'Periodo\n solicitado' },
-                        { text: element.n_dias },
+                        { text: element.n_dias + " d/c" },
                         { text: 'Situaicon del tramite' },
                         { text: element.descripcion, colSpan: 2 },
                         { text: '' }
                     ],
                 )
+                plazosPorAprobarDias += element.n_dias
             }
         }
         var FechaAmpliacion = [
@@ -291,30 +370,30 @@ export default () => {
                 { text: '', border: [false, true, false, false], },
                 { text: '', border: [false, true, false, false], },
                 { text: '', border: [false, true, true, false], },
-                { text: 'Fecha reprogramada de termino de obra' },
-                { text: 'Any DATE' }
+                { text: 'Fecha reprogramada de termino de obra', bold: true, alignment: 'center' },
+                { text: addDaysToEndDate(FichaTecnicaDatosGenerales.fecha_inicial, totalDiasPlazo + Number(FichaTecnicaDatosGenerales.tiempo_ejec) + plazosPorAprobarDias), bold: true }
             ],
 
         ]
 
 
         var PeriodoEjecucion = [
-            { text: '2.-PERIODO DE EJECUCION', style: 'header', alignment: 'left' },
+            { text: '2.-PERIODO DE EJECUCION', style: 'header', alignment: 'left', bold: true,fontSize: 10,fillColor: '#eeeeee' },
             {
                 style: 'tableExample',
                 table: {
-                    widths: ['*', 'auto', 'auto', '*', '*'],
+                    widths: [100, 60, 'auto', '*', '*'],
                     body: [
                         [
-                            { text: 'Plazo de ejecucion aprobado inicialmente', rowSpan: 2, },
-                            { text: 'Segun exp. tec.' },
+                            { text: 'Plazo de Ejecución Aprobado Inicialmente', rowSpan: 2, alignment: 'center' },
+                            { text: 'Segun exp. tec.', color: "red" },
                             { text: '', border: [true, false, true, false], rowSpan: 2 },
-                            { text: 'Fecha de inicio de obra' },
-                            { text: 'Fecha termino programada' }
+                            { text: 'Fecha de inicio de obra', color: "red" },
+                            { text: 'Fecha termino programada', color: "red" }
                         ],
                         [
                             { text: '' },
-                            { text: FichaTecnicaDatosGenerales.tiempo_ejec },
+                            { text: FichaTecnicaDatosGenerales.tiempo_ejec + " d/c" },
                             { text: '' },
                             { text: fechaLarga(FichaTecnicaDatosGenerales.fecha_inicial) },
                             { text: addDaysToEndDate(FichaTecnicaDatosGenerales.fecha_inicial, FichaTecnicaDatosGenerales.tiempo_ejec) }
@@ -334,51 +413,12 @@ export default () => {
             {
                 style: 'tableExample',
                 table: {
-                    widths: ['auto', '*', 'auto', '*', '*'],
+                    widths: [10, 82, 50, '*', '*'],
                     body:
                         DatosTipo3.concat(ItemSuma)
                 }
             },
-            //////////////////////////////
-            // { text: 'Ampliacion Plazo de ejecucion aprobado inicialmente', style: 'header', alignment: 'left' },
-            // {
-            //     style: 'tableExample',
-            //     table: {
-            //         // widths: ['*', '*', '*', '*','*'],
-            //         body:
-            //             [
-            //                 [
-            //                     { text: 'Ampliacion Plazo de ejecucion aprobado inicialmente', rowSpan: 3, colSpan: 2 },
-            //                     { text: '', },
-            //                     { text: 'AMP. plazo' },
-            //                     { text: 'Resolucion de aprobacion' },
-            //                     { text: 'Fecha de aprobacion' }
-            //                 ],
-            //                 [
-            //                     { text: '', },
-            //                     { text: '', },
-            //                     { text: 'AMP. plazo' },
-            //                     { text: 'Resolucion de aprobacion' },
-            //                     { text: 'Fecha de aprobacion' }
-            //                 ],
-            //                 [
-            //                     { text: '', },
-            //                     { text: '', },
-            //                     { text: 'AMP. plazo' },
-            //                     { text: 'Resolucion de aprobacion' },
-            //                     { text: 'Fecha de aprobacion' }
-            //                 ],
-            //                 [
-            //                     { text: '', },
-            //                     { text: 'Total de dias aprobados' },
-            //                     { text: total },
-            //                     { text: 'Termino de obra Reprogramado' },
-            //                     { text: 'Any DATE' }
-            //                 ],
 
-            //             ]
-            //     }
-            // },
             {
                 style: 'tableExample',
                 table: {
@@ -394,48 +434,9 @@ export default () => {
                     widths: ['auto', 'auto', 'auto', 'auto', '*'],
                     body:
                         AmpliacionItem.concat(FechaAmpliacion),
-                    // [{ text: 'Periodo solicitado' }, { text: 'FichaTecnicaPlazos.descripcion', colSpan: 1, rowSpan: 1 }, { text: '' }, { text: 'Situaicon del tramite', rowSpan: 1 }],
-                    // [{ text: 'Any dates' }, { text: 'a' }, { text: 'b' }, { text: '' }],
-                    // [{ text: '', border: [false, true, false, false], }, { text: '', border: [false, true, true, false], }, { text: 'Fecha reprogramada de termino de obra' }, { text: 'Any DATE' }],
-
                 }
             },
-            // { text: 'AMPLIACION DEL PLAZO PARA APROBAR', style: 'header', alignment: 'left' },
-            // {
-            //     style: 'tableExample',
-            //     table: {
-            //         // widths: ['*', '*', '*', '*'],
-            //         body: [
-            //             [
-            //                 { text: 'Periodo solicitado' },
-            //                 { text: 'Situaicon del tramite', rowSpan: 2 },
-            //                 { text: 'FichaTecnicaPlazos.descripcion', colSpan: 2, rowSpan: 2 },
-            //                 { text: '' },
-            //             ],
-            //             [
-            //                 { text: 'Any dates' },
-            //                 { text: '' },
-            //                 { text: '' },
-            //                 { text: '' }
-            //             ],
-            //             [
-            //                 { text: 'Fecha' },
-            //                 { text: 'Situaicon del tramite' },
-            //                 { text: 'FichaTecnicaPlazos.descripcion', colSpan: 2 },
-            //                 { text: '' },
-            //             ],
 
-            //             [
-            //                 { text: '', border: [false, true, false, false], },
-            //                 { text: '', border: [false, true, true, false], },
-            //                 { text: 'Fecha reprogramada de termino de obra' },
-            //                 { text: 'Any DATE' }
-            //             ],
-            //         ]
-            //         // AmpliacionItem.concat(FechaAmpliacion),
-
-            //     }
-            // },
             {
                 style: 'tableExample',
                 table: {
@@ -445,63 +446,72 @@ export default () => {
                 }
             },
         ]
-
-        var CostosIndirectos = [
-            [
-                { text: 'DESCRIPCION', colSpan: 2 },
-                { text: '' },
-                { text: 'EXP. TEC. APROB.' },
-                { text: 'ADIC. APROB.' },
-                { text: 'PARCIAL' }
-            ],
-        ]
-
-        for (let i = 0; i < DatosCostosIndirectos.length; i++) {
-            const element = DatosCostosIndirectos[i];
-            CostosIndirectos.push(
-                [
-                    { text: element.nombre, border: [true, true, false, true], },
-                    { text: 'Any Dates', border: [false, true, true, true], },
-                    { text: Redondea(element.monto_expediente) },
-                    { text: Redondea(element.monto_adicional) },
-                    { text: Redondea(element.monto_expediente + element.monto_adicional) }
-                ],
+        var costosWidths = ['*','auto',"auto"]
+            AmpliacionPresupuestal.forEach((item, i) => {
+                costosWidths.push(
+                   "auto"
+                )
+            });
+            costosWidths.push(
+               "auto"
             )
-
-        }
-
-        var totalPresupuestoAprobado = []
-        totalPresupuestoAprobado.push(
-            [
-                { text: 'TOTAL PRESUPUESTO APROBADO S/.', colSpan: 2 },
-                { text: '' },
-                {
-                    text: Redondea(DatosCostosIndirectos.reduce(
-                        (accumulator, item) => accumulator + item.monto_expediente , 0
-                    ))
-                },
-                {
-                    text: Redondea(DatosCostosIndirectos.reduce(
-                        (accumulator, item) => accumulator  + item.monto_adicional, 0
-                    ))
-                },
-                {
-                    text: Redondea(DatosCostosIndirectos.reduce(
-                        (accumulator, item) => accumulator + item.monto_expediente + item.monto_adicional, 0
-                    ))
-                }
-            ],
-        )
-
+        var costoTotal =[] 
         var PresupuestoObra = [
-            { text: '3.-PRESUPUESTO DE OBRA', style: 'header', alignment: 'left' },
+            { text: '3.-PRESUPUESTO DE OBRA', style: 'header', alignment: 'left', bold: true,fontSize: 10,fillColor: '#eeeeee' },
             {
                 style: 'tableExample',
                 table: {
-                    widths: ['auto', '*', '*', '*', '*'],
-                    body:
-                        CostosIndirectos.concat(totalPresupuestoAprobado)
-                   
+                    widths:costosWidths,
+                    body: [
+                        (() => {
+                            var columnas = [
+                                { text: 'DESCRIPCION', colSpan: 2, alignment: "center", color: "red" },
+                                { text: '' },
+                                { text: 'EXP. TEC. APROB.', alignment: "center", color: "red" },
+                                // { text: 'ADIC. APROB.', alignment: "center", color: "red" },
+                                // { text: 'PARCIAL', alignment: "center", color: "red" }
+                            ]
+                            AmpliacionPresupuestal.forEach((item, i) => {
+                                columnas.push(
+                                    { text: 'ADIC. APROB.' + (i + 1), alignment: "center", color: "red" }
+                                )
+                            });
+                            columnas.push(
+                                { text: 'PARCIAL', alignment: "center", color: "red" }
+                            )
+                            return columnas
+                        })()
+                    ].concat(
+                        (()=>{
+                            var CostosDirectos = [
+                                { text: "TOTAL COSTO DIRECTO S/.", colSpan: 2,alignment: "center", bold: true },
+                                { text: '' },
+                            ]
+                            var totalCostoDirecto = CostoDirecto.monto
+                            AmpliacionPresupuestal.forEach((item, j) => {
+                                totalCostoDirecto -= item.costoDirectoAdicional.monto
+                            });
+                            CostosDirectos.push(
+                                { text: Redondea(totalCostoDirecto) },
+                            )
+                            costoTotal.push(
+                                totalCostoDirecto
+                            )
+                            AmpliacionPresupuestal.forEach((item, j) => {
+                                CostosDirectos.push(
+                                { text: Redondea(item.costoDirectoAdicional.monto) }
+                                )
+                            costoTotal.push(
+                                item.costoDirectoAdicional.monto
+                            )
+                            });
+                            CostosDirectos.push(
+                                { text: Redondea(CostoDirecto.monto) }
+                            )
+                            costoTotal.push(CostoDirecto.monto)
+                            return[CostosDirectos]
+                        })()
+                    )
                 }
             },
             {
@@ -515,20 +525,185 @@ export default () => {
             {
                 style: 'tableExample',
                 table: {
+                    widths:costosWidths,
+                    body:
+                        [
+                            (() => {
+                                var columnas = [
+                                    { text: 'DESCRIPCION', colSpan: 2, alignment: "center", color: "red" },
+                                    { text: '' },
+                                    { text: 'EXP. TEC. APROB.', alignment: "center", color: "red" },
+                                    // { text: 'ADIC. APROB.', alignment: "center", color: "red" },
+                                    // { text: 'PARCIAL', alignment: "center", color: "red" }
+                                ]
+                                AmpliacionPresupuestal.forEach((item, i) => {
+                                    columnas.push(
+                                        { text: 'ADIC. APROB.' + (i + 1), alignment: "center", color: "red" }
+                                    )
+                                });
+                                columnas.push(
+                                    { text: 'PARCIAL', alignment: "center", color: "red" }
+                                )
+                                return columnas
+                            })()
+                        ].concat(
+                            (() => {
+                                
+                                var CostosIndirectos = []
+                                for (let i = 0; i < DatosCostosIndirectos.length; i++) {
+                                    const element = DatosCostosIndirectos[i];
+                                    var parcial = element.monto_expediente
+                                    var fila =
+                                        [
+                                            { text: element.nombre, border: [true, true, false, true], },
+                                            { text: '', border: [false, true, true, true], alignment: "right" },
+                                            { text: Redondea(element.monto_expediente) },
+                                        ]
+                                    AmpliacionPresupuestal.forEach((item, j) => {
+                                        fila.push(
+                                            { text: item.costoIndirectoAdicional[i] ? Redondea(item.costoIndirectoAdicional[i].monto) : "" }
+                                        )
+                                        parcial += item.costoIndirectoAdicional[i] ? item.costoIndirectoAdicional[i].monto : 0
+                                    });
+
+                                    fila.push(
+                                        { text: Redondea(parcial) }
+                                    )
+                                    CostosIndirectos.push(
+                                        fila
+                                    )
+                                }
+                                var totalCostosExpTec = DatosCostosIndirectos.reduce(
+                                    (accumulator, item) => accumulator + item.monto_expediente, 0
+                                )
+                                var totalParcial = totalCostosExpTec
+                                var filaTotales = [
+                                    { text: 'TOTAL COSTO INDIRECTO S/.', colSpan: 2, alignment: "center", bold: true },
+                                    { text: '' },
+                                    {
+                                        text: Redondea(totalCostosExpTec), alignment: "center", bold: true
+                                    },
+                                ]
+                                costoTotal[0]+= totalCostosExpTec
+                                AmpliacionPresupuestal.forEach((item, j) => {
+                                    var tempTotal = item.costoIndirectoAdicional.reduce(
+                                        (accumulator, item) => accumulator + item.monto, 0
+                                    )
+                                    filaTotales.push(
+                                        {
+                                            text: Redondea(tempTotal), alignment: "center", bold: true
+                                        }
+                                    )
+                                    totalParcial += tempTotal
+                                    costoTotal[j+1]+= tempTotal
+                                });
+
+                                filaTotales.push(
+                                    { text: Redondea(totalParcial) }
+                                )
+                                costoTotal[costoTotal.length-1] += totalParcial
+                                CostosIndirectos.push(
+                                    filaTotales
+                                )
+                                return CostosIndirectos
+                            })()
+                        )
+                    // .concat(totalPresupuestoAprobado)
+                },
+                layout: {
+                    hLineWidth: function (i, node) {
+                        return (i === node.table.body.length - 1) ? 2.5 : 1;
+                    },
+                    hLineColor: function (i, node) {
+                        return (i === node.table.body.length - 1) ? 'black' : 'black';
+                    },
+                }
+            },
+            {
+                style: 'tableExample',
+                table: {
                     body: [
-                        [
-                            { text: 'RESOLUCION DE APROBACION DEL EXPEDIENTE TECNICO' },
-                            { text: 'RGGR N° 123456765432- GGR-GR PUNO' },
-                            { text: 'FECHA', border: [true, true, false, true] },
-                            { text: 'ANY DATE' }
-                        ],
-                        [
-                            { text: 'ULTIMA RESOLUCION DE APROBACION (EXP TECNICO MODIFICADO)' },
-                            { text: 'RGGR N° 123456765432- GGR-GR PUNO' },
-                            { text: 'FECHA', border: [true, true, false, true] },
-                            { text: 'ANY DATE' }
-                        ],
+                        [{ text: '', border: [false, false, false, false] }],
                     ]
+                }
+            },
+            {
+                style: 'tableExample',
+                table: {
+                    widths:costosWidths,
+                    body: [
+                        (() => {
+                            var columnas = [
+                                { text: 'DESCRIPCION', colSpan: 2, alignment: "center", color: "red" },
+                                { text: '' },
+                                { text: 'EXP. TEC. APROB.', alignment: "center", color: "red" },
+                                // { text: 'ADIC. APROB.', alignment: "center", color: "red" },
+                                // { text: 'PARCIAL', alignment: "center", color: "red" }
+                            ]
+                            AmpliacionPresupuestal.forEach((item, i) => {
+                                columnas.push(
+                                    { text: 'ADIC. APROB.' + (i + 1), alignment: "center", color: "red" }
+                                )
+                            });
+                            columnas.push(
+                                { text: 'PARCIAL', alignment: "center", color: "red" }
+                            )
+                            return columnas
+                        })()
+                    ].concat(
+                        (()=>{
+                            var CostosDirectos = [
+                                { text: "TOTAL PRESUPUESTO APROBAOO S/.", colSpan: 2,alignment: "center", bold: true },
+                                { text: '' },
+                            ]
+                            costoTotal.forEach(item => {
+                                CostosDirectos.push(
+                                    { text: Redondea(item) },
+                                )
+                            });
+                            return[CostosDirectos]
+                        })()
+                    )
+                }
+            },
+            {
+                style: 'tableExample',
+                table: {
+                    body: [
+                        [{ text: '', border: [false, false, false, false] }],
+                    ]
+                }
+            },
+            {
+                style: 'tableExample',
+                bold:true,
+                table: {
+                    widths: ['*', 'auto', 'auto', 'auto'],                    
+                    body:
+                        [
+                            [
+                                { text: FichaTecnicaDatosGenerales.resolucion_descripcion },
+                                { text: FichaTecnicaDatosGenerales.resolucion_documento },
+                                { text: 'FECHA', border: [true, true, false, true] },
+                                { text: fechaFormatoClasico(FichaTecnicaDatosGenerales.resolucion_fecha), border: [false, true, true, true]  }
+                            ],
+                        ].concat(
+                            (() => {
+                                var resoluciones = []
+                                for (let i = 0; i < AmpliacionPresupuestal.length; i++) {
+                                    const item = AmpliacionPresupuestal[i];
+                                    resoluciones.push(
+                                        [
+                                            { text: item.descripcion },
+                                            { text: item.documento_resolucion },
+                                            { text: 'FECHA', border: [true, true, false, true] },
+                                            { text: fechaFormatoClasico(item.fecha), border: [false, true, true, true] }
+                                        ]
+                                    )
+                                }
+                                return resoluciones
+                            })()
+                        )
                 }
             },
             {
@@ -545,37 +720,61 @@ export default () => {
                 table: {
                     body: [
                         [
-                            { text: 'presupuesto inicial expediente tecnico' },
-                            { text: 'adicionales aprobado' },
-                            { text: 'total presupuesto aprobado' },
+                            { text: 'presupuesto inicial expediente tecnico',color:"red",alignment: 'center' },
+                            { text: 'adicionales aprobado',color:"red",alignment: 'center' },
+                            { text: 'total presupuesto aprobado',color:"red",alignment: 'center' },
                             { text: '', border: [true, false, true, false], rowSpan: 2 },
-                            { text: 'ejecucion presupuesto al 2019' },
-                            { text: 'saldo presupuesto al 2019' },
+                            { text: 'ejecucion presupuesto al 2019',color:"red",alignment: 'center' },
+                            { text: 'saldo presupuesto al 2019',color:"red",alignment: 'center' },
                             { text: '', border: [true, false, true, false], rowSpan: 3 },
-                            { text: 'PIM 2020' },
-                            { text: 'saldo por asignar' }
+                            { text: 'PIM\n 2020',color:"red",alignment: 'center', },
+                            { text: 'saldo por asignar',color:"red",alignment: 'center' }
                         ],
                         [
-                            { text: 'ANY DATES' },
-                            { text: 'ANY DATES' },
-                            { text: 'ANY DATES' },
+                            { text: Redondea(costoTotal[0]),alignment: 'center' },
+                            { text: (()=>
+                                 Redondea(costoTotal.reduce(
+                                    (accumulator, item,i) => {
+                                        if (i == 0 || i == costoTotal.length-1) {
+                                            return accumulator
+                                        }else{
+                                           return accumulator + item
+                                        }
+                                        
+                                    }, 0
+                                ))
+                            )(),alignment: 'center' },
+                            { text: Redondea(costoTotal[costoTotal.length-1]),alignment: 'center' },
                             { text: '' },
-                            { text: 'ANY DATES' },
-                            { text: 'ANY DATES' },
+                            { text: Redondea(EjecucionPresupuestal.monto),alignment: 'center' },
+                            { text: Redondea(costoTotal[costoTotal.length-1]-(EjecucionPresupuestal.monto || 0)),alignment: 'center' },
                             { text: '' },
-                            { text: 'ANY DATES' },
-                            { text: 'ANY DATES' }
+                            { text: Redondea(Pim.monto),alignment: 'center' },
+                            { text: Redondea(costoTotal[costoTotal.length-1]-(EjecucionPresupuestal.monto || 0) - (Pim.monto || 0)),alignment: 'center' }
                         ],
                         [
                             { text: '', border: [false, true, true, false] },
-                            { text: 'ANY PORCENTAJE' },
+                            { text: (()=>{
+                                var costoTotalAdicional = costoTotal.reduce(
+                                    (accumulator, item,i) => {
+                                        if (i == 0 || i == costoTotal.length-1) {
+                                            return accumulator
+                                        }else{
+                                           return accumulator + item
+                                        }
+                                        
+                                    }, 0
+                                )
+                                return Redondea(costoTotalAdicional/costoTotal[0]*100) + " %"
+                            }                               
+                           )(),alignment: 'center' },
                             { text: '', border: [true, true, false, false] },
                             { text: '', border: [false, false, true, false] },
-                            { text: 'ANY PORCENTAJE' },
-                            { text: 'ANY PORCENTAJE' },
+                            { text: Redondea(EjecucionPresupuestal.monto/costoTotal[costoTotal.length-1] *100) + " %",alignment: 'center'},
+                            { text: Redondea((costoTotal[costoTotal.length-1]-EjecucionPresupuestal.monto)/costoTotal[costoTotal.length-1] *100)+ " %",alignment: 'center' },
                             { text: '' },
-                            { text: 'ANY PORCENTAJE' },
-                            { text: 'ANY PORCENTAJE' }
+                            { text: Redondea((Pim.monto)/costoTotal[costoTotal.length-1] *100) + " %",alignment: 'center'},
+                            { text: Redondea((costoTotal[costoTotal.length-1]-EjecucionPresupuestal.monto - Pim.monto)/costoTotal[costoTotal.length-1] *100) + " %",alignment: 'center'}
                         ],
                     ]
                 }
@@ -595,7 +794,7 @@ export default () => {
                                 border: [false, false, true, false]
                             },
                             {
-                                text: 'METAS2 +  ANY NUmber',
+                                text: 'META ' + DatosFichasMeta.numero,
                                 alignment: 'center',
                                 margin: [45, 4, 50, 0],
                             },
@@ -603,7 +802,7 @@ export default () => {
                     ]
                 },
                 layout: {
-                    hLineWidth:function (i, node) {
+                    hLineWidth: function (i, node) {
                         return 5;
                     },
                     vLineWidth: function (i, node) {
@@ -616,31 +815,16 @@ export default () => {
                         return 'black';
                     },
                 },
-                // columns: [
-                //     {
-                //         image: logoGRPuno,
-                //         fit: [280, 280],
-                //         margin: [45, 4, 10, 0]
-                //     },
-                //     {
-                //         alignment: 'right',
-                //         image: logoSigobras,
-                //         width: 48,
-                //         height: 30,
-                //         margin: [20, 4, 10, 0]
-
-                //     }
-                // ]
             },
-            footer: {
-                text: 'fecha de reporte : ',
-                alignment: 'right',
-                italics: true,
-                margin: [20, 10, 10, 0],
-                fontSize: 6.5,
-            },
+            // footer: {
+            //     text: 'fecha de reporte : ',
+            //     alignment: 'right',
+            //     italics: true,
+            //     margin: [20, 10, 10, 0],
+            //     fontSize: 6.5,
+            // },
             content: [
-                { text: 'FICHA TECNICA DE CONTROL DE OBRA', style: 'header', alignment: 'center', margin: [0, 5, 0, 0] },
+                { text: 'FICHA TECNICA DE CONTROL DE OBRA', style: 'header', alignment: 'center', margin: [0, 5, 0, 0], bold: true },
                 {
                     style: 'tableExample',
                     table: {
@@ -648,44 +832,14 @@ export default () => {
                         body: [
                             [
                                 { text: '', border: [false, false, false, false], },
-                                { text: 'Correspondiente al ', border: [true, true, false, true], color: 'red',bold: true },
-                                { text: GenerateFechaPdf(), border: [false, true, true, true], },
+                                { text: 'Correspondiente al ', border: [true, true, false, true], },
+                                { text: GenerateFechaPdf(), border: [false, true, true, true], alignment: 'center', bold: true },
                                 { text: '', border: [false, false, false, false], },
                             ],
                             [
                                 { text: FichaTecnicaDatosGenerales.g_meta, colSpan: 4 }
                             ]
                         ]
-                    },layout: {
-                        hLineWidth:function (i, node) {
-                            return 5;
-                        },
-                        vLineWidth: function (i, node) {
-                            return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-                        },
-                        hLineColor: function (i, node) {
-                            return 'black';
-                        },
-                        vLineColor: function (i, node) {
-                            return 'black';
-                        },
-                        // hLineStyle: function (i, node) {
-                        //     if (i === 0 || i === node.table.body.length) {
-                        //         return null;
-                        //     }
-                        //     return {dash: {length: 10, space: 4}};
-                        // },
-                        // vLineStyle: function (i, node) {
-                        //     if (i === 0 || i === node.table.widths.length) {
-                        //         return null;
-                        //     }
-                        //     return {dash: {length: 4}};
-                        // },
-                        // paddingLeft: function(i, node) { return 4; },
-                        // paddingRight: function(i, node) { return 4; },
-                        // paddingTop: function(i, node) { return 2; },
-                        // paddingBottom: function(i, node) { return 2; },
-                        // fillColor: function (i, node) { return null; }
                     }
                 },
                 {
@@ -702,7 +856,7 @@ export default () => {
             // pageOrientation: 'landscape',
             defaultStyle: {
                 alignment: 'justify',
-                fontSize: 9,
+                fontSize: 8.5,
                 // bold: true,
             },
         }
