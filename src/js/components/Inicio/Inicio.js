@@ -33,6 +33,7 @@ export default ({ recargar }) => {
         fetchComunicados()
         fetchProvincias()
         fetchTipoObras()
+        fetchDatosCostosIndirectos()
     }, []);
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
@@ -67,6 +68,7 @@ export default ({ recargar }) => {
         } else {
             setObraComponentesSeleccionada(id_ficha)
             fetchComponentes(id_ficha)
+            fetchDatosCostosIndirectos(id_ficha)
         }
     }
     //componentes
@@ -77,7 +79,19 @@ export default ({ recargar }) => {
         })
         setComponentes(res.data)
     }
-
+    const [DatosCostosIndirectos, setDatosCostosIndirectos] = useState([])
+    async function fetchDatosCostosIndirectos(id_ficha) {
+        const res = await axios.get(`${UrlServer}/costosIndirectos`,
+            {
+                params: {
+                    id_ficha
+                    // "id_ficha": sessionStorage.getItem("idobra")
+                }
+            }
+        )
+        console.log("poropopo", res.data);
+        setDatosCostosIndirectos(res.data)
+    }
 
     // FILTROS
     //provincias
@@ -162,7 +176,7 @@ export default ({ recargar }) => {
             </div>
             <div
                 style={{
-                    display:"flex"
+                    display: "flex"
                 }}
             >
                 <Input
@@ -175,7 +189,7 @@ export default ({ recargar }) => {
                         backgroundColor: "#171819",
                         borderColor: "#171819",
                         color: "#ffffff",
-                        cursor:"pointer"
+                        cursor: "pointer"
                     }}
                 >
                     <option value="0">
@@ -193,7 +207,7 @@ export default ({ recargar }) => {
                         backgroundColor: "#171819",
                         borderColor: "#171819",
                         color: "#ffffff",
-                        cursor:"pointer"
+                        cursor: "pointer"
                     }}
                 >
                     <option value="0">
@@ -211,7 +225,7 @@ export default ({ recargar }) => {
                         backgroundColor: "#171819",
                         borderColor: "#171819",
                         color: "#ffffff",
-                        cursor:"pointer"
+                        cursor: "pointer"
                     }}
                 >
                     <option value="0">
@@ -455,6 +469,53 @@ export default ({ recargar }) => {
                                                             </tr>
 
                                                         )}
+                                                </tbody>
+                                            </table>
+                                            <table className="table table-bordered table-sm"
+                                                style={{
+                                                    width: "100%"
+                                                }}
+                                            >
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>DESCRIPCION</th>
+                                                        <th>EXPEDIENTE TECNICO APROBADO</th>
+                                                        <th>ADICIONAL APROBADO</th>
+                                                        <th>PARCIAL</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody style={{ backgroundColor: '#333333' }}>
+                                                    
+                                                    {
+                                                        DatosCostosIndirectos.map((item, i) =>
+                                                            <tr key={DatosCostosIndirectos.id}>
+                                                                <th scope="row">{i + 1}</th>
+                                                                <td style={{ fontSize: '0.75rem', color: '#8caeda' }}>{item.nombre}</td>
+                                                                <td>{Redondea(item.monto_expediente)}</td>
+                                                                <td>{Redondea(item.monto_adicional)}</td>
+                                                                <td>{Redondea(item.monto_expediente + item.monto_adicional)}</td>
+                                                            </tr>
+                                                        )
+                                                    }
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>TOTAL</th>
+                                                        <th>{(() => Redondea(DatosCostosIndirectos.reduce(
+                                                                (accumulator, item) => accumulator + item.monto_expediente , 0
+                                                            ))
+                                                            )()}</th>
+                                                        <th>{(() => Redondea(DatosCostosIndirectos.reduce(
+                                                                (accumulator, item) => accumulator +item.monto_adicional, 0
+                                                            ))
+                                                            )()}</th>
+                                                        <th>{
+                                                            (() => Redondea(DatosCostosIndirectos.reduce(
+                                                                (accumulator, item) => accumulator + item.monto_expediente + item.monto_adicional, 0
+                                                            ))
+                                                            )()
+                                                        }</th>
+                                                    </tr>
                                                 </tbody>
                                             </table>
 

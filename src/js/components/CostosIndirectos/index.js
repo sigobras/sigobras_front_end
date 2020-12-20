@@ -14,7 +14,17 @@ export default () => {
     }, [])
     const [modal, setModal] = useState(false);
 
-    const toggle = () => setModal(!modal);
+    const toggle = () => {
+        if (!modal) {
+            setFormularioCostosIndirectos({
+                "nombre": "",
+                "monto_expediente": 0,
+                "monto_adicional": 0,
+                "id_ficha": sessionStorage.getItem("idobra")
+    
+            })
+        }
+        setModal(!modal)};
 
     const [DatosCostosIndirectos, setDatosCostosIndirectos] = useState([])
     async function fetchDatosCostosIndirectos() {
@@ -66,8 +76,10 @@ export default () => {
         // console.log(res.data);
         alert("Sus datos fueron guardados correctamente")
         toggle()
+
         fetchDatosCostosIndirectos()
     }
+
     async function deleteCostoIndirecto(id) {
         // console.log("index", id);
         if (confirm("Esta seguro que desea eliminar este Costo Indirecto?")) {
@@ -240,7 +252,10 @@ export default () => {
 
 function FormularioEdicion({ data, recarga }) {
     useEffect(() => {
-        setFormularioEdicion(data)
+        var clone = {...data}
+        clone.monto_expediente = Redondea(clone.monto_expediente)
+        clone.monto_adicional = Redondea(clone.monto_adicional)
+        setFormularioEdicion(clone)
         return () => {
 
         }
@@ -259,10 +274,18 @@ function FormularioEdicion({ data, recarga }) {
 
     const handleInputChange = (event) => {
         // console.log(event.target.name, typeof event.target.value);
-        setFormularioEdicion({
-            ...FormularioEdicion,
-            [event.target.name]: event.target.value
-        })
+        if (event.target.name == "nombre") {
+            setFormularioEdicion({
+                ...FormularioEdicion,
+                [event.target.name]: event.target.value
+            })    
+        }else{
+            setFormularioEdicion({
+                ...FormularioEdicion,
+                [event.target.name]: formatMoney(event.target.value)
+            })
+        }
+
 
     }
 
@@ -270,6 +293,7 @@ function FormularioEdicion({ data, recarga }) {
         event.preventDefault()
         // console.log(FormularioDatos);
         var clone = { ...FormularioEdicion }
+        console.log("cloneedicion",clone);
         clone.monto_expediente = clone.monto_expediente.replace(/[^0-9\.-]+/g, "")    
         clone.monto_adicional = clone.monto_adicional.replace(/[^0-9\.-]+/g, "")
         console.log("clone enviar",clone);
