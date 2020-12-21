@@ -137,7 +137,9 @@ export default () => {
     }
 
     function fechaLarga(fecha) {
+        console.log("Primera fecha",fecha);
         var fechaTemp = fecha.split('-')
+        console.log("fechaTemp",fechaTemp);
         var date = new Date(fechaTemp[0], fechaTemp[1] - 1, fechaTemp[2]);
         var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: "long" };
         return date.toLocaleDateString("es-ES", options)
@@ -272,7 +274,7 @@ export default () => {
                         [
                             { text: 'Puno', alignment: 'center' },
                             { text: ' ', border: [false, false, false, false], },
-                            { text: FichaTecnicaDatosGenerales.g_local_prov, border: [true, true, true, true], alignment: 'center' },
+                            { text: FichaTecnicaDatosGenerales.g_local_reg, border: [true, true, true, true], alignment: 'center' },
                             { text: '', border: [false, false, false, false], },
                             { text: FichaTecnicaDatosGenerales.g_local_dist, alignment: 'center' },
                             { text: '', border: [false, false, false, false], },
@@ -489,7 +491,7 @@ export default () => {
                             ]
                             var totalCostoDirecto = CostoDirecto.monto
                             AmpliacionPresupuestal.forEach((item, j) => {
-                                totalCostoDirecto -= item.costoDirectoAdicional.monto
+                                totalCostoDirecto -= item.costoDirectoAdicional.monto || 0
                             });
                             CostosDirectos.push(
                                 { text: Redondea(totalCostoDirecto) },
@@ -742,7 +744,8 @@ export default () => {
                                         }
                                         
                                     }, 0
-                                ))
+                                )
+                                )                                    
                             )(),alignment: 'center' },
                             { text: Redondea(costoTotal[costoTotal.length-1]),alignment: 'center' },
                             { text: '' },

@@ -245,7 +245,6 @@ export default ({ data, recarga }) => {
                                         required
                                         onChange={handleInputChange}
                                         value={FormularioDatos.observacion}
-
                                     >
                                     </Input>
                                 </FormGroup>
@@ -262,6 +261,7 @@ export default ({ data, recarga }) => {
                                         className="input-dark"
                                         onChange={handleInputChange}
                                         value={FormularioDatos.fecha_aprobada}
+                                        name = "fecha_aprobada"
                                     >
                                     </Input>
                                 </FormGroup>
