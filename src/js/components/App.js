@@ -166,7 +166,6 @@ export default () => {
                                     <li className="lii">
                                         <NavLink to="/inicio" activeclassname="nav-link"> <span> INICIO</span> </NavLink>
                                     </li>
-
                                     {
                                         DataMenus.map((menus, index) =>
                                             <li className="lii" key={index}>
