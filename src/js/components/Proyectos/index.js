@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
-import { Redondea, mesesShort } from '../Utils/Funciones';
+import { Redondea, mesesShort, fechaFormatoClasico } from '../Utils/Funciones';
 import { Button, Input, Tooltip } from 'reactstrap';
 export default () => {
     useEffect(() => {
@@ -307,8 +307,8 @@ function Plazos({ proyectos_id }) {
                             whiteSpace: "nowrap"
                         }}
                     >
-                        <td>{item.fecha_inicial}</td>
-                        <td>{item.fecha_final}</td>
+                        <td>{fechaFormatoClasico(item.fecha_inicial)}</td>
+                        <td>{fechaFormatoClasico(item.fecha_final)}</td>
                     </tr>
 
                 ]
