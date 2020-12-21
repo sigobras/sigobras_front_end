@@ -17,7 +17,28 @@ export default forwardRef(({ id_padre, recarga }) => {
 
     const [modal, setModal] = useState(false);
 
-    const toggleModal = () => setModal(!modal);
+    const toggleModal = () => {
+        if (!modal) {
+            setFormularioDatos(
+                {
+                    "tipo": "SELECCIONAR",
+                    "nivel": id_padre ? 2 : 1,
+                    "descripcion": "",
+                    "fecha_inicio": "",
+                    "fecha_final": "",
+                    "n_dias": 0,
+                    "documento_resolucion_estado": "",
+                    // "imagen": "",
+                    "observacion": "",
+                    "id_padre": id_padre,
+                    "fichas_id_ficha": sessionStorage.getItem("idobra"),
+                    "plazo_aprobado": false,
+                    "fecha_aprobada":""
+                }
+            )
+        }
+        setModal(!modal)
+    };
 
     const [FormularioDatos, setFormularioDatos] = useState(
         {
@@ -32,7 +53,8 @@ export default forwardRef(({ id_padre, recarga }) => {
             "observacion": "",
             "id_padre": id_padre,
             "fichas_id_ficha": sessionStorage.getItem("idobra"),
-            "plazo_aprobado": false
+            "plazo_aprobado": false,
+            "fecha_aprobada": ""
         }
     )
     const handleInputChange = (event) => {
