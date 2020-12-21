@@ -317,7 +317,7 @@ export default () => {
                         { text: '', },
                         { text: element.n_dias + " d/c" },
                         { text: element.documento_resolucion_estado },
-                        { text: element.fecha_aprobada?fechaLarga(element.fecha_aprobada): "Sin Fecha de Aprbacion" }
+                        { text: element.fecha_aprobada?fechaLarga(element.fecha_aprobada): "Sin Fecha de Aprobación" }
                     ],
                 )
             }
