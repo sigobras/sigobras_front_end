@@ -82,7 +82,7 @@ export default ({ recargar }) => {
     const [DatosCostosIndirectos, setDatosCostosIndirectos] = useState([])
     const [DatosCostosIndirectosCantidad, setDatosCostosIndirectosCantidad] = useState(0)
     async function fetchDatosCostosIndirectos(id_ficha) {
-        const res = await axios.get(`${UrlServer}/costosIndirectosAdicionales`,
+        const res = await axios.get(`${UrlServer}/costosIndirectosAdicionalesCompletos`,
             {
                 params: {
                     id_ficha
