@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { UrlServer } from '../Utils/ServerUrlConfig';
 import { Redondea, mesesShort } from '../Utils/Funciones';
+import { Button, Input, Tooltip } from 'reactstrap';
 export default () => {
     useEffect(() => {
         fetchProyectos()
@@ -12,14 +13,21 @@ export default () => {
         setProyectos(res.data)
     }
     return (
-        <div>
-            interfaz de proyectos
-            <table className="table table-sm table-hover">
+        <div
+            style={{
+                // overflowX: "auto",
+                // overflowY: "auto",
+                // height: "600px"
+            }}
+        >
+            <table className="table">
                 <thead>
-                    <tr>
+                    <tr
+                        style={{
+                            textAlign: "center"
+                        }}
+                    >
                         <th>Nro</th>
-                        <th>CUI</th>
-                        <th>META</th>
                         <th
                             style={{
                                 width: "20%"
@@ -28,9 +36,10 @@ export default () => {
                         <th>Informacion General del PIP y Responsables de Elab. Exp. Tec. </th>
                         <th>Datos del Plan de Trabajo </th>
                         <th>Plazo de Ejecucion </th>
-                        <th></th>
                         <th>Avance Fisico </th>
-                        <th>Ejecucion Presupuestal</th>
+                        <th
+                            colSpan="4"
+                        >Ejecucion Presupuestal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,32 +50,42 @@ export default () => {
                                     {i + 1}
                                 </td>
                                 <td>
-                                    {item.cui}
-                                </td>
-                                <td>
-                                    <ProyectosMeta proyectos_id={item.id} />
-                                </td>
-                                <td>
+                                    <div style={{ display: "flex" }}>
+                                        <Button
+                                            type="button"
+                                            style={{
+                                                borderRadius: "13px",
+                                                margin: "5px",
+                                                backgroundColor: "#171819",
+                                            }}
+                                        >
+                                            CUI {item.cui}
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            style={{
+                                                borderRadius: "13px",
+                                                margin: "5px",
+                                                backgroundColor: "#171819",
+                                            }}
+                                        >
+                                            META <ProyectosMeta proyectos_id={item.id} />
+                                        </Button>
+                                    </div>
                                     {item.nombre}
                                 </td>
                                 <td>
-                                    <div style={{ display: "flex" }}>
+                                    <div>
                                         <div style={{
                                             color: "#17a2b8"
-                                        }}>Costo actualizado PIP &nbsp;</div>
-                                        <div>{item.costo_actualizado}</div>
+                                        }}>Costo actualizado PIP </div>
+                                        <div>{Redondea(item.costo_actualizado)}</div>
                                     </div>
-                                    <div style={{ display: "flex" }}>
+                                    <div>
                                         <div style={{
                                             color: "#17a2b8"
-                                        }}>Costo elab. Exp. Tec. PIP &nbsp;</div>
-                                        <div>{item.costo_elaboracion}</div>
-                                    </div>
-                                    <div style={{ display: "flex" }}>
-                                        <div style={{
-                                            color: "#17a2b8"
-                                        }}>UF &nbsp;</div>
-                                        <div>{item.uf}</div>
+                                        }}>Costo elab. Exp. Tec. PIP</div>
+                                        <div>{Redondea(item.costo_elaboracion)}</div>
                                     </div>
                                     <div style={{ display: "flex" }}>
                                         <div style={{
@@ -96,6 +115,10 @@ export default () => {
                                 <td>
                                     <Plazos proyectos_id={item.id} />
                                 </td>
+                                <td>
+                                    <AvanceFisico proyectos_id={item.id} />
+                                </td>
+                                <EjecucionPresupuestal proyectos_id={item.id} />
                             </tr>
                         )
                     }
@@ -123,9 +146,7 @@ function ProyectosMeta({ proyectos_id }) {
         setProyectoMeta(res.data)
     }
     return (
-        <div>
-            {ProyectoMeta.numero}
-        </div>
+        ProyectoMeta.numero || ""
     )
 }
 function ProyectoUsuario({ proyectos_id }) {
@@ -262,16 +283,246 @@ function Plazos({ proyectos_id }) {
 
     return (
 
-        ProyectoPlazos.map((item, i) =>
-            <tr key={i} >
+        [
+            <tr
+                style={{
+                    color: "#17a2b8"
+                }}
+            >
+                <th>Inicio</th>
+                <th>Termino</th>
+            </tr>,
+            ProyectoPlazos.map((item, i) =>
+                [
+                    <tr key={i} >
+                        <td
+                            style={{
+                                color: "#17a2b8"
+                            }}
+                        >{item.tipo_nombre}</td>
+                        <td></td>
+                    </tr>,
+                    <tr
+                        style={{
+                            whiteSpace: "nowrap"
+                        }}
+                    >
+                        <td>{item.fecha_inicial}</td>
+                        <td>{item.fecha_final}</td>
+                    </tr>
+
+                ]
+            )
+        ]
+    )
+}
+function AvanceFisico({ proyectos_id }) {
+    useEffect(() => {
+        fetchProyectoAvanceFisico()
+    }, [])
+    const [ProyectoAvanceFisico, setProyectoAvanceFisico] = useState([])
+    async function fetchProyectoAvanceFisico() {
+        const res = await axios.get(`${UrlServer}/proyectoAvanceFisico`,
+            {
+                params: {
+                    proyectos_id,
+                    anyo: new Date().getFullYear()
+                }
+            }
+        )
+        setProyectoAvanceFisico(res.data)
+    }
+
+    return (
+
+        [
+            <tr
+                style={{
+                    color: "#17a2b8"
+                }}
+            >
+                <th>Mes</th>
+                <th>Entregable</th>
+                <th>{ProyectoAvanceFisico.reduce((acc, item) => acc + item.porcentaje, 0)} %</th>
+            </tr>,
+            ProyectoAvanceFisico.map((item, i) =>
+                <tr key={i} >
+                    <td
+                        style={{
+                            whiteSpace: "nowrap"
+                        }}
+                    >{mesesShort[item.mes - 1] + "-" + item.anyo}</td>
+                    <td></td>
+                    <td
+                        style={{
+                            whiteSpace: "nowrap"
+                        }}
+                    >{item.porcentaje} %</td>
+                </tr>
+            )
+        ]
+    )
+}
+function EjecucionPresupuestal({ proyectos_id }) {
+    useEffect(() => {
+        fetchEjecucionPresupuestalAnterior()
+        fetchEjecucionPresupuestalActual()
+    }, [])
+    const [EjecucionPresupuestalAnterior, setEjecucionPresupuestalAnterior] = useState({})
+    async function fetchEjecucionPresupuestalAnterior() {
+        const res = await axios.get(`${UrlServer}/proyectoEjecucionPresupuestal`,
+            {
+                params: {
+                    proyectos_id,
+                    anyo: new Date().getFullYear() - 1
+                }
+            }
+        )
+        setEjecucionPresupuestalAnterior(res.data)
+    }
+    const [EjecucionPresupuestalActual, setEjecucionPresupuestalActual] = useState({})
+    async function fetchEjecucionPresupuestalActual() {
+        const res = await axios.get(`${UrlServer}/proyectoEjecucionPresupuestal`,
+            {
+                params: {
+                    proyectos_id,
+                    anyo: new Date().getFullYear()
+                }
+            }
+        )
+        setEjecucionPresupuestalActual(res.data)
+    }
+    return (
+        <td >
+            <tr
+                style={{
+                    textAlign: "center"
+                }}
+            >
+                <th colSpan="2">AÑO {new Date().getFullYear() - 1}</th>
+                <th colSpan="2">AÑO {new Date().getFullYear()}</th>
+            </tr>
+            <tr>
+
                 <th
                     style={{
                         color: "#17a2b8"
                     }}
-                >{item.tipo_nombre}</th>
-                <td>{item.fecha_inicial}</td>
-                <td>{item.fecha_final}</td>
+                >Ppto. Plan</th>
+                <th>
+                    {Redondea(EjecucionPresupuestalAnterior.presupuesto)}
+                </th>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Ppto. Plan</th>
+                <th>
+                    {Redondea(EjecucionPresupuestalActual.presupuesto)}
+                </th>
             </tr>
-        )
+            <tr>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >PIA</th>
+                <td>
+                </td>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >PIA</th>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >PIM</th>
+                <td>
+                    {Redondea(EjecucionPresupuestalAnterior.pim)}
+                </td>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >PIM</th>
+                <td>
+                    {Redondea(EjecucionPresupuestalActual.pim)}
+                </td>
+            </tr>
+            <tr>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Ejec. a Dic.19</th>
+                <td>
+                    {Redondea(EjecucionPresupuestalAnterior.ejecutado)}
+                </td>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >
+                    Devengado
+                </th>
+                <td>
+                    {Redondea(EjecucionPresupuestalActual.devengado)}
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Saldo por dev.</th>
+                <th>
+                    {Redondea(EjecucionPresupuestalActual.pim - EjecucionPresupuestalActual.devengado)}
+                </th>
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Total Asignado</th>
+                <th>
+                    {Redondea(EjecucionPresupuestalAnterior.ejecutado + EjecucionPresupuestalActual.pim)}
+                </th>
+            </tr>
+            <tr>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Saldo por asignar</th>
+                <th>
+                    {Redondea(EjecucionPresupuestalAnterior.presupuesto - EjecucionPresupuestalAnterior.ejecutado)}
+                </th>
+                <th
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Saldo por Asignar</th>
+                <th>
+                    {Redondea(
+                        EjecucionPresupuestalAnterior.presupuesto -
+                        EjecucionPresupuestalAnterior.ejecutado -
+                        EjecucionPresupuestalActual.pim +
+                        EjecucionPresupuestalActual.presupuesto
+                    )}
+                </th>
+            </tr>
+        </td>
+
     )
 }

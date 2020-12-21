@@ -55,14 +55,12 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
             ...FormularioDatos,
             [event.target.name]: event.target.value
         })
-        // console.log(event.target.name, event.target.value);
     }
     async function enviarDatos(event) {
         event.preventDefault()
         const res = await axios.post(`${UrlServer}/FichasLabels`,
             FormularioDatos
         )
-        console.log("res", res.data);
         fetchFichasLabels()
     }
     function setRandomColor() {
@@ -72,13 +70,11 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
         })
     }
     function hexToRgb(hex) {
-        console.log(hex);
         if (hex == undefined || hex == "") {
             hex = "#000000"
         }
         hex = hex.replace("#", "")
         hex = hex.padStart(6, '0')
-        console.log(hex);
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         if (!result) {
             return {
@@ -130,7 +126,6 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                 id_label
             }
         )
-        console.log(res.data);
         RefLabels[id_label].recarga()
         recargarObraLabels(id_ficha)
     }
@@ -466,7 +461,6 @@ const LabelAsignada = forwardRef(
                     }
                 }
             )
-            console.log(id_ficha, id_label, res.data);
             setEstadoAsignado(res.data.cantidad)
         }
         return (

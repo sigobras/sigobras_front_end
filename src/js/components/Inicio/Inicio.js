@@ -89,7 +89,6 @@ export default ({ recargar }) => {
                 }
             }
         )
-        console.log("poropopo", res.data);
         setDatosCostosIndirectos(res.data)
     }
 
@@ -348,6 +347,7 @@ export default ({ recargar }) => {
                                         >
                                             PRESUPUESTO S./{Redondea(item.g_total_presu)}
                                         </div>
+                                        <Plazos_info id_ficha={item.id_ficha} />
                                     </td>
                                     <td>
                                         <EstadoObra id_ficha={item.id_ficha} />
@@ -486,7 +486,7 @@ export default ({ recargar }) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody style={{ backgroundColor: '#333333' }}>
-                                                    
+
                                                     {
                                                         DatosCostosIndirectos.map((item, i) =>
                                                             <tr key={DatosCostosIndirectos.id}>
@@ -502,13 +502,13 @@ export default ({ recargar }) => {
                                                         <th></th>
                                                         <th>TOTAL</th>
                                                         <th>{(() => Redondea(DatosCostosIndirectos.reduce(
-                                                                (accumulator, item) => accumulator + item.monto_expediente , 0
-                                                            ))
-                                                            )()}</th>
+                                                            (accumulator, item) => accumulator + item.monto_expediente, 0
+                                                        ))
+                                                        )()}</th>
                                                         <th>{(() => Redondea(DatosCostosIndirectos.reduce(
-                                                                (accumulator, item) => accumulator +item.monto_adicional, 0
-                                                            ))
-                                                            )()}</th>
+                                                            (accumulator, item) => accumulator + item.monto_adicional, 0
+                                                        ))
+                                                        )()}</th>
                                                         <th>{
                                                             (() => Redondea(DatosCostosIndirectos.reduce(
                                                                 (accumulator, item) => accumulator + item.monto_expediente + item.monto_adicional, 0
@@ -668,41 +668,7 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
             setLabels(res.data)
 
     }
-    function hexToRgb(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        var r = parseInt(result[1], 16);
-        var g = parseInt(result[2], 16);
-        var b = parseInt(result[3], 16);
-        r /= 255, g /= 255, b /= 255;
-        var max = Math.max(r, g, b), min = Math.min(r, g, b);
-        var h, s, l = (max + min) / 2;
-        if (max == min) {
-            h = s = 0; // achromatic
-        } else {
-            var d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
-            }
-            h /= 6;
-        }
-        h = Math.round(360 * h);
-        s = s * 100
-        s = Math.round(s);
-        l = l * 100;
-        l = Math.round(l);
-        var respuesta = {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16),
-            h, s, l
-        }
-        return result ? respuesta : null;
-    }
     const [tooltipOpen, setTooltipOpen] = useState(0);
-
     const toggle = (id) => {
         if (id == tooltipOpen) {
             setTooltipOpen(0)
@@ -721,7 +687,6 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
                     }
                 }
             )
-            console.log("eliminado", res.data);
             fetchLabels(id_ficha)
         }
     }
@@ -777,3 +742,75 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
         </div>
     )
 })
+function Plazos_info({ id_ficha }) {
+    useEffect(() => {
+        fetchPrimerPlazo()
+        fetchUltimoPlazoAprobado()
+        fetchUltimoPlazoSinAprobar()
+    }, [])
+    const [PrimerPlazo, setPrimerPlazo] = useState({})
+    async function fetchPrimerPlazo() {
+        var res = await axios.get(`${UrlServer}/primerPlazo`, {
+            params: {
+                id_ficha
+            }
+        })
+        setPrimerPlazo(res.data)
+    }
+    const [UltimoPlazoAprobado, setUltimoPlazoAprobado] = useState({})
+    async function fetchUltimoPlazoAprobado() {
+        var res = await axios.get(`${UrlServer}/ultimoPlazoAprobado`, {
+            params: {
+                id_ficha
+            }
+        })
+        setUltimoPlazoAprobado(res.data)
+    }
+    const [UltimoPlazoSinAprobar, setUltimoPlazoSinAprobar] = useState({})
+    async function fetchUltimoPlazoSinAprobar() {
+        var res = await axios.get(`${UrlServer}/ultimoPlazoSinAprobar`, {
+            params: {
+                id_ficha
+            }
+        })
+        setUltimoPlazoSinAprobar(res.data)
+    }
+    return (
+        <div style={{
+            display: "flex"
+        }}>
+            {
+                PrimerPlazo.fecha_inicio &&
+                <div
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Inicio de obra</div>
+            }
+            &nbsp;
+            <div>{PrimerPlazo.fecha_inicio}</div> &nbsp;
+
+            {
+                UltimoPlazoAprobado.fecha_final &&
+                <div
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Ultimo plazo aprobado</div>
+            }
+            &nbsp;
+
+            <div>{UltimoPlazoAprobado.fecha_final}</div> &nbsp;
+            {
+                UltimoPlazoSinAprobar.fecha_final &&
+                <div
+                    style={{
+                        color: "#17a2b8"
+                    }}
+                >Ultimo plazo sin aprobar</div>
+            }
+            &nbsp;
+            <div>{UltimoPlazoSinAprobar.fecha_final}</div>
+        </div>
+    )
+}
