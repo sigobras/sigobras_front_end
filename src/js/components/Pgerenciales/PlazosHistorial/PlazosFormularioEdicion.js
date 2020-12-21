@@ -110,9 +110,13 @@ export default ({ data, recarga }) => {
     return (
         <div>
 
-            <Button color="info" outline>
+            <Button 
+            color="info" 
+            outline
+            onClick={toggleModal}
+            >
                 <MdEdit
-                    onClick={toggleModal}
+                    
                 />
             </Button>
             <Modal isOpen={modal} toggle={toggleModal} >

@@ -108,9 +108,13 @@ export default () => {
                                         recarga={fetchPLazosPadres}
 
                                     />
-                                    <Button color="info" outline>
+                                    <Button
+                                        color="info"
+                                        outline
+                                        onClick={() => deletePlazosPadre(item.id)}
+                                    >
                                         <MdDeleteForever
-                                            onClick={() => deletePlazosPadre(item.id)}
+
                                         />
                                     </Button>
                                 </td>
@@ -253,9 +257,13 @@ const PLazosHijos = forwardRef(({ id_padre, count }, ref) => {
                         data={item}
                         recarga={fetchCargarPlazosHijos}
                     />
-                    <Button color="info" outline>
+                    <Button
+                        color="info"
+                        outline
+                        onClick={() => deletePlazosHijos(item.id)}
+                    >
                         <MdDeleteForever
-                            onClick={() => deletePlazosHijos(item.id)}
+
                         />
                     </Button>
 
