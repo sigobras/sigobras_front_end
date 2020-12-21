@@ -881,7 +881,7 @@ export default () => {
                     <a href="#"
                         onClick={() => generatePdf()}
                     >
-                        <FaFilePdf className="text-danger" /> Expediente Tecnico ✔</a>
+                        <FaFilePdf className="text-danger" /> Ficha Tecnica ✔</a>
                     {Loading &&
                         <Backdrop className={classes.backdrop} open> <CircularProgress color="inherit" />
                         </Backdrop>}

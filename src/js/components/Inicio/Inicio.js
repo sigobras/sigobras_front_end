@@ -10,7 +10,7 @@ import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from './InformacionObras/InformacionObra'
 import Curva_S from './Curva_S'
 import { FaList } from "react-icons/fa";
-import { Redondea, hexToRgb } from '../Utils/Funciones';
+import { Redondea, hexToRgb, fechaFormatoClasico } from '../Utils/Funciones';
 import Obras_labels_edicion from './Obras_labels_edicion';
 import CarouselImagenesObra from './CarouselImagenesObra';
 export default ({ recargar }) => {
@@ -80,8 +80,9 @@ export default ({ recargar }) => {
         setComponentes(res.data)
     }
     const [DatosCostosIndirectos, setDatosCostosIndirectos] = useState([])
+    const [DatosCostosIndirectosCantidad, setDatosCostosIndirectosCantidad] = useState(0)
     async function fetchDatosCostosIndirectos(id_ficha) {
-        const res = await axios.get(`${UrlServer}/costosIndirectos`,
+        const res = await axios.get(`${UrlServer}/costosIndirectosAdicionales`,
             {
                 params: {
                     id_ficha
@@ -89,7 +90,10 @@ export default ({ recargar }) => {
                 }
             }
         )
-        setDatosCostosIndirectos(res.data)
+        console.log("costosIndirectosAdicionales", res.data);
+        if (Array.isArray(res.data.data))
+            setDatosCostosIndirectos(res.data.data)
+        setDatosCostosIndirectosCantidad(res.data.cantidad)
     }
 
     // FILTROS
@@ -469,8 +473,26 @@ export default ({ recargar }) => {
                                                             </tr>
 
                                                         )}
+                                                    <tr>
+                                                        <td>TOTAL COSTO DIRECTO</td>
+
+                                                        <td style={{ fontSize: '0.75rem', color: '#8caeda' }}
+                                                        >{item.nombre}</td>
+
+                                                        <td> S/. {Redondea(Componentes.reduce((acc, item2) => acc + item2.presupuesto, 0))}</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+
                                                 </tbody>
                                             </table>
+                                            <div
+                                                style={{
+                                                    color: "rgb(206, 206, 206)",
+                                                    fontSize: "1.2rem",
+                                                    fontWeight: "600",
+                                                }}
+                                            >Costos Indirectos</div>
                                             <table className="table table-bordered table-sm"
                                                 style={{
                                                     width: "100%"
@@ -481,7 +503,18 @@ export default ({ recargar }) => {
                                                         <th>N°</th>
                                                         <th>DESCRIPCION</th>
                                                         <th>EXPEDIENTE TECNICO APROBADO</th>
-                                                        <th>ADICIONAL APROBADO</th>
+                                                        {
+                                                            (
+                                                                () => {
+                                                                    var adicionales = []
+                                                                    for (let j = 0; j < DatosCostosIndirectosCantidad; j++) {
+                                                                        adicionales.push(<th>ADICIONAL APROBADO {j + 1}</th>)
+                                                                    }
+                                                                    return adicionales
+                                                                }
+
+                                                            )()
+                                                        }
                                                         <th>PARCIAL</th>
                                                     </tr>
                                                 </thead>
@@ -493,8 +526,33 @@ export default ({ recargar }) => {
                                                                 <th scope="row">{i + 1}</th>
                                                                 <td style={{ fontSize: '0.75rem', color: '#8caeda' }}>{item.nombre}</td>
                                                                 <td>{Redondea(item.monto_expediente)}</td>
-                                                                <td>{Redondea(item.monto_adicional)}</td>
-                                                                <td>{Redondea(item.monto_expediente + item.monto_adicional)}</td>
+                                                                {
+                                                                    (
+                                                                        () => {
+                                                                            var adicionales = []
+                                                                            for (let j = 0; j < DatosCostosIndirectosCantidad; j++) {
+                                                                                adicionales.push(<td>{Redondea(item["monto_adicional_" + j])}</td>)
+                                                                            }
+                                                                            return adicionales
+                                                                        }
+
+                                                                    )()
+                                                                }
+                                                                <td>
+                                                                    {
+                                                                        (
+                                                                            () => {
+                                                                                var parcial = item.monto_expediente
+                                                                                for (let j = 0; j < DatosCostosIndirectosCantidad; j++) {
+                                                                                    parcial += item["monto_adicional_" + j]
+                                                                                }
+                                                                                return Redondea(parcial)
+                                                                            }
+
+                                                                        )()
+                                                                    }
+                                                                </td>
+
                                                             </tr>
                                                         )
                                                     }
@@ -504,17 +562,47 @@ export default ({ recargar }) => {
                                                         <th>{(() => Redondea(DatosCostosIndirectos.reduce(
                                                             (accumulator, item) => accumulator + item.monto_expediente, 0
                                                         ))
-                                                        )()}</th>
-                                                        <th>{(() => Redondea(DatosCostosIndirectos.reduce(
-                                                            (accumulator, item) => accumulator + item.monto_adicional, 0
-                                                        ))
-                                                        )()}</th>
-                                                        <th>{
-                                                            (() => Redondea(DatosCostosIndirectos.reduce(
-                                                                (accumulator, item) => accumulator + item.monto_expediente + item.monto_adicional, 0
-                                                            ))
+                                                        )()}
+                                                        </th>
+
+                                                        {
+                                                            (
+                                                                () => {
+                                                                    var adicionales = []
+
+                                                                    for (let j = 0; j < DatosCostosIndirectosCantidad; j++) {
+                                                                        var total = 0
+                                                                        for (let k = 0; k < DatosCostosIndirectos.length; k++) {
+                                                                            const item2 = DatosCostosIndirectos[k];
+                                                                            total += item2["monto_adicional_" + j]
+                                                                        }
+                                                                        adicionales.push(<th>{Redondea(total)}</th>)
+                                                                    }
+                                                                    return adicionales
+                                                                }
+
                                                             )()
-                                                        }</th>
+                                                        }
+                                                        <th>
+                                                            {
+                                                                (
+                                                                    () => {
+                                                                        var costoDirecto = DatosCostosIndirectos.reduce(
+                                                                            (accumulator, item) => accumulator + item.monto_expediente, 0
+                                                                        )
+
+                                                                        for (let j = 0; j < DatosCostosIndirectosCantidad; j++) {
+                                                                            for (let k = 0; k < DatosCostosIndirectos.length; k++) {
+                                                                                const item2 = DatosCostosIndirectos[k];
+                                                                                costoDirecto += item2["monto_adicional_" + j]
+                                                                            }
+                                                                        }
+                                                                        return Redondea(costoDirecto)
+                                                                    }
+
+                                                                )()
+                                                            }
+                                                        </th>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -788,7 +876,7 @@ function Plazos_info({ id_ficha }) {
                 >Inicio de obra</div>
             }
             &nbsp;
-            <div>{PrimerPlazo.fecha_inicio}</div> &nbsp;
+            <div>{fechaFormatoClasico(PrimerPlazo.fecha_inicio)}</div> &nbsp;
 
             {
                 UltimoPlazoAprobado.fecha_final &&
@@ -800,7 +888,7 @@ function Plazos_info({ id_ficha }) {
             }
             &nbsp;
 
-            <div>{UltimoPlazoAprobado.fecha_final}</div> &nbsp;
+            <div>{fechaFormatoClasico(UltimoPlazoAprobado.fecha_final)}</div> &nbsp;
             {
                 UltimoPlazoSinAprobar.fecha_final &&
                 <div
@@ -810,7 +898,7 @@ function Plazos_info({ id_ficha }) {
                 >Ultimo plazo sin aprobar</div>
             }
             &nbsp;
-            <div>{UltimoPlazoSinAprobar.fecha_final}</div>
+            <div>{fechaFormatoClasico(UltimoPlazoSinAprobar.fecha_final)}</div>
         </div>
     )
 }
