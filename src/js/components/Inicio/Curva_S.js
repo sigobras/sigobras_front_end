@@ -9,7 +9,7 @@ import { MdSettings, MdSystemUpdateAlt, MdDeleteForever, MdModeEdit, MdSave, MdC
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-function Curva_S({ id_ficha, nombreObra }) {
+function Curva_S({ id_ficha, codigo }) {
     function getMesfromDate(date) {
         date = date.split("-")
         return Number(date[1])
@@ -445,7 +445,7 @@ function Curva_S({ id_ficha, nombreObra }) {
 
         subtitle: {
             // text: nombreObra
-            text: sessionStorage.getItem('codigoObra')
+            text: codigo
         },
         legend: {
             // layout: 'vertical',
@@ -517,7 +517,7 @@ function Curva_S({ id_ficha, nombreObra }) {
 
         subtitle: {
             // text: 'Source: thesolarfoundation.com'
-            text: sessionStorage.getItem('codigoObra')
+            text: codigo
         },
         legend: {
             // layout: 'vertical',
@@ -1009,8 +1009,8 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             >%</button>
                                     }
                                     {
-                                        
-                                        (UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
+
+                                        (UsuarioData.cargo_nombre == "RESIDENTE" || UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
                                         [
 
 
@@ -1049,9 +1049,10 @@ function Curva_S({ id_ficha, nombreObra }) {
                                         <tr>
                                             <th>
                                                 MES
-                            </th>
+                                            </th>
                                             {
                                                 DataCurvaSTemp.map((item, i) =>
+                                                    item.tipo == "PERIODO" &&
                                                     <th
                                                         key={i}
                                                         style={
@@ -1084,7 +1085,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                             {item.estado_codigo == 'C' ? "CORTE " : ""}
                                                             {mesesShort[getMesfromDate(item.fecha_inicial) - 1] + "-" + getAnyofromDate(item.fecha_inicial)}
                                                             {
-                                                                (item.ejecutado_monto == 0 && (UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO")) &&
+                                                                (item.ejecutado_monto == 0 && (UsuarioData.cargo_nombre == "RESIDENTE" || UsuarioData.cargo_nombre == "EDITOR FINANCIERO")) &&
                                                                 <div
                                                                     onClick={() => deletePeriodoCurvaS(item.id)}
                                                                 >
@@ -1096,6 +1097,8 @@ function Curva_S({ id_ficha, nombreObra }) {
 
 
                                                     </th>
+
+
                                                 )
                                             }
 
@@ -1108,6 +1111,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                         </th>
                                             {
                                                 DataCurvaSTemp.map((item, i) =>
+                                                    item.tipo == "PERIODO" &&
                                                     <td key={i}>
                                                         {
                                                             (item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) && EstadoInputProgramado == i ?
@@ -1138,7 +1142,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                 >
                                                                     {Redondea(item.programado_monto) + (!ToggleSoles ? '%' : '')}
                                                                     {(item.ejecutado_monto == 0 || anyoMes(item.fecha_inicial) == anyoMesActual()) &&
-                                                                        ((UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" )&&
+                                                                        ((UsuarioData.cargo_nombre == "RESIDENTE" || UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
                                                                             <div
                                                                                 onClick={() => toggleInputProgramado(i)}
                                                                             >
@@ -1158,6 +1162,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                         </th>
                                             {
                                                 DataCurvaSTemp.map((item, i) =>
+                                                    item.tipo == "PERIODO" &&
                                                     <td key={i}>
                                                         {Redondea(item.ejecutado_monto) + (!ToggleSoles ? '%' : '')} { }
                                                     </td>
@@ -1170,6 +1175,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                             </th>
                                             {
                                                 DataCurvaSTemp.map((item, i) =>
+                                                    item.tipo == "PERIODO" &&
                                                     <td key={i}>
                                                         {
                                                             EstadoInputFinanciero == i ?
@@ -1199,7 +1205,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                                                                     className="d-flex"
                                                                 >
                                                                     {Redondea(item.financiero_monto) + (!ToggleSoles ? '%' : '')}
-                                                                    {(UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO" )&&
+                                                                    {(UsuarioData.cargo_nombre == "RESIDENTE" || UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
                                                                         <div
                                                                             onClick={() => toggleInputFinanciero(i)}
                                                                         >
@@ -1223,7 +1229,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                             src={"https://www.jonmgomes.com/wp-content/uploads/2020/03/Pie_Chart_GIF_5_Seconds.gif?fbclid=IwAR34o4wzp3DOEtf1rKKG72-5bXCkXyuk7utSXYWmnB_k34XqnkPLPphmFio"}
                         />,
                         (
-                            (UsuarioData.cargo_nombre == "RESIDENTE"||UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
+                            (UsuarioData.cargo_nombre == "RESIDENTE" || UsuarioData.cargo_nombre == "EDITOR FINANCIERO") &&
                             <Button
                                 key={1}
                                 color="danger"
@@ -1511,7 +1517,7 @@ function Curva_S({ id_ficha, nombreObra }) {
                         RegistroNoUbicados.registros == 0 &&
                         [
 
-                            (FormularioOpcion == "nuevo" || FormularioOpcion == "total" ||FormularioOpcion =="ejecutado") &&
+                            (FormularioOpcion == "nuevo" || FormularioOpcion == "total" || FormularioOpcion == "ejecutado") &&
                             <Button key={1} color="primary" onClick={saveModalData}>Guardar</Button>
                             ,
                             (FormularioOpcion == "ingreso-pin") &&

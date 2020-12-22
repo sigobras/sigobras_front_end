@@ -382,7 +382,7 @@ export default ({ recargar }) => {
                                         </div>
                                         <div className="d-flex">
 
-                                            <Curva_S id_ficha={item.id_ficha} />
+                                            <Curva_S id_ficha={item.id_ficha} codigo={item.codigo} />
                                             <Obras_labels_edicion
                                                 id_ficha={item.id_ficha}
                                                 recargarObraLabels={recargarObraLabels}

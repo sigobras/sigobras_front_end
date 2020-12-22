@@ -33,7 +33,7 @@ export default forwardRef(({ id_padre, recarga }) => {
                     "id_padre": id_padre,
                     "fichas_id_ficha": sessionStorage.getItem("idobra"),
                     "plazo_aprobado": false,
-                    "fecha_aprobada":""
+                    "fecha_aprobada":null
                 }
             )
         }
@@ -54,7 +54,7 @@ export default forwardRef(({ id_padre, recarga }) => {
             "id_padre": id_padre,
             "fichas_id_ficha": sessionStorage.getItem("idobra"),
             "plazo_aprobado": false,
-            "fecha_aprobada": ""
+            "fecha_aprobada": null
         }
     )
     const handleInputChange = (event) => {
@@ -244,7 +244,7 @@ export default forwardRef(({ id_padre, recarga }) => {
                                         className="input-dark"
                                         maxlength="45"
                                         autocomplete="off"
-                                        required
+                                        // required
                                         onChange={handleInputChange}
                                     />
                                 </FormGroup>
@@ -261,7 +261,7 @@ export default forwardRef(({ id_padre, recarga }) => {
                                         className="input-dark"
                                         maxlength="300"
                                         autocomplete="off"
-                                        required
+                                        // required
                                         onChange={handleInputChange}
                                         value={FormularioDatos.observacion}
 
