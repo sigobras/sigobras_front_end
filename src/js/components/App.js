@@ -19,7 +19,7 @@ import { UrlServer } from './Utils/ServerUrlConfig'
 // app components
 import UserNav from './Otros/UserNav';
 import NotificacionNav from './Otros/NotificacionNav';
-import MensajeNav from "./Otros/MensajesNav";
+// import MensajeNav from "./Otros/MensajesNav";
 import Btns from './Otros/Btns'
 
 // procesos fiscos
@@ -136,9 +136,15 @@ export default () => {
                     </div>
                     <div className="ml-auto">
                         <div className="float-right"><UserNav /></div>
-                        <div className="float-right"><MensajeNav /></div>
-                        <div className="float-right"><NotificacionNav key={DataObra.id_ficha} /></div>
-                        <div className="float-right"> {sessionStorage.getItem('estadoObra') != null && <Btns EstadoObra={EstadoObra} />} </div>
+                        <div className="float-right">
+                            <NotificacionNav key={DataObra.id_ficha} />
+                        </div>
+                        <div className="float-right">
+                            {sessionStorage.getItem('estadoObra') != null
+                                &&
+                                <Btns EstadoObra={EstadoObra} />
+                            }
+                        </div>
                     </div>
                 </nav>
 
@@ -231,7 +237,7 @@ export default () => {
                                                     animate={true}
                                                     animationDuration="1s"
                                                     responsive={true}
-                                                    progress={Redondea1(DataDelta.ejecutado_monto / DataDelta.programado_monto * 100)||0}
+                                                    progress={Redondea1(DataDelta.ejecutado_monto / DataDelta.programado_monto * 100) || 0}
                                                     progressColor="orange"
                                                     bgColor="whitesmoke"
                                                     textColor="orange"

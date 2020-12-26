@@ -154,14 +154,14 @@ class Btns extends Component {
             <div>
                 <button
                     className={this.props.EstadoObra === "Ejecucion"
-                        ? "btn btn-outline-success  p-1 mt-1" :
+                        ? "btn btn-outline-success   " :
                         this.props.EstadoObra === "Paralizado"
-                            ? "btn btn-outline-warning  p-1 mt-1" :
+                            ? "btn btn-outline-warning   " :
                             this.props.EstadoObra === "Corte" ?
-                                "btn btn-outline-danger  p-1 mt-1" :
+                                "btn btn-outline-danger   " :
                                 this.props.EstadoObra === "Actualizacion" ?
-                                    "btn btn-outline-primary  p-1 mt-1" :
-                                    "btn btn-outline-info  p-1 mt-1"}
+                                    "btn btn-outline-primary   " :
+                                    "btn btn-outline-info   "}
                     title={`situación de la obra ${this.props.EstadoObra}`}
                     onClick={this.CambiaEstadoObra}  >
                     <span className="textSigobras">situación actual:</span>
