@@ -45,7 +45,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, "/var/www/sigobras.com/public"),
-        filename: 'main.js',
+        filename: 'main.[contenthash].js',
         publicPath: '/',
     },
     devServer: {
