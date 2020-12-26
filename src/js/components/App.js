@@ -1,5 +1,5 @@
 // libraris
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { FaChevronRight, FaChevronUp } from 'react-icons/fa';
 import { MdDehaze } from "react-icons/md";
 
@@ -9,7 +9,7 @@ import Circle from 'react-circle';
 import { ToastContainer } from "react-toastify";
 
 import axios from 'axios';
-import { Redondea, meses } from './Utils/Funciones';
+import { Redondea, meses, Redondea1 } from './Utils/Funciones';
 import FinancieroBarraPorcentaje from './Inicio/FinancieroBarraPorcentaje';
 import FisicoBarraPorcentaje from './Inicio/FisicoBarraPorcentaje';
 // app assets
@@ -23,35 +23,33 @@ import MensajeNav from "./Otros/MensajesNav";
 import Btns from './Otros/Btns'
 
 // procesos fiscos
-import Inicio from './Inicio/Inicio'
-import MDdiario from "./Pfisicos/Diarios/Diario"
-import MDHistorial from './Pfisicos/HistorialMetrados/Historial'
-import RecursosObra from './Pfisicos/Recursos/RecursosObra'
-import HistorialImagenesObra from './Pfisicos/HistorialImagenes/HistorialImagenesObra'
-import General from '../components/Pfisicos/Valorizaciones/General'
-// import Valorizaciones2 from './Pfisicos/Valorizaciones/Valorizaciones2'
+const Inicio = lazy(() => import('./Inicio/Inicio'));
+const MDdiario = lazy(() => import('./Pfisicos/Diarios/Diario'));
+const MDHistorial = lazy(() => import('./Pfisicos/HistorialMetrados/Historial'))
+const RecursosObra = lazy(() => import('./Pfisicos/Recursos/RecursosObra'))
+const HistorialImagenesObra = lazy(() => import('./Pfisicos/HistorialImagenes/HistorialImagenesObra'))
+const General = lazy(() => import('../components/Pfisicos/Valorizaciones/General'))
+// const Valorizaciones2 = lazy(() => import( './Pfisicos/Valorizaciones/Valorizaciones2'))
 // proceso gerenciales 
-import InterfazGerencial from './Inicio2/InterfazGerencial'
-import Comunicados from '../components/Pgerenciales/Comunicados/comunicados'
-import RecursosMo from '../components/Pgerenciales/Recursos/RecursosPersonal'
-import plazosHistorial from '../components/Pgerenciales/PlazosHistorial/Plazos'
+const InterfazGerencial = lazy(() => import('./Inicio2/InterfazGerencial'))
+const Comunicados = lazy(() => import('../components/Pgerenciales/Comunicados/comunicados'))
+const RecursosMo = lazy(() => import('../components/Pgerenciales/Recursos/RecursosPersonal'))
+const plazosHistorial = lazy(() => import('../components/Pgerenciales/PlazosHistorial/Plazos'))
 //planificacion
-import Planner from '../components/Pgerenciales/Planner/planner'
+const Planner = lazy(() => import('../components/Pgerenciales/Planner/planner'))
 // reportes 
-import ReportesGenerales from './Reportes/ReportesGenerales'
+const ReportesGenerales = lazy(() => import('./Reportes/ReportesGenerales'))
 
 // GESTION DE TAREAS
-import GestionTareas from "./GestionTareas/GestionTareas"
+const GestionTareas = lazy(() => import("./GestionTareas/GestionTareas"))
 //PROYECTOS
-import Proyectos from "./Proyectos/index"
-
-
+const Proyectos = lazy(() => import("./Proyectos/index"))
 // PROCESOS DOCUMENTOS 
-import Index from "./Pdocumentarios/Index"
-import GestionDocumentaria from "./GestionDocumentaria/index"
-
+const Index = lazy(() => import("./Pdocumentarios/Index"))
+const GestionDocumentaria = lazy(() => import("./GestionDocumentaria/index"))
 //COSTOS INDIRECTOS
-import index from "./CostosIndirectos/index"
+const CostosIndirectos = lazy(() => import("./CostosIndirectos/index"))
+const SeguimientoObras = lazy(() => import("./SeguimientoObras/index"))
 
 
 export default () => {
@@ -139,7 +137,7 @@ export default () => {
                     <div className="ml-auto">
                         <div className="float-right"><UserNav /></div>
                         <div className="float-right"><MensajeNav /></div>
-                        <div className="float-right"><NotificacionNav key={DataObra.id_ficha}/></div>
+                        <div className="float-right"><NotificacionNav key={DataObra.id_ficha} /></div>
                         <div className="float-right"> {sessionStorage.getItem('estadoObra') != null && <Btns EstadoObra={EstadoObra} />} </div>
                     </div>
                 </nav>
@@ -199,13 +197,13 @@ export default () => {
                                     }
                                     {DataMenus.length > 0 &&
                                         [
-                                            <li className="lii">
+                                            <li className="lii" key="1">
                                                 <NavLink to="/ReportesGenerales" activeclassname="nav-link" > <span> REPORTES </span> </NavLink>
                                             </li>,
-                                            <li className="lii">
+                                            <li className="lii" key="2">
                                                 <NavLink to="/GestionDocumentaria" activeclassname="nav-link" > <span> GESTION DOCUMENTARIA </span> </NavLink>
                                             </li>,
-                                            <li className="lii">
+                                            <li className="lii" key="3">
                                                 <NavLink to="/CostosIndirectos" activeclassname="nav-link" > <span> COSTOS INDIRECTOS </span> </NavLink>
                                             </li>
                                         ]
@@ -233,7 +231,7 @@ export default () => {
                                                     animate={true}
                                                     animationDuration="1s"
                                                     responsive={true}
-                                                    progress={Redondea(DataDelta.ejecutado_monto / DataDelta.programado_monto * 100)}
+                                                    progress={Redondea1(DataDelta.ejecutado_monto / DataDelta.programado_monto * 100)||0}
                                                     progressColor="orange"
                                                     bgColor="whitesmoke"
                                                     textColor="orange"
@@ -310,36 +308,39 @@ export default () => {
                                 </div>
                             </div>
                             <div className="scroll_contenido">
-                                <Switch>
-                                    <Redirect exact from="/" to="Inicio" />
-                                    <Route path="/Inicio"
-                                        render={(props) => (
-                                            <Inicio {...props} recargar={recargar} />
-                                        )}
-                                    />
-                                    <Route path="/MDdiario" component={MDdiario} />
-                                    <Route path="/MDHistorial" component={MDHistorial} />
-                                    <Redirect exact from="/ParalizacionObra" to="MDdiario" />
-                                    <Route path="/RecursosObra" component={RecursosObra} />
-                                    <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
-                                    <Route path="/General" component={General} />
-                                    {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
-                                    <Route path="/Proyectos" component={Proyectos} />
-                                    {/* PROCESOS GERENCIALES            */}
-                                    <Route path="/InterfazGerencial" component={InterfazGerencial} />
-                                    <Route path="/ReportesGenerales" component={ReportesGenerales} />
-                                    <Route path="/planner" component={Planner} />
-                                    <Route path="/comunicados" component={Comunicados} />
-                                    <Route path="/recursosmanodeobra" component={RecursosMo} />
-                                    <Route path="/plazosHistorial" component={plazosHistorial} />
-                                    {/* Gestion de Tareas */}
-                                    <Route path="/GestionTareas" component={GestionTareas} />
-                                    {/* PROCESOS DOCUMENTARIOS */}
-                                    <Route path="/DOCUEMENTOS" component={Index} />
-                                    <Route path="/GestionDocumentaria" component={GestionDocumentaria} />
-                                    <Route path="/CostosIndirectos" component={index} />
-                                    
-                                </Switch>
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    <Switch>
+                                        <Redirect exact from="/" to="Inicio" />
+                                        <Route path="/Inicio"
+                                            render={(props) => (
+                                                <Inicio {...props} recargar={recargar} />
+                                            )}
+                                        />
+                                        <Route path="/MDdiario" component={MDdiario} />
+                                        <Route path="/MDHistorial" component={MDHistorial} />
+                                        <Redirect exact from="/ParalizacionObra" to="MDdiario" />
+                                        <Route path="/RecursosObra" component={RecursosObra} />
+                                        <Route path="/HistorialImagenesObra" component={HistorialImagenesObra} />
+                                        <Route path="/General" component={General} />
+                                        {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
+                                        <Route path="/Proyectos" component={Proyectos} />
+                                        {/* PROCESOS GERENCIALES            */}
+                                        <Route path="/InterfazGerencial" component={InterfazGerencial} />
+                                        <Route path="/ReportesGenerales" component={ReportesGenerales} />
+                                        <Route path="/planner" component={Planner} />
+                                        <Route path="/comunicados" component={Comunicados} />
+                                        <Route path="/recursosmanodeobra" component={RecursosMo} />
+                                        <Route path="/plazosHistorial" component={plazosHistorial} />
+                                        {/* Gestion de Tareas */}
+                                        <Route path="/GestionTareas" component={GestionTareas} />
+                                        {/* PROCESOS DOCUMENTARIOS */}
+                                        <Route path="/DOCUEMENTOS" component={Index} />
+                                        <Route path="/GestionDocumentaria" component={GestionDocumentaria} />
+                                        <Route path="/CostosIndirectos" component={CostosIndirectos} />
+                                        <Route path="/SeguimientoObras" component={SeguimientoObras} />
+
+                                    </Switch>
+                                </Suspense>
                             </div>
                         </main>
                     </div>

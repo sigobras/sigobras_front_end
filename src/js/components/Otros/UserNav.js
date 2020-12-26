@@ -14,11 +14,9 @@ export default () => {
         }
     );
     async function fetchUsuario() {
-        console.log("datos usuario");
         var request = await axios.post(`${UrlServer}/getDatosUsuario`, {
             id_acceso: sessionStorage.getItem("idacceso")
         })
-        console.log(request.data);
         setUsuario(request.data)
     }
     function cierraSesion() {

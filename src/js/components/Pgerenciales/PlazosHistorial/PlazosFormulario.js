@@ -5,7 +5,7 @@ import { Button, Input, ModalBody, ModalHeader, ModalFooter, Modal, Row, Col, Fo
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import "../PlazosHistorial/Plazos.css";
 import "./PlazosFormulario.css"
-export default forwardRef(({ id_padre, recarga }) => {
+export default forwardRef(({ id_padre, recarga },ref) => {
 
 
     useEffect(() => {

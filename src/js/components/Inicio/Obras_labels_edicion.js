@@ -134,14 +134,14 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
         fetchFichasLabels()
     }, [TextoBuscar])
     return (
-        [
+        <div>
             <button
                 className="btn btn-outline-info btn-sm mr-1"
                 title="labels"
                 onClick={toggleModal}
             >
                 <FaTag />
-            </button>,
+            </button>
             <Modal
                 isOpen={modal}
                 toggle={toggleModal}
@@ -198,14 +198,14 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                                         "--perceived-lightness": "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
                                         "--lightness-switch": " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
                                         padding: " 0 10px",
-                                        "line-height": " 22px!important",
+                                        lineheight: " 22px!important",
                                         "--lightness-threshold": " 0.6",
                                         "--background-alpha": " 0.18",
                                         "--border-alpha": " 0.3",
                                         "--lighten-by": " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
                                         "background": " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
                                         "color": " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
-                                        "border-color": " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+                                        bordercolor: " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
                                         "--label-r": hexToRgb(FormularioDatos.color) ? hexToRgb(FormularioDatos.color).r : 1,
                                         "--label-g": hexToRgb(FormularioDatos.color) ? hexToRgb(FormularioDatos.color).g : 1,
                                         "--label-b": hexToRgb(FormularioDatos.color) ? hexToRgb(FormularioDatos.color).b : 1,
@@ -408,14 +408,14 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                                                 padding: " 0 10px",
                                                 "--perceived-lightness": "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
                                                 "--lightness-switch": " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
-                                                "line-height": " 22px!important",
+                                                lineheight: " 22px!important",
                                                 "--lightness-threshold": " 0.6",
                                                 "--background-alpha": " 0.18",
                                                 "--border-alpha": " 0.3",
                                                 "--lighten-by": " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
                                                 "background": " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
                                                 "color": " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
-                                                "border-color": " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+                                                bordercolor: " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
                                                 "--label-r": hexToRgb(item.color).r,
                                                 "--label-g": hexToRgb(item.color).g,
                                                 "--label-b": hexToRgb(item.color).b,
@@ -437,7 +437,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                 </ModalBody>
 
             </Modal>
-        ]
+        </div>
     )
 }
 forwardRef

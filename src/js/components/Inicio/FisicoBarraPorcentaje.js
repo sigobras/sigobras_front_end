@@ -24,7 +24,7 @@ export default ({ id_ficha }) => {
             width: '100%',
             height: '20px',
             textAlign: 'center',
-            "padding-bottom": "28px"
+            paddingBottom: "28px"
         }}
         >
             <div style={{
@@ -49,7 +49,7 @@ export default ({ id_ficha }) => {
                         position: 'inherit',
                         top: '6px',
                         color: '#8caeda',
-                        "font-size": "12px",
+                        fontSize: "12px",
                         color: "#ffffff",
                         textAlign: "center",
                         display: "flex",
@@ -60,7 +60,7 @@ export default ({ id_ficha }) => {
                     Físico
                     <div
                         style={{
-                            "font-size": "13px"
+                            fontSize: "13px"
                         }}
                     >-({Redondea(FisicoAvance.fisico_avance_porcentaje)} %)</div>
                 </span>

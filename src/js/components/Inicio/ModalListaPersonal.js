@@ -180,16 +180,14 @@ export default ({ id_ficha, codigo_obra }) => {
   //PERSONAL DE OBRA
   const [TabUsuariosPersonalTotal, setTabUsuariosPersonalTotal] = useState(false);
   return (
-    [
+    <div>
       <button
         className="btn btn-outline-info btn-sm mr-1"
         title="Personal"
         onClick={() => toggleModalPersonal()}
       ><FaUserFriends />
-      </button>,
+      </button>
       <Modal isOpen={ModalPersonal} toggle={toggleModalPersonal}
-
-
       >
         <ModalHeader >PERSONAL TECNICO DE OBRA</ModalHeader>
         <ModalBody
@@ -209,7 +207,7 @@ export default ({ id_ficha, codigo_obra }) => {
                       </NavLink>
                     </NavItem>
                   )),
-                  <NavItem >
+                  <NavItem key="listapersonal">
                     <NavLink
                       className={classnames({ active: IdCargoSeleccionado == 0 })}
                       onClick={() => { fetchUsuariosPersonal(0) }}
@@ -498,8 +496,7 @@ export default ({ id_ficha, codigo_obra }) => {
             </TabPane>
           </div>
         </ModalBody>
-      </Modal>,
-      ,
+      </Modal>
       <input
         type="file"
         ref={hiddenFileInput}
@@ -508,7 +505,6 @@ export default ({ id_ficha, codigo_obra }) => {
         }}
         onChange={e => onChangeInputFile(e)}
       />
-      ,
       <Modal
         isOpen={ModalFormulario}
         toggle={() => toggleModalFormulario()}
@@ -659,7 +655,7 @@ export default ({ id_ficha, codigo_obra }) => {
         </ModalFooter>
       </Modal>
 
-    ]
+    </div>
 
   );
 }
