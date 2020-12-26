@@ -49,7 +49,7 @@ export default ({ id_ficha }) => {
                         position: 'inherit',
                         top: '6px',
                         color: '#8caeda',
-                        "font-size": "12px",
+                        fontSize: "12px",
                         color: "#ffffff",
                         display: "flex",
                         justifyContent: "center"
@@ -59,7 +59,7 @@ export default ({ id_ficha }) => {
                     Financiero
                     <div
                         style={{
-                            "font-size": "13px"
+                            fontSize: "13px"
                         }}
                     >
                         -({Redondea(FinancieroAvance.financiero_avance_porcentaje)} %)

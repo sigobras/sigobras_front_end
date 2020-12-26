@@ -656,7 +656,7 @@ iframe::-webkit-scrollbar-thumb {
 }
 
 table.table thead th {
-  position: sticky;
+  /* position: sticky; */
   top: 0px;
   background: #171819;
 }

@@ -796,13 +796,13 @@ function Curva_S({ id_ficha, codigo }) {
     }
 
     return (
-        [
+        <div>
             <button
                 className="btn btn-outline-info btn-sm mr-1"
                 title="CURVA S"
                 onClick={toggleModalPrincipal}
             ><FaChartLine />
-            </button>,
+            </button>
             <Modal isOpen={ModalPrincipal} toggle={toggleModalPrincipal}>
                 <div style={{
                     overflowY: "auto",
@@ -1243,12 +1243,11 @@ function Curva_S({ id_ficha, codigo }) {
                                     height: " 50px",
                                 }}
                             >+</Button>
-                        ),
-
+                        )
                         ]
                     }
                 </div>
-            </Modal>,
+            </Modal>
             < Modal isOpen={modal} toggle={toggle} >
                 <ModalBody>
                     {
@@ -1530,7 +1529,7 @@ function Curva_S({ id_ficha, codigo }) {
                     <Button color="secondary" onClick={toggle}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
-        ]
+        </div>
     );
 }
 export default Curva_S

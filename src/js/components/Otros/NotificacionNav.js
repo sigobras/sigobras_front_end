@@ -13,7 +13,6 @@ export default () => {
     }, [])
     function socketIni() {
         socket.on("gestion_documentaria_" + sessionStorage.getItem('idobra'), (data) => {
-            console.log("llegada de gestion_documentaria");
             fetchNotificacionesCantidad()
             fetchNotificaciones()
         })
@@ -39,7 +38,6 @@ export default () => {
     }
     const [NotificacionesCantidad, setNotificacionesCantidad] = useState(0)
     async function fetchNotificacionesCantidad() {
-        console.log("cantidad");
         var res = await axios.get(`${UrlServer}/FichasNotificaciones_cantidad`,
             {
                 params: {

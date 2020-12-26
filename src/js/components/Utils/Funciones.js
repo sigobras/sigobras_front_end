@@ -169,6 +169,8 @@ function Money_to_float(money) {
 }
 
 function fechaFormatoClasico(fecha) {
+    if(typeof fecha != "string")
+        return ""
     var fechaTemp = ""
     if (fecha) {
         fechaTemp = fecha.split("-")
@@ -247,6 +249,13 @@ const formatMoney = (valor) => {
     return valor.replace(/[^0-9\.-]+/g, "").replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + segundaParte()
 
 }
+function getDaysBetweenDates(fecha_inicio, fecha_final) {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const firstDate = new Date(fecha_inicio);
+    const secondDate = new Date(fecha_final);
+    var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+    return days || 0
+}
 
 module.exports = {
     Redondea,
@@ -267,5 +276,6 @@ module.exports = {
     FechaActual2Meses,
     fechaFormatoClasico,
     hexToRgb,
-    formatMoney
+    formatMoney,
+    getDaysBetweenDates
 } 

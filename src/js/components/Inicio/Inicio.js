@@ -9,31 +9,17 @@ import FisicoBarraPorcentaje from './FisicoBarraPorcentaje';
 import ModalListaPersonal from './ModalListaPersonal'
 import ModalInformacionObras from './InformacionObras/InformacionObra'
 import Curva_S from './Curva_S'
-import { FaList } from "react-icons/fa";
+import { FaList, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Redondea, hexToRgb, fechaFormatoClasico } from '../Utils/Funciones';
 import Obras_labels_edicion from './Obras_labels_edicion';
 import CarouselImagenesObra from './CarouselImagenesObra';
+// import {List} from 'react-virtualized';
 export default ({ recargar }) => {
     //funciones
-    function fechaFormatoClasico(fecha) {
-        var fechaTemp = ""
-        if (fecha) {
-            fechaTemp = fecha.split("-")
-        } else {
-            return fecha
-        }
-        if (fechaTemp.length == 3) {
-            return fechaTemp[2] + "-" + fechaTemp[1] + "-" + fechaTemp[0]
-        } else {
-            return fecha
-        }
-    }
-
     useEffect(() => {
         fetchComunicados()
         fetchProvincias()
         fetchTipoObras()
-        fetchDatosCostosIndirectos()
     }, []);
     //comunicados
     const [Comunicados, setComunicados] = useState([]);
@@ -154,6 +140,7 @@ export default ({ recargar }) => {
             recargar(res.data[0])
         }
     }
+    const [LabelsHabilitado, setLabelsHabilitado] = useState(false)
     useEffect(() => {
         fetchSectores()
         setSectoreSeleccionado(0)
@@ -240,6 +227,18 @@ export default ({ recargar }) => {
                         )
                     }
                 </Input>
+                {LabelsHabilitado ?
+                    <Button onClick={() => setLabelsHabilitado(!LabelsHabilitado)} color="success">
+
+                        <FaEye />
+
+                    </Button> :
+                    <Button onClick={() => setLabelsHabilitado(!LabelsHabilitado)} color="danger">
+
+                        <FaEyeSlash />
+
+                    </Button>
+                }
             </div>
             {
                 <table className="table table-sm" >
@@ -269,7 +268,7 @@ export default ({ recargar }) => {
                                         )
                                     )
                                     &&
-                                    <tr>
+                                    <tr key={i}>
                                         <td
                                             colSpan="8"
                                             style={{
@@ -297,7 +296,7 @@ export default ({ recargar }) => {
                                         )
                                     )
                                     &&
-                                    <tr>
+                                    <tr key={i+"2"}>
                                         <td
                                             colSpan="8"
                                             style={{
@@ -398,6 +397,7 @@ export default ({ recargar }) => {
                                     </td>
                                 </tr>
                                 ,
+                                LabelsHabilitado &&
                                 <tr
                                     style={
                                         sessionStorage.getItem('idobra') == item.id_ficha ?
@@ -407,6 +407,7 @@ export default ({ recargar }) => {
                                             :
                                             {}
                                     }
+                                    key={i+"3"}
                                 >
                                     <td
                                         style={{
@@ -646,14 +647,14 @@ function EstadoObra({ id_ficha }) {
                 "--perceived-lightness": "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
                 "--lightness-switch": " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
                 padding: " 0 10px",
-                "line-height": " 22px!important",
+                lineheight: " 22px!important",
                 "--lightness-threshold": " 0.6",
                 "--background-alpha": " 0.18",
                 "--border-alpha": " 0.3",
                 "--lighten-by": " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
                 "background": " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
                 "color": " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
-                "border-color": " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+                bordercolor: " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
                 "--label-r": hexToRgb(EstadoObra.color).r,
                 "--label-g": hexToRgb(EstadoObra.color).g,
                 "--label-b": hexToRgb(EstadoObra.color).b,
@@ -785,20 +786,21 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
                 Labels.map((item, i) =>
                     [
                         <Button
+                        key={i+"1"}
                             type="button"
                             style={{
                                 borderRadius: "13px",
                                 "--perceived-lightness": "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
                                 "--lightness-switch": " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
                                 padding: " 0 10px",
-                                "line-height": " 22px!important",
+                                lineheight: " 22px!important",
                                 "--lightness-threshold": " 0.6",
                                 "--background-alpha": " 0.18",
                                 "--border-alpha": " 0.3",
                                 "--lighten-by": " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
                                 "background": " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
                                 "color": " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
-                                "border-color": " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+                                bordercolor: " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
                                 "--label-r": hexToRgb(item.color).r,
                                 "--label-g": hexToRgb(item.color).g,
                                 "--label-b": hexToRgb(item.color).b,
@@ -811,10 +813,12 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
                             onClick={() => {
                                 quitarObraLabel(item.id)
                             }}
+                            
                         >
                             {item.nombre}
                         </Button>,
                         <Tooltip
+                        key={i+"2"}
                             placement={"bottom"}
                             isOpen={tooltipOpen == item.id}
                             target={"Tooltip-" + item.id + "-" + id_ficha}
