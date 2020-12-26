@@ -67,7 +67,7 @@ export default () => {
         fetchNotificacionesCantidad()
     }
     return (
-        <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
+        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
             <DropdownToggle>
                 <FaBell />
                 {NotificacionesCantidad}
@@ -115,11 +115,8 @@ export default () => {
                         </DropdownItem>
                     ]
                 )
-
                 )}
-
             </DropdownMenu>
         </Dropdown>
-
     )
 }
