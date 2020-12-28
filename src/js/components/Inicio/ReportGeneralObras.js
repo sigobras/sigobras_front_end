@@ -76,18 +76,31 @@ export default () => {
                     {
                         text: 'PROYECTO EN EJECUCION - SECTOR ' + element.sector_nombre,
                         alignment: 'center',
-                        margin: [0, 0, 0, 15]
+                        margin: [0, 0, 0, 15],
 
                     },
                     {
                         style: 'tableExample',
+                        layout: 'noBorders',
                         table: {
                             widths: [40, '*'],
                             dontBreakRows: true,
+
                             body: [
                                 [
-                                    { text: element.codigo_unificado },
-                                    { text: element.g_meta },
+                                    {
+                                        text: element.codigo_unificado,
+                                        fillColor: '#204d7b',
+                                        color: "yellow",
+                                        bold: true,
+                                        margin: [5, 0, 0, 0],
+                                    },
+                                    {
+                                        text: element.g_meta,
+                                        fillColor: '#204d7b',
+                                        color: "white",
+                                        bold: true,
+                                    },
 
                                 ],
                             ]
@@ -104,18 +117,37 @@ export default () => {
                     },
                 ],
                 [
+                    // {
+                    //     canvas: [
+                    //         {
+                    //             type: 'rect',
+                    //             x: 0,
+                    //             y: 0,
+                    //             w: 285,
+                    //             h: 130,
+                    //             r: 5,
+                    //             lineColor: 'black',
+                    //         },
+                    //     // layout: 'headerLineOnly',
+                    //     // absolutePosition: {x: 45, y: 50}
+                    //     ]
+                    // },
                     {
                         style: 'tableExample',
+                        layout: 'noBorders',
                         table: {
                             // dontBreakRows: true,
                             widths: ['*', 200, 200],
                             body: [
                                 [
-                                    { text: "META : " + element.meta_final },
+                                    {
+                                        text: "META",
+                                        color: "#086eb7"
+                                    },
 
                                     {
                                         image: element.imagen_db1,
-                                        rowSpan: 2,
+                                        rowSpan: 4,
                                         // width: 90,
                                         // height: 90,
                                         fit: [200, 200],
@@ -124,7 +156,7 @@ export default () => {
 
                                     {
                                         image: element.imagen_db2,
-                                        rowSpan: 2,
+                                        rowSpan: 4,
                                         // width: 200,
                                         // height: 200,
                                         fit: [200, 200],
@@ -132,7 +164,26 @@ export default () => {
                                     },
                                 ],
                                 [
-                                    { text: "POBLACION BENEFICIARIA : " + element.poblacion_beneficiaria },
+                                    {
+                                        text: element.meta_final || "Descripcion",
+                                        color: "#26315a"
+                                    },
+                                    { text: "" },
+                                    { text: "" },
+                                ],
+                                [
+                                    {
+                                        text: "POBLACION BENEFICIARIA",
+                                        color: "#086eb7"
+
+                                    },
+                                    { text: "" },
+                                    { text: "" },
+                                ], [
+                                    {
+                                        text: element.poblacion_beneficiaria || "Descripcion",
+                                        color: "#26315a"
+                                    },
                                     { text: "" },
                                     { text: "" },
                                 ],
@@ -152,12 +203,74 @@ export default () => {
                 [
                     {
                         style: 'tableExample',
+                        layout: 'noBorders',
                         table: {
-                            dontBreakRows: true,
-                            widths: [120, 'auto', 'auto', 170, '*'],
+                            // dontBreakRows: true,
+
+                            widths: [130, 'auto', 30, 170, '*'],
                             body: [
-                                [{ text: 'PRESUPUESTO : ', }, { text: Redondea(element.g_total_presu), }, { text: '', border: [false, false, false, false] }, { text: 'AVANCE FINANCIERO ACUMULADO 2020 ', }, { text: Redondea(element.financiero_avance_porcentaje), }],
-                                [{ text: 'MODALIDAD DE EJECUCION : ', }, { text: element.tipoadministracion_nombre, }, { text: '', border: [false, false, false, false] }, { text: 'AVANCE FISICO ACUMULADO 2020 ', }, { text: Redondea(element.fisico_avance_porcentaje), }],
+                                [
+                                    {
+                                        text: 'PRESUPUESTO : ',
+                                        fillColor: '#086eb7',
+                                        color: "yellow",
+                                        bold: true,
+                                        margin: [5, 0, 0, 0],
+
+                                    },
+                                    {
+                                        text: "S/. " + Redondea(element.g_total_presu),
+                                        fillColor: '#086eb7',
+                                        color: "white",
+                                        bold: true,
+                                    },
+                                    { text: '', border: [false, false, false, false] },
+                                    {
+                                        text: 'AVANCE FINANCIERO ACUMULADO 2020 ',
+                                        fillColor: '#086eb7',
+                                        color: "yellow",
+                                        bold: true,
+                                    },
+                                    {
+                                        text: Redondea(element.financiero_avance_porcentaje) + " %",
+                                        fillColor: '#086eb7',
+                                        color: "white",
+                                        bold: true,
+                                    }
+                                ],
+
+                                [{ text: '', border: [false, false, false, false],colSpan:5 }],
+
+
+                                [
+                                    {
+                                        text: 'MODALIDAD DE EJECUCION : ',
+                                        fillColor: '#086eb7',
+                                        color: "yellow",
+                                        bold: true,
+                                        margin: [5, 0, 0, 0],
+
+                                    },
+                                    {
+                                        text: element.tipoadministracion_nombre,
+                                        fillColor: '#086eb7',
+                                        color: "white",
+                                        bold: true,
+                                    },
+                                    { text: '', border: [false, false, false, false] },
+                                    {
+                                        text: 'AVANCE FISICO ACUMULADO 2020 ',
+                                        fillColor: '#086eb7',
+                                        color: "yellow",
+                                        bold: true,
+                                    },
+                                    {
+                                        text: Redondea(element.fisico_avance_porcentaje)+ " %",
+                                        fillColor: '#086eb7',
+                                        color: "white",
+                                        bold: true,
+                                    }
+                                ],
                             ]
                         }
                     },
@@ -170,7 +283,7 @@ export default () => {
                                     text: '',
                                     border: [false, false, false, false],
                                     margin: [0, 0, 0, 15],
-                                    pageBreak: ((((i + 1) % 2) == 0) && (i < DataObras.length-1)) && 'before'
+                                    pageBreak: ((((i + 1) % 2) == 0) && (i < DataObras.length - 1)) && 'before'
                                 }],
                             ]
                         }
@@ -223,8 +336,8 @@ export default () => {
             if (confirm("Desea generar el reporte de todas las obras?")) {
                 fetchGlobalPdf()
             }
-            }}>
-            <FaFilePdf  />
+        }}>
+            <FaFilePdf />
             {
                 Loading &&
                 <Backdrop className={classes.backdrop} open>
