@@ -13,6 +13,7 @@ import { FaList, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Redondea, hexToRgb, fechaFormatoClasico } from '../Utils/Funciones';
 import Obras_labels_edicion from './Obras_labels_edicion';
 import CarouselImagenesObra from './CarouselImagenesObra';
+import ReportGeneralObras from './ReportGeneralObras';
 // import {List} from 'react-virtualized';
 export default ({ recargar }) => {
     //funciones
@@ -239,6 +240,7 @@ export default ({ recargar }) => {
 
                     </Button>
                 }
+                <ReportGeneralObras/>
             </div>
             {
                 <table className="table table-sm" >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import axios from 'axios';
 import { FaSuperpowers, FaCircle } from 'react-icons/fa';
 import { MdFlashOn, MdSearch, MdChevronLeft, MdChevronRight, MdVisibility, MdMonetizationOn, MdWatch, MdLibraryBooks, MdCancel, MdArrowDropDownCircle, MdAddAPhoto } from 'react-icons/md';
@@ -55,8 +55,10 @@ export default () => {
     setCantidadPaginasPartidas(value)
   }
   const [PaginaActual, setPaginaActual] = useState(1);
+  const [FlagPaginaActual, setFlagPaginaActual] = useState(false)
   function onChangePaginaActual(pagina) {
     setPaginaActual(pagina)
+    setFlagPaginaActual(true)
   }
   const [ConteoPartidas, setConteoPartidas] = useState([]);
   async function fectchConteoPartidas() {
@@ -98,6 +100,10 @@ export default () => {
       setTimeout(() => {
         setTogglePartidasEstilo(true)
       }, 500)
+    }
+    if (FlagPaginaActual) {
+      autoScroll()
+      setFlagPaginaActual(false)
     }
   }
   const [PartidaSelecccionado, setPartidaSelecccionado] = useState({ numero: 0, nombre: "", item: "-" });
@@ -221,6 +227,11 @@ export default () => {
     setPartidas([])
     fectchPartidas()
   }, [ComponenteSelecccionado, PaginaActual, CantidadPaginasPartidas, MenuPrioridadesSeleccionado, MenuCategoriasSeleccionado, TextoBuscado])
+  const paginatorRef = useRef(null)
+  const autoScroll = () => {
+    paginatorRef.current.scrollIntoView({ behavior: "smooth" });
+    console.log("autoScroll");
+  }
   return (
     <div>
       <Nav tabs>
@@ -563,7 +574,6 @@ export default () => {
               )}
 
           </tbody>
-
         </table>
         <div
           className="clearfix"
@@ -579,50 +589,70 @@ export default () => {
             }
           }
         >
-          <div className="float-left">
-            <select
-              onChange={(e) => onChangeCantidadPaginasPartidas(e.target.value)}
-              value={CantidadPaginasPartidas}
-              className="form-control form-control-sm" >
-              <option value={10}>10</option>
-              <option value={15}>15</option>
-              <option value={20}>20</option>
-            </select>
-          </div>
-          <div className="float-right mr-2 ">
-            <div className="d-flex text-dark">
+          <div style={{ position: "relative" }} >
+            <div
+              className="float-left"
+              ref={paginatorRef}
+            >
+              <select
+                onChange={(e) => onChangeCantidadPaginasPartidas(e.target.value)}
+                value={CantidadPaginasPartidas}
+                className="form-control form-control-sm"
+                style={{
+                  position: "fixed",
+                  bottom: "0px",
+                  width: "55px"
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
 
-              <InputGroup size="sm">
-                <InputGroupAddon addonType="prepend">
+            <div className="float-right mr-2 "
 
-                  <Button className="btn btn-light pt-0"
-                    onClick={() => onChangePaginaActual(PaginaActual - 1)}
-                    disabled={PaginaActual <= 1}
-                  >
-                    <MdChevronLeft />
-                  </Button>
-                  <input type="text" style={{ width: "30px" }}
-                    value={PaginaActual}
-                    disabled
-                  />
-                  <InputGroupText>
-                    {`de  ${Math.ceil(ConteoPartidas / CantidadPaginasPartidas)}`}
-                  </InputGroupText>
-                </InputGroupAddon>
+            >
+              <div className="d-flex text-dark">
 
-                <InputGroupAddon addonType="append">
-                  <Button className="btn btn-light pt-0"
-                    onClick={() => onChangePaginaActual(PaginaActual + 1)}
-                    disabled={PaginaActual >= Math.ceil(ConteoPartidas / CantidadPaginasPartidas)}
-                  >
-                    <MdChevronRight />
-                  </Button>
-                </InputGroupAddon>
-              </InputGroup>
+                <InputGroup size="sm"
+                  style={{
+                    position: "fixed",
+                    bottom: "0px",
+                    left: "50%",
+                  }}
+                >
+                  <InputGroupAddon addonType="prepend">
+                    <Button className="btn btn-light pt-0"
+                      onClick={() => { onChangePaginaActual(PaginaActual - 1) }}
+                      disabled={PaginaActual <= 1}
+                    >
+                      <MdChevronLeft />
+                    </Button>
+                    <input type="text" style={{ width: "30px" }}
+                      value={PaginaActual}
+                      disabled
+                      onChange={(event) => setPaginaActual(event.target.value)}
+                    />
+                    <InputGroupText
+                    >
+                      {`de  ${Math.ceil(ConteoPartidas / CantidadPaginasPartidas)}`}
+                    </InputGroupText>
+                  </InputGroupAddon>
 
+
+                  <InputGroupAddon addonType="append">
+                    <Button className="btn btn-light pt-0"
+                      onClick={() => { onChangePaginaActual(PaginaActual + 1) }}
+                      disabled={PaginaActual >= Math.ceil(ConteoPartidas / CantidadPaginasPartidas)}                  >
+                      <MdChevronRight />
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+
+              </div>
             </div>
           </div>
-
         </div>
       </CardBody>
     </div>
