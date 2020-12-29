@@ -385,7 +385,7 @@ export default () => {
           <tbody
 
           >
-            {Array.isArray(Partidas) &&
+            {
               Partidas.map((item) =>
                 [
                   <tr
@@ -495,81 +495,79 @@ export default () => {
                     </td>
                   </tr>
                   ,
-                  (
-                    PartidaSelecccionado.item == item.item &&
-                    <tr className="resplandPartidabottom">
-                      <td colSpan="8">
-                        <div className="p-1">
-                          <div className="row">
-                            <div className="col-sm-7 text-info">
-                              {PartidaSelecccionado.descripcion} <MdFlashOn size={20} className="text-danger" />rendimiento: {PartidaSelecccionado.rendimiento} {PartidaSelecccionado.unidad_medida}
-                            </div>
+                  PartidaSelecccionado.item == item.item &&
+                  <tr className="resplandPartidabottom"
+                    key={item.id_partida + "-actividades"}
+                  >
+                    <td colSpan="8">
+                      <div className="p-1">
+                        <div className="row">
+                          <div className="col-sm-7 text-info">
+                            {PartidaSelecccionado.descripcion} <MdFlashOn size={20} className="text-danger" />rendimiento: {PartidaSelecccionado.rendimiento} {PartidaSelecccionado.unidad_medida}
                           </div>
-
-                          <table
-                            className="table-bordered table-sm table-hover"
-                            style={{
-                              width: "100%"
-                            }}
-                          >
-                            <thead>
-                              <tr>
-                                <th>ACTIVIDADES</th>
-                                <th>N° VECES</th>
-                                <th>LARGO</th>
-                                <th>ANCHO</th>
-                                <th>ALTO</th>
-                                <th>METRADO</th>
-                                <th>P / U </th>
-                                <th>P / P</th>
-                                <th>AVANCE Y SALDO</th>
-                                <th>METRAR</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {
-                                Actividades.map((item) =>
-                                  <tr key={item.id_actividad} className={item.actividad_estado === "Mayor Metrado" ? 'FondMM icoVer' : 'icoVer'}>
-                                    <td>{item.nombre}</td>
-                                    <td>{item.veces}</td>
-                                    <td>{item.largo}</td>
-                                    <td>{item.ancho}</td>
-                                    <td>{item.alto}</td>
-                                    <td>{Redondea(item.parcial)} {PartidaSelecccionado.unidad_medida}</td>
-                                    <td>{Redondea(PartidaSelecccionado.costo_unitario)}</td>
-                                    <td>{Redondea(item.parcial * PartidaSelecccionado.costo_unitario)}</td>
-                                    <td>
-                                      <BarraPorcentajeAvanceActividad
-                                        id_actividad={item.id_actividad}
-                                        ref={(ref) => {
-                                          var clone = RefActividades
-                                          clone[item.id_actividad] = ref
-                                          setRefActividades(clone)
-                                        }}
-                                      />
-                                    </td>
-                                    <td>
-                                      {UsuarioData.cargo_nombre == "RESIDENTE" &&
-                                        <ModalIngresoMetrado
-                                          Partida={PartidaSelecccionado}
-                                          Actividad={item}
-                                          recargaActividad={onSaveMetrado}
-                                        />
-                                      }
-
-                                    </td>
-                                  </tr>
-                                )
-                              }
-                            </tbody>
-                          </table>
-
                         </div>
-                      </td>
-                    </tr>
 
-                  )
+                        <table
+                          className="table-bordered table-sm table-hover"
+                          style={{
+                            width: "100%"
+                          }}
+                        >
+                          <thead>
+                            <tr>
+                              <th>ACTIVIDADES</th>
+                              <th>N° VECES</th>
+                              <th>LARGO</th>
+                              <th>ANCHO</th>
+                              <th>ALTO</th>
+                              <th>METRADO</th>
+                              <th>P / U </th>
+                              <th>P / P</th>
+                              <th>AVANCE Y SALDO</th>
+                              <th>METRAR</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              Actividades.map((item) =>
+                                <tr key={item.id_actividad} className={item.actividad_estado === "Mayor Metrado" ? 'FondMM icoVer' : 'icoVer'}>
+                                  <td>{item.nombre}</td>
+                                  <td>{item.veces}</td>
+                                  <td>{item.largo}</td>
+                                  <td>{item.ancho}</td>
+                                  <td>{item.alto}</td>
+                                  <td>{Redondea(item.parcial)} {PartidaSelecccionado.unidad_medida}</td>
+                                  <td>{Redondea(PartidaSelecccionado.costo_unitario)}</td>
+                                  <td>{Redondea(item.parcial * PartidaSelecccionado.costo_unitario)}</td>
+                                  <td>
+                                    <BarraPorcentajeAvanceActividad
+                                      id_actividad={item.id_actividad}
+                                      ref={(ref) => {
+                                        var clone = RefActividades
+                                        clone[item.id_actividad] = ref
+                                        setRefActividades(clone)
+                                      }}
+                                    />
+                                  </td>
+                                  <td>
+                                    {UsuarioData.cargo_nombre == "RESIDENTE" &&
+                                      <ModalIngresoMetrado
+                                        Partida={PartidaSelecccionado}
+                                        Actividad={item}
+                                        recargaActividad={onSaveMetrado}
+                                      />
+                                    }
 
+                                  </td>
+                                </tr>
+                              )
+                            }
+                          </tbody>
+                        </table>
+
+                      </div>
+                    </td>
+                  </tr>
                 ]
               )}
 
@@ -706,9 +704,7 @@ function IconosPartidas({ Id_partida, Id_iconoCategoria, Id_prioridad, Categoria
   }
   //toogle Prioridades
   const [MenuPrioridades, setMenuPrioridades] = useState(false);
-  const [, setPrioridadSeleccionada] = useState(0);
   function onChangePrioridadSeleccionada(id_prioridad) {
-    setPrioridadSeleccionada(id_prioridad)
     setMenuPrioridades(false)
     updateCategoriaPrioridad(id_prioridad, CategoriaSeleccionada)
   }
@@ -732,13 +728,13 @@ function IconosPartidas({ Id_partida, Id_iconoCategoria, Id_prioridad, Categoria
     fetchIcono(request.data.iconosCategorias_id_iconoCategoria)
   }
   return (
-    [
+    <div>
       <div
         onClick={toogleCategorias}
         style={{ color: Prioridad }}
       >
         {Icono}
-      </div>,
+      </div>
       <div
         className={MenuCategorias ? "menuCirculo" : "d-none"}
       >
@@ -756,8 +752,6 @@ function IconosPartidas({ Id_partida, Id_iconoCategoria, Id_prioridad, Categoria
           )
         }
       </div>
-
-      ,
       <div className={MenuPrioridades ? "menuCirculo" : "d-none"}>
         {
           Prioridades.map((item, i) =>
@@ -770,9 +764,7 @@ function IconosPartidas({ Id_partida, Id_iconoCategoria, Id_prioridad, Categoria
           )
         }
       </div>
-
-    ]
-
+    </div>
   )
 }
 

@@ -82,38 +82,36 @@ export default () => {
                 {Notificaciones.map((item, i) =>
                 (
                     item.fichas_notificaciones_tipo_id == 1 &&
-                    [
-                        <DropdownItem>
-                            <NavLink href={`/${item.url}`}>
+                    <DropdownItem key={i}>
+                        <NavLink href={`/${item.url}`}>
+                            <div
+                                style={{
+                                    color: "black",
+                                    fontWeight: 700,
+                                }}
+                            >
+                                {item.emisor}
+                            </div>
+                            <div
+                                style={{
+                                    color: "black",
+                                }}
+                            >
+                                {item.descripcion}
+                            </div>
+                            {
+                                item.asunto &&
                                 <div
                                     style={{
                                         color: "black",
                                         fontWeight: 700,
                                     }}
                                 >
-                                    {item.emisor}
+                                    ASUNTO: {item.asunto}
                                 </div>
-                                <div
-                                    style={{
-                                        color: "black",
-                                    }}
-                                >
-                                    {item.descripcion}
-                                </div>
-                                {
-                                    item.asunto &&
-                                    <div
-                                        style={{
-                                            color: "black",
-                                            fontWeight: 700,
-                                        }}
-                                    >
-                                        ASUNTO: {item.asunto}
-                                    </div>
-                                }
-                            </NavLink>
-                        </DropdownItem>
-                    ]
+                            }
+                        </NavLink>
+                    </DropdownItem>
                 )
                 )}
             </DropdownMenu>

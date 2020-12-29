@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DebounceInput } from 'react-debounce-input';
 import { FaPlus, FaCheck } from 'react-icons/fa';
-
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-
-
 import LogoSigobras from './../../../../../images/logoSigobras.png'
 import { UrlServer } from '../../../Utils/ServerUrlConfig';
 import { FechaActual2Meses, FechaActual, Redondea } from '../../../Utils/Funciones'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default ({ Partida, Actividad, recargaActividad }) => {
     useEffect(() => {
         fectchAvanceActividad()
@@ -23,33 +22,58 @@ export default ({ Partida, Actividad, recargaActividad }) => {
     }
     //modal
     const [modal, setModal] = useState(false);
-    const toggle = () => setModal(!modal);
-    //data de modal
-    const [ModalData, setModalData] = useState(
-        {
-            "id_ficha": sessionStorage.getItem('idobra'),
-            "fecha": "",
-            "valor": 0,
-            "descripcion": "",
-            "id_actividad": Actividad.id_actividad,
-            "id_acceso": sessionStorage.getItem('idacceso')
+    const toggle = () => {
+        if (!modal) {
+            setModalData(
+                {
+                    "id_ficha": sessionStorage.getItem('idobra'),
+                    "fecha": "",
+                    "valor": 0,
+                    "descripcion": "",
+                    "id_actividad": Actividad.id_actividad,
+                    "id_acceso": sessionStorage.getItem('idacceso')
+                }
+            )
         }
-    );
+        setModal(!modal)
+    };
+    //data de modal
+    const [ModalData, setModalData] = useState({});
     function onChangeModalData(name, value) {
         var clone = { ...ModalData }
         clone[name] = value
         setModalData(clone)
-        console.log("clone", clone);
     }
     async function saveModalDATA() {
-        if (confirm("esta seguro de realizar esta accion?")) {
-            const request = await axios.post(`${UrlServer}/postActividad2`,
-                ModalData
+        try {
+            if (confirm("esta seguro de realizar esta accion?")) {
+                const res = await axios.post(`${UrlServer}/postActividad2`,
+                    ModalData
+                )
+                toast.success(res.data.message,
+                    {
+                        position: "top-right",
+                        autoClose: 1000,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                    }
+                )
+
+                toggle()
+                recargaActividad(Partida.id_partida, Actividad.id_actividad)
+            }
+
+        } catch (error) {
+            toast.error(error.response.data.message,
+                {
+                    position: "top-right",
+                    autoClose: 1000,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                }
             )
-            alert(request.data.message)
-            toggle()
-            recargaActividad(Partida.id_partida, Actividad.id_actividad)
         }
+
     }
     return (
         [
@@ -72,6 +96,7 @@ export default ({ Partida, Actividad, recargaActividad }) => {
                 toggle={toggle}
                 size="sm"
             >
+                <ToastContainer />
                 <ModalHeader>
                     <img src={LogoSigobras} width="60px" alt="logo sigobras" />
                 </ModalHeader>

@@ -23,7 +23,9 @@ class MDdiario extends Component {
       return (
         <div>
           <a href="#" className="text-white text-decoration-none">
-            <CardHeader onClick={() => this.CollapseCard(1)} >
+            <CardHeader 
+            // onClick={() => this.CollapseCard(1)}
+             >
               <b>METRADOS DIARIOS</b>
               <div className="float-right">
                 {collapse === 1 ? <MdRemove size={20} /> : <MdAdd size={20} />}
