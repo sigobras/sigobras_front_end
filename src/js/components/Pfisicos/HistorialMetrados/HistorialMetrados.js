@@ -887,7 +887,7 @@ export default () => {
                                                                                                                             <div
                                                                                                                                 className="d-flex"
                                                                                                                             >
-                                                                                                                                {Redondea(item3.valor)} {item3.unidad_medida}
+                                                                                                                                {Redondea(item3.valor,4)} {item3.unidad_medida}
                                                                                                                                 {FechaActiva && UsuarioData.cargo_nombre == "RESIDENTE" &&
                                                                                                                                     <div
                                                                                                                                         onClick={() => setInputAvanceActividadIndex(i3)}
