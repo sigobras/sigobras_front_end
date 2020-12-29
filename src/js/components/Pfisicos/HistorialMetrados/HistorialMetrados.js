@@ -17,13 +17,13 @@ import CheckDate from './CheckDate';
 
 
 export default () => {
-    function FechaLarga(fecha){
+    function FechaLarga(fecha) {
         var fechaTemp = fecha.split("-")
-        var ShortDate = new Date(fechaTemp[0],fechaTemp[1]-1,[fechaTemp[2]]);
-        var options = { year: 'numeric', month: 'long', day: 'numeric',weekday: "long"};
+        var ShortDate = new Date(fechaTemp[0], fechaTemp[1] - 1, [fechaTemp[2]]);
+        var options = { year: 'numeric', month: 'long', day: 'numeric', weekday: "long" };
         return ShortDate.toLocaleDateString("es-ES", options)
     }
-    
+
     useEffect(() => {
         fetchAnyos()
         fetchUsuarioData()
@@ -670,7 +670,7 @@ export default () => {
                                                                                         <td>{item.nombre_actividad}</td>
                                                                                         <td>{item.descripcion_actividad}</td>
 
-                                                                                        <td>{Redondea(item.valor )} {item.unidad_medida}</td>
+                                                                                        <td>{Redondea(item.valor)} {item.unidad_medida}</td>
                                                                                         <td>{Redondea(item.costo_unitario)}</td>
                                                                                         <td>{Redondea(item.parcial)}</td>
                                                                                     </tr>
@@ -845,7 +845,7 @@ export default () => {
                                                                                                 fontSize: "12px",
                                                                                                 backgroundColor: "#ffc107",
                                                                                                 width: "100%",
-                                                                                                padding:"3px",
+                                                                                                padding: "3px",
                                                                                             }}>
                                                                                             <b>{item2.numero + " " + item2.nombre}</b>
                                                                                             <div className="float-right" style={{ color: "#171819", fontSize: "12px", }}>
@@ -892,7 +892,7 @@ export default () => {
                                                                                                                                     <div
                                                                                                                                         onClick={() => setInputAvanceActividadIndex(i3)}
                                                                                                                                     >
-                                                                                                                                        <MdModeEdit style={{cursor:"pointer"}} />
+                                                                                                                                        <MdModeEdit style={{ cursor: "pointer" }} />
                                                                                                                                     </div>
                                                                                                                                 }
                                                                                                                             </div>
@@ -909,12 +909,12 @@ export default () => {
                                                                                                                                 <div
                                                                                                                                     onClick={() => updateAvanceActividad(item3.id_AvanceActividades)}
                                                                                                                                 >
-                                                                                                                                    <MdSave style={{cursor:"pointer"}} />
+                                                                                                                                    <MdSave style={{ cursor: "pointer" }} />
                                                                                                                                 </div>
                                                                                                                                 <div
                                                                                                                                     onClick={() => setInputAvanceActividadIndex(-1)}
                                                                                                                                 >
-                                                                                                                                    <MdClose style={{cursor:"pointer"}} />
+                                                                                                                                    <MdClose style={{ cursor: "pointer" }} />
                                                                                                                                 </div>
                                                                                                                             </div>
 
@@ -928,7 +928,7 @@ export default () => {
                                                                                                                         <div
                                                                                                                             onClick={() => updateAvanceActividad(item3.id_AvanceActividades)}
                                                                                                                         >
-                                                                                                                            <MdDeleteForever style={{cursor:"pointer"}} />
+                                                                                                                            <MdDeleteForever style={{ cursor: "pointer" }} />
                                                                                                                         </div>
                                                                                                                         : ""
                                                                                                                     }
@@ -1023,7 +1023,7 @@ export default () => {
 
                                                                 rows.push(
                                                                     <td >
-                                                                        {Redondea(item["m" + i])}
+                                                                        {Redondea(item["m" + i])} ({Redondea(item["m" + i] / item.presupuesto * 100)} %)
                                                                     </td>
                                                                 );
                                                             }
@@ -1079,15 +1079,19 @@ export default () => {
                                         {
                                             (
                                                 () => {
+                                                    var presupuesto_total = 0
+                                                    ResumenAnualData.data.forEach((item, i) => {
+                                                        presupuesto_total += item.presupuesto
+                                                    });
                                                     var rows = [];
                                                     for (var i = ResumenAnualData.mes_inicial; i <= ResumenAnualData.mes_final; i++) {
-                                                        var presupuesto_total = 0
+                                                        var avance_total = 0
                                                         ResumenAnualData.data.forEach((item, j) => {
-                                                            presupuesto_total += item["m" + i]
+                                                            avance_total += item["m" + i]
                                                         });
                                                         rows.push(
                                                             <td >
-                                                                {Redondea(presupuesto_total)}
+                                                                {Redondea(avance_total)} ({Redondea(avance_total / presupuesto_total * 100)} %)
                                                             </td>
                                                         );
                                                     }
