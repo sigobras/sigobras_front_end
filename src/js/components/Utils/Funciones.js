@@ -1,5 +1,5 @@
 // redondea a dos decimales
-function Redondea(x) {
+function Redondea(x,decimales = 2) {
     // console.log("x =>>", x)
     if (x == null) {
         return "-"
@@ -7,7 +7,7 @@ function Redondea(x) {
     else if (x == 0 || isNaN(x)) {
         return "-"
     }
-    return Number.parseFloat(x).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    return Number.parseFloat(x).toFixed(decimales).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
 }
 function Redondea1(x) {

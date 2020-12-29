@@ -670,7 +670,7 @@ export default () => {
                                                                                         <td>{item.nombre_actividad}</td>
                                                                                         <td>{item.descripcion_actividad}</td>
 
-                                                                                        <td>{Redondea(item.valor)} {item.unidad_medida}</td>
+                                                                                        <td>{Redondea(item.valor,4)} {item.unidad_medida}</td>
                                                                                         <td>{Redondea(item.costo_unitario)}</td>
                                                                                         <td>{Redondea(item.parcial)}</td>
                                                                                     </tr>
@@ -738,7 +738,7 @@ export default () => {
                                                             </td>
 
                                                             <td>
-                                                                {Redondea(item.valor)}
+                                                                {Redondea(item.valor,4)}
 
                                                             </td>
                                                             <td>
@@ -1034,7 +1034,7 @@ export default () => {
 
 
                                                 <td>
-                                                    {Redondea(item.valor)}
+                                                    {Redondea(item.valor,4)}
 
                                                 </td>
                                                 <td>
