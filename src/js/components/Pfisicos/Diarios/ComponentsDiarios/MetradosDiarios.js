@@ -287,8 +287,9 @@ export default () => {
         >
           <thead className="resplandPartida">
             <tr>
+              <th></th>
               <th style={{ width: "39px" }}>
-                <MdArrowDropDownCircle size={20} id="FiltrarPor" color={"#ffa90b"} />
+                <MdArrowDropDownCircle size={20} id="FiltrarPor" color={MenuPrioridadesSeleccionado.color} />
                 <UncontrolledPopover trigger="click" placement="bottom" target="FiltrarPor">
                   <div
                     title="Busqueda por prioridad - color"
@@ -371,7 +372,6 @@ export default () => {
 
                 </UncontrolledPopover>
               </th>
-              <th></th>
               <th>ITEM</th>
               <th>DESCRIPCIÓN</th>
               <th>METRADO</th>
@@ -399,15 +399,22 @@ export default () => {
                         :
                         "font-weight-light icoVer"}
                   >
+                    <td>
+                      {item.tipo == "partida" &&
+                        <PartidasChat
+                          id_partida={item.id_partida}
+                          id_componente={ComponenteSelecccionado.id_componente}
+                          recargaComponenteMensajes={recargaComponenteMensajes}
+                        />
+                      }
+                    </td>
                     <td
-
                     >
                       {
                         item.tipo === "partida" &&
-                        <div title="prioridad"
+                        <div
                           className="prioridad"
                           style={{ color: "#ffffff" }}
-                        // onClick={() => this.Prioridad(i)}
                         >
                           <span
                             className="h6"
@@ -422,15 +429,6 @@ export default () => {
                             />
                           </span>
                         </div>
-                      }
-                    </td>
-                    <td>
-                      {item.tipo == "partida" &&
-                        <PartidasChat
-                          id_partida={item.id_partida}
-                          id_componente={ComponenteSelecccionado.id_componente}
-                          recargaComponenteMensajes={recargaComponenteMensajes}
-                        />
                       }
                     </td>
                     {
