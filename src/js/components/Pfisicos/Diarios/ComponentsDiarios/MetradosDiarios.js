@@ -431,6 +431,17 @@ export default () => {
                         </div>
                       }
                     </td>
+
+                    <td>
+                      {item.tipo == "partida" &&
+                        <PartidasChat
+                          id_partida={item.id_partida}
+                          id_componente={ComponenteSelecccionado.id_componente}
+                          recargaComponenteMensajes={recargaComponenteMensajes}
+                          titulo = {item.descripcion}
+                        />
+                      }
+                    </td>
                     {
                       item.tipo == "partida" ?
                         <td
