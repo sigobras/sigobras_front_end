@@ -51,7 +51,7 @@ export default () => {
             obras[i].fisico_avance_porcentaje = fisico.data.fisico_avance_porcentaje
 
         }
-        console.log("Obras", obras);
+        // console.log("Obras", obras);
         setLoading(false);
         return obras
     }

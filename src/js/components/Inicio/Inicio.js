@@ -12,8 +12,8 @@ import Curva_S from './Curva_S'
 import { FaList, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Redondea, hexToRgb, fechaFormatoClasico } from '../Utils/Funciones';
 import Obras_labels_edicion from './Obras_labels_edicion';
-import CarouselImagenesObra from './CarouselImagenesObra';
 import ReportGeneralObras from './ReportGeneralObras';
+import CarouselNavs from './Carousel/CarouselNavs';
 // import {List} from 'react-virtualized';
 export default ({ recargar }) => {
     //funciones
@@ -389,7 +389,7 @@ export default ({ recargar }) => {
                                                 recargarObraLabels={recargarObraLabels}
                                                 codigo={item.codigo}
                                             />
-                                            <CarouselImagenesObra
+                                            <CarouselNavs
                                                 id_ficha={item.id_ficha}
                                                 codigo={item.codigo}
                                             />
