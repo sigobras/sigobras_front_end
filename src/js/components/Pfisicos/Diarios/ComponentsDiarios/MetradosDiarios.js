@@ -399,15 +399,6 @@ export default () => {
                         :
                         "font-weight-light icoVer"}
                   >
-                    <td>
-                      {item.tipo == "partida" &&
-                        <PartidasChat
-                          id_partida={item.id_partida}
-                          id_componente={ComponenteSelecccionado.id_componente}
-                          recargaComponenteMensajes={recargaComponenteMensajes}
-                        />
-                      }
-                    </td>
                     <td
                     >
                       {
