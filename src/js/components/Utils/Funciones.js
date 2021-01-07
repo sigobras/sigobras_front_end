@@ -7,7 +7,7 @@ function Redondea(x, decimales = 2) {
   else if (x == 0 || isNaN(x)) {
     return "-"
   }
-  if (x <= 0.001) {
+  if (x < 0.01) {
     return "-"
   }
   return Number.parseFloat(x).toFixed(decimales).replace(/\d(?=(\d{3})+\.)/g, '$&,');
