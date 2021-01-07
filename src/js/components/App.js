@@ -28,7 +28,7 @@ const MDdiario = lazy(() => import('./Pfisicos/Diarios/Diario'));
 const MDHistorial = lazy(() => import('./Pfisicos/HistorialMetrados/Historial'))
 const RecursosObra = lazy(() => import('./Pfisicos/Recursos/RecursosObra'))
 const HistorialImagenesObra = lazy(() => import('./Pfisicos/HistorialImagenes/HistorialImagenesObra'))
-const General = lazy(() => import('../components/Pfisicos/Valorizaciones/General'))
+const General = lazy(() => import('../components/Pfisicos/Valorizaciones/index'))
 // const Valorizaciones2 = lazy(() => import( './Pfisicos/Valorizaciones/Valorizaciones2'))
 // proceso gerenciales 
 const InterfazGerencial = lazy(() => import('./Inicio2/InterfazGerencial'))

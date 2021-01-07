@@ -1,0 +1,22 @@
+
+.input_expandible {
+    width: 100%;
+    padding: 10px;
+    margin: 0px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-shadow: #6766a8;
+    border-radius: 9px;
+    /* color: rgb(236, 236, 236); */
+    text-align: center;
+    height: 1.2rem;
+    /* width: 6rem; */
+    border: 1px solid #171819;
+}
+
+.input_expandible:disabled {
+    background: #1d242e !important;
+    color: #d6d6d6;
+    font-weight: bold;
+}
