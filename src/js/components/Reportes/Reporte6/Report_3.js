@@ -5,19 +5,16 @@ import { FaFilePdf } from "react-icons/fa";
 import * as pdfmake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col, Spinner, ModalFooter } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ButtonGroup, Button, Row, Col } from 'reactstrap';
 
 import { encabezadoInforme } from '../Complementos/HeaderInformes'
 import { logoSigobras, logoGRPuno } from '../Complementos/ImgB64'
 
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 
-import { Redondea1, Redondea, Money_to_float } from '../../Utils/Funciones';
+import { Redondea } from '../../Utils/Funciones';
 
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
 // import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
 
 export default () => {
   const [modal, setModal] = useState(false);
@@ -108,7 +105,7 @@ export default () => {
       valor_saldo
     })
   }
-  const [Encabezado, setEncabezado] = useState({})
+  // const [Encabezado, setEncabezado] = useState({})
   async function fetchEncabezado() {
     var res = await axios.post(`${UrlServer}/getInformeDataGeneral`, {
       "id_ficha": sessionStorage.getItem("idobra"),
@@ -170,7 +167,7 @@ export default () => {
                 alignment: 'left',
               },
               {
-                text: ': S/. ' + res.data.costo_directo,
+                text: ': S/. ' + Redondea(res.data.costo_directo),
                 style: 'tableBodyInforme',
                 alignment: 'left',
               },
@@ -269,7 +266,7 @@ export default () => {
                 alignment: 'left'
               },
               {
-                text: ': ' + res.data.porcentaje_avance_acumulado + ' %',
+                text: ': ' + Redondea(res.data.porcentaje_avance_acumulado) + ' %',
                 style: 'tableBodyInforme',
                 alignment: 'left'
               },
@@ -290,7 +287,8 @@ export default () => {
       }
     ]
     console.log("TblHeader", TblHeader);
-    setEncabezado(TblHeader)
+    // setEncabezado(TblHeader)
+    return TblHeader
   }
   useEffect(() => {
     if (AnyoSeleccionado != 0) {
@@ -301,7 +299,6 @@ export default () => {
     if (PeriodoSeleccionado != 0) {
       fetchResumenComponentes()
       fetchCostosIndirectos()
-      fetchEncabezado()
     }
   }, [PeriodoSeleccionado])
   useEffect(() => {
@@ -311,7 +308,7 @@ export default () => {
     // var { DataEncabezado } = this.state
     // var DataHist = this.state.DataApiResumenVal
     // var costosIndirectos = this.state.costos_indirectos
-
+    var Encabezado = await fetchEncabezado()
     var DataRestructurado =
     {
       style: 'tableExample',
@@ -457,7 +454,7 @@ export default () => {
         ]
       }
     }
-    ResumenComponentes.forEach((item, i) => {
+    ResumenComponentes.forEach((item) => {
       DataRestructurado.table.body.push(
         [
           {
