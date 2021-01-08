@@ -174,7 +174,7 @@ function encabezadoInforme(fecha_inicial,fecha_final){
                       alignment: 'left'
                     },
                     {
-                      text: ': '+res.data.porcentaje_avance_acumulado + ' %',
+                      text: ': '+Redondea(res.data.porcentaje_avance_acumulado) + ' %',
                       style: 'tableBodyInforme',
                       alignment: 'left'
                     },

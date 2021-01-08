@@ -33,12 +33,12 @@ class ReportesGenerales extends Component {
                     <CardHeader>REPORTES DE LA OBRA </CardHeader>
                     <CardBody>
 
-                        <fieldset className="mb-3">
+                        {/* <fieldset className="mb-3">
                             <legend>INFORME GENERAL DE OBRAS A MI CARGO</legend>
                             <ul className="nav flex-column ull">
                                 <CtrlEjecDirecta />
                             </ul>
-                        </fieldset>
+                        </fieldset> */}
 
                         <fieldset>
                             <legend>6.- INFORMACIÓN DE LAS VALORIZACIONES DE LA OBRA</legend>
@@ -59,7 +59,7 @@ class ReportesGenerales extends Component {
                                 
                                 {/* 6.5 */}
                                 {/* <Report_5 /> */}
-                                <Report_ficha_tecnica/>
+                                {/* <Report_ficha_tecnica/> */}
 
                                 {/* 6.6 */}
                                 {/* <Report_6 /> */}
