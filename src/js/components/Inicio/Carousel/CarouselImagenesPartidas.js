@@ -2,7 +2,7 @@ import React, {useEffect,useState}from 'react'
 import { Spinner } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig'
 import axios from 'axios';
-export default ({id_ficha}) =>{
+export default ({id_ficha,setFechaPartida}) =>{
     useEffect(() => {
         setLoading(true)
         fetchImagenes()
@@ -24,7 +24,9 @@ export default ({id_ficha}) =>{
             setImagenesObra(res.data)
         }        
         setLoading(false)
-        console.log(res.data);
+        if(res.data.length > 0){
+          setFechaPartida(res.data[0].fecha)
+        }
     }
     const [ImagenActiva, setImagenActiva] = useState(0)
     return (
@@ -45,18 +47,23 @@ export default ({id_ficha}) =>{
                     <h1>No hay imagenes</h1>                        
                 </div>
                 :
-                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
                     
-                    <ol class="carousel-indicators">
+                    <ol className="carousel-indicators">
                         {ImagenesObra.map((item, i) =>
-                            <li data-target="#carouselExampleIndicators"
+                            <li 
+                                key={i}
+                                data-target="#carouselExampleIndicators"
                                 data-slide-to={i}
-                                class={ImagenActiva == i && "active"}
-                                onClick={() => setImagenActiva(i)}
+                                className={ImagenActiva == i ? "active":""}
+                                onClick={() => {
+                                  setImagenActiva(i)
+                                  setFechaPartida(ImagenesObra[i].fecha)
+                                }}
                             ></li>
                         )}
                     </ol>
-                    <div class="carousel-inner"
+                    <div className="carousel-inner"
                         style={{
                             width: "700px",
                             height: "500px",
@@ -79,25 +86,28 @@ export default ({id_ficha}) =>{
                                     
                         }
                         {ImagenesObra.map((item, i) =>
-                            <div class={ImagenActiva == i ? "carousel-item active" : "carousel-item"}>
+                            <div 
+                            key = {i}
+                            className={ImagenActiva == i ? "carousel-item active" : "carousel-item"}
+                            >
                                 
                                 <img
-                                    class="d-block img-fluid"
+                                    className="d-block img-fluid"
                                     src={UrlServer + item.imagen}
                                     alt="First slide"
                                     style={{
                                         height: "500px",
-                                        "max-height": " 500px",
-                                        "margin-left": "auto",
-                                        "margin-right": "auto",
+                                        maxHeight: " 500px",
+                                        marginLeft: "auto",
+                                        marginRight: "auto",
                                         // width: "100%",
                                     }}
                                 />
                                 <div
-                                    class="carousel-caption d-none d-md-block"
+                                    className="carousel-caption d-none d-md-block"
                                     style={{
-                                        "background-color": "#0000006b",
-                                        "border-radius": "12px",
+                                        backgroundColor: "#0000006b",
+                                        borderRadius: "12px",
                                         bottom: "77px"
                                     }}
                                 >
@@ -109,35 +119,37 @@ export default ({id_ficha}) =>{
                         )}
                     </div>
                     <a
-                        class="carousel-control-prev"
+                        className="carousel-control-prev"
                         href="#"
                         role="button"
                         data-slide="prev"
                         onClick={() => {
-                            console.log("ImagenActiva", ImagenActiva);
-                            setImagenActiva(ImagenActiva > 0 ? ImagenActiva - 1 : ImagenesObra.length - 1)
+                            var imagenActiva = ImagenActiva > 0 ? ImagenActiva - 1 : ImagenesObra.length - 1
+                            setImagenActiva(imagenActiva)
+                            setFechaPartida(ImagenesObra[imagenActiva].fecha)
                         }}
                     >
-                        <span class="carousel-control-prev-icon" aria-hidden="true">
+                        <span className="carousel-control-prev-icon" aria-hidden="true">
                         </span>
-                        <span class="sr-only">
+                        <span className="sr-only">
                             Previous
                             
                             </span>
                     </a>
                     
                     <a
-                        class="carousel-control-next"
+                        className="carousel-control-next"
                         href="#"
                         role="button"
                         data-slide="next"
                         onClick={() => {
-                            console.log("ImagenActiva", ImagenActiva);
-                            setImagenActiva(ImagenActiva < ImagenesObra.length - 1 ? ImagenActiva + 1 : 0)
+                            var imagenActiva = ImagenActiva < ImagenesObra.length - 1 ? ImagenActiva + 1 : 0
+                            setImagenActiva(imagenActiva)
+                            setFechaPartida(ImagenesObra[imagenActiva].fecha)
                         }}
                     >
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
+                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span className="sr-only">Next</span>
                     </a>
                 </div>
             }
