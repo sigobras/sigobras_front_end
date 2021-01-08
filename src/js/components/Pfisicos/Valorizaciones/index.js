@@ -18,7 +18,6 @@ export default () => {
     const res = await axios.post(`${UrlServer}/getValGeneralAnyos2`, {
       id_ficha: sessionStorage.getItem('idobra')
     })
-    // console.log("anyos", res.data);
     setAnyos(res.data)
     setAnyoSeleccionado(res.data[res.data.length - 1].anyo)
   }
@@ -32,9 +31,12 @@ export default () => {
       id_ficha: sessionStorage.getItem('idobra'),
       anyo: AnyoSeleccionado
     })
-    // console.log("Periodos", res.data);
-    setPeriodos(res.data)
-    setPeriodoSeleccionado(res.data[res.data.length - 1])
+    if (Array.isArray(res.data)) {
+      setPeriodos(res.data)
+      setPeriodoSeleccionado(res.data[res.data.length - 1])
+    } else {
+      setPeriodos([])
+    }
   }
   const [PeriodoSeleccionado, setPeriodoSeleccionado] = useState("--")
   //Componentes
@@ -43,7 +45,6 @@ export default () => {
     const res = await axios.post(`${UrlServer}/getValGeneralComponentes`, {
       id_ficha: sessionStorage.getItem('idobra')
     })
-    // console.log("Componentes", res.data);
     setComponentes(res.data)
   }
   const [Componenteseleccionado, setComponenteseleccionado] = useState({ numero: 0, nombre: "RESUMEN DE VALORIZACIÓN" })
@@ -56,7 +57,6 @@ export default () => {
       fecha_inicial: PeriodoSeleccionado.fecha_inicial,
       fecha_final: PeriodoSeleccionado.fecha_final
     })
-    console.log("ResumenComponentes", res.data);
     setResumenComponentes(res.data)
     var presupuesto = res.data.reduce((acc, item) => acc + item.presupuesto, 0)
     var valor_anterior = res.data.reduce((acc, item) => acc + item.valor_anterior, 0)
@@ -153,9 +153,7 @@ export default () => {
 
       }
     );
-    console.log('====================================');
-    console.log("costos_indirectos ", costos_indirectos);
-    console.log('====================================');
+
     setCostosIndirectos(costos_indirectos.data)
   }
 
