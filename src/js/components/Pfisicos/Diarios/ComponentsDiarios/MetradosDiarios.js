@@ -84,7 +84,7 @@ export default () => {
   );
   async function fectchPartidas() {
     // setTogglePartidasEstilo(false)
-    const request = await axios.post(`${UrlServer}/getPartidas2`,
+    const res = await axios.post(`${UrlServer}/getPartidas2`,
       {
         id_componente: ComponenteSelecccionado.id_componente,
         inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
@@ -94,7 +94,33 @@ export default () => {
         texto_buscar: TextoBuscado
       }
     )
-    setPartidas(request.data)
+    // setPartidas(request.data)
+    function addLeadingZeros(num, size) {
+      num = num.toString();
+      while (num.length < size) num = "0" + num;
+      return num;
+    }
+    // setPartidas(res.data)
+
+    var arr = res.data.map(
+      item => {
+        item.item2 = item.item.split('.')
+          .map(n => addLeadingZeros(n, 10)).join("")
+        return item
+      }
+    )
+      .sort(
+        (a, b) => {
+          if (a.item2 < b.item2) {
+            return -1;
+          }
+          if (a.item2 > b.item2) {
+            return 1;
+          }
+          return 0;
+        }
+      )
+    setPartidas(arr)
 
     if (!TogglePartidasEstilo) {
       setTimeout(() => {
