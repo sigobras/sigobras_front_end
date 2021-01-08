@@ -425,6 +425,17 @@ export default () => {
                         :
                         "font-weight-light icoVer"}
                   >
+
+                    <td>
+                      {item.tipo == "partida" &&
+                        <PartidasChat
+                          id_partida={item.id_partida}
+                          id_componente={ComponenteSelecccionado.id_componente}
+                          recargaComponenteMensajes={recargaComponenteMensajes}
+                          titulo={item.descripcion}
+                        />
+                      }
+                    </td>
                     <td
                     >
                       {
@@ -446,17 +457,6 @@ export default () => {
                             />
                           </span>
                         </div>
-                      }
-                    </td>
-
-                    <td>
-                      {item.tipo == "partida" &&
-                        <PartidasChat
-                          id_partida={item.id_partida}
-                          id_componente={ComponenteSelecccionado.id_componente}
-                          recargaComponenteMensajes={recargaComponenteMensajes}
-                          titulo = {item.descripcion}
-                        />
                       }
                     </td>
                     {
