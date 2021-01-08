@@ -51,18 +51,18 @@ export default ({ id_ficha }) => {
                     <h1>No hay imagenes</h1>                        
                 </div>
                 :
-                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
                     
-                    <ol class="carousel-indicators">
+                    <ol className="carousel-indicators">
                         {ImagenesObra.map((item, i) =>
                             <li data-target="#carouselExampleIndicators"
                                 data-slide-to={i}
-                                class={ImagenActiva == i && "active"}
+                                className={ImagenActiva == i && "active"}
                                 onClick={() => setImagenActiva(i)}
                             ></li>
                         )}
                     </ol>
-                    <div class="carousel-inner"
+                    <div className="carousel-inner"
                         style={{
                             width: "700px",
                             height: "500px",
@@ -85,10 +85,10 @@ export default ({ id_ficha }) => {
                                     
                         }
                         {ImagenesObra.map((item, i) =>
-                            <div class={ImagenActiva == i ? "carousel-item active" : "carousel-item"}>
+                            <div className={ImagenActiva == i ? "carousel-item active" : "carousel-item"}>
                                 
                                 <img
-                                    class="d-block img-fluid"
+                                    className="d-block img-fluid"
                                     src={UrlServer + item.url}
                                     alt="First slide"
                                     style={{
@@ -100,7 +100,7 @@ export default ({ id_ficha }) => {
                                     }}
                                 />
                                 <div
-                                    class="carousel-caption d-none d-md-block"
+                                    className="carousel-caption d-none d-md-block"
                                     style={{
                                         "background-color": "#0000006b",
                                         "border-radius": "12px",
@@ -115,7 +115,7 @@ export default ({ id_ficha }) => {
                         )}
                     </div>
                     <a
-                        class="carousel-control-prev"
+                        className="carousel-control-prev"
                         href="#"
                         role="button"
                         data-slide="prev"
@@ -124,16 +124,16 @@ export default ({ id_ficha }) => {
                             setImagenActiva(ImagenActiva > 0 ? ImagenActiva - 1 : ImagenesObra.length - 1)
                         }}
                     >
-                        <span class="carousel-control-prev-icon" aria-hidden="true">
+                        <span className="carousel-control-prev-icon" aria-hidden="true">
                         </span>
-                        <span class="sr-only">
+                        <span className="sr-only">
                             Previous
                             
                             </span>
                     </a>
                     
                     <a
-                        class="carousel-control-next"
+                        className="carousel-control-next"
                         href="#"
                         role="button"
                         data-slide="next"
@@ -142,8 +142,8 @@ export default ({ id_ficha }) => {
                             setImagenActiva(ImagenActiva < ImagenesObra.length - 1 ? ImagenActiva + 1 : 0)
                         }}
                     >
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
+                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span className="sr-only">Next</span>
                     </a>
                 </div>
             }
