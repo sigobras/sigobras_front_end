@@ -451,10 +451,12 @@ export default () => {
                                                             {
                       (() => {
                         var suma = 0
+                        // console.log("CostosIndirectos",CostosIndirectos);
                         for (let index = 0; index < CostosIndirectos.length; index++) {
-                          const element = CostosIndirectos[index];
-                          suma = suma + parseFloat(element.monto * ResumenComponentesTotales.porcentaje_anterior / 100)
-
+                          const item = CostosIndirectos[index];
+                          suma += (item.monto * parseFloat(ResumenComponentesTotales.porcentaje_anterior).toFixed(2) / 100)
+                          // console.log("suma",suma);
+                          // console.log("sumando", (item.monto * parseFloat(ResumenComponentesTotales.porcentaje_anterior).toFixed(2) / 100));
                         }
                         return Redondea(suma)
                       })()
@@ -474,8 +476,8 @@ export default () => {
                       (() => {
                         var suma = 0
                         for (let index = 0; index < CostosIndirectos.length; index++) {
-                          const element = CostosIndirectos[index];
-                          suma = suma + parseFloat(element.monto * ResumenComponentesTotales.porcentaje_actual / 100)
+                          const item = CostosIndirectos[index];
+                          suma += (item.monto * parseFloat(ResumenComponentesTotales.porcentaje_actual).toFixed(2) / 100)
                         }
                         return Redondea(suma)
                       })()
@@ -496,8 +498,8 @@ export default () => {
                       (() => {
                         var suma = 0
                         for (let index = 0; index < CostosIndirectos.length; index++) {
-                          const element = CostosIndirectos[index];
-                          suma = suma + parseFloat(element.monto * ResumenComponentesTotales.porcentaje_total / 100)
+                          const item = CostosIndirectos[index];
+                          suma += (item.monto * parseFloat(ResumenComponentesTotales.porcentaje_total).toFixed(2) / 100)
                         }
                         return Redondea(suma)
                       })()
@@ -518,8 +520,8 @@ export default () => {
                       (() => {
                         var suma = 0
                         for (let index = 0; index < CostosIndirectos.length; index++) {
-                          const element = CostosIndirectos[index];
-                          suma = suma + parseFloat(element.monto * ResumenComponentesTotales.porcentaje_saldo / 100)
+                          const item = CostosIndirectos[index];
+                          suma += (item.monto * parseFloat(ResumenComponentesTotales.porcentaje_saldo).toFixed(2) / 100)
                         }
                         return Redondea(suma)
                       })()

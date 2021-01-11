@@ -92,10 +92,10 @@ export default () => {
     for (let index = 0; index < res.data.length; index++) {
       const element = res.data[index];
       presupuesto += parseFloat(element.monto)
-      valor_anterior += parseFloat(element.monto * ResumenComponentesTotales.porcentaje_anterior / 100)
-      valor_actual += parseFloat(element.monto * ResumenComponentesTotales.porcentaje_actual / 100)
-      valor_total += parseFloat(element.monto * ResumenComponentesTotales.porcentaje_total / 100)
-      valor_saldo += parseFloat(element.monto * ResumenComponentesTotales.porcentaje_saldo / 100)
+      valor_anterior += element.monto * parseFloat(ResumenComponentesTotales.porcentaje_anterior).toFixed(2) / 100
+      valor_actual += element.monto * parseFloat(ResumenComponentesTotales.porcentaje_actual).toFixed(2) / 100
+      valor_total += element.monto * parseFloat(ResumenComponentesTotales.porcentaje_total).toFixed(2) / 100
+      valor_saldo += element.monto * parseFloat(ResumenComponentesTotales.porcentaje_saldo).toFixed(2) / 100
     }
     setCostosIndirectosTotales({
       presupuesto,
