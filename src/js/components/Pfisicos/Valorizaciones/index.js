@@ -166,6 +166,7 @@ export default () => {
       }
     )
     setCostosIndirectos(costos_indirectos)
+    setActivatorInput(costos_indirectos.length - 1)
   }
 
   function updateinput(index, nombre_campo, valor) {
@@ -175,10 +176,13 @@ export default () => {
   }
 
   async function eliminar_costo_indirecto(index) {
-    if (confirm("Desea eliminar este registro ? " + index)) {
-      var costos_indirectos = [...CostosIndirectos]
-      costos_indirectos.splice(index, 1);
-      setCostosIndirectos(costos_indirectos)
+    if (confirm("Desea eliminar este registro ? ")) {
+      var res = await axios.post(`${UrlServer}/eliminarCostosIndirectos`,
+        {
+          "id": CostosIndirectos[index].id
+        }
+      );
+      get_data_costos_indirectos()
     }
   }
   const [ActivatorInput, setActivatorInput] = useState(-1)
@@ -188,6 +192,19 @@ export default () => {
   }
 
   async function guardar_costo_indirecto(index) {
+    console.log("guardando");
+    var res = await axios.post(`${UrlServer}/agregarCostoIndirecto`,
+      {
+        "id": CostosIndirectos[index].id,
+        "nombre": CostosIndirectos[index].nombre,
+        "monto": CostosIndirectos[index].monto,
+        "fecha_inicial": PeriodoSeleccionado.fecha_inicial,
+        "fecha_final": PeriodoSeleccionado.fecha_final,
+        "fichas_id_ficha": sessionStorage.getItem("idobra"),
+      }
+    );
+    alert("guardado con exito")
+    setActivatorInput(-1)
     get_data_costos_indirectos()
   }
 
