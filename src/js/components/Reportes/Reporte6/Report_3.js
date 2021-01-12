@@ -353,7 +353,7 @@ export default () => {
               rowSpan: 2
             },
             {
-              text: `${PeriodoSeleccionado.codigo} ${AnyoSeleccionado}`,
+              text: `${PeriodoSeleccionado.mes} ${AnyoSeleccionado}`,
               style: "Tablafecha",
               alignment: "center",
               colSpan: 6
