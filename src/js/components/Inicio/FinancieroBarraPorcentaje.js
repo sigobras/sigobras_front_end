@@ -27,11 +27,19 @@ export default ({ id_ficha, tipo }) => {
         <div>
           <Circle
             progress={Redondea1(FinancieroAvance.financiero_avance_porcentaje)}
-            size="50"
-            textStyle={{
-              font: "bold 80px Helvetica, Arial, sans-serif", // CSSProperties: Custom styling for percentage.
-            }}
+            size="25"
+            showPercentage={false}
+            lineWidth={50}
+            progressColor="orange"
           />
+          <div
+            style={{
+              color: "#ffa500",
+            }}
+          >
+            {Redondea1(FinancieroAvance.financiero_avance_porcentaje) + "%"}
+          </div>
+          <div>{"S/." + Redondea(FinancieroAvance.financiero_avance)}</div>
         </div>
       )}
       {tipo == "barra" && (

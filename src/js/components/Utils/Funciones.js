@@ -330,6 +330,21 @@ function fechaFormatoMesAnyo(dateString) {
   var dateStringArray = dateString.split("-");
   return mesesShort[dateStringArray[1] - 1] + " - " + dateStringArray[0];
 }
+function stringToDateObject(dateString, dias = 0) {
+  if (typeof dateString != "string") {
+    return new Date();
+  }
+  var dateStringArray = dateString.split("-");
+  var date = new Date(
+    dateStringArray[0],
+    dateStringArray[1] - 1,
+    dateStringArray[2]
+  );
+  if (dias != 0) {
+    date.setDate(date.getDate() + dias);
+  }
+  return date;
+}
 
 module.exports = {
   Redondea,
@@ -351,4 +366,5 @@ module.exports = {
   formatMoney,
   getDaysBetweenDates,
   fechaFormatoMesAnyo,
+  stringToDateObject,
 };
