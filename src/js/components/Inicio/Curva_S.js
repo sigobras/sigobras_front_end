@@ -406,10 +406,11 @@ function Curva_S({ id_ficha, codigo }) {
         if (!ToggleSoles) {
             tempFinanciero = tempFinanciero * DataObra.g_total_presu / 100
         }
-        const request = await axios.post(`${UrlServer}/putFinancieroCurvaS`,
+        const res = await axios.post(`${UrlServer}/putFinancieroCurvaS`,
             {
                 "id": id,
-                "financiero_monto": tempFinanciero
+                "financiero_monto": tempFinanciero,
+                "ultimo_editor_idacceso":sessionStorage.getItem('idacceso')
             })
         fetchDataCurvaS()
         toggleInputFinanciero(-1)
