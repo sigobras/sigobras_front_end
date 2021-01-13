@@ -7,6 +7,7 @@ import {
   getDaysBetweenDates,
   mesesShort,
   fechaFormatoMesAnyo,
+  stringToDateObject,
 } from "../Utils/Funciones";
 import axios from "axios";
 import "./index.css";
@@ -27,6 +28,12 @@ export default () => {
     });
     setObras(res.data);
   }
+  const [fechasAnteriorQuincenaData, setfechasAnteriorQuincenaData] = useState(
+    fechasAnteriorQuincena()
+  );
+  const [fechasActualQuincenaData, setfechasActualQuincenaData] = useState(
+    fechasActualQuincena()
+  );
   function fechasAnteriorQuincena() {
     var d = new Date();
     var dia = d.getDate();
@@ -77,21 +84,7 @@ export default () => {
     }
     return true;
   }
-  function stringToDateObject(dateString, dias = 0) {
-    if (typeof dateString != "string") {
-      return new Date();
-    }
-    var dateStringArray = dateString.split("-");
-    var date = new Date(
-      dateStringArray[0],
-      dateStringArray[1] - 1,
-      dateStringArray[2]
-    );
-    if (dias != 0) {
-      date.setDate(date.getDate() + dias);
-    }
-    return date;
-  }
+
   const [TooltipFotosHeader, setTooltipFotosHeader] = useState(false);
 
   const toggleTooltipFotosHeader = () =>
@@ -102,7 +95,7 @@ export default () => {
       <table className=" text-center table table-bordered">
         <thead>
           <tr>
-            <th colSpan="5">Datos de Obra</th>
+            <th colSpan="8">Datos de Obra</th>
             <th colSpan="4">Procesos Físicos</th>
             <th colSpan="1">Procesos Financieros</th>
           </tr>
@@ -110,12 +103,33 @@ export default () => {
             <th>N°</th>
             <th>Estado de Obra</th>
             <th>Código de Obra</th>
+            <th
+              style={{
+                width: "70px",
+              }}
+            >
+              Plazo Inicial
+            </th>
+            <th
+              style={{
+                width: "70px",
+              }}
+            >
+              Plazo Aprobado
+            </th>
+            <th
+              style={{
+                width: "70px",
+              }}
+            >
+              Plazo Sin Aprobar
+            </th>
             <th>Avance Fisico Acumulado</th>
             <th>Avance Financiero Acumulado</th>
-            <th>Último Día de Metrado</th>
-            <th>Plazos</th>
             <th>Fecha de Conclusión Hipotética</th>
-            <th id={"fotosHeader"}>Fotos</th>
+
+            <th id={"fotosHeader"}>Fotos Anterior Quincena</th>
+            <th id={"fotosHeader"}>Fotos Actual Quincena</th>
             <Tooltip
               placement={"top"}
               isOpen={TooltipFotosHeader}
@@ -137,6 +151,7 @@ export default () => {
                 );
               })()}
             </Tooltip>
+            <th>Último Día de Metrado</th>
 
             <th>Último Financiero Editado</th>
 
@@ -152,10 +167,31 @@ export default () => {
         </thead>
         <tbody>
           {Obras.map((item, i) => (
-            <tr key={i} className="fechas-width">
+            <tr key={i}>
               <td>{i + 1}</td>
-              <EstadoObra id_ficha={item.id_ficha} />
-              <td>{item.codigo}</td>
+              <td>
+                <EstadoObra id_ficha={item.id_ficha} />
+              </td>
+              <td>
+                <div
+                  style={{
+                    color: "#17a2b8",
+                  }}
+                >
+                  {item.codigo}
+                </div>
+                <div>{"S/." + Redondea(item.g_total_presu)}</div>
+              </td>
+              <td>
+                <PrimerPlazo id_ficha={item.id_ficha} />
+              </td>
+              <td>
+                <UltimoPlazoAprobado id_ficha={item.id_ficha} />
+              </td>
+              <td>
+                <UltimoPlazoSinAprobar id_ficha={item.id_ficha} />
+              </td>
+
               <td>
                 <FisicoBarraPorcentaje id_ficha={item.id_ficha} tipo="circle" />
               </td>
@@ -166,35 +202,43 @@ export default () => {
                 />
               </td>
               <td>
-                <UltimoDiaMetrado id_ficha={item.id_ficha} />
+                <div>
+                  {" "}
+                  {compareProgramadoMes(item.programado_ultima_fecha) ? (
+                    <ImWink2 size="20" color="#219e12" />
+                  ) : (
+                    <ImSad2 size="20" color="#9e1212" />
+                  )}
+                </div>
+                <div>{fechaFormatoMesAnyo(item.programado_ultima_fecha)}</div>
               </td>
+
               <td>
-                <Plazos_info id_ficha={item.id_ficha} />
-              </td>
-              <td>
-                {fechaFormatoMesAnyo(item.programado_ultima_fecha)}
-                {compareProgramadoMes(item.programado_ultima_fecha) ? (
-                  <ImWink2 size="20" color="#219e12" />
-                ) : (
-                  <ImSad2 size="20" color="#9e1212" />
-                )}
+                <FotosCantidad
+                  id_ficha={item.id_ficha}
+                  fechas={fechasAnteriorQuincenaData}
+                />
               </td>
               <td>
                 <FotosCantidad
                   id_ficha={item.id_ficha}
-                  fechasAnteriorQuincena={fechasAnteriorQuincena}
-                  fechasActualQuincena={fechasActualQuincena}
+                  fechas={fechasActualQuincenaData}
                 />
+              </td>
+              <td>
+                <UltimoDiaMetrado id_ficha={item.id_ficha} />
               </td>
 
               <td id={"financieroUltimaFecha" + item.id_ficha}>
-                {fechaFormatoClasico(item.financiero_ultima_fecha)}
-                {stringToDateObject(item.financiero_ultima_fecha, 7) >
-                new Date() ? (
-                  <ImWink2 size="20" color="#219e12" />
-                ) : (
-                  <ImSad2 size="20" color="#9e1212" />
-                )}
+                <div>
+                  {stringToDateObject(item.financiero_ultima_fecha, 7) >
+                  new Date() ? (
+                    <ImWink2 size="20" color="#219e12" />
+                  ) : (
+                    <ImSad2 size="20" color="#9e1212" />
+                  )}
+                </div>
+                <div> {fechaFormatoClasico(item.financiero_ultima_fecha)}</div>
                 <FinancieroUltimaFechaData id_ficha={item.id_ficha} />
               </td>
             </tr>
@@ -217,96 +261,71 @@ function UltimoDiaMetrado({ id_ficha }) {
   }
   return (
     <div>
+      <div>
+        {stringToDateObject(UltimoMetrado, 7) > new Date() ? (
+          <ImWink2 size="20" color="#219e12" />
+        ) : (
+          <ImSad2 size="20" color="#9e1212" />
+        )}
+      </div>
       <div>{fechaFormatoClasico(UltimoMetrado) || ""}</div>
       {getDaysBetweenDates(UltimoMetrado, new Date()) - 1} días
     </div>
   );
 }
-function Plazos_info({ id_ficha }) {
+function PrimerPlazo({ id_ficha }) {
   useEffect(() => {
-    fetchPrimerPlazo();
-    fetchUltimoPlazoAprobado();
-    fetchUltimoPlazoSinAprobar();
+    fetchPlazoData();
   }, []);
-  const [PrimerPlazo, setPrimerPlazo] = useState({});
-  async function fetchPrimerPlazo() {
+  const [PlazoData, setPlazoData] = useState({});
+  async function fetchPlazoData() {
     var res = await axios.get(`${UrlServer}/primerPlazo`, {
       params: {
         id_ficha,
       },
     });
-    setPrimerPlazo(res.data);
+    setPlazoData(res.data);
   }
-  const [UltimoPlazoAprobado, setUltimoPlazoAprobado] = useState({});
-  async function fetchUltimoPlazoAprobado() {
+
+  return <div>{fechaFormatoClasico(PlazoData.fecha_inicio)}</div>;
+}
+function UltimoPlazoAprobado({ id_ficha }) {
+  useEffect(() => {
+    fetchPlazoData();
+  }, []);
+  const [PlazoData, setPlazoData] = useState({});
+  async function fetchPlazoData() {
     var res = await axios.get(`${UrlServer}/ultimoPlazoAprobado`, {
       params: {
         id_ficha,
       },
     });
-    setUltimoPlazoAprobado(res.data);
+    setPlazoData(res.data);
   }
-  const [UltimoPlazoSinAprobar, setUltimoPlazoSinAprobar] = useState({});
-  async function fetchUltimoPlazoSinAprobar() {
+  return <div>{fechaFormatoClasico(PlazoData.fecha_final)}</div>;
+}
+function UltimoPlazoSinAprobar({ id_ficha }) {
+  useEffect(() => {
+    fetchPlazoData();
+  }, []);
+  const [PlazoData, setPlazoData] = useState({});
+  async function fetchPlazoData() {
     var res = await axios.get(`${UrlServer}/ultimoPlazoSinAprobar`, {
       params: {
         id_ficha,
       },
     });
-    setUltimoPlazoSinAprobar(res.data);
+    setPlazoData(res.data);
   }
-  return (
-    <div>
-      {PrimerPlazo.fecha_inicio && (
-        <div
-          style={{
-            color: "#17a2b8",
-          }}
-        >
-          Inicio de obra
-        </div>
-      )}
-
-      <div>{fechaFormatoClasico(PrimerPlazo.fecha_inicio)}</div>
-
-      {UltimoPlazoAprobado.fecha_final && (
-        <div
-          style={{
-            color: "#17a2b8",
-          }}
-        >
-          Ultimo plazo aprobado
-        </div>
-      )}
-
-      <div>{fechaFormatoClasico(UltimoPlazoAprobado.fecha_final)}</div>
-      {UltimoPlazoSinAprobar.fecha_final && (
-        <div
-          style={{
-            color: "#17a2b8",
-          }}
-        >
-          Ultimo plazo sin aprobar
-        </div>
-      )}
-      <div>{fechaFormatoClasico(UltimoPlazoSinAprobar.fecha_final)}</div>
-    </div>
-  );
+  return <div>{fechaFormatoClasico(PlazoData.fecha_final)}</div>;
 }
-function FotosCantidad({
-  id_ficha,
-  fechasAnteriorQuincena,
-  fechasActualQuincena,
-}) {
+function FotosCantidad({ id_ficha, fechas }) {
   useEffect(() => {
     fetchfotosCantidad1();
-    fetchfotosCantidad2();
   }, []);
   const [fotosCantidad1, setfotosCantidad1] = useState(0);
   async function fetchfotosCantidad1() {
     try {
-      var fechas = fechasAnteriorQuincena();
-
       var res = await axios.get(`${UrlServer}/fotosCantidad`, {
         params: {
           id_ficha,
@@ -319,58 +338,21 @@ function FotosCantidad({
       console.log(error);
     }
   }
-  const [fotosCantidad2, setfotosCantidad2] = useState(0);
-  async function fetchfotosCantidad2() {
-    try {
-      var fechas = fechasActualQuincena();
-
-      var res = await axios.get(`${UrlServer}/fotosCantidad`, {
-        params: {
-          id_ficha,
-          fecha_inicial: fechas.fecha_inicial,
-          fecha_final: fechas.fecha_final,
-        },
-      });
-      setfotosCantidad2(res.data.cantidad);
-    } catch (error) {
-      console.log(error);
-    }
-  }
   return (
     <div>
       <div>
-        <div
-          style={{
-            color: "#17a2b8",
-          }}
-        >
-          anterior quincena
-        </div>
-        {fotosCantidad1}
+        {" "}
         {fotosCantidad1 >= 5 ? (
           <ImWink2 size="20" color="#219e12" />
         ) : (
           <ImSad2 size="20" color="#9e1212" />
         )}
       </div>
-      <div>
-        <div
-          style={{
-            color: "#17a2b8",
-          }}
-        >
-          actual quincena
-        </div>
-        {fotosCantidad2}
-        {fotosCantidad2 >= 5 ? (
-          <ImWink2 size="20" color="#219e12" />
-        ) : (
-          <ImSad2 size="20" color="#9e1212" />
-        )}
-      </div>
+      <div>{fotosCantidad1}</div>
     </div>
   );
 }
+
 function EstadoObra({ id_ficha }) {
   useEffect(() => {
     fetchData();
@@ -450,7 +432,7 @@ function FinancieroUltimaFechaData({ id_ficha }) {
             color: "#17a2b8",
           }}
         >
-          Edito:
+          Editó:
         </div>
         <div>{fechaFormatoMesAnyo(FinancieroData.fecha_inicial)}</div>
       </div>
