@@ -399,16 +399,22 @@ function FinancieroUltimaFechaData({ id_ficha }) {
     setFinancieroData(res.data);
   }
   return FinancieroData.usuario_nombre ? (
-    <div>
+    <div style={{ fontSize: "9px" }}>
       <div>
-        <div
+        {/* <div
           style={{
             color: "#17a2b8",
           }}
         >
           {FinancieroData.cargo_nombre}
+        </div> */}
+        <div
+          style={{
+            color: "#17a2b8",
+          }}
+        >
+          {FinancieroData.usuario_nombre}
         </div>
-        <div>{FinancieroData.usuario_nombre}</div>
       </div>
       <div>
         <div
