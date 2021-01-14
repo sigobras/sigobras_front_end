@@ -183,7 +183,7 @@ export default () => {
             }}
           >
             <td
-              colSpan="6"
+              colSpan="8"
               style={{
                 textAlign: "right",
               }}
@@ -200,6 +200,7 @@ export default () => {
                 }, 0);
               })()}
             </td>
+            <td colSpan="3"></td>
           </tr>
           <tr
             style={{
@@ -207,7 +208,7 @@ export default () => {
             }}
           >
             <td
-              colSpan="6"
+              colSpan="8"
               style={{
                 textAlign: "right",
               }}
@@ -224,6 +225,7 @@ export default () => {
                 }, 0);
               })()}
             </td>
+            <td colSpan="3"></td>
           </tr>
         </tbody>
       </Table>
