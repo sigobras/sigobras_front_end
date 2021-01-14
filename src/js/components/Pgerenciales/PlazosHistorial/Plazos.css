@@ -10,24 +10,28 @@
 } */
 
 .inputplazos {
-    box-shadow: #6766a8;
-    border-radius: 9px;
-    color: rgb(236, 236, 236);
-    text-align: center;
-    height: 1.2rem;
-    width: auto;
-    border: 1px solid #171819;
-    
+  box-shadow: #6766a8;
+  border-radius: 9px;
+  color: rgb(236, 236, 236);
+  text-align: center;
+  height: 1.2rem;
+  width: auto;
+  border: 1px solid #171819;
 }
 
-.inputplazos:enabled{
-    background: #fff  !important;
-	color: #000000;
-	width: auto;
+.inputplazos:enabled {
+  background: #fff !important;
+  color: #000000;
+  width: auto;
 }
-.inputplazos:disabled{
-    background: #1d242e  !important;
-    color: #d6d6d6;
-	font-weight: bold;
-	width: auto;
+.inputplazos:disabled {
+  background: #1d242e !important;
+  color: #d6d6d6;
+  font-weight: bold;
+  width: auto;
+}
+.plazos-tabla > th {
+  background-color: orange !important;
+  color: #000000;
+  font-weight: 900;
 }
