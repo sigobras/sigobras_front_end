@@ -49,7 +49,7 @@ module.exports = {
     ],
   },
   output: {
-    // path: path.resolve(__dirname, "/var/www/sigobras.com/public"),
+    path: path.resolve(__dirname, "/var/www/sigobras.com/public"),
     filename: "main.[contenthash].js",
     publicPath: "/",
   },

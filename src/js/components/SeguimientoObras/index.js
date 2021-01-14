@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Button, Tooltip } from "reactstrap";
+import { ImSad2, ImWink2 } from "react-icons/im";
+import BaseTable, { Column } from "react-base-table";
+import "react-base-table/styles.css";
+
+import "./index.css";
+
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import {
   Redondea,
   hexToRgb,
   fechaFormatoClasico,
   getDaysBetweenDates,
-  mesesShort,
   fechaFormatoMesAnyo,
   stringToDateObject,
 } from "../Utils/Funciones";
-import axios from "axios";
-import "./index.css";
-import { Button, Input, Tooltip } from "reactstrap";
-import { FaRegSmile, FaRegSadCry, FaEyeSlash } from "react-icons/fa";
-import { ImSad2, ImWink2 } from "react-icons/im";
 import FisicoBarraPorcentaje from "../Inicio/FisicoBarraPorcentaje";
 import FinancieroBarraPorcentaje from "../Inicio/FinancieroBarraPorcentaje";
 
@@ -28,12 +30,8 @@ export default () => {
     });
     setObras(res.data);
   }
-  const [fechasAnteriorQuincenaData, setfechasAnteriorQuincenaData] = useState(
-    fechasAnteriorQuincena()
-  );
-  const [fechasActualQuincenaData, setfechasActualQuincenaData] = useState(
-    fechasActualQuincena()
-  );
+  const [fechasAnteriorQuincenaData] = useState(fechasAnteriorQuincena());
+  const [fechasActualQuincenaData] = useState(fechasActualQuincena());
   function fechasAnteriorQuincena() {
     var d = new Date();
     var dia = d.getDate();
@@ -89,7 +87,6 @@ export default () => {
 
   const toggleTooltipFotosHeader = () =>
     setTooltipFotosHeader(!TooltipFotosHeader);
-
   return (
     <div>
       <table className=" text-center table table-bordered">
@@ -108,7 +105,7 @@ export default () => {
                 width: "70px",
               }}
             >
-              Plazo Inicial
+              Inicio de Obra
             </th>
             <th
               style={{
@@ -128,8 +125,8 @@ export default () => {
             <th>Avance Financiero Acumulado</th>
             <th>Fecha de Conclusión Hipotética</th>
 
-            <th id={"fotosHeader"}>Fotos Anterior Quincena</th>
-            <th id={"fotosHeader"}>Fotos Actual Quincena</th>
+            <th id={"fotosHeader"}>Fotos Quincena Anterior</th>
+            <th id={"fotosHeader"}>Fotos Quincena Actual </th>
             <Tooltip
               placement={"top"}
               isOpen={TooltipFotosHeader}
@@ -154,15 +151,6 @@ export default () => {
             <th>Último Día de Metrado</th>
 
             <th>Último Financiero Editado</th>
-
-            {/* <th>Personal</th> */}
-            {/* <th>Ficha Tenica</th> */}
-            {/* <th>Personal</th> */}
-            {/* <th>Tareo</th> */}
-            {/* <th>Certitifacos</th> */}
-            {/* <th>Devengados</th> */}
-            {/* <th>PIM</th> */}
-            {/* <th>Informe mensual</th> */}
           </tr>
         </thead>
         <tbody>

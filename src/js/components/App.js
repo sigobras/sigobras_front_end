@@ -2,7 +2,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { FaChevronRight, FaChevronUp } from "react-icons/fa";
 import { MdDehaze } from "react-icons/md";
-
 import { Collapse } from "reactstrap";
 import {
   BrowserRouter as Router,
@@ -13,22 +12,17 @@ import {
 } from "react-router-dom";
 import Circle from "react-circle";
 import { ToastContainer } from "react-toastify";
-
 import axios from "axios";
+
 import { Redondea, meses, Redondea1 } from "./Utils/Funciones";
 import FinancieroBarraPorcentaje from "./Inicio/FinancieroBarraPorcentaje";
 import FisicoBarraPorcentaje from "./Inicio/FisicoBarraPorcentaje";
-// app assets
 import LogoSigobras from "../../images/logoSigobras.png";
 import { UrlServer } from "./Utils/ServerUrlConfig";
-
-// app components
 import UserNav from "./Otros/UserNav";
 import NotificacionNav from "./Otros/NotificacionNav";
-// import MensajeNav from "./Otros/MensajesNav";
 import Btns from "./Otros/Btns";
 
-// procesos fiscos
 const Inicio = lazy(() => import("./Inicio/Inicio"));
 const MDdiario = lazy(() => import("./Pfisicos/Diarios/Diario"));
 const MDHistorial = lazy(() =>
@@ -41,7 +35,6 @@ const HistorialImagenesObra = lazy(() =>
 const General = lazy(() =>
   import("../components/Pfisicos/Valorizaciones/index")
 );
-// const Valorizaciones2 = lazy(() => import( './Pfisicos/Valorizaciones/Valorizaciones2'))
 // proceso gerenciales
 const InterfazGerencial = lazy(() => import("./Inicio2/InterfazGerencial"));
 const Comunicados = lazy(() =>
@@ -59,6 +52,7 @@ const Planner = lazy(() =>
 );
 // reportes
 const ReportesGenerales = lazy(() => import("./Reportes/ReportesGenerales"));
+const SeguimientoObras = lazy(() => import("./SeguimientoObras"));
 
 // GESTION DE TAREAS
 const GestionTareas = lazy(() => import("./GestionTareas/GestionTareas"));
@@ -69,7 +63,6 @@ const Index = lazy(() => import("./Pdocumentarios/Index"));
 const GestionDocumentaria = lazy(() => import("./GestionDocumentaria/index"));
 //COSTOS INDIRECTOS
 const CostosIndirectos = lazy(() => import("./CostosIndirectos/index"));
-const SeguimientoObras = lazy(() => import("./SeguimientoObras/index"));
 
 export default () => {
   useEffect(() => {
@@ -239,14 +232,42 @@ export default () => {
                     </li>
                   ))}
                   {DataMenus.length > 0 && [
-                    <li className="lii" key="1">
-                      <NavLink
-                        to="/ReportesGenerales"
-                        activeclassname="nav-link"
+                    <li className="lii">
+                      <a
+                        className="nav-link"
+                        onClick={() => CollapseMenu("REPORTES")}
                       >
-                        {" "}
-                        <span> REPORTES </span>{" "}
-                      </NavLink>
+                        REPORTES
+                        <div className="float-right">
+                          {collapse === "REPORTES" ? (
+                            <FaChevronUp />
+                          ) : (
+                            <FaChevronRight />
+                          )}
+                        </div>
+                      </a>
+                      <Collapse isOpen={collapse === "REPORTES"}>
+                        <ul className="nav flex-column ull ">
+                          <li className="lii pl-3">
+                            <NavLink
+                              to="/SeguimientoObras"
+                              activeclassname="nav-link"
+                            >
+                              {" "}
+                              <span> Seguimiento de Obras </span>{" "}
+                            </NavLink>
+                          </li>
+                          <li className="lii pl-3">
+                            <NavLink
+                              to="/ReportesGenerales"
+                              activeclassname="nav-link"
+                            >
+                              {" "}
+                              <span> Reportes Para Imprimir </span>{" "}
+                            </NavLink>
+                          </li>
+                        </ul>
+                      </Collapse>
                     </li>,
                     <li className="lii" key="2">
                       <NavLink
