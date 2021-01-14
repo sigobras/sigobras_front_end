@@ -62,7 +62,7 @@ export default () => {
       const formData = new FormData();
       formData.append("archivo", e.target.files[0]);
       e.target.value = null;
-      formData.append("codigo_obra", sessionStorage.getItem("idobra"));
+      formData.append("codigo_obra", sessionStorage.getItem("codigoObra"));
       formData.append("id_acceso", sessionStorage.getItem("idacceso"));
       const config = {
         headers: {
