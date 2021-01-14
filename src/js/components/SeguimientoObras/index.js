@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Tooltip } from "reactstrap";
 import { ImSad2, ImWink2 } from "react-icons/im";
-import "react-base-table/styles.css";
-
 import "./index.css";
-
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import {
   Redondea,
