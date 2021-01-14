@@ -8,7 +8,7 @@ import React, {
 import axios from "axios";
 import { FaFileContract, FaUpload } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
-import { Button, Table } from "reactstrap";
+import { Button, Table, Tooltip } from "reactstrap";
 
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { fechaFormatoClasico } from "../../Utils/Funciones";
@@ -97,7 +97,7 @@ export default () => {
 
       <Table>
         <thead>
-          <tr>
+          <tr className="plazos-tabla">
             <th>#</th>
             <th>TIPO/ESTADO</th>
             <th>DESCRIPCIÓN</th>
@@ -125,8 +125,9 @@ export default () => {
             <tr
               key={i}
               style={{
-                color: "#17a2b8",
+                color: "#",
                 fontWeight: "700",
+                background: "#171819",
               }}
             >
               <th>{i + 1}</th>
@@ -135,43 +136,11 @@ export default () => {
               <td>{item.descripcion}</td>
               <td>{item.documento_resolucion_estado}</td>
               <td>
-                <div style={{ display: "flex", textAlign: "center" }}>
-                  <div
-                    onClick={() => uploadFile(item.id)}
-                    style={{
-                      cursor: "pointer",
-                      width: "100%",
-                    }}
-                  >
-                    <FaUpload size={10} color={"#ffffff"} />
-                  </div>
-                  {item.archivo !== null && (
-                    <div
-                      className="text-primary"
-                      title="descargar archivo"
-                      onClick={() =>
-                        DescargarArchivo(`${UrlServer}${item.archivo}`)
-                      }
-                      style={{
-                        cursor: "pointer",
-                        width: "100%",
-                      }}
-                    >
-                      <FaFileContract size={20} color={"#17a2b8"} />
-                    </div>
-                  )}
-                </div>
-                {item.archivo !== null && (
-                  <div
-                    style={{
-                      fontWeight: "100",
-                      color: "white",
-                    }}
-                  >
-                    <div>Subido por : </div>
-                    <div>{item.usuario_nombre}</div>
-                  </div>
-                )}
+                <TooltipUploadIcon
+                  item={item}
+                  uploadFile={uploadFile}
+                  DescargarArchivo={DescargarArchivo}
+                />
               </td>
               <td></td>
               <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
@@ -315,3 +284,54 @@ const PLazosHijos = forwardRef(({ id_padre, count }, ref) => {
     </tr>
   ));
 });
+function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+  return (
+    <div>
+      <Tooltip
+        placement="right"
+        isOpen={tooltipOpen}
+        target="TooltipExample"
+        toggle={toggle}
+      >
+        Adjuntar Resolución
+      </Tooltip>
+      <div style={{ display: "flex", textAlign: "center" }} id="TooltipExample">
+        <div
+          onClick={() => uploadFile(item.id)}
+          style={{
+            cursor: "pointer",
+            width: "100%",
+          }}
+        >
+          <FaUpload size={15} color={"#ffffff"} />
+        </div>
+        {item.archivo !== null && (
+          <div
+            className="text-primary"
+            title="descargar archivo"
+            onClick={() => DescargarArchivo(`${UrlServer}${item.archivo}`)}
+            style={{
+              cursor: "pointer",
+              width: "100%",
+            }}
+          >
+            <FaFileContract size={20} color={"#17a2b8"} />
+          </div>
+        )}
+      </div>
+      {item.archivo !== null && (
+        <div
+          style={{
+            fontWeight: "100",
+            color: "white",
+          }}
+        >
+          <div>Subido por : </div>
+          <div>{item.usuario_nombre}</div>
+        </div>
+      )}
+    </div>
+  );
+}
