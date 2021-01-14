@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Tooltip } from "reactstrap";
 import { ImSad2, ImWink2 } from "react-icons/im";
-import "./index.css";
+import { TiWarning } from "react-icons/ti";
+
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import {
   Redondea,
@@ -14,6 +15,8 @@ import {
 } from "../Utils/Funciones";
 import FisicoBarraPorcentaje from "../Inicio/FisicoBarraPorcentaje";
 import FinancieroBarraPorcentaje from "../Inicio/FinancieroBarraPorcentaje";
+
+import "./index.css";
 
 export default () => {
   useEffect(() => {
@@ -253,7 +256,7 @@ function UltimoDiaMetrado({ id_ficha }) {
         )}
       </div>
       <div>{fechaFormatoClasico(UltimoMetrado) || ""}</div>
-      {getDaysBetweenDates(UltimoMetrado, new Date()) - 1} días
+      {getDaysBetweenDates(new Date(), UltimoMetrado) - 1} días
     </div>
   );
 }
@@ -270,8 +273,38 @@ function PrimerPlazo({ id_ficha }) {
     });
     setPlazoData(res.data);
   }
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+  return PlazoData.fecha_inicio ? (
+    <div>
+      <div
+        style={{
+          color: "#17a2b8",
+        }}
+      >
+        {fechaFormatoClasico(PlazoData.fecha_inicio)}
+      </div>
 
-  return <div>{fechaFormatoClasico(PlazoData.fecha_inicio)}</div>;
+      <div id={"PrimerPlazo" + id_ficha}>
+        {getDaysBetweenDates(new Date(), PlazoData.fecha_inicio) - 1} d/c
+      </div>
+      <Tooltip
+        placement="bottom"
+        isOpen={tooltipOpen}
+        target={"PrimerPlazo" + id_ficha}
+        toggle={toggle}
+      >
+        Desde el inicio hasta hoy
+      </Tooltip>
+    </div>
+  ) : (
+    <div>
+      {/* <a href="/plazosHistorial" class="nav-link"> */}
+      {/* {sessionStorage.setItem("idobra", id_ficha)} */}
+      <TiWarning size="20" color="orange" />
+      {/* </a> */}
+    </div>
+  );
 }
 function UltimoPlazoAprobado({ id_ficha }) {
   useEffect(() => {
@@ -286,7 +319,38 @@ function UltimoPlazoAprobado({ id_ficha }) {
     });
     setPlazoData(res.data);
   }
-  return <div>{fechaFormatoClasico(PlazoData.fecha_final)}</div>;
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+  return PlazoData.fecha_final ? (
+    <div>
+      <div
+        style={{
+          color: "#17a2b8",
+        }}
+      >
+        {fechaFormatoClasico(PlazoData.fecha_final)}
+      </div>
+
+      <div id={"UltimoPlazoAprobado" + id_ficha}>
+        {getDaysBetweenDates(PlazoData.fecha_final, new Date()) - 1} d/c
+      </div>
+      <Tooltip
+        placement="bottom"
+        isOpen={tooltipOpen}
+        target={"UltimoPlazoAprobado" + id_ficha}
+        toggle={toggle}
+      >
+        Dias a la fecha actual
+      </Tooltip>
+    </div>
+  ) : (
+    <div>
+      {/* <a href="/plazosHistorial" class="nav-link"> */}
+      {/* {sessionStorage.setItem("idobra", id_ficha)} */}
+      <TiWarning size="20" color="orange" />
+      {/* </a> */}
+    </div>
+  );
 }
 function UltimoPlazoSinAprobar({ id_ficha }) {
   useEffect(() => {
@@ -301,7 +365,33 @@ function UltimoPlazoSinAprobar({ id_ficha }) {
     });
     setPlazoData(res.data);
   }
-  return <div>{fechaFormatoClasico(PlazoData.fecha_final)}</div>;
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const toggle = () => setTooltipOpen(!tooltipOpen);
+  return PlazoData.fecha_final ? (
+    <div>
+      <div
+        style={{
+          color: "#17a2b8",
+        }}
+      >
+        {fechaFormatoClasico(PlazoData.fecha_final)}
+      </div>
+
+      <div id={"UltimoPlazoSinAprobar" + id_ficha}>
+        {getDaysBetweenDates(PlazoData.fecha_final, new Date()) - 1} d/c
+      </div>
+      <Tooltip
+        placement="bottom"
+        isOpen={tooltipOpen}
+        target={"UltimoPlazoSinAprobar" + id_ficha}
+        toggle={toggle}
+      >
+        Dias a la fecha actual
+      </Tooltip>
+    </div>
+  ) : (
+    <div></div>
+  );
 }
 function FotosCantidad({ id_ficha, fechas }) {
   useEffect(() => {

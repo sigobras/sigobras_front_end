@@ -320,7 +320,7 @@ function getDaysBetweenDates(fecha_inicio, fecha_final) {
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const firstDate = new Date(fecha_inicio);
   const secondDate = new Date(fecha_final);
-  var days = Math.round(Math.abs((firstDate - secondDate) / oneDay));
+  var days = Math.round((firstDate - secondDate) / oneDay);
   return days || 0;
 }
 function fechaFormatoMesAnyo(dateString) {
