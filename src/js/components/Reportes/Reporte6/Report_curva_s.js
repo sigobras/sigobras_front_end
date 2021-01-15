@@ -138,11 +138,11 @@ function Report_curva_s() {
     })
     // console.log("request get compomentes", request.data);
     var CompomentesRecibidos = request.data
-    
+
     // Obtenemos la data de los compomnetes fisicos
     for (let i = 0; i < CompomentesRecibidos.length; i++) {
       const element = CompomentesRecibidos[i];
-      
+
       const request2 = await axios.post(`${UrlServer}/getFisicoComponente`, {
         "id_componente": element.id_componente
       })
@@ -713,10 +713,10 @@ function Report_curva_s() {
       const element = ComponentesPdf[i];
       body.push(
         [
-          {text:ComponentesPdf[i].numero, fontSize: 6.5,}, 
-          {text:ComponentesPdf[i].nombre, fontSize: 6.5,}, 
-          {text:Redondea(ComponentesPdf[i].presupuesto), fontSize: 6.5,}, 
-          {text:Redondea(ComponentesPdf[i].avance), fontSize: 6.5,}, 
+          {text:ComponentesPdf[i].numero, fontSize: 6.5,},
+          {text:ComponentesPdf[i].nombre, fontSize: 6.5,},
+          {text:Redondea(ComponentesPdf[i].presupuesto), fontSize: 6.5,},
+          {text:Redondea(ComponentesPdf[i].avance), fontSize: 6.5,},
           {text:Redondea((ComponentesPdf[i].avance /ComponentesPdf[i].presupuesto)*100) + " %", fontSize: 6.5,}
         ]
       )
@@ -849,7 +849,7 @@ function Report_curva_s() {
       Imagenes_en_base_64.length > 2 &&
       [
         {
-          text: "PANEL FOTOGRAFICO DEL AVANZE DE OBRA",
+          text: "PANEL FOTOGRAFICO DEL AVANCE DE OBRA",
           border: [false, false, false, false],
           colSpan: 3,
           alignment: 'center',
@@ -1078,7 +1078,7 @@ function Report_curva_s() {
                 {
                   text: meses[new Date().getMonth() - 1],
                   alignment: 'center',
-                  // margin: [0, -8, 0, -1], 
+                  // margin: [0, -8, 0, -1],
                   fontSize: 9,
                   border: [false, false, false, false],
 
