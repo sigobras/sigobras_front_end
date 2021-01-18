@@ -344,7 +344,7 @@ export default ({ recargar }) => {
                   >
                     {item.codigo}
                   </Button>
-                  {item.g_meta}
+                  {item.g_meta + "/CUI - " + item.codigo_unificado}
                   <div
                     style={{
                       color: "#17a2b8",
