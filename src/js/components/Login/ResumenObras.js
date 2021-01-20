@@ -118,11 +118,6 @@ export default () => {
               <th className="text-center">N°</th>
               <th>OBRA</th>
               <th className="text-center">ESTADO</th>
-              <th
-                style={{ width: "70px", minWidth: "50px", textAlign: "center" }}
-              >
-                UDM{" "}
-              </th>
               <th className="text-center">AVANCE </th>
               <th className="text-center">OPCIONES</th>
             </tr>
@@ -195,10 +190,6 @@ export default () => {
                 </td>
                 <td>
                   <EstadoObra id_ficha={item.id_ficha} />
-                </td>
-                <td className="text-center">
-                  {calcular_dias(item.ultima_fecha, new Date()) - 1} días{" "}
-                  <div>{fechaFormatoClasico(item.ultima_fecha)}</div>
                 </td>
                 <td
                   style={{
