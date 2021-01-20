@@ -1,31 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   Carousel,
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
-  CarouselCaption
-} from 'reactstrap';
+  CarouselCaption,
+} from "reactstrap";
 
 const items = [
   {
     id: 1,
-    caption: 'PROCESOS FÍSICOS',
-    altText: '',
-    src: 'https://blog.infaimon.com/wp-content/uploads/2017/12/iStock-516607254.jpg',
+    caption: "PROCESOS FÍSICOS",
+    altText: "",
+    src:
+      "https://blog.infaimon.com/wp-content/uploads/2017/12/iStock-516607254.jpg",
   },
   {
     id: 2,
-    caption: 'PROCESOS GERENCIALES',
-    altText: '',
-    src: 'https://e.rpp-noticias.io/normal/2017/05/23/412741_411981.jpg',
+    caption: "PROCESOS GERENCIALES",
+    altText: "",
+    src: "https://e.rpp-noticias.io/normal/2017/05/23/412741_411981.jpg",
   },
   {
     id: 3,
-    caption: 'PROCESOS FINANCIEROS',
-    altText: '',
-    src: 'https://img.elcomercio.pe/files/article_content_ec_fotos/uploads/2017/09/08/59b32061b73ce.jpeg',
-  }
+    caption: "PROCESOS FINANCIEROS",
+    altText: "",
+    src:
+      "https://img.elcomercio.pe/files/article_content_ec_fotos/uploads/2017/09/08/59b32061b73ce.jpeg",
+  },
 ];
 
 class Slider extends Component {
@@ -49,13 +51,19 @@ class Slider extends Component {
 
   next() {
     if (this.animating) return;
-    const nextIndex = this.state.activeIndex === items.length - 1 ? 0 : this.state.activeIndex + 1;
+    const nextIndex =
+      this.state.activeIndex === items.length - 1
+        ? 0
+        : this.state.activeIndex + 1;
     this.setState({ activeIndex: nextIndex });
   }
 
   previous() {
     if (this.animating) return;
-    const nextIndex = this.state.activeIndex === 0 ? items.length - 1 : this.state.activeIndex - 1;
+    const nextIndex =
+      this.state.activeIndex === 0
+        ? items.length - 1
+        : this.state.activeIndex - 1;
     this.setState({ activeIndex: nextIndex });
   }
 
@@ -76,33 +84,52 @@ class Slider extends Component {
           onExiting={this.onExiting}
           onExited={this.onExited}
         >
-          <img src={item.src} alt={item.altText} width="100%" style={{height: "-webkit-fill-available"}} />
+          <img
+            src={item.src}
+            alt={item.altText}
+            width="100%"
+            style={{ height: "-webkit-fill-available" }}
+          />
 
-          <CarouselCaption className="h1" captionText={item.altText} captionHeader={item.caption} />
+          <CarouselCaption
+            className="h1"
+            captionText={item.altText}
+            captionHeader={item.caption}
+          />
         </CarouselItem>
       );
     });
 
     return (
-      <div  className="contenSilider">
+      <div className="contenSilider">
         <style>
-          {
-            `.custom-tag {
+          {`.custom-tag {
                 max-width: 100%;
                 height: 400px;
                 background: black;
-              }`
-          }
+              }`}
         </style>
         <Carousel
           activeIndex={activeIndex}
           next={this.next}
           previous={this.previous}
         >
-          <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
+          <CarouselIndicators
+            items={items}
+            activeIndex={activeIndex}
+            onClickHandler={this.goToIndex}
+          />
           {slides}
-          <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
-          <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
+          <CarouselControl
+            direction="prev"
+            directionText="Previous"
+            onClickHandler={this.previous}
+          />
+          <CarouselControl
+            direction="next"
+            directionText="Next"
+            onClickHandler={this.next}
+          />
         </Carousel>
       </div>
     );
