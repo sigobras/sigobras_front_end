@@ -33,9 +33,16 @@ export default ({ recargar }) => {
   //comunicados
   const [Comunicados, setComunicados] = useState([]);
   async function fetchComunicados() {
-    var res = await axios.post(`${UrlServer}/comunicadosInicio`, {
-      id_ficha: sessionStorage.getItem("idobra"),
-    });
+    var res = await axios.get(
+      `${UrlServer}/v1/obrasComunicados`,
+      {
+        params: {
+          id_ficha: sessionStorage.getItem("idobra"),
+        },
+      },
+      config
+    );
+    console.log("comunicados ", res);
     setComunicados(res.data);
   }
 
