@@ -27,9 +27,8 @@ export default () => {
   async function fetchProvincias() {
     var res = await axios.get(`${UrlServer}/v1/unidadEjecutora/public`);
     setProvincias(res.data);
-    setProvinciaSeleccionada(res.data[0].id_unidadEjecutora);
   }
-  const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(-1);
+  const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(0);
 
   //sectores
   const [Sectores, setSectores] = useState([]);
@@ -54,8 +53,10 @@ export default () => {
     setObras(res.data);
   }
   useEffect(() => {
-    fetchSectores();
-    setSectoreSeleccionado(0);
+    if (ProvinciaSeleccionada != -1) {
+      fetchSectores();
+      setSectoreSeleccionado(0);
+    }
   }, [ProvinciaSeleccionada]);
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default () => {
             cursor: "pointer",
           }}
         >
-          <option value="0">Todas las provincias</option>
+          <option value="0">TODAS LAS PROVINCIAS</option>
           {Provincias.map((item, i) => (
             <option key={i} value={item.id_unidadEjecutora}>
               {item.nombre}
@@ -162,11 +163,7 @@ export default () => {
               ),
               <tr key={item.id_ficha}>
                 <td>{i + 1}</td>
-                <td
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
+                <td>
                   <Button
                     type="button"
                     style={{
@@ -186,10 +183,10 @@ export default () => {
                   >
                     PRESUPUESTO S./{Redondea(item.g_total_presu)}
                   </div>
-                  <Plazos_info id_ficha={item.id_ficha} />
+                  <Plazos_info item={item} />
                 </td>
                 <td>
-                  <EstadoObra id_ficha={item.id_ficha} />
+                  <EstadoObra item={item} />
                 </td>
                 <td
                   style={{
@@ -197,12 +194,16 @@ export default () => {
                   }}
                 >
                   <FisicoBarraPorcentaje
-                    id_ficha={item.id_ficha}
                     tipo="barra"
+                    id_ficha={item.id_ficha}
+                    avance={item.avancefisico_acumulado}
+                    total={item.presupuesto_costodirecto}
                   />
                   <FinancieroBarraPorcentaje
-                    id_ficha={item.id_ficha}
                     tipo="barra"
+                    id_ficha={item.id_ficha}
+                    avance={item.avancefinanciero_acumulado}
+                    total={item.g_total_presu}
                   />
                 </td>
                 <td>
@@ -222,18 +223,7 @@ export default () => {
   );
 };
 //componente de estado de obra
-function EstadoObra({ id_ficha }) {
-  useEffect(() => {
-    fetchData();
-  }, []);
-  const [EstadoObra, setEstadoObra] = useState({});
-  async function fetchData() {
-    var res = await axios.post(`${UrlServer}/getEstadoObra`, {
-      id_ficha: id_ficha,
-    });
-    setEstadoObra(res.data);
-  }
-
+function EstadoObra({ item }) {
   return (
     <Button
       type="button"
@@ -256,61 +246,29 @@ function EstadoObra({ id_ficha }) {
           " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
         bordercolor:
           " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
-        "--label-r": hexToRgb(EstadoObra.color).r,
-        "--label-g": hexToRgb(EstadoObra.color).g,
-        "--label-b": hexToRgb(EstadoObra.color).b,
-        "--label-h": hexToRgb(EstadoObra.color).h,
-        "--label-s": hexToRgb(EstadoObra.color).s,
-        "--label-l": hexToRgb(EstadoObra.color).l,
+        "--label-r": hexToRgb(item.estadoobra_color).r,
+        "--label-g": hexToRgb(item.estadoobra_color).g,
+        "--label-b": hexToRgb(item.estadoobra_color).b,
+        "--label-h": hexToRgb(item.estadoobra_color).h,
+        "--label-s": hexToRgb(item.estadoobra_color).s,
+        "--label-l": hexToRgb(item.estadoobra_color).l,
         margin: "5px",
         cursor: "default",
       }}
     >
-      {EstadoObra.nombre}
+      {item.estadoobra_nombre}
     </Button>
   );
 }
 //avancecomponente
-function Plazos_info({ id_ficha }) {
-  useEffect(() => {
-    fetchPrimerPlazo();
-    fetchUltimoPlazoAprobado();
-    fetchUltimoPlazoSinAprobar();
-  }, []);
-  const [PrimerPlazo, setPrimerPlazo] = useState({});
-  async function fetchPrimerPlazo() {
-    var res = await axios.get(`${UrlServer}/primerPlazo`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setPrimerPlazo(res.data);
-  }
-  const [UltimoPlazoAprobado, setUltimoPlazoAprobado] = useState({});
-  async function fetchUltimoPlazoAprobado() {
-    var res = await axios.get(`${UrlServer}/ultimoPlazoAprobado`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setUltimoPlazoAprobado(res.data);
-  }
-  const [UltimoPlazoSinAprobar, setUltimoPlazoSinAprobar] = useState({});
-  async function fetchUltimoPlazoSinAprobar() {
-    var res = await axios.get(`${UrlServer}/ultimoPlazoSinAprobar`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setUltimoPlazoSinAprobar(res.data);
-  }
+function Plazos_info({ item }) {
   return (
     <div
       style={{
         display: "flex",
       }}
     >
-      {PrimerPlazo.fecha_inicio && (
+      {item.plazoinicial_fecha && (
         <div
           style={{
             color: "#17a2b8",
@@ -320,8 +278,8 @@ function Plazos_info({ id_ficha }) {
         </div>
       )}
       &nbsp;
-      <div>{fechaFormatoClasico(PrimerPlazo.fecha_inicio)}</div> &nbsp;
-      {UltimoPlazoAprobado.fecha_final && (
+      <div>{fechaFormatoClasico(item.plazoinicial_fecha)}</div> &nbsp;
+      {item.plazoaprobado_ultimo_fecha && (
         <div
           style={{
             color: "#17a2b8",
@@ -331,8 +289,8 @@ function Plazos_info({ id_ficha }) {
         </div>
       )}
       &nbsp;
-      <div>{fechaFormatoClasico(UltimoPlazoAprobado.fecha_final)}</div> &nbsp;
-      {UltimoPlazoSinAprobar.fecha_final && (
+      <div>{fechaFormatoClasico(item.plazoaprobado_ultimo_fecha)}</div> &nbsp;
+      {item.plazosinaprobar_ultimo_fecha && (
         <div
           style={{
             color: "#17a2b8",
@@ -342,7 +300,7 @@ function Plazos_info({ id_ficha }) {
         </div>
       )}
       &nbsp;
-      <div>{fechaFormatoClasico(UltimoPlazoSinAprobar.fecha_final)}</div>
+      <div>{fechaFormatoClasico(item.plazosinaprobar_ultimo_fecha)}</div>
     </div>
   );
 }

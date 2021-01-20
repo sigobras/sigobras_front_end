@@ -4,20 +4,10 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, Redondea1 } from "../Utils/Funciones";
 import { Button, Input, Tooltip } from "reactstrap";
 import Circle from "react-circle";
-export default ({ id_ficha, tipo }) => {
-  useEffect(() => {
-    fetchFisicoAvance();
-  }, []);
-
+export default ({ tipo, id_ficha, avance, total }) => {
   const [FisicoAvance, setFisicoAvance] = useState({
-    fisico_avance_porcentaje: 0,
+    fisico_avance_porcentaje: (avance / total) * 100,
   });
-  async function fetchFisicoAvance() {
-    const request = await axios.post(`${UrlServer}/getFisico`, {
-      id_ficha: id_ficha,
-    });
-    setFisicoAvance(request.data);
-  }
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const toggle = () => setTooltipOpen(!tooltipOpen);
@@ -39,7 +29,7 @@ export default ({ id_ficha, tipo }) => {
           >
             {Redondea1(FisicoAvance.fisico_avance_porcentaje) + "%"}
           </div>
-          <div>{"S/." + Redondea(FisicoAvance.fisico_avance)}</div>
+          <div>{"S/." + Redondea(avance)}</div>
         </div>
       )}
       {tipo == "barra" && (
@@ -101,7 +91,7 @@ export default ({ id_ficha, tipo }) => {
               target={"FisicoBarraPorcentaje-" + id_ficha}
               toggle={toggle}
             >
-              S/.{Redondea(FisicoAvance.fisico_avance)}
+              S/.{Redondea(avance)}
             </Tooltip>
           </div>
         </div>
