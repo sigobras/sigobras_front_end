@@ -469,7 +469,9 @@ export default () => {
                     />
                     <Route
                       path="/SeguimientoObras"
-                      component={SeguimientoObras}
+                      render={(props) => (
+                        <SeguimientoObras {...props} recargar={recargar} />
+                      )}
                     />
                   </Switch>
                 </Suspense>

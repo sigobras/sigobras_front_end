@@ -3,6 +3,8 @@ import axios from "axios";
 import { Button, Tooltip } from "reactstrap";
 import { ImSad2, ImWink2 } from "react-icons/im";
 import { TiWarning } from "react-icons/ti";
+import { useHistory } from "react-router-dom";
+import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import {
@@ -18,17 +20,39 @@ import FinancieroBarraPorcentaje from "../Inicio/FinancieroBarraPorcentaje";
 
 import "./index.css";
 
-export default () => {
-  useEffect(() => {
-    fetchObras();
-  }, []);
+export default ({ recargar }) => {
+  const history = useHistory();
+
   const [Obras, setObras] = useState([]);
+  const [SortBy, setSortBy] = useState("");
+  const [SortByModificador, setSortByModificador] = useState("");
+
   async function fetchObras() {
-    var res = await axios.post(`${UrlServer}/listaObrasSeguimientoByIdAcceso`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
+    var res = await axios.get(`${UrlServer}/v1/obras`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        sort_by: SortBy ? SortBy + "-" + SortByModificador : "",
+      },
     });
+    console.log("res", res);
     setObras(res.data);
   }
+  function toggleSortByModificador() {
+    if (SortByModificador == "asc") {
+      setSortByModificador("desc");
+    } else {
+      setSortByModificador("asc");
+    }
+  }
+  function setOrderBy(newColum) {
+    if (newColum == SortBy) {
+      toggleSortByModificador();
+    } else {
+      setSortBy(newColum);
+      setSortByModificador("asc");
+    }
+  }
+
   const [fechasAnteriorQuincenaData] = useState(fechasAnteriorQuincena());
   const [fechasActualQuincenaData] = useState(fechasActualQuincena());
   function fechasAnteriorQuincena() {
@@ -43,8 +67,6 @@ export default () => {
     anyo = dia < 15 ? anyo - 1 : anyo;
     var fecha_inicial = anyo + "-" + mes + "-" + dia_inicial;
     var fecha_final = anyo + "-" + mes + "-" + dia_final;
-    // console.log("fecha_inicial", fecha_inicial);
-    // console.log("fecha_final", fecha_final);
     return {
       fecha_inicial,
       fecha_final,
@@ -59,8 +81,6 @@ export default () => {
     var dia_final = dia > 15 ? 31 : 15;
     var fecha_inicial = anyo + "-" + mes + "-" + dia_inicial;
     var fecha_final = anyo + "-" + mes + "-" + dia_final;
-    // console.log("fecha_inicial",fecha_inicial);
-    // console.log("fecha_final",fecha_final);
     return {
       fecha_inicial,
       fecha_final,
@@ -83,22 +103,44 @@ export default () => {
   }
 
   const [TooltipFotosHeader, setTooltipFotosHeader] = useState(false);
+  const [TooltipFotosHeader2, setTooltipFotosHeader2] = useState(false);
 
   const toggleTooltipFotosHeader = () =>
     setTooltipFotosHeader(!TooltipFotosHeader);
+  const toggleTooltipFotosHeader2 = () =>
+    setTooltipFotosHeader2(!TooltipFotosHeader2);
+
+  useEffect(() => {
+    fetchObras();
+  }, [SortBy, SortByModificador]);
+  function cabezeraOrderBy(textShow, variable) {
+    return (
+      <div onClick={() => setOrderBy(variable)} style={{ cursor: "pointer" }}>
+        <span>{textShow}</span>
+        {SortBy == variable && (
+          <span>
+            {SortByModificador == "asc" ? <FaAngleDown /> : <FaAngleUp />}
+          </span>
+        )}
+      </div>
+    );
+  }
   return (
     <div>
       <table className=" text-center table table-bordered">
         <thead>
           <tr>
             <th colSpan="8">Datos de Obra</th>
-            <th colSpan="4">Procesos Físicos</th>
-            <th colSpan="1">Procesos Financieros</th>
+            <th colSpan="5">Procesos Físicos</th>
+            <th colSpan="2">Procesos Financieros</th>
           </tr>
           <tr>
             <th>N°</th>
             <th>Estado de Obra</th>
-            <th>Código de Obra</th>
+            <th>
+              {cabezeraOrderBy("Código de Obra", "codigo")}
+              {cabezeraOrderBy("Presupuesto", "g_total_presu")}
+            </th>
             <th
               style={{
                 width: "70px",
@@ -120,26 +162,50 @@ export default () => {
             >
               Plazo Sin Aprobar
             </th>
-            <th>Avance Fisico Acumulado</th>
-            <th>Avance Financiero Acumulado</th>
+            <th>
+              {cabezeraOrderBy(
+                "Avance Fisico Acumulado",
+                "avancefisico_acumulado"
+              )}
+            </th>
+            <th>
+              {cabezeraOrderBy(
+                "Avance Financiero Acumulado",
+                "avancefinanciero_acumulado"
+              )}
+            </th>
             <th>Fecha de Conclusión Hipotética</th>
 
-            <th id={"fotosHeader"}>Fotos Quincena Anterior</th>
-            <th id={"fotosHeader"}>Fotos Quincena Actual </th>
+            <th id={"fotosHeader1"}>Fotos Quincena Anterior</th>
+            <th id={"fotosHeader2"}>Fotos Quincena Actual </th>
+            <th>Fotos Total</th>
             <Tooltip
               placement={"top"}
               isOpen={TooltipFotosHeader}
-              target={"fotosHeader"}
+              target={"fotosHeader1"}
               toggle={toggleTooltipFotosHeader}
             >
               {(() => {
                 var fechas1 = fechasAnteriorQuincena();
-                var fechas2 = fechasActualQuincena();
                 return (
                   <div>
                     Primera quincena
                     <div>{fechaFormatoClasico(fechas1.fecha_inicial)}</div>
                     <div>{fechaFormatoClasico(fechas1.fecha_final)}</div>
+                  </div>
+                );
+              })()}
+            </Tooltip>
+            <Tooltip
+              placement={"top"}
+              isOpen={TooltipFotosHeader2}
+              target={"fotosHeader2"}
+              toggle={toggleTooltipFotosHeader2}
+            >
+              {(() => {
+                var fechas2 = fechasActualQuincena();
+                return (
+                  <div>
                     Segunda quincena
                     <div>{fechaFormatoClasico(fechas2.fecha_inicial)}</div>
                     <div>{fechaFormatoClasico(fechas2.fecha_final)}</div>
@@ -147,19 +213,34 @@ export default () => {
                 );
               })()}
             </Tooltip>
-            <th>Último Día de Metrado</th>
+            <th>
+              {cabezeraOrderBy(
+                "Último Día de Metrado",
+                "avancefisico_ultimafecha"
+              )}
+            </th>
 
+            <th>{cabezeraOrderBy("PIM", "pim_anyoactual")}</th>
             <th>Último Financiero Editado</th>
           </tr>
         </thead>
         <tbody>
           {Obras.map((item, i) => (
-            <tr key={i}>
+            <tr
+              key={item.id_ficha}
+              style={
+                sessionStorage.getItem("idobra") == item.id_ficha
+                  ? {
+                      backgroundColor: "#171819",
+                    }
+                  : {}
+              }
+            >
               <td>{i + 1}</td>
               <td>
-                <EstadoObra id_ficha={item.id_ficha} />
+                <EstadoObra item={item} />
               </td>
-              <td>
+              <td onClick={() => recargar(item)} style={{ cursor: "pointer" }}>
                 <div
                   style={{
                     color: "#17a2b8",
@@ -168,24 +249,62 @@ export default () => {
                   {item.codigo}
                 </div>
                 <div>{"S/." + Redondea(item.g_total_presu)}</div>
+                <div>
+                  <span
+                    style={{
+                      color: "#17a2b8",
+                    }}
+                  >
+                    CUI
+                  </span>
+                  <span>{" - " + item.codigo_unificado}</span>
+                </div>
               </td>
-              <td>
-                <PrimerPlazo id_ficha={item.id_ficha} />
+              <td
+                onClick={async () => {
+                  await recargar(item);
+                  // history.push("/plazosHistorial");
+                  window.open("plazosHistorial", "_blank");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <PrimerPlazo item={item} />
               </td>
-              <td>
-                <UltimoPlazoAprobado id_ficha={item.id_ficha} />
+              <td
+                onClick={async () => {
+                  await recargar(item);
+                  // history.push("/plazosHistorial");
+                  window.open("plazosHistorial", "_blank");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <UltimoPlazoAprobado item={item} />
               </td>
-              <td>
-                <UltimoPlazoSinAprobar id_ficha={item.id_ficha} />
+              <td
+                onClick={async () => {
+                  await recargar(item);
+                  // history.push("/plazosHistorial");
+                  window.open("plazosHistorial", "_blank");
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <UltimoPlazoSinAprobar item={item} />
               </td>
 
               <td>
-                <FisicoBarraPorcentaje id_ficha={item.id_ficha} tipo="circle" />
+                <FisicoBarraPorcentaje
+                  tipo="circle"
+                  id_ficha={item.id_ficha}
+                  avance={item.avancefisico_acumulado}
+                  total={item.presupuesto_costodirecto}
+                />
               </td>
               <td>
                 <FinancieroBarraPorcentaje
-                  id_ficha={item.id_ficha}
                   tipo="circle"
+                  id_ficha={item.id_ficha}
+                  avance={item.avancefinanciero_acumulado}
+                  total={item.g_total_presu}
                 />
               </td>
               <td>
@@ -213,8 +332,12 @@ export default () => {
                 />
               </td>
               <td>
-                <UltimoDiaMetrado id_ficha={item.id_ficha} />
+                <FotosTotal id_ficha={item.id_ficha} />
               </td>
+              <td>
+                <UltimoDiaMetrado item={item} />
+              </td>
+              <td>{item.pim_anyoactual}</td>
 
               <td id={"financieroUltimaFecha" + item.id_ficha}>
                 <div>
@@ -235,63 +358,41 @@ export default () => {
     </div>
   );
 };
-function UltimoDiaMetrado({ id_ficha }) {
-  useEffect(() => {
-    fetchUltimoMetrado();
-  }, []);
-  const [UltimoMetrado, setUltimoMetrado] = useState({});
-  async function fetchUltimoMetrado() {
-    var res = await axios.post(`${UrlServer}/getUltimoDiaMetrado`, {
-      id_ficha,
-    });
-    setUltimoMetrado(res.data.fecha);
-  }
+function UltimoDiaMetrado({ item }) {
   return (
     <div>
       <div>
-        {stringToDateObject(UltimoMetrado, 7) > new Date() ? (
+        {stringToDateObject(item.avancefisico_ultimafecha, 7) > new Date() ? (
           <ImWink2 size="20" color="#219e12" />
         ) : (
           <ImSad2 size="20" color="#9e1212" />
         )}
       </div>
-      <div>{fechaFormatoClasico(UltimoMetrado) || ""}</div>
-      {getDaysBetweenDates(new Date(), UltimoMetrado) - 1} días
+      <div>{fechaFormatoClasico(item.avancefisico_ultimafecha) || ""}</div>
+      {getDaysBetweenDates(new Date(), item.avancefisico_ultimafecha) - 1} días
     </div>
   );
 }
-function PrimerPlazo({ id_ficha }) {
-  useEffect(() => {
-    fetchPlazoData();
-  }, []);
-  const [PlazoData, setPlazoData] = useState({});
-  async function fetchPlazoData() {
-    var res = await axios.get(`${UrlServer}/primerPlazo`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setPlazoData(res.data);
-  }
+function PrimerPlazo({ item }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const toggle = () => setTooltipOpen(!tooltipOpen);
-  return PlazoData.fecha_inicio ? (
+  return item.plazoinicial_fecha ? (
     <div>
       <div
         style={{
           color: "#17a2b8",
         }}
       >
-        {fechaFormatoClasico(PlazoData.fecha_inicio)}
+        {fechaFormatoClasico(item.plazoinicial_fecha)}
       </div>
 
-      <div id={"PrimerPlazo" + id_ficha}>
-        {getDaysBetweenDates(new Date(), PlazoData.fecha_inicio) - 1} d/c
+      <div id={"PrimerPlazo" + item.id_ficha}>
+        {getDaysBetweenDates(new Date(), item.plazoinicial_fecha) - 1} d/c
       </div>
       <Tooltip
         placement="bottom"
         isOpen={tooltipOpen}
-        target={"PrimerPlazo" + id_ficha}
+        target={"PrimerPlazo" + item.id_ficha}
         toggle={toggle}
       >
         Desde el inicio hasta hoy
@@ -299,45 +400,31 @@ function PrimerPlazo({ id_ficha }) {
     </div>
   ) : (
     <div>
-      {/* <a href="/plazosHistorial" class="nav-link"> */}
-      {/* {sessionStorage.setItem("idobra", id_ficha)} */}
       <TiWarning size="20" color="orange" />
-      {/* </a> */}
     </div>
   );
 }
-function UltimoPlazoAprobado({ id_ficha }) {
-  useEffect(() => {
-    fetchPlazoData();
-  }, []);
-  const [PlazoData, setPlazoData] = useState({});
-  async function fetchPlazoData() {
-    var res = await axios.get(`${UrlServer}/ultimoPlazoAprobado`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setPlazoData(res.data);
-  }
+function UltimoPlazoAprobado({ item }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const toggle = () => setTooltipOpen(!tooltipOpen);
-  return PlazoData.fecha_final ? (
+  return item.plazoaprobado_ultimo_fecha ? (
     <div>
       <div
         style={{
           color: "#17a2b8",
         }}
       >
-        {fechaFormatoClasico(PlazoData.fecha_final)}
+        {fechaFormatoClasico(item.plazoaprobado_ultimo_fecha)}
       </div>
 
-      <div id={"UltimoPlazoAprobado" + id_ficha}>
-        {getDaysBetweenDates(PlazoData.fecha_final, new Date()) - 1} d/c
+      <div id={"UltimoPlazoAprobado" + item.id_ficha}>
+        {getDaysBetweenDates(item.plazoaprobado_ultimo_fecha, new Date()) - 1}{" "}
+        d/c
       </div>
       <Tooltip
         placement="bottom"
         isOpen={tooltipOpen}
-        target={"UltimoPlazoAprobado" + id_ficha}
+        target={"UltimoPlazoAprobado" + item.id_ficha}
         toggle={toggle}
       >
         Dias a la fecha actual
@@ -345,45 +432,31 @@ function UltimoPlazoAprobado({ id_ficha }) {
     </div>
   ) : (
     <div>
-      {/* <a href="/plazosHistorial" class="nav-link"> */}
-      {/* {sessionStorage.setItem("idobra", id_ficha)} */}
       <TiWarning size="20" color="orange" />
-      {/* </a> */}
     </div>
   );
 }
-function UltimoPlazoSinAprobar({ id_ficha }) {
-  useEffect(() => {
-    fetchPlazoData();
-  }, []);
-  const [PlazoData, setPlazoData] = useState({});
-  async function fetchPlazoData() {
-    var res = await axios.get(`${UrlServer}/ultimoPlazoSinAprobar`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setPlazoData(res.data);
-  }
+function UltimoPlazoSinAprobar({ item }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const toggle = () => setTooltipOpen(!tooltipOpen);
-  return PlazoData.fecha_final ? (
+  return item.plazosinaprobar_ultimo_fecha ? (
     <div>
       <div
         style={{
           color: "#17a2b8",
         }}
       >
-        {fechaFormatoClasico(PlazoData.fecha_final)}
+        {fechaFormatoClasico(item.plazosinaprobar_ultimo_fecha)}
       </div>
 
-      <div id={"UltimoPlazoSinAprobar" + id_ficha}>
-        {getDaysBetweenDates(PlazoData.fecha_final, new Date()) - 1} d/c
+      <div id={"UltimoPlazoSinAprobar" + item.id_ficha}>
+        {getDaysBetweenDates(item.plazosinaprobar_ultimo_fecha, new Date()) - 1}{" "}
+        d/c
       </div>
       <Tooltip
         placement="bottom"
         isOpen={tooltipOpen}
-        target={"UltimoPlazoSinAprobar" + id_ficha}
+        target={"UltimoPlazoSinAprobar" + item.id_ficha}
         toggle={toggle}
       >
         Dias a la fecha actual
@@ -427,18 +500,7 @@ function FotosCantidad({ id_ficha, fechas }) {
   );
 }
 
-function EstadoObra({ id_ficha }) {
-  useEffect(() => {
-    fetchData();
-  }, []);
-  const [EstadoObra, setEstadoObra] = useState({});
-  async function fetchData() {
-    var res = await axios.post(`${UrlServer}/getEstadoObra`, {
-      id_ficha: id_ficha,
-    });
-    setEstadoObra(res.data);
-  }
-
+function EstadoObra({ item }) {
   return (
     <Button
       type="button"
@@ -461,17 +523,17 @@ function EstadoObra({ id_ficha }) {
           " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
         bordercolor:
           " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
-        "--label-r": hexToRgb(EstadoObra.color).r,
-        "--label-g": hexToRgb(EstadoObra.color).g,
-        "--label-b": hexToRgb(EstadoObra.color).b,
-        "--label-h": hexToRgb(EstadoObra.color).h,
-        "--label-s": hexToRgb(EstadoObra.color).s,
-        "--label-l": hexToRgb(EstadoObra.color).l,
+        "--label-r": hexToRgb(item.estadoobra_color).r,
+        "--label-g": hexToRgb(item.estadoobra_color).g,
+        "--label-b": hexToRgb(item.estadoobra_color).b,
+        "--label-h": hexToRgb(item.estadoobra_color).h,
+        "--label-s": hexToRgb(item.estadoobra_color).s,
+        "--label-l": hexToRgb(item.estadoobra_color).l,
         margin: "5px",
         cursor: "default",
       }}
     >
-      {EstadoObra.nombre}
+      {item.estadoobra_nombre}
     </Button>
   );
 }
@@ -520,4 +582,19 @@ function FinancieroUltimaFechaData({ id_ficha }) {
   ) : (
     <div></div>
   );
+}
+function FotosTotal({ id_ficha }) {
+  useEffect(() => {
+    fetchFotosCantidad();
+  }, []);
+  const [FotosCantidad, setFotosCantidad] = useState(0);
+  async function fetchFotosCantidad() {
+    var res = await axios.get(`${UrlServer}/fotosCantidadTotal`, {
+      params: {
+        id_ficha,
+      },
+    });
+    setFotosCantidad(res.data.cantidad);
+  }
+  return <div>{FotosCantidad}</div>;
 }
