@@ -5,21 +5,27 @@ import React, {
   useImperativeHandle,
 } from "react";
 import axios from "axios";
-import "jspdf-autotable";
-import "../../../css/inicio.css";
+import {
+  FaList,
+  FaEye,
+  FaEyeSlash,
+  FaAngleDown,
+  FaAngleUp,
+} from "react-icons/fa";
+import { Button, Input, Tooltip } from "reactstrap";
+
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import FinancieroBarraPorcentaje from "./FinancieroBarraPorcentaje";
-import { Button, Input, Tooltip } from "reactstrap";
 import FisicoBarraPorcentaje from "./FisicoBarraPorcentaje";
 import ModalListaPersonal from "./ModalListaPersonal";
 import ModalInformacionObras from "./InformacionObras/InformacionObra";
 import Curva_S from "./Curva_S";
-import { FaList, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
 import Obras_labels_edicion from "./Obras_labels_edicion";
 import ReportGeneralObras from "./ReportGeneralObras";
 import CarouselNavs from "./Carousel/CarouselNavs";
-// import {List} from 'react-virtualized';
+
+import "../../../css/inicio.css";
 export default ({ recargar }) => {
   //funciones
   useEffect(() => {
@@ -152,18 +158,52 @@ export default ({ recargar }) => {
   }
   //obras
   const [Obras, setObras] = useState([]);
+  //sort
+  const [SortBy, setSortBy] = useState("");
+  const [SortByModificador, setSortByModificador] = useState("");
+  function toggleSortByModificador() {
+    if (SortByModificador == "asc") {
+      setSortByModificador("desc");
+    } else {
+      setSortByModificador("asc");
+    }
+  }
+  function setOrderBy(newColum) {
+    if (newColum == SortBy) {
+      toggleSortByModificador();
+    } else {
+      setSortBy(newColum);
+      setSortByModificador("asc");
+    }
+  }
+  function cabezeraOrderBy(textShow, variable) {
+    return (
+      <div onClick={() => setOrderBy(variable)} style={{ cursor: "pointer" }}>
+        <span>{textShow}</span>
+        {SortBy == variable && (
+          <span>
+            {SortByModificador == "asc" ? <FaAngleDown /> : <FaAngleUp />}
+          </span>
+        )}
+      </div>
+    );
+  }
+  //end sort
   async function fetchObras() {
-    var res = await axios.post(`${UrlServer}/listaObrasByIdAcceso`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
-      id_unidadEjecutora: ProvinciaSeleccionada,
-      idsectores: SectoreSeleccionado,
-      Estados_id_Estado: EstadosObraeleccionada,
+    var res = await axios.get(`${UrlServer}/v1/obras`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_unidadEjecutora: ProvinciaSeleccionada,
+        idsectores: SectoreSeleccionado,
+        sort_by: "poblacion-desc",
+      },
     });
     setObras(res.data);
     if (!sessionStorage.getItem("idobra")) {
       recargar(res.data[0]);
     }
   }
+
   const [LabelsHabilitado, setLabelsHabilitado] = useState(false);
   useEffect(() => {
     fetchSectores();
@@ -276,7 +316,7 @@ export default ({ recargar }) => {
               <th
                 style={{ width: "70px", minWidth: "50px", textAlign: "center" }}
               >
-                UDM{" "}
+                UDM
               </th>
               <th className="text-center">AVANCE </th>
               <th className="text-center">OPCIONES</th>
@@ -359,14 +399,17 @@ export default ({ recargar }) => {
                   >
                     PRESUPUESTO S./{Redondea(item.g_total_presu)}
                   </div>
-                  <Plazos_info id_ficha={item.id_ficha} />
+                  <Plazos_info item={item} />
                 </td>
                 <td>
-                  <EstadoObra id_ficha={item.id_ficha} />
+                  <EstadoObra item={item} />
                 </td>
                 <td className="text-center">
-                  {calcular_dias(item.ultima_fecha, new Date()) - 1} días{" "}
-                  <div>{fechaFormatoClasico(item.ultima_fecha)}</div>
+                  {calcular_dias(item.avancefisico_ultimafecha, new Date()) - 1}{" "}
+                  días{" "}
+                  <div>
+                    {fechaFormatoClasico(item.avancefisico_ultimafecha)}
+                  </div>
                 </td>
                 <td
                   style={{
@@ -374,12 +417,16 @@ export default ({ recargar }) => {
                   }}
                 >
                   <FisicoBarraPorcentaje
-                    id_ficha={item.id_ficha}
                     tipo="barra"
+                    id_ficha={item.id_ficha}
+                    avance={item.avancefisico_acumulado}
+                    total={item.presupuesto_costodirecto}
                   />
                   <FinancieroBarraPorcentaje
-                    id_ficha={item.id_ficha}
                     tipo="barra"
+                    id_ficha={item.id_ficha}
+                    avance={item.avancefinanciero_acumulado}
+                    total={item.g_total_presu}
                   />
                 </td>
                 <td>
@@ -662,18 +709,7 @@ export default ({ recargar }) => {
   );
 };
 //componente de estado de obra
-function EstadoObra({ id_ficha }) {
-  useEffect(() => {
-    fetchData();
-  }, []);
-  const [EstadoObra, setEstadoObra] = useState({});
-  async function fetchData() {
-    var res = await axios.post(`${UrlServer}/getEstadoObra`, {
-      id_ficha: id_ficha,
-    });
-    setEstadoObra(res.data);
-  }
-
+function EstadoObra({ item }) {
   return (
     <Button
       type="button"
@@ -696,17 +732,17 @@ function EstadoObra({ id_ficha }) {
           " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
         bordercolor:
           " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
-        "--label-r": hexToRgb(EstadoObra.color).r,
-        "--label-g": hexToRgb(EstadoObra.color).g,
-        "--label-b": hexToRgb(EstadoObra.color).b,
-        "--label-h": hexToRgb(EstadoObra.color).h,
-        "--label-s": hexToRgb(EstadoObra.color).s,
-        "--label-l": hexToRgb(EstadoObra.color).l,
+        "--label-r": hexToRgb(item.estadoobra_color).r,
+        "--label-g": hexToRgb(item.estadoobra_color).g,
+        "--label-b": hexToRgb(item.estadoobra_color).b,
+        "--label-h": hexToRgb(item.estadoobra_color).h,
+        "--label-s": hexToRgb(item.estadoobra_color).s,
+        "--label-l": hexToRgb(item.estadoobra_color).l,
         margin: "5px",
         cursor: "default",
       }}
     >
-      {EstadoObra.nombre}
+      {item.estadoobra_nombre}
     </Button>
   );
 }
@@ -872,46 +908,14 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
     </div>
   );
 });
-function Plazos_info({ id_ficha }) {
-  useEffect(() => {
-    fetchPrimerPlazo();
-    fetchUltimoPlazoAprobado();
-    fetchUltimoPlazoSinAprobar();
-  }, []);
-  const [PrimerPlazo, setPrimerPlazo] = useState({});
-  async function fetchPrimerPlazo() {
-    var res = await axios.get(`${UrlServer}/primerPlazo`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setPrimerPlazo(res.data);
-  }
-  const [UltimoPlazoAprobado, setUltimoPlazoAprobado] = useState({});
-  async function fetchUltimoPlazoAprobado() {
-    var res = await axios.get(`${UrlServer}/ultimoPlazoAprobado`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setUltimoPlazoAprobado(res.data);
-  }
-  const [UltimoPlazoSinAprobar, setUltimoPlazoSinAprobar] = useState({});
-  async function fetchUltimoPlazoSinAprobar() {
-    var res = await axios.get(`${UrlServer}/ultimoPlazoSinAprobar`, {
-      params: {
-        id_ficha,
-      },
-    });
-    setUltimoPlazoSinAprobar(res.data);
-  }
+function Plazos_info({ item }) {
   return (
     <div
       style={{
         display: "flex",
       }}
     >
-      {PrimerPlazo.fecha_inicio && (
+      {item.plazoinicial_fecha && (
         <div
           style={{
             color: "#17a2b8",
@@ -921,8 +925,8 @@ function Plazos_info({ id_ficha }) {
         </div>
       )}
       &nbsp;
-      <div>{fechaFormatoClasico(PrimerPlazo.fecha_inicio)}</div> &nbsp;
-      {UltimoPlazoAprobado.fecha_final && (
+      <div>{fechaFormatoClasico(item.plazoinicial_fecha)}</div> &nbsp;
+      {item.plazoaprobado_ultimo_fecha && (
         <div
           style={{
             color: "#17a2b8",
@@ -932,8 +936,8 @@ function Plazos_info({ id_ficha }) {
         </div>
       )}
       &nbsp;
-      <div>{fechaFormatoClasico(UltimoPlazoAprobado.fecha_final)}</div> &nbsp;
-      {UltimoPlazoSinAprobar.fecha_final && (
+      <div>{fechaFormatoClasico(item.plazoaprobado_ultimo_fecha)}</div> &nbsp;
+      {item.plazosinaprobar_ultimo_fecha && (
         <div
           style={{
             color: "#17a2b8",
@@ -943,7 +947,7 @@ function Plazos_info({ id_ficha }) {
         </div>
       )}
       &nbsp;
-      <div>{fechaFormatoClasico(UltimoPlazoSinAprobar.fecha_final)}</div>
+      <div>{fechaFormatoClasico(item.plazosinaprobar_ultimo_fecha)}</div>
     </div>
   );
 }
