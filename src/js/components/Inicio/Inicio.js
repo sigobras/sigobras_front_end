@@ -31,7 +31,6 @@ export default ({ recargar }) => {
   useEffect(() => {
     fetchComunicados();
     fetchProvincias();
-    fetchTipoObras();
     if (!sessionStorage.getItem("provinciaSeleccionada")) {
       setProvinciaSeleccionada(sessionStorage.getItem("provinciaSeleccionada"));
     }
@@ -39,15 +38,11 @@ export default ({ recargar }) => {
   //comunicados
   const [Comunicados, setComunicados] = useState([]);
   async function fetchComunicados() {
-    var res = await axios.get(
-      `${UrlServer}/v1/obrasComunicados`,
-      {
-        params: {
-          id_ficha: sessionStorage.getItem("idobra"),
-        },
+    var res = await axios.get(`${UrlServer}/v1/obrasComunicados`, {
+      params: {
+        id_ficha: sessionStorage.getItem("idobra"),
       },
-      config
-    );
+    });
     console.log("comunicados ", res);
     setComunicados(res.data);
   }
@@ -82,8 +77,10 @@ export default ({ recargar }) => {
   //componentes
   const [Componentes, setComponentes] = useState([]);
   async function fetchComponentes(id_ficha) {
-    var res = await axios.post(`${UrlServer}/getComponentes`, {
-      id_ficha,
+    var res = await axios.get(`${UrlServer}/v1/componentes`, {
+      params: {
+        id_ficha,
+      },
     });
     setComponentes(res.data);
   }
@@ -102,7 +99,6 @@ export default ({ recargar }) => {
         },
       }
     );
-    console.log("costosIndirectosAdicionales", res.data);
     if (Array.isArray(res.data.data)) setDatosCostosIndirectos(res.data.data);
     setDatosCostosIndirectosCantidad(res.data.cantidad);
   }
@@ -111,48 +107,40 @@ export default ({ recargar }) => {
   //provincias
   const [Provincias, setProvincias] = useState([]);
   async function fetchProvincias() {
-    var res = await axios.post(`${UrlServer}/getProvincias`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
-      id_unidadEjecutora: "0",
+    var res = await axios.get(`${UrlServer}/v1/unidadEjecutora`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+      },
     });
     setProvincias(res.data);
     if (!sessionStorage.getItem("provinciaSeleccionada")) {
-      setProvinciaSeleccionada(res.data[0].id_unidadEjecutora);
-      sessionStorage.setItem(
-        "provinciaSeleccionada",
-        res.data[0].id_unidadEjecutora
-      );
+      sessionStorage.setItem("provinciaSeleccionada", 0);
     } else {
       setProvinciaSeleccionada(sessionStorage.getItem("provinciaSeleccionada"));
     }
   }
-  const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(-1);
+  const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(0);
 
   //sectores
   const [Sectores, setSectores] = useState([]);
   const [SectoreSeleccionado, setSectoreSeleccionado] = useState(0);
   async function fetchSectores() {
-    var res = await axios.post(`${UrlServer}/getSectores`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
-      id_unidadEjecutora: ProvinciaSeleccionada,
+    var res = await axios.get(`${UrlServer}/v1/sectores`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_unidadEjecutora: ProvinciaSeleccionada,
+      },
     });
     setSectores(res.data);
-  }
-  //tipo de obras
-  const [TipoObras, setTipoObras] = useState([]);
-  async function fetchTipoObras() {
-    var res = await axios.post(`${UrlServer}/getTipoObras`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
-    });
-    setTipoObras(res.data);
   }
   //estados
   const [EstadosObra, setEstadosObra] = useState([]);
   const [EstadosObraeleccionada, setEstadosObraeleccionada] = useState(0);
   async function fetchEstadosObra() {
-    var res = await axios.post(`${UrlServer}/getEstados`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
-      id_unidadEjecutora: ProvinciaSeleccionada,
+    var res = await axios.get(`${UrlServer}/v1/obrasEstados`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+      },
     });
     setEstadosObra(res.data);
   }
@@ -195,6 +183,7 @@ export default ({ recargar }) => {
         id_acceso: sessionStorage.getItem("idacceso"),
         id_unidadEjecutora: ProvinciaSeleccionada,
         idsectores: SectoreSeleccionado,
+        id_Estado: EstadosObraeleccionada,
         sort_by: "poblacion-desc",
       },
     });
@@ -753,8 +742,10 @@ function ComponenteAvance({ id_componente }) {
   }, []);
   const [ComponenteAvance, setComponenteAvance] = useState(0);
   async function fetchData() {
-    var res = await axios.post(`${UrlServer}/getFisicoComponente`, {
-      id_componente,
+    var res = await axios.get(`${UrlServer}/v1/avanceActividades/componente`, {
+      params: {
+        id_componente,
+      },
     });
     setComponenteAvance(res.data.avance);
   }
@@ -768,8 +759,10 @@ function ComponenteBarraPorcentaje({ id_componente, componente }) {
     0
   );
   async function fetchData() {
-    var res = await axios.post(`${UrlServer}/getFisicoComponente`, {
-      id_componente,
+    var res = await axios.get(`${UrlServer}/v1/avanceActividades/componente`, {
+      params: {
+        id_componente,
+      },
     });
     setComponenteAvancePorcentaje(
       (res.data.avance / componente.presupuesto) * 100
