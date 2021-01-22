@@ -230,7 +230,7 @@ export default ({ recargar }) => {
             </th>
 
             <th>{cabezeraOrderBy("PIM", "pim_anyoactual")}</th>
-            <th>Último Financiero Editado</th>
+            <th style={{ width: "80px" }}>Último Financiero Editado</th>
           </tr>
         </thead>
         <tbody>
@@ -357,8 +357,11 @@ export default ({ recargar }) => {
                     <ImSad2 size="20" color="#9e1212" />
                   )}
                 </div>
-                <div> {fechaFormatoClasico(item.financiero_ultima_fecha)}</div>
-                <FinancieroUltimaFechaData id_ficha={item.id_ficha} />
+
+                <FinancieroUltimaFechaData
+                  id_ficha={item.id_ficha}
+                  item={item}
+                />
               </td>
             </tr>
           ))}
@@ -546,7 +549,7 @@ function EstadoObra({ item }) {
     </Button>
   );
 }
-function FinancieroUltimaFechaData({ id_ficha }) {
+function FinancieroUltimaFechaData({ id_ficha, item }) {
   useEffect(() => {
     fetchFinancieroData();
   }, []);
@@ -561,6 +564,10 @@ function FinancieroUltimaFechaData({ id_ficha }) {
   }
   return FinancieroData.usuario_nombre ? (
     <div style={{ fontSize: "9px" }}>
+      <div>
+        {"El: "}
+        {fechaFormatoClasico(item.financiero_ultima_fecha)}
+      </div>
       <div>
         <div
           style={{
