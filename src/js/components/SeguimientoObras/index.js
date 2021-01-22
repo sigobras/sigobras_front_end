@@ -115,7 +115,16 @@ export default ({ recargar }) => {
   }, [SortBy, SortByModificador]);
   function cabezeraOrderBy(textShow, variable) {
     return (
-      <div onClick={() => setOrderBy(variable)} style={{ cursor: "pointer" }}>
+      <div
+        onClick={() => setOrderBy(variable)}
+        style={
+          SortBy == variable
+            ? { cursor: "pointer", backgroundColor: "orange" }
+            : {
+                cursor: "pointer",
+              }
+        }
+      >
         <span>{textShow}</span>
         {SortBy == variable && (
           <span>
@@ -337,11 +346,11 @@ export default ({ recargar }) => {
               <td>
                 <UltimoDiaMetrado item={item} />
               </td>
-              <td>{item.pim_anyoactual}</td>
+              <td>{"S/." + Redondea(item.pim_anyoactual)}</td>
 
               <td id={"financieroUltimaFecha" + item.id_ficha}>
                 <div>
-                  {stringToDateObject(item.financiero_ultima_fecha, 7) >
+                  {stringToDateObject(item.financiero_ultima_fecha, 14) >
                   new Date() ? (
                     <ImWink2 size="20" color="#219e12" />
                   ) : (
@@ -553,13 +562,6 @@ function FinancieroUltimaFechaData({ id_ficha }) {
   return FinancieroData.usuario_nombre ? (
     <div style={{ fontSize: "9px" }}>
       <div>
-        {/* <div
-          style={{
-            color: "#17a2b8",
-          }}
-        >
-          {FinancieroData.cargo_nombre}
-        </div> */}
         <div
           style={{
             color: "#17a2b8",
