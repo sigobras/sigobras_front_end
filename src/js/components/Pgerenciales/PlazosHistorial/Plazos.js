@@ -303,14 +303,7 @@ function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
       >
         Adjuntar Resolución
       </Tooltip>
-      <Tooltip
-        placement="right"
-        isOpen={tooltipOpen2}
-        target="TooltipExample2"
-        toggle={toggle2}
-      >
-        Descargar Resolución
-      </Tooltip>
+
       <div style={{ display: "flex", textAlign: "center" }}>
         <div
           onClick={() => uploadFile(item.id)}
@@ -322,7 +315,15 @@ function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
         >
           <FaUpload size={15} color={"#ffffff"} />
         </div>
-        {item.archivo !== null && (
+        {item.archivo !== null && [
+          <Tooltip
+            placement="right"
+            isOpen={tooltipOpen2}
+            target="TooltipExample2"
+            toggle={toggle2}
+          >
+            Descargar Resolución
+          </Tooltip>,
           <div
             className="text-primary"
             onClick={() => DescargarArchivo(`${UrlServer}${item.archivo}`)}
@@ -333,8 +334,8 @@ function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
             id="TooltipExample2"
           >
             <FaFileContract size={20} color={"#17a2b8"} />
-          </div>
-        )}
+          </div>,
+        ]}
       </div>
       {item.archivo !== null && (
         <div
