@@ -104,11 +104,11 @@ export default () => {
             <th colSpan="3" style={{ textAlign: "center" }}>
               RESOLUCIÓN
             </th>
-            <th>FECHA INICIAL</th>
-            <th>FECHA FINAL</th>
+            <th style={{ width: "68px" }}>FECHA INICIAL</th>
+            <th style={{ width: "68px" }}>FECHA FINAL</th>
             <th>DIÁS</th>
             <th>PLAZO APROBADO</th>
-            <th>APROBADO EL</th>
+            <th style={{ width: "68px", textAlign: "center" }}>APROBADO EL</th>
             <th>OPCIONES</th>
           </tr>
         </thead>
@@ -134,7 +134,9 @@ export default () => {
               {/* <th scope="row">{item.id}</th> */}
               <td>{item.tipo_nombre}</td>
               <td>{item.descripcion}</td>
-              <td>{item.documento_resolucion_estado}</td>
+              <td style={{ width: "200px" }}>
+                {item.documento_resolucion_estado}
+              </td>
               <td>
                 <TooltipUploadIcon
                   item={item}
@@ -147,7 +149,7 @@ export default () => {
               <td>{fechaFormatoClasico(item.fecha_final)}</td>
               <td>{item.n_dias}</td>
               <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
-              <td>{item.fecha_aprobada}</td>
+              <td>{fechaFormatoClasico(item.fecha_aprobada)}</td>
               <td style={{ display: "flex" }}>
                 <PlazosFormulario
                   id_padre={item.id}
@@ -288,7 +290,9 @@ const PLazosHijos = forwardRef(({ id_padre, count }, ref) => {
 });
 function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [tooltipOpen2, setTooltipOpen2] = useState(false);
   const toggle = () => setTooltipOpen(!tooltipOpen);
+  const toggle2 = () => setTooltipOpen2(!tooltipOpen2);
   return (
     <div>
       <Tooltip
@@ -299,25 +303,34 @@ function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
       >
         Adjuntar Resolución
       </Tooltip>
-      <div style={{ display: "flex", textAlign: "center" }} id="TooltipExample">
+      <Tooltip
+        placement="right"
+        isOpen={tooltipOpen2}
+        target="TooltipExample2"
+        toggle={toggle2}
+      >
+        Descargar Resolución
+      </Tooltip>
+      <div style={{ display: "flex", textAlign: "center" }}>
         <div
           onClick={() => uploadFile(item.id)}
           style={{
             cursor: "pointer",
             width: "100%",
           }}
+          id="TooltipExample"
         >
           <FaUpload size={15} color={"#ffffff"} />
         </div>
         {item.archivo !== null && (
           <div
             className="text-primary"
-            title="descargar archivo"
             onClick={() => DescargarArchivo(`${UrlServer}${item.archivo}`)}
             style={{
               cursor: "pointer",
               width: "100%",
             }}
+            id="TooltipExample2"
           >
             <FaFileContract size={20} color={"#17a2b8"} />
           </div>
