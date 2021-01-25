@@ -245,7 +245,13 @@ export default ({ recargar }) => {
                   : {}
               }
             >
-              <td>{i + 1}</td>
+              <td
+                style={{
+                  fontSize: "8px",
+                }}
+              >
+                {i + 1}
+              </td>
               <td>
                 <EstadoObra item={item} />
               </td>
@@ -401,6 +407,22 @@ function PrimerPlazo({ item }) {
       <div id={"PrimerPlazo" + item.id_ficha}>
         {getDaysBetweenDates(new Date(), item.plazoinicial_fecha) - 1} d/c
       </div>
+      {!item.plazoaprobado_ultimo_fecha && !item.plazosinaprobar_ultimo_fecha && (
+        <div>
+          <div
+            style={{
+              color: "#17a2b8",
+            }}
+          >
+            {fechaFormatoClasico(item.plazoinicial_fechafinal)}
+          </div>
+
+          <div id={"PrimerPlazo" + item.id_ficha}>
+            {getDaysBetweenDates(new Date(), item.plazoinicial_fechafinal) - 1}{" "}
+            d/c
+          </div>
+        </div>
+      )}
       <Tooltip
         placement="bottom"
         isOpen={tooltipOpen}
@@ -543,6 +565,7 @@ function EstadoObra({ item }) {
         "--label-l": hexToRgb(item.estadoobra_color).l,
         margin: "5px",
         cursor: "default",
+        fontSize: "10px",
       }}
     >
       {item.estadoobra_nombre}
