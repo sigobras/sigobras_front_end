@@ -91,11 +91,10 @@ export default ({ recargar }) => {
   ] = useState(0);
   async function fetchDatosCostosIndirectos(id_ficha) {
     const res = await axios.get(
-      `${UrlServer}/costosIndirectosAdicionalesCompletos`,
+      `${UrlServer}/v1/obrasCostosIndirectos/adicionales`,
       {
         params: {
           id_ficha,
-          // "id_ficha": sessionStorage.getItem("idobra")
         },
       }
     );
@@ -381,12 +380,24 @@ export default ({ recargar }) => {
                     {item.codigo}
                   </Button>
                   {item.g_meta + "/CUI - " + item.codigo_unificado}
-                  <div
-                    style={{
-                      color: "#17a2b8",
-                    }}
-                  >
-                    PRESUPUESTO S./{Redondea(item.g_total_presu)}
+                  <div>
+                    <span
+                      style={{
+                        color: "#17a2b8",
+                      }}
+                    >
+                      PRESUPUESTO S./{Redondea(item.g_total_presu)}
+                    </span>{" "}
+                    <span
+                      style={{
+                        color: "orange",
+                      }}
+                    >
+                      SALDO FINANCIERO S./
+                      {Redondea(
+                        item.g_total_presu - item.avancefinanciero_acumulado
+                      )}
+                    </span>
                   </div>
                   <Plazos_info item={item} />
                 </td>
@@ -822,7 +833,7 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
   }, []);
   const [Labels, setLabels] = useState([]);
   async function fetchLabels() {
-    var res = await axios.get(`${UrlServer}/FichasLabelsAsignadas`, {
+    var res = await axios.get(`${UrlServer}/v1/obrasLabels/obras`, {
       params: {
         id_ficha,
       },
@@ -839,7 +850,7 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
   };
   async function quitarObraLabel(id_label) {
     if (confirm("Esta seguro de quitar esta etiqueta?")) {
-      var res = await axios.delete(`${UrlServer}/FichasAsignarLabels`, {
+      var res = await axios.delete(`${UrlServer}/v1/obrasLabels/obras`, {
         data: {
           id_ficha,
           id_label,
