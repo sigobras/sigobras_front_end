@@ -19,7 +19,7 @@ import FinancieroBarraPorcentaje from "./FinancieroBarraPorcentaje";
 import FisicoBarraPorcentaje from "./FisicoBarraPorcentaje";
 import ModalListaPersonal from "./ModalListaPersonal";
 import ModalInformacionObras from "./InformacionObras/InformacionObra";
-import Curva_S from "./Curva_S";
+import Curva_S from "./Cuva_S";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
 import Obras_labels_edicion from "./Obras_labels_edicion";
 import ReportGeneralObras from "./ReportGeneralObras";
@@ -447,7 +447,7 @@ export default ({ recargar }) => {
                     <ModalInformacionObras id_ficha={item.id_ficha} />
                   </div>
                   <div className="d-flex">
-                    <Curva_S id_ficha={item.id_ficha} codigo={item.codigo} />
+                    <Curva_S item={item} />
                     <Obras_labels_edicion
                       id_ficha={item.id_ficha}
                       recargarObraLabels={recargarObraLabels}
