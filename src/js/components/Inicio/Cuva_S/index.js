@@ -102,30 +102,31 @@ export default ({ item }) => {
       >
         <FaChartLine />
       </button>
-      <Modal isOpen={ModalPrincipal} toggle={toggleModalPrincipal}>
-        <div className="d-flex">
-          <CurvaS_Cabezera
-            key={CurvaSAnyoSeleccionado}
-            CurvaSdata={CurvaSdata}
-            item={item}
-            anyo={CurvaSAnyoSeleccionado}
-            ref={cabeceraRef}
-          />
-          <div>
-            <FormularioPrincipal
-              id_ficha={item.id_ficha}
-              recargarData={recargarData}
+      <Modal isOpen={ModalPrincipal} toggle={toggleModalPrincipal} size={"lg"}>
+        <div style={{ width: "800px" }}>
+          <div className="d-flex">
+            <CurvaS_Cabezera
+              key={CurvaSAnyoSeleccionado}
+              CurvaSdata={CurvaSdata}
+              item={item}
+              anyo={CurvaSAnyoSeleccionado}
+              ref={cabeceraRef}
             />
             <div>
-              <select
-                onChange={(e) => setCurvaSAnyoSeleccionado(e.target.value)}
-              >
-                {CurvaSAnyos.map((item, i) => (
-                  <option key={i}>{item.anyo}</option>
-                ))}
-              </select>
-            </div>
-            {/* {!ToggleSoles ? (
+              <FormularioPrincipal
+                id_ficha={item.id_ficha}
+                recargarData={recargarData}
+              />
+              <div>
+                <select
+                  onChange={(e) => setCurvaSAnyoSeleccionado(e.target.value)}
+                >
+                  {CurvaSAnyos.map((item, i) => (
+                    <option key={i}>{item.anyo}</option>
+                  ))}
+                </select>
+              </div>
+              {/* {!ToggleSoles ? (
               <button
                 type="button"
                 className="btn btn-primary"
@@ -144,187 +145,200 @@ export default ({ item }) => {
                 %
               </button>
             )} */}
+            </div>
           </div>
-        </div>
-        <CurvaS_Chart
-          key={JSON.stringify(CurvaSdata)}
-          CurvaSdata={CurvaSdata}
-          codigo={item.codigo}
-        />
-        <div
-          style={{
-            overflowX: "auto",
-          }}
-        >
-          <table className="table table-striped table-dark">
-            <thead>
-              <tr>
-                <th>MES</th>
-                {CurvaSdata.map((item, i) => (
-                  <th
-                    key={i}
-                    style={
-                      item.tipo == "TOTAL" ? { backgroundColor: "red" } : {}
-                    }
-                  >
-                    {item.tipo == "TOTAL"
-                      ? "TOTAL - " + item.anyo
-                      : mesesShort[item.mes - 1] + "-" + item.anyo}
-                    {item.fisico_monto == 0 &&
-                      (UsuarioData.cargo_nombre == "RESIDENTE" ||
-                        UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
-                        <div onClick={() => deletePeriodoCurvaS(item.id)}>
-                          <MdDeleteForever
-                            title={"eliminiar periodo"}
-                            style={{ cursor: "pointer" }}
-                          />
-                        </div>
-                      )}
+          <CurvaS_Chart
+            key={JSON.stringify(CurvaSdata)}
+            CurvaSdata={CurvaSdata}
+            codigo={item.codigo}
+          />
+          <div
+            style={{
+              overflowX: "auto",
+            }}
+          >
+            <table className="table table-striped table-dark">
+              <thead>
+                <tr>
+                  <th style={{ width: "200px" }}>MES</th>
+                  {CurvaSdata.map((item, i) => (
+                    <th
+                      key={i}
+                      style={
+                        item.tipo == "TOTAL" ? { backgroundColor: "red" } : {}
+                      }
+                    >
+                      {item.tipo == "TOTAL"
+                        ? "TOTAL - " + item.anyo
+                        : mesesShort[item.mes - 1] + "-" + item.anyo}
+                      {item.fisico_monto == 0 &&
+                        (UsuarioData.cargo_nombre == "RESIDENTE" ||
+                          UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+                          <div onClick={() => deletePeriodoCurvaS(item.id)}>
+                            <MdDeleteForever
+                              title={"eliminiar periodo"}
+                              style={{ cursor: "pointer" }}
+                            />
+                          </div>
+                        )}
+                    </th>
+                  ))}
+                  <th style={{ backgroundColor: "red" }}>
+                    TOTAL - {CurvaSAnyoSeleccionado}
                   </th>
-                ))}
-                <th style={{ backgroundColor: "red" }}>
-                  TOTAL - {CurvaSAnyoSeleccionado}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>PROGRAMADO EJECUTADO</th>
-                {CurvaSdata.map((item, i) => (
-                  <td key={i}>
-                    <Programado
-                      item={item}
-                      UsuarioData={UsuarioData}
-                      recargar={recargarData}
-                    />
-                  </td>
-                ))}
-                <th>
-                  {Redondea(
-                    CurvaSdata.reduce((acc, item) => {
-                      if (item.tipo != "TOTAL") {
-                        acc += item.fisico_programado_monto;
-                      }
-                      return acc;
-                    }, 0)
-                  )}
-                </th>
-              </tr>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th style={{ width: "200px", display: "block" }}>
+                    PROGRAMADO EJECUTADO
+                  </th>
+                  {CurvaSdata.map((item, i) => (
+                    <td key={i}>
+                      <Programado
+                        item={item}
+                        UsuarioData={UsuarioData}
+                        recargar={recargarData}
+                      />
+                    </td>
+                  ))}
+                  <th>
+                    {Redondea(
+                      CurvaSdata.reduce((acc, item) => {
+                        if (item.tipo != "TOTAL") {
+                          acc += item.fisico_programado_monto;
+                        }
+                        return acc;
+                      }, 0)
+                    )}
+                  </th>
+                </tr>
 
-              <tr>
-                <th>PROGRAMADO EJECUTADO REAL</th>
-                {CurvaSdata.map((item, i) => (
-                  <td key={i}>
-                    {item.fisico_monto
-                      ? Redondea(item.fisico_monto)
-                      : Redondea(item.fisico_programado_monto)}
-                  </td>
-                ))}
-                <th>
-                  {Redondea(
-                    CurvaSdata.reduce((acc, item) => {
-                      if (item.tipo != "TOTAL") {
-                        acc += item.fisico_monto
-                          ? item.fisico_monto
-                          : item.fisico_programado_monto;
-                      }
-                      return acc;
-                    }, 0)
-                  )}
-                </th>
-              </tr>
-              <tr>
-                <th>EJECUTADO</th>
-                {CurvaSdata.map((item, i) => (
-                  <td key={i}>{Redondea(item.fisico_monto)}</td>
-                ))}
-                <th>
-                  {Redondea(
-                    CurvaSdata.reduce((acc, item) => {
-                      if (item.tipo != "TOTAL") {
-                        acc += item.fisico_monto;
-                      }
-                      return acc;
-                    }, 0)
-                  )}
-                </th>
-              </tr>
-              <tr>
-                <th>PROGRAMADO FINANCIERO</th>
-                {CurvaSdata.map((item, i) => (
-                  <td key={i}>
-                    {item.tipo == "TOTAL" ? (
-                      item.fisico_programado_monto
-                    ) : (
-                      <FinancieroProgramado
-                        item={item}
-                        UsuarioData={UsuarioData}
-                        recargar={recargarData}
-                      />
+                <tr>
+                  <th style={{ width: "200px", display: "block" }}>
+                    PROGRAMADO EJECUTADO REAL
+                  </th>
+                  {CurvaSdata.map((item, i) => (
+                    <td key={i}>
+                      {item.fisico_monto
+                        ? Redondea(item.fisico_monto)
+                        : Redondea(item.fisico_programado_monto)}
+                    </td>
+                  ))}
+                  <th>
+                    {Redondea(
+                      CurvaSdata.reduce((acc, item) => {
+                        if (item.tipo != "TOTAL") {
+                          acc += item.fisico_monto
+                            ? item.fisico_monto
+                            : item.fisico_programado_monto;
+                        }
+                        return acc;
+                      }, 0)
                     )}
-                  </td>
-                ))}
-                <th>
-                  {Redondea(
-                    CurvaSdata.reduce((acc, item) => {
-                      if (item.tipo != "TOTAL") {
-                        acc += item.financiero_programado_monto;
-                      }
-                      return acc;
-                    }, 0)
-                  )}
-                </th>
-              </tr>
-              <tr>
-                <th>PROGRAMADO FINANCIERO REAL</th>
-                {CurvaSdata.map((item, i) => (
-                  <td key={i}>
-                    {item.financiero_monto
-                      ? Redondea(item.financiero_monto)
-                      : Redondea(item.financiero_programado_monto)}
-                  </td>
-                ))}
-                <th>
-                  {Redondea(
-                    CurvaSdata.reduce((acc, item) => {
-                      if (item.tipo != "TOTAL") {
-                        acc += item.financiero_monto
-                          ? item.financiero_monto
-                          : item.financiero_programado_monto;
-                      }
-                      return acc;
-                    }, 0)
-                  )}
-                </th>
-              </tr>
-              <tr>
-                <th>FINANCIERO</th>
-                {CurvaSdata.map((item, i) => (
-                  <td key={i}>
-                    {item.tipo == "TOTAL" ? (
-                      item.fisico_programado_monto
-                    ) : (
-                      <Financiero
-                        item={item}
-                        UsuarioData={UsuarioData}
-                        recargar={recargarData}
-                      />
+                  </th>
+                </tr>
+                <tr>
+                  <th style={{ width: "200px", display: "block" }}>
+                    EJECUTADO
+                  </th>
+                  {CurvaSdata.map((item, i) => (
+                    <td key={i}>{Redondea(item.fisico_monto)}</td>
+                  ))}
+                  <th>
+                    {Redondea(
+                      CurvaSdata.reduce((acc, item) => {
+                        if (item.tipo != "TOTAL") {
+                          acc += item.fisico_monto;
+                        }
+                        return acc;
+                      }, 0)
                     )}
-                  </td>
-                ))}
-                <th>
-                  {Redondea(
-                    CurvaSdata.reduce((acc, item) => {
-                      if (item.tipo != "TOTAL") {
-                        acc += item.financiero_monto;
-                      }
-                      return acc;
-                    }, 0)
-                  )}
-                </th>
-              </tr>
-            </tbody>
-          </table>
+                  </th>
+                </tr>
+                <tr>
+                  <th style={{ width: "200px", display: "block" }}>
+                    PROGRAMADO FINANCIERO
+                  </th>
+                  {CurvaSdata.map((item, i) => (
+                    <td key={i}>
+                      {item.tipo == "TOTAL" ? (
+                        item.fisico_programado_monto
+                      ) : (
+                        <FinancieroProgramado
+                          item={item}
+                          UsuarioData={UsuarioData}
+                          recargar={recargarData}
+                        />
+                      )}
+                    </td>
+                  ))}
+                  <th>
+                    {Redondea(
+                      CurvaSdata.reduce((acc, item) => {
+                        if (item.tipo != "TOTAL") {
+                          acc += item.financiero_programado_monto;
+                        }
+                        return acc;
+                      }, 0)
+                    )}
+                  </th>
+                </tr>
+                <tr>
+                  <th style={{ width: "200px", display: "block" }}>
+                    PROGRAMADO FINANCIERO REAL
+                  </th>
+                  {CurvaSdata.map((item, i) => (
+                    <td key={i}>
+                      {item.financiero_monto
+                        ? Redondea(item.financiero_monto)
+                        : Redondea(item.financiero_programado_monto)}
+                    </td>
+                  ))}
+                  <th>
+                    {Redondea(
+                      CurvaSdata.reduce((acc, item) => {
+                        if (item.tipo != "TOTAL") {
+                          acc += item.financiero_monto
+                            ? item.financiero_monto
+                            : item.financiero_programado_monto;
+                        }
+                        return acc;
+                      }, 0)
+                    )}
+                  </th>
+                </tr>
+                <tr>
+                  <th style={{ width: "200px", display: "block" }}>
+                    FINANCIERO
+                  </th>
+                  {CurvaSdata.map((item, i) => (
+                    <td key={i}>
+                      {item.tipo == "TOTAL" ? (
+                        item.fisico_programado_monto
+                      ) : (
+                        <Financiero
+                          item={item}
+                          UsuarioData={UsuarioData}
+                          recargar={recargarData}
+                        />
+                      )}
+                    </td>
+                  ))}
+                  <th>
+                    {Redondea(
+                      CurvaSdata.reduce((acc, item) => {
+                        if (item.tipo != "TOTAL") {
+                          acc += item.financiero_monto;
+                        }
+                        return acc;
+                      }, 0)
+                    )}
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </Modal>
     </div>

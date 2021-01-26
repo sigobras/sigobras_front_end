@@ -88,7 +88,7 @@ export default forwardRef(({ item, anyo }, ref) => {
     <div className="d-flex">
       <div>
         <Alert
-          color="primary"
+          color="info"
           style={{
             marginBottom: "2px",
             padding: "3px 7px",
@@ -101,7 +101,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           <div style={{ fontSize: "9px" }}>PROGRAMADO ACUMULADO</div>
         </Alert>
         <Alert
-          color="primary"
+          color="info"
           style={{
             marginBottom: "2px",
             padding: "3px 7px",
@@ -121,7 +121,7 @@ export default forwardRef(({ item, anyo }, ref) => {
       &nbsp;&nbsp;
       <div>
         <Alert
-          color="warning"
+          color="info"
           style={{
             marginBottom: "2px",
             padding: "3px 7px",
@@ -134,7 +134,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           <div style={{ fontSize: "9px" }}>EJECUTADO ACUMULADO</div>
         </Alert>
         <Alert
-          color="warning"
+          color="info"
           style={{
             marginBottom: "2px",
             padding: "3px 7px",
@@ -154,7 +154,7 @@ export default forwardRef(({ item, anyo }, ref) => {
       &nbsp;&nbsp;
       <div>
         <Alert
-          color="light"
+          color="warning"
           style={{
             marginBottom: "2px",
             padding: "3px 7px",
@@ -167,7 +167,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           <div style={{ fontSize: "9px" }}>FINANCIERO ACUMULADO</div>
         </Alert>
         <Alert
-          color="light"
+          color="warning"
           style={{
             marginBottom: "2px",
             padding: "3px 7px",
