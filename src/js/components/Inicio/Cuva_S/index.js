@@ -172,6 +172,7 @@ export default ({ item }) => {
                         ? "TOTAL - " + item.anyo
                         : mesesShort[item.mes - 1] + "-" + item.anyo}
                       {item.fisico_monto == 0 &&
+                        item.tipo != "TOTAL" &&
                         (UsuarioData.cargo_nombre == "RESIDENTE" ||
                           UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
                           <div onClick={() => deletePeriodoCurvaS(item.id)}>
@@ -189,8 +190,14 @@ export default ({ item }) => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th style={{ width: "200px", display: "block" }}>
+                <tr style={{ color: "#666666" }}>
+                  <th
+                    style={{
+                      width: "200px",
+                      display: "block",
+                      color: "#666666",
+                    }}
+                  >
                     PROGRAMADO EJECUTADO
                   </th>
                   {CurvaSdata.map((item, i) => (
@@ -256,14 +263,20 @@ export default ({ item }) => {
                     )}
                   </th>
                 </tr>
-                <tr>
-                  <th style={{ width: "200px", display: "block" }}>
+                <tr style={{ color: "#666666" }}>
+                  <th
+                    style={{
+                      width: "200px",
+                      display: "block",
+                      color: "#666666",
+                    }}
+                  >
                     PROGRAMADO FINANCIERO
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.tipo == "TOTAL" ? (
-                        item.fisico_programado_monto
+                        Redondea(item.fisico_programado_monto)
                       ) : (
                         <FinancieroProgramado
                           item={item}
@@ -315,7 +328,7 @@ export default ({ item }) => {
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.tipo == "TOTAL" ? (
-                        item.fisico_programado_monto
+                        Redondea(item.fisico_programado_monto)
                       ) : (
                         <Financiero
                           item={item}
