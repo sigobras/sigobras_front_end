@@ -174,7 +174,7 @@ export default ({ item }) => {
               overflowX: "auto",
             }}
           >
-            <table className="table table-striped table-dark">
+            <table className="table">
               <thead>
                 <tr>
                   <th style={{ width: "200px" }}>MES</th>
@@ -182,7 +182,9 @@ export default ({ item }) => {
                     <th
                       key={i}
                       style={
-                        item.tipo == "TOTAL" ? { backgroundColor: "red" } : {}
+                        item.tipo == "TOTAL"
+                          ? { backgroundColor: "#3a3b3c" }
+                          : {}
                       }
                     >
                       {item.tipo == "TOTAL"
@@ -201,7 +203,7 @@ export default ({ item }) => {
                         )}
                     </th>
                   ))}
-                  <th style={{ backgroundColor: "red" }}>
+                  <th style={{ backgroundColor: "#3a3b3c" }}>
                     TOTAL - {CurvaSAnyoSeleccionado}
                   </th>
                 </tr>

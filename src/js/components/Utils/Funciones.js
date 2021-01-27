@@ -9,9 +9,15 @@ function Redondea(x, decimales = 2) {
   if (decimales == 2 && x < 0.01) {
     return "-";
   }
-  return Number.parseFloat(x)
-    .toFixed(decimales)
-    .replace(/\d(?=(\d{3})+\.)/g, "$&,");
+  if (x < 0.01) {
+    return Number.parseFloat(x)
+      .toFixed(decimales)
+      .replace(/\d(?=(\d{3})+\.)/g, "$&,");
+  } else {
+    return Number.parseFloat(x)
+      .toFixed(2)
+      .replace(/\d(?=(\d{3})+\.)/g, "$&,");
+  }
 }
 function Redondea1(x) {
   if (x == null) {
