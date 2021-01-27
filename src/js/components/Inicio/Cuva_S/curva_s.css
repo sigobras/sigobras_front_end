@@ -1,10 +1,10 @@
 .curvaS_fisicoRow td,
 .curvaS_fisicoRow th {
-  background-color: #1f6975;
+  color: #17a2b8;
   /* background-color: #17a2b8; */
 }
 .curvaS_FinancieroRow td,
 .curvaS_FinancieroRow th {
   /* background-color: orange; */
-  background-color: #885f14;
+  color: orange;
 }
