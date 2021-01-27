@@ -6,10 +6,10 @@ function Redondea(x, decimales = 2) {
   } else if (x == 0 || isNaN(x)) {
     return "-";
   }
-  if (decimales == 2 && x < 0.01) {
+  if (decimales == 2 && Math.abs(x) < 0.01) {
     return "-";
   }
-  if (x < 0.01) {
+  if (Math.abs(x) < 0.01) {
     return Number.parseFloat(x)
       .toFixed(decimales)
       .replace(/\d(?=(\d{3})+\.)/g, "$&,");
