@@ -21,7 +21,7 @@ import CurvaS_Cabezera from "./CurvaS_Cabecera";
 
 import "./curva_s.css";
 
-export default ({ item }) => {
+export default ({ Obra }) => {
   //functions
   function siEsMesActual(anyo, mes) {
     var anyoActual = new Date().getFullYear();
@@ -30,6 +30,16 @@ export default ({ item }) => {
     // console.log("llegado", anyo, mes);
     // console.log("calculo", anyo == anyoActual && mes == mesActual);
     if (anyo == anyoActual && mes == mesActual) return true;
+    return false;
+  }
+  function esMenorIgualMesActual(anyo, mes) {
+    var dateProgramado = new Date(anyo, mes - 1, 1);
+    if (dateProgramado == "Invalid Date") return true;
+    // console.log("date creado", dateProgramado);
+    // console.log("resultado", dateProgramado <= new Date());
+    if (dateProgramado <= new Date()) {
+      return true;
+    }
     return false;
   }
 
@@ -55,7 +65,7 @@ export default ({ item }) => {
   const [CurvaSAnyoSeleccionado, setCurvaSAnyoSeleccionado] = useState(0);
   const fetchCurvaSAnyos = async () => {
     const res = await axios.post(`${UrlServer}/getDataCurvaSAnyos`, {
-      id_ficha: item.id_ficha,
+      id_ficha: Obra.id_ficha,
     });
     setCurvaSAnyos(res.data);
     setCurvaSAnyoSeleccionado(res.data[0].anyo);
@@ -63,27 +73,27 @@ export default ({ item }) => {
   const [CurvaSdata, setCurvaSdata] = useState([]);
   const fetchCurvaSdata = async () => {
     const res = await axios.post(`${UrlServer}/getDataCurvaSAcumuladosByAnyo`, {
-      id_ficha: item.id_ficha,
+      id_ficha: Obra.id_ficha,
       anyo: CurvaSAnyoSeleccionado,
     });
     const res2 = await axios.post(`${UrlServer}/getDataCurvaS`, {
-      id_ficha: item.id_ficha,
+      id_ficha: Obra.id_ficha,
       anyo: CurvaSAnyoSeleccionado,
     });
     var dataTotal = res.data.concat(res2.data);
     if (!ToggleSoles) {
-      console.log("item", item);
+      console.log("Obra", Obra);
       for (let i = 0; i < dataTotal.length; i++) {
         const element = dataTotal[i];
         element.fisico_monto =
-          (element.fisico_monto / item.presupuesto_costodirecto) * 100;
+          (element.fisico_monto / Obra.presupuesto_costodirecto) * 100;
         element.fisico_programado_monto =
-          (element.fisico_programado_monto / item.presupuesto_costodirecto) *
+          (element.fisico_programado_monto / Obra.presupuesto_costodirecto) *
           100;
         element.financiero_monto =
-          (element.financiero_monto / item.g_total_presu) * 100;
+          (element.financiero_monto / Obra.g_total_presu) * 100;
         element.financiero_programado_monto =
-          (element.financiero_programado_monto / item.g_total_presu) * 100;
+          (element.financiero_programado_monto / Obra.g_total_presu) * 100;
       }
     }
     console.log("dataTotal", dataTotal);
@@ -134,14 +144,14 @@ export default ({ item }) => {
             <CurvaS_Cabezera
               key={CurvaSAnyoSeleccionado}
               CurvaSdata={CurvaSdata}
-              item={item}
+              item={Obra}
               anyo={CurvaSAnyoSeleccionado}
               ref={cabeceraRef}
             />
             &nbsp;&nbsp;
             <div>
               <FormularioPrincipal
-                id_ficha={item.id_ficha}
+                id_ficha={Obra.id_ficha}
                 recargarData={recargarData}
               />
               <div style={{ margin: "1px" }}>
@@ -177,7 +187,7 @@ export default ({ item }) => {
           <CurvaS_Chart
             key={JSON.stringify(CurvaSdata)}
             CurvaSdata={CurvaSdata}
-            codigo={item.codigo}
+            codigo={Obra.codigo}
             ToggleSoles={ToggleSoles}
           />
           <div
@@ -186,9 +196,14 @@ export default ({ item }) => {
             }}
           >
             <table className="table">
-              <thead>
+              <tbody>
                 <tr>
-                  <th style={{ width: "200px" }}>MES</th>
+                  <th
+                    style={{ width: "200px", backgroundColor: "#171819" }}
+                    className="curvaS_tablaCabezera"
+                  >
+                    MES
+                  </th>
                   {CurvaSdata.map((item, i) => (
                     <th
                       key={i}
@@ -197,7 +212,7 @@ export default ({ item }) => {
                           ? { backgroundColor: "#3a3b3c" }
                           : siEsMesActual(item.anyo, item.mes)
                           ? { backgroundColor: "#004080" }
-                          : {}
+                          : { backgroundColor: "#171819" }
                       }
                     >
                       {item.tipo == "TOTAL"
@@ -220,14 +235,13 @@ export default ({ item }) => {
                     TOTAL - {CurvaSAnyoSeleccionado}
                   </th>
                 </tr>
-              </thead>
-              <tbody>
-                <tr className="curvaS_fisicoRow">
+                <tr className="curvaS_fisicoRow ">
                   <th
                     style={{
                       width: "200px",
                       display: "block",
                     }}
+                    className="curvaS_tablaCabezera"
                   >
                     PROGRAMADO EJECUTADO
                   </th>
@@ -238,6 +252,7 @@ export default ({ item }) => {
                         UsuarioData={UsuarioData}
                         recargar={recargarData}
                         ToggleSoles={ToggleSoles}
+                        Obra={Obra}
                       />
                     </td>
                   ))}
@@ -254,12 +269,15 @@ export default ({ item }) => {
                 </tr>
 
                 <tr className="curvaS_fisicoRow">
-                  <th style={{ width: "200px", display: "block" }}>
-                    PROGRAMADO EJECUTADO REAL
+                  <th
+                    style={{ width: "200px", display: "block" }}
+                    className="curvaS_tablaCabezera"
+                  >
+                    PROGRAMADO EJECUTADO ACTUALIZADO
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
-                      {(item.fisico_monto
+                      {(esMenorIgualMesActual(item.anyo, item.mes)
                         ? Redondea(item.fisico_monto, ToggleSoles ? 2 : 4)
                         : Redondea(
                             item.fisico_programado_monto,
@@ -271,7 +289,7 @@ export default ({ item }) => {
                     {Redondea(
                       CurvaSdata.reduce((acc, item) => {
                         if (item.tipo != "TOTAL") {
-                          acc += item.fisico_monto
+                          acc += esMenorIgualMesActual(item.anyo, item.mes)
                             ? item.fisico_monto
                             : item.fisico_programado_monto;
                         }
@@ -282,7 +300,10 @@ export default ({ item }) => {
                   </th>
                 </tr>
                 <tr className="curvaS_fisicoRow">
-                  <th style={{ width: "200px", display: "block" }}>
+                  <th
+                    style={{ width: "200px", display: "block" }}
+                    className="curvaS_tablaCabezera"
+                  >
                     EJECUTADO
                   </th>
                   {CurvaSdata.map((item, i) => (
@@ -309,6 +330,7 @@ export default ({ item }) => {
                       width: "200px",
                       display: "block",
                     }}
+                    className="curvaS_tablaCabezera"
                   >
                     PROGRAMADO FINANCIERO
                   </th>
@@ -316,7 +338,7 @@ export default ({ item }) => {
                     <td key={i}>
                       {item.tipo == "TOTAL" ? (
                         Redondea(
-                          item.fisico_programado_monto,
+                          item.financiero_programado_monto,
                           ToggleSoles ? 2 : 4
                         ) + (!ToggleSoles ? "%" : "")
                       ) : (
@@ -325,6 +347,7 @@ export default ({ item }) => {
                           UsuarioData={UsuarioData}
                           recargar={recargarData}
                           ToggleSoles={ToggleSoles}
+                          Obra={Obra}
                         />
                       )}
                     </td>
@@ -342,12 +365,15 @@ export default ({ item }) => {
                   </th>
                 </tr>
                 <tr className="curvaS_FinancieroRow">
-                  <th style={{ width: "200px", display: "block" }}>
-                    PROGRAMADO FINANCIERO REAL
+                  <th
+                    style={{ width: "200px", display: "block" }}
+                    className="curvaS_tablaCabezera"
+                  >
+                    PROGRAMADO FINANCIERO ACTUALIZADO
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
-                      {(item.financiero_monto
+                      {(esMenorIgualMesActual(item.anyo, item.mes)
                         ? Redondea(item.financiero_monto, ToggleSoles ? 2 : 4)
                         : Redondea(
                             item.financiero_programado_monto,
@@ -359,7 +385,7 @@ export default ({ item }) => {
                     {Redondea(
                       CurvaSdata.reduce((acc, item) => {
                         if (item.tipo != "TOTAL") {
-                          acc += item.financiero_monto
+                          acc += esMenorIgualMesActual(item.anyo, item.mes)
                             ? item.financiero_monto
                             : item.financiero_programado_monto;
                         }
@@ -370,22 +396,24 @@ export default ({ item }) => {
                   </th>
                 </tr>
                 <tr className="curvaS_FinancieroRow">
-                  <th style={{ width: "200px", display: "block" }}>
+                  <th
+                    style={{ width: "200px", display: "block" }}
+                    className="curvaS_tablaCabezera"
+                  >
                     FINANCIERO
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.tipo == "TOTAL" ? (
-                        Redondea(
-                          item.fisico_programado_monto,
-                          ToggleSoles ? 2 : 4
-                        ) + (!ToggleSoles ? "%" : "")
+                        Redondea(item.financiero_monto, ToggleSoles ? 2 : 4) +
+                        (!ToggleSoles ? "%" : "")
                       ) : (
                         <Financiero
                           item={item}
                           UsuarioData={UsuarioData}
                           recargar={recargarData}
                           ToggleSoles={ToggleSoles}
+                          Obra={Obra}
                         />
                       )}
                     </td>
@@ -410,14 +438,20 @@ export default ({ item }) => {
     </div>
   );
 };
-function Programado({ item, UsuarioData, recargar, ToggleSoles }) {
+function Programado({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
   async function update() {
+    var temp = Input;
+    if (!ToggleSoles) {
+      console.log("temp", temp);
+      temp = (temp * Obra.presupuesto_costodirecto) / 100;
+      console.log("temp", temp);
+    }
     const res = await axios.post(`${UrlServer}/putProgramadoCurvaSbyId`, {
       id: item.id,
-      fisico_programado_monto: Input,
+      fisico_programado_monto: temp,
     });
     ToggleEditable();
     recargar();
@@ -454,14 +488,20 @@ function Programado({ item, UsuarioData, recargar, ToggleSoles }) {
     </div>
   );
 }
-function Financiero({ item, UsuarioData, recargar, ToggleSoles }) {
+function Financiero({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
   async function update() {
+    var tempFinanciero = Input;
+    if (!ToggleSoles) {
+      console.log("es porcentaje", tempFinanciero);
+      tempFinanciero = (tempFinanciero * Obra.g_total_presu) / 100;
+      console.log("tempFinanciero", tempFinanciero);
+    }
     const res = await axios.post(`${UrlServer}/putFinancieroCurvaS`, {
       id: item.id,
-      financiero_monto: Input,
+      financiero_monto: tempFinanciero,
       ultimo_editor_idacceso: sessionStorage.getItem("idacceso"),
     });
     ToggleEditable();
@@ -495,14 +535,24 @@ function Financiero({ item, UsuarioData, recargar, ToggleSoles }) {
     </div>
   );
 }
-function FinancieroProgramado({ item, UsuarioData, recargar, ToggleSoles }) {
+function FinancieroProgramado({
+  item,
+  UsuarioData,
+  recargar,
+  ToggleSoles,
+  Obra,
+}) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
   async function update() {
+    var tempFinanciero = Input;
+    if (!ToggleSoles) {
+      tempFinanciero = (tempFinanciero * Obra.g_total_presu) / 100;
+    }
     const res = await axios.post(`${UrlServer}/putFinancieroProgramadoCurvaS`, {
       id: item.id,
-      financiero_programado_monto: Input,
+      financiero_programado_monto: tempFinanciero,
       ultimo_editor_idacceso: sessionStorage.getItem("idacceso"),
     });
     ToggleEditable();

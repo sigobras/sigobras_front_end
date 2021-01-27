@@ -447,7 +447,7 @@ export default ({ recargar }) => {
                     <ModalInformacionObras id_ficha={item.id_ficha} />
                   </div>
                   <div className="d-flex">
-                    <Curva_S item={item} />
+                    <Curva_S Obra={item} />
                     <Obras_labels_edicion
                       id_ficha={item.id_ficha}
                       recargarObraLabels={recargarObraLabels}
