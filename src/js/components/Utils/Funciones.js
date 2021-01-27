@@ -6,7 +6,7 @@ function Redondea(x, decimales = 2) {
   } else if (x == 0 || isNaN(x)) {
     return "-";
   }
-  if (x < 0.01) {
+  if (decimales == 2 && x < 0.01) {
     return "-";
   }
   return Number.parseFloat(x)
@@ -18,6 +18,12 @@ function Redondea1(x) {
     return "0";
   }
   return Number(Number.parseFloat(x).toFixed(2));
+}
+function RedondeaDecimales(x, decimales) {
+  if (x == null) {
+    return "0";
+  }
+  return Number(Number.parseFloat(x).toFixed(decimales));
 }
 
 function Redondea2(x) {
@@ -367,4 +373,5 @@ module.exports = {
   getDaysBetweenDates,
   fechaFormatoMesAnyo,
   stringToDateObject,
+  RedondeaDecimales,
 };

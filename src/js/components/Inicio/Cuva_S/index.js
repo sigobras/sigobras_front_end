@@ -13,11 +13,13 @@ import {
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-import { Redondea, mesesShort } from "../../Utils/Funciones";
+import { Redondea, mesesShort, RedondeaDecimales } from "../../Utils/Funciones";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import FormularioPrincipal from "./FormularioPrincipal";
 import CurvaS_Chart from "./CurvaS_Chart";
 import CurvaS_Cabezera from "./CurvaS_Cabecera";
+
+import "./curva_s.css";
 
 export default ({ item }) => {
   // refs
@@ -28,9 +30,14 @@ export default ({ item }) => {
     if (!ModalPrincipal) {
       fetchCurvaSAnyos();
       fetchUsuarioData();
-      fetchCurvaSdata();
+      if (CurvaSAnyoSeleccionado != 0) fetchCurvaSdata();
     }
     setModalPrincipal(!ModalPrincipal);
+  }
+  //toggle soles
+  const [ToggleSoles, setToggleSoles] = useState(false);
+  function onChangeToggleSoles() {
+    setToggleSoles(!ToggleSoles);
   }
   //curva s data
   const [CurvaSAnyos, setCurvaSAnyos] = useState([]);
@@ -48,21 +55,29 @@ export default ({ item }) => {
       id_ficha: item.id_ficha,
       anyo: CurvaSAnyoSeleccionado,
     });
-    console.log("res", res);
     const res2 = await axios.post(`${UrlServer}/getDataCurvaS`, {
       id_ficha: item.id_ficha,
       anyo: CurvaSAnyoSeleccionado,
     });
-    console.log("res2", res2);
-    setCurvaSdata(res.data.concat(res2.data));
-    console.log("CurvaSdata", res.data.concat(res2.data));
+    var dataTotal = res.data.concat(res2.data);
+    if (!ToggleSoles) {
+      console.log("item", item);
+      for (let i = 0; i < dataTotal.length; i++) {
+        const element = dataTotal[i];
+        element.fisico_monto =
+          (element.fisico_monto / item.presupuesto_costodirecto) * 100;
+        element.fisico_programado_monto =
+          (element.fisico_programado_monto / item.presupuesto_costodirecto) *
+          100;
+        element.financiero_monto =
+          (element.financiero_monto / item.g_total_presu) * 100;
+        element.financiero_programado_monto =
+          (element.financiero_programado_monto / item.g_total_presu) * 100;
+      }
+    }
+    console.log("dataTotal", dataTotal);
+    setCurvaSdata(dataTotal);
   };
-
-  //toggle soles
-  const [ToggleSoles, setToggleSoles] = useState(false);
-  function onChangeToggleSoles() {
-    setToggleSoles(!ToggleSoles);
-  }
 
   //UsuarioData
   const [UsuarioData, setUsuarioData] = useState({});
@@ -92,7 +107,7 @@ export default ({ item }) => {
     if (CurvaSAnyoSeleccionado != 0) {
       fetchCurvaSdata();
     }
-  }, [CurvaSAnyoSeleccionado]);
+  }, [CurvaSAnyoSeleccionado, ToggleSoles]);
   return (
     <div>
       <button
@@ -112,12 +127,13 @@ export default ({ item }) => {
               anyo={CurvaSAnyoSeleccionado}
               ref={cabeceraRef}
             />
+            &nbsp;&nbsp;
             <div>
               <FormularioPrincipal
                 id_ficha={item.id_ficha}
                 recargarData={recargarData}
               />
-              <div>
+              <div style={{ margin: "1px" }}>
                 <select
                   onChange={(e) => setCurvaSAnyoSeleccionado(e.target.value)}
                 >
@@ -126,31 +142,32 @@ export default ({ item }) => {
                   ))}
                 </select>
               </div>
-              {/* {!ToggleSoles ? (
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ height: "32px" }}
-                onClick={() => onChangeToggleSoles()}
-              >
-                S/.
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ height: "32px" }}
-                onClick={() => onChangeToggleSoles()}
-              >
-                %
-              </button>
-            )} */}
+              {ToggleSoles ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ height: "26px" }}
+                  onClick={() => onChangeToggleSoles()}
+                >
+                  S/.
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ height: "26px" }}
+                  onClick={() => onChangeToggleSoles()}
+                >
+                  %
+                </button>
+              )}
             </div>
           </div>
           <CurvaS_Chart
             key={JSON.stringify(CurvaSdata)}
             CurvaSdata={CurvaSdata}
             codigo={item.codigo}
+            ToggleSoles={ToggleSoles}
           />
           <div
             style={{
@@ -190,12 +207,11 @@ export default ({ item }) => {
                 </tr>
               </thead>
               <tbody>
-                <tr style={{ color: "#666666" }}>
+                <tr className="curvaS_fisicoRow">
                   <th
                     style={{
                       width: "200px",
                       display: "block",
-                      color: "#666666",
                     }}
                   >
                     PROGRAMADO EJECUTADO
@@ -206,6 +222,7 @@ export default ({ item }) => {
                         item={item}
                         UsuarioData={UsuarioData}
                         recargar={recargarData}
+                        ToggleSoles={ToggleSoles}
                       />
                     </td>
                   ))}
@@ -221,15 +238,18 @@ export default ({ item }) => {
                   </th>
                 </tr>
 
-                <tr>
+                <tr className="curvaS_fisicoRow">
                   <th style={{ width: "200px", display: "block" }}>
                     PROGRAMADO EJECUTADO REAL
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.fisico_monto
-                        ? Redondea(item.fisico_monto)
-                        : Redondea(item.fisico_programado_monto)}
+                        ? Redondea(item.fisico_monto, ToggleSoles ? 2 : 4)
+                        : Redondea(
+                            item.fisico_programado_monto,
+                            ToggleSoles ? 2 : 4
+                          )}
                     </td>
                   ))}
                   <th>
@@ -241,16 +261,19 @@ export default ({ item }) => {
                             : item.fisico_programado_monto;
                         }
                         return acc;
-                      }, 0)
+                      }, 0),
+                      4
                     )}
                   </th>
                 </tr>
-                <tr>
+                <tr className="curvaS_fisicoRow">
                   <th style={{ width: "200px", display: "block" }}>
                     EJECUTADO
                   </th>
                   {CurvaSdata.map((item, i) => (
-                    <td key={i}>{Redondea(item.fisico_monto)}</td>
+                    <td key={i}>
+                      {Redondea(item.fisico_monto, ToggleSoles ? 2 : 4)}
+                    </td>
                   ))}
                   <th>
                     {Redondea(
@@ -259,16 +282,16 @@ export default ({ item }) => {
                           acc += item.fisico_monto;
                         }
                         return acc;
-                      }, 0)
+                      }, 0),
+                      4
                     )}
                   </th>
                 </tr>
-                <tr style={{ color: "#666666" }}>
+                <tr className="curvaS_FinancieroRow">
                   <th
                     style={{
                       width: "200px",
                       display: "block",
-                      color: "#666666",
                     }}
                   >
                     PROGRAMADO FINANCIERO
@@ -276,12 +299,16 @@ export default ({ item }) => {
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.tipo == "TOTAL" ? (
-                        Redondea(item.fisico_programado_monto)
+                        Redondea(
+                          item.fisico_programado_monto,
+                          ToggleSoles ? 2 : 4
+                        )
                       ) : (
                         <FinancieroProgramado
                           item={item}
                           UsuarioData={UsuarioData}
                           recargar={recargarData}
+                          ToggleSoles={ToggleSoles}
                         />
                       )}
                     </td>
@@ -293,19 +320,23 @@ export default ({ item }) => {
                           acc += item.financiero_programado_monto;
                         }
                         return acc;
-                      }, 0)
+                      }, 0),
+                      4
                     )}
                   </th>
                 </tr>
-                <tr>
+                <tr className="curvaS_FinancieroRow">
                   <th style={{ width: "200px", display: "block" }}>
                     PROGRAMADO FINANCIERO REAL
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.financiero_monto
-                        ? Redondea(item.financiero_monto)
-                        : Redondea(item.financiero_programado_monto)}
+                        ? Redondea(item.financiero_monto, ToggleSoles ? 2 : 4)
+                        : Redondea(
+                            item.financiero_programado_monto,
+                            ToggleSoles ? 2 : 4
+                          )}
                     </td>
                   ))}
                   <th>
@@ -317,23 +348,28 @@ export default ({ item }) => {
                             : item.financiero_programado_monto;
                         }
                         return acc;
-                      }, 0)
+                      }, 0),
+                      4
                     )}
                   </th>
                 </tr>
-                <tr>
+                <tr className="curvaS_FinancieroRow">
                   <th style={{ width: "200px", display: "block" }}>
                     FINANCIERO
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
                       {item.tipo == "TOTAL" ? (
-                        Redondea(item.fisico_programado_monto)
+                        Redondea(
+                          item.fisico_programado_monto,
+                          ToggleSoles ? 2 : 4
+                        )
                       ) : (
                         <Financiero
                           item={item}
                           UsuarioData={UsuarioData}
                           recargar={recargarData}
+                          ToggleSoles={ToggleSoles}
                         />
                       )}
                     </td>
@@ -345,7 +381,8 @@ export default ({ item }) => {
                           acc += item.financiero_monto;
                         }
                         return acc;
-                      }, 0)
+                      }, 0),
+                      4
                     )}
                   </th>
                 </tr>
@@ -357,7 +394,7 @@ export default ({ item }) => {
     </div>
   );
 };
-function Programado({ item, UsuarioData, recargar }) {
+function Programado({ item, UsuarioData, recargar, ToggleSoles }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
@@ -372,7 +409,10 @@ function Programado({ item, UsuarioData, recargar }) {
   return Editable ? (
     <div className="d-flex">
       <DebounceInput
-        value={item.fisico_programado_monto}
+        value={RedondeaDecimales(
+          item.fisico_programado_monto,
+          ToggleSoles ? 2 : 4
+        )}
         debounceTimeout={300}
         onChange={(e) => setInput(e.target.value)}
         type="number"
@@ -386,7 +426,7 @@ function Programado({ item, UsuarioData, recargar }) {
     </div>
   ) : (
     <div className="d-flex">
-      {Redondea(item.fisico_programado_monto)}
+      {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4)}
       {item.fisico_monto == 0 &&
         (UsuarioData.cargo_nombre == "RESIDENTE" ||
           UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
@@ -397,7 +437,7 @@ function Programado({ item, UsuarioData, recargar }) {
     </div>
   );
 }
-function Financiero({ item, UsuarioData, recargar }) {
+function Financiero({ item, UsuarioData, recargar, ToggleSoles }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
@@ -413,7 +453,7 @@ function Financiero({ item, UsuarioData, recargar }) {
   return Editable ? (
     <div className="d-flex">
       <DebounceInput
-        value={item.financiero_monto}
+        value={RedondeaDecimales(item.financiero_monto, ToggleSoles ? 2 : 4)}
         debounceTimeout={300}
         onChange={(e) => setInput(e.target.value)}
         type="number"
@@ -427,7 +467,7 @@ function Financiero({ item, UsuarioData, recargar }) {
     </div>
   ) : (
     <div className="d-flex">
-      {Redondea(item.financiero_monto)}
+      {Redondea(item.financiero_monto, ToggleSoles ? 2 : 4)}
       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
         UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
         <div onClick={() => ToggleEditable()}>
@@ -437,7 +477,7 @@ function Financiero({ item, UsuarioData, recargar }) {
     </div>
   );
 }
-function FinancieroProgramado({ item, UsuarioData, recargar }) {
+function FinancieroProgramado({ item, UsuarioData, recargar, ToggleSoles }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
@@ -453,7 +493,10 @@ function FinancieroProgramado({ item, UsuarioData, recargar }) {
   return Editable ? (
     <div className="d-flex">
       <DebounceInput
-        value={item.financiero_programado_monto}
+        value={RedondeaDecimales(
+          item.financiero_programado_monto,
+          ToggleSoles ? 2 : 4
+        )}
         debounceTimeout={300}
         onChange={(e) => setInput(e.target.value)}
         type="number"
@@ -467,7 +510,7 @@ function FinancieroProgramado({ item, UsuarioData, recargar }) {
     </div>
   ) : (
     <div className="d-flex">
-      {Redondea(item.financiero_programado_monto)}
+      {Redondea(item.financiero_programado_monto, ToggleSoles ? 2 : 4)}
       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
         UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
         <div onClick={() => ToggleEditable()}>

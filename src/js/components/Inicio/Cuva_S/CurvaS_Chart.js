@@ -4,7 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 
 import { Redondea, mesesShort } from "../../Utils/Funciones";
 
-export default ({ CurvaSdata, codigo }) => {
+export default ({ CurvaSdata, codigo, ToggleSoles }) => {
   function redondeo(num) {
     return Math.round((num + Number.EPSILON) * 100) / 100;
   }
@@ -119,7 +119,6 @@ export default ({ CurvaSdata, codigo }) => {
         },
       ],
     };
-    console.log("dataChart", dataChart);
     setDataChart(dataChart);
   }
   let options = {
@@ -149,7 +148,7 @@ export default ({ CurvaSdata, codigo }) => {
     },
     tooltip: {
       split: true,
-      valueSuffix: " Soles",
+      valueSuffix: ToggleSoles ? " Soles" : " %",
     },
     xAxis: {
       categories: DataChart.labels,
@@ -183,14 +182,21 @@ export default ({ CurvaSdata, codigo }) => {
           style: {
             textOutline: false,
           },
+          formatter: function () {
+            return this.y + (!ToggleSoles ? "%" : "");
+          },
         },
       },
     },
     series: DataChart.datasets,
   };
   return (
-    <div>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+    <div style={{ height: "350px" }}>
+      <HighchartsReact
+        containerProps={{ style: { height: "100%" } }}
+        highcharts={Highcharts}
+        options={options}
+      />
     </div>
   );
 };

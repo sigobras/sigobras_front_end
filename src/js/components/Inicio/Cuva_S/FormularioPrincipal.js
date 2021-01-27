@@ -91,7 +91,6 @@ export default ({ id_ficha, recargarData }) => {
     setMesesModal(Dataclonado);
   }
   async function saveModalData() {
-    console.log("MesesModal", MesesModal);
     if (FormularioOpcion == "nuevo") {
       const request2 = await axios.post(
         `${UrlServer}/postDataCurvaS`,
@@ -122,7 +121,6 @@ export default ({ id_ficha, recargarData }) => {
     const res = await axios.post(`${UrlServer}/getPimData`, {
       id_ficha: id_ficha,
     });
-    console.log("res", res.data);
     setPinData(res.data);
   }
   function addPinData() {
@@ -150,9 +148,8 @@ export default ({ id_ficha, recargarData }) => {
   return (
     <div>
       <div onClick={toggle} style={{ color: "#676767" }}>
-        <MdSettings style={{ cursor: "pointer" }} size={32} />
+        <MdSettings style={{ cursor: "pointer" }} size={26} />
       </div>
-
       <Modal isOpen={modal} toggle={toggle}>
         <ModalBody>
           {RegistroNoUbicados.registros > 0 ? (
