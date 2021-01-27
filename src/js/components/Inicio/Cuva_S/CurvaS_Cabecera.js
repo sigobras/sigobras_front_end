@@ -49,7 +49,6 @@ export default forwardRef(({ item, anyo }, ref) => {
       anyo,
     });
     setCurvaS_Acumulados(res.data);
-    console.log("acumulados", res.data);
   }
   //acumulado anyo especifico
   const [
@@ -65,7 +64,6 @@ export default forwardRef(({ item, anyo }, ref) => {
       }
     );
     setCurvaS_AcumuladosAnyoEspecifico(res.data);
-    console.log("acumulados especifico", res.data);
   }
   //pim
   const [PimMonto, setPimMonto] = useState(0);
@@ -91,7 +89,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="info"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "0px 7px",
             textAlign: "center",
           }}
         >
@@ -104,7 +102,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="info"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "0px 7px",
             textAlign: "center",
           }}
         >
@@ -124,7 +122,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="info"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "0px 7px",
             textAlign: "center",
           }}
         >
@@ -137,7 +135,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="info"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "0px 7px",
             textAlign: "center",
           }}
         >
@@ -157,7 +155,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="warning"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "0px 7px",
             textAlign: "center",
           }}
         >
@@ -170,7 +168,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="warning"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "0px 7px",
             textAlign: "center",
           }}
         >
@@ -189,7 +187,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="success"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "1px 7px",
             textAlign: "center",
           }}
         >
@@ -203,7 +201,7 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="success"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "1px 7px",
             textAlign: "center",
           }}
         >
@@ -220,20 +218,18 @@ export default forwardRef(({ item, anyo }, ref) => {
           color="success"
           style={{
             marginBottom: "2px",
-            padding: "3px 7px",
+            padding: "1px 7px",
             textAlign: "center",
           }}
         >
-          <div className="d-flex">
-            <div style={{ fontSize: "13px" }}>SALDO PIM</div>
-            &nbsp;
-            <div style={{ fontWeight: 700 }}>
-              S/.
-              {Redondea(
-                PimMonto - CurvaS_AcumuladosAnyoEspecifico.financiero_monto
-              )}
-            </div>
-          </div>
+          <span style={{ fontSize: "13px" }}>SALDO PIM</span>
+          &nbsp;
+          <span style={{ fontWeight: 700 }}>
+            S/.
+            {Redondea(
+              PimMonto - CurvaS_AcumuladosAnyoEspecifico.financiero_monto
+            )}
+          </span>
         </Alert>
       </div>
     </div>
