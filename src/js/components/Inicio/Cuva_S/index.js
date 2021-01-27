@@ -22,6 +22,17 @@ import CurvaS_Cabezera from "./CurvaS_Cabecera";
 import "./curva_s.css";
 
 export default ({ item }) => {
+  //functions
+  function siEsMesActual(anyo, mes) {
+    var anyoActual = new Date().getFullYear();
+    var mesActual = new Date().getMonth() + 1;
+    // console.log("actual", anyoActual, mesActual);
+    // console.log("llegado", anyo, mes);
+    // console.log("calculo", anyo == anyoActual && mes == mesActual);
+    if (anyo == anyoActual && mes == mesActual) return true;
+    return false;
+  }
+
   // refs
   const cabeceraRef = useRef(null);
   //modal
@@ -184,6 +195,8 @@ export default ({ item }) => {
                       style={
                         item.tipo == "TOTAL"
                           ? { backgroundColor: "#3a3b3c" }
+                          : siEsMesActual(item.anyo, item.mes)
+                          ? { backgroundColor: "#004080" }
                           : {}
                       }
                     >
@@ -236,7 +249,7 @@ export default ({ item }) => {
                         }
                         return acc;
                       }, 0)
-                    )}
+                    ) + (!ToggleSoles ? "%" : "")}
                   </th>
                 </tr>
 
@@ -246,12 +259,12 @@ export default ({ item }) => {
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
-                      {item.fisico_monto
+                      {(item.fisico_monto
                         ? Redondea(item.fisico_monto, ToggleSoles ? 2 : 4)
                         : Redondea(
                             item.fisico_programado_monto,
                             ToggleSoles ? 2 : 4
-                          )}
+                          )) + (!ToggleSoles ? "%" : "")}
                     </td>
                   ))}
                   <th>
@@ -265,7 +278,7 @@ export default ({ item }) => {
                         return acc;
                       }, 0),
                       4
-                    )}
+                    ) + (!ToggleSoles ? "%" : "")}
                   </th>
                 </tr>
                 <tr className="curvaS_fisicoRow">
@@ -274,7 +287,8 @@ export default ({ item }) => {
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
-                      {Redondea(item.fisico_monto, ToggleSoles ? 2 : 4)}
+                      {Redondea(item.fisico_monto, ToggleSoles ? 2 : 4) +
+                        (!ToggleSoles ? "%" : "")}
                     </td>
                   ))}
                   <th>
@@ -286,7 +300,7 @@ export default ({ item }) => {
                         return acc;
                       }, 0),
                       4
-                    )}
+                    ) + (!ToggleSoles ? "%" : "")}
                   </th>
                 </tr>
                 <tr className="curvaS_FinancieroRow">
@@ -304,7 +318,7 @@ export default ({ item }) => {
                         Redondea(
                           item.fisico_programado_monto,
                           ToggleSoles ? 2 : 4
-                        )
+                        ) + (!ToggleSoles ? "%" : "")
                       ) : (
                         <FinancieroProgramado
                           item={item}
@@ -324,7 +338,7 @@ export default ({ item }) => {
                         return acc;
                       }, 0),
                       4
-                    )}
+                    ) + (!ToggleSoles ? "%" : "")}
                   </th>
                 </tr>
                 <tr className="curvaS_FinancieroRow">
@@ -333,12 +347,12 @@ export default ({ item }) => {
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
-                      {item.financiero_monto
+                      {(item.financiero_monto
                         ? Redondea(item.financiero_monto, ToggleSoles ? 2 : 4)
                         : Redondea(
                             item.financiero_programado_monto,
                             ToggleSoles ? 2 : 4
-                          )}
+                          )) + (!ToggleSoles ? "%" : "")}
                     </td>
                   ))}
                   <th>
@@ -352,7 +366,7 @@ export default ({ item }) => {
                         return acc;
                       }, 0),
                       4
-                    )}
+                    ) + (!ToggleSoles ? "%" : "")}
                   </th>
                 </tr>
                 <tr className="curvaS_FinancieroRow">
@@ -365,7 +379,7 @@ export default ({ item }) => {
                         Redondea(
                           item.fisico_programado_monto,
                           ToggleSoles ? 2 : 4
-                        )
+                        ) + (!ToggleSoles ? "%" : "")
                       ) : (
                         <Financiero
                           item={item}
@@ -385,7 +399,7 @@ export default ({ item }) => {
                         return acc;
                       }, 0),
                       4
-                    )}
+                    ) + (!ToggleSoles ? "%" : "")}
                   </th>
                 </tr>
               </tbody>
@@ -428,7 +442,8 @@ function Programado({ item, UsuarioData, recargar, ToggleSoles }) {
     </div>
   ) : (
     <div className="d-flex">
-      {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4)}
+      {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4) +
+        (!ToggleSoles ? "%" : "")}
       {item.fisico_monto == 0 &&
         (UsuarioData.cargo_nombre == "RESIDENTE" ||
           UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
@@ -469,7 +484,8 @@ function Financiero({ item, UsuarioData, recargar, ToggleSoles }) {
     </div>
   ) : (
     <div className="d-flex">
-      {Redondea(item.financiero_monto, ToggleSoles ? 2 : 4)}
+      {Redondea(item.financiero_monto, ToggleSoles ? 2 : 4) +
+        (!ToggleSoles ? "%" : "")}
       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
         UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
         <div onClick={() => ToggleEditable()}>
@@ -512,7 +528,8 @@ function FinancieroProgramado({ item, UsuarioData, recargar, ToggleSoles }) {
     </div>
   ) : (
     <div className="d-flex">
-      {Redondea(item.financiero_programado_monto, ToggleSoles ? 2 : 4)}
+      {Redondea(item.financiero_programado_monto, ToggleSoles ? 2 : 4) +
+        (!ToggleSoles ? "%" : "")}
       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
         UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
         <div onClick={() => ToggleEditable()}>
