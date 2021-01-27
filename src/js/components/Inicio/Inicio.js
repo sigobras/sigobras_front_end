@@ -17,7 +17,7 @@ import { Button, Input, Tooltip } from "reactstrap";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import FinancieroBarraPorcentaje from "./FinancieroBarraPorcentaje";
 import FisicoBarraPorcentaje from "./FisicoBarraPorcentaje";
-import ModalListaPersonal from "./ModalListaPersonal";
+import ModalListaPersonal from "./ListaPersonal";
 import ModalInformacionObras from "./InformacionObras/InformacionObra";
 import Curva_S from "./Cuva_S";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
