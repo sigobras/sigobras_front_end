@@ -97,8 +97,8 @@ export default () => {
     setDataMenus(res.data);
   }
   const [DataDelta, setDataDelta] = useState({
-    ejecutado_monto: 1,
-    programado_monto: 1,
+    fisico_monto: 1,
+    fisico_programado_monto: 1,
   });
   async function fetchDataDelta(id_ficha) {
     var res = await axios.post(`${UrlServer}/getUltimoEjecutadoCurvaS`, {
@@ -315,8 +315,8 @@ export default () => {
                           responsive={true}
                           progress={
                             Redondea1(
-                              (DataDelta.ejecutado_monto /
-                                DataDelta.programado_monto) *
+                              (DataDelta.fisico_monto /
+                                DataDelta.fisico_programado_monto) *
                                 100
                             ) || 0
                           }
@@ -348,7 +348,7 @@ export default () => {
                         background: "orange",
                       }}
                     >
-                      PROGRAMADO {Redondea(DataDelta.programado_monto)}
+                      PROGRAMADO {Redondea(DataDelta.fisico_programado_monto)}
                     </div>
                     <div
                       className="PresuObra"
@@ -357,7 +357,7 @@ export default () => {
                       }}
                     >
                       {" "}
-                      EJECUTADO {Redondea(DataDelta.ejecutado_monto)}
+                      EJECUTADO {Redondea(DataDelta.fisico_monto)}
                     </div>
                   </div>
                 </div>
