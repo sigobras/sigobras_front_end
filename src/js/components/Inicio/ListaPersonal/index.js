@@ -27,6 +27,7 @@ export default ({ id_ficha, codigo_obra }) => {
     setModalPersonal(!ModalPersonal);
     if (!ModalPersonal) {
       fetchCargosPersonal();
+      fetchUsuarioData();
     }
   }
   //getcargos
@@ -110,6 +111,14 @@ export default ({ id_ficha, codigo_obra }) => {
     fetchUsuariosPersonal();
     fetchUsuariosPersonalInactivos();
   }
+  //UsuarioData
+  const [UsuarioData, setUsuarioData] = useState({});
+  async function fetchUsuarioData() {
+    const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+      id_acceso: sessionStorage.getItem("idacceso"),
+    });
+    setUsuarioData(request.data);
+  }
 
   useEffect(() => {
     recargar();
@@ -154,8 +163,10 @@ export default ({ id_ficha, codigo_obra }) => {
                   </NavLink>
                 </NavItem>,
               ]}
-
-              <FormularioPersonal id_ficha={id_ficha} recargar={recargar} />
+              {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                <FormularioPersonal id_ficha={id_ficha} recargar={recargar} />
+              )}
             </Nav>
 
             {IdCargoSeleccionado == 0 ? (
@@ -216,14 +227,22 @@ export default ({ id_ficha, codigo_obra }) => {
                         <td>{item.dni}</td>
                         <td>{item.email}</td>
                         <td>
-                          <HabilitarButton item={item} recargar={recargar} />
+                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                            UsuarioData.cargo_nombre ==
+                              "EDITOR DE PERSONAL") && (
+                            <HabilitarButton item={item} recargar={recargar} />
+                          )}
                         </td>
                         <td>
-                          <FormularioPersonal
-                            id_ficha={id_ficha}
-                            dataPersonal={item}
-                            recargar={recargar}
-                          />
+                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                            UsuarioData.cargo_nombre ==
+                              "EDITOR DE PERSONAL") && (
+                            <FormularioPersonal
+                              id_ficha={id_ficha}
+                              dataPersonal={item}
+                              recargar={recargar}
+                            />
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -434,7 +453,14 @@ export default ({ id_ficha, codigo_obra }) => {
                           <td>{item.dni}</td>
                           <td>{item.email}</td>
                           <td>
-                            <HabilitarButton item={item} recargar={recargar} />
+                            {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                              UsuarioData.cargo_nombre ==
+                                "EDITOR DE PERSONAL") && (
+                              <HabilitarButton
+                                item={item}
+                                recargar={recargar}
+                              />
+                            )}
                           </td>
                         </tr>
                       ))}
