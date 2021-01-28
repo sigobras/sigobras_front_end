@@ -108,6 +108,7 @@ export default ({ Obra }) => {
     });
     setUsuarioData(request.data);
   }
+  //recargar
   function recargarData() {
     fetchCurvaSdata();
     cabeceraRef.current.recargar();
