@@ -49,6 +49,7 @@ export default ({ id_ficha, codigo_obra }) => {
         id_ficha: id_ficha,
         id_cargo: IdCargoSeleccionado,
         habilitado: true,
+        cargos_tipo_id: 3,
       },
     });
     setUsuariosPersonal(res.data);
@@ -94,6 +95,7 @@ export default ({ id_ficha, codigo_obra }) => {
         id_ficha: id_ficha,
         id_cargo: IdCargoSeleccionado,
         habilitado: false,
+        cargos_tipo_id: 3,
       },
     });
     setUsuariosPersonalInactivos(request.data);
@@ -167,13 +169,12 @@ export default ({ id_ficha, codigo_obra }) => {
                   <thead>
                     <tr>
                       <th></th>
-                      <th>PERSONAL</th>
-                      <th></th>
-                      <th></th>
+                      <th colSpan="3">PERSONAL</th>
                       <th>CARGO</th>
                       <th>CELULAR</th>
                       <th>DNI</th>
                       <th>EMAIL</th>
+                      <th colSpan="2">OPCIONES</th>
                     </tr>
                   </thead>
                   <tbody>
