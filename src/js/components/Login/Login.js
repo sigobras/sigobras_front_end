@@ -60,92 +60,90 @@ export default () => {
   return (
     <Router>
       <nav className="navbar navbar-expand-lg  bg-dark">
-        <div className="collapse navbar-collapse" id="navbarNavDropdown">
-          <a className="navbar-brand" href="/">
-            <img src={LogoSigobras} alt="login sigobras " width="50px" />
-            <span className="textSigobras h5 ml-2">SIGOBRAS</span>
-          </a>
-          <ul className="nav navbar-nav">
-            <li className="nav-item">
-              <Link to="/ResumenObras" className="nav-link">
-                {" "}
-                Resumen Obras
-              </Link>
-            </li>
-          </ul>
-          <ul className="nav navbar-nav flex-row justify-content-between ml-auto">
-            <li>
-              <Button id="contactos" outline color="warning" className="mr-2">
-                Contacténos <TiArrowSortedDown />
-              </Button>
-              <UncontrolledPopover placement="bottom" target="contactos">
-                <PopoverHeader>Contácto</PopoverHeader>
-                <PopoverBody>
-                  <p>
-                    <b>Celular N° : </b>
-                    <br />
-                    <span>951 396 279</span>
-                  </p>
-                  <p>
-                    <b>Email :</b>
-                    <br /> <span> manager@sigobras.com</span>
-                  </p>
-                </PopoverBody>
-              </UncontrolledPopover>
-            </li>
-            <li>
-              <Button id="login" outline color="primary">
-                Ingresar <TiArrowSortedDown />
-              </Button>
-              <UncontrolledPopover placement="bottom" target="login">
-                <PopoverHeader>Acceda a SIGOBRAS </PopoverHeader>
-                <PopoverBody>
-                  <form onSubmit={handleSubmit} autoComplete="off">
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="usuario"
-                        placeholder="Usuario"
-                        onChange={handleChange}
-                        required
-                        autoFocus
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input
-                        type="password"
-                        className="form-control"
-                        name="password"
-                        placeholder="Contraseña"
-                        required
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <button
-                        type="submit"
-                        disabled={
-                          !(
-                            UsuarioDatos.usuario.length > 0 &&
-                            UsuarioDatos.password.length > 0
-                          )
-                        }
-                        className="btn btn-primary btn-lg btn-block"
-                      >
-                        {isLoading ? (
-                          <Spinner color="warnnig" type="grow" />
-                        ) : (
-                          "INGRESAR"
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </PopoverBody>
-              </UncontrolledPopover>
-            </li>
-          </ul>
-        </div>
+        <a className="navbar-brand" href="/">
+          <img src={LogoSigobras} alt="login sigobras " width="50px" />
+          <span className="textSigobras h5 ml-2">SIGOBRAS</span>
+        </a>
+        <ul className="nav navbar-nav">
+          <li className="nav-item">
+            <Link to="/ResumenObras" className="nav-link">
+              {" "}
+              Resumen Obras
+            </Link>
+          </li>
+        </ul>
+        <ul className="nav navbar-nav flex-row justify-content-between ml-auto">
+          <li>
+            <Button id="contactos" outline color="warning" className="mr-2">
+              Contacténos <TiArrowSortedDown />
+            </Button>
+            <UncontrolledPopover placement="bottom" target="contactos">
+              <PopoverHeader>Contácto</PopoverHeader>
+              <PopoverBody>
+                <p>
+                  <b>Celular N° : </b>
+                  <br />
+                  <span>951 396 279</span>
+                </p>
+                <p>
+                  <b>Email :</b>
+                  <br /> <span> manager@sigobras.com</span>
+                </p>
+              </PopoverBody>
+            </UncontrolledPopover>
+          </li>
+          <li>
+            <Button id="login" outline color="primary">
+              Ingresar <TiArrowSortedDown />
+            </Button>
+            <UncontrolledPopover placement="bottom" target="login">
+              <PopoverHeader>Acceda a SIGOBRAS </PopoverHeader>
+              <PopoverBody>
+                <form onSubmit={handleSubmit} autoComplete="off">
+                  <div className="form-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="usuario"
+                      placeholder="Usuario"
+                      onChange={handleChange}
+                      required
+                      autoFocus
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      className="form-control"
+                      name="password"
+                      placeholder="Contraseña"
+                      required
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <button
+                      type="submit"
+                      disabled={
+                        !(
+                          UsuarioDatos.usuario.length > 0 &&
+                          UsuarioDatos.password.length > 0
+                        )
+                      }
+                      className="btn btn-primary btn-lg btn-block"
+                    >
+                      {isLoading ? (
+                        <Spinner color="warnnig" type="grow" />
+                      ) : (
+                        "INGRESAR"
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </PopoverBody>
+            </UncontrolledPopover>
+          </li>
+        </ul>
       </nav>
 
       <div className="container-fluid">
