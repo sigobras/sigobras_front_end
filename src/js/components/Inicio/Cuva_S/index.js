@@ -151,10 +151,14 @@ export default ({ Obra }) => {
             />
             &nbsp;&nbsp;
             <div>
-              <FormularioPrincipal
-                id_ficha={Obra.id_ficha}
-                recargarData={recargarData}
-              />
+              {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+                <FormularioPrincipal
+                  id_ficha={Obra.id_ficha}
+                  recargarData={recargarData}
+                />
+              )}
+
               <div style={{ margin: "1px" }}>
                 <select
                   onChange={(e) => setCurvaSAnyoSeleccionado(e.target.value)}

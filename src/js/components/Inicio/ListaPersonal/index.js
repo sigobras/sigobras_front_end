@@ -133,7 +133,7 @@ export default ({ id_ficha, codigo_obra }) => {
         <FaUserFriends />
       </button>
       <Modal isOpen={ModalPersonal} toggle={toggleModalPersonal}>
-        <ModalHeader>PERSONAL TECNICO DE OBRA</ModalHeader>
+        <ModalHeader>{codigo_obra} - PERSONAL TECNICO DE OBRA</ModalHeader>
         <ModalBody>
           <div className="card">
             <Nav tabs>
