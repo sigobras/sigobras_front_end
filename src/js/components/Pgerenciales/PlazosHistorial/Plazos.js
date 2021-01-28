@@ -229,6 +229,26 @@ export default () => {
             </td>
             <td colSpan="3"></td>
           </tr>
+          <tr
+            style={{
+              fontWeight: 700,
+            }}
+          >
+            <td
+              colSpan="8"
+              style={{
+                textAlign: "right",
+              }}
+            >
+              PLAZO DE EJECUCION TOTAL
+            </td>
+            <td>
+              {(() => {
+                return PlazosPadres.reduce((acu, item) => acu + item.n_dias, 0);
+              })()}
+            </td>
+            <td colSpan="3"></td>
+          </tr>
         </tbody>
       </Table>
     </div>
