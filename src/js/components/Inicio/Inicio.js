@@ -5,34 +5,28 @@ import React, {
   useImperativeHandle,
 } from "react";
 import axios from "axios";
-import {
-  FaList,
-  FaEye,
-  FaEyeSlash,
-  FaAngleDown,
-  FaAngleUp,
-} from "react-icons/fa";
+import { FaList, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button, Input, Tooltip } from "reactstrap";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import FinancieroBarraPorcentaje from "./FinancieroBarraPorcentaje";
 import FisicoBarraPorcentaje from "./FisicoBarraPorcentaje";
 import ModalListaPersonal from "./ListaPersonal";
-import ModalInformacionObras from "./InformacionObras/InformacionObra";
 import Curva_S from "./Cuva_S";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
 import Obras_labels_edicion from "./Obras_labels_edicion";
-import ReportGeneralObras from "./ReportGeneralObras";
 import CarouselNavs from "./Carousel/CarouselNavs";
 
 import "../../../css/inicio.css";
 export default ({ recargar }) => {
   //funciones
   useEffect(() => {
-    fetchComunicados();
     fetchProvincias();
     if (!sessionStorage.getItem("provinciaSeleccionada")) {
       setProvinciaSeleccionada(sessionStorage.getItem("provinciaSeleccionada"));
+    }
+    if (!sessionStorage.getItem("provinciaSeleccionada")) {
+      fetchComunicados();
     }
   }, []);
   //comunicados
@@ -145,37 +139,6 @@ export default ({ recargar }) => {
   }
   //obras
   const [Obras, setObras] = useState([]);
-  //sort
-  const [SortBy, setSortBy] = useState("");
-  const [SortByModificador, setSortByModificador] = useState("");
-  function toggleSortByModificador() {
-    if (SortByModificador == "asc") {
-      setSortByModificador("desc");
-    } else {
-      setSortByModificador("asc");
-    }
-  }
-  function setOrderBy(newColum) {
-    if (newColum == SortBy) {
-      toggleSortByModificador();
-    } else {
-      setSortBy(newColum);
-      setSortByModificador("asc");
-    }
-  }
-  function cabezeraOrderBy(textShow, variable) {
-    return (
-      <div onClick={() => setOrderBy(variable)} style={{ cursor: "pointer" }}>
-        <span>{textShow}</span>
-        {SortBy == variable && (
-          <span>
-            {SortByModificador == "asc" ? <FaAngleDown /> : <FaAngleUp />}
-          </span>
-        )}
-      </div>
-    );
-  }
-  //end sort
   async function fetchObras() {
     var res = await axios.get(`${UrlServer}/v1/obras`, {
       params: {
@@ -292,7 +255,6 @@ export default ({ recargar }) => {
             <FaEyeSlash />
           </Button>
         )}
-        <ReportGeneralObras />
       </div>
       {
         <table className="table table-sm">
@@ -444,7 +406,6 @@ export default ({ recargar }) => {
                       id_ficha={item.id_ficha}
                       codigo_obra={item.codigo}
                     />
-                    <ModalInformacionObras id_ficha={item.id_ficha} />
                   </div>
                   <div className="d-flex">
                     <Curva_S Obra={item} />
@@ -848,14 +809,8 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
       setTooltipOpen(id);
     }
   };
-  async function quitarObraLabel(id_label) {
+  async function quitarObraLabel() {
     if (confirm("Esta seguro de quitar esta etiqueta?")) {
-      var res = await axios.delete(`${UrlServer}/v1/obrasLabels/obras`, {
-        data: {
-          id_ficha,
-          id_label,
-        },
-      });
       fetchLabels(id_ficha);
     }
   }
@@ -894,7 +849,7 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
           }}
           id={"Tooltip-" + item.id + "-" + id_ficha}
           onClick={() => {
-            quitarObraLabel(item.id);
+            quitarObraLabel();
           }}
         >
           {item.nombre}

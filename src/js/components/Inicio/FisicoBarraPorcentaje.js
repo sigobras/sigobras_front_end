@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { UrlServer } from "../Utils/ServerUrlConfig";
-import { Redondea, Redondea1 } from "../Utils/Funciones";
-import { Button, Input, Tooltip } from "reactstrap";
+import React, { useState } from "react";
+import { Tooltip } from "reactstrap";
 import Circle from "react-circle";
+
+import { Redondea, Redondea1 } from "../Utils/Funciones";
 export default ({ tipo, id_ficha, avance, total }) => {
-  const [FisicoAvance, setFisicoAvance] = useState({
+  const [RandNumber, setRandNumber] = useState(Math.floor(Math.random() * 10));
+  const [FisicoAvance] = useState({
     fisico_avance_porcentaje: (avance / total) * 100,
   });
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -74,7 +74,7 @@ export default ({ tipo, id_ficha, avance, total }) => {
                 display: "flex",
                 justifyContent: "center",
               }}
-              id={"FisicoBarraPorcentaje-" + id_ficha}
+              id={"FisicoBarraPorcentaje-" + id_ficha + RandNumber}
             >
               Físico
               <div
@@ -88,7 +88,7 @@ export default ({ tipo, id_ficha, avance, total }) => {
             <Tooltip
               placement={"top"}
               isOpen={tooltipOpen}
-              target={"FisicoBarraPorcentaje-" + id_ficha}
+              target={"FisicoBarraPorcentaje-" + id_ficha + RandNumber}
               toggle={toggle}
             >
               S/.{Redondea(avance)}
