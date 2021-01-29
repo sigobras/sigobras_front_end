@@ -183,7 +183,7 @@ export default ({ CurvaSdata, codigo, ToggleSoles }) => {
             textOutline: false,
           },
           formatter: function () {
-            return this.y + (!ToggleSoles ? "%" : "");
+            return Redondea(this.y) + (!ToggleSoles ? "%" : "");
           },
         },
       },

@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { UrlServer } from "../Utils/ServerUrlConfig";
-import { Redondea, Redondea1 } from "../Utils/Funciones";
-import { Button, Input, Tooltip } from "reactstrap";
+import React, { useState } from "react";
+import { Tooltip } from "reactstrap";
 import Circle from "react-circle";
+
+import { Redondea, Redondea1 } from "../Utils/Funciones";
+
 export default ({ tipo, id_ficha, avance, total }) => {
-  const [FinancieroAvance, setFinancieroAvance] = useState({
+  const [RandNumber, setRandNumber] = useState(Math.floor(Math.random() * 10));
+  const [FinancieroAvance] = useState({
     financiero_avance_porcentaje: (avance / total) * 100,
   });
-  async function fetchFinancieroAvance() {
-    const request = await axios.post(`${UrlServer}/getFinanciero`, {
-      id_ficha: id_ficha,
-    });
-    setFinancieroAvance(request.data);
-  }
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const toggle = () => setTooltipOpen(!tooltipOpen);
@@ -78,7 +73,7 @@ export default ({ tipo, id_ficha, avance, total }) => {
                 display: "flex",
                 justifyContent: "center",
               }}
-              id={"FinancieroBarraPorcentaje-" + id_ficha}
+              id={"FinancieroBarraPorcentaje-" + id_ficha + RandNumber}
             >
               Financiero
               <div
@@ -92,7 +87,7 @@ export default ({ tipo, id_ficha, avance, total }) => {
             <Tooltip
               placement={"bottom"}
               isOpen={tooltipOpen}
-              target={"FinancieroBarraPorcentaje-" + id_ficha}
+              target={"FinancieroBarraPorcentaje-" + id_ficha + RandNumber}
               toggle={toggle}
             >
               S/.{Redondea(avance)}

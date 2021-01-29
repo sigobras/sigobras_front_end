@@ -29,7 +29,7 @@ import {
   MdDeleteForever,
 } from "react-icons/md";
 
-import PartidasChat from "../../libs/PartidasChat";
+import PartidasChat from "../../../libs/PartidasChat";
 import CheckDate from "./CheckDate";
 
 export default () => {

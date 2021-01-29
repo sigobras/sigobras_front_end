@@ -114,9 +114,9 @@ export default ({ id_ficha, codigo_obra }) => {
   //UsuarioData
   const [UsuarioData, setUsuarioData] = useState({});
   async function fetchUsuarioData() {
-    const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
-      id_acceso: sessionStorage.getItem("idacceso"),
-    });
+    const request = await axios.get(
+      `${UrlServer}/v1/usuarios/acceso/${sessionStorage.getItem("idacceso")}`
+    );
     setUsuarioData(request.data);
   }
 

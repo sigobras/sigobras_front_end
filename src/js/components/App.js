@@ -24,7 +24,7 @@ import NotificacionNav from "./Otros/NotificacionNav";
 import Btns from "./Otros/Btns";
 
 const Inicio = lazy(() => import("./Inicio/Inicio"));
-const MDdiario = lazy(() => import("./Pfisicos/Diarios/Diario"));
+const MDdiario = lazy(() => import("./Pfisicos/Diarios"));
 const MDHistorial = lazy(() =>
   import("./Pfisicos/HistorialMetrados/Historial")
 );
@@ -36,7 +36,6 @@ const General = lazy(() =>
   import("../components/Pfisicos/Valorizaciones/index")
 );
 // proceso gerenciales
-const InterfazGerencial = lazy(() => import("./Inicio2/InterfazGerencial"));
 const Comunicados = lazy(() =>
   import("../components/Pgerenciales/Comunicados/comunicados")
 );
@@ -76,9 +75,12 @@ export default () => {
   }, []);
   const [DataObra, setDataObra] = useState([]);
   async function fetchDatosGenerales(id_ficha) {
-    var res = await axios.post(`${UrlServer}/getDatosGenerales2`, {
-      id_ficha,
+    var res = await axios.get(`${UrlServer}/v1/obras/${id_ficha}`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+      },
     });
+    console.log(res.data);
     setDataObra(res.data);
   }
   const [CostoDirecto, setCostoDirecto] = useState([]);
@@ -371,8 +373,10 @@ export default () => {
                   >
                     <FisicoBarraPorcentaje
                       key={DataObra.id_ficha}
-                      id_ficha={DataObra.id_ficha}
                       tipo="barra"
+                      id_ficha={DataObra.id_ficha}
+                      avance={DataObra.avancefisico_acumulado}
+                      total={DataObra.presupuesto_costodirecto}
                     />
                   </div>
                 )}
@@ -386,8 +390,10 @@ export default () => {
                 >
                   <FinancieroBarraPorcentaje
                     key={DataObra.id_ficha}
-                    id_ficha={DataObra.id_ficha}
                     tipo="barra"
+                    id_ficha={DataObra.id_ficha}
+                    avance={DataObra.avancefinanciero_acumulado}
+                    total={DataObra.g_total_presu}
                   />
                 </div>
                 <div
@@ -440,10 +446,7 @@ export default () => {
                     {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
                     <Route path="/Proyectos" component={Proyectos} />
                     {/* PROCESOS GERENCIALES            */}
-                    <Route
-                      path="/InterfazGerencial"
-                      component={InterfazGerencial}
-                    />
+
                     <Route
                       path="/ReportesGenerales"
                       component={ReportesGenerales}

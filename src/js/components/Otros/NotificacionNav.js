@@ -13,7 +13,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { socket } from "../Utils/socket";
 export default () => {
   useEffect(() => {
-    fetchNotificacionesCantidad();
+    // fetchNotificacionesCantidad();
     fetchNotificaciones();
     socketIni();
   }, []);
@@ -21,7 +21,7 @@ export default () => {
     socket.on(
       "gestion_documentaria_" + sessionStorage.getItem("idobra"),
       (data) => {
-        fetchNotificacionesCantidad();
+        // fetchNotificacionesCantidad();
         fetchNotificaciones();
       }
     );
@@ -67,7 +67,7 @@ export default () => {
       id_acceso: sessionStorage.getItem("idacceso"),
       id_ficha: sessionStorage.getItem("idobra"),
     });
-    fetchNotificacionesCantidad();
+    // fetchNotificacionesCantidad();
   }
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggle}>

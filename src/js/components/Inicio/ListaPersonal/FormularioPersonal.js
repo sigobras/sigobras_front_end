@@ -41,8 +41,12 @@ export default ({ id_ficha, dataPersonal, recargar }) => {
 
   const [CargosLimitados, setCargosLimitados] = useState([]);
   async function getCargos() {
-    var res = await axios.get(`${UrlServer}/v1/cargos/`);
-    console.log("cargos", res.data);
+    var res = await axios.get(`${UrlServer}/v1/cargos/`, {
+      params: {
+        cargos_tipo_id: 3,
+      },
+    });
+    console.log("cargos test", res.data);
     setCargosLimitados(res.data);
   }
   function onChangeInputFormulario(name, value) {
@@ -80,7 +84,7 @@ export default ({ id_ficha, dataPersonal, recargar }) => {
           );
         } else {
           var request = await axios.post(
-            `${UrlServer}/postUsuarioObra`,
+            `${UrlServer}/v1/usuarios/obra/${id_ficha}`,
             DataFormulario
           );
         }
