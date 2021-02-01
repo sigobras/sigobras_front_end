@@ -146,6 +146,10 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
   }
   //asignacion de labels
   async function asignarLabel(id_label) {
+    const res = await axios.post(`${UrlServer}/FichasAsignarLabels`, {
+      id_ficha,
+      id_label,
+    });
     RefLabels[id_label].recarga();
     recargarObraLabels(id_ficha);
   }
@@ -452,7 +456,6 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
     </div>
   );
 };
-forwardRef;
 const LabelAsignada = forwardRef(({ id_ficha, id_label }, ref) => {
   useImperativeHandle(ref, () => ({
     recarga() {
