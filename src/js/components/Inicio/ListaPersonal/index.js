@@ -69,6 +69,17 @@ export default ({ id_ficha, codigo_obra }) => {
       formData.append("obra_codigo", codigo_obra);
       formData.append("id_acceso", idAccesoInputFile);
       formData.append("id_ficha", id_ficha);
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      };
+      var res = await axios.post(
+        `${UrlServer}/putUsuarioMemo`,
+        formData,
+        config
+      );
+      console.log(res.data);
       recargar();
     } else {
       e.target.value = null;
