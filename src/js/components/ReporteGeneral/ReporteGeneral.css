@@ -1,0 +1,40 @@
+.reporteGeneral-table tbody tr td,
+.reporteGeneral-table tbody tr th {
+  padding: 0px;
+  /* color: rgb(15, 15, 15); */
+  font-size: 11px;
+  /* background-color: #b1f9c0; */
+}
+
+.reporteGeneral-table input,
+.reporteGeneral-table textarea {
+  height: 16px;
+  font-size: 11px;
+}
+.reporteGeneral-cabezera {
+  background: #242526;
+  color: white;
+}
+.reporteGeneral-cabezeraSticky {
+  position: sticky;
+  left: 0px;
+  background: #242526;
+  color: white;
+}
+.reporteGeneral-body {
+  background: white;
+  color: black;
+}
+.reporteGeneral-bodySticky {
+  position: sticky;
+  left: 0px;
+  background: white;
+  color: black;
+}
+.reporteGeneral-bodySticky-analitico {
+  position: sticky;
+  left: 300px;
+  background: #242526;
+  color: white;
+  border-color: white;
+}

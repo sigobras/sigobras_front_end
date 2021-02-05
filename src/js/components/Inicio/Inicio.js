@@ -16,6 +16,7 @@ import Curva_S from "./Cuva_S";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
 import Obras_labels_edicion from "./Obras_labels_edicion";
 import CarouselNavs from "./Carousel/CarouselNavs";
+import PersonalCostoDirecto from "./PersonalCostoDirecto";
 
 import "../../../css/inicio.css";
 export default ({ recargar }) => {
@@ -406,6 +407,7 @@ export default ({ recargar }) => {
                       id_ficha={item.id_ficha}
                       codigo_obra={item.codigo}
                     />
+                    {/* <PersonalCostoDirecto /> */}
                   </div>
                   <div className="d-flex">
                     <Curva_S Obra={item} />
@@ -714,7 +716,7 @@ function ComponenteAvance({ id_componente }) {
   }, []);
   const [ComponenteAvance, setComponenteAvance] = useState(0);
   async function fetchData() {
-    var res = await axios.get(`${UrlServer}/v1/avanceActividades/componente`, {
+    var res = await axios.get(`${UrlServer}/v1/avance/fisico/componente`, {
       params: {
         id_componente,
       },
@@ -731,7 +733,7 @@ function ComponenteBarraPorcentaje({ id_componente, componente }) {
     0
   );
   async function fetchData() {
-    var res = await axios.get(`${UrlServer}/v1/avanceActividades/componente`, {
+    var res = await axios.get(`${UrlServer}/v1/avance/fisico/componente`, {
       params: {
         id_componente,
       },
