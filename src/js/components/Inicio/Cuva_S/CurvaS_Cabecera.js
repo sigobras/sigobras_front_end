@@ -72,7 +72,7 @@ export default forwardRef(({ item, anyo }, ref) => {
       id_ficha: item.id_ficha,
       anyo,
     });
-    setPimMonto(res.data.monto);
+    setPimMonto(res.data.pim);
   }
   //recargar
   useImperativeHandle(ref, () => ({
