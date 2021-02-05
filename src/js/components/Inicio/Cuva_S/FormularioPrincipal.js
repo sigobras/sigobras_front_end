@@ -140,7 +140,6 @@ export default ({ id_ficha, recargarData }) => {
   async function savePinData() {
     if (confirm("Esta seguro de ingresar estos datos?")) {
       const request = await axios.post(`${UrlServer}/postCurvaSPin`, PinData);
-      // setModal(false);
       alert("registro exitoso");
       fetchPinData();
     }
@@ -364,10 +363,10 @@ export default ({ id_ficha, recargarData }) => {
                     </td>
                     <td>
                       <DebounceInput
-                        value={item.monto}
+                        value={item.pim}
                         debounceTimeout={300}
                         onChange={(e) =>
-                          onChangePinData(i, "monto", e.target.value)
+                          onChangePinData(i, "pim", e.target.value)
                         }
                         type="number"
                         className="form-control"

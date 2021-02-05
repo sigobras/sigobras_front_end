@@ -1,0 +1,13 @@
+.input-dark input,
+.input-dark select {
+  background-color: #171819;
+  border: none;
+  color: white;
+}
+.input-dark td {
+  background-color: #171819;
+  border: none;
+  color: white;
+  border-color: #171819;
+  padding: 9px;
+}

@@ -1,0 +1,21 @@
+body {
+  overflow: hidden;
+}
+.grid-container {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 40px 1fr 30px;
+}
+.grid-body {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  overflow: hidden;
+}
+.grid-content {
+  overflow-y: scroll;
+}
+.grid-sidebar {
+  overflow-y: scroll;
+}

@@ -62,6 +62,8 @@ const Index = lazy(() => import("./Pdocumentarios/Index"));
 const GestionDocumentaria = lazy(() => import("./GestionDocumentaria/index"));
 //COSTOS INDIRECTOS
 const CostosIndirectos = lazy(() => import("./CostosIndirectos/index"));
+const ModificacionExpediente = lazy(() => import("./ModificacionExpediente"));
+const ReporteGeneral = lazy(() => import("./ReporteGeneral"));
 
 export default () => {
   useEffect(() => {
@@ -96,7 +98,9 @@ export default () => {
       id_ficha,
       id_acceso: sessionStorage.getItem("idacceso"),
     });
-    setDataMenus(res.data);
+    if (Array.isArray(res.data)) {
+      setDataMenus(res.data);
+    }
   }
   const [DataDelta, setDataDelta] = useState({
     fisico_monto: 1,
@@ -416,14 +420,7 @@ export default () => {
               </div>
             </nav>
             <main role="main" className="col ml-sm-auto col-lg px-0">
-              <div className="d-flex mb-0 border-button pt-5 p-1 m-0">
-                <div>
-                  <b>
-                    {DataObra.g_meta &&
-                      DataObra.codigo + " - " + DataObra.g_meta.toUpperCase()}
-                  </b>
-                </div>
-              </div>
+              <div className="d-flex mb-0 border-button pt-5 p-1 m-0"></div>
               <div className="scroll_contenido">
                 <Suspense fallback={<div>Loading...</div>}>
                   <Switch>
@@ -476,6 +473,7 @@ export default () => {
                         <SeguimientoObras {...props} recargar={recargar} />
                       )}
                     />
+                    <Route path="/ReporteGeneral" component={ReporteGeneral} />
                   </Switch>
                 </Suspense>
               </div>
