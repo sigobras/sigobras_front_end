@@ -1,15 +1,22 @@
 .reporteGeneral-table tbody tr td,
 .reporteGeneral-table tbody tr th {
   padding: 0px;
-  /* color: rgb(15, 15, 15); */
   font-size: 11px;
-  /* background-color: #b1f9c0; */
 }
 
-.reporteGeneral-table input,
-.reporteGeneral-table textarea {
+.reporteGeneral-table input {
   height: 16px;
   font-size: 11px;
+  background: #42ff0038;
+}
+.reporteGeneral-table textarea {
+  font-size: 11px;
+  background: #42ff0038;
+}
+.reporteGeneral-table-input {
+  height: 16px;
+  font-size: 11px;
+  background: #42ff0038;
 }
 .reporteGeneral-cabezera {
   background: #242526;
