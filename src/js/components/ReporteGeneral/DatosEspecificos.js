@@ -47,7 +47,7 @@ export default ({ data, AnyoSeleccionado }) => {
   }
 
   return (
-    <div style={{ width: "500px" }}>
+    <div style={{ width: "300px" }}>
       <table style={{ width: "100%" }}>
         <tbody>
           <tr>
@@ -220,7 +220,6 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
   //autosave function
   async function guardarData() {
     var res = await axios.put(`${UrlServer}/v1/fuentesFinancieamiento`, Data);
-    console.log("guardado", res.data);
     toast.success("Guardado automatico exitoso", {
       position: "bottom-center",
       autoClose: 1000,
@@ -236,14 +235,13 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
     var res = await axios.delete(
       `${UrlServer}/v1/fuentesFinancieamiento/${id}`
     );
-    console.log("eliminando", res.data, id);
     cargarData();
   }
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
+        gridTemplateColumns: "1fr",
       }}
     >
       {Data.map((item, i) => (
@@ -282,6 +280,7 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
         type="textarea"
         onClick={() => agregarData()}
         placeholder="Agregar nueva fuente de financiamiento"
+        readOnly="true"
       />
     </div>
   );
