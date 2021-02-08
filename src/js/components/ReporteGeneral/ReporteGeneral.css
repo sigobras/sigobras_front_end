@@ -37,6 +37,7 @@
   left: 0px;
   background: white;
   color: black;
+  z-index: 1;
 }
 .reporteGeneral-bodySticky-analitico {
   position: sticky;
