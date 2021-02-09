@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { RiEyeOffFill, RiEyeFill } from "react-icons/ri";
-import { Button, Input, Spinner } from "reactstrap";
+import {
+  Button,
+  Input,
+  Spinner,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownMenu,
+  Nav,
+} from "reactstrap";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -54,21 +63,33 @@ export default () => {
     setObras(res.data);
   }
   //seleccionar anyo
-  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2020);
+  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
+  const [dropdownOpen, setdropdownOpen] = useState(false);
+  function toggle() {
+    setdropdownOpen(!dropdownOpen);
+  }
   return (
     <div>
       <OrderListInterfaces
         ListInterfaces={ListInterfaces}
         setListInterfaces={setListInterfaces}
       />
-      <Input
-        type="select"
-        onChange={(e) => setAnyoSeleccionado(e.target.value)}
-        value={AnyoSeleccionado}
-      >
-        <option>2020</option>
-        <option>2021</option>
-      </Input>
+      <Nav tabs>
+        <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
+          <DropdownToggle nav caret>
+            {AnyoSeleccionado == 0 ? "--" : AnyoSeleccionado}
+          </DropdownToggle>
+          <DropdownMenu>
+            <DropdownItem onClick={() => setAnyoSeleccionado(2020)}>
+              2020
+            </DropdownItem>
+            <DropdownItem onClick={() => setAnyoSeleccionado(2021)}>
+              2021
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </Nav>
+
       <div
         style={{
           overflowX: "auto",
@@ -124,7 +145,7 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
   const [, setDraggedItem] = useState(-1);
   function array_move(arr, old_index, new_index) {
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr; // for testing
+    return arr;
   }
   return (
     <div>

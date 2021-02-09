@@ -295,6 +295,12 @@ export default () => {
                     </li>,
                   ]}
                 </ul>
+                <div
+                  className="ContentpresupuestoObra"
+                  style={{ marginTop: "10px" }}
+                >
+                  <div className="PresuObra mr-2">{DataObra.codigo}</div>
+                </div>
 
                 <div
                   className="abajoCirculos pl-2 pr-2"
@@ -384,7 +390,6 @@ export default () => {
                     />
                   </div>
                 )}
-
                 <div
                   style={{
                     marginTop: "10px",

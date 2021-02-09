@@ -42,7 +42,8 @@
 .reporteGeneral-bodySticky-analitico {
   position: sticky;
   left: 300px;
-  background: #242526;
-  color: white;
+  /* background: #242526; */
+  background: white;
+  color: black;
   border-color: white;
 }
