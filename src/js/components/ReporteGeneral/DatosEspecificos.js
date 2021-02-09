@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort } from "../Utils/Funciones";
 import DatosEspecificos from "./DatosEspecificos";
+import BotonNuevo from "../../libs/BotonNuevo";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -208,11 +209,6 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
     var clone = [...Data];
     clone[index].nombre = value;
     setData(clone);
-    // if (value != "") {
-    //   var clone2 = [...DataFormulario];
-    //   clone2[index].nombre = value;
-    //   setDataFormulario(clone2);
-    // }
   };
   //autosave timer
   let timer,
@@ -237,6 +233,8 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
     );
     cargarData();
   }
+  //edicion
+  const [ModoEdicion, setModoEdicion] = useState(-1);
   return (
     <div
       style={{
@@ -249,21 +247,27 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
           style={{
             position: "relative",
           }}
+          onClick={() => setModoEdicion(i)}
         >
-          <Input
-            type="textarea"
-            value={item.nombre}
-            onChange={(e) => handleInputChange(i, e.target.value)}
-            onKeyUp={() => {
-              window.clearTimeout(timer);
-              timer = window.setTimeout(() => {
-                guardarData();
-              }, timeoutVal);
-            }}
-            onKeyPress={() => {
-              window.clearTimeout(timer);
-            }}
-          />
+          {ModoEdicion == i ? (
+            <Input
+              type="text"
+              value={item.nombre}
+              onChange={(e) => handleInputChange(i, e.target.value)}
+              onKeyUp={() => {
+                window.clearTimeout(timer);
+                timer = window.setTimeout(() => {
+                  guardarData();
+                }, timeoutVal);
+              }}
+              onKeyPress={() => {
+                window.clearTimeout(timer);
+              }}
+            />
+          ) : (
+            <div className="reporteGeneral-table-input">{item.nombre}</div>
+          )}
+
           <RiDeleteBin6Line
             onClick={() => eliminarData(item.id)}
             style={{
@@ -276,12 +280,7 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
           />
         </div>
       ))}
-      <Input
-        type="textarea"
-        onClick={() => agregarData()}
-        placeholder="Agregar nueva fuente de financiamiento"
-        readOnly="true"
-      />
+      <BotonNuevo size="80" onClick={() => agregarData()} />
     </div>
   );
 }
