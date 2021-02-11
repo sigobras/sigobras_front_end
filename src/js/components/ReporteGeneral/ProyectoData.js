@@ -10,28 +10,12 @@ import DatosEspecificos from "./DatosEspecificos";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ numero, data, AnyoSeleccionado }) => {
+export default ({ numero, data, AnyoSeleccionado, setMensajeGuardando }) => {
   useEffect(() => {
     cargarMeta();
   }, []);
-
-  const [ObraData, setObraData] = useState(data);
-  const [ObraDataModificada, setObraDataModificada] = useState({});
-  const handleInputChange = (name, value) => {
-    setObraData({
-      ...ObraData,
-      [name]: value,
-    });
-    setObraDataModificada({
-      ...ObraDataModificada,
-      [name]: value,
-    });
-  };
-  //autosave input
-  let timer,
-    timeoutVal = 2000;
   //meta
-  const [Meta, setMeta] = useState(0);
+  const [Meta, setMeta] = useState(data.meta);
   async function cargarMeta() {
     var res = await axios.get(`${UrlServer}/v1/datosAnuales`, {
       params: {
@@ -39,32 +23,25 @@ export default ({ numero, data, AnyoSeleccionado }) => {
         anyo: AnyoSeleccionado,
       },
     });
-    console.log("data");
     setMeta(res.data.meta);
   }
   //temp
   const [ModoEdicion, setModoEdicion] = useState("");
   async function guardarData() {
+    setMensajeGuardando(true);
     var res = await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
       anyo: AnyoSeleccionado,
       meta: Meta,
     });
-    toast.success("Guardado automatico exitoso", {
-      position: "bottom-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    setMensajeGuardando(false);
     cargarMeta();
   }
   return (
     <div style={{ width: "300px" }}>
       <div>
-        <span style={{ fontWeight: "900" }}>N° {numero}</span>
-        {data.nombre_obra}
+        <span style={{ fontWeight: "700" }}>N° {numero} </span>
+        <span>{data.nombre_obra}</span>
+        <span style={{ fontWeight: "700" }}>{data.codigo} </span>
       </div>
       <table
         className="reporteGeneral-table"
@@ -72,7 +49,7 @@ export default ({ numero, data, AnyoSeleccionado }) => {
           width: "100%",
         }}
       >
-        <tbody>
+        <tbody className="reporteGeneral-titulos">
           <tr>
             <th>Meta {AnyoSeleccionado}</th>
             <td
@@ -84,16 +61,10 @@ export default ({ numero, data, AnyoSeleccionado }) => {
                   type="text"
                   value={Meta}
                   onChange={(e) => setMeta(e.target.value)}
-                  onKeyUp={() => {
-                    window.clearTimeout(timer);
-                    timer = window.setTimeout(() => {
-                      guardarData();
-                    }, timeoutVal);
+                  onBlur={() => {
+                    setModoEdicion("");
+                    guardarData();
                   }}
-                  onKeyPress={() => {
-                    window.clearTimeout(timer);
-                  }}
-                  onBlur={() => setModoEdicion("")}
                 ></Input>
               ) : (
                 Meta
@@ -102,15 +73,15 @@ export default ({ numero, data, AnyoSeleccionado }) => {
           </tr>
           <tr>
             <th>Presupuesto</th>
-            <td>{Redondea(ObraData.presupuesto)}</td>
+            <td>{Redondea(data.presupuesto)}</td>
           </tr>
           <tr>
             <th>Estado Obra</th>
-            <td>{ObraData.estado_obra}</td>
+            <td>{data.estado_obra}</td>
           </tr>
           <tr>
             <th>Codigo UI</th>
-            <td>{ObraData.codigo_ui}</td>
+            <td>{data.codigo_ui}</td>
           </tr>
         </tbody>
       </table>

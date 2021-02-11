@@ -32,7 +32,7 @@ export default ({ data }) => {
   return (
     <div style={{ width: "250px" }}>
       <table style={{ width: "100%" }}>
-        <tbody>
+        <tbody className="reporteGeneral-titulos">
           <tr>
             <th>Esp. Téc.</th>
             <td>{buscarPersonal(30)}</td>

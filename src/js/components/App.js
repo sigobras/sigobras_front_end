@@ -259,8 +259,7 @@ export default () => {
                               to="/SeguimientoObras"
                               activeclassname="nav-link"
                             >
-                              {" "}
-                              <span> Seguimiento de Obras </span>{" "}
+                              <span> Seguimiento de Obras </span>
                             </NavLink>
                           </li>
                           <li className="lii pl-3">
@@ -478,7 +477,12 @@ export default () => {
                         <SeguimientoObras {...props} recargar={recargar} />
                       )}
                     />
-                    <Route path="/ReporteGeneral" component={ReporteGeneral} />
+                    <Route
+                      path="/ReporteGeneral"
+                      render={(props) => (
+                        <ReporteGeneral {...props} recargar={recargar} />
+                      )}
+                    />
                   </Switch>
                 </Suspense>
               </div>

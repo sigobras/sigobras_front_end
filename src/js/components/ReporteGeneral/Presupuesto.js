@@ -10,7 +10,7 @@ import DatosEspecificos from "./DatosEspecificos";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ data, AnyoSeleccionado }) => {
+export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
   useEffect(() => {
     cargarData();
     cargarAvanceFinancieroAcumulado();
@@ -70,6 +70,7 @@ export default ({ data, AnyoSeleccionado }) => {
   let timer,
     timeoutVal = 2000;
   async function guardarData() {
+    setMensajeGuardando(true);
     if (DataFormularioResumen.presupuesto_aprobado) {
       var res = await axios.put(
         `${UrlServer}/v1/datosAnuales/${data.id_ficha}`,
@@ -89,15 +90,7 @@ export default ({ data, AnyoSeleccionado }) => {
         }
       );
     }
-    toast.success("Guardado automatico exitoso", {
-      position: "bottom-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    setMensajeGuardando(false);
     cargarData();
   }
 
@@ -108,7 +101,7 @@ export default ({ data, AnyoSeleccionado }) => {
       ) : (
         <table style={{ width: "100%" }} className="reporteGeneral-table">
           <tbody>
-            <tr>
+            <tr className="reporteGeneral-titulos">
               <th colSpan="2">
                 Presupuesto Ejecutado al {AnyoSeleccionado - 1}
               </th>
@@ -127,14 +120,9 @@ export default ({ data, AnyoSeleccionado }) => {
                     onChange={(e) =>
                       handleInputChange("presupuesto_aprobado", e.target.value)
                     }
-                    onKeyUp={() => {
-                      window.clearTimeout(timer);
-                      timer = window.setTimeout(() => {
-                        guardarData();
-                      }, timeoutVal);
-                    }}
-                    onKeyPress={() => {
-                      window.clearTimeout(timer);
+                    onBlur={() => {
+                      setModoEdicion("");
+                      guardarData();
                     }}
                   ></Input>
                 ) : (
@@ -151,14 +139,9 @@ export default ({ data, AnyoSeleccionado }) => {
                     type="text"
                     value={DataFormulario.pia}
                     onChange={(e) => handleInputChange("pia", e.target.value)}
-                    onKeyUp={() => {
-                      window.clearTimeout(timer);
-                      timer = window.setTimeout(() => {
-                        guardarData();
-                      }, timeoutVal);
-                    }}
-                    onKeyPress={() => {
-                      window.clearTimeout(timer);
+                    onBlur={() => {
+                      setModoEdicion("");
+                      guardarData();
                     }}
                   ></Input>
                 ) : (
@@ -179,14 +162,9 @@ export default ({ data, AnyoSeleccionado }) => {
                     type="text"
                     value={DataFormulario.pim}
                     onChange={(e) => handleInputChange("pim", e.target.value)}
-                    onKeyUp={() => {
-                      window.clearTimeout(timer);
-                      timer = window.setTimeout(() => {
-                        guardarData();
-                      }, timeoutVal);
-                    }}
-                    onKeyPress={() => {
-                      window.clearTimeout(timer);
+                    onBlur={() => {
+                      setModoEdicion("");
+                      guardarData();
                     }}
                   ></Input>
                 ) : (
@@ -201,6 +179,7 @@ export default ({ data, AnyoSeleccionado }) => {
                     DataFormulario.presupuesto_aprobado) *
                     100
                 )}
+                %
               </td>
               <td>T. Asig.</td>
               <td>
@@ -235,6 +214,7 @@ export default ({ data, AnyoSeleccionado }) => {
                     DataFormulario.presupuesto_aprobado) *
                     100
                 )}
+                %
               </td>
               <td>
                 {Redondea(
@@ -244,6 +224,7 @@ export default ({ data, AnyoSeleccionado }) => {
                     DataFormulario.presupuesto_aprobado) *
                     100
                 )}
+                %
               </td>
             </tr>
           </tbody>

@@ -18,8 +18,8 @@ import { toast } from "react-toastify";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 export default ({ EstadoObra }) => {
   const [DataEstadosObra, setDataEstadosObra] = useState([]);
-  const [modal, setmodal] = useState("");
-  const [modalClave, setmodalClave] = useState("");
+  const [modal, setmodal] = useState(false);
+  const [modalClave, setmodalClave] = useState(false);
   const [FormUsuario, setFormUsuario] = useState("");
   const [FormPassword, setFormPassword] = useState("");
 

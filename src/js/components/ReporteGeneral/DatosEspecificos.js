@@ -11,7 +11,7 @@ import BotonNuevo from "../../libs/BotonNuevo";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ data, AnyoSeleccionado }) => {
+export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
   let timer,
     timeoutVal = 2000;
 
@@ -31,26 +31,21 @@ export default ({ data, AnyoSeleccionado }) => {
   };
   //save data
   async function guardarData() {
-    var res = await axios.put(
-      `${UrlServer}/v1/obras/${data.id_ficha}`,
-      DataFormularioResumen
-    );
-    toast.success("Guardado automatico exitoso", {
-      position: "bottom-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-    //  cargarData();
+    setMensajeGuardando(true);
+    if (Object.keys(DataFormularioResumen).length > 0) {
+      var res = await axios.put(
+        `${UrlServer}/v1/obras/${data.id_ficha}`,
+        DataFormularioResumen
+      );
+    }
+
+    setMensajeGuardando(false);
   }
 
   return (
     <div style={{ width: "300px" }}>
       <table style={{ width: "100%" }}>
-        <tbody>
+        <tbody className="reporteGeneral-titulos">
           <tr>
             <th>Codigo SNIP</th>
             <td
@@ -64,14 +59,9 @@ export default ({ data, AnyoSeleccionado }) => {
                   onChange={(e) =>
                     handleInputChange("codigo_snip", e.target.value)
                   }
-                  onKeyUp={() => {
-                    window.clearTimeout(timer);
-                    timer = window.setTimeout(() => {
-                      guardarData();
-                    }, timeoutVal);
-                  }}
-                  onKeyPress={() => {
-                    window.clearTimeout(timer);
+                  onBlur={() => {
+                    setModoEdicion("");
+                    guardarData();
                   }}
                 ></Input>
               ) : (
@@ -90,14 +80,9 @@ export default ({ data, AnyoSeleccionado }) => {
                   type="text"
                   value={DataFormulario.funcion}
                   onChange={(e) => handleInputChange("funcion", e.target.value)}
-                  onKeyUp={() => {
-                    window.clearTimeout(timer);
-                    timer = window.setTimeout(() => {
-                      guardarData();
-                    }, timeoutVal);
-                  }}
-                  onKeyPress={() => {
-                    window.clearTimeout(timer);
+                  onBlur={() => {
+                    setModoEdicion("");
+                    guardarData();
                   }}
                 ></Input>
               ) : (
@@ -118,14 +103,9 @@ export default ({ data, AnyoSeleccionado }) => {
                   onChange={(e) =>
                     handleInputChange("division_funcional", e.target.value)
                   }
-                  onKeyUp={() => {
-                    window.clearTimeout(timer);
-                    timer = window.setTimeout(() => {
-                      guardarData();
-                    }, timeoutVal);
-                  }}
-                  onKeyPress={() => {
-                    window.clearTimeout(timer);
+                  onBlur={() => {
+                    setModoEdicion("");
+                    guardarData();
                   }}
                 ></Input>
               ) : (
@@ -146,14 +126,9 @@ export default ({ data, AnyoSeleccionado }) => {
                   onChange={(e) =>
                     handleInputChange("subprograma", e.target.value)
                   }
-                  onKeyUp={() => {
-                    window.clearTimeout(timer);
-                    timer = window.setTimeout(() => {
-                      guardarData();
-                    }, timeoutVal);
-                  }}
-                  onKeyPress={() => {
-                    window.clearTimeout(timer);
+                  onBlur={() => {
+                    setModoEdicion("");
+                    guardarData();
                   }}
                 ></Input>
               ) : (
@@ -169,6 +144,7 @@ export default ({ data, AnyoSeleccionado }) => {
               <FuentesFinancieamiento
                 id_ficha={data.id_ficha}
                 anyo={AnyoSeleccionado}
+                setMensajeGuardando={setMensajeGuardando}
               />
             </td>
           </tr>
@@ -177,7 +153,7 @@ export default ({ data, AnyoSeleccionado }) => {
     </div>
   );
 };
-function FuentesFinancieamiento({ id_ficha, anyo }) {
+function FuentesFinancieamiento({ id_ficha, anyo, setMensajeGuardando }) {
   useEffect(() => {
     cargarData();
   }, []);
@@ -215,16 +191,9 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
     timeoutVal = 2000;
   //autosave function
   async function guardarData() {
+    setMensajeGuardando(true);
     var res = await axios.put(`${UrlServer}/v1/fuentesFinancieamiento`, Data);
-    toast.success("Guardado automatico exitoso", {
-      position: "bottom-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    setMensajeGuardando(false);
   }
   //delete
   async function eliminarData(id) {
@@ -244,6 +213,7 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
     >
       {Data.map((item, i) => (
         <div
+          key={i}
           style={{
             position: "relative",
           }}
@@ -254,14 +224,9 @@ function FuentesFinancieamiento({ id_ficha, anyo }) {
               type="text"
               value={item.nombre}
               onChange={(e) => handleInputChange(i, e.target.value)}
-              onKeyUp={() => {
-                window.clearTimeout(timer);
-                timer = window.setTimeout(() => {
-                  guardarData();
-                }, timeoutVal);
-              }}
-              onKeyPress={() => {
-                window.clearTimeout(timer);
+              onBlur={() => {
+                setModoEdicion(-1);
+                guardarData();
               }}
             />
           ) : (

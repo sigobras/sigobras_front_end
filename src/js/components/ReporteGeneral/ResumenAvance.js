@@ -14,7 +14,7 @@ export default ({ data }) => {
   return (
     <div>
       <table style={{ width: "100%" }}>
-        <tbody>
+        <tbody className="reporteGeneral-titulos">
           <tr>
             <th>avance fisico</th>
           </tr>

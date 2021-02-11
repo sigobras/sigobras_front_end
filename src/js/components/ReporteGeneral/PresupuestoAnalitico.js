@@ -11,7 +11,7 @@ import BotonNuevo from "../../libs/BotonNuevo";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ data, AnyoSeleccionado }) => {
+export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
   useEffect(() => {
     cargarData();
   }, []);
@@ -50,7 +50,7 @@ export default ({ data, AnyoSeleccionado }) => {
   }
 
   //edicion
-  const [ModoEdcion, setModoEdcion] = useState("");
+  const [ModoEdicion, setModoEdicion] = useState("");
   function agregarData() {
     var clone = [...Data];
     clone.push({ id: null, nombre: "", fichas_id_ficha: data.id_ficha });
@@ -112,6 +112,7 @@ export default ({ data, AnyoSeleccionado }) => {
   let timer,
     timeoutVal = 2000;
   async function guardarData() {
+    setMensajeGuardando(true);
     var dataProcesada = [];
     for (let i = 0; i < Data.length; i++) {
       const element = Data[i];
@@ -125,22 +126,27 @@ export default ({ data, AnyoSeleccionado }) => {
       `${UrlServer}/v1/analitico/resumen`,
       dataProcesada
     );
+    setMensajeGuardando(false);
     cargarData();
   }
   async function guardarDataAnual() {
     console.log("DatoAnual", DatoAnual);
+    setMensajeGuardando(true);
     var res = await axios.put(
       `${UrlServer}/v1/analitico/resumen/anual`,
       DatoAnual
     );
+    setMensajeGuardando(false);
     console.log("guardarDataAnual", res.data);
   }
   async function guardarDataMensual() {
     console.log("DatoMensual", DatoMensual);
+    setMensajeGuardando(true);
     var res = await axios.put(
       `${UrlServer}/v1/analitico/resumen/mensual`,
       DatoMensual
     );
+    setMensajeGuardando(false);
   }
   //delete
   async function eliminarData(id) {
@@ -152,7 +158,7 @@ export default ({ data, AnyoSeleccionado }) => {
   return (
     <div style={{ width: "2000px" }}>
       <table className="text-center">
-        <tbody>
+        <tbody className="reporteGeneral-titulos">
           <tr>
             <th className="reporteGeneral-bodySticky-analitico ">
               Descripción
@@ -187,23 +193,22 @@ export default ({ data, AnyoSeleccionado }) => {
             <tr key={i}>
               <th
                 className="reporteGeneral-bodySticky-analitico "
-                onClick={() => setModoEdcion("nombre" + i)}
+                onClick={() => setModoEdicion("nombre" + i)}
+                style={{
+                  textAlign: "left",
+                  padding: "5px",
+                }}
               >
-                {ModoEdcion == "nombre" + i ? (
+                {ModoEdicion == "nombre" + i ? (
                   <div>
                     <Input
                       value={item.nombre}
                       onChange={(e) =>
                         handleInputChange(i, "nombre", e.target.value)
                       }
-                      onKeyUp={() => {
-                        window.clearTimeout(timer);
-                        timer = window.setTimeout(() => {
-                          guardarData();
-                        }, timeoutVal);
-                      }}
-                      onKeyPress={() => {
-                        window.clearTimeout(timer);
+                      onBlur={() => {
+                        setModoEdicion("");
+                        guardarData();
                       }}
                     />
                     <RiDeleteBin6Line
@@ -223,11 +228,11 @@ export default ({ data, AnyoSeleccionado }) => {
               </th>
               <td
                 onClick={() =>
-                  setModoEdcion("presupuesto_aprobado_anterior" + i)
+                  setModoEdicion("presupuesto_aprobado_anterior" + i)
                 }
                 className="reporteGeneral-table-input "
               >
-                {ModoEdcion == "presupuesto_aprobado_anterior" + i ? (
+                {ModoEdicion == "presupuesto_aprobado_anterior" + i ? (
                   <div>
                     <Input
                       value={item.presupuesto_aprobado_anterior}
@@ -238,14 +243,9 @@ export default ({ data, AnyoSeleccionado }) => {
                           e.target.value
                         )
                       }
-                      onKeyUp={() => {
-                        window.clearTimeout(timer);
-                        timer = window.setTimeout(() => {
-                          guardarDataAnual();
-                        }, timeoutVal);
-                      }}
-                      onKeyPress={() => {
-                        window.clearTimeout(timer);
+                      onBlur={() => {
+                        setModoEdicion("");
+                        guardarDataAnual();
                       }}
                     />
                   </div>
@@ -255,11 +255,11 @@ export default ({ data, AnyoSeleccionado }) => {
               </td>
               <td
                 onClick={() =>
-                  setModoEdcion("financiero_ejecutado_anterior" + i)
+                  setModoEdicion("financiero_ejecutado_anterior" + i)
                 }
                 className="reporteGeneral-table-input "
               >
-                {ModoEdcion == "financiero_ejecutado_anterior" + i ? (
+                {ModoEdicion == "financiero_ejecutado_anterior" + i ? (
                   <div>
                     <Input
                       value={item.financiero_ejecutado_anterior}
@@ -270,14 +270,9 @@ export default ({ data, AnyoSeleccionado }) => {
                           e.target.value
                         )
                       }
-                      onKeyUp={() => {
-                        window.clearTimeout(timer);
-                        timer = window.setTimeout(() => {
-                          guardarDataAnual();
-                        }, timeoutVal);
-                      }}
-                      onKeyPress={() => {
-                        window.clearTimeout(timer);
+                      onBlur={() => {
+                        setModoEdicion("");
+                        guardarDataAnual();
                       }}
                     />
                   </div>
@@ -292,24 +287,19 @@ export default ({ data, AnyoSeleccionado }) => {
                 )}
               </td>
               <td
-                onClick={() => setModoEdcion("pim_actual" + i)}
+                onClick={() => setModoEdicion("pim_actual" + i)}
                 className="reporteGeneral-table-input "
               >
-                {ModoEdcion == "pim_actual" + i ? (
+                {ModoEdicion == "pim_actual" + i ? (
                   <div>
                     <Input
                       value={item.pim_actual}
                       onChange={(e) =>
                         handleInputChange(i, "pim_actual", e.target.value)
                       }
-                      onKeyUp={() => {
-                        window.clearTimeout(timer);
-                        timer = window.setTimeout(() => {
-                          guardarDataAnual();
-                        }, timeoutVal);
-                      }}
-                      onKeyPress={() => {
-                        window.clearTimeout(timer);
+                      onBlur={() => {
+                        setModoEdicion("");
+                        guardarDataAnual();
                       }}
                     />
                   </div>
@@ -333,11 +323,12 @@ export default ({ data, AnyoSeleccionado }) => {
                     <td
                       key={mes}
                       onClick={() =>
-                        setModoEdcion("financiero_programado_monto_mes" + mes)
+                        setModoEdicion("financiero_programado_monto_mes" + mes)
                       }
                       className="reporteGeneral-table-input "
                     >
-                      {ModoEdcion == "financiero_programado_monto_mes" + mes ? (
+                      {ModoEdicion ==
+                      "financiero_programado_monto_mes" + mes ? (
                         <div>
                           <Input
                             value={
@@ -350,14 +341,9 @@ export default ({ data, AnyoSeleccionado }) => {
                                 e.target.value
                               )
                             }
-                            onKeyUp={() => {
-                              window.clearTimeout(timer);
-                              timer = window.setTimeout(() => {
-                                guardarDataMensual();
-                              }, timeoutVal);
-                            }}
-                            onKeyPress={() => {
-                              window.clearTimeout(timer);
+                            onBlur={() => {
+                              setModoEdicion("");
+                              guardarDataMensual();
                             }}
                           />
                         </div>
@@ -367,17 +353,14 @@ export default ({ data, AnyoSeleccionado }) => {
                     </td>
                   );
                   tempRender.push(
-                    // <td key={mes + "-2"}>
-                    //   {Redondea(item["financiero_monto_mes" + mes])}
-                    // </td>
                     <td
                       key={mes + "-2"}
                       onClick={() =>
-                        setModoEdcion("financiero_monto_mes" + mes)
+                        setModoEdicion("financiero_monto_mes" + mes)
                       }
                       className="reporteGeneral-table-input "
                     >
-                      {ModoEdcion == "financiero_monto_mes" + mes ? (
+                      {ModoEdicion == "financiero_monto_mes" + mes ? (
                         <div>
                           <Input
                             value={item["financiero_monto_mes" + mes]}
@@ -388,14 +371,9 @@ export default ({ data, AnyoSeleccionado }) => {
                                 e.target.value
                               )
                             }
-                            onKeyUp={() => {
-                              window.clearTimeout(timer);
-                              timer = window.setTimeout(() => {
-                                guardarDataMensual();
-                              }, timeoutVal);
-                            }}
-                            onKeyPress={() => {
-                              window.clearTimeout(timer);
+                            onBlur={() => {
+                              setModoEdicion("");
+                              guardarDataMensual();
                             }}
                           />
                         </div>

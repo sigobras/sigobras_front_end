@@ -47,3 +47,7 @@
   color: black;
   border-color: white;
 }
+.reporteGeneral-titulos th {
+  background: #c6c8ca;
+  font-weight: 700;
+}
