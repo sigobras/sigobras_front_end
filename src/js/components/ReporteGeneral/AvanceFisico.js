@@ -10,7 +10,7 @@ import DatosEspecificos from "./DatosEspecificos";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ data }) => {
+export default ({ data, AnyoSeleccionado }) => {
   useEffect(() => {
     cargarAcumuladoPrevio();
     cargarData();
@@ -22,7 +22,7 @@ export default ({ data }) => {
     var res = await axios.get(`${UrlServer}/v1/avance/acumuladoAnual`, {
       params: {
         id_ficha: data.id_ficha,
-        anyo: 2019,
+        anyo: AnyoSeleccionado - 1,
       },
     });
     setAcumuladoPrevio(res.data);
@@ -33,7 +33,7 @@ export default ({ data }) => {
     var res = await axios.get(`${UrlServer}/v1/avance/acumuladoAnual`, {
       params: {
         id_ficha: data.id_ficha,
-        anyo: 2020,
+        anyo: AnyoSeleccionado,
       },
     });
     setAcumuladoActual(res.data);
@@ -45,7 +45,7 @@ export default ({ data }) => {
     var res = await axios.get(`${UrlServer}/v1/avance/resumenAnual`, {
       params: {
         id_ficha: data.id_ficha,
-        anyo: 2020,
+        anyo: AnyoSeleccionado,
       },
     });
     setData(res.data);
@@ -58,10 +58,13 @@ export default ({ data }) => {
   }
   return (
     <div style={{ width: "300px" }}>
-      <table style={{ width: "100%" }} className="text-center">
+      <table
+        style={{ width: "100%" }}
+        className="text-center reporteGeneral-titulos"
+      >
         <tbody>
           <tr>
-            <td>A Dic. 2019</td>
+            <th>A Dic. {AnyoSeleccionado - 1}</th>
             <td>
               {Redondea(
                 (AcumuladoPrevio.fisico_monto / data.presupuesto_costodirecto) *
@@ -81,12 +84,14 @@ export default ({ data }) => {
                     {Redondea(
                       (buscarMes(i) / data.presupuesto_costodirecto) * 100
                     )}
+                    %
                   </td>
                   <th>{mesesShort[i + 5]}</th>
                   <td>
                     {Redondea(
                       (buscarMes(i + 6) / data.presupuesto_costodirecto) * 100
                     )}
+                    %
                   </td>
                 </tr>
               );
@@ -94,7 +99,7 @@ export default ({ data }) => {
             return dataTemp;
           })()}
           <tr>
-            <td>A. Actual</td>
+            <th>A. Actual</th>
             <td>
               {Redondea(
                 (AcumuladoActual.fisico_monto / data.presupuesto_costodirecto) *

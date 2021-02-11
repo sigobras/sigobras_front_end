@@ -27,7 +27,7 @@ import PresupuestoAnalitico from "./PresupuestoAnalitico";
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
 
-export default () => {
+export default ({ recargar }) => {
   useEffect(() => {
     cargarObras();
   }, []);
@@ -68,12 +68,11 @@ export default () => {
   function toggle() {
     setdropdownOpen(!dropdownOpen);
   }
+  //guardado
+  const [MensajeGuardando, setMensajeGuardando] = useState(false);
   return (
     <div>
-      <OrderListInterfaces
-        ListInterfaces={ListInterfaces}
-        setListInterfaces={setListInterfaces}
-      />
+      {MensajeGuardando ? "Guardando..." : "Guardado"}
       <Nav tabs>
         <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle nav caret>
@@ -88,8 +87,11 @@ export default () => {
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
+        <OrderListInterfaces
+          ListInterfaces={ListInterfaces}
+          setListInterfaces={setListInterfaces}
+        />
       </Nav>
-
       <div
         style={{
           overflowX: "auto",
@@ -116,6 +118,7 @@ export default () => {
                     data={item}
                     AnyoSeleccionado={AnyoSeleccionado}
                     key={AnyoSeleccionado}
+                    setMensajeGuardando={setMensajeGuardando}
                   />
                 </td>
                 {ListInterfaces.map(
@@ -127,6 +130,8 @@ export default () => {
                             data={item}
                             AnyoSeleccionado={AnyoSeleccionado}
                             key={AnyoSeleccionado}
+                            recargar={recargar}
+                            setMensajeGuardando={setMensajeGuardando}
                           />
                         }
                       </td>
@@ -141,26 +146,95 @@ export default () => {
   );
 };
 function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
+  const [ModoEdicion, setModoEdicion] = useState(false);
   const [HoverItem, setHoverItem] = useState(-1);
   const [, setDraggedItem] = useState(-1);
   function array_move(arr, old_index, new_index) {
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
     return arr;
   }
+  //mostrar todos
+  function mostrarTodos() {
+    var clone = [...ListInterfaces];
+    for (let i = 0; i < ListInterfaces.length; i++) {
+      const item = ListInterfaces[i];
+      item.activado = true;
+    }
+    setListInterfaces(clone);
+  }
+  //ocultarTodos
+  function ocultarTodos() {
+    var clone = [...ListInterfaces];
+    for (let i = 0; i < ListInterfaces.length; i++) {
+      const item = ListInterfaces[i];
+      item.activado = false;
+    }
+    setListInterfaces(clone);
+  }
   return (
     <div>
-      <div>
-        {ListInterfaces.map((item, i) => (
+      {!ModoEdicion ? (
+        <Button onClick={() => setModoEdicion(true)}>Editar Modulos</Button>
+      ) : (
+        <Button onClick={() => setModoEdicion(false)}>Ocultar edicion</Button>
+      )}
+      {ModoEdicion && (
+        <Button onClick={() => mostrarTodos()}>Mostrar todos</Button>
+      )}
+      {ModoEdicion && (
+        <Button onClick={() => ocultarTodos()}>Ocultar todos</Button>
+      )}
+      {ModoEdicion && (
+        <div>
+          {ListInterfaces.map((item, i) => (
+            <span
+              key={i}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("index", i);
+                setDraggedItem(i);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setHoverItem(i);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                setHoverItem(-1);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                var indexOrigen = e.dataTransfer.getData("index");
+                var tempArray = [...ListInterfaces];
+                if (indexOrigen < i) {
+                  i--;
+                }
+                array_move(tempArray, indexOrigen, i);
+                setListInterfaces(tempArray);
+                setHoverItem(-1);
+              }}
+              style={{
+                marginLeft: HoverItem == i ? "10px" : "0px",
+              }}
+            >
+              <Button color={item.activado ? "success" : "danger"}>
+                {item.nombre}{" "}
+                <span
+                  onClick={() => {
+                    var temp = [...ListInterfaces];
+                    temp[i].activado = !temp[i].activado;
+                    setListInterfaces(temp);
+                  }}
+                >
+                  {item.activado ? <RiEyeFill /> : <RiEyeOffFill />}
+                </span>
+              </Button>
+            </span>
+          ))}
           <span
-            key={i}
-            draggable
-            onDragStart={(e) => {
-              e.dataTransfer.setData("index", i);
-              setDraggedItem(i);
-            }}
             onDragOver={(e) => {
               e.preventDefault();
-              setHoverItem(i);
+              setHoverItem(ListInterfaces.length);
             }}
             onDragLeave={(e) => {
               e.preventDefault();
@@ -170,6 +244,7 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
               e.preventDefault();
               var indexOrigen = e.dataTransfer.getData("index");
               var tempArray = [...ListInterfaces];
+              var i = ListInterfaces.length;
               if (indexOrigen < i) {
                 i--;
               }
@@ -177,49 +252,11 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
               setListInterfaces(tempArray);
               setHoverItem(-1);
             }}
-            style={{
-              marginLeft: HoverItem == i ? "10px" : "0px",
-            }}
           >
-            <Button>
-              {item.nombre}{" "}
-              <span
-                onClick={() => {
-                  var temp = [...ListInterfaces];
-                  temp[i].activado = !temp[i].activado;
-                  setListInterfaces(temp);
-                }}
-              >
-                {item.activado ? <RiEyeFill /> : <RiEyeOffFill />}
-              </span>
-            </Button>
+            ---
           </span>
-        ))}
-        <span
-          onDragOver={(e) => {
-            e.preventDefault();
-            setHoverItem(ListInterfaces.length);
-          }}
-          onDragLeave={(e) => {
-            e.preventDefault();
-            setHoverItem(-1);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            var indexOrigen = e.dataTransfer.getData("index");
-            var tempArray = [...ListInterfaces];
-            var i = ListInterfaces.length;
-            if (indexOrigen < i) {
-              i--;
-            }
-            array_move(tempArray, indexOrigen, i);
-            setListInterfaces(tempArray);
-            setHoverItem(-1);
-          }}
-        >
-          ---
-        </span>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
