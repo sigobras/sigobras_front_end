@@ -1,9 +1,12 @@
 // redondea a dos decimales
-function Redondea(x, decimales = 2) {
+function Redondea(x, decimales = 2, soloPositivos = false) {
   // console.log("x =>>", x)
   if (x == null) {
     return "-";
   } else if (x == 0 || isNaN(x)) {
+    return "-";
+  }
+  if (x < 0 && soloPositivos) {
     return "-";
   }
   if (decimales == 2 && Math.abs(x) < 0.01) {

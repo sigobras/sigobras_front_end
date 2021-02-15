@@ -909,8 +909,10 @@ export default () => {
                                                   {Redondea(item3.valor, 4)}{" "}
                                                   {item3.unidad_medida}
                                                   {FechaActiva &&
-                                                    UsuarioData.cargo_nombre ==
-                                                      "RESIDENTE" && (
+                                                    (UsuarioData.cargo_nombre ==
+                                                      "RESIDENTE" ||
+                                                      UsuarioData.cargo_nombre ==
+                                                        "ADMINISTRADOR GENERAL") && (
                                                       <div
                                                         onClick={() =>
                                                           setInputAvanceActividadIndex(
@@ -973,8 +975,10 @@ export default () => {
                                             <td>{Redondea(item3.parcial)}</td>
                                             <td>
                                               {FechaActiva &&
-                                              UsuarioData.cargo_nombre ==
-                                                "RESIDENTE" ? (
+                                              (UsuarioData.cargo_nombre ==
+                                                "RESIDENTE" ||
+                                                UsuarioData.cargo_nombre ==
+                                                  "ADMINISTRADOR GENERAL") ? (
                                                 <div
                                                   onClick={() =>
                                                     updateAvanceActividad(
