@@ -746,14 +746,20 @@ export default () => {
 
                   <td>
                     {Redondea(
-                      item.metrado - item.metrado_anterior - item.metrado_actual
+                      item.metrado -
+                        item.metrado_anterior -
+                        item.metrado_actual,
+                      2,
+                      true
                     )}
                   </td>
                   <td>
                     {Redondea(
                       item.metrado * item.costo_unitario -
                         item.valor_anterior -
-                        item.valor_actual
+                        item.valor_actual,
+                      2,
+                      true
                     )}
                   </td>
                   <td>
@@ -762,7 +768,9 @@ export default () => {
                         item.metrado_anterior -
                         item.metrado_actual) /
                         item.metrado) *
-                        100
+                        100,
+                      2,
+                      true
                     )}
                   </td>
                 </tr>
