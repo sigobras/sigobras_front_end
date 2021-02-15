@@ -271,6 +271,15 @@ export default () => {
                               <span> Reportes Para Imprimir </span>{" "}
                             </NavLink>
                           </li>
+                          <li className="lii pl-3">
+                            <NavLink
+                              to="/reporteGeneral"
+                              activeclassname="nav-link"
+                            >
+                              {" "}
+                              <span> Reportes General </span>{" "}
+                            </NavLink>
+                          </li>
                         </ul>
                       </Collapse>
                     </li>,
