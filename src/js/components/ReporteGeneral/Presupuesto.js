@@ -150,7 +150,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
               </td>
             </tr>
             <tr>
-              <td rowSpan="2">Ejec. a Dic.19</td>
+              <td rowSpan="2">Ejec. a Dic. {AnyoSeleccionado - 1}</td>
               <td>{Redondea(AvanceFinancieroAcumulado.financiero_monto)}</td>
               <td>PIM</td>
               <td
