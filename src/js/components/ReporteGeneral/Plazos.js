@@ -36,25 +36,27 @@ export default ({ data, recargar }) => {
     }
   }
   return (
-    <div style={{ width: "500px" }}>
+    <div style={{ width: "600px" }}>
       <table style={{ width: "100%" }}>
         <tbody className="reporteGeneral-titulos">
           <tr>
-            <th>tipo</th>
-            <th>fecha inicial</th>
-            <th>fecha final</th>
+            <th>decripcion</th>
+            <th style={{ width: "60px" }}>fecha inicial</th>
+            <th style={{ width: "60px" }}>fecha final</th>
             <th>dias</th>
             <th>resolucion</th>
+            <th>plazo aprobado </th>
             <th>archivo</th>
           </tr>
           {Data.map((item, i) => (
             <tr key={i}>
-              <td>{item.tipo_nombre}</td>
+              <td>{item.descripcion}</td>
 
               <td>{item.fecha_inicial}</td>
               <td>{item.fecha_final}</td>
               <td>{item.n_dias}</td>
               <td>{item.documento_resolucion_estado}</td>
+              <td>{item.plazo_aprobado ? "Aprobado" : "Sin aprobar	"}</td>
               <td>
                 {item.archivo && (
                   <div
@@ -74,6 +76,76 @@ export default ({ data, recargar }) => {
               </td>
             </tr>
           ))}
+          <tr
+            style={{
+              fontWeight: 700,
+            }}
+          >
+            <td
+              colSpan="3"
+              style={{
+                textAlign: "right",
+              }}
+            >
+              TOTAL DIAS APROBADOS
+            </td>
+            <td>
+              {(() => {
+                return Data.reduce((acu, item) => {
+                  if (item.plazo_aprobado) {
+                    return acu + item.n_dias;
+                  }
+                  return acu;
+                }, 0);
+              })()}
+            </td>
+            <td colSpan="3"></td>
+          </tr>
+          <tr
+            style={{
+              fontWeight: 700,
+            }}
+          >
+            <td
+              colSpan="3"
+              style={{
+                textAlign: "right",
+              }}
+            >
+              TOTAL DIAS SIN APROBAR
+            </td>
+            <td>
+              {(() => {
+                return Data.reduce((acu, item) => {
+                  if (!item.plazo_aprobado) {
+                    return acu + item.n_dias;
+                  }
+                  return acu;
+                }, 0);
+              })()}
+            </td>
+            <td colSpan="3"></td>
+          </tr>
+          <tr
+            style={{
+              fontWeight: 700,
+            }}
+          >
+            <td
+              colSpan="3"
+              style={{
+                textAlign: "right",
+              }}
+            >
+              PLAZO DE EJECUCION TOTAL
+            </td>
+            <td>
+              {(() => {
+                return Data.reduce((acu, item) => acu + item.n_dias, 0);
+              })()}
+            </td>
+            <td colSpan="3"></td>
+          </tr>
         </tbody>
       </table>
       <Button
