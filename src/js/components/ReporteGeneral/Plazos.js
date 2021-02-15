@@ -5,7 +5,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
-import { Redondea, mesesShort } from "../Utils/Funciones";
+import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
 import DatosEspecificos from "./DatosEspecificos";
 
 import "./ReporteGeneral.css";
@@ -52,8 +52,8 @@ export default ({ data, recargar }) => {
             <tr key={i}>
               <td>{item.descripcion}</td>
 
-              <td>{item.fecha_inicial}</td>
-              <td>{item.fecha_final}</td>
+              <td>{fechaFormatoClasico(item.fecha_inicial)}</td>
+              <td>{fechaFormatoClasico(item.fecha_final)}</td>
               <td>{item.n_dias}</td>
               <td>{item.documento_resolucion_estado}</td>
               <td>{item.plazo_aprobado ? "Aprobado" : "Sin aprobar	"}</td>
