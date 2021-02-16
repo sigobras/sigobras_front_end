@@ -60,7 +60,7 @@ export default ({ data, AnyoSeleccionado }) => {
     <div style={{ width: "300px" }}>
       <table
         style={{ width: "100%" }}
-        className="text-center reporteGeneral-titulos"
+        className="text-center reporteGeneral-titulos reporteGeneral-table"
       >
         <tbody>
           <tr>

@@ -44,7 +44,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
 
   return (
     <div style={{ width: "300px" }}>
-      <table style={{ width: "100%" }}>
+      <table style={{ width: "100%" }} className="reporteGeneral-table">
         <tbody className="reporteGeneral-titulos">
           <tr>
             <th>Codigo SNIP</th>
