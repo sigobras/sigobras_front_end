@@ -13,32 +13,32 @@ import "react-toastify/dist/ReactToastify.css";
 export default ({ data }) => {
   return (
     <div>
-      <table style={{ width: "100%" }}>
+      <table style={{ width: "100%" }} className="reporteGeneral-table">
         <tbody className="reporteGeneral-titulos">
           <tr>
             <th>avance fisico</th>
           </tr>
-          <tr>
+          <tr className="reporteGeneral-avanceFisico">
             <td>S/.{Redondea(data.avancefisico_acumulado)}</td>
           </tr>
-          <tr>
+          <tr className="reporteGeneral-avanceFisico">
             <td>
               {Redondea(
                 (data.avancefisico_acumulado / data.presupuesto_costodirecto) *
                   100
-              )}
+              )}{" "}
               %
             </td>
           </tr>
           <tr>
             <th>avance financiero</th>
           </tr>
-          <tr>
+          <tr className="reporteGeneral-avanceFinanciero">
             <td>S/.{Redondea(data.avancefinanciero_acumulado)}</td>
           </tr>
-          <tr>
+          <tr className="reporteGeneral-avanceFinanciero">
             <td>
-              {Redondea((data.avancefisico_acumulado / data.presupuesto) * 100)}
+              {Redondea((data.avancefisico_acumulado / data.presupuesto) * 100)}{" "}
               %
             </td>
           </tr>

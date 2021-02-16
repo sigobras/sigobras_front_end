@@ -6,6 +6,9 @@ function Redondea(x, decimales = 2, soloPositivos = false) {
   } else if (x == 0 || isNaN(x)) {
     return "-";
   }
+  if (!isFinite(x)) {
+    return "-";
+  }
   if (x < 0 && soloPositivos) {
     return "-";
   }

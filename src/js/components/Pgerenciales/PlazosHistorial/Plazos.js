@@ -177,6 +177,8 @@ export default () => {
                 clone[item.id] = ref;
                 setRefPlazosHijos(clone);
               }}
+              uploadFile={uploadFile}
+              DescargarArchivo={DescargarArchivo}
             />,
           ])}
           <tr
@@ -254,60 +256,75 @@ export default () => {
     </div>
   );
 };
-const PLazosHijos = forwardRef(({ id_padre, count }, ref) => {
-  useImperativeHandle(ref, () => ({
-    recarga() {
-      fetchCargarPlazosHijos();
-    },
-  }));
-
-  useEffect(() => {
-    fetchCargarPlazosHijos();
-    return () => {};
-  }, []);
-  const [CargarPlazosHijos, setCargarPlazosHijos] = useState([]);
-  async function fetchCargarPlazosHijos() {
-    const res = await axios.get(`${UrlServer}/plazosHijos`, {
-      params: {
-        id_ficha: sessionStorage.getItem("idobra"),
-        id_padre: id_padre,
+const PLazosHijos = forwardRef(
+  ({ id_padre, count, uploadFile, DescargarArchivo }, ref) => {
+    useImperativeHandle(ref, () => ({
+      recarga() {
+        fetchCargarPlazosHijos();
       },
-    });
-    setCargarPlazosHijos(res.data);
-  }
-  async function deletePlazosHijos(id) {
-    if (confirm("Esta seguro que desea eliminar este Subestado?")) {
-      const res = await axios.delete(`${UrlServer}/plazosPadresAndHijos`, {
-        data: {
-          id: id,
+    }));
+
+    useEffect(() => {
+      fetchCargarPlazosHijos();
+      return () => {};
+    }, []);
+    const [CargarPlazosHijos, setCargarPlazosHijos] = useState([]);
+    async function fetchCargarPlazosHijos() {
+      const res = await axios.get(`${UrlServer}/plazosHijos`, {
+        params: {
+          id_ficha: sessionStorage.getItem("idobra"),
+          id_padre: id_padre,
         },
       });
-      alert("se elimino registro con exito");
-      fetchCargarPlazosHijos();
+      setCargarPlazosHijos(res.data);
     }
+    async function deletePlazosHijos(id) {
+      if (confirm("Esta seguro que desea eliminar este Subestado?")) {
+        const res = await axios.delete(`${UrlServer}/plazosPadresAndHijos`, {
+          data: {
+            id: id,
+          },
+        });
+        alert("se elimino registro con exito");
+        fetchCargarPlazosHijos();
+      }
+    }
+    return CargarPlazosHijos.map((item, i) => (
+      <tr key={i}>
+        <td style={{ paddingLeft: "20px" }}>{count + "." + (i + 1)}</td>
+        <td>{item.tipo_nombre}</td>
+        <td>{item.descripcion}</td>
+        <td>{item.documento_resolucion_estado}</td>
+        <td>
+          <TooltipUploadIcon
+            item={item}
+            uploadFile={uploadFile}
+            DescargarArchivo={DescargarArchivo}
+          />
+        </td>
+        <td></td>
+        <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
+        <td>{fechaFormatoClasico(item.fecha_final)}</td>
+        <td>{item.n_dias}</td>
+        <td></td>
+        <td>{item.fecha_aprobada}</td>
+        <td style={{ display: "flex" }}>
+          <PlazosFormularioEdicion
+            data={item}
+            recarga={fetchCargarPlazosHijos}
+          />
+          <Button
+            color="info"
+            outline
+            onClick={() => deletePlazosHijos(item.id)}
+          >
+            <MdDeleteForever />
+          </Button>
+        </td>
+      </tr>
+    ));
   }
-  return CargarPlazosHijos.map((item, i) => (
-    <tr key={i}>
-      <td style={{ paddingLeft: "20px" }}>{count + "." + (i + 1)}</td>
-      <td>{item.tipo_nombre}</td>
-      <td>{item.descripcion}</td>
-      <td>{item.documento_resolucion_estado}</td>
-      <td></td>
-      <td></td>
-      <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
-      <td>{fechaFormatoClasico(item.fecha_final)}</td>
-      <td>{item.n_dias}</td>
-      <td></td>
-      <td>{item.fecha_aprobada}</td>
-      <td style={{ display: "flex" }}>
-        <PlazosFormularioEdicion data={item} recarga={fetchCargarPlazosHijos} />
-        <Button color="info" outline onClick={() => deletePlazosHijos(item.id)}>
-          <MdDeleteForever />
-        </Button>
-      </td>
-    </tr>
-  ));
-});
+);
 function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipOpen2, setTooltipOpen2] = useState(false);

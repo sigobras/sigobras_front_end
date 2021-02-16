@@ -33,11 +33,15 @@ export default ({ recargar }) => {
   }, []);
   const [ListInterfaces, setListInterfaces] = useState([
     {
-      nombre: "DatosEspecificos",
+      nombre: "Datos Especificos",
       activado: true,
       interfaz: DatosEspecificos,
     },
-    { nombre: "ResumenAvance", activado: true, interfaz: ResumenAvance },
+    {
+      nombre: "Acumulado a la fecha actual",
+      activado: true,
+      interfaz: ResumenAvance,
+    },
     { nombre: "Plazos", activado: true, interfaz: Plazos },
 
     { nombre: "Responsables", activado: true, interfaz: Responsables },
@@ -48,7 +52,7 @@ export default ({ recargar }) => {
     },
     { nombre: "Presupuesto", activado: true, interfaz: Presupuesto },
     {
-      nombre: "Presupuesto Analítico Aprobado y Ejecutado de Obra",
+      nombre: "Analitico Ejecutado",
       activado: true,
       interfaz: PresupuestoAnalitico,
     },
@@ -97,7 +101,10 @@ export default ({ recargar }) => {
           overflowX: "auto",
         }}
       >
-        <table className="table table-bordered table-light reporteGeneral-table">
+        <table
+          className="table-bordered reporteGeneral-table"
+          style={{ background: "#242526", borderColor: "#242526" }}
+        >
           <tbody>
             <tr className=" text-center">
               <th className="reporteGeneral-cabezeraSticky">Proyecto</th>

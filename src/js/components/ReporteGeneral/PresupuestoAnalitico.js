@@ -157,7 +157,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
 
   return (
     <div style={{ width: "2000px" }}>
-      <table className="text-center">
+      <table className="text-center reporteGeneral-table">
         <tbody className="reporteGeneral-titulos">
           <tr>
             <th className="reporteGeneral-bodySticky-analitico ">

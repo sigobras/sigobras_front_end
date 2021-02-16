@@ -14,14 +14,17 @@ export default ({ data, recargar }) => {
   useEffect(() => {
     cargarData();
   }, []);
+  const [Loading, setLoading] = useState(false);
   const [Data, setData] = useState([]);
   async function cargarData() {
+    setLoading(true);
     var res = await axios.get(`${UrlServer}/v1/obrasPlazos`, {
       params: {
         id_ficha: data.id_ficha,
       },
     });
     setData(res.data);
+    setLoading(false);
   }
   //descargar archivo
   function DescargarArchivo(data) {
@@ -37,117 +40,121 @@ export default ({ data, recargar }) => {
   }
   return (
     <div style={{ width: "600px" }}>
-      <table style={{ width: "100%" }}>
-        <tbody className="reporteGeneral-titulos">
-          <tr>
-            <th>decripcion</th>
-            <th style={{ width: "60px" }}>fecha inicial</th>
-            <th style={{ width: "60px" }}>fecha final</th>
-            <th>dias</th>
-            <th>resolucion</th>
-            <th>plazo aprobado </th>
-            <th>archivo</th>
-          </tr>
-          {Data.map((item, i) => (
-            <tr key={i}>
-              <td>{item.descripcion}</td>
-
-              <td>{fechaFormatoClasico(item.fecha_inicial)}</td>
-              <td>{fechaFormatoClasico(item.fecha_final)}</td>
-              <td>{item.n_dias}</td>
-              <td>{item.documento_resolucion_estado}</td>
-              <td>{item.plazo_aprobado ? "Aprobado" : "Sin aprobar	"}</td>
-              <td>
-                {item.archivo && (
-                  <div
-                    className="text-primary"
-                    onClick={() =>
-                      DescargarArchivo(`${UrlServer}${item.archivo}`)
-                    }
-                    style={{
-                      cursor: "pointer",
-                      width: "100%",
-                    }}
-                    id="TooltipExample2"
-                  >
-                    <RiDownload2Fill size={20} color={"#17a2b8"} />
-                  </div>
-                )}
-              </td>
+      {Loading ? (
+        <Spinner type="grow" color="dark" />
+      ) : (
+        <table className="reporteGeneral-table" style={{ width: "100%" }}>
+          <tbody className="reporteGeneral-titulos">
+            <tr>
+              <th>decripcion</th>
+              <th style={{ width: "60px" }}>fecha inicial</th>
+              <th style={{ width: "60px" }}>fecha final</th>
+              <th>dias</th>
+              <th>resolucion</th>
+              <th>plazo aprobado </th>
+              <th>archivo</th>
             </tr>
-          ))}
-          <tr
-            style={{
-              fontWeight: 700,
-            }}
-          >
-            <td
-              colSpan="3"
+            {Data.map((item, i) => (
+              <tr key={i}>
+                <td>{item.descripcion}</td>
+
+                <td>{fechaFormatoClasico(item.fecha_inicial)}</td>
+                <td>{fechaFormatoClasico(item.fecha_final)}</td>
+                <td>{item.n_dias}</td>
+                <td>{item.documento_resolucion_estado}</td>
+                <td>{item.plazo_aprobado ? "Aprobado" : "Sin aprobar	"}</td>
+                <td>
+                  {item.archivo && (
+                    <div
+                      className="text-primary"
+                      onClick={() =>
+                        DescargarArchivo(`${UrlServer}${item.archivo}`)
+                      }
+                      style={{
+                        cursor: "pointer",
+                        width: "100%",
+                      }}
+                      id="TooltipExample2"
+                    >
+                      <RiDownload2Fill size={20} color={"#17a2b8"} />
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+            <tr
               style={{
-                textAlign: "right",
+                fontWeight: 700,
               }}
             >
-              TOTAL DIAS APROBADOS
-            </td>
-            <td>
-              {(() => {
-                return Data.reduce((acu, item) => {
-                  if (item.plazo_aprobado) {
-                    return acu + item.n_dias;
-                  }
-                  return acu;
-                }, 0);
-              })()}
-            </td>
-            <td colSpan="3"></td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: 700,
-            }}
-          >
-            <td
-              colSpan="3"
+              <td
+                colSpan="3"
+                style={{
+                  textAlign: "right",
+                }}
+              >
+                TOTAL DIAS APROBADOS
+              </td>
+              <td>
+                {(() => {
+                  return Data.reduce((acu, item) => {
+                    if (item.plazo_aprobado) {
+                      return acu + item.n_dias;
+                    }
+                    return acu;
+                  }, 0);
+                })()}
+              </td>
+              <td colSpan="3"></td>
+            </tr>
+            <tr
               style={{
-                textAlign: "right",
+                fontWeight: 700,
               }}
             >
-              TOTAL DIAS SIN APROBAR
-            </td>
-            <td>
-              {(() => {
-                return Data.reduce((acu, item) => {
-                  if (!item.plazo_aprobado) {
-                    return acu + item.n_dias;
-                  }
-                  return acu;
-                }, 0);
-              })()}
-            </td>
-            <td colSpan="3"></td>
-          </tr>
-          <tr
-            style={{
-              fontWeight: 700,
-            }}
-          >
-            <td
-              colSpan="3"
+              <td
+                colSpan="3"
+                style={{
+                  textAlign: "right",
+                }}
+              >
+                TOTAL DIAS SIN APROBAR
+              </td>
+              <td>
+                {(() => {
+                  return Data.reduce((acu, item) => {
+                    if (!item.plazo_aprobado) {
+                      return acu + item.n_dias;
+                    }
+                    return acu;
+                  }, 0);
+                })()}
+              </td>
+              <td colSpan="3"></td>
+            </tr>
+            <tr
               style={{
-                textAlign: "right",
+                fontWeight: 700,
               }}
             >
-              PLAZO DE EJECUCION TOTAL
-            </td>
-            <td>
-              {(() => {
-                return Data.reduce((acu, item) => acu + item.n_dias, 0);
-              })()}
-            </td>
-            <td colSpan="3"></td>
-          </tr>
-        </tbody>
-      </table>
+              <td
+                colSpan="3"
+                style={{
+                  textAlign: "right",
+                }}
+              >
+                PLAZO DE EJECUCION TOTAL
+              </td>
+              <td>
+                {(() => {
+                  return Data.reduce((acu, item) => acu + item.n_dias, 0);
+                })()}
+              </td>
+              <td colSpan="3"></td>
+            </tr>
+          </tbody>
+        </table>
+      )}
       <Button
         onClick={async () => {
           await recargar(data);
