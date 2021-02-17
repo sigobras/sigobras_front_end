@@ -121,6 +121,7 @@ export default ({ id_ficha, codigo_obra }) => {
 
   //recargar
   function recargar() {
+    fetchCargosPersonal();
     fetchUsuariosPersonal();
     fetchUsuariosPersonalInactivos();
   }
@@ -187,7 +188,7 @@ export default ({ id_ficha, codigo_obra }) => {
       >
         <FaUserFriends />
       </button>
-      <Modal isOpen={ModalPersonal} toggle={toggleModalPersonal}>
+      <Modal isOpen={ModalPersonal} toggle={toggleModalPersonal} size="lg">
         <ModalHeader>{codigo_obra} - PERSONAL TECNICO DE OBRA</ModalHeader>
         <ModalBody>
           <div className="card">
@@ -230,7 +231,7 @@ export default ({ id_ficha, codigo_obra }) => {
                     <thead>
                       <tr>
                         <th></th>
-                        <th colSpan="2">PERSONAL</th>
+                        <th>PERSONAL</th>
                         <th>CARGO</th>
                         <th>CELULAR</th>
                         <th>DNI</th>
@@ -243,24 +244,6 @@ export default ({ id_ficha, codigo_obra }) => {
                         <tr key={i}>
                           <td>{i + 1}</td>
                           <td>{item.nombre_usuario}</td>
-                          <td>
-                            {item.memorandum !== null && (
-                              <div
-                                className="text-primary"
-                                title="descargar memorandum"
-                                onClick={() =>
-                                  DescargarArchivo(
-                                    `${UrlServer}${item.memorandum}`
-                                  )
-                                }
-                                style={{
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <FaMediumM size={15} color={"#2676bb"} />
-                              </div>
-                            )}
-                          </td>
                           <td>{item.cargo_nombre}</td>
                           <td>{item.celular}</td>
                           <td>{item.dni}</td>
@@ -384,6 +367,7 @@ export default ({ id_ficha, codigo_obra }) => {
                             <th>CELULAR</th>
                             <th>DNI</th>
                             <th>EMAIL</th>
+                            <th>OPCIONES</th>
                           </tr>
                         </thead>
                         <tbody>
