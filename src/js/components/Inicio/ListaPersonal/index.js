@@ -496,7 +496,7 @@ export default ({ id_ficha, codigo_obra }) => {
                         <Input
                           type="date"
                           value={item.fecha_final}
-                          onChange={() =>
+                          onChange={(e) =>
                             actualizarHistorialPersonal(
                               i,
                               "fecha_final",
