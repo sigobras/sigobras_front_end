@@ -103,10 +103,12 @@ export default ({ Obra }) => {
   //UsuarioData
   const [UsuarioData, setUsuarioData] = useState({});
   async function fetchUsuarioData() {
-    const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
+    const res = await axios.post(`${UrlServer}/getDatosUsuario`, {
       id_acceso: sessionStorage.getItem("idacceso"),
+      id_ficha: sessionStorage.getItem("idobra"),
     });
-    setUsuarioData(request.data);
+    console.log("fetchUsuarioData", res.data);
+    setUsuarioData(res.data);
   }
   //recargar
   function recargarData() {

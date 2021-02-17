@@ -38,6 +38,7 @@ export default forwardRef(({ item, anyo }, ref) => {
   async function fetchUsuarioData() {
     const res = await axios.post(`${UrlServer}/getDatosUsuario`, {
       id_acceso: sessionStorage.getItem("idacceso"),
+      id_ficha: sessionStorage.getItem("idobra"),
     });
     setUsuarioData(res.data);
   }
