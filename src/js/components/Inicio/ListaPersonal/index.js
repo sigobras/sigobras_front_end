@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
+  Input,
   Collapse,
   Nav,
   NavItem,
@@ -12,7 +13,6 @@ import {
   ModalBody,
   Button,
 } from "reactstrap";
-import classnames from "classnames";
 import { FaUserFriends, FaMediumM, FaUpload } from "react-icons/fa";
 
 import Usuario from "../../../../images/usuario.png";
@@ -28,6 +28,7 @@ export default ({ id_ficha, codigo_obra }) => {
     if (!ModalPersonal) {
       fetchCargosPersonal();
       fetchUsuarioData();
+      setIdCargoSeleccionado(0);
     }
   }
   //getcargos
@@ -43,7 +44,7 @@ export default ({ id_ficha, codigo_obra }) => {
   }
   //get usuarios
   const [UsuariosPersonal, setUsuariosPersonal] = useState([]);
-  const [IdCargoSeleccionado, setIdCargoSeleccionado] = useState(0);
+  const [IdCargoSeleccionado, setIdCargoSeleccionado] = useState(-1);
   async function fetchUsuariosPersonal() {
     var res = await axios.get(`${UrlServer}/v1/usuarios`, {
       params: {
@@ -56,9 +57,9 @@ export default ({ id_ficha, codigo_obra }) => {
     setUsuariosPersonal(res.data);
   }
   //input file
-  const [idAccesoInputFile, setidAccesoInputFile] = useState(0);
-  async function uploadFile(id_acceso) {
-    await setidAccesoInputFile(id_acceso);
+  const [idDesignacion, setidDesignacion] = useState(0);
+  async function uploadFile(id) {
+    await setidDesignacion(id);
     hiddenFileInput.current.click();
   }
   async function onChangeInputFile(e) {
@@ -67,20 +68,21 @@ export default ({ id_ficha, codigo_obra }) => {
       formData.append("memorandum", e.target.files[0]);
       e.target.value = null;
       formData.append("obra_codigo", codigo_obra);
-      formData.append("id_acceso", idAccesoInputFile);
+      formData.append("id", idDesignacion);
       formData.append("id_ficha", id_ficha);
       const config = {
         headers: {
           "content-type": "multipart/form-data",
         },
       };
-      var res = await axios.post(
-        `${UrlServer}/putUsuarioMemo`,
+
+      const res = await axios.put(
+        `${UrlServer}/v1/designaciones/${idDesignacion}/memorandum`,
         formData,
         config
       );
       console.log(res.data);
-      recargar();
+      cargarHistorialPersonal();
     } else {
       e.target.value = null;
     }
@@ -131,8 +133,50 @@ export default ({ id_ficha, codigo_obra }) => {
     setUsuarioData(request.data);
   }
 
+  //nueva interfaz
+  const [HistorialPersonal, setHistorialPersonal] = useState([]);
+  async function cargarHistorialPersonal() {
+    const res = await axios.get(`${UrlServer}/v1/designaciones`, {
+      params: {
+        id_ficha,
+        id_cargo: IdCargoSeleccionado,
+      },
+    });
+    setHistorialPersonal(res.data);
+  }
+  async function actualizarHistorialPersonal(index, name, value) {
+    var clone = [...HistorialPersonal];
+    clone[index][name] = value;
+    const res = await axios.put(
+      `${UrlServer}/v1/designaciones/${clone[index].id}`,
+      {
+        fecha_inicio: clone[index].fecha_inicio,
+        fecha_final: clone[index].fecha_final,
+      }
+    );
+    setHistorialPersonal(clone);
+    console.log("actualizarHistorialPersonal", res.data);
+    cargarHistorialPersonal();
+  }
+  function agregarPersonal() {
+    var clone = [...HistorialPersonal];
+    clone.push({
+      nombre: "temp",
+      cargo: "residente",
+      celular: "12312",
+      dni: "123",
+      email: "sdl",
+      fecha_inicio: "2019-01-01",
+      fecha_final: "2019-12-01",
+      estado: "habilitado",
+    });
+    setHistorialPersonal(clone);
+  }
   useEffect(() => {
-    recargar();
+    if (IdCargoSeleccionado != -1) {
+      recargar();
+      cargarHistorialPersonal();
+    }
   }, [IdCargoSeleccionado]);
   return (
     <div>
@@ -152,9 +196,7 @@ export default ({ id_ficha, codigo_obra }) => {
                 CargosPersonal.map((item, i) => (
                   <NavItem key={i}>
                     <NavLink
-                      className={classnames({
-                        active: IdCargoSeleccionado === item.id_cargo,
-                      })}
+                      active={IdCargoSeleccionado === item.id_cargo}
                       onClick={() => {
                         setIdCargoSeleccionado(item.id_cargo);
                       }}
@@ -174,273 +216,33 @@ export default ({ id_ficha, codigo_obra }) => {
                   </NavLink>
                 </NavItem>,
               ]}
-              {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
-                <FormularioPersonal id_ficha={id_ficha} recargar={recargar} />
-              )}
             </Nav>
 
             {IdCargoSeleccionado == 0 ? (
-              <TabPane
-                style={{
-                  maxHeight: "500px",
-                  overflowY: "auto",
-                }}
-              >
-                <table className="table table-sm small">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th colSpan="3">PERSONAL</th>
-                      <th>CARGO</th>
-                      <th>CELULAR</th>
-                      <th>DNI</th>
-                      <th>EMAIL</th>
-                      <th colSpan="2">OPCIONES</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {UsuariosPersonal.map((item, i) => (
-                      <tr key={i}>
-                        <td>{i + 1}</td>
-                        <td>{item.nombre_usuario}</td>
-                        <td>
-                          <div
-                            onClick={() => uploadFile(item.id_acceso)}
-                            style={{
-                              textAlign: "center",
-                              cursor: "pointer",
-                            }}
-                          >
-                            <FaUpload size={10} color={"#ffffff"} />
-                          </div>
-                        </td>
-                        <td>
-                          {item.memorandum !== null && (
-                            <div
-                              className="text-primary"
-                              title="descargar memorandum"
-                              onClick={() =>
-                                DescargarArchivo(
-                                  `${UrlServer}${item.memorandum}`
-                                )
-                              }
-                              style={{
-                                cursor: "pointer",
-                              }}
-                            >
-                              <FaMediumM size={15} color={"#2676bb"} />
-                            </div>
-                          )}
-                        </td>
-                        <td>{item.cargo_nombre}</td>
-                        <td>{item.celular}</td>
-                        <td>{item.dni}</td>
-                        <td>{item.email}</td>
-                        <td>
-                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                            UsuarioData.cargo_nombre ==
-                              "EDITOR DE PERSONAL") && (
-                            <HabilitarButton item={item} recargar={recargar} />
-                          )}
-                        </td>
-                        <td>
-                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                            UsuarioData.cargo_nombre ==
-                              "EDITOR DE PERSONAL") && (
-                            <FormularioPersonal
-                              id_ficha={id_ficha}
-                              dataPersonal={item}
-                              recargar={recargar}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </TabPane>
-            ) : (
-              <TabPane
-                style={{
-                  maxHeight: "250px",
-                  overflowY: "auto",
-                }}
-              >
-                {UsuariosPersonal.map((usuarios, IdUsuario) => (
-                  <div
-                    className="row no-gutters position-relative"
-                    key={IdUsuario}
-                  >
-                    <div className="col-md-3 mb-md-0 p-md-4">
-                      <div
-                        style={{
-                          textAlign: "center",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <img
-                          src={Usuario}
-                          className="w-75"
-                          alt="users sigobras"
-                        />
-                      </div>
-                      <div>
-                        {usuarios.memorandum !== null && (
-                          <div
-                            className="text-primary"
-                            title="descargar memorandum"
-                            onClick={() =>
-                              DescargarArchivo(
-                                `${UrlServer}${usuarios.memorandum}`
-                              )
-                            }
-                            style={{
-                              position: "absolute",
-                              top: "12px",
-                              right: "29px",
-                              cursor: "pointer",
-                            }}
-                          >
-                            <FaMediumM size={15} color={"#2676bb"} />
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        onClick={() => uploadFile(usuarios.id_acceso)}
-                        style={{
-                          textAlign: "center",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <FaUpload size={15} color={"#dc3545"} />
-                      </div>
-                    </div>
-                    <div className="col-md-9 position-static p-4 pl-md-0">
-                      <ListGroup>
-                        <b>{usuarios.nombre_usuario}</b>
-                        <b>CELULAR N° </b> <span>{usuarios.celular}</span>
-                        <b>DNI </b> <span>{usuarios.dni}</span>
-                        <b>EMAIL </b> <span>{usuarios.email}</span>
-                        <b>DIRECCION </b> <span>{usuarios.direccion}</span>
-                        <b>N° COLEGIATURA </b> <span>{usuarios.cpt}</span>
-                      </ListGroup>
-                    </div>
-                  </div>
-                ))}
-              </TabPane>
-            )}
-
-            <TabPane>
-              {UsuariosPersonalInactivos.length > 0 && (
-                <Button
-                  color="primary"
-                  onClick={() => toggleModalPersonalInactivo()}
-                  style={{ marginBottom: "1rem" }}
+              <div>
+                <TabPane
+                  style={{
+                    maxHeight: "500px",
+                    overflowY: "auto",
+                  }}
                 >
-                  PERSONAL INACTIVO
-                </Button>
-              )}
-
-              <Collapse
-                isOpen={ModalPersonalInactivo}
-                style={{
-                  maxHeight: "250px",
-                  overflowY: "auto",
-                }}
-              >
-                {IdCargoSeleccionado != 0 ? (
-                  UsuariosPersonalInactivos.map((usuarios, IdUsuario) => (
-                    <div
-                      className="row no-gutters position-relative"
-                      key={IdUsuario}
-                    >
-                      <div className="col-md-3 mb-md-0 p-md-4">
-                        <div
-                          style={{
-                            textAlign: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <img
-                            src={Usuario}
-                            className="w-75"
-                            alt="users sigobras"
-                          />
-                        </div>
-                        <div>
-                          {usuarios.memorandum !== null && (
-                            <div
-                              className="text-primary"
-                              title="descargar memorandum"
-                              onClick={() =>
-                                DescargarArchivo(
-                                  `${UrlServer}${usuarios.memorandum}`
-                                )
-                              }
-                              style={{
-                                position: "absolute",
-                                top: "12px",
-                                right: "29px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <FaMediumM size={15} color={"#dc3545"} />
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          onClick={() => uploadFile(usuarios.id_acceso)}
-                          style={{
-                            textAlign: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <FaUpload size={15} color={"#dc3545"} />
-                        </div>
-                      </div>
-                      <div className="col-md-9 position-static p-4 pl-md-0">
-                        <ListGroup>
-                          <b>{usuarios.nombre_usuario}</b>
-                          <b>CELULAR N° </b> <span>{usuarios.celular}</span>
-                          <b>DNI </b> <span>{usuarios.dni}</span>
-                          <b>EMAIL </b> <span>{usuarios.email}</span>
-                          <b>DIRECCION </b> <span>{usuarios.direccion}</span>
-                          <b>N° COLEGIATURA </b> <span>{usuarios.cpt}</span>
-                        </ListGroup>
-                      </div>
-                    </div>
-                  ))
-                ) : (
                   <table className="table table-sm small">
                     <thead>
                       <tr>
                         <th></th>
-                        <th>PERSONAL</th>
-                        <th></th>
-                        <th></th>
+                        <th colSpan="2">PERSONAL</th>
                         <th>CARGO</th>
                         <th>CELULAR</th>
                         <th>DNI</th>
                         <th>EMAIL</th>
+                        <th colSpan="2">OPCIONES</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {UsuariosPersonalInactivos.map((item, i) => (
+                      {UsuariosPersonal.map((item, i) => (
                         <tr key={i}>
                           <td>{i + 1}</td>
                           <td>{item.nombre_usuario}</td>
-                          <td>
-                            <div
-                              onClick={() => uploadFile(item.id_acceso)}
-                              style={{
-                                textAlign: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <FaUpload size={10} color={"#ffffff"} />
-                            </div>
-                          </td>
                           <td>
                             {item.memorandum !== null && (
                               <div
@@ -473,13 +275,261 @@ export default ({ id_ficha, codigo_obra }) => {
                               />
                             )}
                           </td>
+                          <td>
+                            {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                              UsuarioData.cargo_nombre ==
+                                "EDITOR DE PERSONAL") && (
+                              <FormularioPersonal
+                                id_ficha={id_ficha}
+                                dataPersonal={item}
+                                recargar={recargar}
+                              />
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                )}
-              </Collapse>
-            </TabPane>
+                </TabPane>
+                <TabPane>
+                  {UsuariosPersonalInactivos.length > 0 && (
+                    <Button
+                      color="primary"
+                      onClick={() => toggleModalPersonalInactivo()}
+                      style={{ marginBottom: "1rem" }}
+                    >
+                      PERSONAL INACTIVO
+                    </Button>
+                  )}
+
+                  <Collapse
+                    isOpen={ModalPersonalInactivo}
+                    style={{
+                      maxHeight: "250px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    {IdCargoSeleccionado != 0 ? (
+                      UsuariosPersonalInactivos.map((usuarios, IdUsuario) => (
+                        <div
+                          className="row no-gutters position-relative"
+                          key={IdUsuario}
+                        >
+                          <div className="col-md-3 mb-md-0 p-md-4">
+                            <div
+                              style={{
+                                textAlign: "center",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <img
+                                src={Usuario}
+                                className="w-75"
+                                alt="users sigobras"
+                              />
+                            </div>
+                            <div>
+                              {usuarios.memorandum !== null && (
+                                <div
+                                  className="text-primary"
+                                  title="descargar memorandum"
+                                  onClick={() =>
+                                    DescargarArchivo(
+                                      `${UrlServer}${usuarios.memorandum}`
+                                    )
+                                  }
+                                  style={{
+                                    position: "absolute",
+                                    top: "12px",
+                                    right: "29px",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <FaMediumM size={15} color={"#dc3545"} />
+                                </div>
+                              )}
+                            </div>
+                            <div
+                              onClick={() => uploadFile(usuarios.id_acceso)}
+                              style={{
+                                textAlign: "center",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <FaUpload size={15} color={"#dc3545"} />
+                            </div>
+                          </div>
+                          <div className="col-md-9 position-static p-4 pl-md-0">
+                            <ListGroup>
+                              <b>{usuarios.nombre_usuario}</b>
+                              <b>CELULAR N° </b> <span>{usuarios.celular}</span>
+                              <b>DNI </b> <span>{usuarios.dni}</span>
+                              <b>EMAIL </b> <span>{usuarios.email}</span>
+                              <b>DIRECCION </b>{" "}
+                              <span>{usuarios.direccion}</span>
+                              <b>N° COLEGIATURA </b> <span>{usuarios.cpt}</span>
+                            </ListGroup>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <table className="table table-sm small">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th>PERSONAL</th>
+                            <th></th>
+                            <th></th>
+                            <th>CARGO</th>
+                            <th>CELULAR</th>
+                            <th>DNI</th>
+                            <th>EMAIL</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {UsuariosPersonalInactivos.map((item, i) => (
+                            <tr key={i}>
+                              <td>{i + 1}</td>
+                              <td>{item.nombre_usuario}</td>
+                              <td>
+                                <div
+                                  onClick={() => uploadFile(item.id_acceso)}
+                                  style={{
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <FaUpload size={10} color={"#ffffff"} />
+                                </div>
+                              </td>
+                              <td>
+                                {item.memorandum !== null && (
+                                  <div
+                                    className="text-primary"
+                                    title="descargar memorandum"
+                                    onClick={() =>
+                                      DescargarArchivo(
+                                        `${UrlServer}${item.memorandum}`
+                                      )
+                                    }
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <FaMediumM size={15} color={"#2676bb"} />
+                                  </div>
+                                )}
+                              </td>
+                              <td>{item.cargo_nombre}</td>
+                              <td>{item.celular}</td>
+                              <td>{item.dni}</td>
+                              <td>{item.email}</td>
+                              <td>
+                                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                                  UsuarioData.cargo_nombre ==
+                                    "EDITOR DE PERSONAL") && (
+                                  <HabilitarButton
+                                    item={item}
+                                    recargar={recargar}
+                                  />
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </Collapse>
+                </TabPane>
+              </div>
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <td>
+                      {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                        UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                        <FormularioPersonal
+                          id_ficha={id_ficha}
+                          recargar={recargar}
+                          id_cargo={IdCargoSeleccionado}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th colSpan="3">nombre</th>
+                    <th>fecha de ingreso</th>
+                    <th>fecha de salida</th>
+                    <th>estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {HistorialPersonal.map((item, i) => (
+                    <tr key={item.id}>
+                      <td>{item.nombre}</td>
+                      <td>
+                        <div
+                          onClick={() => uploadFile(item.id)}
+                          style={{
+                            textAlign: "center",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <FaUpload size={10} color={"#ffffff"} />
+                        </div>
+                      </td>
+                      <td>
+                        {item.memorandum !== null && (
+                          <div
+                            className="text-primary"
+                            title="descargar memorandum"
+                            onClick={() =>
+                              DescargarArchivo(`${UrlServer}${item.memorandum}`)
+                            }
+                            style={{
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FaMediumM size={15} color={"#2676bb"} />
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <Input
+                          type="date"
+                          value={item.fecha_inicio}
+                          onChange={(e) =>
+                            actualizarHistorialPersonal(
+                              i,
+                              "fecha_inicio",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="date"
+                          value={item.fecha_final}
+                          onChange={() =>
+                            actualizarHistorialPersonal(
+                              i,
+                              "fecha_final",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+
+                      <td>
+                        {item.habilitado ? "Habilitado" : "Deshabilitado"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </ModalBody>
       </Modal>

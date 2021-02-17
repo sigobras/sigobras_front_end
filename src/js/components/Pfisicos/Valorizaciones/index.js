@@ -71,28 +71,33 @@ export default () => {
       fecha_inicial: PeriodoSeleccionado.fecha_inicial,
       fecha_final: PeriodoSeleccionado.fecha_final,
     });
-    setResumenComponentes(res.data);
-    var presupuesto = res.data.reduce((acc, item) => acc + item.presupuesto, 0);
-    var valor_anterior = res.data.reduce(
-      (acc, item) => acc + item.valor_anterior,
-      0
-    );
-    var valor_actual = res.data.reduce(
-      (acc, item) => acc + item.valor_actual,
-      0
-    );
-    setResumenComponentesTotales({
-      presupuesto,
-      valor_anterior,
-      porcentaje_anterior: (valor_anterior / presupuesto) * 100,
-      valor_actual,
-      porcentaje_actual: (valor_actual / presupuesto) * 100,
-      valor_total: valor_anterior + valor_actual,
-      porcentaje_total: ((valor_anterior + valor_actual) / presupuesto) * 100,
-      valor_saldo: presupuesto - valor_anterior - valor_actual,
-      porcentaje_saldo:
-        ((presupuesto - valor_anterior - valor_actual) / presupuesto) * 100,
-    });
+    if (Array.isArray(res.data)) {
+      setResumenComponentes(res.data);
+      var presupuesto = res.data.reduce(
+        (acc, item) => acc + item.presupuesto,
+        0
+      );
+      var valor_anterior = res.data.reduce(
+        (acc, item) => acc + item.valor_anterior,
+        0
+      );
+      var valor_actual = res.data.reduce(
+        (acc, item) => acc + item.valor_actual,
+        0
+      );
+      setResumenComponentesTotales({
+        presupuesto,
+        valor_anterior,
+        porcentaje_anterior: (valor_anterior / presupuesto) * 100,
+        valor_actual,
+        porcentaje_actual: (valor_actual / presupuesto) * 100,
+        valor_total: valor_anterior + valor_actual,
+        porcentaje_total: ((valor_anterior + valor_actual) / presupuesto) * 100,
+        valor_saldo: presupuesto - valor_anterior - valor_actual,
+        porcentaje_saldo:
+          ((presupuesto - valor_anterior - valor_actual) / presupuesto) * 100,
+      });
+    }
   }
   //Componentes
   const [Partidas, setPartidas] = useState([]);
