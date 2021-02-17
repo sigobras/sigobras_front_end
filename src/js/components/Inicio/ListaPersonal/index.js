@@ -13,7 +13,7 @@ import {
   ModalBody,
   Button,
 } from "reactstrap";
-import { FaUserFriends, FaMediumM, FaUpload } from "react-icons/fa";
+import { FaUserFriends, FaMediumM, FaUpload, FaSave } from "react-icons/fa";
 
 import Usuario from "../../../../images/usuario.png";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
@@ -129,8 +129,11 @@ export default ({ id_ficha, codigo_obra }) => {
   const [UsuarioData, setUsuarioData] = useState({});
   async function fetchUsuarioData() {
     const request = await axios.get(
-      `${UrlServer}/v1/usuarios/acceso/${sessionStorage.getItem("idacceso")}`
+      `${UrlServer}/v1/usuarios/obra/${sessionStorage.getItem(
+        "idobra"
+      )}/acceso/${sessionStorage.getItem("idacceso")}`
     );
+    console.log("fetchUsuarioData", request.data);
     setUsuarioData(request.data);
   }
 
@@ -145,9 +148,14 @@ export default ({ id_ficha, codigo_obra }) => {
     });
     setHistorialPersonal(res.data);
   }
-  async function actualizarHistorialPersonal(index, name, value) {
+  const handleInputChange = (index, name, value) => {
     var clone = [...HistorialPersonal];
     clone[index][name] = value;
+    setHistorialPersonal(clone);
+  };
+  async function guardarDesignaciones(index) {
+    var clone = [...HistorialPersonal];
+    console.log("guardando", index, clone[index]);
     const res = await axios.put(
       `${UrlServer}/v1/designaciones/${clone[index].id}`,
       {
@@ -155,23 +163,7 @@ export default ({ id_ficha, codigo_obra }) => {
         fecha_final: clone[index].fecha_final,
       }
     );
-    setHistorialPersonal(clone);
-    console.log("actualizarHistorialPersonal", res.data);
     cargarHistorialPersonal();
-  }
-  function agregarPersonal() {
-    var clone = [...HistorialPersonal];
-    clone.push({
-      nombre: "temp",
-      cargo: "residente",
-      celular: "12312",
-      dni: "123",
-      email: "sdl",
-      fecha_inicio: "2019-01-01",
-      fecha_final: "2019-12-01",
-      estado: "habilitado",
-    });
-    setHistorialPersonal(clone);
   }
   useEffect(() => {
     if (IdCargoSeleccionado != -1) {
@@ -211,6 +203,9 @@ export default ({ id_ficha, codigo_obra }) => {
                     active={IdCargoSeleccionado == 0}
                     onClick={() => {
                       setIdCargoSeleccionado(0);
+                    }}
+                    style={{
+                      background: "orange",
                     }}
                   >
                     LISTA PERSONAL
@@ -446,6 +441,7 @@ export default ({ id_ficha, codigo_obra }) => {
                     <th>fecha de ingreso</th>
                     <th>fecha de salida</th>
                     <th>estado</th>
+                    <th>opciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -453,15 +449,18 @@ export default ({ id_ficha, codigo_obra }) => {
                     <tr key={item.id}>
                       <td>{item.nombre}</td>
                       <td>
-                        <div
-                          onClick={() => uploadFile(item.id)}
-                          style={{
-                            textAlign: "center",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <FaUpload size={10} color={"#ffffff"} />
-                        </div>
+                        {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                          <div
+                            onClick={() => uploadFile(item.id)}
+                            style={{
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FaUpload size={10} color={"#ffffff"} />
+                          </div>
+                        )}
                       </td>
                       <td>
                         {item.memorandum !== null && (
@@ -484,10 +483,12 @@ export default ({ id_ficha, codigo_obra }) => {
                           type="date"
                           value={item.fecha_inicio}
                           onChange={(e) =>
-                            actualizarHistorialPersonal(
-                              i,
-                              "fecha_inicio",
-                              e.target.value
+                            handleInputChange(i, "fecha_inicio", e.target.value)
+                          }
+                          disabled={
+                            !(
+                              UsuarioData.cargo_nombre == "RESIDENTE" ||
+                              UsuarioData.cargo_nombre == "EDITOR DE PERSONAL"
                             )
                           }
                         />
@@ -497,10 +498,12 @@ export default ({ id_ficha, codigo_obra }) => {
                           type="date"
                           value={item.fecha_final}
                           onChange={(e) =>
-                            actualizarHistorialPersonal(
-                              i,
-                              "fecha_final",
-                              e.target.value
+                            handleInputChange(i, "fecha_final", e.target.value)
+                          }
+                          disabled={
+                            !(
+                              UsuarioData.cargo_nombre == "RESIDENTE" ||
+                              UsuarioData.cargo_nombre == "EDITOR DE PERSONAL"
                             )
                           }
                         />
@@ -508,6 +511,18 @@ export default ({ id_ficha, codigo_obra }) => {
 
                       <td>
                         {item.habilitado ? "Habilitado" : "Deshabilitado"}
+                      </td>
+                      <td>
+                        {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                          <Button
+                            outline
+                            color="primary"
+                            onClick={() => guardarDesignaciones(i)}
+                          >
+                            <FaSave />
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -531,10 +546,12 @@ export default ({ id_ficha, codigo_obra }) => {
 function HabilitarButton({ item, recargar }) {
   //update habilitado
   async function updateHabilitado(id, habilitado) {
-    var res = await axios.put(`${UrlServer}/v1/usuarios/${id}/habilitado`, {
-      habilitado: !habilitado,
-    });
-    recargar();
+    if (confirm("Esta seguro de cambiar el estado del usuario")) {
+      var res = await axios.put(`${UrlServer}/v1/usuarios/${id}/habilitado`, {
+        habilitado: !habilitado,
+      });
+      recargar();
+    }
   }
   return (
     <div>
