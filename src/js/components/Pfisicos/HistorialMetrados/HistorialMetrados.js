@@ -540,6 +540,7 @@ export default () => {
   async function fetchUsuarioData() {
     const request = await axios.post(`${UrlServer}/getDatosUsuario`, {
       id_acceso: sessionStorage.getItem("idacceso"),
+      id_ficha: sessionStorage.getItem("idobra"),
     });
     console.log("cargando usuario data", request.data);
     await setUsuarioData(request.data);
