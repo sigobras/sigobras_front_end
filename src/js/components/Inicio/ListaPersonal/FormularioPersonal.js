@@ -36,6 +36,8 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
           fecha_inicio: "",
         }
       );
+      setModoDatosPorDNI(false);
+      setVerificador(false);
     }
   }
   const [DataFormulario, setDataFormulario] = useState({});
@@ -76,31 +78,47 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
     if (errores != "") {
       alert("Falta llenar los siguientes campos " + errores);
     } else {
-      if (confirm("Esta seguro que desea registrar un nuevo usuario?")) {
-        console.log("saveUsuario", DataFormulario);
-        // return;
+      if (ModoDatosPorDNI) {
         try {
-          if (dataPersonal) {
-            var request = await axios.put(
-              `${UrlServer}/v1/usuarios/${DataFormulario.id_usuario}`,
-              DataFormulario
-            );
-          } else {
-            var request = await axios.post(
-              `${UrlServer}/v1/usuarios/obra/${id_ficha}/cargo/${IdCargoSeleccionado}`,
-              DataFormulario
-            );
-          }
-
-          alert(request.data.message);
+          var res = await axios.post(`${UrlServer}/v1/accesos/asignarObra`, {
+            Fichas_id_ficha: sessionStorage.getItem("idobra"),
+            Accesos_id_acceso: DataFormulario.id_acceso,
+            cargos_id_Cargo: IdCargoSeleccionado,
+            fecha_inicio: DataFormulario.fecha_inicio,
+          });
+          alert(res.data.message);
           toggleModalFormulario();
           recargar();
         } catch (error) {
-          console.log(error.response.data);
-          if (error.response.data.message == "ER_DUP_ENTRY") {
-            alert("El dni ya esta registrado");
-          } else {
-            alert("Ocurrio un error");
+          alert("Ocurrio un error");
+        }
+      } else {
+        if (confirm("Esta seguro que desea registrar un nuevo usuario?")) {
+          console.log("saveUsuario", DataFormulario);
+          // return;
+          try {
+            if (dataPersonal) {
+              var res = await axios.put(
+                `${UrlServer}/v1/usuarios/${DataFormulario.id_usuario}`,
+                DataFormulario
+              );
+            } else {
+              var request = await axios.post(
+                `${UrlServer}/v1/usuarios/obra/${id_ficha}/cargo/${IdCargoSeleccionado}`,
+                DataFormulario
+              );
+            }
+
+            alert(request.data.message);
+            toggleModalFormulario();
+            recargar();
+          } catch (error) {
+            console.log(error.response.data);
+            if (error.response.data.message == "ER_DUP_ENTRY") {
+              alert("El dni ya esta registrado");
+            } else {
+              alert("Ocurrio un error");
+            }
           }
         }
       }
@@ -113,10 +131,12 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
       );
       console.log("buscarUsuarioPorDNI", res.data);
       setDataFormulario(res.data);
+      setModoDatosPorDNI(true);
     } catch (error) {
       alert("no se encontro el usuario");
     }
   }
+  const [ModoDatosPorDNI, setModoDatosPorDNI] = useState(false);
   return (
     <div>
       {dataPersonal ? (
@@ -171,6 +191,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     className="form-control"
                     invalid={Verificador && !DataFormulario.nombre}
                     required
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>El nombre es requerido</FormFeedback>
                 </FormGroup>
@@ -190,6 +211,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     className="form-control"
                     invalid={Verificador && !DataFormulario.apellido_paterno}
                     required
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>El apellido paterno es requerido</FormFeedback>
                 </FormGroup>
@@ -211,6 +233,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     className="form-control"
                     invalid={Verificador && !DataFormulario.apellido_materno}
                     required
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>El apellido materno es requerido</FormFeedback>
                 </FormGroup>
@@ -230,6 +253,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                       max="99999999"
                       invalid={Verificador && DataFormulario.dni.length != 8}
                       required
+                      disabled={ModoDatosPorDNI}
                     />
                     <div class="input-group-append">
                       <Button
@@ -258,6 +282,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     className="form-control"
                     invalid={Verificador && !DataFormulario.direccion}
                     required
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>La direccion es requerida</FormFeedback>
                 </FormGroup>
@@ -273,6 +298,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     }
                     className="form-control"
                     invalid={Verificador && !DataFormulario.apellido_paterno}
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>El apellido paterno es requerido</FormFeedback>
                 </FormGroup>
@@ -293,6 +319,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     min="111111111"
                     max="999999999"
                     required
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>El celular debe tener 9 digitos</FormFeedback>
                 </FormGroup>
@@ -310,6 +337,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                     }
                     className="form-control"
                     invalid={Verificador && !DataFormulario.apellido_paterno}
+                    disabled={ModoDatosPorDNI}
                   />
                   <FormFeedback>El apellido paterno es requerido</FormFeedback>
                 </FormGroup>
