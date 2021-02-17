@@ -46,13 +46,13 @@ export default ({ data, recargar }) => {
         <table className="reporteGeneral-table" style={{ width: "100%" }}>
           <tbody className="reporteGeneral-titulos">
             <tr>
-              <th>decripcion</th>
+              <th>decripción</th>
               <th style={{ width: "60px" }}>fecha inicial</th>
               <th style={{ width: "60px" }}>fecha final</th>
-              <th>dias</th>
-              <th>resolucion</th>
+              <th>N° días</th>
+              <th>resolución N°</th>
               <th>plazo aprobado </th>
-              <th>archivo</th>
+              <th>documento</th>
             </tr>
             {Data.map((item, i) => (
               <tr key={i}>

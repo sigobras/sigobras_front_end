@@ -33,14 +33,19 @@ export default () => {
     },
   ]);
   async function fetchNotificaciones() {
-    var res = await axios.get(`${UrlServer}/FichasNotificaciones`, {
-      params: {
-        id_acceso: sessionStorage.getItem("idacceso"),
-        id_ficha: sessionStorage.getItem("idobra"),
-      },
-    });
-    if (Array.isArray(res.data)) {
-      setNotificaciones(res.data);
+    if (
+      sessionStorage.getItem("idobra") &&
+      sessionStorage.getItem("idacceso")
+    ) {
+      var res = await axios.get(`${UrlServer}/FichasNotificaciones`, {
+        params: {
+          id_acceso: sessionStorage.getItem("idacceso"),
+          id_ficha: sessionStorage.getItem("idobra"),
+        },
+      });
+      if (Array.isArray(res.data)) {
+        setNotificaciones(res.data);
+      }
     }
   }
   const [NotificacionesCantidad, setNotificacionesCantidad] = useState(0);

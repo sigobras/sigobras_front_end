@@ -50,7 +50,7 @@ export default ({ data }) => {
             <td>{buscarPersonal(7)}</td>
           </tr>
           <tr>
-            <th>Asis. Tec.</th>
+            <th>Asis. Téc.</th>
             <td>{buscarPersonal(9)}</td>
           </tr>
           <tr>

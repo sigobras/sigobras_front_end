@@ -33,26 +33,26 @@ export default ({ recargar }) => {
   }, []);
   const [ListInterfaces, setListInterfaces] = useState([
     {
-      nombre: "Datos Especificos",
+      nombre: "DATOS ESPECÍFICOS",
       activado: true,
       interfaz: DatosEspecificos,
     },
     {
-      nombre: "Acumulado a la fecha actual",
+      nombre: "ACUMULADO " + new Date().getFullYear(),
       activado: true,
       interfaz: ResumenAvance,
     },
-    { nombre: "Plazos", activado: true, interfaz: Plazos },
+    { nombre: "PLAZOS", activado: true, interfaz: Plazos },
 
-    { nombre: "Responsables", activado: true, interfaz: Responsables },
+    { nombre: "RESPONSABLES", activado: true, interfaz: Responsables },
     {
-      nombre: "Resumen Avance Fisico",
+      nombre: "RES. AVANCE FÍSICO",
       activado: true,
       interfaz: AvanceFisico,
     },
-    { nombre: "Presupuesto", activado: true, interfaz: Presupuesto },
+    { nombre: "PRESUPUESTO", activado: true, interfaz: Presupuesto },
     {
-      nombre: "Analitico Ejecutado",
+      nombre: "ANALÍTICO",
       activado: true,
       interfaz: PresupuestoAnalitico,
     },
@@ -102,12 +102,12 @@ export default ({ recargar }) => {
         }}
       >
         <table
-          className="table-bordered reporteGeneral-table"
+          className="table-bordered reporteGeneral-table text-center"
           style={{ background: "#242526", borderColor: "#242526" }}
         >
           <tbody>
             <tr className=" text-center">
-              <th className="reporteGeneral-cabezeraSticky">Proyecto</th>
+              <th className="reporteGeneral-cabezeraSticky">PROYECTO</th>
               {ListInterfaces.map(
                 (item, i) =>
                   item.activado && (
@@ -181,9 +181,13 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
   return (
     <div>
       {!ModoEdicion ? (
-        <Button onClick={() => setModoEdicion(true)}>Editar Modulos</Button>
+        <Button color="info" onClick={() => setModoEdicion(true)}>
+          Editar Modulos
+        </Button>
       ) : (
-        <Button onClick={() => setModoEdicion(false)}>Ocultar edicion</Button>
+        <Button color="info" onClick={() => setModoEdicion(false)}>
+          Ocultar edicion
+        </Button>
       )}
       {ModoEdicion && (
         <Button onClick={() => mostrarTodos()}>Mostrar todos</Button>
@@ -233,7 +237,11 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
                     setListInterfaces(temp);
                   }}
                 >
-                  {item.activado ? <RiEyeFill /> : <RiEyeOffFill />}
+                  {item.activado ? (
+                    <RiEyeFill size="15" />
+                  ) : (
+                    <RiEyeOffFill size="15" />
+                  )}
                 </span>
               </Button>
             </span>
