@@ -2,9 +2,18 @@ import React, { useState } from "react";
 import axios from "axios";
 import { DebounceInput } from "react-debounce-input";
 import { MdAddAPhoto } from "react-icons/md";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
+} from "reactstrap";
 import LogoSigobras from "./../../../../images/logoSigobras.png";
+
 import { UrlServer } from "../../Utils/ServerUrlConfig";
+import { FechaActual } from "../../Utils/Funciones";
 export default ({ id_partida }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
@@ -30,6 +39,7 @@ export default ({ id_partida }) => {
   }
   //descripcion
   const [Descripcion, setDescripcion] = useState("");
+  const [Fecha, setFecha] = useState(FechaActual());
   //save
   async function savePartidaFoto() {
     console.log("savePartidaFoto");
@@ -39,6 +49,7 @@ export default ({ id_partida }) => {
     formData.append("codigo_obra", sessionStorage.getItem("codigoObra"));
     formData.append("Partidas_id_partida", id_partida);
     formData.append("descripcionObservacion", Descripcion);
+    formData.append("fecha", Fecha);
     formData.append("foto", Files);
     const config = {
       headers: {
@@ -97,6 +108,15 @@ export default ({ id_partida }) => {
               debounceTimeout={300}
               onChange={(e) => setDescripcion(e.target.value)}
               className="form-control"
+            />
+          </div>
+
+          <div className="form-group mt-2">
+            <label htmlFor="comment">FECHA</label>
+            <Input
+              type="date"
+              value={Fecha}
+              onChange={(e) => setFecha(e.target.value)}
             />
           </div>
         </ModalBody>

@@ -165,7 +165,7 @@ export default () => {
           </div>
           <div className="ml-auto">
             <div className="float-right">
-              <UserNav />
+              <UserNav key={DataObra.id_ficha} />
             </div>
             <div className="float-right">
               <NotificacionNav key={DataObra.id_ficha} />
