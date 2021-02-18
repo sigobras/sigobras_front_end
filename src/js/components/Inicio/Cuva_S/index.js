@@ -225,7 +225,7 @@ export default ({ Obra }) => {
                       {item.tipo == "TOTAL"
                         ? "TOTAL - " + item.anyo
                         : mesesShort[item.mes - 1] + "-" + item.anyo}
-                      {item.fisico_monto == 0 &&
+                      {(item.fisico_monto == 0 || item.fisico_monto == null) &&
                         item.tipo != "TOTAL" &&
                         (UsuarioData.cargo_nombre == "RESIDENTE" ||
                           UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
@@ -485,7 +485,7 @@ function Programado({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
     <div className="d-flex">
       {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
-      {item.fisico_monto == 0 &&
+      {(item.fisico_monto == 0 || item.fisico_monto == null) &&
         (UsuarioData.cargo_nombre == "RESIDENTE" ||
           UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
           <div onClick={() => ToggleEditable()}>
