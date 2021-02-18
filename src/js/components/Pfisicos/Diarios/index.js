@@ -55,7 +55,9 @@ export default () => {
   const [UsuarioData, setUsuarioData] = useState({});
   async function fetchUsuarioData() {
     const request = await axios.get(
-      `${UrlServer}/v1/usuarios/acceso/${sessionStorage.getItem("idacceso")}`
+      `${UrlServer}/v1/usuarios/obra/${sessionStorage.getItem(
+        "idobra"
+      )}/acceso/${sessionStorage.getItem("idacceso")}`
     );
     setUsuarioData(request.data);
   }

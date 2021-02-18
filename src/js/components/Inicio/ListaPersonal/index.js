@@ -161,6 +161,7 @@ export default ({ id_ficha, codigo_obra }) => {
       {
         fecha_inicio: clone[index].fecha_inicio,
         fecha_final: clone[index].fecha_final,
+        memorandum: clone[index].memorandum,
       }
     );
     cargarHistorialPersonal();
@@ -493,7 +494,7 @@ export default ({ id_ficha, codigo_obra }) => {
                           }
                         />
                       </td>
-                      <td>
+                      <td style={{ display: "flex" }}>
                         <Input
                           type="date"
                           value={item.fecha_final}
@@ -507,6 +508,15 @@ export default ({ id_ficha, codigo_obra }) => {
                             )
                           }
                         />
+                        <Button
+                          outline
+                          color="danger"
+                          onClick={() =>
+                            handleInputChange(i, "fecha_final", "")
+                          }
+                        >
+                          X
+                        </Button>
                       </td>
 
                       <td>
