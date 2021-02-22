@@ -155,16 +155,35 @@ export default ({ id_ficha, codigo_obra }) => {
   };
   async function guardarDesignaciones(index) {
     var clone = [...HistorialPersonal];
-    console.log("guardando", index, clone[index]);
+    console.log(clone, index);
     const res = await axios.put(
       `${UrlServer}/v1/designaciones/${clone[index].id}`,
       {
         fecha_inicio: clone[index].fecha_inicio,
         fecha_final: clone[index].fecha_final,
-        memorandum: clone[index].memorandum,
       }
     );
+    alert("Registro exitoso");
     cargarHistorialPersonal();
+  }
+  async function guardarDesignacionesNull(index, name) {
+    try {
+      var clone = [...HistorialPersonal];
+      clone[index][name] = "";
+      setHistorialPersonal(clone);
+      const res = await axios.put(
+        `${UrlServer}/v1/designaciones/${clone[index].id}`,
+        {
+          fecha_inicio: clone[index].fecha_inicio,
+          fecha_final: clone[index].fecha_final,
+          tipoUndefined: true,
+        }
+      );
+      setHistorialPersonal(clone);
+      cargarHistorialPersonal();
+    } catch (error) {
+      alert("Ocurrio un error");
+    }
   }
   useEffect(() => {
     if (IdCargoSeleccionado != -1) {
@@ -511,9 +530,9 @@ export default ({ id_ficha, codigo_obra }) => {
                         <Button
                           outline
                           color="danger"
-                          onClick={() =>
-                            handleInputChange(i, "fecha_final", "")
-                          }
+                          onClick={() => {
+                            guardarDesignacionesNull(i, "fecha_final");
+                          }}
                         >
                           X
                         </Button>
