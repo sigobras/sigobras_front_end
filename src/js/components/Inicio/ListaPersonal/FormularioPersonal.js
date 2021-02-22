@@ -50,7 +50,6 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
         cargos_tipo_id: 3,
       },
     });
-    console.log("cargos test", res.data);
     setCargosLimitados(res.data);
   }
   function onChangeInputFormulario(name, value) {
@@ -99,21 +98,20 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
           try {
             if (dataPersonal) {
               var res = await axios.put(
-                `${UrlServer}/v1/usuarios/${DataFormulario.id_usuario}`,
+                `${UrlServer}/v1/usuarios/${DataFormulario.id_acceso}`,
                 DataFormulario
               );
             } else {
-              var request = await axios.post(
+              var res = await axios.post(
                 `${UrlServer}/v1/usuarios/obra/${id_ficha}/cargo/${IdCargoSeleccionado}`,
                 DataFormulario
               );
             }
 
-            alert(request.data.message);
+            alert(res.data.message);
             toggleModalFormulario();
             recargar();
           } catch (error) {
-            console.log(error.response.data);
             if (error.response.data.message == "ER_DUP_ENTRY") {
               alert("El dni ya esta registrado");
             } else {
@@ -129,7 +127,6 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
       var res = await axios.get(
         `${UrlServer}/v1/usuarios/dni/${DataFormulario.dni}`
       );
-      console.log("buscarUsuarioPorDNI", res.data);
       setDataFormulario(res.data);
       setModoDatosPorDNI(true);
     } catch (error) {
@@ -343,21 +340,23 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                 </FormGroup>
               </Col>
             </Row>
-            <Row style={{ width: "600px" }}>
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="fecha_inicio">Fecha de inicio</Label>
-                  <Input
-                    type="date"
-                    value={DataFormulario.fecha_inicio}
-                    onChange={(e) =>
-                      onChangeInputFormulario("fecha_inicio", e.target.value)
-                    }
-                    required
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
+            {!dataPersonal && (
+              <Row style={{ width: "600px" }}>
+                <Col md={6}>
+                  <FormGroup>
+                    <Label for="fecha_inicio">Fecha de inicio</Label>
+                    <Input
+                      type="date"
+                      value={DataFormulario.fecha_inicio}
+                      onChange={(e) =>
+                        onChangeInputFormulario("fecha_inicio", e.target.value)
+                      }
+                      required
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+            )}
           </ModalBody>
           <ModalFooter>
             <Button type="submit" color="primary">

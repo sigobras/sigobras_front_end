@@ -18,6 +18,7 @@ import { FaUserFriends, FaMediumM, FaUpload, FaSave } from "react-icons/fa";
 import Usuario from "../../../../images/usuario.png";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import FormularioPersonal from "./FormularioPersonal";
+import UsuarioDetalles from "./UsuarioDetalles";
 
 export default ({ id_ficha, codigo_obra }) => {
   const hiddenFileInput = useRef(null);
@@ -475,7 +476,9 @@ export default ({ id_ficha, codigo_obra }) => {
                 <tbody>
                   {HistorialPersonal.map((item, i) => (
                     <tr key={item.id}>
-                      <td>{item.nombre}</td>
+                      <td>
+                        <UsuarioDetalles data={item} />
+                      </td>
                       <td>
                         {(UsuarioData.cargo_nombre == "RESIDENTE" ||
                           UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
@@ -560,7 +563,25 @@ export default ({ id_ficha, codigo_obra }) => {
                       </td>
 
                       <td>
-                        {item.habilitado ? "Habilitado" : "Deshabilitado"}
+                        {item.habilitado ? (
+                          <div
+                            style={{
+                              fontWeight: "700",
+                              color: "green",
+                            }}
+                          >
+                            Habilitado
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              fontWeight: "700",
+                              color: "red",
+                            }}
+                          >
+                            Deshabilitado
+                          </div>
+                        )}
                       </td>
                       <td>
                         {(UsuarioData.cargo_nombre == "RESIDENTE" ||
