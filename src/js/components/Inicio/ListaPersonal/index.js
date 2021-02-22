@@ -266,7 +266,9 @@ export default ({ id_ficha, codigo_obra }) => {
                           <td>
                             {(UsuarioData.cargo_nombre == "RESIDENTE" ||
                               UsuarioData.cargo_nombre ==
-                                "EDITOR DE PERSONAL") && (
+                                "EDITOR DE PERSONAL" ||
+                              UsuarioData.cargo_nombre ==
+                                "ADMINISTRADOR GENERAL") && (
                               <HabilitarButton
                                 item={item}
                                 recargar={recargar}
@@ -276,7 +278,9 @@ export default ({ id_ficha, codigo_obra }) => {
                           <td>
                             {(UsuarioData.cargo_nombre == "RESIDENTE" ||
                               UsuarioData.cargo_nombre ==
-                                "EDITOR DE PERSONAL") && (
+                                "EDITOR DE PERSONAL" ||
+                              UsuarioData.cargo_nombre ==
+                                "ADMINISTRADOR GENERAL") && (
                               <FormularioPersonal
                                 id_ficha={id_ficha}
                                 dataPersonal={item}
@@ -426,7 +430,9 @@ export default ({ id_ficha, codigo_obra }) => {
                               <td>
                                 {(UsuarioData.cargo_nombre == "RESIDENTE" ||
                                   UsuarioData.cargo_nombre ==
-                                    "EDITOR DE PERSONAL") && (
+                                    "EDITOR DE PERSONAL" ||
+                                  UsuarioData.cargo_nombre ==
+                                    "ADMINISTRADOR GENERAL") && (
                                   <HabilitarButton
                                     item={item}
                                     recargar={recargar}
@@ -447,7 +453,9 @@ export default ({ id_ficha, codigo_obra }) => {
                   <tr>
                     <td>
                       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                        UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                        UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
+                        UsuarioData.cargo_nombre ==
+                          "ADMINISTRADOR GENERAL") && (
                         <FormularioPersonal
                           id_ficha={id_ficha}
                           recargar={recargar}
@@ -470,7 +478,9 @@ export default ({ id_ficha, codigo_obra }) => {
                       <td>{item.nombre}</td>
                       <td>
                         {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
+                          UsuarioData.cargo_nombre ==
+                            "ADMINISTRADOR GENERAL") && (
                           <div
                             onClick={() => uploadFile(item.id)}
                             style={{
@@ -508,7 +518,10 @@ export default ({ id_ficha, codigo_obra }) => {
                           disabled={
                             !(
                               UsuarioData.cargo_nombre == "RESIDENTE" ||
-                              UsuarioData.cargo_nombre == "EDITOR DE PERSONAL"
+                              UsuarioData.cargo_nombre ==
+                                "EDITOR DE PERSONAL" ||
+                              UsuarioData.cargo_nombre ==
+                                "ADMINISTRADOR GENERAL"
                             )
                           }
                         />
@@ -523,19 +536,27 @@ export default ({ id_ficha, codigo_obra }) => {
                           disabled={
                             !(
                               UsuarioData.cargo_nombre == "RESIDENTE" ||
-                              UsuarioData.cargo_nombre == "EDITOR DE PERSONAL"
+                              UsuarioData.cargo_nombre ==
+                                "EDITOR DE PERSONAL" ||
+                              UsuarioData.cargo_nombre ==
+                                "ADMINISTRADOR GENERAL"
                             )
                           }
                         />
-                        <Button
-                          outline
-                          color="danger"
-                          onClick={() => {
-                            guardarDesignacionesNull(i, "fecha_final");
-                          }}
-                        >
-                          X
-                        </Button>
+                        {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
+                          UsuarioData.cargo_nombre ==
+                            "ADMINISTRADOR GENERAL") && (
+                          <Button
+                            outline
+                            color="danger"
+                            onClick={() => {
+                              guardarDesignacionesNull(i, "fecha_final");
+                            }}
+                          >
+                            X
+                          </Button>
+                        )}
                       </td>
 
                       <td>
@@ -543,7 +564,9 @@ export default ({ id_ficha, codigo_obra }) => {
                       </td>
                       <td>
                         {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL") && (
+                          UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
+                          UsuarioData.cargo_nombre ==
+                            "ADMINISTRADOR GENERAL") && (
                           <Button
                             outline
                             color="primary"
