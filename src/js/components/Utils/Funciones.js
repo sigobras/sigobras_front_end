@@ -363,7 +363,17 @@ function stringToDateObject(dateString, dias = 0) {
   }
   return date;
 }
-
+function DescargarArchivo(data) {
+  if (confirm("Desea descargar el archivo?")) {
+    const url = data;
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", data, "target", "_blank");
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+  }
+}
 module.exports = {
   Redondea,
   PrimerDiaDelMesActual,
@@ -386,4 +396,5 @@ module.exports = {
   fechaFormatoMesAnyo,
   stringToDateObject,
   RedondeaDecimales,
+  DescargarArchivo,
 };
