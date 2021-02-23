@@ -47,7 +47,6 @@ export default ({ recargar }) => {
   const [IndexCostoSeleccionado, setIndexCostoSeleccionado] = useState({});
   //guardadr
   async function guardarData(event) {
-    console.log("guardando data");
     event.preventDefault();
     try {
       var res = await axios.post(`${UrlServer}/v1/analiticoCostos/obra`, {
@@ -57,7 +56,6 @@ export default ({ recargar }) => {
       recargar();
       alert("Registro exitoso");
     } catch (error) {
-      console.log(error.response);
       if (error.response.data.message == "ER_DUP_ENTRY") {
         alert("Costo ya asignado");
       } else {
@@ -104,6 +102,7 @@ export default ({ recargar }) => {
         size="15"
         onClick={toggle}
         style={{ cursor: "pointer" }}
+        title="Agregar Nuevo Costo"
       />
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Seleccione el Costo</ModalHeader>

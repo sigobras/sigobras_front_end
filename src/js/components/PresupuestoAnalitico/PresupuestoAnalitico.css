@@ -1,62 +1,27 @@
-/* .prespuesto_analitico-table input {
-  background: black;
-} */
+.whiteThem-table tbody {
+  background: white;
+  color: black;
+  border: 1px solid black;
+}
 .whiteThem-table tbody tr td,
 .whiteThem-table tbody tr th {
   padding: 0px;
   font-size: 11px;
   vertical-align: top;
 }
-.whiteThem-table {
-  border-collapse: separate;
-}
-
-.whiteThem-table input {
-  height: 16px;
-  font-size: 11px;
-  background: #42ff0038;
-}
-.whiteThem-table textarea {
-  font-size: 11px;
-  background: #42ff0038;
-}
-.whiteThem-table-input {
-  height: 16px;
-  font-size: 11px;
-  background: #42ff0038;
-}
-.whiteThem-table tbody {
-  background: white;
-  color: black;
-}
-.whiteThem-cabezeraSticky {
-  position: sticky;
-  left: 0px;
-  background: #242526;
-  color: white;
-}
-.whiteThem-bodySticky {
-  position: sticky;
-  left: 0px;
-  background: white;
-  color: black;
-  z-index: 1;
-}
-.whiteThem-bodySticky-analitico {
-  position: sticky;
-  left: 300px;
-  /* background: #242526; */
-  background: white;
-  color: black;
-  border-color: white;
-}
 .whiteThem-table tbody th {
   background: #c6c8ca;
   font-weight: 700;
 }
-.whiteThem-avanceFisico {
-  background: #17a2b8;
+.whiteThem-table tbody td {
+  background: white;
 }
-.whiteThem-avanceFinanciero {
-  background: orange;
+
+.whiteThem-table-input {
+  height: 16px;
+  font-size: 11px;
+  /* background: #42ff0038; */
+  text-align: right;
+  padding: 15px 2px;
+  line-height: 28px;
 }
