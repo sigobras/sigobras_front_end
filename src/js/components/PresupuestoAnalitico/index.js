@@ -35,7 +35,6 @@ export default () => {
       },
     });
     setPresupuestosAprobados(res.data);
-    console.log("cargarPresupuestosAprobados", res.data);
   }
 
   //CostosAnalitico
@@ -47,11 +46,11 @@ export default () => {
       },
     });
     setCostosAnalitico(res.data);
-  }
-  function agregarCostoAnalitico() {
-    var clone = [...CostosAnalitico];
-    clone.push(CostosNombres[IndexCostoSeleccionado]);
-    setCostosAnalitico(clone);
+    var tempCostosCollapse = [];
+    res.data.forEach((item) => {
+      tempCostosCollapse.push(true);
+    });
+    setCostosCollapse(tempCostosCollapse);
   }
 
   function recargar() {
@@ -63,7 +62,16 @@ export default () => {
 
   //refs
   const [RefEspecificas, setRefEspecificas] = useState([]);
-
+  //collapse costos
+  const [CostosCollapse, setCostosCollapse] = useState([]);
+  //expandir costos
+  function cambiarCostosCollapseTodos(estado) {
+    var clone = [...CostosCollapse];
+    clone.forEach((item, i) => {
+      clone[i] = estado;
+    });
+    setCostosCollapse(clone);
+  }
   useEffect(() => {
     if (PresupuestosAprobados.length) {
       cargarCostosAnalitico();
@@ -71,13 +79,29 @@ export default () => {
   }, [PresupuestosAprobados]);
   return (
     <div>
+      <Button onClick={() => cambiarCostosCollapseTodos(true)}>
+        Expandir todo
+      </Button>
+      <Button onClick={() => cambiarCostosCollapseTodos(false)}>
+        Contraer todo
+      </Button>
       <table className="whiteThem-table">
-        <thead>
+        <thead style={{ fontSize: "10px" }}>
           <tr>
-            <th>ITEM</th>
-            <th>
-              <span>DESCRIPCION</span>{" "}
-              <ModalCostosAnalitico recargar={recargar} />
+            {CostosAnalitico.length > 0 && <th>ITEM</th>}
+            <th
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
+              {PresupuestosAprobados.length > 0 && (
+                <span>
+                  {CostosAnalitico.length == 0 && "Agregar nuevo costo =>"}
+                  <ModalCostosAnalitico recargar={recargar} />
+                </span>
+              )}
             </th>
             {PresupuestosAprobados.map((item, i) => (
               <th key={i} style={{ position: "relative" }}>
@@ -123,7 +147,11 @@ export default () => {
               </th>
             ))}
             <th>
-              <ModalNuevoPresupuesto recargar={recargar} />
+              <div>
+                {PresupuestosAprobados.length == 0 &&
+                  " Agregar nuevo presupuesto =>"}
+                <ModalNuevoPresupuesto recargar={recargar} />
+              </div>
             </th>
           </tr>
         </thead>
@@ -131,9 +159,25 @@ export default () => {
           {CostosAnalitico.map((item, i) => [
             <tr key={i + "-1"}>
               <th>{item.id}</th>
-              <th>
-                {item.nombre}
-                <span style={{ marginLeft: "10px" }}>
+              <th
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    var clone = [...CostosCollapse];
+                    clone[i] = !clone[i];
+                    setCostosCollapse(clone);
+                  }}
+                >
+                  {item.nombre}
+                </span>
+                <span>
                   <FaPlusCircle
                     color="#000000"
                     size="15"
@@ -153,7 +197,9 @@ export default () => {
                 ) {
                   var element = PresupuestosAprobados[index];
                   tempRender.push(
-                    <th>{Redondea(item["presupuesto_" + element.id])}</th>
+                    <th style={{ textAlign: "right" }}>
+                      {Redondea(item["presupuesto_" + element.id])}
+                    </th>
                   );
                 }
                 return tempRender;
@@ -171,34 +217,39 @@ export default () => {
                 clone[item.id] = ref;
                 setRefEspecificas(clone);
               }}
+              display={CostosCollapse[i] ? "" : "none"}
             />,
           ])}
-          <tr>
-            <th colSpan="2">Presupuesto Total</th>
-            {(() => {
-              var tempRender = [];
-              for (
-                let index = 0;
-                index < PresupuestosAprobados.length;
-                index++
-              ) {
-                var element = PresupuestosAprobados[index];
-                var total = 0;
+          {PresupuestosAprobados.length > 0 && (
+            <tr>
+              <th colSpan="2">PRESUPUESTO TOTAL</th>
+              {(() => {
+                var tempRender = [];
                 for (
-                  let index2 = 0;
-                  index2 < CostosAnalitico.length;
-                  index2++
+                  let index = 0;
+                  index < PresupuestosAprobados.length;
+                  index++
                 ) {
-                  const element2 = CostosAnalitico[index2];
-                  if (element2["presupuesto_" + element.id]) {
-                    total += element2["presupuesto_" + element.id];
+                  var element = PresupuestosAprobados[index];
+                  var total = 0;
+                  for (
+                    let index2 = 0;
+                    index2 < CostosAnalitico.length;
+                    index2++
+                  ) {
+                    const element2 = CostosAnalitico[index2];
+                    if (element2["presupuesto_" + element.id]) {
+                      total += element2["presupuesto_" + element.id];
+                    }
                   }
+                  tempRender.push(
+                    <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
+                  );
                 }
-                tempRender.push(<th>{Redondea(total)}</th>);
-              }
-              return tempRender;
-            })()}
-          </tr>
+                return tempRender;
+              })()}
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

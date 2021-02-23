@@ -58,7 +58,6 @@ export default ({ recargar, data }) => {
   async function guardarFormularioData(event) {
     event.preventDefault();
     try {
-      console.log("data ", FormularioData);
       const formData = new FormData();
       formData.append("fichas_id_ficha", FormularioData.fichas_id_ficha);
       formData.append("resolucion", FormularioData.resolucion);
@@ -103,6 +102,7 @@ export default ({ recargar, data }) => {
           size="15"
           onClick={toggle}
           style={{ cursor: "pointer" }}
+          title="Agregar Nuevo Presupuesto"
         />
       )}
 

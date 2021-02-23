@@ -4,24 +4,12 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import {
-  Button,
-  Input,
-  Spinner,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownMenu,
-  Nav,
-} from "reactstrap";
+import { Input } from "reactstrap";
 import axios from "axios";
-import { FaUpload, FaDownload } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 
-import ModalCostosAnalitico from "./ModalCostosAnalitico";
-import ModalNuevoPresupuesto from "./ModalNuevoPresupuesto";
 import { UrlServer } from "../Utils/ServerUrlConfig";
-import { Redondea, DescargarArchivo } from "../Utils/Funciones";
+import { Redondea, formatMoney } from "../Utils/Funciones";
 export default forwardRef(
   (
     {
@@ -30,6 +18,7 @@ export default forwardRef(
       CostosAnalitico,
       setCostosAnalitico,
       index,
+      display,
     },
     ref
   ) => {
@@ -93,14 +82,13 @@ export default forwardRef(
     const [IndexEdicion, setIndexEdicion] = useState(-1);
 
     const customStyles = {
-      option: (provided, state) => ({
+      option: (provided) => ({
         ...provided,
         color: "black",
         backgroundColor: "white",
       }),
     };
     async function promiseOptions(inputValue) {
-      console.log("cargando data");
       var res = await axios.get(`${UrlServer}/v1/clasificadorPresupuestario/`, {
         params: {
           textoBuscado: inputValue,
@@ -120,7 +108,6 @@ export default forwardRef(
     }
     //handleinputchange
     function handleInputChange(input) {
-      console.log("value", input);
       var inputData = input.label.split("-");
       var clone = [...EspecificasCostos];
       clone[IndexEdicion].id_clasificador = input.value;
@@ -132,7 +119,6 @@ export default forwardRef(
     async function guardandoEspecifica() {
       try {
         if (confirm("Desea registrar esta especifica")) {
-          console.log("guardando", EspecificasCostos);
           var dataProcesada = [];
           EspecificasCostos.forEach((item) => {
             dataProcesada.push({
@@ -141,16 +127,11 @@ export default forwardRef(
               clasificadores_presupuestarios_id: item.id_clasificador,
             });
           });
-          var res = await axios.put(
-            `${UrlServer}/v1/analitico/`,
-            dataProcesada
-          );
-          alert("Registro exitoso");
+          await axios.put(`${UrlServer}/v1/analitico/`, dataProcesada);
         }
         setIndexEdicion(-1);
         cargarEspecificasCostos();
       } catch (error) {
-        console.log("error", error.response);
         if (error.response.data.message == "ER_DUP_ENTRY") {
           alert(
             "La especifica seleccionada ya esta registrada en esta seccion"
@@ -161,16 +142,15 @@ export default forwardRef(
       }
     }
     //edicion presupuestos
-    const [IndexEdicionPresupuesto, setIndexEdicionPresupuesto] = useState(-1);
-    //eliminar item
-    function eliminarItem(index) {
-      var clone = [...EspecificasCostos];
-      clone.splice(index, 1);
-      setEspecificasCostos(clone);
-    }
+    //refs
+    const [RefEspecificasInput, setRefEspecificasInput] = useState([]);
+
     return EspecificasCostos.map((item, i) => (
-      <tr key={i + "-1"}>
-        <td colSpan={IndexEdicion == i ? "2" : "1"}>
+      <tr style={{ display: display }}>
+        <td
+          colSpan={IndexEdicion == i ? "2" : "1"}
+          style={{ fontSize: "9px", width: "50px" }}
+        >
           {IndexEdicion == i ? (
             <AsyncSelect
               cacheOptions
@@ -188,28 +168,30 @@ export default forwardRef(
             <div onClick={() => setIndexEdicion(i)}>{item.clasificador}</div>
           )}
         </td>
-        {IndexEdicion != i && <td>{item.descripcion}</td>}
+        {IndexEdicion != i && (
+          <td onClick={() => setIndexEdicion(i)}>{item.descripcion}</td>
+        )}
         {(() => {
           var tempRender = [];
           for (let index = 0; index < PresupuestosAprobados.length; index++) {
             var element = PresupuestosAprobados[index];
             tempRender.push(
-              <td
-                onClick={() =>
-                  setIndexEdicionPresupuesto(i + "_presupuesto_" + index)
-                }
-              >
-                {IndexEdicionPresupuesto == i + "_presupuesto_" + index ? (
-                  <PresupuestoInput
-                    value={item["presupuesto_" + element.id]}
-                    presupuesto_analitico_id={item.id}
-                    presupuestos_aprobados_id={element.id}
-                    recargar={cargarEspecificasCostos}
-                    setIndexEdicionPresupuesto={setIndexEdicionPresupuesto}
-                  />
-                ) : (
-                  Redondea(item["presupuesto_" + element.id])
-                )}
+              <td>
+                <PresupuestoInput
+                  value={Redondea(
+                    item["presupuesto_" + element.id],
+                    2,
+                    false,
+                    ""
+                  )}
+                  presupuesto_analitico_id={item.id}
+                  presupuestos_aprobados_id={element.id}
+                  recargar={cargarEspecificasCostos}
+                  RefEspecificasInput={RefEspecificasInput}
+                  setRefEspecificasInput={setRefEspecificasInput}
+                  EspecificasCostos={EspecificasCostos}
+                  PresupuestosAprobados={PresupuestosAprobados}
+                />
               </td>
             );
           }
@@ -225,7 +207,10 @@ function PresupuestoInput({
   presupuesto_analitico_id,
   presupuestos_aprobados_id,
   recargar,
-  setIndexEdicionPresupuesto,
+  RefEspecificasInput,
+  setRefEspecificasInput,
+  EspecificasCostos,
+  PresupuestosAprobados,
 }) {
   const [InputValue, setInputValue] = useState({
     presupuesto_analitico_id,
@@ -233,22 +218,79 @@ function PresupuestoInput({
     monto: value,
   });
   function handleInputChange(e) {
+    setflagCambios(true);
     setInputValue({
       ...InputValue,
-      monto: e.target.value,
+      monto: formatMoney(e.target.value),
     });
   }
   async function guardarData() {
-    console.log("guardando data", InputValue);
-    await axios.put(`${UrlServer}/v1/analitico/presupuesto`, [InputValue]);
-    setIndexEdicionPresupuesto(-1);
-    recargar();
+    if (flagCambios) {
+      var clone = { ...InputValue };
+      clone.monto = clone.monto.replace(/[^0-9\.-]+/g, "");
+      await axios.put(`${UrlServer}/v1/analitico/presupuesto`, [clone]);
+      recargar();
+    }
+  }
+  const [flagCambios, setflagCambios] = useState(false);
+  //on enter
+  function handleEnter(event) {
+    //movimiento vertical
+    if (event.keyCode === 13 || event.keyCode === 40) {
+      var index = EspecificasCostos.findIndex(
+        (item) => item.id == presupuesto_analitico_id
+      );
+      if (index < EspecificasCostos.length - 1) {
+        RefEspecificasInput[
+          EspecificasCostos[index + 1].id + "-" + presupuestos_aprobados_id
+        ].focus();
+      }
+    }
+    if (event.keyCode === 38) {
+      var index = EspecificasCostos.findIndex(
+        (item) => item.id == presupuesto_analitico_id
+      );
+      if (index > 0) {
+        RefEspecificasInput[
+          EspecificasCostos[index - 1].id + "-" + presupuestos_aprobados_id
+        ].focus();
+      }
+    }
+    //movimiento horizontal
+    if (event.keyCode === 37) {
+      var index = PresupuestosAprobados.findIndex(
+        (item) => item.id == presupuestos_aprobados_id
+      );
+      if (index > 0) {
+        RefEspecificasInput[
+          presupuesto_analitico_id + "-" + PresupuestosAprobados[index - 1].id
+        ].focus();
+      }
+    }
+    if (event.keyCode === 39) {
+      var index = PresupuestosAprobados.findIndex(
+        (item) => item.id == presupuestos_aprobados_id
+      );
+      if (index < PresupuestosAprobados.length - 1) {
+        RefEspecificasInput[
+          presupuesto_analitico_id + "-" + PresupuestosAprobados[index + 1].id
+        ].focus();
+      }
+    }
+    guardarData();
   }
   return (
     <Input
       value={InputValue.monto}
       onChange={(e) => handleInputChange(e)}
       onBlur={() => guardarData()}
+      className="whiteThem-table-input"
+      onKeyDown={handleEnter}
+      innerRef={(ref) => {
+        var clone = RefEspecificasInput;
+        clone[presupuesto_analitico_id + "-" + presupuestos_aprobados_id] = ref;
+        setRefEspecificasInput(clone);
+      }}
     />
   );
 }
