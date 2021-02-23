@@ -17,7 +17,7 @@ import {
   FormGroup,
   Label,
 } from "reactstrap";
-import { FaUpload, FaMediumM } from "react-icons/fa";
+import { FaUpload, FaMediumM, FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
@@ -94,13 +94,16 @@ export default ({ recargar, data }) => {
   }
   const [ShowArchivoForm, setShowArchivoForm] = useState(false);
   return (
-    <div>
+    <span>
       {data ? (
-        <FaUpload onClick={toggle} />
+        <FaUpload onClick={toggle} style={{ cursor: "pointer" }} />
       ) : (
-        <Button color="danger" onClick={toggle}>
-          +
-        </Button>
+        <FaPlusCircle
+          color="orange"
+          size="15"
+          onClick={toggle}
+          style={{ cursor: "pointer" }}
+        />
       )}
 
       <Modal isOpen={modal} toggle={toggle}>
@@ -182,6 +185,6 @@ export default ({ recargar, data }) => {
           </ModalFooter>
         </form>
       </Modal>
-    </div>
+    </span>
   );
 };

@@ -19,6 +19,7 @@ import {
 } from "reactstrap";
 import axios from "axios";
 import CreatableSelect from "react-select/creatable";
+import { FaUpload, FaDownload, FaPlusCircle } from "react-icons/fa";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, DescargarArchivo } from "../Utils/Funciones";
@@ -98,9 +99,12 @@ export default ({ recargar }) => {
   };
   return (
     <span>
-      <Button color="danger" onClick={toggle}>
-        +
-      </Button>
+      <FaPlusCircle
+        color="orange"
+        size="15"
+        onClick={toggle}
+        style={{ cursor: "pointer" }}
+      />
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Seleccione el Costo</ModalHeader>
         <form onSubmit={guardarData}>

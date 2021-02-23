@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Input,
@@ -8,9 +8,12 @@ import {
   DropdownToggle,
   DropdownMenu,
   Nav,
+  UncontrolledPopover,
+  PopoverHeader,
+  PopoverBody,
 } from "reactstrap";
 import axios from "axios";
-import { FaUpload, FaDownload } from "react-icons/fa";
+import { FaUpload, FaDownload, FaPlusCircle } from "react-icons/fa";
 
 import ModalCostosAnalitico from "./ModalCostosAnalitico";
 import ModalNuevoPresupuesto from "./ModalNuevoPresupuesto";
@@ -21,9 +24,7 @@ import "./PresupuestoAnalitico.css";
 
 export default () => {
   useEffect(() => {
-    cargarEspecicasDatos();
     cargarPresupuestosAprobados();
-    cargarCostosAnalitico();
   }, []);
   //Presupuesto
   const [PresupuestosAprobados, setPresupuestosAprobados] = useState([]);
@@ -52,32 +53,25 @@ export default () => {
     clone.push(CostosNombres[IndexCostoSeleccionado]);
     setCostosAnalitico(clone);
   }
-  //especificas
-  const [EspecificasDatos, setEspecificasDatos] = useState([]);
-  async function cargarEspecicasDatos() {
-    var res = await axios.get(`${UrlServer}/v1/clasificadorPresupuestario`);
-    var temp = [];
-    if (Array.isArray(res.data)) {
-      res.data.forEach((item) => {
-        temp.push({
-          value: item.id,
-          label: item.clasificador + " - " + item.descripcion,
-        });
-      });
-    }
-    setEspecificasDatos(temp);
-  }
+
   function recargar() {
     cargarPresupuestosAprobados();
     cargarCostosAnalitico();
   }
   //show icon
-  const [ShowUploadIcon, setShowUploadIcon] = useState(-1);
-  //uploadArchivo archivo
+  const [ShowIcons, setShowIcons] = useState(-1);
 
+  //refs
+  const [RefEspecificas, setRefEspecificas] = useState([]);
+
+  useEffect(() => {
+    if (PresupuestosAprobados.length) {
+      cargarCostosAnalitico();
+    }
+  }, [PresupuestosAprobados]);
   return (
     <div>
-      <table className="table">
+      <table className="whiteThem-table">
         <thead>
           <tr>
             <th>ITEM</th>
@@ -86,36 +80,44 @@ export default () => {
               <ModalCostosAnalitico recargar={recargar} />
             </th>
             {PresupuestosAprobados.map((item, i) => (
-              <th
-                key={i}
-                onMouseOver={() => setShowUploadIcon(i)}
-                onMouseLeave={() => setShowUploadIcon(-1)}
-                style={{ position: "relative" }}
-              >
-                <div>{item.nombre}</div>
-                <div>
-                  {item.archivo && (
-                    <div
-                      onClick={() =>
-                        DescargarArchivo(`${UrlServer}${item.archivo}`)
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      <FaDownload />
-                    </div>
-                  )}
+              <th key={i} style={{ position: "relative" }}>
+                <div
+                  onClick={() => {
+                    if (ShowIcons != i) {
+                      setShowIcons(i);
+                    } else {
+                      setShowIcons(-1);
+                    }
+                  }}
+                >
+                  {item.nombre}
                 </div>
-                {ShowUploadIcon == i && (
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      position: "absolute",
-                      top: "0px",
-                      right: "0px",
-                    }}
-                    onClick={() => uploadArchivo()}
-                  >
-                    <ModalNuevoPresupuesto data={item} recargar={recargar} />
+                {ShowIcons == i && (
+                  <div>
+                    {item.resolucion && (
+                      <div
+                        style={{
+                          fontSize: "9px",
+                        }}
+                      >
+                        {item.resolucion}
+                      </div>
+                    )}
+
+                    <div>
+                      <span>
+                        <FaDownload
+                          onClick={() =>
+                            DescargarArchivo(`${UrlServer}${item.archivo}`)
+                          }
+                          style={{ cursor: "pointer" }}
+                        />{" "}
+                        <ModalNuevoPresupuesto
+                          data={item}
+                          recargar={recargar}
+                        />
+                      </span>
+                    </div>
                   </div>
                 )}
               </th>
@@ -128,8 +130,20 @@ export default () => {
         <tbody>
           {CostosAnalitico.map((item, i) => [
             <tr key={i + "-1"}>
-              <td>{item.id}</td>
-              <td>{item.nombre}</td>
+              <th>{item.id}</th>
+              <th>
+                {item.nombre}
+                <span style={{ marginLeft: "10px" }}>
+                  <FaPlusCircle
+                    color="#000000"
+                    size="15"
+                    onClick={() => {
+                      RefEspecificas[item.id].nuevo();
+                    }}
+                    style={{ cursor: "pointer" }}
+                  />
+                </span>
+              </th>
               {(() => {
                 var tempRender = [];
                 for (
@@ -139,7 +153,7 @@ export default () => {
                 ) {
                   var element = PresupuestosAprobados[index];
                   tempRender.push(
-                    <td>{item["presupuesto_aprobado_" + element.id]}</td>
+                    <th>{Redondea(item["presupuesto_" + element.id])}</th>
                   );
                 }
                 return tempRender;
@@ -148,10 +162,43 @@ export default () => {
             <PresupuestoEspecifica
               key={i + "-2"}
               id_costo={item.id}
-              EspecificasDatos={EspecificasDatos}
               PresupuestosAprobados={PresupuestosAprobados}
+              index={i}
+              CostosAnalitico={CostosAnalitico}
+              setCostosAnalitico={setCostosAnalitico}
+              ref={(ref) => {
+                var clone = RefEspecificas;
+                clone[item.id] = ref;
+                setRefEspecificas(clone);
+              }}
             />,
           ])}
+          <tr>
+            <th colSpan="2">Presupuesto Total</th>
+            {(() => {
+              var tempRender = [];
+              for (
+                let index = 0;
+                index < PresupuestosAprobados.length;
+                index++
+              ) {
+                var element = PresupuestosAprobados[index];
+                var total = 0;
+                for (
+                  let index2 = 0;
+                  index2 < CostosAnalitico.length;
+                  index2++
+                ) {
+                  const element2 = CostosAnalitico[index2];
+                  if (element2["presupuesto_" + element.id]) {
+                    total += element2["presupuesto_" + element.id];
+                  }
+                }
+                tempRender.push(<th>{Redondea(total)}</th>);
+              }
+              return tempRender;
+            })()}
+          </tr>
         </tbody>
       </table>
     </div>
