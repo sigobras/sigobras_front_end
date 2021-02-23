@@ -1,0 +1,15 @@
+.curvaS_fisicoRow td,
+.curvaS_fisicoRow th {
+  color: #17a2b8;
+  /* background-color: #17a2b8; */
+}
+.curvaS_FinancieroRow td,
+.curvaS_FinancieroRow th {
+  /* background-color: orange; */
+  color: orange;
+}
+.curvaS_tablaCabezera {
+  position: sticky;
+  left: 0px;
+  background: #242526;
+}

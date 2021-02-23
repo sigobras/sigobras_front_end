@@ -1,0 +1,63 @@
+.reporteGeneral-table tbody tr td,
+.reporteGeneral-table tbody tr th {
+  padding: 0px;
+  font-size: 11px;
+  vertical-align: top;
+}
+.reporteGeneral-table {
+  border-collapse: separate;
+}
+
+.reporteGeneral-table input {
+  height: 16px;
+  font-size: 11px;
+  background: #42ff0038;
+}
+.reporteGeneral-table textarea {
+  font-size: 11px;
+  background: #42ff0038;
+}
+.reporteGeneral-table-input {
+  height: 16px;
+  font-size: 11px;
+  background: #42ff0038;
+}
+.reporteGeneral-cabezera {
+  background: #242526;
+  color: white;
+}
+.reporteGeneral-cabezeraSticky {
+  position: sticky;
+  left: 0px;
+  background: #242526;
+  color: white;
+}
+.reporteGeneral-body {
+  background: white;
+  color: black;
+}
+.reporteGeneral-bodySticky {
+  position: sticky;
+  left: 0px;
+  background: white;
+  color: black;
+  z-index: 1;
+}
+.reporteGeneral-bodySticky-analitico {
+  position: sticky;
+  left: 300px;
+  /* background: #242526; */
+  background: white;
+  color: black;
+  border-color: white;
+}
+.reporteGeneral-titulos th {
+  background: #c6c8ca;
+  font-weight: 700;
+}
+.reporteGeneral-avanceFisico {
+  background: #17a2b8;
+}
+.reporteGeneral-avanceFinanciero {
+  background: orange;
+}

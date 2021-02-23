@@ -1,225 +1,177 @@
-import React, { Component } from 'react';
-import axios from 'axios'
-import { DebounceInput } from 'react-debounce-input';
+import React, { useState } from "react";
+import axios from "axios";
+import {
+  Row,
+  Col,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Form,
+} from "reactstrap";
 import { toast } from "react-toastify";
-import { MdModeEdit } from "react-icons/md";
-import { UrlServer } from '../Utils/ServerUrlConfig'
 
+import { UrlServer } from "../Utils/ServerUrlConfig";
+export default ({ EstadoObra }) => {
+  const [DataEstadosObra, setDataEstadosObra] = useState([]);
+  const [modal, setmodal] = useState(false);
+  const [modalClave, setmodalClave] = useState(false);
+  const [FormUsuario, setFormUsuario] = useState("");
+  const [FormPassword, setFormPassword] = useState("");
 
-import { Row, Col, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter, InputGroup } from 'reactstrap';
+  const [EstadoObraSeleccionado, setEstadoObraSeleccionado] = useState("");
 
-class Btns extends Component {
-    constructor() {
-        super()
-        this.state = {
-            DataEstadosObra: [],
-            modal: false,
-            modalClave: false,
-            DataSegunEstado: [],
-            IdEstado: '',
-            pass: '',
-            mensajes: ''
+  async function fetchEstadosObra() {
+    const res = await axios.get(`${UrlServer}/listaestados`);
+    setDataEstadosObra(res.data);
+  }
+  function ModalEstadoObra() {
+    if (!modal) {
+      fetchEstadosObra();
+    }
+    setmodal(!modal);
+  }
+  function ModalPassword() {
+    setmodalClave(!modalClave);
+  }
+
+  async function SubmitEsadoObra(e) {
+    e.preventDefault();
+    if (FormPassword.length > 0) {
+      if (confirm("¿cambiar situación de la obra?")) {
+        const res = await axios.post(UrlServer + "/login2", {
+          usuario: FormUsuario,
+          password: FormPassword,
+        });
+        console.log("login", res);
+        if ((res.data.id_acceso = sessionStorage.getItem("idacceso"))) {
+          const res2 = await axios.post(`${UrlServer}/ActualizarEstado`, {
+            Fichas_id_ficha: sessionStorage.getItem("idobra"),
+            Estados_id_estado: EstadoObraSeleccionado,
+          });
+          if (res2.status == 200) {
+            toast.success("✔ situación actual de la obra actualizada ");
+            console.log("response", res2.data);
+            sessionStorage.setItem("estadoObra", res2.data.nombre);
+            setTimeout(() => {
+              window.location.href = "/inicio";
+            }, 50);
+            setmodalClave(false);
+            setmodal(false);
+          } else {
+            toast.error("❌ errores en cambiar la situacion actual de la obra");
+          }
         }
-        this.CambiaEstadoObra = this.CambiaEstadoObra.bind(this)
-        this.ModalEstadoObra = this.ModalEstadoObra.bind(this)
-        this.ModalPassword = this.ModalPassword.bind(this)
-        this.SubmitEsadoObra = this.SubmitEsadoObra.bind(this)
+      }
     }
-
-    componentDidMount() {
-        axios.get(`${UrlServer}/listaestados`)
-            .then((res) => {
-                // console.log('data ', res.data)
-                this.setState({
-                    DataEstadosObra: res.data
-                })
-            })
-            .catch((err) =>
-                console.error('falló al obtener datos ❌', err)
-            )
-    }
-
-    ModalEstadoObra() {
-        this.setState(prevState => ({
-            modal: !prevState.modal
-        }));
-    }
-
-    ModalPassword() {
-        this.setState(prevState => ({
-            modalClave: !prevState.modalClave
-        }));
-    }
-
-    CambiaEstadoObra() {
-
-        this.ModalEstadoObra()
-        var dataEstadosObra = this.state.DataEstadosObra
-        var SituacionActualObra = sessionStorage.getItem("estadoObra")
-
-        var DataSegunEstado = []
-
-        switch (SituacionActualObra) {
-            case "Ejecucion":
-                DataSegunEstado.push(dataEstadosObra[3])
-                break;
-
-            case "Corte":
-                DataSegunEstado.push(dataEstadosObra[0], dataEstadosObra[2], dataEstadosObra[3])
-                break;
-
-            case "Actualizacion":
-                DataSegunEstado.push(dataEstadosObra[0], dataEstadosObra[3])
-                break;
-
-            case "Paralizado":
-                DataSegunEstado.push(dataEstadosObra[0])
-                break;
-
-            case "Compatibilidad":
-                DataSegunEstado.push(dataEstadosObra[0], dataEstadosObra[3])
-                break;
-
+  }
+  return (
+    <div>
+      <button
+        className={
+          EstadoObra === "Ejecucion"
+            ? "btn btn-outline-success   "
+            : EstadoObra === "Paralizado"
+            ? "btn btn-outline-warning   "
+            : EstadoObra === "Corte"
+            ? "btn btn-outline-danger   "
+            : EstadoObra === "Actualizacion"
+            ? "btn btn-outline-primary   "
+            : "btn btn-outline-info   "
         }
-        // console.log('>', DataSegunEstado);
+        title={`situación de la obra ${EstadoObra}`}
+        onClick={() => ModalEstadoObra()}
+      >
+        <span className="textSigobras">situación actual:</span>
+        {EstadoObra}
+      </button>
+      <Modal
+        isOpen={modal}
+        fade={false}
+        toggle={() => ModalEstadoObra()}
+        backdrop="static"
+      >
+        <ModalHeader toggle={() => ModalEstadoObra()}>
+          Cambiar situación de la obra
+        </ModalHeader>
+        <ModalBody>
+          <Row>
+            <Col sm="6">
+              <span className="h4 text-center">
+                situación actual:
+                <br />
+                {EstadoObra}
+              </span>
+            </Col>
+            <Col sm="6">
+              <FormGroup>
+                <Label>Cambiar a:</Label>
+                <Input
+                  type="select"
+                  className="form-control-sm"
+                  onChange={(e) => setEstadoObraSeleccionado(e.target.value)}
+                >
+                  <option>Seleccione </option>
+                  {DataEstadosObra.map((item, i) => (
+                    <option value={item.id_Estado} key={i}>
+                      {item.nombre}
+                    </option>
+                  ))}
+                </Input>
+              </FormGroup>
+            </Col>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="success" onClick={() => ModalPassword()}>
+            Cambiar estado{" "}
+          </Button>{" "}
+          <Button color="danger" onClick={() => ModalEstadoObra()}>
+            Cancelar
+          </Button>
+        </ModalFooter>
+      </Modal>
 
-        this.setState({
-            DataSegunEstado
-        })
-
-    }
-
-
-
-    SubmitEsadoObra(e) {
-
-        e.preventDefault()
-        // this.ModalPassword()
-
-        if (this.state.pass.length > 0) {
-            if (confirm('¿cambiar situación de la obra?')) {
-                axios.post(UrlServer + '/login', {
-                    usuario: sessionStorage.getItem("usuario"),
-                    password: this.state.pass
-                })
-                    .then((res) => {
-                        // console.log(res.data)
-
-                        if (sessionStorage.getItem("usuario") === res.data.usuario) {
-
-                            axios.post(`${UrlServer}/ActualizarEstado`, {
-                                "Fichas_id_ficha": sessionStorage.getItem('idobra'),
-                                "Estados_id_estado": this.state.IdEstado
-                            })
-                                .then((res) => {
-                                    // console.log('res>',res.data.nombre);
-
-                                    if (res.data) {
-                                        toast.success('✔ situación actual de la obra actualizada ');
-                                        sessionStorage.setItem('estadoObra', res.data.nombre)
-
-                                        setTimeout(() => {
-                                            window.location.href = '/inicio'
-                                        }, 50);
-                                    } else {
-                                        toast.error('❌ errores en cambiar la situacion actual de la obra');
-                                    }
-                                })
-                                .catch((err) => {
-                                    toast.error('❌ errores en cambiar la situacion actual de la obra');
-                                    console.log('hubo errores >>', err)
-                                })
-                        } else {
-                            this.setState({ mensajes: "¡Contraseña incorrecta! se esta registrando sus datos" })
-                            // console.log('la contraseña es incorrecta')
-
-                        }
-                    })
-                    .catch((err) => {
-                        console.error('error', err);
-
-                    })
-            }
-
-        } else {
-            this.setState({ mensajes: "¡Ingrese su contraseña¡" })
-
-        }
-    }
-
-
-    render() {
-        const { DataSegunEstado } = this.state
-        return (
-            <div>
-                <button
-                    className={this.props.EstadoObra === "Ejecucion"
-                        ? "btn btn-outline-success   " :
-                        this.props.EstadoObra === "Paralizado"
-                            ? "btn btn-outline-warning   " :
-                            this.props.EstadoObra === "Corte" ?
-                                "btn btn-outline-danger   " :
-                                this.props.EstadoObra === "Actualizacion" ?
-                                    "btn btn-outline-primary   " :
-                                    "btn btn-outline-info   "}
-                    title={`situación de la obra ${this.props.EstadoObra}`}
-                    onClick={this.CambiaEstadoObra}  >
-                    <span className="textSigobras">situación actual:</span>
-                    {this.props.EstadoObra}
-                </button>
-                <Modal isOpen={this.state.modal} fade={false} toggle={this.ModalEstadoObra} backdrop="static">
-                    <ModalHeader toggle={this.ModalEstadoObra}>Cambiar situación de la obra</ModalHeader>
-                    <ModalBody>
-                        <Row>
-                            <Col sm="6">
-                                <span className="h4 text-center">situación actual:<br />{this.props.EstadoObra}</span>
-                            </Col>
-                            <Col sm="6">
-                                <FormGroup>
-                                    <Label >Cambiar a:</Label>
-                                    <Input type="select" className="form-control-sm" onChange={e => this.setState({ IdEstado: e.target.value })}>
-                                        <option>Seleccione </option>
-                                        {DataSegunEstado.length === 0 ? 'no hay datos' : DataSegunEstado.map((EstadoObra, IndexObra) =>
-                                            <option value={EstadoObra.id_Estado} key={IndexObra}>
-                                                {EstadoObra.nombre}
-                                            </option>
-                                        )}
-
-                                    </Input>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="success" onClick={this.ModalPassword}>Cambiar estado</Button>{' '}
-                        <Button color="danger" onClick={this.ModalEstadoObra}>Cancelar</Button>
-                    </ModalFooter>
-                </Modal>
-
-
-
-
-
-                <Modal isOpen={this.state.modalClave} fade={false} toggle={this.ModalPassword} size="sm">
-                    <ModalHeader toggle={this.ModalPassword}>Ingrese su contraseña</ModalHeader>
-                    <ModalBody>
-                        <InputGroup>
-                            <DebounceInput debounceTimeout={200} onChange={e => this.setState({ pass: e.target.value })} type="password" className="form-control" autoFocus />
-
-
-
-                        </InputGroup>
-                        {this.state.mensajes}<br /><br />
-
-                        <Button color="success" onClick={this.SubmitEsadoObra}>Confirmar </Button>{' '}
-                        <Button color="danger" onClick={this.ModalPassword}>Cancelar</Button>
-                    </ModalBody>
-
-                </Modal>
-            </div>
-        );
-    }
-}
-
-export default Btns;
+      <Modal isOpen={modalClave} fade={false} toggle={ModalPassword} size="lg">
+        <ModalHeader toggle={ModalPassword}>Ingrese su contraseña</ModalHeader>
+        <ModalBody>
+          <Form inline onSubmit={SubmitEsadoObra} autoComplete="off">
+            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+              <Label for="exampleEmail" className="mr-sm-2">
+                Usuario
+              </Label>
+              <Input
+                autoComplete={false}
+                type="text"
+                value={FormUsuario}
+                onChange={(e) => setFormUsuario(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
+              <Label for="examplePassword" className="mr-sm-2">
+                Password
+              </Label>
+              <Input
+                autoComplete={false}
+                type="password"
+                placeholder="don't tell!"
+                value={FormPassword}
+                onChange={(e) => setFormPassword(e.target.value)}
+              />
+            </FormGroup>
+            <Button color="success" type="submit">
+              Confirmar{" "}
+            </Button>{" "}
+            <Button color="danger" onClick={() => ModalPassword()}>
+              Cancelar
+            </Button>
+          </Form>
+        </ModalBody>
+      </Modal>
+    </div>
+  );
+};

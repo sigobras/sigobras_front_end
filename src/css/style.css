@@ -2,7 +2,7 @@ html,
 body {
   /* height: 100%; */
 
-  font-size: .9rem !important;
+  font-size: 0.9rem !important;
   color: #cecece !important;
   /* background-image: url("../images/blur-bg.jpg"); */
   /* background-position: 50% 0%; */
@@ -39,15 +39,12 @@ body {
   /* Scrollable contents if viewport is shorter than content. */
 }
 
-
-
 @supports ((position: -webkit-sticky) or (position: sticky)) {
   .sidebar-sticky {
     position: -webkit-sticky;
     position: sticky;
   }
 }
-
 
 /* texto barra navegacion izquierda */
 .sidebar .nav-link {
@@ -65,13 +62,12 @@ body {
 
 /* Navbar */
 .navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
   font-size: 1rem;
   /* background-color: rgba(0, 0, 0, 0.25); */
   /* box-shadow: inset -1px 0 0 rgb(255, 255, 255); */
 }
-
 
 /* nav izquierda menu principal */
 
@@ -101,12 +97,10 @@ body {
 }
 
 .navbarCollapseRight {
-  display: none
+  display: none;
 }
 
 /* fin nav derecha  */
-
-
 
 @media only screen and (max-width: 767px) {
   .navbarExplandLeft {
@@ -129,7 +123,7 @@ body {
   }
 
   .navbarExplandRight {
-    display: none
+    display: none;
   }
 
   /* .ButtonToogleMenu{
@@ -177,7 +171,6 @@ body {
   border-bottom: 1px solid #262728;
 }
 
-
 .lii a.active {
   background-color: #0080ff;
   color: #fffefe !important;
@@ -186,8 +179,6 @@ body {
 .lii a:hover:not(.active) {
   background-color: #0080ff !important;
 }
-
-
 
 /* SCROLL ANG95 */
 .scroll_contenido {
@@ -204,14 +195,8 @@ body {
 /* scrol de partidas */
 .scroll_contenido::-webkit-scrollbar-thumb {
   background-color: #0080ff;
-  ;
   outline: 0px solid rgb(255, 0, 0);
 }
-
-
-
-
-
 
 /* TABLE RESPONSIVE SCROLL PERSONALIZADO  */
 
@@ -219,7 +204,6 @@ body {
   display: block;
   width: 100%;
   overflow: auto;
-
 }
 
 /* Tamaño del scroll */
@@ -227,7 +211,6 @@ body {
   width: 8px;
   height: 8px;
   cursor: pointer;
-
 }
 
 /* Ponemos un color de fondo y redondeamos las esquinas del thumb */
@@ -235,14 +218,12 @@ body {
   background: #0080ff;
   border-radius: 4px;
   cursor: pointer;
-
 }
 
 /* Cambiamos el fondo cuando esté en active */
 .table-responsive::-webkit-scrollbar-thumb:active {
   background-color: #5688ff;
   cursor: pointer;
-
 }
 
 /* Cambiamos el fondo y agregamos una sombra cuando esté en hover */
@@ -263,13 +244,7 @@ body {
 .table-responsive::-webkit-scrollbar-track:active {
   background: #d4d4d4;
   cursor: pointer;
-
 }
-
-
-
-
-
 
 /* SCROLL NAV VERTICAL ----------------------------------------------- */
 .sidebar-sticky::-webkit-scrollbar {
@@ -294,7 +269,7 @@ body {
 
 /* bordes propios */
 .border-button {
-  border-bottom: 1px solid #171819
+  border-bottom: 1px solid #171819;
 }
 
 .border-left {
@@ -344,11 +319,10 @@ body {
 
 /* tamaño de fuente pequeño */
 .fsize {
-  font-size: 0.5rem
+  font-size: 0.5rem;
 }
 
 /* color de tabla actividades */
-
 
 .tdData {
   border-left: #272829;
@@ -372,10 +346,9 @@ body {
   display: none;
 }
 
-
 .resplandPartida {
   border-bottom: 2px solid #0080ff;
-  background: #3a3b3c
+  background: #3a3b3c;
 }
 
 .icoVer {
@@ -413,7 +386,6 @@ body {
 
 /* pone posicion fixed a los header de la tabla */
 
-
 /* fin pone posicion fixed a los header de la tabla */
 /* 
 iframe {
@@ -429,8 +401,6 @@ iframe::-webkit-scrollbar-thumb {
   ;
   outline: 2px solid rgb(255, 0, 0);
 } */
-
-
 
 /* prioridad css */
 
@@ -534,7 +504,6 @@ iframe::-webkit-scrollbar-thumb {
   cursor: pointer;
 }
 
-
 .circleIcono:nth-child(1) {
   transform: translateX(18px);
 }
@@ -569,7 +538,6 @@ iframe::-webkit-scrollbar-thumb {
   border-radius: 50%;
   cursor: pointer;
 }
-
 
 .circleIconoFiltrar:nth-child(1) {
   /* transform: rotate(0deg) translateX(18px); */
@@ -629,7 +597,7 @@ iframe::-webkit-scrollbar-thumb {
   width: 274px;
   border: 1px solid #3a3b3c;
   border-radius: 8px 8px 0px 0px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .chatHeader {
@@ -656,11 +624,10 @@ iframe::-webkit-scrollbar-thumb {
 }
 
 table.table thead th {
-  /* position: sticky; */
+  position: sticky;
   top: 0px;
   background: #171819;
 }
-
 
 /* hover imagen btn */
 
@@ -690,8 +657,6 @@ table.table thead th {
   background: #171819;
 }
 
-
-
 /* piky selected ---------------------- ediciones */
 .picky {
   width: 86% !important;
@@ -702,13 +667,12 @@ table.table thead th {
   border-right: 2px solid #3a3a3a;
 }
 
-
 /* hover en recursos */
 
 .contentDataTd {
   cursor: pointer;
   /* background: yellowgreen; */
-  transition: all .1s;
+  transition: all 0.1s;
 }
 
 .ContIcon {
@@ -721,12 +685,11 @@ table.table thead th {
   position: relative;
 }
 
-.contentDataTd:hover>*[contenteditable="true"] {
+.contentDataTd:hover > *[contenteditable="true"] {
   background-color: #1a028585;
   cursor: text;
   display: inline-block;
 }
-
 
 .divCodigoRecur {
   border: 1px solid #2676bb;
@@ -753,23 +716,27 @@ table.table thead th {
 
 .NuevaOrdenCompra {
   background: rgb(57, 111, 136);
-  background: linear-gradient(90deg, #dc3535ab 0%, #2676bb 50%, rgba(81, 136, 131, 0.2) 100%);
+  background: linear-gradient(
+    90deg,
+    #dc3535ab 0%,
+    #2676bb 50%,
+    rgba(81, 136, 131, 0.2) 100%
+  );
 }
 
-.btnCancelar{
+.btnCancelar {
   background: #ffffff5c;
   border-radius: 50%;
   cursor: pointer;
   color: red;
   padding: 4px;
 }
-.btnCancelar:hover{
+.btnCancelar:hover {
   background: red;
   border-radius: 50%;
   cursor: pointer;
   color: white;
 }
-
 
 /* comentarios de partidas metrados diarios */
 
@@ -777,7 +744,7 @@ table.table thead th {
   width: 350px;
   padding: 10px;
   border-radius: 6px;
-  color: #FFF;
+  color: #fff;
   position: relative;
   line-height: 20px;
   margin-left: 67px;
@@ -785,11 +752,11 @@ table.table thead th {
 .comentario:nth-child(odd):before {
   content: "";
   display: block;
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-top: 12px solid transparent;
   border-bottom: 12px solid transparent;
-  border-right: 12px solid #3966ab; 
+  border-right: 12px solid #3966ab;
   position: absolute;
   top: 10px;
   left: -12px;
@@ -801,15 +768,15 @@ table.table thead th {
 .comentario:nth-child(even):after {
   content: "";
   display: block;
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-top: 12px solid transparent;
   border-bottom: 12px solid transparent;
-  border-right: 12px solid #3a3c3f; 
+  border-right: 12px solid #3a3c3f;
   position: absolute;
   top: 16px;
   left: -12px;
 }
-.comentario:nth-child(even){
+.comentario:nth-child(even) {
   background: linear-gradient(to right, #3a3a3a, #3966ab);
 }
