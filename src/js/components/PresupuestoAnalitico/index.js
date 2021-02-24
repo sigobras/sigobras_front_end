@@ -106,55 +106,36 @@ export default () => {
         </th>
       );
     }
-    // for (let index = 0; index < PresupuestosAprobados.length; index++) {
-    //   var element = PresupuestosAprobados[index];
-    //   tempRender.push(
-    //     <th style={{ textAlign: "right", width: "80px" }}>
-    //       {Redondea(item["presupuesto_" + element.id])}
-    //     </th>
-    //   );
-    // }
     return tempRender;
   }
 
-  function RenderAvanceAnualData(item) {
-    var tempRender = [];
-    for (let index = 0; index < AnyosEjecutados.length; index++) {
-      var key = AnyosEjecutados[index];
-      tempRender.push(
-        <th style={{ textAlign: "right", width: "80px" }}>
-          {Redondea(item[key])}
-        </th>
-      );
-    }
-    return tempRender;
-  }
-  function RenderAvanceMensualData(item) {
-    var tempRender = [];
-    for (let mes = 1; mes <= 12; mes++) {
-      tempRender.push(
-        <th style={{ textAlign: "right", width: "80px" }}>
-          {Redondea(item[`avanceMensual_${AnyoSeleccionado}_${mes}`])}
-        </th>
-      );
-    }
-    return tempRender;
-  }
   function RenderPresupuestoTotales() {
     var tempRender = [];
-    for (let index = 0; index < PresupuestosAprobados.length; index++) {
-      var element = PresupuestosAprobados[index];
-      var total = 0;
-      for (let index2 = 0; index2 < CostosAnalitico.length; index2++) {
-        const element2 = CostosAnalitico[index2];
-        if (element2["presupuesto_" + element.id]) {
-          total += element2["presupuesto_" + element.id];
-        }
-      }
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
+    if (CostosAnalitico.length) {
+      var item = CostosAnalitico[0];
+      var properties = Object.keys(item).filter(
+        (element) =>
+          element.startsWith("presupuesto_") ||
+          element.startsWith("avanceAnual_") ||
+          element.startsWith("avanceMensual")
       );
+      for (let i = 0; i < properties.length; i++) {
+        const key = properties[i];
+        var total = 0;
+        for (let index2 = 0; index2 < CostosAnalitico.length; index2++) {
+          const element2 = CostosAnalitico[index2];
+          if (element2[key]) {
+            total += element2[key];
+          }
+        }
+        tempRender.push(
+          <th style={{ textAlign: "right", width: "80px" }}>
+            {Redondea(total)}
+          </th>
+        );
+      }
     }
+
     return tempRender;
   }
   useEffect(() => {
@@ -253,6 +234,7 @@ export default () => {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
+                  border: "none",
                 }}
               >
                 <span

@@ -8,6 +8,7 @@
   padding: 0px;
   font-size: 11px;
   vertical-align: top;
+  border: 1px solid black;
 }
 .whiteThem-table tbody th {
   background: #c6c8ca;
@@ -24,4 +25,5 @@
   text-align: right;
   padding: 15px 5px;
   line-height: 28px;
+  border: none;
 }
