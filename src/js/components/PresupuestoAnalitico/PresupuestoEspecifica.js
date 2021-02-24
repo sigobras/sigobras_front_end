@@ -212,10 +212,7 @@ export default forwardRef(
     }
     return EspecificasCostos.map((item, i) => (
       <tr style={{ display: display }}>
-        <td
-          colSpan={IndexEdicion == i ? "2" : "1"}
-          style={{ fontSize: "9px", width: "120px" }}
-        >
+        <td colSpan={IndexEdicion == i ? "2" : "1"} style={{ fontSize: "9px" }}>
           {IndexEdicion == i ? (
             <AsyncSelect
               cacheOptions
@@ -234,9 +231,7 @@ export default forwardRef(
           )}
         </td>
         {IndexEdicion != i && (
-          <td onClick={() => setIndexEdicion(i)} style={{ width: "700px" }}>
-            {item.descripcion}
-          </td>
+          <td onClick={() => setIndexEdicion(i)}>{item.descripcion}</td>
         )}
         {RenderPresupuestosData(item)}
       </tr>
