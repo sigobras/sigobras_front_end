@@ -18,7 +18,7 @@ import { FaUpload, FaDownload, FaPlusCircle } from "react-icons/fa";
 import ModalCostosAnalitico from "./ModalCostosAnalitico";
 import ModalNuevoPresupuesto from "./ModalNuevoPresupuesto";
 import { UrlServer } from "../Utils/ServerUrlConfig";
-import { Redondea, DescargarArchivo } from "../Utils/Funciones";
+import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
 import PresupuestoEspecifica from "./PresupuestoEspecifica";
 import "./PresupuestoAnalitico.css";
 
@@ -72,13 +72,98 @@ export default () => {
     });
     setCostosCollapse(clone);
   }
+  //anyoseleccionado
+  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
+  //anyos ejecutados
+  const [AnyosEjecutados, setAnyosEjecutados] = useState([]);
+  //function de renderizado
+  function RenderMesesTitulo() {
+    var tempRender = [];
+    // AvanceAnual;
+    for (let index = 1; index <= 12; index++) {
+      tempRender.push(
+        <td>
+          {mesesShort[index - 1]} - {AnyoSeleccionado}
+        </td>
+      );
+    }
+    return tempRender;
+  }
+  function RenderPresupuestosData(item) {
+    var tempRender = [];
+    var properties = Object.keys(item).filter(
+      (element) =>
+        element.startsWith("presupuesto_") ||
+        element.startsWith("avanceAnual_") ||
+        element.startsWith("avanceMensual")
+    );
+    //filter properties
+    for (let i = 0; i < properties.length; i++) {
+      const key = properties[i];
+      tempRender.push(
+        <th style={{ textAlign: "right", width: "80px" }}>
+          {Redondea(item[key])}
+        </th>
+      );
+    }
+    // for (let index = 0; index < PresupuestosAprobados.length; index++) {
+    //   var element = PresupuestosAprobados[index];
+    //   tempRender.push(
+    //     <th style={{ textAlign: "right", width: "80px" }}>
+    //       {Redondea(item["presupuesto_" + element.id])}
+    //     </th>
+    //   );
+    // }
+    return tempRender;
+  }
+
+  function RenderAvanceAnualData(item) {
+    var tempRender = [];
+    for (let index = 0; index < AnyosEjecutados.length; index++) {
+      var key = AnyosEjecutados[index];
+      tempRender.push(
+        <th style={{ textAlign: "right", width: "80px" }}>
+          {Redondea(item[key])}
+        </th>
+      );
+    }
+    return tempRender;
+  }
+  function RenderAvanceMensualData(item) {
+    var tempRender = [];
+    for (let mes = 1; mes <= 12; mes++) {
+      tempRender.push(
+        <th style={{ textAlign: "right", width: "80px" }}>
+          {Redondea(item[`avanceMensual_${AnyoSeleccionado}_${mes}`])}
+        </th>
+      );
+    }
+    return tempRender;
+  }
+  function RenderPresupuestoTotales() {
+    var tempRender = [];
+    for (let index = 0; index < PresupuestosAprobados.length; index++) {
+      var element = PresupuestosAprobados[index];
+      var total = 0;
+      for (let index2 = 0; index2 < CostosAnalitico.length; index2++) {
+        const element2 = CostosAnalitico[index2];
+        if (element2["presupuesto_" + element.id]) {
+          total += element2["presupuesto_" + element.id];
+        }
+      }
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
+      );
+    }
+    return tempRender;
+  }
   useEffect(() => {
     if (PresupuestosAprobados.length) {
       cargarCostosAnalitico();
     }
   }, [PresupuestosAprobados]);
   return (
-    <div>
+    <div style={{ overflowX: "auto" }}>
       <Button onClick={() => cambiarCostosCollapseTodos(true)}>
         Expandir todo
       </Button>
@@ -113,8 +198,16 @@ export default () => {
                       setShowIcons(-1);
                     }
                   }}
+                  className="d-flex"
                 >
-                  {item.nombre}
+                  <span>{item.nombre}</span>
+                  {PresupuestosAprobados.length - 1 == i && (
+                    <span>
+                      {PresupuestosAprobados.length == 0 &&
+                        " Agregar nuevo presupuesto =>"}
+                      <ModalNuevoPresupuesto recargar={recargar} />
+                    </span>
+                  )}
                 </div>
                 {ShowIcons == i && (
                   <div>
@@ -146,13 +239,10 @@ export default () => {
                 )}
               </th>
             ))}
-            <th>
-              <div>
-                {PresupuestosAprobados.length == 0 &&
-                  " Agregar nuevo presupuesto =>"}
-                <ModalNuevoPresupuesto recargar={recargar} />
-              </div>
-            </th>
+            {AnyosEjecutados.map((item, i) => (
+              <th>TOTAL EJECUTADO {item.substr(item.length - 4)}</th>
+            ))}
+            {RenderMesesTitulo()}
           </tr>
         </thead>
         <tbody>
@@ -188,28 +278,13 @@ export default () => {
                   />
                 </span>
               </th>
-              {(() => {
-                var tempRender = [];
-                for (
-                  let index = 0;
-                  index < PresupuestosAprobados.length;
-                  index++
-                ) {
-                  var element = PresupuestosAprobados[index];
-                  tempRender.push(
-                    <th style={{ textAlign: "right" }}>
-                      {Redondea(item["presupuesto_" + element.id])}
-                    </th>
-                  );
-                }
-                return tempRender;
-              })()}
+              {RenderPresupuestosData(item)}
             </tr>,
             <PresupuestoEspecifica
               key={i + "-2"}
               id_costo={item.id}
               PresupuestosAprobados={PresupuestosAprobados}
-              index={i}
+              index_costo={i}
               CostosAnalitico={CostosAnalitico}
               setCostosAnalitico={setCostosAnalitico}
               ref={(ref) => {
@@ -218,36 +293,14 @@ export default () => {
                 setRefEspecificas(clone);
               }}
               display={CostosCollapse[i] ? "" : "none"}
+              AnyoSeleccionado={AnyoSeleccionado}
+              setAnyosEjecutados={setAnyosEjecutados}
             />,
           ])}
           {PresupuestosAprobados.length > 0 && (
             <tr>
               <th colSpan="2">PRESUPUESTO TOTAL</th>
-              {(() => {
-                var tempRender = [];
-                for (
-                  let index = 0;
-                  index < PresupuestosAprobados.length;
-                  index++
-                ) {
-                  var element = PresupuestosAprobados[index];
-                  var total = 0;
-                  for (
-                    let index2 = 0;
-                    index2 < CostosAnalitico.length;
-                    index2++
-                  ) {
-                    const element2 = CostosAnalitico[index2];
-                    if (element2["presupuesto_" + element.id]) {
-                      total += element2["presupuesto_" + element.id];
-                    }
-                  }
-                  tempRender.push(
-                    <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
-                  );
-                }
-                return tempRender;
-              })()}
+              {RenderPresupuestoTotales()}
             </tr>
           )}
         </tbody>

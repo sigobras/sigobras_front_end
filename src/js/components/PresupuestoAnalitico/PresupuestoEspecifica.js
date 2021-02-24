@@ -17,8 +17,10 @@ export default forwardRef(
       PresupuestosAprobados,
       CostosAnalitico,
       setCostosAnalitico,
-      index,
+      index_costo,
       display,
+      AnyoSeleccionado,
+      setAnyosEjecutados,
     },
     ref
   ) => {
@@ -32,6 +34,7 @@ export default forwardRef(
     }));
 
     const [EspecificasCostos, setEspecificasCostos] = useState([]);
+    const [AvanceAnual, setAvanceAnual] = useState([]);
     async function cargarEspecificasCostos() {
       var idsPresupuestoAprobados = PresupuestosAprobados.reduce(
         (acc, item) => acc + item.id + ",",
@@ -42,26 +45,42 @@ export default forwardRef(
         params: {
           id_costo,
           presupuestosAprobados: idsPresupuestoAprobados,
+          anyo: AnyoSeleccionado,
+          id_ficha: sessionStorage.getItem("idobra"),
         },
       });
-      if (res.data[0].id != null) {
+      if (res.data.length && res.data[0].id != null) {
         setEspecificasCostos(res.data);
+        //anyos de avance anual
+        if (res.data.length) {
+          var anyos = Object.keys(res.data[0]).filter((item) =>
+            item.startsWith("avanceAnual_")
+          );
+          setAvanceAnual(anyos);
+          setAnyosEjecutados(anyos);
+        }
+        // actualizacion de costosanaliticos
         var clone = [...CostosAnalitico];
         var analiticoPresupuestos = res.data;
         var properties = Object.keys(analiticoPresupuestos[0]);
         //filter properties
-        var properties = properties.filter((item) =>
-          item.startsWith("presupuesto_")
+        var propertiesPresupuesto = properties.filter(
+          (item) =>
+            item.startsWith("presupuesto_") ||
+            item.startsWith("avanceAnual_") ||
+            item.startsWith("avanceMensual")
         );
-
         for (let i = 0; i < analiticoPresupuestos.length; i++) {
           const item = analiticoPresupuestos[i];
-          for (let j = 0; j < properties.length; j++) {
-            const item2 = properties[j];
-            if (clone[index][item2]) {
-              clone[index][item2] += item[item2];
+          for (let j = 0; j < propertiesPresupuesto.length; j++) {
+            const item2 = propertiesPresupuesto[j];
+            if (i == 0) {
+              clone[index_costo][item2] = 0;
+            }
+            if (clone[index_costo][item2]) {
+              clone[index_costo][item2] += item[item2];
             } else {
-              clone[index][item2] = item[item2];
+              clone[index_costo][item2] = item[item2];
             }
           }
         }
@@ -144,7 +163,67 @@ export default forwardRef(
     //edicion presupuestos
     //refs
     const [RefEspecificasInput, setRefEspecificasInput] = useState([]);
-
+    //redner
+    function RenderPresupuestosData(item) {
+      var tempRender = [];
+      for (let index = 0; index < PresupuestosAprobados.length; index++) {
+        var element = PresupuestosAprobados[index];
+        tempRender.push(
+          <td>
+            <PresupuestoInput
+              value={Redondea(item["presupuesto_" + element.id], 2, false, "")}
+              presupuesto_analitico_id={item.id}
+              presupuestos_aprobados_id={element.id}
+              recargar={cargarEspecificasCostos}
+              RefEspecificasInput={RefEspecificasInput}
+              setRefEspecificasInput={setRefEspecificasInput}
+              EspecificasCostos={EspecificasCostos}
+              PresupuestosAprobados={PresupuestosAprobados}
+            />
+          </td>
+        );
+      }
+      return tempRender;
+    }
+    function RenderAvanceAnualData(item) {
+      var tempRender = [];
+      for (let index = 0; index < AvanceAnual.length; index++) {
+        const key = AvanceAnual[index];
+        tempRender.push(
+          <td>
+            <AvanceAnualInput
+              value={Redondea(item[key], 2, false, "")}
+              anyo={key.substr(key.length - 4)}
+              presupuesto_analitico_id={item.id}
+              recargar={cargarEspecificasCostos}
+            />
+          </td>
+        );
+      }
+      return tempRender;
+    }
+    function RenderAvanceMensualData(item) {
+      var tempRender = [];
+      for (let index = 1; index <= 12; index++) {
+        tempRender.push(
+          <td>
+            <AvanceMensualInput
+              value={Redondea(
+                item[`avanceMensual_${AnyoSeleccionado}_${index}`],
+                2,
+                false,
+                ""
+              )}
+              anyo={AnyoSeleccionado}
+              mes={index}
+              presupuesto_analitico_id={item.id}
+              recargar={cargarEspecificasCostos}
+            />
+          </td>
+        );
+      }
+      return tempRender;
+    }
     return EspecificasCostos.map((item, i) => (
       <tr style={{ display: display }}>
         <td
@@ -169,34 +248,13 @@ export default forwardRef(
           )}
         </td>
         {IndexEdicion != i && (
-          <td onClick={() => setIndexEdicion(i)}>{item.descripcion}</td>
+          <td onClick={() => setIndexEdicion(i)} style={{ width: "300px" }}>
+            {item.descripcion}
+          </td>
         )}
-        {(() => {
-          var tempRender = [];
-          for (let index = 0; index < PresupuestosAprobados.length; index++) {
-            var element = PresupuestosAprobados[index];
-            tempRender.push(
-              <td>
-                <PresupuestoInput
-                  value={Redondea(
-                    item["presupuesto_" + element.id],
-                    2,
-                    false,
-                    ""
-                  )}
-                  presupuesto_analitico_id={item.id}
-                  presupuestos_aprobados_id={element.id}
-                  recargar={cargarEspecificasCostos}
-                  RefEspecificasInput={RefEspecificasInput}
-                  setRefEspecificasInput={setRefEspecificasInput}
-                  EspecificasCostos={EspecificasCostos}
-                  PresupuestosAprobados={PresupuestosAprobados}
-                />
-              </td>
-            );
-          }
-          return tempRender;
-        })()}
+        {RenderPresupuestosData(item)}
+        {RenderAvanceAnualData(item)}
+        {RenderAvanceMensualData(item)}
       </tr>
     ));
   }
@@ -291,6 +349,87 @@ function PresupuestoInput({
         clone[presupuesto_analitico_id + "-" + presupuestos_aprobados_id] = ref;
         setRefEspecificasInput(clone);
       }}
+    />
+  );
+}
+function AvanceAnualInput({ value, anyo, presupuesto_analitico_id, recargar }) {
+  const [InputValue, setInputValue] = useState({
+    presupuesto_analitico_id,
+    anyo,
+    monto: value,
+  });
+  const [flagCambios, setflagCambios] = useState(false);
+  function handleInputChange(e) {
+    setflagCambios(true);
+    setInputValue({
+      ...InputValue,
+      monto: formatMoney(e.target.value),
+    });
+  }
+  async function guardarData() {
+    if (flagCambios) {
+      var clone = { ...InputValue };
+      clone.monto = clone.monto.replace(/[^0-9\.-]+/g, "");
+      await axios.put(`${UrlServer}/v1/analitico/avanceAnual`, [clone]);
+      recargar();
+    }
+  }
+  return (
+    <Input
+      value={InputValue.monto}
+      onChange={(e) => handleInputChange(e)}
+      onBlur={() => guardarData()}
+      className="whiteThem-table-input"
+      // onKeyDown={handleEnter}
+      // innerRef={(ref) => {
+      //   var clone = RefEspecificasInput;
+      //   clone[presupuesto_analitico_id + "-" + presupuestos_aprobados_id] = ref;
+      //   setRefEspecificasInput(clone);
+      // }}
+    />
+  );
+}
+function AvanceMensualInput({
+  value,
+  presupuesto_analitico_id,
+  anyo,
+  mes,
+  recargar,
+}) {
+  const [InputValue, setInputValue] = useState({
+    presupuesto_analitico_id,
+    anyo,
+    mes,
+    monto: value,
+  });
+  const [flagCambios, setflagCambios] = useState(false);
+  function handleInputChange(e) {
+    setflagCambios(true);
+    setInputValue({
+      ...InputValue,
+      monto: formatMoney(e.target.value),
+    });
+  }
+  async function guardarData() {
+    if (flagCambios) {
+      var clone = { ...InputValue };
+      clone.monto = clone.monto.replace(/[^0-9\.-]+/g, "");
+      await axios.put(`${UrlServer}/v1/analitico/avanceMensual`, [clone]);
+      recargar();
+    }
+  }
+  return (
+    <Input
+      value={InputValue.monto}
+      onChange={(e) => handleInputChange(e)}
+      onBlur={() => guardarData()}
+      className="whiteThem-table-input"
+      // onKeyDown={handleEnter}
+      // innerRef={(ref) => {
+      //   var clone = RefEspecificasInput;
+      //   clone[presupuesto_analitico_id + "-" + presupuestos_aprobados_id] = ref;
+      //   setRefEspecificasInput(clone);
+      // }}
     />
   );
 }
