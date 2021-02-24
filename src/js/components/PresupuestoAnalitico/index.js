@@ -82,9 +82,9 @@ export default () => {
     // AvanceAnual;
     for (let index = 1; index <= 12; index++) {
       tempRender.push(
-        <td>
+        <th className="whiteThem-table-propiedades">
           {mesesShort[index - 1]} - {AnyoSeleccionado}
-        </td>
+        </th>
       );
     }
     return tempRender;
@@ -101,9 +101,7 @@ export default () => {
     for (let i = 0; i < properties.length; i++) {
       const key = properties[i];
       tempRender.push(
-        <th style={{ textAlign: "right", width: "80px" }}>
-          {Redondea(item[key])}
-        </th>
+        <th style={{ textAlign: "right" }}>{Redondea(item[key])}</th>
       );
     }
     return tempRender;
@@ -129,9 +127,7 @@ export default () => {
           }
         }
         tempRender.push(
-          <th style={{ textAlign: "right", width: "80px" }}>
-            {Redondea(total)}
-          </th>
+          <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
         );
       }
     }
@@ -151,14 +147,20 @@ export default () => {
       <Button onClick={() => cambiarCostosCollapseTodos(false)}>
         Contraer todo
       </Button>
-      <table className="whiteThem-table">
+      <table className="whiteThem-table" style={{ width: "max-content" }}>
         <thead style={{ fontSize: "10px" }}>
           <tr>
-            {CostosAnalitico.length > 0 && <th>ITEM</th>}
+            {CostosAnalitico.length > 0 && (
+              <th style={{ fontSize: "9px" }} className="whiteThem-table-item">
+                ITEM
+              </th>
+            )}
             <th
+              className="whiteThem-table-descripcion"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
+                border: "none",
               }}
             >
               {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
@@ -170,7 +172,7 @@ export default () => {
               )}
             </th>
             {PresupuestosAprobados.map((item, i) => (
-              <th key={i} style={{ position: "relative" }}>
+              <th key={i} className="whiteThem-table-propiedades">
                 <div
                   onClick={() => {
                     if (ShowIcons != i) {
@@ -221,7 +223,9 @@ export default () => {
               </th>
             ))}
             {AnyosEjecutados.map((item, i) => (
-              <th>TOTAL EJECUTADO {item.substr(item.length - 4)}</th>
+              <th className="whiteThem-table-propiedades">
+                TOTAL EJECUTADO {item.substr(item.length - 4)}
+              </th>
             ))}
             {RenderMesesTitulo()}
           </tr>
@@ -229,7 +233,7 @@ export default () => {
         <tbody>
           {CostosAnalitico.map((item, i) => [
             <tr key={i + "-1"}>
-              <th>{item.id}</th>
+              <th style={{ fontSize: "9px" }}>{item.id}</th>
               <th
                 style={{
                   display: "flex",
@@ -281,7 +285,8 @@ export default () => {
           ])}
           {PresupuestosAprobados.length > 0 && (
             <tr>
-              <th colSpan="2">PRESUPUESTO TOTAL</th>
+              <th></th>
+              <th style={{ textAlign: "right" }}>PRESUPUESTO TOTAL</th>
               {RenderPresupuestoTotales()}
             </tr>
           )}

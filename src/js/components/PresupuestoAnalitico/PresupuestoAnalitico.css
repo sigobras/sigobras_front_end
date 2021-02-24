@@ -23,7 +23,18 @@
   font-size: 11px;
   /* background: #42ff0038; */
   text-align: right;
-  padding: 15px 5px;
+  /* padding: 15px 5px; */
   line-height: 28px;
   border: none;
+  width: 70px;
+}
+.whiteThem-table-item {
+  width: 70px;
+}
+.whiteThem-table-descripcion {
+  width: 400px;
+  font-size: 10px;
+}
+.whiteThem-table-propiedades {
+  width: 70px;
 }
