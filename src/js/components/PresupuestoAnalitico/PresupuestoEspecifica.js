@@ -4,7 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { Input } from "reactstrap";
+import { Input, Button } from "reactstrap";
 import axios from "axios";
 import AsyncSelect from "react-select/async";
 
@@ -127,8 +127,10 @@ export default forwardRef(
       }
       return temp;
     }
+    const [flagCambios, setflagCambios] = useState(false);
     //handleinputchange
     function handleInputChange(input) {
+      setflagCambios(true);
       var inputData = input.label.split("-");
       var clone = [...EspecificasCostos];
       clone[IndexEdicion].id_clasificador = input.value;
@@ -150,8 +152,6 @@ export default forwardRef(
           });
           await axios.put(`${UrlServer}/v1/analitico/`, dataProcesada);
         }
-        setIndexEdicion(-1);
-        cargarEspecificasCostos();
       } catch (error) {
         if (error.response.data.message == "ER_DUP_ENTRY") {
           alert(
@@ -161,6 +161,9 @@ export default forwardRef(
           alert("Ocurrio un error");
         }
       }
+      setIndexEdicion(-1);
+      cargarEspecificasCostos();
+      setflagCambios(false);
     }
     //refs
     const [RefEspecificasInput, setRefEspecificasInput] = useState([]);
@@ -256,32 +259,43 @@ export default forwardRef(
       );
       return tempRender;
     }
-    return EspecificasCostos.map((item, i) => (
-      <tr style={{ display: display }}>
-        <td colSpan={IndexEdicion == i ? "2" : "1"} style={{ fontSize: "9px" }}>
-          {IndexEdicion == i ? (
-            <AsyncSelect
-              cacheOptions
-              defaultOptions
-              loadOptions={promiseOptions}
-              styles={customStyles}
-              value={{
-                value: item.id_clasificador,
-                label: item.clasificador + " - " + item.descripcion,
-              }}
-              onChange={handleInputChange}
-              onBlur={guardandoEspecifica}
-            />
-          ) : (
-            <div onClick={() => setIndexEdicion(i)}>{item.clasificador}</div>
+    return [
+      EspecificasCostos.map((item, i) => (
+        <tr style={{ display: display }}>
+          <td
+            colSpan={IndexEdicion == i ? "2" : "1"}
+            style={{ fontSize: "9px" }}
+          >
+            {IndexEdicion == i ? (
+              <AsyncSelect
+                cacheOptions
+                defaultOptions
+                loadOptions={promiseOptions}
+                styles={customStyles}
+                value={{
+                  value: item.id_clasificador,
+                  label: item.clasificador + " - " + item.descripcion,
+                }}
+                onChange={handleInputChange}
+                // onBlur={guardandoEspecifica}
+                // onBlur={setIndexEdicion(-1)}
+              />
+            ) : (
+              <div onClick={() => setIndexEdicion(i)}>{item.clasificador}</div>
+            )}
+          </td>
+          {IndexEdicion != i && (
+            <td onClick={() => setIndexEdicion(i)}>{item.descripcion}</td>
           )}
-        </td>
-        {IndexEdicion != i && (
-          <td onClick={() => setIndexEdicion(i)}>{item.descripcion}</td>
-        )}
-        {RenderPresupuestosData(item)}
-      </tr>
-    ));
+          {RenderPresupuestosData(item)}
+        </tr>
+      )),
+      flagCambios && (
+        <Button color="primary" onClick={() => guardandoEspecifica()}>
+          Guardar
+        </Button>
+      ),
+    ];
   }
 );
 function PresupuestoInput({
