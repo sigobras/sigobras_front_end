@@ -34,7 +34,6 @@ export default forwardRef(
     }));
 
     const [EspecificasCostos, setEspecificasCostos] = useState([]);
-    const [AvanceAnual, setAvanceAnual] = useState([]);
     async function cargarEspecificasCostos() {
       var idsPresupuestoAprobados = PresupuestosAprobados.reduce(
         (acc, item) => acc + item.id + ",",
@@ -56,7 +55,7 @@ export default forwardRef(
           var anyos = Object.keys(res.data[0]).filter((item) =>
             item.startsWith("avanceAnual_")
           );
-          setAvanceAnual(anyos);
+          anyos;
           setAnyosEjecutados(anyos);
         }
         // actualizacion de costosanaliticos
@@ -195,7 +194,7 @@ export default forwardRef(
           mes = temp[2];
         }
         tempRender.push(
-          <td>
+          <td className="whiteThem-table-propiedades">
             <PresupuestoInput
               objectKey={key}
               value={Redondea(item[key], 2, false, "")}
@@ -225,15 +224,35 @@ export default forwardRef(
       }
       //acumulado
       tempRender.push(
-        <td style={{ textAlign: "right" }}>{Redondea(acumulado)}</td>
+        <td
+          className="whiteThem-table-propiedades"
+          style={{ textAlign: "right" }}
+        >
+          {Redondea(acumulado)}
+        </td>
+      );
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea((acumulado / ultimoPresupuesto) * 100)} %
+        </th>
       );
       // saldo
       tempRender.push(
-        <td style={{ textAlign: "right" }}>
+        <td
+          className="whiteThem-table-propiedades"
+          style={{ textAlign: "right" }}
+        >
           {Redondea(ultimoPresupuesto - acumulado)}
         </td>
       );
-      console.log("final");
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea(
+            ((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100
+          )}{" "}
+          %
+        </th>
+      );
       return tempRender;
     }
     return EspecificasCostos.map((item, i) => (
@@ -286,7 +305,6 @@ function PresupuestoInput({
     mes,
   });
   function handleInputChange(e) {
-    console.log("cambios");
     setflagCambios(true);
     setInputValue({
       ...InputValue,
@@ -294,7 +312,6 @@ function PresupuestoInput({
     });
   }
   async function guardarData() {
-    console.log("objectKey", objectKey);
     if (flagCambios) {
       var clone = { ...InputValue };
       clone.monto = clone.monto.replace(/[^0-9\.-]+/g, "");
@@ -304,18 +321,15 @@ function PresupuestoInput({
       if (objectKey.startsWith("presupuesto_")) {
         delete clone.anyo;
         delete clone.mes;
-        console.log("clone", clone);
         await axios.put(`${UrlServer}/v1/analitico/presupuesto`, [clone]);
       }
       if (objectKey.startsWith("avanceAnual_")) {
         delete clone.mes;
         delete clone.presupuestos_aprobados_id;
-        console.log("clone", clone);
         await axios.put(`${UrlServer}/v1/analitico/avanceAnual`, [clone]);
       }
       if (objectKey.startsWith("avanceMensual_")) {
         delete clone.presupuestos_aprobados_id;
-        console.log("clone", clone);
         await axios.put(`${UrlServer}/v1/analitico/avanceMensual`, [clone]);
       }
       recargar();
