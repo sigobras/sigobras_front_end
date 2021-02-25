@@ -214,13 +214,17 @@ export default () => {
     }
   }, [PresupuestosAprobados]);
   return (
-    <div style={{ overflowX: "auto", minHeight: "500px" }}>
-      <Button onClick={() => cambiarCostosCollapseTodos(true)}>
-        Expandir todo
-      </Button>
-      <Button onClick={() => cambiarCostosCollapseTodos(false)}>
-        Contraer todo
-      </Button>
+    <div style={{ overflowX: "auto", minHeight: "580px" }}>
+      {CostosAnalitico.length > 0 && (
+        <Button onClick={() => cambiarCostosCollapseTodos(true)}>
+          Expandir todo
+        </Button>
+      )}
+      {CostosAnalitico.length > 0 && (
+        <Button onClick={() => cambiarCostosCollapseTodos(false)}>
+          Contraer todo
+        </Button>
+      )}
       {PresupuestosAprobados.length == 0 && (
         <span>
           {"Paso 1. Nuevo presupuesto =>"}
@@ -235,7 +239,7 @@ export default () => {
       )}{" "}
       {AnyosEjecutados.length == 0 && (
         <span>
-          {"Paso 3. Nuevo Año Ejecutado =>"}
+          {"Paso 3. Nuevo Año Ejecutado(opcional) =>"}
           <ModalNuevoAnyo recargar={recargar} />
         </span>
       )}
@@ -324,9 +328,9 @@ export default () => {
                 )}
               </th>
             ))}
-            {RenderMesesTitulo()}
-            <th colSpan="2">Acumulado</th>
-            <th colSpan="2">Saldo</th>
+            {CostosAnalitico.length > 0 && RenderMesesTitulo()}
+            {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
+            {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
           </tr>
         </thead>
         <tbody>

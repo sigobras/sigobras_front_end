@@ -70,6 +70,16 @@ export default ({ recargar, data }) => {
           "content-type": "multipart/form-data",
         },
       };
+      var res1 = await axios.get(`${UrlServer}/v1/presupuestosAprobados`, {
+        params: {
+          id_ficha: sessionStorage.getItem("idobra"),
+          fecha: FormularioData.fecha,
+        },
+      });
+      console.log("res1", res1.data);
+      if (res1.data.length > 0) {
+        throw "CONFLICTOS_FECHAS";
+      }
       if (data) {
         var res = await axios.put(
           `${UrlServer}/v1/presupuestosAprobados/${FormularioData.id}`,
@@ -88,7 +98,11 @@ export default ({ recargar, data }) => {
       setModal(false);
       alert(res.data.message);
     } catch (error) {
-      alert("Ocurrio un error");
+      if (error == "CONFLICTOS_FECHAS") {
+        alert("Hay conflictos con fechas anteriores");
+      } else {
+        alert("Ocurrio un error");
+      }
     }
   }
   const [ShowArchivoForm, setShowArchivoForm] = useState(false);
@@ -107,9 +121,7 @@ export default ({ recargar, data }) => {
       )}
 
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>
-          Ingresar Nuevo Presupuesto Aprobado
-        </ModalHeader>
+        <ModalHeader toggle={toggle}>Ingresar Presupuesto</ModalHeader>
         <form onSubmit={guardarFormularioData}>
           <ModalBody>
             <Row>
@@ -127,7 +139,7 @@ export default ({ recargar, data }) => {
               </Col>
               <Col md={5}>
                 <FormGroup>
-                  <Label>fecha</Label>
+                  <Label>Fecha de aprobacion</Label>
                   <Input
                     value={FormularioData.fecha}
                     type="date"
@@ -140,9 +152,21 @@ export default ({ recargar, data }) => {
             </Row>
             <Row>
               <Col md={12}>
-                <Button onClick={() => setShowArchivoForm(!ShowArchivoForm)}>
-                  Agregar archivo
-                </Button>
+                {ShowArchivoForm ? (
+                  <Button
+                    color="danger"
+                    onClick={() => setShowArchivoForm(!ShowArchivoForm)}
+                  >
+                    Ocultar campos (no se tiene el archivo en digital)
+                  </Button>
+                ) : (
+                  <Button
+                    color="primary"
+                    onClick={() => setShowArchivoForm(!ShowArchivoForm)}
+                  >
+                    Agregar archivo (si se tiene el archivo en digital)
+                  </Button>
+                )}
               </Col>
             </Row>
             {ShowArchivoForm && (

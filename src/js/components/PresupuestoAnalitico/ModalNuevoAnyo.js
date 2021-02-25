@@ -64,7 +64,7 @@ export default ({ recargar }) => {
         size="15"
         onClick={toggle}
         style={{ cursor: "pointer" }}
-        title="Agregar Nuevo Presupuesto"
+        title="Agregar Nuevo Año Ejecutado"
       />
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>
