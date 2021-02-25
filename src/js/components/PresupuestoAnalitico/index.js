@@ -82,7 +82,7 @@ export default () => {
     // AvanceAnual;
     for (let index = 1; index <= 12; index++) {
       tempRender.push(
-        <th className="whiteThem-table-propiedades">
+        <th className="whiteThem-table-propiedades" colSpan="2">
           {mesesShort[index - 1]} - {AnyoSeleccionado}
         </th>
       );
@@ -98,12 +98,34 @@ export default () => {
         element.startsWith("avanceMensual")
     );
     //filter properties
+    var acumulado = 0;
+    var ultimoPresupuesto = 0;
     for (let i = 0; i < properties.length; i++) {
       const key = properties[i];
       tempRender.push(
         <th style={{ textAlign: "right" }}>{Redondea(item[key])}</th>
       );
+      if (key.startsWith("presupuesto_")) {
+        ultimoPresupuesto = item[key];
+      }
+      if (key.startsWith("avanceAnual_") || key.startsWith("avanceMensual_")) {
+        tempRender.push(
+          <th style={{ textAlign: "right" }}>
+            {Redondea((item[key] / ultimoPresupuesto) * 100)} %
+          </th>
+        );
+        if (item[key]) acumulado += item[key];
+      }
     }
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
+    );
+    // saldo
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>
+        {Redondea(ultimoPresupuesto - acumulado)}
+      </th>
+    );
     return tempRender;
   }
 
@@ -117,6 +139,8 @@ export default () => {
           element.startsWith("avanceAnual_") ||
           element.startsWith("avanceMensual")
       );
+      var acumulado = 0;
+      var ultimoPresupuesto = 0;
       for (let i = 0; i < properties.length; i++) {
         const key = properties[i];
         var total = 0;
@@ -124,12 +148,30 @@ export default () => {
           const element2 = CostosAnalitico[index2];
           if (element2[key]) {
             total += element2[key];
+            if (
+              key.startsWith("avanceAnual_") ||
+              key.startsWith("avanceMensual")
+            ) {
+              acumulado += element2[key];
+            }
+            if (key.startsWith("presupuesto_")) {
+              ultimoPresupuesto = total;
+            }
           }
         }
         tempRender.push(
           <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
         );
       }
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
+      );
+      // saldo
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea(ultimoPresupuesto - acumulado)}
+        </th>
+      );
     }
 
     return tempRender;
@@ -223,11 +265,13 @@ export default () => {
               </th>
             ))}
             {AnyosEjecutados.map((item, i) => (
-              <th className="whiteThem-table-propiedades">
+              <th className="whiteThem-table-propiedades" colSpan="2">
                 TOTAL EJECUTADO {item.substr(item.length - 4)}
               </th>
             ))}
             {RenderMesesTitulo()}
+            <th>Acumulado</th>
+            <th>Saldo</th>
           </tr>
         </thead>
         <tbody>

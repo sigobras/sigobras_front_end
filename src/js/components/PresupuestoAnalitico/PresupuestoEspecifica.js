@@ -112,6 +112,8 @@ export default forwardRef(
         params: {
           textoBuscado: inputValue,
           limit: 10,
+          id_inicio: 1475,
+          id_final: 1688,
         },
       });
       var temp = [];
@@ -171,6 +173,8 @@ export default forwardRef(
           element.startsWith("avanceAnual_") ||
           element.startsWith("avanceMensual_")
       );
+      var acumulado = 0;
+      var ultimoPresupuesto = 0;
       for (let i = 0; i < properties.length; i++) {
         const key = properties[i];
         var anyo = null;
@@ -179,6 +183,7 @@ export default forwardRef(
         if (key.startsWith("presupuesto_")) {
           var temp = key.split("_");
           presupuestos_aprobados_id = temp[1];
+          ultimoPresupuesto = item[key];
         }
         if (key.startsWith("avanceAnual_")) {
           var temp = key.split("_");
@@ -207,7 +212,28 @@ export default forwardRef(
             />
           </td>
         );
+        if (key.startsWith("avanceAnual_") || key.startsWith("avanceMensual")) {
+          tempRender.push(
+            <td style={{ textAlign: "right" }}>
+              {item[key]
+                ? Redondea((item[key] / ultimoPresupuesto) * 100) + "%"
+                : ""}
+            </td>
+          );
+          if (item[key]) acumulado += item[key];
+        }
       }
+      //acumulado
+      tempRender.push(
+        <td style={{ textAlign: "right" }}>{Redondea(acumulado)}</td>
+      );
+      // saldo
+      tempRender.push(
+        <td style={{ textAlign: "right" }}>
+          {Redondea(ultimoPresupuesto - acumulado)}
+        </td>
+      );
+      console.log("final");
       return tempRender;
     }
     return EspecificasCostos.map((item, i) => (
