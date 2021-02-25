@@ -105,6 +105,7 @@ export default forwardRef(
         color: "black",
         backgroundColor: "white",
       }),
+      // menuPortal: (provided) => ({ ...provided, zIndex: "9999 !important" }),
     };
     async function promiseOptions(inputValue) {
       var res = await axios.get(`${UrlServer}/v1/clasificadorPresupuestario/`, {

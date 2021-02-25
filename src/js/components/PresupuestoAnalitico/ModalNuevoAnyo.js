@@ -47,10 +47,14 @@ export default ({ recargar }) => {
         alert("Registro exitoso");
         window.location.reload(false);
       } else {
-        throw "Error";
+        throw "NECESITA_ESPECIFICA";
       }
     } catch (error) {
-      alert("Ocurrio un error");
+      if (error == "NECESITA_ESPECIFICA") {
+        alert("Se necesita ingresar una especifica primero");
+      } else {
+        alert("Ocurrio un error");
+      }
     }
   }
   return (

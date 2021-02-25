@@ -214,7 +214,7 @@ export default () => {
     }
   }, [PresupuestosAprobados]);
   return (
-    <div style={{ overflowX: "auto" }}>
+    <div style={{ overflowX: "auto", minHeight: "500px" }}>
       <Button onClick={() => cambiarCostosCollapseTodos(true)}>
         Expandir todo
       </Button>
@@ -223,13 +223,19 @@ export default () => {
       </Button>
       {PresupuestosAprobados.length == 0 && (
         <span>
-          {"Nuevo presupuesto =>"}
+          {"Paso 1. Nuevo presupuesto =>"}
           <ModalNuevoPresupuesto recargar={recargar} />
+        </span>
+      )}{" "}
+      {CostosAnalitico.length == 0 && (
+        <span>
+          {"Paso 2. Nuevo costo =>"}
+          <ModalCostosAnalitico recargar={recargar} />
         </span>
       )}{" "}
       {AnyosEjecutados.length == 0 && (
         <span>
-          {"Nuevo Año Ejecutado =>"}
+          {"Paso 3. Nuevo Año Ejecutado =>"}
           <ModalNuevoAnyo recargar={recargar} />
         </span>
       )}
