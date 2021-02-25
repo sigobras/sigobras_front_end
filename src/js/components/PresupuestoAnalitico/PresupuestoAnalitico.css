@@ -13,9 +13,11 @@
 .whiteThem-table tbody th {
   background: #c6c8ca;
   font-weight: 700;
+  border: 1px solid black;
 }
 .whiteThem-table tbody td {
   background: white;
+  border: 1px solid black;
 }
 
 .whiteThem-table-input {

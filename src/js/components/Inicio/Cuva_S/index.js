@@ -154,7 +154,8 @@ export default ({ Obra }) => {
             &nbsp;&nbsp;
             <div>
               {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+                UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
+                UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
                 <FormularioPrincipal
                   id_ficha={Obra.id_ficha}
                   recargarData={recargarData}
@@ -228,7 +229,9 @@ export default ({ Obra }) => {
                       {(item.fisico_monto == 0 || item.fisico_monto == null) &&
                         item.tipo != "TOTAL" &&
                         (UsuarioData.cargo_nombre == "RESIDENTE" ||
-                          UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+                          UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
+                          UsuarioData.cargo_nombre ==
+                            "ADMINISTRADOR GENERAL") && (
                           <div onClick={() => deletePeriodoCurvaS(item.id)}>
                             <MdDeleteForever
                               title={"eliminiar periodo"}
@@ -487,7 +490,8 @@ function Programado({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
         (!ToggleSoles ? "%" : "")}
       {(item.fisico_monto == 0 || item.fisico_monto == null) &&
         (UsuarioData.cargo_nombre == "RESIDENTE" ||
-          UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+          UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
+          UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
           <div onClick={() => ToggleEditable()}>
             <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
           </div>
@@ -534,7 +538,8 @@ function Financiero({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
       {Redondea(item.financiero_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-        UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+        UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
+        UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
         <div onClick={() => ToggleEditable()}>
           <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
         </div>
@@ -588,7 +593,8 @@ function FinancieroProgramado({
       {Redondea(item.financiero_programado_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
       {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-        UsuarioData.cargo_nombre == "EDITOR FINANCIERO") && (
+        UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
+        UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
         <div onClick={() => ToggleEditable()}>
           <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
         </div>
