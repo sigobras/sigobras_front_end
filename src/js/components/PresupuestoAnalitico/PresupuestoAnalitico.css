@@ -1,3 +1,9 @@
+.whiteThem-table thead th {
+  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
 .whiteThem-table tbody {
   background: white;
   color: black;
@@ -28,15 +34,15 @@
   /* padding: 15px 5px; */
   line-height: 28px;
   border: none;
-  width: 70px;
+  /* width: 70px; */
 }
 .whiteThem-table-item {
   width: 70px;
 }
 .whiteThem-table-descripcion {
-  width: 400px;
+  /* width: 400px; */
   font-size: 10px;
 }
 .whiteThem-table-propiedades {
-  width: 70px;
+  width: 90px;
 }

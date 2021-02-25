@@ -21,6 +21,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
 import PresupuestoEspecifica from "./PresupuestoEspecifica";
 import "./PresupuestoAnalitico.css";
+import ModalNuevoAnyo from "./ModalNuevoAnyo";
 
 export default () => {
   useEffect(() => {
@@ -55,7 +56,6 @@ export default () => {
 
   function recargar() {
     cargarPresupuestosAprobados();
-    cargarCostosAnalitico();
   }
   //show icon
   const [ShowIcons, setShowIcons] = useState(-1);
@@ -82,7 +82,7 @@ export default () => {
     // AvanceAnual;
     for (let index = 1; index <= 12; index++) {
       tempRender.push(
-        <th className="whiteThem-table-propiedades" colSpan="2">
+        <th colSpan="2">
           {mesesShort[index - 1]} - {AnyoSeleccionado}
         </th>
       );
@@ -117,13 +117,25 @@ export default () => {
         if (item[key]) acumulado += item[key];
       }
     }
+    //acumulados
     tempRender.push(
       <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
+    );
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>
+        {Redondea((acumulado / ultimoPresupuesto) * 100)} %
+      </th>
     );
     // saldo
     tempRender.push(
       <th style={{ textAlign: "right" }}>
         {Redondea(ultimoPresupuesto - acumulado)}
+      </th>
+    );
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>
+        {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
+        %
       </th>
     );
     return tempRender;
@@ -162,14 +174,34 @@ export default () => {
         tempRender.push(
           <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
         );
+        if (key.startsWith("avanceAnual_") || key.startsWith("avanceMensual")) {
+          tempRender.push(
+            <th style={{ textAlign: "right" }}>
+              {Redondea((total / ultimoPresupuesto) * 100)}
+            </th>
+          );
+        }
       }
+      //acumulados
       tempRender.push(
         <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
+      );
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea((acumulado / ultimoPresupuesto) * 100)}
+        </th>
       );
       // saldo
       tempRender.push(
         <th style={{ textAlign: "right" }}>
           {Redondea(ultimoPresupuesto - acumulado)}
+        </th>
+      );
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea(
+            ((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100
+          )}
         </th>
       );
     }
@@ -189,6 +221,18 @@ export default () => {
       <Button onClick={() => cambiarCostosCollapseTodos(false)}>
         Contraer todo
       </Button>
+      {PresupuestosAprobados.length == 0 && (
+        <span>
+          {"Nuevo presupuesto =>"}
+          <ModalNuevoPresupuesto recargar={recargar} />
+        </span>
+      )}{" "}
+      {AnyosEjecutados.length == 0 && (
+        <span>
+          {"Nuevo Año Ejecutado =>"}
+          <ModalNuevoAnyo recargar={recargar} />
+        </span>
+      )}
       <table className="whiteThem-table" style={{ width: "max-content" }}>
         <thead style={{ fontSize: "10px" }}>
           <tr>
@@ -214,7 +258,7 @@ export default () => {
               )}
             </th>
             {PresupuestosAprobados.map((item, i) => (
-              <th key={i} className="whiteThem-table-propiedades">
+              <th key={i}>
                 <div
                   onClick={() => {
                     if (ShowIcons != i) {
@@ -265,19 +309,24 @@ export default () => {
               </th>
             ))}
             {AnyosEjecutados.map((item, i) => (
-              <th className="whiteThem-table-propiedades" colSpan="2">
-                TOTAL EJECUTADO {item.substr(item.length - 4)}
+              <th colSpan="2">
+                <span>TOTAL EJECUTADO {item.substr(item.length - 4)}</span>
+                {AnyosEjecutados.length - 1 == i && (
+                  <span>
+                    <ModalNuevoAnyo recargar={recargar} />
+                  </span>
+                )}
               </th>
             ))}
             {RenderMesesTitulo()}
-            <th>Acumulado</th>
-            <th>Saldo</th>
+            <th colSpan="2">Acumulado</th>
+            <th colSpan="2">Saldo</th>
           </tr>
         </thead>
         <tbody>
           {CostosAnalitico.map((item, i) => [
             <tr key={i + "-1"}>
-              <th style={{ fontSize: "9px" }}>{item.id}</th>
+              <th style={{ fontSize: "9px" }}>{i + 1}</th>
               <th
                 style={{
                   display: "flex",
