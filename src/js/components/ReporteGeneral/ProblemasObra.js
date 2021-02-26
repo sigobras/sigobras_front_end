@@ -51,18 +51,18 @@ export default ({ data, recargar }) => {
     }
   }
   return (
-    <div style={{ width: "600px" }}>
+    <div style={{ width: "750px" }}>
       {/* <Button onClick={() => cargarProblemas()}>RECARGAR</Button> */}
       <table style={{ width: "100%" }}>
         <tbody className="reporteGeneral-titulos">
           <tr>
             <th>Nro</th>
-            <th style={{ width: "10px" }}>fecha</th>
+            <th>fecha</th>
             <th>titulo</th>
-            <th style={{ width: "300px" }}>descripcion</th>
+            <th style={{ width: "470px" }}>descripcion</th>
           </tr>
           {Problemas.map((item, i) => (
-            <tr>
+            <tr style={{ height: "80px" }}>
               <td>{i + 1}</td>
               <td>
                 <ProblemaInput
@@ -93,7 +93,7 @@ export default ({ data, recargar }) => {
                   name="descripcion"
                   type="textarea"
                   actualizar={cargarProblemas}
-                  maxLength="45"
+                  maxLength="280"
                 />
                 <RiDeleteBin6Line
                   onClick={() => eliminarData(item.id)}
@@ -160,7 +160,10 @@ function ProblemaInput({ item, name, type, actualizar, maxLength }) {
       onChange={(e) => handleInput(e.target.value)}
       onBlur={() => guardarData()}
       type={type ? type : "text"}
-      style={{ background: FlagCambios ? "#48dc23" : "#42ff0038" }}
+      style={{
+        background: FlagCambios ? "#48dc23" : "#42ff0038",
+        height: "75px",
+      }}
       maxLength={maxLength}
     />
   );
