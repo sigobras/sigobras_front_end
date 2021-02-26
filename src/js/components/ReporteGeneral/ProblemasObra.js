@@ -24,11 +24,8 @@ export default ({ data, recargar }) => {
           id_ficha: data.id_ficha,
         },
       });
-      console.log("res", res.data);
       setProblemas(res.data);
-    } catch (error) {
-      console.log("Ocurrio un error", error);
-    }
+    } catch (error) {}
   }
   function agregarData() {
     var clone = [...Problemas];
@@ -175,7 +172,6 @@ function ProblemaInput({
   const [FlagCambios, setFlagCambios] = useState(false);
   function handleInput(value) {
     setFlagCambios(true);
-    console.log("cambio", InputValue, value);
     setInputValue({
       ...InputValue,
       [name]: value,
@@ -184,7 +180,6 @@ function ProblemaInput({
   async function guardarData() {
     try {
       if (FlagCambios) {
-        console.log("enviando", InputValue);
         var res = await axios.put(`${UrlServer}/v1/problemasObra`, [
           InputValue,
         ]);
@@ -195,7 +190,6 @@ function ProblemaInput({
       }
     } catch (error) {
       alert("Ocurrio un error");
-      console.log(error);
     }
   }
   return (
