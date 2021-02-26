@@ -522,7 +522,7 @@ export default ({ recargar }) => {
                         </tr>
                       </tbody>
                     </table>
-                    <div
+                    {/* <div
                       style={{
                         color: "rgb(206, 206, 206)",
                         fontSize: "1.2rem",
@@ -660,7 +660,7 @@ export default ({ recargar }) => {
                           </th>
                         </tr>
                       </tbody>
-                    </table>
+                    </table> */}
                   </td>
                 </tr>
               ),

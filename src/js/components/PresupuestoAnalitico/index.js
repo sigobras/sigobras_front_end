@@ -73,7 +73,7 @@ export default () => {
     setCostosCollapse(clone);
   }
   //anyoseleccionado
-  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2020);
+  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
   //anyos ejecutados
   const [AnyosEjecutados, setAnyosEjecutados] = useState([]);
   //function de renderizado

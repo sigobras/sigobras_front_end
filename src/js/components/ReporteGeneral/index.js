@@ -24,6 +24,7 @@ import AvanceFisico from "./AvanceFisico";
 import Presupuesto from "./Presupuesto";
 import PresupuestoAnalitico from "./PresupuestoAnalitico";
 import ProblemasObra from "./ProblemasObra";
+import InformesInfobras from "./InformesInfobras";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -57,6 +58,11 @@ export default ({ recargar }) => {
       nombre: "PROBLEMAS",
       activado: true,
       interfaz: ProblemasObra,
+    },
+    {
+      nombre: "INFORMES MENSUALES",
+      activado: true,
+      interfaz: InformesInfobras,
     },
     // {
     //   nombre: "ANALÍTICO",
