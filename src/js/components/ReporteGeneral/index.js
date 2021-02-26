@@ -57,11 +57,11 @@ export default ({ recargar }) => {
       interfaz: AvanceFisico,
     },
     { nombre: "PRESUPUESTO", activado: true, interfaz: Presupuesto },
-    {
-      nombre: "ANALÍTICO",
-      activado: true,
-      interfaz: PresupuestoAnalitico,
-    },
+    // {
+    //   nombre: "ANALÍTICO",
+    //   activado: true,
+    //   interfaz: PresupuestoAnalitico,
+    // },
   ]);
   const [Obras, setObras] = useState([]);
   async function cargarObras() {
