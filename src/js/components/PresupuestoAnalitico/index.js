@@ -13,7 +13,7 @@ import {
   PopoverBody,
 } from "reactstrap";
 import axios from "axios";
-import { FaUpload, FaDownload, FaPlusCircle } from "react-icons/fa";
+import { FaUpload, FaFileAlt, FaPlusCircle } from "react-icons/fa";
 
 import ModalCostosAnalitico from "./ModalCostosAnalitico";
 import ModalNuevoPresupuesto from "./ModalNuevoPresupuesto";
@@ -73,7 +73,7 @@ export default () => {
     setCostosCollapse(clone);
   }
   //anyoseleccionado
-  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
+  const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2020);
   //anyos ejecutados
   const [AnyosEjecutados, setAnyosEjecutados] = useState([]);
   //function de renderizado
@@ -302,7 +302,7 @@ export default () => {
 
                     <div>
                       <span>
-                        <FaDownload
+                        <FaFileAlt
                           onClick={() =>
                             DescargarArchivo(`${UrlServer}${item.archivo}`)
                           }
