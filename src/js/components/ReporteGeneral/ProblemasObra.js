@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { RiEyeOffFill, RiDeleteBin6Line } from "react-icons/ri";
+import { FaUpload, FaFileAlt, FaPlusCircle } from "react-icons/fa";
 import { Button, Input, Spinner } from "reactstrap";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -42,85 +43,128 @@ export default ({ data, recargar }) => {
   }
   async function eliminarData(id) {
     try {
-      if (id != null) {
-        await axios.delete(`${UrlServer}/v1/problemasObra/${id}`);
+      if (confirm("Esta seguro de eliminar este problema?")) {
+        if (id != null) {
+          await axios.delete(`${UrlServer}/v1/problemasObra/${id}`);
+        }
+        cargarProblemas();
       }
-      cargarProblemas();
     } catch (error) {
       alert("Ocurrio un error");
     }
   }
   return (
-    <div style={{ width: "750px" }}>
+    <div style={{ width: "510px" }}>
       {/* <Button onClick={() => cargarProblemas()}>RECARGAR</Button> */}
       <table style={{ width: "100%" }}>
         <tbody className="reporteGeneral-titulos">
           <tr>
-            <th>Nro</th>
-            <th>fecha</th>
-            <th>titulo</th>
-            <th style={{ width: "470px" }}>descripcion</th>
+            <th
+              style={{
+                width: "510px",
+                display: "flex",
+                justifyContent: "space-between",
+                border: "none",
+              }}
+            >
+              <span></span>
+              <span>descripcion</span>
+              <span>
+                <FaPlusCircle
+                  color="#000000"
+                  size="15"
+                  onClick={() => {
+                    agregarData();
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+              </span>
+            </th>
           </tr>
           {Problemas.map((item, i) => (
             <tr style={{ height: "80px" }}>
-              <td>{i + 1}</td>
-              <td>
-                <ProblemaInput
-                  key={JSON.stringify(item)}
-                  item={item}
-                  name="fecha"
-                  type="date"
-                  actualizar={cargarProblemas}
-                />
-              </td>
-              <td>
-                <ProblemaInput
-                  key={JSON.stringify(item)}
-                  item={item}
-                  name="titulo"
-                  actualizar={cargarProblemas}
-                  maxLength="45"
-                />
-              </td>
               <td
                 style={{
                   position: "relative",
                 }}
               >
-                <ProblemaInput
-                  key={JSON.stringify(item)}
-                  item={item}
-                  name="descripcion"
-                  type="textarea"
-                  actualizar={cargarProblemas}
-                  maxLength="280"
-                />
+                <div
+                  className="d-flex"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ paddingLeft: "13px", fontWeight: 700 }}>
+                    {i + 1}
+                  </span>
+                  <span>
+                    <ProblemaInput
+                      key={JSON.stringify(item)}
+                      item={item}
+                      name="titulo"
+                      actualizar={cargarProblemas}
+                      maxLength="45"
+                      placeholder="Cuál es el tipo de problema?"
+                      style={{
+                        width: "340px",
+                        fontWeight: 700,
+                      }}
+                    />
+                  </span>
+                  <span>
+                    <ProblemaInput
+                      key={JSON.stringify(item)}
+                      item={item}
+                      name="fecha"
+                      type="date"
+                      actualizar={cargarProblemas}
+                    />
+                  </span>
+                </div>
+                <div>
+                  <ProblemaInput
+                    key={JSON.stringify(item)}
+                    item={item}
+                    name="descripcion"
+                    type="textarea"
+                    actualizar={cargarProblemas}
+                    maxLength="280"
+                    style={{
+                      height: "75px",
+                    }}
+                    placeholder="Ingrese el problema y/o dificultad que tenga en obra"
+                  />
+                </div>
+
                 <RiDeleteBin6Line
                   onClick={() => eliminarData(item.id)}
                   style={{
                     position: "absolute",
-                    top: "0px",
-                    right: "0px",
-                    color: "red",
+                    bottom: "0px",
+                    right: "10px",
+                    color: "black",
                     cursor: "pointer",
                   }}
+                  size="15"
                 />
               </td>
             </tr>
           ))}
-          <tr>
-            <td>
-              <Button color="primary" onClick={() => agregarData()}>
-                +
-              </Button>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
   );
 };
-function ProblemaInput({ item, name, type, actualizar, maxLength }) {
+function ProblemaInput({
+  item,
+  name,
+  type,
+  actualizar,
+  maxLength,
+  style,
+  placeholder,
+}) {
   const [InputValue, setInputValue] = useState(() => {
     var temp = {};
     temp[name] = item[name];
@@ -160,11 +204,9 @@ function ProblemaInput({ item, name, type, actualizar, maxLength }) {
       onChange={(e) => handleInput(e.target.value)}
       onBlur={() => guardarData()}
       type={type ? type : "text"}
-      style={{
-        background: FlagCambios ? "#48dc23" : "#42ff0038",
-        height: "75px",
-      }}
+      style={{ ...style, background: FlagCambios ? "#17a2b840" : "#42ff0038" }}
       maxLength={maxLength}
+      placeholder={placeholder}
     />
   );
 }

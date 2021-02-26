@@ -38,11 +38,7 @@ export default ({ recargar }) => {
       activado: true,
       interfaz: DatosEspecificos,
     },
-    {
-      nombre: "PROBLEMAS",
-      activado: true,
-      interfaz: ProblemasObra,
-    },
+
     {
       nombre: "ACUMULADO " + new Date().getFullYear(),
       activado: true,
@@ -57,6 +53,11 @@ export default ({ recargar }) => {
       interfaz: AvanceFisico,
     },
     { nombre: "PRESUPUESTO", activado: true, interfaz: Presupuesto },
+    {
+      nombre: "PROBLEMAS",
+      activado: true,
+      interfaz: ProblemasObra,
+    },
     // {
     //   nombre: "ANALÍTICO",
     //   activado: true,
