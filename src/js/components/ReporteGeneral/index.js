@@ -23,6 +23,7 @@ import Responsables from "./Responsables";
 import AvanceFisico from "./AvanceFisico";
 import Presupuesto from "./Presupuesto";
 import PresupuestoAnalitico from "./PresupuestoAnalitico";
+import ProblemasObra from "./ProblemasObra";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,6 +37,11 @@ export default ({ recargar }) => {
       nombre: "DATOS ESPECÍFICOS",
       activado: true,
       interfaz: DatosEspecificos,
+    },
+    {
+      nombre: "PROBLEMAS",
+      activado: true,
+      interfaz: ProblemasObra,
     },
     {
       nombre: "ACUMULADO " + new Date().getFullYear(),
