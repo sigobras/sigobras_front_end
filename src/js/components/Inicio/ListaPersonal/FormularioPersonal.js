@@ -240,7 +240,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                   <Label for="DNI">DNI*</Label>
                   <div class="input-group mb-3">
                     <Input
-                      type="number"
+                      type="text"
                       value={DataFormulario.dni}
                       onChange={(e) =>
                         onChangeInputFormulario("dni", e.target.value)
