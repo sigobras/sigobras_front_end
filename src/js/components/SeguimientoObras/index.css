@@ -1,3 +1,12 @@
-.fechas-width td{
-    min-width: 70px;
+.fechas-width td {
+  min-width: 70px;
+}
+.seguimiento-obras_informes-infobras {
+  width: 150px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* grid-template-rows: repeat(6, 1fr); */
+}
+.seguimiento-obras_informes-infobras div {
+  width: 100px;
 }

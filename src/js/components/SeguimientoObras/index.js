@@ -14,6 +14,7 @@ import {
   getDaysBetweenDates,
   fechaFormatoMesAnyo,
   stringToDateObject,
+  mesesShort,
 } from "../Utils/Funciones";
 import FisicoBarraPorcentaje from "../Inicio/FisicoBarraPorcentaje";
 import FinancieroBarraPorcentaje from "../Inicio/FinancieroBarraPorcentaje";
@@ -135,7 +136,11 @@ export default ({ recargar }) => {
     );
   }
   return (
-    <div>
+    <div
+      style={{
+        overflowX: "auto",
+      }}
+    >
       <table className=" text-center table table-bordered">
         <thead>
           <tr>
@@ -231,6 +236,7 @@ export default ({ recargar }) => {
 
             <th>{cabezeraOrderBy("PIM", "pim_anyoactual")}</th>
             <th style={{ width: "80px" }}>Último Financiero Editado</th>
+            <th>Informes No Presentados a Infobras</th>
           </tr>
         </thead>
         <tbody>
@@ -368,6 +374,9 @@ export default ({ recargar }) => {
                   id_ficha={item.id_ficha}
                   item={item}
                 />
+              </td>
+              <td>
+                <InformesInfobras id_ficha={item.id_ficha} />
               </td>
             </tr>
           ))}
@@ -629,4 +638,27 @@ function FotosTotal({ id_ficha }) {
     setFotosCantidad(res.data.cantidad);
   }
   return <div>{FotosCantidad}</div>;
+}
+function InformesInfobras({ id_ficha }) {
+  useEffect(() => {
+    cargarData();
+  }, []);
+  const [Data, setData] = useState([]);
+  async function cargarData() {
+    var res = await axios.get(`${UrlServer}/v1/infobras/informes`, {
+      params: {
+        id_ficha,
+        estado_presentado: 1,
+        fecha_inicio: "2019-03-01",
+      },
+    });
+    setData(res.data);
+  }
+  return (
+    <div className="seguimiento-obras_informes-infobras">
+      {Data.map((item, i) => (
+        <div>{mesesShort[item.mes - 1] + " -  " + item.anyo}</div>
+      ))}
+    </div>
+  );
 }

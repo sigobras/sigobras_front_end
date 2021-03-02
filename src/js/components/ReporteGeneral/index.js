@@ -80,6 +80,14 @@ export default ({ recargar }) => {
     setObras(res.data);
   }
   //seleccionar anyo
+  const [AnyosList, setAnyosList] = useState(() => {
+    var temp = [];
+    for (let index = 2010; index <= 2021; index++) {
+      temp.push(index);
+    }
+    return temp;
+  });
+
   const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
   const [dropdownOpen, setdropdownOpen] = useState(false);
   function toggle() {
@@ -95,13 +103,13 @@ export default ({ recargar }) => {
           <DropdownToggle nav caret>
             {AnyoSeleccionado == 0 ? "--" : AnyoSeleccionado}
           </DropdownToggle>
+
           <DropdownMenu>
-            <DropdownItem onClick={() => setAnyoSeleccionado(2020)}>
-              2020
-            </DropdownItem>
-            <DropdownItem onClick={() => setAnyoSeleccionado(2021)}>
-              2021
-            </DropdownItem>
+            {AnyosList.map((item, i) => (
+              <DropdownItem onClick={() => setAnyoSeleccionado(item)}>
+                {item}
+              </DropdownItem>
+            ))}
           </DropdownMenu>
         </Dropdown>
         <OrderListInterfaces

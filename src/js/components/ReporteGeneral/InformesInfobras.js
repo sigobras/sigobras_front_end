@@ -64,7 +64,7 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
     for (let i = 1; i <= 12; i++) {
       tempRender.push(
         <tr>
-          <th>{mesesShort[i - 1] + " " + AnyoSeleccionado}</th>
+          <th>{mesesShort[i - 1] + "-" + AnyoSeleccionado}</th>
           <td>
             <NuevoInforme
               key={buscarMesInData(i)}
@@ -75,6 +75,19 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
               data={buscarMesInData(i)}
               InformesUbicaciones={InformesUbicaciones}
             />
+          </td>
+          <td>
+            {buscarMesInData(i) && buscarMesInData(i).archivo && (
+              <FaFileAlt
+                onClick={() =>
+                  DescargarArchivo(`${UrlServer}${buscarMesInData(i).archivo}`)
+                }
+                style={{ cursor: "pointer" }}
+              />
+            )}
+          </td>
+          <td style={{ width: "62px" }}>
+            {buscarMesInData(i) ? buscarMesInData(i).abreviacion : ""}
           </td>
         </tr>
       );
@@ -87,18 +100,17 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
     try {
       var res = await axios.get(`${UrlServer}/v1/informesUbicaciones`);
       setInformesUbicaciones(res.data);
-      console.log("InformesUbicaciones", res.data);
     } catch (error) {}
   }
   return (
-    <div style={{ width: "100px" }}>
+    <div style={{ width: "150px" }}>
       <table style={{ width: "100%" }}>
         <tbody className="reporteGeneral-titulos">
           {renderMeses()}
           {PrimerInforme.mes && (
             <tr>
-              <td colSpan="2">
-                Primer informe emitido en{" "}
+              <td colSpan="4">
+                El primer informe emitido fue en:{" "}
                 {mesesShort[PrimerInforme.mes - 1] + " " + PrimerInforme.anyo}
               </td>
             </tr>
@@ -128,7 +140,14 @@ function NuevoInforme({
           observacion: data.observacion,
           informes_ubicaciones_id: data.informes_ubicaciones_id,
           codigo: sessionStorage.getItem("codigoObra"),
+          estado_presentado: data.estado_presentado,
           archivo: data.archivo,
+        });
+        setInputObjectModificada({
+          anyo: data.anyo,
+          mes: data.mes,
+          fichas_id_ficha: data.fichas_id_ficha,
+          informes_ubicaciones_id: data.informes_ubicaciones_id,
         });
       }
     }
@@ -139,28 +158,57 @@ function NuevoInforme({
     mes,
     fichas_id_ficha,
     observacion: "",
-    informes_ubicaciones_id: "SELECCIONE",
+    informes_ubicaciones_id: "",
     codigo: sessionStorage.getItem("codigoObra"),
-    archivo: "",
+    estado_presentado: false,
+  });
+  const [InputObjectModificada, setInputObjectModificada] = useState({
+    anyo,
+    mes,
+    fichas_id_ficha,
+    informes_ubicaciones_id: "",
   });
   const [FlagModificacionArchivo, setFlagModificacionArchivo] = useState(false);
   function handleInputChange(e) {
+    console.log("InputObjectModificada", InputObjectModificada);
     if (e.target.name == "archivo") {
       setFlagModificacionArchivo(true);
       setInputObject({
         ...InputObject,
         [e.target.name]: e.target.files[0],
       });
+      setInputObjectModificada({
+        ...InputObjectModificada,
+        codigo: sessionStorage.getItem("codigoObra"),
+        [e.target.name]: e.target.files[0],
+      });
+    } else if (e.target.name == "estado_presentado") {
+      setInputObject({
+        ...InputObject,
+        [e.target.name]: e.target.value == "false" ? true : false,
+      });
+      setInputObjectModificada({
+        ...InputObjectModificada,
+        [e.target.name]: e.target.value == "false" ? true : false,
+      });
     } else {
       setInputObject({
         ...InputObject,
         [e.target.name]: e.target.value,
       });
+      setInputObjectModificada({
+        ...InputObjectModificada,
+        [e.target.name]: e.target.value,
+      });
     }
+    console.log("InputObjectModificada", InputObjectModificada);
   }
   async function guardarData(e) {
     e.preventDefault();
     try {
+      if (InputObjectModificada.informes_ubicaciones_id == "") {
+        throw "UBICACION_OBLIGATORIA";
+      }
       if (
         data &&
         FlagModificacionArchivo &&
@@ -168,9 +216,10 @@ function NuevoInforme({
       ) {
         return;
       }
+      console.log("InputObjectModificada", InputObjectModificada);
       const form_data = new FormData();
-      for (var key in InputObject) {
-        form_data.append(key, InputObject[key]);
+      for (var key in InputObjectModificada) {
+        form_data.append(key, InputObjectModificada[key]);
       }
       const config = {
         headers: {
@@ -186,8 +235,13 @@ function NuevoInforme({
 
       recargar();
     } catch (error) {
-      alert("Ocurrio un error");
+      if (error == "UBICACION_OBLIGATORIA") {
+        alert("Se necesita seleccionar una ubicacion");
+      } else {
+        alert("Ocurrio un error");
+      }
     }
+    toggle();
   }
   function DescargarArchivo(data) {
     if (confirm("Desea descargar el archivo?")) {
@@ -203,7 +257,7 @@ function NuevoInforme({
 
   return (
     <div>
-      {data ? (
+      {data && data.estado_presentado ? (
         <FaCheckCircle
           color="green"
           onClick={toggle}
@@ -216,12 +270,12 @@ function NuevoInforme({
           style={{ cursor: "pointer" }}
         />
       )}
-      {data && data.archivo && (
+      {/* {data && data.archivo && (
         <FaFileAlt
           onClick={() => DescargarArchivo(`${UrlServer}${data.archivo}`)}
           style={{ cursor: "pointer" }}
         />
-      )}
+      )} */}
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Ingreso de nuevo informe</ModalHeader>
         <form onSubmit={guardarData}>
@@ -248,8 +302,9 @@ function NuevoInforme({
                     name="informes_ubicaciones_id"
                     type="select"
                     onChange={handleInputChange}
+                    required
                   >
-                    <option>{"SELECCIONE"}</option>
+                    <option value="">{"SELECCIONE"}</option>
                     {InformesUbicaciones.map((item, i) => (
                       <option value={item.id}>{item.descripcion}</option>
                     ))}
@@ -280,9 +335,26 @@ function NuevoInforme({
                 </FormGroup>
               </Col>
             </Row>
+            <Row>
+              <Col md="12">
+                <FormGroup check>
+                  <Label check>
+                    <input
+                      type="checkbox"
+                      className="form-control"
+                      checked={InputObject.estado_presentado}
+                      value={InputObject.estado_presentado}
+                      name="estado_presentado"
+                      onChange={handleInputChange}
+                    />
+                    Registrado en Infobras
+                  </Label>
+                </FormGroup>
+              </Col>
+            </Row>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={toggle} type="submit">
+            <Button color="primary" type="submit">
               {data ? "Actualizar" : "Guardar"}
             </Button>{" "}
             <Button color="secondary" onClick={toggle}>
