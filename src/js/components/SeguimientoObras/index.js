@@ -141,12 +141,16 @@ export default ({ recargar }) => {
         overflowX: "auto",
       }}
     >
-      <table className=" text-center table table-bordered">
+      <table
+        className="table seguimiento-obras text-center"
+        style={{ width: "max-content" }}
+      >
         <thead>
           <tr>
             <th colSpan="8">Datos de Obra</th>
             <th colSpan="5">Procesos Físicos</th>
             <th colSpan="2">Procesos Financieros</th>
+            <th colSpan="1">Infobras</th>
           </tr>
           <tr>
             <th>N°</th>
@@ -155,27 +159,9 @@ export default ({ recargar }) => {
               {cabezeraOrderBy("Código de Obra", "codigo")}
               {cabezeraOrderBy("Presupuesto", "g_total_presu")}
             </th>
-            <th
-              style={{
-                width: "70px",
-              }}
-            >
-              Inicio de Obra
-            </th>
-            <th
-              style={{
-                width: "70px",
-              }}
-            >
-              Plazo Aprobado
-            </th>
-            <th
-              style={{
-                width: "70px",
-              }}
-            >
-              Plazo Sin Aprobar
-            </th>
+            <th>Inicio de Obra</th>
+            <th>Plazo Aprobado</th>
+            <th>Plazo Sin Aprobar</th>
             <th>
               {cabezeraOrderBy(
                 "Avance Fisico Acumulado",
@@ -235,7 +221,7 @@ export default ({ recargar }) => {
             </th>
 
             <th>{cabezeraOrderBy("PIM", "pim_anyoactual")}</th>
-            <th style={{ width: "80px" }}>Último Financiero Editado</th>
+            <th>Último Financiero Editado</th>
             <th>Informes No Presentados a Infobras</th>
           </tr>
         </thead>
@@ -376,7 +362,7 @@ export default ({ recargar }) => {
                 />
               </td>
               <td>
-                <InformesInfobras id_ficha={item.id_ficha} />
+                <InformesInfobras id_ficha={item.id_ficha} item={item} />
               </td>
             </tr>
           ))}
@@ -639,7 +625,7 @@ function FotosTotal({ id_ficha }) {
   }
   return <div>{FotosCantidad}</div>;
 }
-function InformesInfobras({ id_ficha }) {
+function InformesInfobras({ id_ficha, item }) {
   useEffect(() => {
     cargarData();
   }, []);
@@ -649,7 +635,7 @@ function InformesInfobras({ id_ficha }) {
       params: {
         id_ficha,
         estado_presentado: 1,
-        fecha_inicio: "2019-03-01",
+        fecha_inicio: item.plazoinicial_fecha,
       },
     });
     setData(res.data);
