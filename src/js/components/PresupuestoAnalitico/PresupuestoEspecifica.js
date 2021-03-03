@@ -277,8 +277,6 @@ export default forwardRef(
                   label: item.clasificador + " - " + item.descripcion,
                 }}
                 onChange={handleInputChange}
-                // onBlur={guardandoEspecifica}
-                // onBlur={setIndexEdicion(-1)}
               />
             ) : (
               <div onClick={() => setIndexEdicion(i)}>{item.clasificador}</div>
