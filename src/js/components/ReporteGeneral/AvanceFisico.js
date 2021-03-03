@@ -64,8 +64,8 @@ export default ({ data, AnyoSeleccionado }) => {
       >
         <tbody>
           <tr>
-            <th>A Dic. {AnyoSeleccionado - 1}</th>
-            <td>
+            <th style={{ width: "70px" }}>A Dic. {AnyoSeleccionado - 1}</th>
+            <td style={{ width: "70px" }}>
               {Redondea(
                 (AcumuladoPrevio.fisico_monto / data.presupuesto_costodirecto) *
                   100
@@ -79,15 +79,15 @@ export default ({ data, AnyoSeleccionado }) => {
             for (let i = 1; i <= 6; i++) {
               dataTemp.push(
                 <tr key={i}>
-                  <th>{mesesShort[i - 1]}</th>
-                  <td>
+                  <th style={{ width: "70px" }}>{mesesShort[i - 1]}</th>
+                  <td style={{ width: "70px" }}>
                     {Redondea(
                       (buscarMes(i) / data.presupuesto_costodirecto) * 100
                     )}
                     %
                   </td>
-                  <th>{mesesShort[i + 5]}</th>
-                  <td>
+                  <th style={{ width: "70px" }}>{mesesShort[i + 5]}</th>
+                  <td style={{ width: "70px" }}>
                     {Redondea(
                       (buscarMes(i + 6) / data.presupuesto_costodirecto) * 100
                     )}
@@ -99,8 +99,8 @@ export default ({ data, AnyoSeleccionado }) => {
             return dataTemp;
           })()}
           <tr>
-            <th>A. Actual</th>
-            <td>
+            <th style={{ width: "70px" }}>A. Actual</th>
+            <td style={{ width: "70px" }}>
               {Redondea(
                 (AcumuladoActual.fisico_monto / data.presupuesto_costodirecto) *
                   100

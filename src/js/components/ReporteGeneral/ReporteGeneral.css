@@ -13,6 +13,12 @@
   font-size: 11px;
   background: #42ff0038;
 }
+.reporteGeneral-table select {
+  height: 16px;
+  font-size: 11px;
+  background: #42ff0038;
+  padding: 0px;
+}
 .reporteGeneral-table textarea {
   font-size: 11px;
   background: #42ff0038;
