@@ -418,12 +418,20 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
   return (
     <div>
       <span>
-        <Button onClick={() => mostrarTodos()} color="success">
+        <Button
+          onClick={() => mostrarTodos()}
+          color="success"
+          style={{ margin: "1px" }}
+        >
           Mostrar
         </Button>
       </span>
       <span>
-        <Button onClick={() => ocultarTodos()} color="danger">
+        <Button
+          onClick={() => ocultarTodos()}
+          color="danger"
+          style={{ margin: "1px" }}
+        >
           Ocultar
         </Button>
       </span>
@@ -459,7 +467,7 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
         >
           <Button
             color={item.activado ? "info" : "warning"}
-            style={{ height: "25px", fontSize: "10px" }}
+            style={{ height: "25px", fontSize: "10px", margin: "1px" }}
           >
             {item.nombre}
             <span
