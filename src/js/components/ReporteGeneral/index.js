@@ -38,7 +38,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default ({ recargar }) => {
   useEffect(() => {
     cargarListOrders();
-    cargarListOrdersIndex();
+    cargarObras();
   }, []);
   const interfaces = [
     {
@@ -82,7 +82,6 @@ export default ({ recargar }) => {
     interfaces
   );
   const [ListOrders, setListOrders] = useState([]);
-  const [ListOrdersPrimeraCarga, setListOrdersPrimeraCarga] = useState(false);
   async function cargarListOrders() {
     try {
       var res = await axios.get(`${UrlServer}/v1/reporteGeneral/interfaces`, {
@@ -97,7 +96,6 @@ export default ({ recargar }) => {
         }
         setListOrders(res.data);
       }
-      setListOrdersPrimeraCarga(true);
     } catch (error) {
       console.log("error", error);
     }
@@ -113,7 +111,6 @@ export default ({ recargar }) => {
       }
     );
     if (res.data) {
-      console.log("if", res.data.seleccion);
       setListOrdersIndex(res.data.seleccion);
     }
   }
@@ -125,7 +122,6 @@ export default ({ recargar }) => {
       (item, i) => ListOrdersIndex == item.id
     );
     var Order = ListOrders[indexCalculado].orden;
-
     for (let index = 0; index < Order.length; index++) {
       const element = Order[index];
       var newItem = ListInterfacesDefecto[element.posicion];
@@ -184,9 +180,12 @@ export default ({ recargar }) => {
   }
   async function actualizarOrdenInterfaces() {
     try {
+      var indexCalculado = ListOrders.findIndex(
+        (item, i) => ListOrdersIndex == item.id
+      );
       var res = await axios.put(`${UrlServer}/v1/reporteGeneral/interfaces`, [
         {
-          nombre: ListOrders[ListOrdersIndex].nombre,
+          nombre: ListOrders[indexCalculado].nombre,
           configuracion: JSON.stringify(calcularNuevoOrden()),
           accesos_id_acceso: sessionStorage.getItem("idacceso"),
         },
@@ -195,6 +194,7 @@ export default ({ recargar }) => {
       alert("Registro exitoso");
     } catch (error) {
       alert("Ocurrio un error");
+      console.log(error);
     }
   }
   async function guardarSeleccion() {
@@ -222,20 +222,20 @@ export default ({ recargar }) => {
     }
   }
   useEffect(() => {
-    if (ListOrdersIndex != -1 && ListOrders.length > 0) {
-      cargarObras();
-      guardarSeleccion();
-      ordernarInterfaces();
+    if (ListOrders.length > 0) {
+      cargarListOrdersIndex();
+    }
+  }, [ListOrders]);
+  useEffect(() => {
+    console.log("useefecct", ListOrders, ListOrdersIndex);
+    if (ListOrders.length > 0) {
+      if (ListOrdersIndex != -1) {
+        ordernarInterfaces();
+      }
     }
   }, [ListOrdersIndex]);
-  useEffect(() => {
-    if (ListOrdersPrimeraCarga) {
-      cargarObras();
-    }
-  }, [ListOrdersPrimeraCarga]);
   return (
     <div>
-      {MensajeGuardando ? "Guardando..." : "Guardado"}
       <span className="d-flex justify-content-between">
         <span className="d-flex">
           <Nav
@@ -249,30 +249,39 @@ export default ({ recargar }) => {
 
               <DropdownMenu>
                 {AnyosList.map((item, i) => (
-                  <DropdownItem onClick={() => setAnyoSeleccionado(item)}>
+                  <DropdownItem
+                    onClick={() => setAnyoSeleccionado(item)}
+                    key={i}
+                  >
                     {item}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
             </Dropdown>
           </Nav>
-          {!ModoEdicion ? (
-            <Button
-              color="info"
-              onClick={() => setModoEdicion(true)}
-              style={{ height: "29px" }}
-            >
-              Editar Modulos
-            </Button>
-          ) : (
-            <Button
-              color="info"
-              onClick={() => setModoEdicion(false)}
-              style={{ height: "29px" }}
-            >
-              Ocultar edicion
-            </Button>
-          )}
+          <span>
+            {!ModoEdicion ? (
+              <Button
+                color="info"
+                onClick={() => setModoEdicion(true)}
+                style={{ height: "25px", width: "110px", fontSize: "10px" }}
+              >
+                Editar Modulos
+              </Button>
+            ) : (
+              <Button
+                color="info"
+                onClick={() => setModoEdicion(false)}
+                style={{ height: "25px", width: "110px", fontSize: "10px" }}
+              >
+                Ocultar edicion
+              </Button>
+            )}{" "}
+          </span>{" "}
+          <span style={{ paddingLeft: "10px" }}>
+            {" "}
+            {MensajeGuardando ? "  Guardando..." : "  Guardado"}
+          </span>
         </span>
         <span className="d-flex">
           {ListOrders.length > 0 && (
@@ -286,16 +295,16 @@ export default ({ recargar }) => {
                 background: "#171819",
                 border: "#171819",
                 color: "white",
+                height: "25px",
+                width: "150px",
+                fontSize: "10px",
               }}
             >
               <option disabled hidden value="">
                 SELECCIONE
               </option>
               {ListOrders.map((item, i) => (
-                <option
-                  value={item.id}
-                  selected={item.seleccionado ? "selected" : ""}
-                >
+                <option value={item.id} key={i}>
                   {item.nombre}
                 </option>
               ))}
@@ -304,9 +313,10 @@ export default ({ recargar }) => {
           {ListOrders.length > 0 && (
             <Button
               onClick={() => actualizarOrdenInterfaces()}
-              style={{ height: "34px", width: "200px" }}
+              style={{ height: "25px", width: "110px", fontSize: "10px" }}
+              color="danger"
             >
-              Actualizar Menu
+              Guardando cambios
             </Button>
           )}
           <NuevoMenu
@@ -407,10 +417,14 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
   return (
     <div>
       <span>
-        <Button onClick={() => mostrarTodos()}>Mostrar</Button>
+        <Button onClick={() => mostrarTodos()} color="success">
+          Mostrar
+        </Button>
       </span>
       <span>
-        <Button onClick={() => ocultarTodos()}>Ocultar</Button>
+        <Button onClick={() => ocultarTodos()} color="danger">
+          Ocultar
+        </Button>
       </span>
       {ListInterfaces.map((item, i) => (
         <span
@@ -443,8 +457,8 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
           }}
         >
           <Button
-            color={item.activado ? "success" : "danger"}
-            style={{ fontSize: "10px" }}
+            color={item.activado ? "info" : "warning"}
+            style={{ height: "25px", fontSize: "10px" }}
           >
             {item.nombre}
             <span
@@ -519,9 +533,9 @@ function NuevoMenu({ calcularNuevoOrden, recargar }) {
   return (
     <span>
       <Button
-        color="danger"
+        color="success"
         onClick={toggle}
-        style={{ height: "34px", width: "100px" }}
+        style={{ height: "25px", width: "110px", fontSize: "10px" }}
       >
         Nuevo menu
       </Button>

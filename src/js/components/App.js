@@ -83,7 +83,6 @@ export default () => {
         id_acceso: sessionStorage.getItem("idacceso"),
       },
     });
-    console.log(res.data);
     setDataObra(res.data);
   }
   const [CostoDirecto, setCostoDirecto] = useState([]);
@@ -203,34 +202,30 @@ export default () => {
                 <ul className="nav flex-column ull">
                   <li className="lii">
                     <NavLink to="/inicio" activeclassname="nav-link">
-                      {" "}
-                      <span> INICIO</span>{" "}
+                      <span> INICIO</span>
                     </NavLink>
                   </li>
-                  {DataMenus.map((menus, index) => (
-                    <li className="lii" key={index}>
-                      <a
-                        className="nav-link"
-                        onClick={() => CollapseMenu(index)}
-                      >
+                  {DataMenus.map((menus, i) => (
+                    <li className="lii" key={i}>
+                      <a className="nav-link" onClick={() => CollapseMenu(i)}>
                         {menus.nombreMenu}
                         <div className="float-right">
-                          {collapse === index ? (
+                          {collapse === i ? (
                             <FaChevronUp />
                           ) : (
                             <FaChevronRight />
                           )}
                         </div>
                       </a>
-                      <Collapse isOpen={collapse === index}>
+                      <Collapse isOpen={collapse === i}>
                         <ul className="nav flex-column ull ">
-                          {menus.submenus.map((subMenu, IndexSub) => (
-                            <li className="lii pl-3" key={IndexSub}>
+                          {menus.submenus.map((item, i2) => (
+                            <li className="lii pl-3" key={i2}>
                               <NavLink
-                                to={subMenu.ruta}
+                                to={item.ruta}
                                 activeclassname="nav-link"
                               >
-                                {subMenu.nombreMenu}
+                                {item.nombreMenu}
                               </NavLink>
                             </li>
                           ))}
@@ -239,7 +234,7 @@ export default () => {
                     </li>
                   ))}
                   {DataMenus.length > 0 && [
-                    <li className="lii">
+                    <li className="lii" key="11">
                       <a
                         className="nav-link"
                         onClick={() => CollapseMenu("REPORTES")}
@@ -284,7 +279,7 @@ export default () => {
                         </ul>
                       </Collapse>
                     </li>,
-                    <li className="lii" key="2">
+                    <li className="lii" key="22">
                       <NavLink
                         to="/GestionDocumentaria"
                         activeclassname="nav-link"
@@ -293,7 +288,7 @@ export default () => {
                         <span> GESTION DOCUMENTARIA </span>{" "}
                       </NavLink>
                     </li>,
-                    <li className="lii" key="3">
+                    <li className="lii" key="33">
                       <NavLink
                         to="/CostosIndirectos"
                         activeclassname="nav-link"

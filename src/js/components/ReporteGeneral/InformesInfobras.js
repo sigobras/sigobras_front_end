@@ -63,7 +63,7 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
     var tempRender = [];
     for (let i = 1; i <= 12; i++) {
       tempRender.push(
-        <tr>
+        <tr key={i}>
           <th>{mesesShort[i - 1] + "-" + AnyoSeleccionado}</th>
           <td>
             <NuevoInforme
@@ -87,7 +87,7 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
             )}
           </td>
           <td style={{ width: "62px" }}>
-            {buscarMesInData(i) ? buscarMesInData(i).abreviacion : ""}
+            {buscarMesInData(i) ? buscarMesInData(i).abreviacion : " "}
           </td>
         </tr>
       );
@@ -254,7 +254,6 @@ function NuevoInforme({
       link.click();
     }
   }
-
   return (
     <div>
       {data && data.estado_presentado ? (
@@ -270,12 +269,6 @@ function NuevoInforme({
           style={{ cursor: "pointer" }}
         />
       )}
-      {/* {data && data.archivo && (
-        <FaFileAlt
-          onClick={() => DescargarArchivo(`${UrlServer}${data.archivo}`)}
-          style={{ cursor: "pointer" }}
-        />
-      )} */}
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Ingreso de nuevo informe</ModalHeader>
         <form onSubmit={guardarData}>
@@ -306,7 +299,9 @@ function NuevoInforme({
                   >
                     <option value="">{"SELECCIONE"}</option>
                     {InformesUbicaciones.map((item, i) => (
-                      <option value={item.id}>{item.descripcion}</option>
+                      <option value={item.id} key={i}>
+                        {item.descripcion}
+                      </option>
                     ))}
                   </Input>
                 </FormGroup>
