@@ -79,7 +79,7 @@ export default ({ data, recargar }) => {
             </th>
           </tr>
           {Problemas.map((item, i) => (
-            <tr style={{ height: "80px" }}>
+            <tr style={{ height: "80px" }} key={i}>
               <td
                 style={{
                   position: "relative",
