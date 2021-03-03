@@ -9,6 +9,12 @@ import {
   DropdownToggle,
   DropdownMenu,
   Nav,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  FormGroup,
+  Label,
 } from "reactstrap";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -31,9 +37,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default ({ recargar }) => {
   useEffect(() => {
-    cargarObras();
+    cargarListOrders();
+    cargarListOrdersIndex();
   }, []);
-  const [ListInterfaces, setListInterfaces] = useState([
+  const interfaces = [
     {
       nombre: "DATOS ESPECÍFICOS",
       activado: true,
@@ -69,7 +76,72 @@ export default ({ recargar }) => {
     //   activado: true,
     //   interfaz: PresupuestoAnalitico,
     // },
-  ]);
+  ];
+  const [ListInterfaces, setListInterfaces] = useState(interfaces);
+  const [ListInterfacesDefecto, setListInterfacesDefecto] = useState(
+    interfaces
+  );
+  const [ListOrders, setListOrders] = useState([]);
+  const [ListOrdersPrimeraCarga, setListOrdersPrimeraCarga] = useState(false);
+  async function cargarListOrders() {
+    try {
+      var res = await axios.get(`${UrlServer}/v1/reporteGeneral/interfaces`, {
+        params: {
+          id_acceso: sessionStorage.getItem("idacceso"),
+        },
+      });
+      if (res.data.length > 0) {
+        for (let i = 0; i < res.data.length; i++) {
+          const item = res.data[i];
+          item.orden = JSON.parse(res.data[i].configuracion);
+        }
+        setListOrders(res.data);
+      }
+      setListOrdersPrimeraCarga(true);
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+  const [ListOrdersIndex, setListOrdersIndex] = useState("");
+  async function cargarListOrdersIndex() {
+    var res = await axios.get(
+      `${UrlServer}/v1/reporteGeneral/interfaces/seleccion`,
+      {
+        params: {
+          id_acceso: sessionStorage.getItem("idacceso"),
+        },
+      }
+    );
+    if (res.data) {
+      console.log("if", res.data.seleccion);
+      setListOrdersIndex(res.data.seleccion);
+    }
+  }
+  //ordenar interfaces
+  function ordernarInterfaces() {
+    var newOrder = [];
+    var listIndexUsados = [];
+    var indexCalculado = ListOrders.findIndex(
+      (item, i) => ListOrdersIndex == item.id
+    );
+    var Order = ListOrders[indexCalculado].orden;
+
+    for (let index = 0; index < Order.length; index++) {
+      const element = Order[index];
+      var newItem = ListInterfacesDefecto[element.posicion];
+      newItem.activado = element.activado;
+      newOrder.push(newItem);
+      listIndexUsados.push(element.posicion);
+    }
+    for (let index = 0; index < ListInterfacesDefecto.length; index++) {
+      const element = ListInterfacesDefecto[index];
+      if (!listIndexUsados.includes(index)) {
+        newOrder.push(ListInterfacesDefecto[index]);
+      }
+    }
+    setListInterfaces(newOrder);
+  }
+
   const [Obras, setObras] = useState([]);
   async function cargarObras() {
     var res = await axios.get(`${UrlServer}/v1/obras/resumen`, {
@@ -95,28 +167,163 @@ export default ({ recargar }) => {
   }
   //guardado
   const [MensajeGuardando, setMensajeGuardando] = useState(false);
+  //menu
+  function calcularNuevoOrden() {
+    var temp = [];
+    for (let index = 0; index < ListInterfaces.length; index++) {
+      const element = ListInterfaces[index];
+      var indexFound = ListInterfacesDefecto.findIndex(
+        (item, i) => item.nombre == element.nombre
+      );
+      temp.push({
+        posicion: indexFound,
+        activado: element.activado,
+      });
+    }
+    return temp;
+  }
+  async function actualizarOrdenInterfaces() {
+    try {
+      var res = await axios.put(`${UrlServer}/v1/reporteGeneral/interfaces`, [
+        {
+          nombre: ListOrders[ListOrdersIndex].nombre,
+          configuracion: JSON.stringify(calcularNuevoOrden()),
+          accesos_id_acceso: sessionStorage.getItem("idacceso"),
+        },
+      ]);
+      cargarListOrders();
+      alert("Registro exitoso");
+    } catch (error) {
+      alert("Ocurrio un error");
+    }
+  }
+  async function guardarSeleccion() {
+    try {
+      var res = await axios.put(
+        `${UrlServer}/v1/reporteGeneral/interfaces/seleccion`,
+        [
+          {
+            seleccion: ListOrdersIndex,
+            accesos_id_acceso: sessionStorage.getItem("idacceso"),
+          },
+        ]
+      );
+    } catch (error) {
+      alert("Ocurrio un error");
+    }
+  }
+  //activar edicion de menus
+  const [ModoEdicion, setModoEdicion] = useState(false);
+  //recarga de datos
+  async function recarga(id) {
+    await cargarListOrders();
+    if (id) {
+      setListOrdersIndex(id);
+    }
+  }
+  useEffect(() => {
+    if (ListOrdersIndex != -1 && ListOrders.length > 0) {
+      cargarObras();
+      guardarSeleccion();
+      ordernarInterfaces();
+    }
+  }, [ListOrdersIndex]);
+  useEffect(() => {
+    if (ListOrdersPrimeraCarga) {
+      cargarObras();
+    }
+  }, [ListOrdersPrimeraCarga]);
   return (
     <div>
       {MensajeGuardando ? "Guardando..." : "Guardado"}
-      <Nav tabs>
-        <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
-          <DropdownToggle nav caret>
-            {AnyoSeleccionado == 0 ? "--" : AnyoSeleccionado}
-          </DropdownToggle>
+      <span className="d-flex justify-content-between">
+        <span className="d-flex">
+          <Nav
+            tabs
+            style={{ paddingTop: "0px", margin: "0px", height: "29px" }}
+          >
+            <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
+              <DropdownToggle nav caret>
+                {AnyoSeleccionado == 0 ? "--" : AnyoSeleccionado}
+              </DropdownToggle>
 
-          <DropdownMenu>
-            {AnyosList.map((item, i) => (
-              <DropdownItem onClick={() => setAnyoSeleccionado(item)}>
-                {item}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-        <OrderListInterfaces
-          ListInterfaces={ListInterfaces}
-          setListInterfaces={setListInterfaces}
-        />
-      </Nav>
+              <DropdownMenu>
+                {AnyosList.map((item, i) => (
+                  <DropdownItem onClick={() => setAnyoSeleccionado(item)}>
+                    {item}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </Nav>
+          {!ModoEdicion ? (
+            <Button
+              color="info"
+              onClick={() => setModoEdicion(true)}
+              style={{ height: "29px" }}
+            >
+              Editar Modulos
+            </Button>
+          ) : (
+            <Button
+              color="info"
+              onClick={() => setModoEdicion(false)}
+              style={{ height: "29px" }}
+            >
+              Ocultar edicion
+            </Button>
+          )}
+        </span>
+        <span className="d-flex">
+          {ListOrders.length > 0 && (
+            <Input
+              type="select"
+              onChange={(e) => {
+                setListOrdersIndex(e.target.value);
+              }}
+              value={ListOrdersIndex}
+              style={{
+                background: "#171819",
+                border: "#171819",
+                color: "white",
+              }}
+            >
+              <option disabled hidden value="">
+                SELECCIONE
+              </option>
+              {ListOrders.map((item, i) => (
+                <option
+                  value={item.id}
+                  selected={item.seleccionado ? "selected" : ""}
+                >
+                  {item.nombre}
+                </option>
+              ))}
+            </Input>
+          )}
+          {ListOrders.length > 0 && (
+            <Button
+              onClick={() => actualizarOrdenInterfaces()}
+              style={{ height: "34px", width: "200px" }}
+            >
+              Actualizar Menu
+            </Button>
+          )}
+          <NuevoMenu
+            calcularNuevoOrden={calcularNuevoOrden}
+            recargar={recarga}
+          />
+        </span>
+      </span>
+      {ModoEdicion && (
+        <div>
+          <OrderListInterfaces
+            ListInterfaces={ListInterfaces}
+            setListInterfaces={setListInterfaces}
+          />
+        </div>
+      )}
+
       <div
         style={{
           overflowX: "auto",
@@ -174,9 +381,7 @@ export default ({ recargar }) => {
   );
 };
 function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
-  const [ModoEdicion, setModoEdicion] = useState(false);
   const [HoverItem, setHoverItem] = useState(-1);
-  const [, setDraggedItem] = useState(-1);
   function array_move(arr, old_index, new_index) {
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
     return arr;
@@ -201,98 +406,147 @@ function OrderListInterfaces({ ListInterfaces, setListInterfaces }) {
   }
   return (
     <div>
-      {!ModoEdicion ? (
-        <Button color="info" onClick={() => setModoEdicion(true)}>
-          Editar Modulos
-        </Button>
-      ) : (
-        <Button color="info" onClick={() => setModoEdicion(false)}>
-          Ocultar edicion
-        </Button>
-      )}
-      {ModoEdicion && (
-        <Button onClick={() => mostrarTodos()}>Mostrar todos</Button>
-      )}
-      {ModoEdicion && (
-        <Button onClick={() => ocultarTodos()}>Ocultar todos</Button>
-      )}
-      {ModoEdicion && (
-        <div>
-          {ListInterfaces.map((item, i) => (
+      <span>
+        <Button onClick={() => mostrarTodos()}>Mostrar</Button>
+      </span>
+      <span>
+        <Button onClick={() => ocultarTodos()}>Ocultar</Button>
+      </span>
+      {ListInterfaces.map((item, i) => (
+        <span
+          key={i}
+          draggable
+          onDragStart={(e) => {
+            e.dataTransfer.setData("index", i);
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setHoverItem(i);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            setHoverItem(-1);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            var indexOrigen = e.dataTransfer.getData("index");
+            var tempArray = [...ListInterfaces];
+            if (indexOrigen < i) {
+              i--;
+            }
+            array_move(tempArray, indexOrigen, i);
+            setListInterfaces(tempArray);
+            setHoverItem(-1);
+          }}
+          style={{
+            marginLeft: HoverItem == i ? "10px" : "0px",
+          }}
+        >
+          <Button
+            color={item.activado ? "success" : "danger"}
+            style={{ fontSize: "10px" }}
+          >
+            {item.nombre}
             <span
-              key={i}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData("index", i);
-                setDraggedItem(i);
-              }}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setHoverItem(i);
-              }}
-              onDragLeave={(e) => {
-                e.preventDefault();
-                setHoverItem(-1);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                var indexOrigen = e.dataTransfer.getData("index");
-                var tempArray = [...ListInterfaces];
-                if (indexOrigen < i) {
-                  i--;
-                }
-                array_move(tempArray, indexOrigen, i);
-                setListInterfaces(tempArray);
-                setHoverItem(-1);
-              }}
-              style={{
-                marginLeft: HoverItem == i ? "10px" : "0px",
+              onClick={() => {
+                var temp = [...ListInterfaces];
+                temp[i].activado = !temp[i].activado;
+                setListInterfaces(temp);
               }}
             >
-              <Button color={item.activado ? "success" : "danger"}>
-                {item.nombre}{" "}
-                <span
-                  onClick={() => {
-                    var temp = [...ListInterfaces];
-                    temp[i].activado = !temp[i].activado;
-                    setListInterfaces(temp);
-                  }}
-                >
-                  {item.activado ? (
-                    <RiEyeFill size="15" />
-                  ) : (
-                    <RiEyeOffFill size="15" />
-                  )}
-                </span>
-              </Button>
+              {item.activado ? (
+                <RiEyeFill size="15" />
+              ) : (
+                <RiEyeOffFill size="15" />
+              )}
             </span>
-          ))}
-          <span
-            onDragOver={(e) => {
-              e.preventDefault();
-              setHoverItem(ListInterfaces.length);
-            }}
-            onDragLeave={(e) => {
-              e.preventDefault();
-              setHoverItem(-1);
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              var indexOrigen = e.dataTransfer.getData("index");
-              var tempArray = [...ListInterfaces];
-              var i = ListInterfaces.length;
-              if (indexOrigen < i) {
-                i--;
-              }
-              array_move(tempArray, indexOrigen, i);
-              setListInterfaces(tempArray);
-              setHoverItem(-1);
-            }}
-          >
-            ---
-          </span>
-        </div>
-      )}
+          </Button>
+        </span>
+      ))}
+      <span
+        onDragOver={(e) => {
+          e.preventDefault();
+          setHoverItem(ListInterfaces.length);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          setHoverItem(-1);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          var indexOrigen = e.dataTransfer.getData("index");
+          var tempArray = [...ListInterfaces];
+          var i = ListInterfaces.length;
+          if (indexOrigen < i) {
+            i--;
+          }
+          array_move(tempArray, indexOrigen, i);
+          setListInterfaces(tempArray);
+          setHoverItem(-1);
+        }}
+      >
+        ---
+      </span>
     </div>
+  );
+}
+function NuevoMenu({ calcularNuevoOrden, recargar }) {
+  const [modal, setModal] = useState(false);
+  const toggle = () => {
+    if (!modal) {
+      setInputValue("");
+    }
+    setModal(!modal);
+  };
+  async function nuevoOrdenInterfaces() {
+    try {
+      var res = await axios.put(`${UrlServer}/v1/reporteGeneral/interfaces`, [
+        {
+          nombre: InputValue,
+          configuracion: JSON.stringify(calcularNuevoOrden()),
+          accesos_id_acceso: sessionStorage.getItem("idacceso"),
+        },
+      ]);
+      var id = res.data.id;
+      recargar(id);
+      setModal(false);
+      alert("Registro exitoso");
+    } catch (error) {
+      alert("Ocurrio un error");
+    }
+  }
+  const [InputValue, setInputValue] = useState("");
+  return (
+    <span>
+      <Button
+        color="danger"
+        onClick={toggle}
+        style={{ height: "34px", width: "100px" }}
+      >
+        Nuevo menu
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>
+          Creacion de un nuevo menu personalizado
+        </ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Label>Nombre del nuevo menu</Label>
+            <Input
+              value={InputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={() => nuevoOrdenInterfaces()}>
+            Guardar
+          </Button>{" "}
+          <Button color="secondary" onClick={toggle}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </span>
   );
 }
