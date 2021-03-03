@@ -643,7 +643,10 @@ function InformesInfobras({ id_ficha, item }) {
   return (
     <div className="seguimiento-obras_informes-infobras">
       {Data.map((item, i) => (
-        <div>{mesesShort[item.mes - 1] + " -  " + item.anyo}</div>
+        <div>
+          <span>{mesesShort[item.mes - 1] + " -  "}</span>
+          <span style={{ color: "#17a2b8" }}> {item.anyo}</span>
+        </div>
       ))}
     </div>
   );
