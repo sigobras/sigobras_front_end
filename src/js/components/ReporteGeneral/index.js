@@ -231,6 +231,7 @@ export default ({ recargar }) => {
     if (ListOrders.length > 0) {
       if (ListOrdersIndex != -1) {
         ordernarInterfaces();
+        guardarSeleccion();
       }
     }
   }, [ListOrdersIndex]);
