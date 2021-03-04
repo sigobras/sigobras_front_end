@@ -27,7 +27,11 @@ export default ({ data }) => {
   }
   function buscarPersonal(id) {
     var temp = Personal.find((item) => item.id_cargo == id);
-    return temp ? temp.nombre_completo : "";
+    var renderTemp = [
+      <td>{temp ? temp.nombre_completo : ""}</td>,
+      <td>{temp ? temp.celular : ""}</td>,
+    ];
+    return renderTemp;
   }
   return (
     <div style={{ width: "250px" }}>
@@ -35,27 +39,27 @@ export default ({ data }) => {
         <tbody className="reporteGeneral-titulos">
           <tr>
             <th>Esp. Téc.</th>
-            <td>{buscarPersonal(30)}</td>
+            {buscarPersonal(30)}
           </tr>
           <tr>
             <th>Esp. Adm.</th>
-            <td>{buscarPersonal(31)}</td>
+            {buscarPersonal(31)}
           </tr>
           <tr>
             <th>Supervisor</th>
-            <td>{buscarPersonal(6)}</td>
+            {buscarPersonal(6)}
           </tr>
           <tr>
             <th>Residente</th>
-            <td>{buscarPersonal(7)}</td>
+            {buscarPersonal(7)}
           </tr>
           <tr>
             <th>Asis. Téc.</th>
-            <td>{buscarPersonal(9)}</td>
+            {buscarPersonal(9)}
           </tr>
           <tr>
             <th>Asis. Adm.</th>
-            <td>{buscarPersonal(10)}</td>
+            {buscarPersonal(10)}
           </tr>
         </tbody>
       </table>

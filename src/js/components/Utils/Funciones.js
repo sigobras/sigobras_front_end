@@ -6,6 +6,11 @@ function Redondea(
   respuestaVacio = "-"
 ) {
   // console.log("x =>>", x)
+  var decimales_pequenyos = decimales;
+  if (Array.isArray(decimales)) {
+    decimales_pequenyos = decimales[1];
+    decimales = decimales[0];
+  }
   if (x == null) {
     return respuestaVacio;
   } else if (x == 0 || isNaN(x)) {
@@ -22,11 +27,11 @@ function Redondea(
   }
   if (Math.abs(x) < 0.01) {
     return Number.parseFloat(x)
-      .toFixed(decimales)
+      .toFixed(decimales_pequenyos)
       .replace(/\d(?=(\d{3})+\.)/g, "$&,");
   } else {
     return Number.parseFloat(x)
-      .toFixed(2)
+      .toFixed(decimales)
       .replace(/\d(?=(\d{3})+\.)/g, "$&,");
   }
 }

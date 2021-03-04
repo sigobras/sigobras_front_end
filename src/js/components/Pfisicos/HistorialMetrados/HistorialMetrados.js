@@ -905,7 +905,7 @@ export default () => {
                                             </td>
                                             <td>
                                               {InputAvanceActividadIndex !=
-                                              i3 ? (
+                                              i2 + "-" + i3 ? (
                                                 <div className="d-flex">
                                                   {Redondea(item3.valor, 4)}{" "}
                                                   {item3.unidad_medida}
@@ -917,7 +917,7 @@ export default () => {
                                                       <div
                                                         onClick={() =>
                                                           setInputAvanceActividadIndex(
-                                                            i3
+                                                            i2 + "-" + i3
                                                           )
                                                         }
                                                       >
