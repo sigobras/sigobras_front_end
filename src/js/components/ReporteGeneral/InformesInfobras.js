@@ -139,8 +139,9 @@ function NuevoInforme({
           fichas_id_ficha: data.fichas_id_ficha,
           observacion: data.observacion,
           informes_ubicaciones_id: data.informes_ubicaciones_id,
-          codigo: sessionStorage.getItem("codigoObra"),
           estado_presentado: data.estado_presentado,
+          fecha_recepcion: data.fecha_recepcion,
+          fecharegisto_infobras: data.fecharegisto_infobras,
           archivo: data.archivo,
         });
         setInputObjectModificada({
@@ -175,6 +176,7 @@ function NuevoInforme({
       setFlagModificacionArchivo(true);
       setInputObject({
         ...InputObject,
+        codigo: sessionStorage.getItem("codigoObra"),
         [e.target.name]: e.target.files[0],
       });
       setInputObjectModificada({
@@ -216,7 +218,6 @@ function NuevoInforme({
       ) {
         return;
       }
-      console.log("InputObjectModificada", InputObjectModificada);
       const form_data = new FormData();
       for (var key in InputObjectModificada) {
         form_data.append(key, InputObjectModificada[key]);
@@ -232,7 +233,6 @@ function NuevoInforme({
         config
       );
       alert("Registro exitoso");
-
       recargar();
     } catch (error) {
       if (error == "UBICACION_OBLIGATORIA") {
@@ -276,7 +276,7 @@ function NuevoInforme({
             <Row>
               <Col md={12}>
                 <FormGroup>
-                  <Label>Observacion</Label>
+                  <Label>Observacion General del Mes</Label>
                   <Input
                     value={InputObject.observacion}
                     name="observacion"
@@ -287,7 +287,7 @@ function NuevoInforme({
               </Col>
             </Row>
             <Row>
-              <Col md={12}>
+              <Col md={6}>
                 <FormGroup>
                   <Label>Ubicacion</Label>
                   <Input
@@ -306,7 +306,96 @@ function NuevoInforme({
                   </Input>
                 </FormGroup>
               </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label>Fecha de recepcion en Infobras</Label>
+                  <Input
+                    type="date"
+                    onChange={handleInputChange}
+                    value={InputObject.fecha_recepcion}
+                    name="fecha_recepcion"
+                  />
+                </FormGroup>
+              </Col>
             </Row>
+            <Row>
+              <Col md="6">
+                <FormGroup>
+                  <Label>Fecha de registro a Infobras</Label>
+                  <Input
+                    type="date"
+                    onChange={handleInputChange}
+                    value={InputObject.fecharegisto_infobras}
+                    name="fecharegisto_infobras"
+                  />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6">
+                <FormGroup check inline>
+                  <input
+                    type="checkbox"
+                    className="form-control"
+                    checked={InputObject.estado_presentado}
+                    value={InputObject.estado_presentado}
+                    name="estado_presentado"
+                    onChange={handleInputChange}
+                  />
+                  <Label check>Registrado en Infobras</Label>
+                </FormGroup>
+              </Col>
+            </Row>
+            DESCRIPCION DEL CONTENIDO
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Nro</th>
+                  <th>ARCHIVADORES Y FOLDER</th>
+                  <th>FOLIOS</th>
+                  <th>OBSERVACION</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>TOMO I</td>
+                  <td>484 FOLIOS</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <th>Archivador</th>
+                  <td>484 FOLIOS</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <th>Archivador</th>
+                  <td>484 FOLIOS</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <th>Archivador</th>
+                  <td>484 FOLIOS</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>TOMO II</td>
+                </tr>
+                <tr>
+                  <th>1</th>
+                  <th>Archivador</th>
+                  <td>484 FOLIOS</td>
+                </tr>
+                <tr>
+                  <th>2</th>
+                  <th>Folder</th>
+                </tr>
+                <tr>
+                  <th>3</th>
+                  <th>CD</th>
+                </tr>
+              </tbody>
+            </table>
             <Row>
               <Col md={12}>
                 <FormGroup>
@@ -327,23 +416,6 @@ function NuevoInforme({
                     onChange={handleInputChange}
                     name="archivo"
                   />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="12">
-                <FormGroup check>
-                  <Label check>
-                    <input
-                      type="checkbox"
-                      className="form-control"
-                      checked={InputObject.estado_presentado}
-                      value={InputObject.estado_presentado}
-                      name="estado_presentado"
-                      onChange={handleInputChange}
-                    />
-                    Registrado en Infobras
-                  </Label>
                 </FormGroup>
               </Col>
             </Row>

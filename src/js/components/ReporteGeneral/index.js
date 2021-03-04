@@ -67,7 +67,7 @@ export default ({ recargar }) => {
       interfaz: ProblemasObra,
     },
     {
-      nombre: "INFORMES MENSUALES",
+      nombre: "INFORMES EN INFOBRAS",
       activado: true,
       interfaz: InformesInfobras,
     },
