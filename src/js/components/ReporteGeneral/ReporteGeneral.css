@@ -6,6 +6,7 @@
 }
 .reporteGeneral-table {
   border-collapse: separate;
+  background: white;
 }
 
 .reporteGeneral-table input {
@@ -58,6 +59,7 @@
   border-color: white;
 }
 .reporteGeneral-titulos th {
+  color: black;
   background: #c6c8ca;
   font-weight: 700;
 }

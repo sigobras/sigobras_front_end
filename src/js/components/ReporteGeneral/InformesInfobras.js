@@ -1,5 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { FaRegTimesCircle, FaCheckCircle, FaFileAlt } from "react-icons/fa";
+import React, {
+  forwardRef,
+  useEffect,
+  useState,
+  useImperativeHandle,
+  useRef,
+} from "react";
+import {
+  FaRegTimesCircle,
+  FaCheckCircle,
+  FaFileAlt,
+  FaPlusCircle,
+  FaTrash,
+} from "react-icons/fa";
 import {
   Button,
   Input,
@@ -13,15 +25,10 @@ import {
   Col,
 } from "reactstrap";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort } from "../Utils/Funciones";
-import DatosEspecificos from "./DatosEspecificos";
-import BotonNuevo from "../../libs/BotonNuevo";
 
-import "./ReporteGeneral.css";
-import "react-toastify/dist/ReactToastify.css";
 export default ({ data, recargar, AnyoSeleccionado }) => {
   useEffect(() => {
     cargarData();
@@ -232,6 +239,7 @@ function NuevoInforme({
         form_data,
         config
       );
+      console.log(res.data);
       alert("Registro exitoso");
       recargar();
     } catch (error) {
@@ -330,6 +338,27 @@ function NuevoInforme({
                   />
                 </FormGroup>
               </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label>
+                    archivo
+                    {/* {data && data.archivo && (
+                      <FaFileAlt
+                        onClick={() =>
+                          DescargarArchivo(`${UrlServer}${InputObject.archivo}`)
+                        }
+                        style={{ cursor: "pointer" }}
+                      />
+                    )} */}
+                  </Label>
+                  <Input
+                    // value={FormularioData.nombre}
+                    type="file"
+                    onChange={handleInputChange}
+                    name="archivo"
+                  />
+                </FormGroup>
+              </Col>
             </Row>
             <Row>
               <Col md="6">
@@ -346,79 +375,6 @@ function NuevoInforme({
                 </FormGroup>
               </Col>
             </Row>
-            DESCRIPCION DEL CONTENIDO
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Nro</th>
-                  <th>ARCHIVADORES Y FOLDER</th>
-                  <th>FOLIOS</th>
-                  <th>OBSERVACION</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>TOMO I</td>
-                  <td>484 FOLIOS</td>
-                </tr>
-                <tr>
-                  <th>1</th>
-                  <th>Archivador</th>
-                  <td>484 FOLIOS</td>
-                </tr>
-                <tr>
-                  <th>1</th>
-                  <th>Archivador</th>
-                  <td>484 FOLIOS</td>
-                </tr>
-                <tr>
-                  <th>1</th>
-                  <th>Archivador</th>
-                  <td>484 FOLIOS</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>TOMO II</td>
-                </tr>
-                <tr>
-                  <th>1</th>
-                  <th>Archivador</th>
-                  <td>484 FOLIOS</td>
-                </tr>
-                <tr>
-                  <th>2</th>
-                  <th>Folder</th>
-                </tr>
-                <tr>
-                  <th>3</th>
-                  <th>CD</th>
-                </tr>
-              </tbody>
-            </table>
-            <Row>
-              <Col md={12}>
-                <FormGroup>
-                  <Label>
-                    archivo
-                    {data && data.archivo && (
-                      <FaFileAlt
-                        onClick={() =>
-                          DescargarArchivo(`${UrlServer}${InputObject.archivo}`)
-                        }
-                        style={{ cursor: "pointer" }}
-                      />
-                    )}
-                  </Label>
-                  <Input
-                    // value={FormularioData.nombre}
-                    type="file"
-                    onChange={handleInputChange}
-                    name="archivo"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" type="submit">
@@ -429,7 +385,309 @@ function NuevoInforme({
             </Button>
           </ModalFooter>
         </form>
+        {data && (
+          <ModalBody>
+            <DescripcionInforme id={data && data.id} />
+          </ModalBody>
+        )}
       </Modal>
     </div>
   );
 }
+function DescripcionInforme({ id }) {
+  useEffect(() => {
+    cargarDescripcion();
+  }, []);
+  const [Descripcion, setDescripcion] = useState([]);
+  async function cargarDescripcion() {
+    try {
+      var res = await axios.get(
+        `${UrlServer}/v1/infobras/informes/descripcion`,
+        {
+          params: {
+            id: id,
+            padres: true,
+          },
+        }
+      );
+      setDescripcion(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function agregarDescripcion() {
+    try {
+      var res = await axios.put(
+        `${UrlServer}/v1/infobras/informes/descripcion`,
+        [
+          {
+            id: null,
+            tipo: 1,
+            nombre: "",
+            folios: "",
+            observacion: "",
+            infobras_informes_id: id,
+            padre: null,
+          },
+        ]
+      );
+      cargarDescripcion();
+      alert("Registro exitoso");
+    } catch (error) {
+      console.log(error);
+      alert("Ocurrio un error");
+    }
+  }
+  function handleInputChange(event, index, item) {
+    var flagClone = [...FlagCambios];
+    flagClone[item.id] = true;
+    setFlagCambios(flagClone);
+    var clone = [...Descripcion];
+    clone[index][event.target.name] = event.target.value;
+    setDescripcion(clone);
+  }
+  const [FlagCambios, setFlagCambios] = useState([]);
+  async function guardarData(item) {
+    try {
+      var res = await axios.put(
+        `${UrlServer}/v1/infobras/informes/descripcion`,
+        [item]
+      );
+      var flagClone = [...FlagCambios];
+      flagClone[item.id] = false;
+      setFlagCambios(flagClone);
+    } catch (error) {
+      console.log(error);
+      alert("Ocurrio un error");
+    }
+    cargarDetalles();
+  }
+  async function eliminarDetalle(id) {
+    try {
+      if (confirm("Esta seguro de eliminar este dato?")) {
+        var res = await axios.delete(
+          `${UrlServer}/v1/infobras/informes/${id}/descripcion`
+        );
+        alert("Se elimino exitosamente");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Ocurrio un error");
+    }
+    cargarDescripcion();
+  }
+  const [RefDescripcionInforme, setRefDescripcionInforme] = useState([]);
+  return (
+    <div>
+      <table
+        style={{ width: "100%" }}
+        className="reporteGeneral-table reporteGeneral-titulos"
+      >
+        <thead>
+          <tr>
+            <th colSpan="5">DESCRIPCION DEL CONTENIDO</th>
+          </tr>
+          <tr>
+            <th>Nro</th>
+            <th>ARCHIVADORES Y FOLDER</th>
+            <th>FOLIOS</th>
+            <th>OBSERVACION</th>
+            <th>
+              <FaPlusCircle onClick={() => agregarDescripcion()} />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {Descripcion.map((item, i) => [
+            <tr key={i}>
+              <th>{i + 1}</th>
+              <td>
+                <Input
+                  value={item.nombre || ""}
+                  onChange={(e) => handleInputChange(e, i, item)}
+                  name="nombre"
+                  onBlur={() => guardarData(item)}
+                  style={{
+                    background: FlagCambios[item.id]
+                      ? "#17a2b840"
+                      : "#42ff0038",
+                  }}
+                />
+              </td>
+              <td>
+                <Input
+                  value={item.folios || ""}
+                  onChange={(e) => handleInputChange(e, i, item)}
+                  name="folios"
+                  onBlur={() => guardarData(item)}
+                  style={{
+                    background: FlagCambios[item.id]
+                      ? "#17a2b840"
+                      : "#42ff0038",
+                  }}
+                />
+              </td>
+              <td>
+                <Input
+                  value={item.observacion || ""}
+                  onChange={(e) => handleInputChange(e, i, item)}
+                  name="observacion"
+                  onBlur={() => guardarData(item)}
+                  style={{
+                    background: FlagCambios[item.id]
+                      ? "#17a2b840"
+                      : "#42ff0038",
+                  }}
+                />
+              </td>
+              <td>
+                <FaPlusCircle
+                  onClick={() => {
+                    console.log(RefDescripcionInforme);
+                    RefDescripcionInforme[item.id].agregar();
+                  }}
+                  color="#007bff"
+                />
+                <FaTrash onClick={() => eliminarDetalle(item.id)} color="red" />
+              </td>
+            </tr>,
+            <DescripcionDetalles
+              id={item.id}
+              id_informe={id}
+              index={i + 1}
+              ref={(ref) => {
+                var clone = RefDescripcionInforme;
+                clone[item.id] = ref;
+                // clone[1] = ref;
+                setRefDescripcionInforme(clone);
+              }}
+              guardarData={guardarData}
+              FlagCambios={FlagCambios}
+              setFlagCambios={setFlagCambios}
+            />,
+          ])}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+const DescripcionDetalles = forwardRef(
+  (
+    { id_informe, id, index, guardarData, FlagCambios, setFlagCambios },
+    ref
+  ) => {
+    useImperativeHandle(ref, () => ({
+      agregar() {
+        agregarDetalles();
+      },
+    }));
+    useEffect(() => {
+      cargarDetalles();
+    }, []);
+    const [Detalles, setDetalles] = useState([]);
+    async function cargarDetalles() {
+      try {
+        var res = await axios.get(
+          `${UrlServer}/v1/infobras/informes/descripcion`,
+          {
+            params: {
+              padre: id,
+            },
+          }
+        );
+        console.log("data", id, res.data);
+        setDetalles(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    async function agregarDetalles() {
+      try {
+        var res = await axios.put(
+          `${UrlServer}/v1/infobras/informes/descripcion`,
+          [
+            {
+              id: null,
+              tipo: 2,
+              nombre: "",
+              folios: "",
+              observacion: "",
+              infobras_informes_id: id_informe,
+              padre: id,
+            },
+          ]
+        );
+        alert("Registro exitoso");
+      } catch (error) {
+        console.log(error);
+        alert("Ocurrio un error");
+      }
+      cargarDetalles();
+    }
+    function handleInputChange(event, index, item) {
+      var flagClone = [...FlagCambios];
+      flagClone[item.id] = true;
+      setFlagCambios(flagClone);
+
+      var clone = [...Detalles];
+      clone[index][event.target.name] = event.target.value;
+      setDetalles(clone);
+    }
+
+    async function eliminarDetalle(id) {
+      try {
+        if (confirm("Esta seguro de eliminar este dato?")) {
+          var res = await axios.delete(
+            `${UrlServer}/v1/infobras/informes/${id}/descripcion`
+          );
+          alert("Se elimino exitosamente");
+        }
+      } catch (error) {
+        console.log(error);
+        alert("Ocurrio un error");
+      }
+      cargarDetalles();
+    }
+    return Detalles.map((item, i) => (
+      <tr key={i}>
+        <th>{index + " " + (i + 1)}</th>
+        <td>
+          <Input
+            value={item.nombre || ""}
+            onChange={(e) => handleInputChange(e, i, item)}
+            name="nombre"
+            onBlur={() => guardarData(item)}
+            style={{
+              background: FlagCambios[item.id] ? "#17a2b840" : "#42ff0038",
+            }}
+          />
+        </td>
+        <td>
+          <Input
+            value={item.folios || ""}
+            onChange={(e) => handleInputChange(e, i, item)}
+            name="folios"
+            onBlur={() => guardarData(item)}
+            style={{
+              background: FlagCambios[item.id] ? "#17a2b840" : "#42ff0038",
+            }}
+          />
+        </td>
+        <td>
+          <Input
+            value={item.observacion || ""}
+            onChange={(e) => handleInputChange(e, i, item)}
+            name="observacion"
+            onBlur={() => guardarData(item)}
+            style={{
+              background: FlagCambios[item.id] ? "#17a2b840" : "#42ff0038",
+            }}
+          />
+        </td>
+        <td>
+          <FaTrash onClick={() => eliminarDetalle(item.id)} color="red" />
+        </td>
+      </tr>
+    ));
+  }
+);
