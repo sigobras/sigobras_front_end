@@ -651,7 +651,7 @@ export default () => {
         </div>
       ) : (
         <div className="table-responsive">
-          <table className="table table-bordered table-sm small mb-0" hover>
+          <table className="table table-bordered table-hover">
             <thead className="text-center resplandPartida">
               <tr>
                 <th colSpan="3" rowSpan="2" className="align-middle">
