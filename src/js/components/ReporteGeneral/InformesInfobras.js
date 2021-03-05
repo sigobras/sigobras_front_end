@@ -27,7 +27,7 @@ import {
 import axios from "axios";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
-import { Redondea, mesesShort } from "../Utils/Funciones";
+import { Redondea, mesesShort, DescargarArchivo } from "../Utils/Funciones";
 
 export default ({ data, recargar, AnyoSeleccionado }) => {
   useEffect(() => {
@@ -141,6 +141,7 @@ function NuevoInforme({
     if (!modal) {
       if (data) {
         setInputObject({
+          id: data.id,
           anyo: data.anyo,
           mes: data.mes,
           fichas_id_ficha: data.fichas_id_ficha,
@@ -158,6 +159,8 @@ function NuevoInforme({
           informes_ubicaciones_id: data.informes_ubicaciones_id,
         });
       }
+    } else {
+      recargar();
     }
     setModal(!modal);
   };
@@ -239,27 +242,13 @@ function NuevoInforme({
         form_data,
         config
       );
-      console.log(res.data);
-      alert("Registro exitoso");
-      recargar();
+      setInputObject(res.data);
     } catch (error) {
       if (error == "UBICACION_OBLIGATORIA") {
         alert("Se necesita seleccionar una ubicacion");
       } else {
         alert("Ocurrio un error");
       }
-    }
-    toggle();
-  }
-  function DescargarArchivo(data) {
-    if (confirm("Desea descargar el archivo?")) {
-      const url = data;
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", data, "target", "_blank");
-      link.setAttribute("target", "_blank");
-      document.body.appendChild(link);
-      link.click();
     }
   }
   return (
@@ -284,7 +273,7 @@ function NuevoInforme({
             <Row>
               <Col md={12}>
                 <FormGroup>
-                  <Label>Observacion General del Mes</Label>
+                  <Label>Observación General del Mes</Label>
                   <Input
                     value={InputObject.observacion}
                     name="observacion"
@@ -297,7 +286,7 @@ function NuevoInforme({
             <Row>
               <Col md={6}>
                 <FormGroup>
-                  <Label>Ubicacion</Label>
+                  <Label>Ubicación</Label>
                   <Input
                     value={InputObject.informes_ubicaciones_id}
                     name="informes_ubicaciones_id"
@@ -316,7 +305,7 @@ function NuevoInforme({
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <Label>Fecha de recepcion en Infobras</Label>
+                  <Label>Fecha de recepción en Infobras</Label>
                   <Input
                     type="date"
                     onChange={handleInputChange}
@@ -340,19 +329,8 @@ function NuevoInforme({
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <Label>
-                    archivo
-                    {/* {data && data.archivo && (
-                      <FaFileAlt
-                        onClick={() =>
-                          DescargarArchivo(`${UrlServer}${InputObject.archivo}`)
-                        }
-                        style={{ cursor: "pointer" }}
-                      />
-                    )} */}
-                  </Label>
+                  <Label>Archivo</Label>
                   <Input
-                    // value={FormularioData.nombre}
                     type="file"
                     onChange={handleInputChange}
                     name="archivo"
@@ -385,9 +363,9 @@ function NuevoInforme({
             </Button>
           </ModalFooter>
         </form>
-        {data && (
+        {InputObject.id && (
           <ModalBody>
-            <DescripcionInforme id={data && data.id} />
+            <DescripcionInforme id={InputObject.id} />
           </ModalBody>
         )}
       </Modal>
@@ -432,7 +410,6 @@ function DescripcionInforme({ id }) {
         ]
       );
       cargarDescripcion();
-      alert("Registro exitoso");
     } catch (error) {
       console.log(error);
       alert("Ocurrio un error");
@@ -460,7 +437,6 @@ function DescripcionInforme({ id }) {
       console.log(error);
       alert("Ocurrio un error");
     }
-    cargarDetalles();
   }
   async function eliminarDetalle(id) {
     try {
@@ -468,7 +444,6 @@ function DescripcionInforme({ id }) {
         var res = await axios.delete(
           `${UrlServer}/v1/infobras/informes/${id}/descripcion`
         );
-        alert("Se elimino exitosamente");
       }
     } catch (error) {
       console.log(error);
@@ -485,22 +460,47 @@ function DescripcionInforme({ id }) {
       >
         <thead>
           <tr>
-            <th colSpan="5">DESCRIPCION DEL CONTENIDO</th>
+            <td
+              colSpan="5"
+              style={{
+                background: "#636465",
+                color: "white",
+              }}
+            >
+              DESCRIPCIÓN DEL CONTENIDO
+            </td>
           </tr>
-          <tr>
-            <th>Nro</th>
-            <th>ARCHIVADORES Y FOLDER</th>
-            <th>FOLIOS</th>
-            <th>OBSERVACION</th>
-            <th>
-              <FaPlusCircle onClick={() => agregarDescripcion()} />
-            </th>
+          <tr
+            style={{
+              background: "#636465",
+              color: "white",
+            }}
+          >
+            <td>N°</td>
+            <td>Archivadores y/o folders</td>
+            <td>N° Folios</td>
+            <td>Observación</td>
+            <td>
+              <FaPlusCircle
+                onClick={() => agregarDescripcion()}
+                style={{ cursor: "pointer" }}
+                color="#ffd400"
+                size="20"
+              />
+            </td>
           </tr>
         </thead>
         <tbody>
           {Descripcion.map((item, i) => [
-            <tr key={i}>
-              <th>{i + 1}</th>
+            <tr key={i} style={{ background: "#bbdcb0cc" }}>
+              <th
+                style={{
+                  background: "#636465",
+                  color: "white",
+                }}
+              >
+                {i + 1}
+              </th>
               <td>
                 <Input
                   value={item.nombre || ""}
@@ -546,9 +546,14 @@ function DescripcionInforme({ id }) {
                     console.log(RefDescripcionInforme);
                     RefDescripcionInforme[item.id].agregar();
                   }}
-                  color="#007bff"
+                  color="#595a5a"
+                  style={{ cursor: "pointer" }}
                 />
-                <FaTrash onClick={() => eliminarDetalle(item.id)} color="red" />
+                <FaTrash
+                  onClick={() => eliminarDetalle(item.id)}
+                  color="#595a5a"
+                  style={{ cursor: "pointer" }}
+                />
               </td>
             </tr>,
             <DescripcionDetalles
@@ -617,7 +622,6 @@ const DescripcionDetalles = forwardRef(
             },
           ]
         );
-        alert("Registro exitoso");
       } catch (error) {
         console.log(error);
         alert("Ocurrio un error");
@@ -640,7 +644,6 @@ const DescripcionDetalles = forwardRef(
           var res = await axios.delete(
             `${UrlServer}/v1/infobras/informes/${id}/descripcion`
           );
-          alert("Se elimino exitosamente");
         }
       } catch (error) {
         console.log(error);
@@ -650,7 +653,14 @@ const DescripcionDetalles = forwardRef(
     }
     return Detalles.map((item, i) => (
       <tr key={i}>
-        <th>{index + " " + (i + 1)}</th>
+        <td
+          style={{
+            background: "#636465",
+            color: "white",
+          }}
+        >
+          {index + "." + (i + 1)}
+        </td>
         <td>
           <Input
             value={item.nombre || ""}
@@ -685,7 +695,11 @@ const DescripcionDetalles = forwardRef(
           />
         </td>
         <td>
-          <FaTrash onClick={() => eliminarDetalle(item.id)} color="red" />
+          <FaTrash
+            onClick={() => eliminarDetalle(item.id)}
+            color="#595a5a"
+            style={{ cursor: "pointer" }}
+          />
         </td>
       </tr>
     ));
