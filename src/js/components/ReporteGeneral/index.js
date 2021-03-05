@@ -38,7 +38,6 @@ import "react-toastify/dist/ReactToastify.css";
 export default ({ recargar }) => {
   useEffect(() => {
     cargarListOrders();
-    cargarObras();
   }, []);
   const interfaces = [
     {
@@ -82,6 +81,7 @@ export default ({ recargar }) => {
     interfaces
   );
   const [ListOrders, setListOrders] = useState([]);
+  const [ListOrdersCargado, setListOrdersCargado] = useState(false);
   async function cargarListOrders() {
     try {
       var res = await axios.get(`${UrlServer}/v1/reporteGeneral/interfaces`, {
@@ -89,6 +89,8 @@ export default ({ recargar }) => {
           id_acceso: sessionStorage.getItem("idacceso"),
         },
       });
+      console.log("cargarListOrders", res.data);
+      setListOrdersCargado(true);
       if (res.data.length > 0) {
         for (let i = 0; i < res.data.length; i++) {
           const item = res.data[i];
@@ -100,7 +102,8 @@ export default ({ recargar }) => {
       console.log("error", error);
     }
   }
-  const [ListOrdersIndex, setListOrdersIndex] = useState("");
+  const [ListOrdersIndex, setListOrdersIndex] = useState(-1);
+  const [ListOrdersIndexCargado, setListOrdersIndexCargado] = useState(false);
   async function cargarListOrdersIndex() {
     var res = await axios.get(
       `${UrlServer}/v1/reporteGeneral/interfaces/seleccion`,
@@ -110,7 +113,10 @@ export default ({ recargar }) => {
         },
       }
     );
+    console.log("cargarListOrdersIndex", res.data);
+    setListOrdersIndexCargado(true);
     if (res.data) {
+      console.log("seleccion", res.data.seleccion);
       setListOrdersIndex(res.data.seleccion);
     }
   }
@@ -120,6 +126,14 @@ export default ({ recargar }) => {
     var listIndexUsados = [];
     var indexCalculado = ListOrders.findIndex(
       (item, i) => ListOrdersIndex == item.id
+    );
+    console.log(
+      "ordernarInterfaces",
+      ListOrders,
+      "index",
+      ListOrdersIndex,
+      "calculado",
+      indexCalculado
     );
     var Order = ListOrders[indexCalculado].orden;
     for (let index = 0; index < Order.length; index++) {
@@ -140,6 +154,7 @@ export default ({ recargar }) => {
 
   const [Obras, setObras] = useState([]);
   async function cargarObras() {
+    console.log("cargando obras");
     var res = await axios.get(`${UrlServer}/v1/obras/resumen`, {
       params: {
         id_acceso: sessionStorage.getItem("idacceso"),
@@ -222,19 +237,21 @@ export default ({ recargar }) => {
     }
   }
   useEffect(() => {
-    if (ListOrders.length > 0) {
+    if (ListOrdersCargado) {
       cargarListOrdersIndex();
     }
-  }, [ListOrders]);
+  }, [ListOrders, ListOrdersCargado]);
   useEffect(() => {
-    console.log("useefecct", ListOrders, ListOrdersIndex);
-    if (ListOrders.length > 0) {
-      if (ListOrdersIndex != -1) {
+    if (ListOrdersCargado && ListOrdersIndexCargado) {
+      if (ListOrdersIndex != -1 && ListOrders.length > 0) {
         ordernarInterfaces();
         guardarSeleccion();
       }
+      if (Obras.length == 0) {
+        cargarObras();
+      }
     }
-  }, [ListOrdersIndex]);
+  }, [ListOrdersIndex, ListOrdersCargado, ListOrdersIndexCargado]);
   return (
     <div>
       <span className="d-flex justify-content-between">
