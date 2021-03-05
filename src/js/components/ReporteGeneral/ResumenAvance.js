@@ -38,7 +38,9 @@ export default ({ data }) => {
           </tr>
           <tr className="reporteGeneral-avanceFinanciero">
             <td>
-              {Redondea((data.avancefisico_acumulado / data.presupuesto) * 100)}{" "}
+              {Redondea(
+                (data.avancefinanciero_acumulado / data.presupuesto) * 100
+              )}{" "}
               %
             </td>
           </tr>
