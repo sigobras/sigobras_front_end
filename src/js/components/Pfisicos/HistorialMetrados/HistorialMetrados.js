@@ -192,6 +192,7 @@ export default () => {
             />
           ) : (
             <HistorialMetradosResumenMensual
+              key={AnyoSeleccionado + MesSeleccionado}
               Anyo={AnyoSeleccionado}
               Mes={MesSeleccionado}
             />
@@ -205,7 +206,10 @@ export default () => {
         )
       ) : (
         AnyoSeleccionado != 0 && (
-          <HistorialMetradosResumenAnual Anyo={AnyoSeleccionado} />
+          <HistorialMetradosResumenAnual
+            Anyo={AnyoSeleccionado}
+            key={AnyoSeleccionado}
+          />
         )
       )}
     </div>
