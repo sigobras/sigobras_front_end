@@ -39,7 +39,6 @@ function HistorialObservaciones() {
       id_acceso: sessionStorage.getItem("idacceso"),
       id_ficha: sessionStorage.getItem("idobra"),
     });
-    console.log("cargando usuario data");
     await setUsuarioData(request.data);
   }
   //modal dificultades
@@ -87,7 +86,6 @@ function HistorialObservaciones() {
         tipo: tipo,
       }
     );
-    console.log("req_comentariosNoVistos", req_comentariosNoVistos);
     setDificultadComentariosNoVistos(req_comentariosNoVistos.data);
   }
 
@@ -126,12 +124,10 @@ function HistorialObservaciones() {
       result = result.toLocaleDateString("fr-CA");
       Dataclonado.fecha_final = result;
     }
-    console.log("datos capturados", Dataclonado);
     setNewDificultad(Dataclonado);
   }
 
   async function saveDificultad() {
-    console.log("newDificultad", newDificultad);
     if (confirm("Los datos ingresados se guardaran, esta seguro?")) {
       const request = await axios.post(
         `${UrlServer}/postDificultades`,
@@ -349,7 +345,6 @@ function HistorialObservaciones() {
                 <FormGroup>
                   {/* duracion */}
                   <Label>tiempo perdido</Label>
-                  {/* {console.log("new dificultad", newDificultad.duracion)} */}
                   <DebounceInput
                     value={newDificultad.duracion}
                     debounceTimeout={300}

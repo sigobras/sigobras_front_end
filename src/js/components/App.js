@@ -65,6 +65,7 @@ const CostosIndirectos = lazy(() => import("./CostosIndirectos/index"));
 const ModificacionExpediente = lazy(() => import("./ModificacionExpediente"));
 const ReporteGeneral = lazy(() => import("./ReporteGeneral"));
 const PresupuestoAnalitico = lazy(() => import("./PresupuestoAnalitico"));
+const Test = lazy(() => import("./Test"));
 
 export default () => {
   useEffect(() => {
@@ -492,6 +493,7 @@ export default () => {
                       path="/PresupuestoAnalitico"
                       component={PresupuestoAnalitico}
                     />
+                    <Route path="/Test" component={Test} />
                   </Switch>
                 </Suspense>
               </div>
