@@ -27,9 +27,28 @@ export default () => {
   useEffect(() => {
     fetchPLazosPadres();
     fetchUsuarioData();
+    cargarPermiso(
+      "agregar_plazo,actualizar_plazo,eliminar_plazo,actualizar_archivoplazo"
+    );
     return () => {};
   }, []);
 
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   const [PlazosPadres, setPlazosPadres] = useState([]);
   async function fetchPLazosPadres() {
     const res = await axios.get(`${UrlServer}/plazosPadres`, {
@@ -102,8 +121,7 @@ export default () => {
   }
   return (
     <div>
-      {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-        UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+      {Permisos["agregar_plazo"] == 1 && (
         <PlazosFormulario id_padre={null} recarga={fetchPLazosPadres} />
       )}
       <Table>
@@ -149,15 +167,13 @@ export default () => {
                 {item.documento_resolucion_estado}
               </td>
               <td>
-                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
-                  <TooltipUploadIcon
-                    item={item}
-                    uploadFile={uploadFile}
-                    DescargarArchivo={DescargarArchivo}
-                    UsuarioData={UsuarioData}
-                  />
-                )}
+                <TooltipUploadIcon
+                  item={item}
+                  uploadFile={uploadFile}
+                  DescargarArchivo={DescargarArchivo}
+                  UsuarioData={UsuarioData}
+                  Permisos={Permisos}
+                />
               </td>
               <td></td>
               <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
@@ -204,6 +220,7 @@ export default () => {
               uploadFile={uploadFile}
               DescargarArchivo={DescargarArchivo}
               UsuarioData={UsuarioData}
+              Permisos={Permisos}
             />,
           ])}
           <tr
@@ -282,7 +299,10 @@ export default () => {
   );
 };
 const PLazosHijos = forwardRef(
-  ({ id_padre, count, uploadFile, DescargarArchivo, UsuarioData }, ref) => {
+  (
+    { id_padre, count, uploadFile, DescargarArchivo, UsuarioData, Permisos },
+    ref
+  ) => {
     useImperativeHandle(ref, () => ({
       recarga() {
         fetchCargarPlazosHijos();
@@ -328,6 +348,7 @@ const PLazosHijos = forwardRef(
               uploadFile={uploadFile}
               DescargarArchivo={DescargarArchivo}
               UsuarioData={UsuarioData}
+              Permisos={Permisos}
             />
           )}
         </td>
@@ -360,12 +381,7 @@ const PLazosHijos = forwardRef(
     ));
   }
 );
-function TooltipUploadIcon({
-  item,
-  uploadFile,
-  DescargarArchivo,
-  UsuarioData,
-}) {
+function TooltipUploadIcon({ item, uploadFile, DescargarArchivo, Permisos }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipOpen2, setTooltipOpen2] = useState(false);
   const toggle = () => setTooltipOpen(!tooltipOpen);
@@ -382,16 +398,22 @@ function TooltipUploadIcon({
       </Tooltip>
 
       <div style={{ display: "flex", textAlign: "center" }}>
-        <div
-          onClick={() => uploadFile(item.id)}
-          style={{
-            cursor: "pointer",
-            width: "100%",
-          }}
-          id="TooltipExample"
-        >
-          <FaUpload size={15} color={"#ffffff"} />
-        </div>
+        {
+          <div
+            onClick={() => {
+              if (Permisos["actualizar_archivoplazo"]) {
+                uploadFile(item.id);
+              }
+            }}
+            style={{
+              cursor: "pointer",
+              width: "100%",
+            }}
+            id="TooltipExample"
+          >
+            <FaUpload size={15} color={"#ffffff"} />
+          </div>
+        }
 
         {item.archivo !== null && [
           <Tooltip
