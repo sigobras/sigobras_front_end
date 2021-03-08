@@ -11,10 +11,26 @@ import BotonNuevo from "../../libs/BotonNuevo";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
-  let timer,
-    timeoutVal = 2000;
-
+export default ({ data, setMensajeGuardando }) => {
+  useEffect(() => {
+    cargarPermiso(`actualizar_datosespecificos`);
+  }, []);
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   //edicion
   const [ModoEdicion, setModoEdicion] = useState("");
   const [DataFormulario, setDataFormulario] = useState(data);
@@ -52,7 +68,8 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
               onClick={() => setModoEdicion("codigo_snip")}
               className="reporteGeneral-table-input"
             >
-              {ModoEdicion == "codigo_snip" ? (
+              {Permisos["actualizar_datosespecificos"] &&
+              ModoEdicion == "codigo_snip" ? (
                 <Input
                   type="text"
                   value={DataFormulario.codigo_snip}
@@ -75,7 +92,8 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
               onClick={() => setModoEdicion("funcion")}
               className="reporteGeneral-table-input"
             >
-              {ModoEdicion == "funcion" ? (
+              {Permisos["actualizar_datosespecificos"] &&
+              ModoEdicion == "funcion" ? (
                 <Input
                   type="text"
                   value={DataFormulario.funcion}
@@ -96,7 +114,8 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
               onClick={() => setModoEdicion("division_funcional")}
               className="reporteGeneral-table-input"
             >
-              {ModoEdicion == "division_funcional" ? (
+              {Permisos["actualizar_datosespecificos"] &&
+              ModoEdicion == "division_funcional" ? (
                 <Input
                   type="text"
                   value={DataFormulario.division_funcional}
@@ -119,7 +138,8 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
               onClick={() => setModoEdicion("subprograma")}
               className="reporteGeneral-table-input"
             >
-              {ModoEdicion == "subprograma" ? (
+              {Permisos["actualizar_datosespecificos"] &&
+              ModoEdicion == "subprograma" ? (
                 <Input
                   type="text"
                   value={DataFormulario.subprograma}

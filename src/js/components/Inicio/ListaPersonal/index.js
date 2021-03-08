@@ -352,15 +352,21 @@ export default ({ id_ficha, codigo_obra }) => {
                                 </div>
                               )}
                             </div>
-                            <div
-                              onClick={() => uploadFile(usuarios.id_acceso)}
-                              style={{
-                                textAlign: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <FaUpload size={15} color={"#dc3545"} />
-                            </div>
+                            {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                              UsuarioData.cargo_nombre ==
+                                "EDITOR DE PERSONAL" ||
+                              UsuarioData.cargo_nombre ==
+                                "ADMINISTRADOR GENERAL") && (
+                              <div
+                                onClick={() => uploadFile(usuarios.id_acceso)}
+                                style={{
+                                  textAlign: "center",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <FaUpload size={15} color={"#dc3545"} />
+                              </div>
+                            )}
                           </div>
                           <div className="col-md-9 position-static p-4 pl-md-0">
                             <ListGroup>
@@ -396,15 +402,21 @@ export default ({ id_ficha, codigo_obra }) => {
                               <td>{i + 1}</td>
                               <td>{item.nombre_usuario}</td>
                               <td>
-                                <div
-                                  onClick={() => uploadFile(item.id_acceso)}
-                                  style={{
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  <FaUpload size={10} color={"#ffffff"} />
-                                </div>
+                                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                                  UsuarioData.cargo_nombre ==
+                                    "EDITOR DE PERSONAL" ||
+                                  UsuarioData.cargo_nombre ==
+                                    "ADMINISTRADOR GENERAL") && (
+                                  <div
+                                    onClick={() => uploadFile(item.id_acceso)}
+                                    style={{
+                                      textAlign: "center",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    <FaUpload size={10} color={"#ffffff"} />
+                                  </div>
+                                )}
                               </td>
                               <td>
                                 {item.memorandum !== null && (

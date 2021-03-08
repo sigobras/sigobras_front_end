@@ -52,6 +52,13 @@ export default ({ Obra }) => {
       fetchCurvaSAnyos();
       fetchUsuarioData();
       if (CurvaSAnyoSeleccionado != 0) fetchCurvaSdata();
+      cargarPermiso(
+        `actualizar_curvas_pimymes,
+        actualizar_programadofinanciero,
+        actualizar_programadoejecutado,
+        actualizar_progrmadofinanciero,
+        actualizar_edicionfinanciero,eliminar_periodocurvas`
+      );
     }
     setModalPrincipal(!ModalPrincipal);
   }
@@ -107,8 +114,23 @@ export default ({ Obra }) => {
       id_acceso: sessionStorage.getItem("idacceso"),
       id_ficha: sessionStorage.getItem("idobra"),
     });
-    console.log("fetchUsuarioData", res.data);
     setUsuarioData(res.data);
+  }
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
   }
   //recargar
   function recargarData() {
@@ -153,13 +175,13 @@ export default ({ Obra }) => {
             />
             &nbsp;&nbsp;
             <div>
-              {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
-                UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+              {ModalPrincipal && Permisos["actualizar_curvas_pimymes"] ? (
                 <FormularioPrincipal
                   id_ficha={Obra.id_ficha}
                   recargarData={recargarData}
                 />
+              ) : (
+                ""
               )}
 
               <div style={{ margin: "1px" }}>
@@ -228,10 +250,7 @@ export default ({ Obra }) => {
                         : mesesShort[item.mes - 1] + "-" + item.anyo}
                       {(item.fisico_monto == 0 || item.fisico_monto == null) &&
                         item.tipo != "TOTAL" &&
-                        (UsuarioData.cargo_nombre == "RESIDENTE" ||
-                          UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
-                          UsuarioData.cargo_nombre ==
-                            "ADMINISTRADOR GENERAL") && (
+                        Permisos["eliminar_periodocurvas"] && (
                           <div onClick={() => deletePeriodoCurvaS(item.id)}>
                             <MdDeleteForever
                               title={"eliminiar periodo"}
@@ -263,6 +282,7 @@ export default ({ Obra }) => {
                         recargar={recargarData}
                         ToggleSoles={ToggleSoles}
                         Obra={Obra}
+                        Permisos={Permisos}
                       />
                     </td>
                   ))}
@@ -448,7 +468,14 @@ export default ({ Obra }) => {
     </div>
   );
 };
-function Programado({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
+function Programado({
+  item,
+  UsuarioData,
+  recargar,
+  ToggleSoles,
+  Obra,
+  Permisos,
+}) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
@@ -489,9 +516,7 @@ function Programado({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
       {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
       {(item.fisico_monto == 0 || item.fisico_monto == null) &&
-        (UsuarioData.cargo_nombre == "RESIDENTE" ||
-          UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
-          UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+        Permisos["actualizar_programadoejecutado"] && (
           <div onClick={() => ToggleEditable()}>
             <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
           </div>
