@@ -14,7 +14,26 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
     cargarData();
     cargarAvanceFinancieroAcumulado();
     cargarFuentesFinanciamientoList();
+    cargarPermiso(
+      "agregar_fuentesfinanciamiento,actualizar_pim,actualizar_pia,actualizar_presupuestoaprobado"
+    );
   }, []);
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   const [Loading, setLoading] = useState(false);
   //Data
   const [DataFormulario, setDataFormulario] = useState({});
@@ -112,7 +131,8 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
                 onClick={() => setModoEdicion("presupuesto_aprobado")}
                 className="reporteGeneral-table-input"
               >
-                {ModoEdicion == "presupuesto_aprobado" ? (
+                {Permisos["actualizar_presupuestoaprobado"] &&
+                ModoEdicion == "presupuesto_aprobado" ? (
                   <Input
                     type="text"
                     value={DataFormulario.presupuesto_aprobado}
@@ -133,7 +153,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
                 onClick={() => setModoEdicion("pia")}
                 className="reporteGeneral-table-input"
               >
-                {ModoEdicion == "pia" ? (
+                {Permisos["actualizar_pia"] && ModoEdicion == "pia" ? (
                   <Input
                     type="text"
                     value={DataFormulario.pia}
@@ -156,7 +176,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
                 onClick={() => setModoEdicion("pim")}
                 className="reporteGeneral-table-input"
               >
-                {ModoEdicion == "pim" ? (
+                {Permisos["actualizar_pim"] && ModoEdicion == "pim" ? (
                   <Input
                     type="text"
                     value={DataFormulario.pim}
@@ -236,6 +256,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
                   anyo={AnyoSeleccionado}
                   setMensajeGuardando={setMensajeGuardando}
                   FuentesFinanciamientoList={FuentesFinanciamientoList}
+                  Permisos={Permisos}
                 />
               </td>
             </tr>
@@ -250,6 +271,7 @@ function FuentesFinancieamiento({
   anyo,
   setMensajeGuardando,
   FuentesFinanciamientoList,
+  Permisos,
 }) {
   useEffect(() => {
     cargarData();
@@ -359,6 +381,7 @@ function FuentesFinancieamiento({
                   onBlur={() => {
                     setModoEdicion(-1);
                   }}
+                  disabled={!Permisos["agregar_fuentesfinanciamiento"]}
                 >
                   <option value="">SELECCIONE</option>
                   {FuentesFinanciamientoList.map((item, i) => (
@@ -374,6 +397,7 @@ function FuentesFinancieamiento({
                   onBlur={() => {
                     setModoEdicion(-1);
                   }}
+                  disabled={!Permisos["agregar_fuentesfinanciamiento"]}
                 />
               </span>
             </div>
@@ -405,8 +429,11 @@ function FuentesFinancieamiento({
       {FlagCambios.length > 0 && (
         <Button onClick={() => guardarData()}>Guardar</Button>
       )}
-
-      <BotonNuevo size="80" onClick={() => agregarData()} />
+      {Permisos["agregar_fuentesfinanciamiento"] ? (
+        <BotonNuevo size="80" onClick={() => agregarData()} />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

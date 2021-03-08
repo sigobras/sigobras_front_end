@@ -26,6 +26,7 @@ export default () => {
 
   useEffect(() => {
     fetchPLazosPadres();
+    fetchUsuarioData();
     return () => {};
   }, []);
 
@@ -91,10 +92,20 @@ export default () => {
       link.click();
     }
   }
+  const [UsuarioData, setUsuarioData] = useState({});
+  async function fetchUsuarioData() {
+    const res = await axios.post(`${UrlServer}/getDatosUsuario`, {
+      id_acceso: sessionStorage.getItem("idacceso"),
+      id_ficha: sessionStorage.getItem("idobra"),
+    });
+    setUsuarioData(res.data);
+  }
   return (
     <div>
-      <PlazosFormulario id_padre={null} recarga={fetchPLazosPadres} />
-
+      {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+        UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+        <PlazosFormulario id_padre={null} recarga={fetchPLazosPadres} />
+      )}
       <Table>
         <thead>
           <tr className="plazos-tabla">
@@ -138,11 +149,15 @@ export default () => {
                 {item.documento_resolucion_estado}
               </td>
               <td>
-                <TooltipUploadIcon
-                  item={item}
-                  uploadFile={uploadFile}
-                  DescargarArchivo={DescargarArchivo}
-                />
+                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                  <TooltipUploadIcon
+                    item={item}
+                    uploadFile={uploadFile}
+                    DescargarArchivo={DescargarArchivo}
+                    UsuarioData={UsuarioData}
+                  />
+                )}
               </td>
               <td></td>
               <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
@@ -151,21 +166,30 @@ export default () => {
               <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
               <td>{fechaFormatoClasico(item.fecha_aprobada)}</td>
               <td style={{ display: "flex" }}>
-                <PlazosFormulario
-                  id_padre={item.id}
-                  recarga={activeChildFunctions}
-                />
-                <PlazosFormularioEdicion
-                  data={item}
-                  recarga={fetchPLazosPadres}
-                />
-                <Button
-                  color="info"
-                  outline
-                  onClick={() => deletePlazosPadre(item.id)}
-                >
-                  <MdDeleteForever />
-                </Button>
+                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                  <PlazosFormulario
+                    id_padre={item.id}
+                    recarga={activeChildFunctions}
+                  />
+                )}
+                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                  <PlazosFormularioEdicion
+                    data={item}
+                    recarga={fetchPLazosPadres}
+                  />
+                )}
+                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                  <Button
+                    color="info"
+                    outline
+                    onClick={() => deletePlazosPadre(item.id)}
+                  >
+                    <MdDeleteForever />
+                  </Button>
+                )}
               </td>
             </tr>,
 
@@ -179,6 +203,7 @@ export default () => {
               }}
               uploadFile={uploadFile}
               DescargarArchivo={DescargarArchivo}
+              UsuarioData={UsuarioData}
             />,
           ])}
           <tr
@@ -257,7 +282,7 @@ export default () => {
   );
 };
 const PLazosHijos = forwardRef(
-  ({ id_padre, count, uploadFile, DescargarArchivo }, ref) => {
+  ({ id_padre, count, uploadFile, DescargarArchivo, UsuarioData }, ref) => {
     useImperativeHandle(ref, () => ({
       recarga() {
         fetchCargarPlazosHijos();
@@ -296,11 +321,15 @@ const PLazosHijos = forwardRef(
         <td>{item.descripcion}</td>
         <td>{item.documento_resolucion_estado}</td>
         <td>
-          <TooltipUploadIcon
-            item={item}
-            uploadFile={uploadFile}
-            DescargarArchivo={DescargarArchivo}
-          />
+          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+            UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+            <TooltipUploadIcon
+              item={item}
+              uploadFile={uploadFile}
+              DescargarArchivo={DescargarArchivo}
+              UsuarioData={UsuarioData}
+            />
+          )}
         </td>
         <td></td>
         <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
@@ -309,23 +338,34 @@ const PLazosHijos = forwardRef(
         <td></td>
         <td>{item.fecha_aprobada}</td>
         <td style={{ display: "flex" }}>
-          <PlazosFormularioEdicion
-            data={item}
-            recarga={fetchCargarPlazosHijos}
-          />
-          <Button
-            color="info"
-            outline
-            onClick={() => deletePlazosHijos(item.id)}
-          >
-            <MdDeleteForever />
-          </Button>
+          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+            UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+            <PlazosFormularioEdicion
+              data={item}
+              recarga={fetchCargarPlazosHijos}
+            />
+          )}
+          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+            UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+            <Button
+              color="info"
+              outline
+              onClick={() => deletePlazosHijos(item.id)}
+            >
+              <MdDeleteForever />
+            </Button>
+          )}
         </td>
       </tr>
     ));
   }
 );
-function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
+function TooltipUploadIcon({
+  item,
+  uploadFile,
+  DescargarArchivo,
+  UsuarioData,
+}) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipOpen2, setTooltipOpen2] = useState(false);
   const toggle = () => setTooltipOpen(!tooltipOpen);
@@ -352,6 +392,7 @@ function TooltipUploadIcon({ item, uploadFile, DescargarArchivo }) {
         >
           <FaUpload size={15} color={"#ffffff"} />
         </div>
+
         {item.archivo !== null && [
           <Tooltip
             placement="right"

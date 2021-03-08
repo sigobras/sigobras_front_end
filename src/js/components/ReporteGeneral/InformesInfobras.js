@@ -34,7 +34,24 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
     cargarData();
     cargarInformesUbicaciones();
     cargarPrimerInforme();
+    cargarPermiso("agregar_informe,actualizar_informe");
   }, []);
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   const [Informes, setInformes] = useState([]);
   async function cargarData() {
     try {
@@ -81,6 +98,7 @@ export default ({ data, recargar, AnyoSeleccionado }) => {
               recargar={cargarData}
               data={buscarMesInData(i)}
               InformesUbicaciones={InformesUbicaciones}
+              Permisos={Permisos}
             />
           </td>
           <td>
@@ -134,6 +152,7 @@ function NuevoInforme({
   fichas_id_ficha,
   recargar,
   InformesUbicaciones,
+  Permisos,
 }) {
   const [modal, setModal] = useState(false);
 
@@ -256,13 +275,17 @@ function NuevoInforme({
       {data && data.estado_presentado ? (
         <FaCheckCircle
           color="green"
-          onClick={toggle}
+          onClick={() => {
+            if (Permisos["agregar_informe"]) toggle();
+          }}
           style={{ cursor: "pointer" }}
         />
       ) : (
         <FaRegTimesCircle
           color="red"
-          onClick={toggle}
+          onClick={() => {
+            if (Permisos["actualizar_informe"]) toggle();
+          }}
           style={{ cursor: "pointer" }}
         />
       )}

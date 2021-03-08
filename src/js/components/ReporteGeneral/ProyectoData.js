@@ -13,7 +13,24 @@ import "react-toastify/dist/ReactToastify.css";
 export default ({ numero, data, AnyoSeleccionado, setMensajeGuardando }) => {
   useEffect(() => {
     cargarMeta();
+    cargarPermiso(`actualizar_meta`);
   }, []);
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   //meta
   const [Meta, setMeta] = useState(data.meta);
   async function cargarMeta() {
@@ -56,7 +73,7 @@ export default ({ numero, data, AnyoSeleccionado, setMensajeGuardando }) => {
               onClick={() => setModoEdicion("Meta")}
               className="reporteGeneral-table-input"
             >
-              {ModoEdicion == "Meta" ? (
+              {Permisos["actualizar_meta"] && ModoEdicion == "Meta" ? (
                 <Input
                   type="text"
                   value={Meta}

@@ -289,15 +289,15 @@ export default () => {
                         <span> GESTION DOCUMENTARIA </span>{" "}
                       </NavLink>
                     </li>,
-                    <li className="lii" key="33">
-                      <NavLink
-                        to="/CostosIndirectos"
-                        activeclassname="nav-link"
-                      >
-                        {" "}
-                        <span> COSTOS INDIRECTOS </span>{" "}
-                      </NavLink>
-                    </li>,
+                    // <li className="lii" key="33">
+                    //   <NavLink
+                    //     to="/CostosIndirectos"
+                    //     activeclassname="nav-link"
+                    //   >
+                    //     {" "}
+                    //     <span> COSTOS INDIRECTOS </span>{" "}
+                    //   </NavLink>
+                    // </li>,
                   ]}
                 </ul>
                 <div
