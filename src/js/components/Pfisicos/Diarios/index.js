@@ -49,7 +49,27 @@ export default () => {
     fectchComponentes();
     fectchPrioridades();
     fetchCategorias();
+    cargarPermiso(
+      "ingresar_metrado,ingresar_fotospartidas,ver_chatpartidas,actualizar_iconopartidas"
+    );
   }, []);
+  //permisos
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   //usuario data
   //get datos de usuario
   const [UsuarioData, setUsuarioData] = useState({});
@@ -486,32 +506,34 @@ export default () => {
                 }
               >
                 <td>
-                  {item.tipo == "partida" && (
-                    <PartidasChat
-                      id_partida={item.id_partida}
-                      id_componente={ComponenteSelecccionado.id_componente}
-                      recargaComponenteMensajes={recargaComponenteMensajes}
-                      titulo={item.descripcion}
-                    />
-                  )}
+                  {Permisos["ver_chatpartidas"] == 1 &&
+                    item.tipo == "partida" && (
+                      <PartidasChat
+                        id_partida={item.id_partida}
+                        id_componente={ComponenteSelecccionado.id_componente}
+                        recargaComponenteMensajes={recargaComponenteMensajes}
+                        titulo={item.descripcion}
+                      />
+                    )}
                 </td>
                 <td>
-                  {item.tipo === "partida" && (
-                    <div className="prioridad" style={{ color: "#ffffff" }}>
-                      <span className="h6">
-                        <IconosPartidas
-                          Id_iconoCategoria={
-                            item.iconosCategorias_id_iconoCategoria
-                          }
-                          Id_prioridad={item.prioridades_id_prioridad}
-                          Id_partida={item.id_partida}
-                          Categorias={Categorias}
-                          CategoriasComponente={CategoriasComponente}
-                          Prioridades={Prioridades}
-                        />
-                      </span>
-                    </div>
-                  )}
+                  {Permisos["actualizar_iconopartidas"] == 1 &&
+                    item.tipo === "partida" && (
+                      <div className="prioridad" style={{ color: "#ffffff" }}>
+                        <span className="h6">
+                          <IconosPartidas
+                            Id_iconoCategoria={
+                              item.iconosCategorias_id_iconoCategoria
+                            }
+                            Id_prioridad={item.prioridades_id_prioridad}
+                            Id_partida={item.id_partida}
+                            Categorias={Categorias}
+                            CategoriasComponente={CategoriasComponente}
+                            Prioridades={Prioridades}
+                          />
+                        </span>
+                      </div>
+                    )}
                 </td>
                 {item.tipo == "partida" ? (
                   <td
