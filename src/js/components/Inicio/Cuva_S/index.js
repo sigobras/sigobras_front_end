@@ -278,7 +278,6 @@ export default ({ Obra }) => {
                     <td key={i}>
                       <Programado
                         item={item}
-                        UsuarioData={UsuarioData}
                         recargar={recargarData}
                         ToggleSoles={ToggleSoles}
                         Obra={Obra}
@@ -468,14 +467,7 @@ export default ({ Obra }) => {
     </div>
   );
 };
-function Programado({
-  item,
-  UsuarioData,
-  recargar,
-  ToggleSoles,
-  Obra,
-  Permisos,
-}) {
+function Programado({ item, recargar, ToggleSoles, Obra, Permisos }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
