@@ -81,7 +81,7 @@ export default ({ CurvaSdata, codigo, ToggleSoles }) => {
         (item.financiero_programado_monto == 0 ||
           item.financiero_programado_monto == null)
       ) {
-        programado.pop();
+        financiero_programado.pop();
       } else {
         financiero_programado_monto_break = false;
       }

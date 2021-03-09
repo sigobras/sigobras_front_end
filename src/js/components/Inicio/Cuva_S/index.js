@@ -53,11 +53,7 @@ export default ({ Obra }) => {
       fetchUsuarioData();
       if (CurvaSAnyoSeleccionado != 0) fetchCurvaSdata();
       cargarPermiso(
-        `actualizar_curvas_pimymes,
-        actualizar_programadofinanciero,
-        actualizar_programadoejecutado,
-        actualizar_progrmadofinanciero,
-        actualizar_edicionfinanciero,eliminar_periodocurvas`
+        `actualizar_curvas_pimymes,actualizar_programadofinanciero, actualizar_programadoejecutado,actualizar_progrmadofinanciero, actualizar_edicionfinanciero,eliminar_periodocurvas`
       );
     }
     setModalPrincipal(!ModalPrincipal);
@@ -118,10 +114,15 @@ export default ({ Obra }) => {
   }
   const [Permisos, setPermisos] = useState(false);
   async function cargarPermiso(nombres_clave) {
+    console.log("data", {
+      id_acceso: sessionStorage.getItem("idacceso"),
+      id_ficha: Obra.id_ficha,
+      nombres_clave,
+    });
     const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
       params: {
         id_acceso: sessionStorage.getItem("idacceso"),
-        id_ficha: sessionStorage.getItem("idobra"),
+        id_ficha: Obra.id_ficha,
         nombres_clave,
       },
     });
@@ -130,6 +131,7 @@ export default ({ Obra }) => {
     for (const key in tempArray) {
       tempList[key] = res.data[key];
     }
+    console.log("permisos", tempList);
     setPermisos(tempList);
   }
   //recargar
@@ -505,6 +507,7 @@ function Programado({ item, recargar, ToggleSoles, Obra, Permisos }) {
     </div>
   ) : (
     <div className="d-flex">
+      {console.log("Permisos programado", Permisos)}
       {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
       {(item.fisico_monto == 0 || item.fisico_monto == null) &&
