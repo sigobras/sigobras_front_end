@@ -19,6 +19,22 @@ import UsuarioDetalles from "./UsuarioDetalles";
 import ListaPersonal from "./ListaPersonal";
 
 export default ({ id_ficha, codigo_obra }) => {
+  const [Permisos, setPermisos] = useState([]);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   const hiddenFileInput = useRef(null);
   //modal personal
   const [ModalPersonal, setModalPersonal] = useState(false);
@@ -28,6 +44,9 @@ export default ({ id_ficha, codigo_obra }) => {
       fetchCargosPersonal();
       fetchUsuarioData();
       setIdCargoSeleccionado(0);
+      cargarPermiso(
+        "actualizar_habilitarpersonal,actualizar_datospersonal,agregar_personal,actualizar_fechapersonal,actualizar_memorandumpersonal"
+      );
     }
   }
   //getcargos
@@ -178,9 +197,7 @@ export default ({ id_ficha, codigo_obra }) => {
                 LISTA PERSONAL
               </NavLink>
               <NavLink>
-                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                  UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                {Permisos["agregar_personal"] == 1 && (
                   <FormularioPersonal
                     id_ficha={id_ficha}
                     recargar={fetchCargosPersonal}
@@ -190,166 +207,129 @@ export default ({ id_ficha, codigo_obra }) => {
               </NavLink>
             </Nav>
 
-            {(IdCargoSeleccionado == 0 || IdCargoSeleccionado == -2) && (
+            {IdCargoSeleccionado == 0 || IdCargoSeleccionado == -2 ? (
               <ListaPersonal
                 key={IdCargoSeleccionado}
                 id_ficha={id_ficha}
                 UsuarioData={UsuarioData}
                 cargos_tipo_id={IdCargoSeleccionado == 0 ? 3 : 2}
+                Permisos={Permisos}
               />
-            )}
-            {IdCargoSeleccionado != -1 &&
-              IdCargoSeleccionado != -2 &&
-              IdCargoSeleccionado != 0 && (
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th colSpan="3">nombre</th>
-                      <th>fecha de ingreso</th>
-                      <th>fecha de salida</th>
-                      <th>estado</th>
-                      <th>opciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {HistorialPersonal.map((item, i) => (
-                      <tr key={item.id}>
-                        <td>
-                          <UsuarioDetalles data={item} />
-                        </td>
-                        <td>
-                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                            UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                            UsuarioData.cargo_nombre ==
-                              "ADMINISTRADOR GENERAL") && (
-                            <div
-                              onClick={() => uploadFile(item.id)}
-                              style={{
-                                textAlign: "center",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <FaUpload size={10} color={"#ffffff"} />
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          {item.memorandum !== null && (
-                            <div
-                              className="text-primary"
-                              title="descargar memorandum"
-                              onClick={() =>
-                                DescargarArchivo(
-                                  `${UrlServer}${item.memorandum}`
-                                )
-                              }
-                              style={{
-                                cursor: "pointer",
-                              }}
-                            >
-                              <FaMediumM size={15} color={"#2676bb"} />
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          <Input
-                            type="date"
-                            value={item.fecha_inicio}
-                            onChange={(e) =>
-                              handleInputChange(
-                                i,
-                                "fecha_inicio",
-                                e.target.value
-                              )
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th colSpan="3">nombre</th>
+                    <th>fecha de ingreso</th>
+                    <th>fecha de salida</th>
+                    <th>estado</th>
+                    <th>opciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {HistorialPersonal.map((item, i) => (
+                    <tr key={item.id}>
+                      <td>
+                        <UsuarioDetalles data={item} />
+                      </td>
+                      <td>
+                        {Permisos["actualizar_memorandumpersonal"] == 1 && (
+                          <div
+                            onClick={() => uploadFile(item.id)}
+                            style={{
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FaUpload size={10} color={"#ffffff"} />
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        {item.memorandum !== null && (
+                          <div
+                            className="text-primary"
+                            title="descargar memorandum"
+                            onClick={() =>
+                              DescargarArchivo(`${UrlServer}${item.memorandum}`)
                             }
-                            disabled={
-                              !(
-                                UsuarioData.cargo_nombre == "RESIDENTE" ||
-                                UsuarioData.cargo_nombre ==
-                                  "EDITOR DE PERSONAL" ||
-                                UsuarioData.cargo_nombre ==
-                                  "ADMINISTRADOR GENERAL"
-                              )
-                            }
-                          />
-                        </td>
-                        <td style={{ display: "flex" }}>
-                          <Input
-                            type="date"
-                            value={item.fecha_final}
-                            onChange={(e) =>
-                              handleInputChange(
-                                i,
-                                "fecha_final",
-                                e.target.value
-                              )
-                            }
-                            disabled={
-                              !(
-                                UsuarioData.cargo_nombre == "RESIDENTE" ||
-                                UsuarioData.cargo_nombre ==
-                                  "EDITOR DE PERSONAL" ||
-                                UsuarioData.cargo_nombre ==
-                                  "ADMINISTRADOR GENERAL"
-                              )
-                            }
-                          />
-                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                            UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                            UsuarioData.cargo_nombre ==
-                              "ADMINISTRADOR GENERAL") && (
-                            <Button
-                              outline
-                              color="danger"
-                              onClick={() => {
-                                guardarDesignacionesNull(i, "fecha_final");
-                              }}
-                            >
-                              X
-                            </Button>
-                          )}
-                        </td>
+                            style={{
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FaMediumM size={15} color={"#2676bb"} />
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <Input
+                          type="date"
+                          value={item.fecha_inicio}
+                          onChange={(e) =>
+                            handleInputChange(i, "fecha_inicio", e.target.value)
+                          }
+                          disabled={!Permisos["actualizar_fechapersonal"]}
+                        />
+                      </td>
+                      <td style={{ display: "flex" }}>
+                        <Input
+                          type="date"
+                          value={item.fecha_final}
+                          onChange={(e) =>
+                            handleInputChange(i, "fecha_final", e.target.value)
+                          }
+                          disabled={!Permisos["actualizar_fechapersonal"]}
+                        />
+                        {Permisos["actualizar_fechapersonal"] == 1 && (
+                          <Button
+                            outline
+                            color="danger"
+                            onClick={() => {
+                              guardarDesignacionesNull(i, "fecha_final");
+                            }}
+                          >
+                            X
+                          </Button>
+                        )}
+                      </td>
 
-                        <td>
-                          {item.habilitado ? (
-                            <div
-                              style={{
-                                fontWeight: "700",
-                                color: "green",
-                              }}
-                            >
-                              Habilitado
-                            </div>
-                          ) : (
-                            <div
-                              style={{
-                                fontWeight: "700",
-                                color: "red",
-                              }}
-                            >
-                              Deshabilitado
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                            UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                            UsuarioData.cargo_nombre ==
-                              "ADMINISTRADOR GENERAL") && (
-                            <Button
-                              outline
-                              color="primary"
-                              onClick={() => guardarDesignaciones(i)}
-                            >
-                              <FaSave />
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+                      <td>
+                        {item.habilitado ? (
+                          <div
+                            style={{
+                              fontWeight: "700",
+                              color: "green",
+                            }}
+                          >
+                            Habilitado
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              fontWeight: "700",
+                              color: "red",
+                            }}
+                          >
+                            Deshabilitado
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        {Permisos["actualizar_fechapersonal"] && (
+                          <Button
+                            outline
+                            color="primary"
+                            onClick={() => guardarDesignaciones(i)}
+                          >
+                            <FaSave />
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </ModalBody>
       </Modal>

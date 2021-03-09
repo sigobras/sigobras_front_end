@@ -7,7 +7,7 @@ import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { DescargarArchivo } from "../../Utils/Funciones";
 import FormularioPersonal from "./FormularioPersonal";
 
-export default ({ id_ficha, UsuarioData, cargos_tipo_id }) => {
+export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
   useEffect(() => {
     fetchUsuariosPersonal();
     fetchUsuariosPersonalInactivos();
@@ -77,18 +77,18 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id }) => {
                 <td>{item.dni}</td>
                 <td>{item.email}</td>
                 <td>
-                  {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                    UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                    UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                  {Permisos["actualizar_habilitarpersonal"] == 1 && (
                     <HabilitarButton item={item} recargar={recargar} />
                   )}
                 </td>
                 <td>
-                  <FormularioPersonal
-                    id_ficha={id_ficha}
-                    dataPersonal={item}
-                    recargar={recargar}
-                  />
+                  {Permisos["actualizar_datospersonal"] == 1 && (
+                    <FormularioPersonal
+                      id_ficha={id_ficha}
+                      dataPersonal={item}
+                      recargar={recargar}
+                    />
+                  )}
                 </td>
               </tr>
             ))}
@@ -133,9 +133,7 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id }) => {
                   <td>{i + 1}</td>
                   <td>{item.nombre_usuario}</td>
                   <td>
-                    {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                      UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                      UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                    {Permisos["actualizar_memorandumpersonal"] == 1 && (
                       <div
                         onClick={() => uploadFile(item.id_acceso)}
                         style={{
@@ -168,18 +166,18 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id }) => {
                   <td>{item.dni}</td>
                   <td>{item.email}</td>
                   <td>
-                    {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                      UsuarioData.cargo_nombre == "EDITOR DE PERSONAL" ||
-                      UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                    {Permisos["actualizar_habilitarpersonal"] == 1 && (
                       <HabilitarButton item={item} recargar={recargar} />
                     )}
                   </td>
                   <td>
-                    <FormularioPersonal
-                      id_ficha={id_ficha}
-                      dataPersonal={item}
-                      recargar={recargar}
-                    />
+                    {Permisos["actualizar_datospersonal"] == 1 && (
+                      <FormularioPersonal
+                        id_ficha={id_ficha}
+                        dataPersonal={item}
+                        recargar={recargar}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}

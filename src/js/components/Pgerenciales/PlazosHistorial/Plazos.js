@@ -18,12 +18,6 @@ import PlazosFormularioEdicion from "./PlazosFormularioEdicion";
 import "../PlazosHistorial/Plazos.css";
 
 export default () => {
-  const [RefPlazosHijos, setRefPlazosHijos] = useState([]);
-
-  function activeChildFunctions(id_padre) {
-    RefPlazosHijos[id_padre].recarga();
-  }
-
   useEffect(() => {
     fetchPLazosPadres();
     fetchUsuarioData();
@@ -32,7 +26,11 @@ export default () => {
     );
     return () => {};
   }, []);
+  const [RefPlazosHijos, setRefPlazosHijos] = useState([]);
 
+  function activeChildFunctions(id_padre) {
+    RefPlazosHijos[id_padre].recarga();
+  }
   const [Permisos, setPermisos] = useState(false);
   async function cargarPermiso(nombres_clave) {
     const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
@@ -182,22 +180,19 @@ export default () => {
               <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
               <td>{fechaFormatoClasico(item.fecha_aprobada)}</td>
               <td style={{ display: "flex" }}>
-                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                {Permisos["agregar_plazo"] == 1 && (
                   <PlazosFormulario
                     id_padre={item.id}
                     recarga={activeChildFunctions}
                   />
                 )}
-                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                {Permisos["actualizar_plazo"] == 1 && (
                   <PlazosFormularioEdicion
                     data={item}
                     recarga={fetchPLazosPadres}
                   />
                 )}
-                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                {Permisos["eliminar_plazo"] == 1 && (
                   <Button
                     color="info"
                     outline
@@ -341,8 +336,7 @@ const PLazosHijos = forwardRef(
         <td>{item.descripcion}</td>
         <td>{item.documento_resolucion_estado}</td>
         <td>
-          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-            UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+          {Permisos["actualizar_archivoplazo"] == 1 && (
             <TooltipUploadIcon
               item={item}
               uploadFile={uploadFile}
@@ -359,15 +353,13 @@ const PLazosHijos = forwardRef(
         <td></td>
         <td>{item.fecha_aprobada}</td>
         <td style={{ display: "flex" }}>
-          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-            UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+          {Permisos["actualizar_plazo"] == 1 && (
             <PlazosFormularioEdicion
               data={item}
               recarga={fetchCargarPlazosHijos}
             />
           )}
-          {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-            UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+          {Permisos["eliminar_plazo"] == 1 && (
             <Button
               color="info"
               outline
