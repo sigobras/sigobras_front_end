@@ -53,7 +53,7 @@ export default ({ Obra }) => {
       fetchUsuarioData();
       if (CurvaSAnyoSeleccionado != 0) fetchCurvaSdata();
       cargarPermiso(
-        `actualizar_curvas_pimymes,actualizar_programadofinanciero, actualizar_programadoejecutado,actualizar_progrmadofinanciero, actualizar_edicionfinanciero,eliminar_periodocurvas`
+        `actualizar_programadoejecutado,actualizar_programadofinanciero,actualizar_financiero,actualizar_curvas_pimymes,eliminar_periodocurvas`
       );
     }
     setModalPrincipal(!ModalPrincipal);
@@ -114,11 +114,6 @@ export default ({ Obra }) => {
   }
   const [Permisos, setPermisos] = useState(false);
   async function cargarPermiso(nombres_clave) {
-    console.log("data", {
-      id_acceso: sessionStorage.getItem("idacceso"),
-      id_ficha: Obra.id_ficha,
-      nombres_clave,
-    });
     const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
       params: {
         id_acceso: sessionStorage.getItem("idacceso"),
@@ -131,7 +126,6 @@ export default ({ Obra }) => {
     for (const key in tempArray) {
       tempList[key] = res.data[key];
     }
-    console.log("permisos", tempList);
     setPermisos(tempList);
   }
   //recargar
@@ -278,13 +272,20 @@ export default ({ Obra }) => {
                   </th>
                   {CurvaSdata.map((item, i) => (
                     <td key={i}>
-                      <Programado
-                        item={item}
-                        recargar={recargarData}
-                        ToggleSoles={ToggleSoles}
-                        Obra={Obra}
-                        Permisos={Permisos}
-                      />
+                      {item.tipo == "TOTAL" ? (
+                        Redondea(
+                          item.fisico_programado_monto,
+                          ToggleSoles ? 2 : 4
+                        ) + (!ToggleSoles ? "%" : "")
+                      ) : (
+                        <Programado
+                          item={item}
+                          recargar={recargarData}
+                          ToggleSoles={ToggleSoles}
+                          Obra={Obra}
+                          Permisos={Permisos}
+                        />
+                      )}
                     </td>
                   ))}
                   <th>
@@ -379,6 +380,7 @@ export default ({ Obra }) => {
                           recargar={recargarData}
                           ToggleSoles={ToggleSoles}
                           Obra={Obra}
+                          Permisos={Permisos}
                         />
                       )}
                     </td>
@@ -445,6 +447,7 @@ export default ({ Obra }) => {
                           recargar={recargarData}
                           ToggleSoles={ToggleSoles}
                           Obra={Obra}
+                          Permisos={Permisos}
                         />
                       )}
                     </td>
@@ -507,28 +510,31 @@ function Programado({ item, recargar, ToggleSoles, Obra, Permisos }) {
     </div>
   ) : (
     <div className="d-flex">
-      {console.log("Permisos programado", Permisos)}
       {Redondea(item.fisico_programado_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
-      {(item.fisico_monto == 0 || item.fisico_monto == null) &&
-        Permisos["actualizar_programadoejecutado"] && (
-          <div onClick={() => ToggleEditable()}>
-            <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
-          </div>
-        )}
+      {Permisos["actualizar_programadoejecutado"] && (
+        <div onClick={() => ToggleEditable()}>
+          <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
+        </div>
+      )}
     </div>
   );
 }
-function Financiero({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
+function Financiero({
+  item,
+  UsuarioData,
+  recargar,
+  ToggleSoles,
+  Obra,
+  Permisos,
+}) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
   const [Input, setInput] = useState("");
   async function update() {
     var tempFinanciero = Input;
     if (!ToggleSoles) {
-      console.log("es porcentaje", tempFinanciero);
       tempFinanciero = (tempFinanciero * Obra.g_total_presu) / 100;
-      console.log("tempFinanciero", tempFinanciero);
     }
     const res = await axios.post(`${UrlServer}/putFinancieroCurvaS`, {
       id: item.id,
@@ -557,9 +563,7 @@ function Financiero({ item, UsuarioData, recargar, ToggleSoles, Obra }) {
     <div className="d-flex">
       {Redondea(item.financiero_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
-      {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-        UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
-        UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+      {Permisos["actualizar_financiero"] && (
         <div onClick={() => ToggleEditable()}>
           <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
         </div>
@@ -573,6 +577,7 @@ function FinancieroProgramado({
   recargar,
   ToggleSoles,
   Obra,
+  Permisos,
 }) {
   const [Editable, setEditable] = useState(false);
   const ToggleEditable = () => setEditable(!Editable);
@@ -612,9 +617,7 @@ function FinancieroProgramado({
     <div className="d-flex">
       {Redondea(item.financiero_programado_monto, ToggleSoles ? 2 : 4) +
         (!ToggleSoles ? "%" : "")}
-      {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-        UsuarioData.cargo_nombre == "EDITOR FINANCIERO" ||
-        UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+      {Permisos["actualizar_programadofinanciero"] && (
         <div onClick={() => ToggleEditable()}>
           <MdModeEdit title={"Editar"} style={{ cursor: "pointer" }} />
         </div>

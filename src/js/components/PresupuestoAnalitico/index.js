@@ -100,6 +100,8 @@ export default () => {
     //filter properties
     var acumulado = 0;
     var ultimoPresupuesto = 0;
+    var acumuladoAnual = 0;
+    var acumuladoMensual = 0;
     for (let i = 0; i < properties.length; i++) {
       const key = properties[i];
       tempRender.push(
@@ -115,6 +117,13 @@ export default () => {
           </th>
         );
         if (item[key]) acumulado += item[key];
+
+        if (key.startsWith("avanceAnual_")) {
+          if (item[key]) acumuladoAnual += item[key];
+        }
+        if (key.startsWith("avanceMensual_")) {
+          if (item[key]) acumuladoMensual += item[key];
+        }
       }
     }
     //acumulados
@@ -138,6 +147,36 @@ export default () => {
         %
       </th>
     );
+    //zona de presupuesto pim
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>{Redondea(acumuladoAnual)}</th>
+    );
+    // saldo anyo pasado
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>
+        {Redondea(ultimoPresupuesto - acumuladoAnual)}
+      </th>
+    );
+    //pim
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>{Redondea(item["pim"])}</th>
+    );
+    //devengado anyo actual
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>{Redondea(acumuladoMensual)}</th>
+    );
+    //saldo devengado
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>
+        {Redondea(item["pim"] - acumuladoMensual)}
+      </th>
+    );
+    //saldo por asignar
+    tempRender.push(
+      <th style={{ textAlign: "right" }}>
+        {Redondea(ultimoPresupuesto - acumuladoAnual - item["pim"])}
+      </th>
+    );
     return tempRender;
   }
 
@@ -153,18 +192,26 @@ export default () => {
       );
       var acumulado = 0;
       var ultimoPresupuesto = 0;
+      var acumuladoAnual = 0;
+      var acumuladoMensual = 0;
       for (let i = 0; i < properties.length; i++) {
         const key = properties[i];
         var total = 0;
         for (let index2 = 0; index2 < CostosAnalitico.length; index2++) {
-          const element2 = CostosAnalitico[index2];
-          if (element2[key]) {
-            total += element2[key];
+          const item = CostosAnalitico[index2];
+          if (item[key]) {
+            total += item[key];
             if (
               key.startsWith("avanceAnual_") ||
               key.startsWith("avanceMensual")
             ) {
-              acumulado += element2[key];
+              acumulado += item[key];
+              if (key.startsWith("avanceAnual_")) {
+                if (item[key]) acumuladoAnual += item[key];
+              }
+              if (key.startsWith("avanceMensual_")) {
+                if (item[key]) acumuladoMensual += item[key];
+              }
             }
             if (key.startsWith("presupuesto_")) {
               ultimoPresupuesto = total;
@@ -202,6 +249,43 @@ export default () => {
           {Redondea(
             ((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100
           )}
+        </th>
+      );
+      //zona de presupuesto pim
+      var pim = 0;
+      for (let index2 = 0; index2 < CostosAnalitico.length; index2++) {
+        const item = CostosAnalitico[index2];
+        if (item["pim"]) {
+          pim += item["pim"];
+        }
+      }
+      //acumulado anual
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>{Redondea(acumuladoAnual)}</th>
+      );
+      // saldo anyo pasado
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea(ultimoPresupuesto - acumuladoAnual)}
+          {/* {ultimoPresupuesto + " - " + acumuladoAnual} */}
+        </th>
+      );
+      //pim
+      tempRender.push(<th style={{ textAlign: "right" }}>{Redondea(pim)}</th>);
+      //devengado anyo actual
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>{Redondea(acumuladoMensual)}</th>
+      );
+      //saldo devengado
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea(pim - acumuladoMensual)}
+        </th>
+      );
+      //saldo por asignar
+      tempRender.push(
+        <th style={{ textAlign: "right" }}>
+          {Redondea(ultimoPresupuesto - acumuladoAnual - pim)}
         </th>
       );
     }
@@ -331,6 +415,12 @@ export default () => {
             {CostosAnalitico.length > 0 && RenderMesesTitulo()}
             {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
             {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
+            <th>Acumulado al {AnyoSeleccionado - 1}</th>
+            <th>Saldo al {AnyoSeleccionado - 1}</th>
+            <th>PIM {AnyoSeleccionado}</th>
+            <th>DEVENGADO {AnyoSeleccionado}</th>
+            <th>SALDO DEVENGADO PIM {AnyoSeleccionado}</th>
+            <th>SALDO POR ASIGNAR {AnyoSeleccionado}</th>
           </tr>
         </thead>
         <tbody>
