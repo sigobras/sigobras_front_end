@@ -271,7 +271,7 @@ export default () => {
                       cursor: "pointer",
                     }}
                   >
-                    {item.emisor_cargo + " - " + item.emisor_nombre}
+                    {item.emisor_nombre}
                   </td>
                   <td
                     className="col-md-2"
