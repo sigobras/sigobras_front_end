@@ -71,7 +71,8 @@ export default ({ Obra }) => {
       id_ficha: Obra.id_ficha,
     });
     setCurvaSAnyos(res.data);
-    setCurvaSAnyoSeleccionado(res.data[0].anyo);
+    if (CurvaSAnyoSeleccionado == 0)
+      setCurvaSAnyoSeleccionado(res.data[0].anyo);
   };
   const [CurvaSdata, setCurvaSdata] = useState([]);
   const fetchCurvaSdata = async () => {
@@ -99,7 +100,6 @@ export default ({ Obra }) => {
           (element.financiero_programado_monto / Obra.g_total_presu) * 100;
       }
     }
-    console.log("dataTotal", dataTotal);
     setCurvaSdata(dataTotal);
   };
 
@@ -183,7 +183,9 @@ export default ({ Obra }) => {
               <div style={{ margin: "1px" }}>
                 <select
                   onChange={(e) => setCurvaSAnyoSeleccionado(e.target.value)}
+                  value={CurvaSAnyoSeleccionado}
                 >
+                  <option value="">Seleccione</option>
                   {CurvaSAnyos.map((item, i) => (
                     <option key={i}>{item.anyo}</option>
                   ))}
@@ -244,9 +246,8 @@ export default ({ Obra }) => {
                       {item.tipo == "TOTAL"
                         ? "TOTAL - " + item.anyo
                         : mesesShort[item.mes - 1] + "-" + item.anyo}
-                      {(item.fisico_monto == 0 || item.fisico_monto == null) &&
-                        item.tipo != "TOTAL" &&
-                        Permisos["eliminar_periodocurvas"] && (
+                      {item.tipo != "TOTAL" &&
+                        Permisos["eliminar_periodocurvas"] == 1 && (
                           <div onClick={() => deletePeriodoCurvaS(item.id)}>
                             <MdDeleteForever
                               title={"eliminiar periodo"}
