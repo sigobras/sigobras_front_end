@@ -66,6 +66,7 @@ const ModificacionExpediente = lazy(() => import("./ModificacionExpediente"));
 const ReporteGeneral = lazy(() => import("./ReporteGeneral"));
 const PresupuestoAnalitico = lazy(() => import("./PresupuestoAnalitico"));
 const Test = lazy(() => import("./Test"));
+const FuentesFinanciamiento = lazy(() => import("./FuentesFinanciamiento"));
 
 export default () => {
   useEffect(() => {
@@ -234,71 +235,64 @@ export default () => {
                       </Collapse>
                     </li>
                   ))}
-                  {DataMenus.length > 0 && [
-                    <li className="lii" key="11">
-                      <a
-                        className="nav-link"
-                        onClick={() => CollapseMenu("REPORTES")}
-                      >
-                        REPORTES
-                        <div className="float-right">
-                          {collapse === "REPORTES" ? (
-                            <FaChevronUp />
-                          ) : (
-                            <FaChevronRight />
-                          )}
-                        </div>
-                      </a>
-                      <Collapse isOpen={collapse === "REPORTES"}>
-                        <ul className="nav flex-column ull ">
-                          <li className="lii pl-3">
-                            <NavLink
-                              to="/SeguimientoObras"
-                              activeclassname="nav-link"
-                            >
-                              <span> Seguimiento de Obras </span>
-                            </NavLink>
-                          </li>
-                          <li className="lii pl-3">
-                            <NavLink
-                              to="/ReportesGenerales"
-                              activeclassname="nav-link"
-                            >
-                              {" "}
-                              <span> Reportes Para Imprimir </span>{" "}
-                            </NavLink>
-                          </li>
-                          <li className="lii pl-3">
-                            <NavLink
-                              to="/reporteGeneral"
-                              activeclassname="nav-link"
-                            >
-                              {" "}
-                              <span> Reportes General </span>{" "}
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </Collapse>
-                    </li>,
-                    <li className="lii" key="22">
-                      <NavLink
-                        to="/GestionDocumentaria"
-                        activeclassname="nav-link"
-                      >
-                        {" "}
-                        <span> GESTION DOCUMENTARIA </span>{" "}
-                      </NavLink>
-                    </li>,
-                    // <li className="lii" key="33">
-                    //   <NavLink
-                    //     to="/CostosIndirectos"
-                    //     activeclassname="nav-link"
-                    //   >
-                    //     {" "}
-                    //     <span> COSTOS INDIRECTOS </span>{" "}
-                    //   </NavLink>
-                    // </li>,
-                  ]}
+                  {DataMenus.length > 0 && (
+                    <>
+                      <li className="lii" key="11">
+                        <a
+                          className="nav-link"
+                          onClick={() => CollapseMenu("REPORTES")}
+                        >
+                          REPORTES
+                          <div className="float-right">
+                            {collapse === "REPORTES" ? (
+                              <FaChevronUp />
+                            ) : (
+                              <FaChevronRight />
+                            )}
+                          </div>
+                        </a>
+                        <Collapse isOpen={collapse === "REPORTES"}>
+                          <ul className="nav flex-column ull ">
+                            <li className="lii pl-3">
+                              <NavLink
+                                to="/SeguimientoObras"
+                                activeclassname="nav-link"
+                              >
+                                <span> Seguimiento de Obras </span>
+                              </NavLink>
+                            </li>
+                            <li className="lii pl-3">
+                              <NavLink
+                                to="/ReportesGenerales"
+                                activeclassname="nav-link"
+                              >
+                                {" "}
+                                <span> Reportes Para Imprimir </span>{" "}
+                              </NavLink>
+                            </li>
+                            <li className="lii pl-3">
+                              <NavLink
+                                to="/reporteGeneral"
+                                activeclassname="nav-link"
+                              >
+                                {" "}
+                                <span> Reportes General </span>{" "}
+                              </NavLink>
+                            </li>
+                          </ul>
+                        </Collapse>
+                      </li>
+                      <li className="lii" key="22">
+                        <NavLink
+                          to="/GestionDocumentaria"
+                          activeclassname="nav-link"
+                        >
+                          {" "}
+                          <span> GESTION DOCUMENTARIA </span>{" "}
+                        </NavLink>
+                      </li>
+                    </>
+                  )}
                 </ul>
                 <div
                   className="ContentpresupuestoObra"
@@ -492,6 +486,10 @@ export default () => {
                     <Route
                       path="/PresupuestoAnalitico"
                       component={PresupuestoAnalitico}
+                    />
+                    <Route
+                      path="/FuentesFinanciamiento"
+                      component={FuentesFinanciamiento}
                     />
                     <Route path="/Test" component={Test} />
                   </Switch>
