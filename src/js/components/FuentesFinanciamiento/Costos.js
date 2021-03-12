@@ -109,7 +109,7 @@ export default ({ id, anyo }) => {
     );
     setEspecificas(res.data);
   }
-  async function agregarEspecifica() {
+  async function agregarEspecifica(id) {
     var res = await axios.post(
       `${UrlServer}/v1/fuentesFinancieamiento/especificas`,
       {
@@ -259,7 +259,9 @@ export default ({ id, anyo }) => {
                           <FaEdit
                             onClick={() => setEstadoEdicion("costo" + item.id)}
                           />
-                          <FaPlusCircle onClick={() => agregarEspecifica()} />
+                          <FaPlusCircle
+                            onClick={() => agregarEspecifica(item.id)}
+                          />
                           <FaTrash onClick={() => eliminarCosto(item.id)} />
                         </span>
                       </span>
