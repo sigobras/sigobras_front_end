@@ -63,7 +63,7 @@ export default ({ id, anyo }) => {
       },
     });
 
-    var nextId = res.data || maxId;
+    var nextId = res.data ? res.data.id : maxId;
     console.log("next id", nextId);
     var res2 = await axios.post(
       `${UrlServer}/v1/fuentesFinancieamiento/costos`,
@@ -291,6 +291,7 @@ export default ({ id, anyo }) => {
         },
       }
     );
+    console.log("cargarVariacionesPim", res.data);
     setVariacionesPim(res.data);
   }
   async function agregarVariacionPim() {
@@ -489,188 +490,205 @@ export default ({ id, anyo }) => {
           />
         </>
       ) : (
-        <table className="whiteThem-table">
-          <thead>
-            <tr>
-              <th>ITEM</th>
-              <th style={{ position: "relative" }}>
-                DESCRIPCION
-                <span
-                  style={{
-                    position: "absolute",
-                    top: "0px",
-                    right: "0px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <FaPlusCircle
-                    onClick={() => agregarCosto()}
-                    color="orange"
-                    size="15"
-                  />
-                </span>
-              </th>
-              <th>PIA</th>
-              {variacionesRenderTitulo()}
-              <th>ACUMULADO {anyo}</th>
-              <th>SALDO</th>
+        <>
+          {VariacionesPim.length == 0 && (
+            <>
+              {"Agregar nueva variacion de PIM =>"}
+              <FaPlusCircle
+                onClick={() => agregarVariacionPim()}
+                style={{
+                  cursor: "pointer",
+                }}
+                color="orange"
+                size="15"
+              />
+            </>
+          )}
+          <table className="whiteThem-table">
+            <thead>
+              <tr>
+                <th>ITEM</th>
+                <th style={{ position: "relative" }}>
+                  DESCRIPCION
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "0px",
+                      right: "0px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <FaPlusCircle
+                      onClick={() => agregarCosto()}
+                      color="orange"
+                      size="15"
+                    />
+                  </span>
+                </th>
+                <th>PIA</th>
+                {variacionesRenderTitulo()}
+                <th>ACUMULADO {anyo}</th>
+                <th>SALDO</th>
 
-              {mesesRenderTitulo()}
-            </tr>
-          </thead>
-          <tbody>
-            {Costos.map((item, i) => (
-              <>
-                <tr>
-                  <th>{i + 1}</th>
-                  <th style={{ position: "relative", width: "450px" }}>
-                    {EstadoEdicion == "costo" + item.id ? (
-                      <span style={{ display: "flex" }}>
-                        <CustomSelect
-                          value={item.id_costo}
-                          Opciones={CostosList}
-                          item={item}
-                          itemValue={"id_costo"}
-                          itemLabel={"nombre"}
-                          guardar={(valor) => actualizarCosto(valor, item.id)}
-                          cancel={() => setEstadoEdicion("")}
-                        />
-                      </span>
-                    ) : (
-                      <span>
-                        <span
-                          style={{
-                            paddingRight: "60px",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {item.nombre}
-                        </span>
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "0px",
-                            right: "0px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <FaEdit
-                            onClick={() => setEstadoEdicion("costo" + item.id)}
-                            style={{
-                              paddingLeft: "5px",
-                            }}
-                            size="15"
-                          />
-                          <FaPlusCircle
-                            onClick={() => agregarEspecifica(item.id)}
-                            style={{
-                              paddingLeft: "5px",
-                            }}
-                            size="15"
-                          />
-                          <FaTrash
-                            onClick={() => eliminarCosto(item.id)}
-                            style={{
-                              paddingLeft: "5px",
-                            }}
-                            size="15"
-                          />
-                        </span>
-                      </span>
-                    )}
-                  </th>
-                  <th>
-                    {Redondea(
-                      Especificas.reduce((acc, item2) => {
-                        if (item2.id_costoasignado == item.id) {
-                          acc += item2.pia;
-                        }
-                        return acc;
-                      }, 0)
-                    )}
-                  </th>
-                  {renderCostoMeses(item.id)}
-                </tr>
-                {Especificas.filter(
-                  (item2, i) => item2.id_costoasignado == item.id
-                ).map((item2, i2) => (
-                  <tr key={i2}>
-                    <td
-                      style={{
-                        whiteSpace: "nowrap",
-                        paddingRight: "5px",
-                        paddingLeft: "5px",
-                      }}
-                      colSpan={
-                        EstadoEdicion == "especifica" + item2.id ? "2" : "1"
-                      }
-                    >
-                      {EstadoEdicion == "especifica" + item2.id ? (
+                {mesesRenderTitulo()}
+              </tr>
+            </thead>
+            <tbody>
+              {Costos.map((item, i) => (
+                <>
+                  <tr>
+                    <th>{i + 1}</th>
+                    <th style={{ position: "relative", width: "450px" }}>
+                      {EstadoEdicion == "costo" + item.id ? (
                         <span style={{ display: "flex" }}>
-                          <CustomAsyncSelect
-                            value={item2}
-                            guardar={(valor) =>
-                              actualizarEspecifica(valor, item2.id)
-                            }
-                          />
-                          <MdCancel
-                            onClick={() => setEstadoEdicion("")}
-                            style={{ cursor: "pointer" }}
+                          <CustomSelect
+                            value={item.id_costo}
+                            Opciones={CostosList}
+                            item={item}
+                            itemValue={"id_costo"}
+                            itemLabel={"nombre"}
+                            guardar={(valor) => actualizarCosto(valor, item.id)}
+                            cancel={() => setEstadoEdicion("")}
                           />
                         </span>
                       ) : (
-                        item2.clasificador
+                        <span>
+                          <span
+                            style={{
+                              paddingRight: "60px",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {item.nombre}
+                          </span>
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "0px",
+                              right: "0px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FaEdit
+                              onClick={() =>
+                                setEstadoEdicion("costo" + item.id)
+                              }
+                              style={{
+                                paddingLeft: "5px",
+                              }}
+                              size="15"
+                            />
+                            <FaPlusCircle
+                              onClick={() => agregarEspecifica(item.id)}
+                              style={{
+                                paddingLeft: "5px",
+                              }}
+                              size="15"
+                            />
+                            <FaTrash
+                              onClick={() => eliminarCosto(item.id)}
+                              style={{
+                                paddingLeft: "5px",
+                              }}
+                              size="15"
+                            />
+                          </span>
+                        </span>
                       )}
-                    </td>
-                    {EstadoEdicion != "especifica" + item2.id && (
-                      <td
-                        style={{ whiteSpace: "nowrap", position: "relative" }}
-                      >
-                        <span style={{ paddingRight: "60px" }}>
-                          {item2.descripcion}
-                        </span>
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "0px",
-                            right: "0px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <FaEdit
-                            onClick={() =>
-                              setEstadoEdicion("especifica" + item2.id)
-                            }
-                            style={{
-                              paddingLeft: "5px",
-                            }}
-                            size="15"
-                          />
-                          <FaTrash
-                            onClick={() => eliminarEspecifica(item2.id)}
-                            style={{
-                              paddingLeft: "5px",
-                            }}
-                            size="15"
-                          />
-                        </span>
-                      </td>
-                    )}
-                    <td>
-                      <CustomInput
-                        value={Redondea(item2.pia, 2, false, "")}
-                        onBlur={(value) => guardarMonto(value, item2.id)}
-                        style={{ width: "150px" }}
-                      />
-                    </td>
-                    {mesesEspecificaRender(item2)}
+                    </th>
+                    <th>
+                      {Redondea(
+                        Especificas.reduce((acc, item2) => {
+                          if (item2.id_costoasignado == item.id) {
+                            acc += item2.pia;
+                          }
+                          return acc;
+                        }, 0)
+                      )}
+                    </th>
+                    {renderCostoMeses(item.id)}
                   </tr>
-                ))}
-              </>
-            ))}
-            <tr>{renderTotales()}</tr>
-          </tbody>
-        </table>
+                  {Especificas.filter(
+                    (item2, i) => item2.id_costoasignado == item.id
+                  ).map((item2, i2) => (
+                    <tr key={i2}>
+                      <td
+                        style={{
+                          whiteSpace: "nowrap",
+                          paddingRight: "5px",
+                          paddingLeft: "5px",
+                        }}
+                        colSpan={
+                          EstadoEdicion == "especifica" + item2.id ? "2" : "1"
+                        }
+                      >
+                        {EstadoEdicion == "especifica" + item2.id ? (
+                          <span style={{ display: "flex" }}>
+                            <CustomAsyncSelect
+                              value={item2}
+                              guardar={(valor) =>
+                                actualizarEspecifica(valor, item2.id)
+                              }
+                            />
+                            <MdCancel
+                              onClick={() => setEstadoEdicion("")}
+                              style={{ cursor: "pointer" }}
+                            />
+                          </span>
+                        ) : (
+                          item2.clasificador
+                        )}
+                      </td>
+                      {EstadoEdicion != "especifica" + item2.id && (
+                        <td
+                          style={{ whiteSpace: "nowrap", position: "relative" }}
+                        >
+                          <span style={{ paddingRight: "60px" }}>
+                            {item2.descripcion}
+                          </span>
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "0px",
+                              right: "0px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <FaEdit
+                              onClick={() =>
+                                setEstadoEdicion("especifica" + item2.id)
+                              }
+                              style={{
+                                paddingLeft: "5px",
+                              }}
+                              size="15"
+                            />
+                            <FaTrash
+                              onClick={() => eliminarEspecifica(item2.id)}
+                              style={{
+                                paddingLeft: "5px",
+                              }}
+                              size="15"
+                            />
+                          </span>
+                        </td>
+                      )}
+                      <td>
+                        <CustomInput
+                          value={Redondea(item2.pia, 2, false, "")}
+                          onBlur={(value) => guardarMonto(value, item2.id)}
+                          style={{ width: "150px" }}
+                        />
+                      </td>
+                      {mesesEspecificaRender(item2)}
+                    </tr>
+                  ))}
+                </>
+              ))}
+              <tr>{renderTotales()}</tr>
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );
