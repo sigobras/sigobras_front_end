@@ -62,16 +62,16 @@ export default ({ id, anyo }) => {
         id: maxId,
       },
     });
-    console.log("next id", res.data);
-    if (res.data) {
-      var res = await axios.put(
-        `${UrlServer}/v1/fuentesFinancieamiento/costos`,
-        {
-          fuentesfinanciamiento_asignados_id: id,
-          presupuestoanalitico_costos_id: res.data.id,
-        }
-      );
-    }
+
+    var nextId = res.data || maxId;
+    console.log("next id", nextId);
+    var res2 = await axios.post(
+      `${UrlServer}/v1/fuentesFinancieamiento/costos`,
+      {
+        fuentesfinanciamiento_asignados_id: id,
+        presupuestoanalitico_costos_id: nextId,
+      }
+    );
     cargarCostos();
   }
   async function eliminarCosto(id) {
@@ -96,6 +96,47 @@ export default ({ id, anyo }) => {
     );
     setEstadoEdicion("");
     cargarCostos();
+  }
+  const [EstadoEdicion, setEstadoEdicion] = useState("");
+  function renderCostoMeses(id_costo) {
+    var tempRender = [];
+    var acumulado = 0;
+    var ultimoPresupuesto = 0;
+    //variaciones
+    for (let i = 0; i < VariacionesPim.length; i++) {
+      const variacion = VariacionesPim[i];
+      var total = 0;
+      for (let i = 0; i < Especificas.length; i++) {
+        const item = Especificas[i];
+        if (item.id_costoasignado == id_costo) {
+          total += item["variacionPim_" + variacion.id];
+        }
+      }
+      ultimoPresupuesto = total;
+      tempRender.push(<th>{Redondea(total)}</th>);
+    }
+    //meses
+    for (let mes = 1; mes <= 12; mes++) {
+      var total = 0;
+      var totalProgramado = 0;
+      for (let i = 0; i < Especificas.length; i++) {
+        const item = Especificas[i];
+        if (item.id_costoasignado == id_costo) {
+          total += item["avanceMensual_" + mes];
+          totalProgramado += item["programadoMensual_" + mes];
+        }
+      }
+      acumulado += total;
+      tempRender.push(<th>{Redondea(total)}</th>);
+      tempRender.push(<th>{Redondea(totalProgramado)}</th>);
+    }
+    tempRender.splice(VariacionesPim.length, 0, <th>{Redondea(acumulado)}</th>);
+    tempRender.splice(
+      VariacionesPim.length + 1,
+      0,
+      <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
+    );
+    return tempRender;
   }
   //especificias
   const [Especificas, setEspecificas] = useState([]);
@@ -146,6 +187,98 @@ export default ({ id, anyo }) => {
     cargarEspecificas();
     setEstadoEdicion("");
   }
+  async function guardarMonto(pia, id) {
+    var res = await axios.put(
+      `${UrlServer}/v1/fuentesFinancieamiento/especificas/${id}`,
+      {
+        pia,
+      }
+    );
+    cargarEspecificas();
+  }
+  async function guardarAvanceMensual(
+    monto,
+    fuentesfinanciamiento_analitico_id,
+    mes
+  ) {
+    var res = await axios.put(
+      `${UrlServer}/v1/fuentesFinancieamiento/avanceMensual`,
+      {
+        fuentesfinanciamiento_analitico_id,
+        anyo,
+        mes,
+        monto,
+      }
+    );
+    cargarEspecificas();
+  }
+  async function guardarProgramadoMensual(
+    programado,
+    fuentesfinanciamiento_analitico_id,
+    mes
+  ) {
+    var res = await axios.put(
+      `${UrlServer}/v1/fuentesFinancieamiento/avanceMensual`,
+      {
+        fuentesfinanciamiento_analitico_id,
+        anyo,
+        mes,
+        programado,
+      }
+    );
+    cargarEspecificas();
+  }
+  function mesesEspecificaRender(item) {
+    var tempRender = [];
+    var acumulado = 0;
+    var ultimoPresupuesto = 0;
+    //render variaciones
+    for (let i = 0; i < VariacionesPim.length; i++) {
+      const element = VariacionesPim[i];
+      ultimoPresupuesto = item["variacionPim_" + element.id];
+      tempRender.push(
+        <td>
+          <CustomInput
+            value={Redondea(item["variacionPim_" + element.id], 2, false, "")}
+            onBlur={(value) =>
+              guardarVariacionesPimMonto(value, item.id, element.id)
+            }
+            style={{ width: "100px" }}
+          />
+        </td>
+      );
+    }
+    //render meses
+    for (let i = 1; i <= 12; i++) {
+      acumulado += item["avanceMensual_" + i];
+      tempRender.push(
+        <td>
+          <CustomInput
+            value={Redondea(item["avanceMensual_" + i], 2, false, "")}
+            onBlur={(value) => guardarAvanceMensual(value, item.id, i)}
+            style={{ width: "100px" }}
+          />
+        </td>
+      );
+      tempRender.push(
+        <td>
+          <CustomInput
+            value={Redondea(item["programadoMensual_" + i], 2, false, "")}
+            onBlur={(value) => guardarProgramadoMensual(value, item.id, i)}
+            style={{ width: "100px" }}
+          />
+        </td>
+      );
+    }
+
+    tempRender.splice(VariacionesPim.length, 0, <th>{Redondea(acumulado)}</th>);
+    tempRender.splice(
+      VariacionesPim.length + 1,
+      0,
+      <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
+    );
+    return tempRender;
+  }
   //variaciones
   const [VariacionesPim, setVariacionesPim] = useState([]);
   async function cargarVariacionesPim() {
@@ -160,8 +293,56 @@ export default ({ id, anyo }) => {
     );
     setVariacionesPim(res.data);
   }
+  async function agregarVariacionPim() {
+    var nombreGenerado = "Variacion " + (VariacionesPim.length + 1);
+    var res = await axios.post(
+      `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim`,
+      {
+        nombre: nombreGenerado,
+        fichas_id_ficha: sessionStorage.getItem("idobra"),
+        anyo,
+      }
+    );
+    cargarVariacionesPim();
+    cargarEspecificas();
+  }
+  async function actualizarVariacionPim(nombre, id) {
+    var res = await axios.put(
+      `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim/${id}`,
+      {
+        nombre,
+      }
+    );
+    cargarVariacionesPim();
+    cargarEspecificas();
+  }
+  async function eliminarVariacionPim(id) {
+    if (confirm("Esta seguro de eliminar esta dato?")) {
+      var res = await axios.delete(
+        `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim/${id}`
+      );
+      cargarVariacionesPim();
+      cargarEspecificas();
+    }
+  }
+  async function guardarVariacionesPimMonto(
+    monto,
+    fuentesfinanciamiento_analitico_id,
+    variacionespim_id
+  ) {
+    var res = await axios.put(
+      `${UrlServer}/v1/fuentesFinancieamiento/variacionesPimMonto`,
+      {
+        fuentesfinanciamiento_analitico_id,
+        variacionespim_id,
+        monto,
+      }
+    );
+    cargarEspecificas();
+  }
   const [EdicionVariacion, setEdicionVariacion] = useState("");
   const [EdicionVariacionNombre, setEdicionVariacionNombre] = useState("");
+  //render
   function variacionesRenderTitulo() {
     var tempRender = [];
     for (let i = 0; i < VariacionesPim.length; i++) {
@@ -237,168 +418,22 @@ export default ({ id, anyo }) => {
     }
     return tempRender;
   }
-  async function agregarVariacionPim() {
-    var nombreGenerado = "Variacion " + (VariacionesPim.length + 1);
-    var res = await axios.post(
-      `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim`,
-      {
-        nombre: nombreGenerado,
-        fichas_id_ficha: sessionStorage.getItem("idobra"),
-        anyo,
-      }
-    );
-    cargarVariacionesPim();
-    cargarEspecificas();
-  }
-  async function actualizarVariacionPim(nombre, id) {
-    var res = await axios.put(
-      `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim/${id}`,
-      {
-        nombre,
-      }
-    );
-    cargarVariacionesPim();
-    cargarEspecificas();
-  }
-  async function eliminarVariacionPim(id) {
-    if (confirm("Esta seguro de eliminar esta dato?")) {
-      var res = await axios.delete(
-        `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim/${id}`
-      );
-      cargarVariacionesPim();
-      cargarEspecificas();
-    }
-  }
-  async function guardarVariacionesPimMonto(
-    monto,
-    fuentesfinanciamiento_analitico_id,
-    variacionespim_id
-  ) {
-    var res = await axios.put(
-      `${UrlServer}/v1/fuentesFinancieamiento/variacionesPimMonto`,
-      {
-        fuentesfinanciamiento_analitico_id,
-        variacionespim_id,
-        monto,
-      }
-    );
-    cargarEspecificas();
-  }
-  function mesesEspecificaRender(item) {
-    var tempRender = [];
-    var acumulado = 0;
-    var ultimoPresupuesto = 0;
-    //render variaciones
-    for (let i = 0; i < VariacionesPim.length; i++) {
-      const element = VariacionesPim[i];
-      ultimoPresupuesto = item["variacionPim_" + element.id];
-      tempRender.push(
-        <td>
-          <CustomInput
-            value={Redondea(item["variacionPim_" + element.id], 2, false, "")}
-            onBlur={(value) =>
-              guardarVariacionesPimMonto(value, item.id, element.id)
-            }
-            style={{ width: "100px" }}
-          />
-        </td>
-      );
-    }
-    //render meses
-    for (let i = 1; i <= 12; i++) {
-      acumulado += item["avanceMensual_" + i];
-      tempRender.push(
-        <td>
-          <CustomInput
-            value={Redondea(item["avanceMensual_" + i], 2, false, "")}
-            onBlur={(value) => guardarAvanceMensual(value, item.id, i)}
-            style={{ width: "100px" }}
-          />
-        </td>
-      );
-    }
-
-    tempRender.splice(VariacionesPim.length, 0, <th>{Redondea(acumulado)}</th>);
-    tempRender.splice(
-      VariacionesPim.length + 1,
-      0,
-      <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
-    );
-    return tempRender;
-  }
   function mesesRenderTitulo() {
     var tempRender = [];
     for (let i = 1; i <= 12; i++) {
       tempRender.push(<th>{mesesShort[i - 1] + " - " + anyo}</th>);
+      tempRender.push(
+        <th>{"programado " + mesesShort[i - 1] + " - " + anyo}</th>
+      );
     }
     return tempRender;
   }
-  async function guardarMonto(pia, id) {
-    var res = await axios.put(
-      `${UrlServer}/v1/fuentesFinancieamiento/especificas/${id}`,
-      {
-        pia,
-      }
-    );
-    cargarEspecificas();
-  }
-  async function guardarAvanceMensual(
-    monto,
-    fuentesfinanciamiento_analitico_id,
-    mes
-  ) {
-    var res = await axios.put(
-      `${UrlServer}/v1/fuentesFinancieamiento/avanceMensual`,
-      {
-        fuentesfinanciamiento_analitico_id,
-        anyo,
-        mes,
-        monto,
-      }
-    );
-    cargarEspecificas();
-  }
-  const [EstadoEdicion, setEstadoEdicion] = useState("");
-  function renderCostoMeses(id_costo) {
-    var tempRender = [];
-    var acumulado = 0;
-    var ultimoPresupuesto = 0;
-    for (let i = 0; i < VariacionesPim.length; i++) {
-      const variacion = VariacionesPim[i];
-      var total = 0;
-      for (let i = 0; i < Especificas.length; i++) {
-        const item = Especificas[i];
-        if (item.id_costoasignado == id_costo) {
-          total += item["variacionPim_" + variacion.id];
-        }
-      }
-      ultimoPresupuesto = total;
-      tempRender.push(<th>{Redondea(total)}</th>);
-    }
-    for (let mes = 1; mes <= 12; mes++) {
-      var total = 0;
-      for (let i = 0; i < Especificas.length; i++) {
-        const item = Especificas[i];
-        if (item.id_costoasignado == id_costo) {
-          total += item["avanceMensual_" + mes];
-        }
-      }
-      acumulado += total;
-      tempRender.push(<th>{Redondea(total)}</th>);
-    }
-    tempRender.splice(VariacionesPim.length, 0, <th>{Redondea(acumulado)}</th>);
-    tempRender.splice(
-      VariacionesPim.length + 1,
-      0,
-      <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
-    );
-    return tempRender;
-  }
+
   function renderTotales() {
     var tempRender = [];
     var acumulado = 0;
     var ultimoPresupuesto = 0;
-
+    //variaciones
     for (let i = 0; i < VariacionesPim.length; i++) {
       const variacion = VariacionesPim[i];
       var total = 0;
@@ -414,15 +449,18 @@ export default ({ id, anyo }) => {
       tempRender.push(<th>{Redondea(total)}</th>);
       ultimoPresupuesto = total;
     }
+    //meses
     for (let mes = 1; mes <= 12; mes++) {
       var total = 0;
+      var programadoTotal = 0;
 
       for (let i = 0; i < Especificas.length; i++) {
         const item = Especificas[i];
         total += item["avanceMensual_" + mes];
+        programadoTotal += item["programadoMensual_" + mes];
       }
-
       tempRender.push(<th>{Redondea(total)}</th>);
+      tempRender.push(<th>{Redondea(programadoTotal)}</th>);
       acumulado += total;
     }
 
