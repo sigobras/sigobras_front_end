@@ -20,6 +20,7 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
         id_ficha: id_ficha,
         habilitado: true,
         cargos_tipo_id: cargos_tipo_id,
+        sort_by: "cargos_tipo_id,nivel",
       },
     });
     console.log("setUsuariosPersonal", res.data);

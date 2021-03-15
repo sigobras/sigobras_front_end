@@ -11,6 +11,7 @@ import {
   UncontrolledPopover,
   PopoverHeader,
   PopoverBody,
+  dropdownOpen,
 } from "reactstrap";
 import axios from "axios";
 import { FaUpload, FaFileAlt, FaPlusCircle } from "react-icons/fa";
@@ -26,7 +27,17 @@ export default () => {
     cargarFuentesFinanciamiento();
     return () => {};
   }, []);
+  //seleccionar anyo
+  const [AnyosList, setAnyosList] = useState(() => {
+    var temp = [];
+    for (let index = 2010; index <= 2021; index++) {
+      temp.push(index);
+    }
+    return temp;
+  });
   const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
+  const [dropdownOpen, setdropdownOpen] = useState(false);
+
   const [FuentesFinanciamiento, setFuentesFinanciamiento] = useState([]);
   async function cargarFuentesFinanciamiento() {
     var res = await axios.get(`${UrlServer}/v1/fuentesFinancieamiento`, {
@@ -77,11 +88,37 @@ export default () => {
       }
     }
   }
+  useEffect(() => {
+    cargarFuentesFinanciamiento();
+    return () => {};
+  }, [AnyoSeleccionado]);
   return (
-    <div>
-      <Button onClick={() => agregarFuenteFinanciamiento()} color="primary">
-        AgregarFuente
-      </Button>
+    <div style={{ overflowX: "auto" }}>
+      <span className="d-flex">
+        <Nav tabs style={{ paddingTop: "0px", margin: "0px", height: "29px" }}>
+          <Dropdown
+            nav
+            isOpen={dropdownOpen}
+            toggle={() => setdropdownOpen(!dropdownOpen)}
+          >
+            <DropdownToggle nav caret>
+              {AnyoSeleccionado == 0 ? "--" : AnyoSeleccionado}
+            </DropdownToggle>
+
+            <DropdownMenu>
+              {AnyosList.map((item, i) => (
+                <DropdownItem onClick={() => setAnyoSeleccionado(item)} key={i}>
+                  {item}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </Nav>
+        <Button onClick={() => agregarFuenteFinanciamiento()} color="primary">
+          AgregarFuente
+        </Button>
+      </span>
+
       {FuentesFinanciamiento.map((item, i) => (
         <div key={item.id}>
           <span className="d-flex">
