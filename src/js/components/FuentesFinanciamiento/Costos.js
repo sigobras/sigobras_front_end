@@ -159,7 +159,7 @@ export default ({ id, anyo }) => {
       {
         clasificadores_presupuestarios_id: "1505",
         fuentesfinanciamiento_costosasignados_id: id,
-        monto: "0",
+        pia: "0",
       }
     );
     cargarEspecificas();
@@ -287,7 +287,7 @@ export default ({ id, anyo }) => {
       {
         params: {
           anyo,
-          id_ficha: sessionStorage.getItem("idobra"),
+          id,
         },
       }
     );
@@ -300,7 +300,7 @@ export default ({ id, anyo }) => {
       `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim`,
       {
         nombre: nombreGenerado,
-        fichas_id_ficha: sessionStorage.getItem("idobra"),
+        fuentesfinanciamiento_asignados_id: id,
         anyo,
       }
     );
