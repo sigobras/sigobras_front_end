@@ -17,6 +17,7 @@
   font-size: 11px;
   vertical-align: top;
   border: 1px solid black;
+  white-space: nowrap;
 }
 .whiteThem-table tbody th {
   background: #c6c8ca;

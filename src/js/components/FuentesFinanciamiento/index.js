@@ -18,7 +18,7 @@ import { FaUpload, FaFileAlt, FaPlusCircle } from "react-icons/fa";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
-import Costos from "./Costos";
+import Especificas from "./Especificas";
 
 import "./FuentesFinanciamiento.css";
 export default () => {
@@ -93,7 +93,7 @@ export default () => {
     return () => {};
   }, [AnyoSeleccionado]);
   return (
-    <div style={{ overflowX: "auto" }}>
+    <div style={{ overflowX: "auto", paddingBottom: "200px" }}>
       <span className="d-flex">
         <Nav tabs style={{ paddingTop: "0px", margin: "0px", height: "29px" }}>
           <Dropdown
@@ -142,7 +142,7 @@ export default () => {
               </Button>
             </span>
           </span>
-          <Costos id={item.id} anyo={AnyoSeleccionado} />
+          <Especificas Id_fuente={item.id} Anyo={AnyoSeleccionado} />
         </div>
       ))}
     </div>

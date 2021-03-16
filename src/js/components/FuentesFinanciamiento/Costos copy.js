@@ -270,7 +270,6 @@ export default ({ id, anyo }) => {
         </td>
       );
     }
-
     tempRender.splice(VariacionesPim.length, 0, <th>{Redondea(acumulado)}</th>);
     tempRender.splice(
       VariacionesPim.length + 1,
@@ -422,9 +421,15 @@ export default ({ id, anyo }) => {
   function mesesRenderTitulo() {
     var tempRender = [];
     for (let i = 1; i <= 12; i++) {
-      tempRender.push(<th>{mesesShort[i - 1] + " - " + anyo}</th>);
       tempRender.push(
-        <th>{"programado " + mesesShort[i - 1] + " - " + anyo}</th>
+        <th style={{ whiteSpace: "nowrap" }}>
+          {mesesShort[i - 1] + " - " + anyo}
+        </th>
+      );
+      tempRender.push(
+        <th style={{ whiteSpace: "nowrap" }}>
+          {"P/" + mesesShort[i - 1] + " - " + anyo}
+        </th>
       );
     }
     return tempRender;
