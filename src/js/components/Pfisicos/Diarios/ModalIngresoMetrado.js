@@ -106,7 +106,7 @@ export default ({ Partida, Actividad, recargaActividad }) => {
         <div className="d-flex justify-content-between ">
           <div>{/* INGRESE EL METRADO: {this.state.Porcentaje_Metrado} */}</div>
           <div title="redimiento" className="text-right bold text-warning">
-            redim.: {Partida.rendimiento}
+            redimiento {Partida.rendimiento}
           </div>
         </div>
         <div className="input-group input-group-sm mb-0">
