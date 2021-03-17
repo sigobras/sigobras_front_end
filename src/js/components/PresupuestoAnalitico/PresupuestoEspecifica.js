@@ -21,6 +21,7 @@ export default forwardRef(
       display,
       AnyoSeleccionado,
       setAnyosEjecutados,
+      ShowPim,
     },
     ref
   ) => {
@@ -204,28 +205,34 @@ export default forwardRef(
           mes = temp[2];
           if (item[key]) acumuladoMensual += item[key];
         }
-        tempRender.push(
-          <td className="whiteThem-table-propiedades">
-            <PresupuestoInput
-              objectKey={key}
-              value={Redondea(item[key], 2, false, "")}
-              presupuesto_analitico_id={item.id}
-              presupuestos_aprobados_id={presupuestos_aprobados_id}
-              recargar={cargarEspecificasCostos}
-              RefEspecificasInput={RefEspecificasInput}
-              setRefEspecificasInput={setRefEspecificasInput}
-              EspecificasCostos={EspecificasCostos}
-              anyo={anyo}
-              mes={mes}
-              propertyIndex={i}
-              properties={properties}
-            />
-          </td>
-        );
         //porcentajes
         if (key.startsWith("avanceAnual_") || key.startsWith("avanceMensual")) {
           tempRender.push(
-            <td style={{ textAlign: "right" }}>
+            <td
+              className="whiteThem-table-propiedades"
+              style={{ display: ShowPim ? "none" : "" }}
+            >
+              <PresupuestoInput
+                objectKey={key}
+                value={Redondea(item[key], 2, false, "")}
+                presupuesto_analitico_id={item.id}
+                presupuestos_aprobados_id={presupuestos_aprobados_id}
+                recargar={cargarEspecificasCostos}
+                RefEspecificasInput={RefEspecificasInput}
+                setRefEspecificasInput={setRefEspecificasInput}
+                EspecificasCostos={EspecificasCostos}
+                anyo={anyo}
+                mes={mes}
+                propertyIndex={i}
+                properties={properties}
+              />
+            </td>
+          );
+          tempRender.push(
+            <td
+              style={{ textAlign: "right" }}
+              style={{ display: ShowPim ? "none" : "" }}
+            >
               {item[key]
                 ? Redondea((item[key] / ultimoPresupuesto) * 100) + "%"
                 : ""}
@@ -233,6 +240,26 @@ export default forwardRef(
           );
           //calculando acumulado
           if (item[key]) acumulado += item[key];
+        }
+        if (key.startsWith("presupuesto_")) {
+          tempRender.push(
+            <td className="whiteThem-table-propiedades">
+              <PresupuestoInput
+                objectKey={key}
+                value={Redondea(item[key], 2, false, "")}
+                presupuesto_analitico_id={item.id}
+                presupuestos_aprobados_id={presupuestos_aprobados_id}
+                recargar={cargarEspecificasCostos}
+                RefEspecificasInput={RefEspecificasInput}
+                setRefEspecificasInput={setRefEspecificasInput}
+                EspecificasCostos={EspecificasCostos}
+                anyo={anyo}
+                mes={mes}
+                propertyIndex={i}
+                properties={properties}
+              />
+            </td>
+          );
         }
       }
       //acumulado
@@ -267,52 +294,6 @@ export default forwardRef(
           )}{" "}
           %
         </th>
-      );
-      //zona de presupuesto pim
-      tempRender.push(
-        <td style={{ textAlign: "right" }}>{Redondea(acumuladoAnual)}</td>
-      );
-      // saldo anyo pasado
-      tempRender.push(
-        <td style={{ textAlign: "right" }}>
-          {Redondea(ultimoPresupuesto - acumuladoAnual)}
-        </td>
-      );
-      //pim
-      tempRender.push(
-        <td style={{ textAlign: "right" }}>
-          {" "}
-          <PresupuestoInput
-            objectKey={"pim"}
-            value={Redondea(item["pim"], 2, false, "")}
-            presupuesto_analitico_id={item.id}
-            presupuestos_aprobados_id={presupuestos_aprobados_id}
-            recargar={cargarEspecificasCostos}
-            RefEspecificasInput={RefEspecificasInput}
-            setRefEspecificasInput={setRefEspecificasInput}
-            EspecificasCostos={EspecificasCostos}
-            anyo={anyo}
-            mes={mes}
-            // propertyIndex={i}
-            properties={properties}
-          />
-        </td>
-      );
-      //devengado anyo actual
-      tempRender.push(
-        <td style={{ textAlign: "right" }}>{Redondea(acumuladoMensual)}</td>
-      );
-      //saldo devengado
-      tempRender.push(
-        <td style={{ textAlign: "right" }}>
-          {Redondea(item["pim"] - acumuladoMensual)}
-        </td>
-      );
-      //saldo por asignar
-      tempRender.push(
-        <td style={{ textAlign: "right" }}>
-          {Redondea(ultimoPresupuesto - acumuladoAnual - item["pim"])}
-        </td>
       );
       return tempRender;
     }

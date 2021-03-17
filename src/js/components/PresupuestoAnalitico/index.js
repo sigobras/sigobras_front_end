@@ -104,15 +104,24 @@ export default () => {
     var acumuladoMensual = 0;
     for (let i = 0; i < properties.length; i++) {
       const key = properties[i];
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>{Redondea(item[key])}</th>
-      );
+
       if (key.startsWith("presupuesto_")) {
         ultimoPresupuesto = item[key];
       }
       if (key.startsWith("avanceAnual_") || key.startsWith("avanceMensual_")) {
         tempRender.push(
-          <th style={{ textAlign: "right" }}>
+          <th
+            style={{ textAlign: "right" }}
+            style={{ display: ShowPim ? "none" : "" }}
+          >
+            {Redondea(item[key])}
+          </th>
+        );
+        tempRender.push(
+          <th
+            style={{ textAlign: "right" }}
+            style={{ display: ShowPim ? "none" : "" }}
+          >
             {Redondea((item[key] / ultimoPresupuesto) * 100)} %
           </th>
         );
@@ -124,6 +133,11 @@ export default () => {
         if (key.startsWith("avanceMensual_")) {
           if (item[key]) acumuladoMensual += item[key];
         }
+      }
+      if (key.startsWith("presupuesto_")) {
+        tempRender.push(
+          <th style={{ textAlign: "right" }}>{Redondea(item[key])}</th>
+        );
       }
     }
     //acumulados
@@ -145,36 +159,6 @@ export default () => {
       <th style={{ textAlign: "right" }}>
         {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
         %
-      </th>
-    );
-    //zona de presupuesto pim
-    tempRender.push(
-      <th style={{ textAlign: "right" }}>{Redondea(acumuladoAnual)}</th>
-    );
-    // saldo anyo pasado
-    tempRender.push(
-      <th style={{ textAlign: "right" }}>
-        {Redondea(ultimoPresupuesto - acumuladoAnual)}
-      </th>
-    );
-    //pim
-    tempRender.push(
-      <th style={{ textAlign: "right" }}>{Redondea(item["pim"])}</th>
-    );
-    //devengado anyo actual
-    tempRender.push(
-      <th style={{ textAlign: "right" }}>{Redondea(acumuladoMensual)}</th>
-    );
-    //saldo devengado
-    tempRender.push(
-      <th style={{ textAlign: "right" }}>
-        {Redondea(item["pim"] - acumuladoMensual)}
-      </th>
-    );
-    //saldo por asignar
-    tempRender.push(
-      <th style={{ textAlign: "right" }}>
-        {Redondea(ultimoPresupuesto - acumuladoAnual - item["pim"])}
       </th>
     );
     return tempRender;
@@ -218,14 +202,28 @@ export default () => {
             }
           }
         }
-        tempRender.push(
-          <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
-        );
+
         if (key.startsWith("avanceAnual_") || key.startsWith("avanceMensual")) {
           tempRender.push(
-            <th style={{ textAlign: "right" }}>
+            <th
+              style={{ textAlign: "right" }}
+              style={{ display: ShowPim ? "none" : "" }}
+            >
+              {Redondea(total)}
+            </th>
+          );
+          tempRender.push(
+            <th
+              style={{ textAlign: "right" }}
+              style={{ display: ShowPim ? "none" : "" }}
+            >
               {Redondea((total / ultimoPresupuesto) * 100)}
             </th>
+          );
+        }
+        if (key.startsWith("presupuesto_")) {
+          tempRender.push(
+            <th style={{ textAlign: "right" }}>{Redondea(total)}</th>
           );
         }
       }
@@ -251,43 +249,6 @@ export default () => {
           )}
         </th>
       );
-      //zona de presupuesto pim
-      var pim = 0;
-      for (let index2 = 0; index2 < CostosAnalitico.length; index2++) {
-        const item = CostosAnalitico[index2];
-        if (item["pim"]) {
-          pim += item["pim"];
-        }
-      }
-      //acumulado anual
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>{Redondea(acumuladoAnual)}</th>
-      );
-      // saldo anyo pasado
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>
-          {Redondea(ultimoPresupuesto - acumuladoAnual)}
-          {/* {ultimoPresupuesto + " - " + acumuladoAnual} */}
-        </th>
-      );
-      //pim
-      tempRender.push(<th style={{ textAlign: "right" }}>{Redondea(pim)}</th>);
-      //devengado anyo actual
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>{Redondea(acumuladoMensual)}</th>
-      );
-      //saldo devengado
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>
-          {Redondea(pim - acumuladoMensual)}
-        </th>
-      );
-      //saldo por asignar
-      tempRender.push(
-        <th style={{ textAlign: "right" }}>
-          {Redondea(ultimoPresupuesto - acumuladoAnual - pim)}
-        </th>
-      );
     }
 
     return tempRender;
@@ -297,6 +258,7 @@ export default () => {
       cargarCostosAnalitico();
     }
   }, [PresupuestosAprobados]);
+  const [ShowPim, setShowPim] = useState(false);
   return (
     <div style={{ overflowX: "auto", minHeight: "580px" }}>
       {CostosAnalitico.length > 0 && (
@@ -402,25 +364,24 @@ export default () => {
                 )}
               </th>
             ))}
-            {AnyosEjecutados.map((item, i) => (
-              <th colSpan="2">
-                <span>TOTAL EJECUTADO {item.substr(item.length - 4)}</span>
-                {AnyosEjecutados.length - 1 == i && (
-                  <span>
-                    <ModalNuevoAnyo recargar={recargar} />
-                  </span>
-                )}
-              </th>
-            ))}
-            {CostosAnalitico.length > 0 && RenderMesesTitulo()}
+            {!ShowPim && (
+              <>
+                {AnyosEjecutados.map((item, i) => (
+                  <th colSpan="2">
+                    <span>TOTAL EJECUTADO {item.substr(item.length - 4)}</span>
+                    {AnyosEjecutados.length - 1 == i && (
+                      <span>
+                        <ModalNuevoAnyo recargar={recargar} />
+                      </span>
+                    )}
+                  </th>
+                ))}
+                {CostosAnalitico.length > 0 && RenderMesesTitulo()}
+              </>
+            )}
+
             {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
             {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
-            <th>Acumulado al {AnyoSeleccionado - 1}</th>
-            <th>Saldo al {AnyoSeleccionado - 1}</th>
-            <th>PIM {AnyoSeleccionado}</th>
-            <th>DEVENGADO {AnyoSeleccionado}</th>
-            <th>SALDO DEVENGADO PIM {AnyoSeleccionado}</th>
-            <th>SALDO POR ASIGNAR {AnyoSeleccionado}</th>
           </tr>
         </thead>
         <tbody>
@@ -474,6 +435,7 @@ export default () => {
               display={CostosCollapse[i] ? "" : "none"}
               AnyoSeleccionado={AnyoSeleccionado}
               setAnyosEjecutados={setAnyosEjecutados}
+              ShowPim={ShowPim}
             />,
           ])}
           {PresupuestosAprobados.length > 0 && (
