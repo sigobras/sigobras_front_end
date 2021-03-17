@@ -356,7 +356,7 @@ export default ({ Id_fuente, Anyo }) => {
   function renderEspecificasContenido(item) {
     var tempRender = [];
     var acumulado = 0;
-    var ultimoPresupuesto = 0;
+    var ultimoPresupuesto = item.pia;
     //render variaciones
     for (let i = 0; i < VariacionesPim.length; i++) {
       const element = VariacionesPim[i];
@@ -368,7 +368,7 @@ export default ({ Id_fuente, Anyo }) => {
             onBlur={(value) =>
               guardarVariacionesPimMonto(value, item.id, element.id)
             }
-            style={{ width: "100px" }}
+            style={{ width: "90px" }}
           />
         </td>
       );
@@ -408,7 +408,7 @@ export default ({ Id_fuente, Anyo }) => {
           <CustomInput
             value={Redondea(item["avanceMensual_" + i], 2, false, "")}
             onBlur={(value) => guardarAvanceMensual(value, item.id, i)}
-            style={{ width: "150px" }}
+            style={{ width: "90px" }}
           />
         </td>
       );
@@ -418,31 +418,34 @@ export default ({ Id_fuente, Anyo }) => {
           <CustomInput
             value={Redondea(item["programadoMensual_" + i], 2, false, "")}
             onBlur={(value) => guardarProgramadoMensual(value, item.id, i)}
-            style={{ width: "150px" }}
+            style={{ width: "90px" }}
           />
         </td>
       );
     }
-    tempRender.splice(0, 0, <th>{Redondea(acumulado)}</th>);
-    tempRender.splice(1, 0, <th></th>);
+    tempRender.splice(0, 0, <td>{Redondea(acumulado)}</td>);
+    tempRender.splice(1, 0, <td></td>);
     return tempRender;
   }
   function renderTotales() {
     var tempRender = [];
     var acumulado = 0;
     var ultimoPresupuesto = 0;
+    //pia
+    var piaTotal = 0;
+    for (let i = 0; i < Especificas.length; i++) {
+      const item = Especificas[i];
+      piaTotal += item.pia;
+    }
+    ultimoPresupuesto = piaTotal;
+    tempRender.push(<th>{Redondea(piaTotal)}</th>);
     //variaciones
     for (let i = 0; i < VariacionesPim.length; i++) {
       const variacion = VariacionesPim[i];
       var pim = 0;
-      var piaTotal = 0;
       for (let i = 0; i < Especificas.length; i++) {
         const item = Especificas[i];
         pim += item["variacionPim_" + variacion.id];
-        piaTotal += item.pia;
-      }
-      if (i == 0) {
-        tempRender.push(<th>{Redondea(piaTotal)}</th>);
       }
       tempRender.push(<th>{Redondea(pim)}</th>);
       ultimoPresupuesto = pim;
@@ -462,11 +465,15 @@ export default ({ Id_fuente, Anyo }) => {
     }
     tempRender.unshift(<th colSpan="2">Total</th>);
 
-    tempRender.splice(VariacionesPim.length + 2, 0, <th>{acumulado}</th>);
+    tempRender.splice(
+      VariacionesPim.length + 2,
+      0,
+      <th>{Redondea(acumulado)}</th>
+    );
     tempRender.splice(
       VariacionesPim.length + 3,
       0,
-      <th>{ultimoPresupuesto - acumulado}</th>
+      <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
     );
     return tempRender;
   }
@@ -524,10 +531,13 @@ export default ({ Id_fuente, Anyo }) => {
                     />
                   </span>
                 </th>
-                <th>Pia</th>
+                <th>
+                  PIA
+                  {VariacionesPim.length == 0 && "/PIM"}
+                </th>
                 {renderVariacionesTitulo()}
-                <th>Acumulado</th>
-                <th>Saldo</th>
+                <th>Devengado {Anyo}</th>
+                <th>Saldo {Anyo}</th>
                 {renderMesesTitulo()}
               </tr>
             </thead>
@@ -558,6 +568,7 @@ export default ({ Id_fuente, Anyo }) => {
                           <MdCancel
                             onClick={() => setEstadoEdicion("")}
                             style={{ cursor: "pointer" }}
+                            size={"20"}
                           />
                         </span>
                       )}
@@ -593,7 +604,7 @@ export default ({ Id_fuente, Anyo }) => {
                         onBlur={(value) =>
                           guardarVariacionMonto(value, item.id)
                         }
-                        style={{ width: "150px" }}
+                        style={{ width: "90px" }}
                       />
                     </td>
                     {renderEspecificasContenido(item)}
@@ -764,8 +775,9 @@ function CustomAsyncSelect({ value, guardar }) {
 
       <MdSave
         style={{ cursor: "pointer" }}
-        color={FlagCambios ? "blue" : ""}
+        color={FlagCambios ? "orange" : ""}
         onClick={() => guardar(Value.id_clasificador)}
+        size={"20"}
       />
     </>
   );
