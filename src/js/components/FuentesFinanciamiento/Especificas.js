@@ -557,8 +557,12 @@ export default ({ Id_fuente, Anyo }) => {
                   {VariacionesPim.length == 0 && "/PIM"}
                 </th>
                 {renderVariacionesTitulo()}
-                <th>Devengado {Anyo}</th>
-                <th>Saldo {Anyo}</th>
+                <th style={{ background: "orange", color: "black" }}>
+                  Devengado {Anyo}
+                </th>
+                <th style={{ background: "orange", color: "black" }}>
+                  Saldo {Anyo}
+                </th>
                 {renderMesesTitulo()}
               </tr>
             </thead>
@@ -567,8 +571,9 @@ export default ({ Id_fuente, Anyo }) => {
                 <>
                   <tr>
                     <th
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer", width: "60px" }}
                       colSpan={EstadoEdicion != "especifica_" + item.id ? 1 : 2}
+                      className="whiteThem-table-sticky"
                     >
                       {EstadoEdicion != "especifica_" + item.id ? (
                         <span
@@ -595,7 +600,7 @@ export default ({ Id_fuente, Anyo }) => {
                       )}
                     </th>
                     {EstadoEdicion != "especifica_" + item.id && (
-                      <th>
+                      <th className="whiteThem-table-sticky2">
                         {item.descripcion}
                         <span
                           style={{
@@ -634,8 +639,8 @@ export default ({ Id_fuente, Anyo }) => {
                     (item2, i) => item2.id_analitico == item.id
                   ).map((item2, i2) => (
                     <tr key={i2}>
-                      <td>{i2 + 1}</td>
-                      <td>
+                      <td className="whiteThem-table-sticky">{i2 + 1}</td>
+                      <td className="whiteThem-table-sticky2">
                         {EstadoEdicion != "costo_" + item2.id ? (
                           <>
                             <span
