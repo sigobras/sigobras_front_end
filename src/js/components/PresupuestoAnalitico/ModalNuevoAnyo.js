@@ -58,7 +58,7 @@ export default ({ recargar }) => {
   return (
     <span>
       <FaPlusCircle
-        color="orange"
+        color="#28d645"
         size="15"
         onClick={toggle}
         style={{ cursor: "pointer" }}

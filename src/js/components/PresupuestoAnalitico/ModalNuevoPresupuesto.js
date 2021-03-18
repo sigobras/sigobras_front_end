@@ -112,7 +112,7 @@ export default ({ recargar, data }) => {
         <FaUpload onClick={toggle} style={{ cursor: "pointer" }} />
       ) : (
         <FaPlusCircle
-          color="orange"
+          color="#0080ff"
           size="15"
           onClick={toggle}
           style={{ cursor: "pointer" }}
