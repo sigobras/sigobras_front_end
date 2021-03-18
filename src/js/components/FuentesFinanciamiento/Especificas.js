@@ -160,6 +160,11 @@ export default ({ Id_fuente, Anyo }) => {
     fuentesfinanciamiento_analitico_id,
     id
   ) {
+    console.log("actualizando", {
+      id,
+      fuentesfinanciamiento_analitico_id,
+      presupuestoanalitico_costos_id,
+    });
     var res = await axios.put(
       `${UrlServer}/v1/fuentesFinancieamiento/costos/`,
       {
@@ -662,11 +667,11 @@ export default ({ Id_fuente, Anyo }) => {
                             value={item2.id_costo}
                             Opciones={CostosList}
                             item={item2}
-                            itemValue={"id_costo"}
+                            itemValue={"id"}
                             itemLabel={"nombre"}
-                            guardar={(valor) =>
-                              actualizarCosto(valor, item.id, item2.id)
-                            }
+                            guardar={(valor) => {
+                              actualizarCosto(valor, item.id, item2.id);
+                            }}
                             cancel={() => setEstadoEdicion("")}
                           />
                         )}
@@ -697,7 +702,7 @@ function CustomSelect({
   const [FlagCambios, setFlagCambios] = useState(false);
   function handleInputChange(e) {
     setFlagCambios(true);
-    setValue(formatMoney(e.target.value));
+    setValue(e.target.value);
   }
   return (
     <>

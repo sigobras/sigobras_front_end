@@ -138,7 +138,9 @@ export default () => {
         }
         if (key.startsWith("avanceAnual_")) {
           tempRender.push(
-            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
+            <th style={{ textAlign: "right", width: "80px" }}>
+              {Redondea(accu)}
+            </th>
           );
           tempRender.push(
             <th style={{ textAlign: "right" }}>
@@ -149,7 +151,9 @@ export default () => {
         }
         if (key.startsWith("avanceMensual")) {
           tempRender.push(
-            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
+            <th style={{ textAlign: "right", width: "80px" }}>
+              {Redondea(accu)}
+            </th>
           );
           tempRender.push(
             <th style={{ textAlign: "right" }}>
@@ -164,14 +168,16 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length,
       0,
-      <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
+      <th style={{ textAlign: "right", background: "orange" }}>
+        {Redondea(acumulado)}
+      </th>
       // <th style={{ textAlign: "right" }}>"acumulado"</th>
     );
     //porcentaje acumulado
     tempRender.splice(
       PresupuestosAprobados.length + 1,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right", background: "orange" }}>
         {Redondea((acumulado / ultimoPresupuesto) * 100)} %
       </th>
     );
@@ -179,7 +185,7 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 2,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right", background: "orange" }}>
         {Redondea(ultimoPresupuesto - acumulado)}
       </th>
     );
@@ -187,7 +193,7 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 3,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right", background: "orange" }}>
         {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
         %
       </th>
@@ -270,12 +276,14 @@ export default () => {
                 onBlur={(value) => {
                   guardarPresupuesto(value, item.id, key.split("_")[1]);
                 }}
+                style={{ textAlign: "right" }}
               />
             ) : (
               Redondea(item[key], 2, false, "")
             )}
           </td>
         );
+        ultimoPresupuesto = item[key];
       }
       if (key.startsWith("avanceAnual_")) {
         tempRender.push(
@@ -286,6 +294,7 @@ export default () => {
                 onBlur={(value) =>
                   guardarAvanceAnual(value, item.id, key.split("_")[1])
                 }
+                style={{ textAlign: "right" }}
               />
             ) : (
               Redondea(item[key], 2, false, "")
@@ -387,7 +396,7 @@ export default () => {
     // AvanceAnual;
     for (let index = 1; index <= 12; index++) {
       tempRender.push(
-        <th colSpan="2">
+        <th colSpan="2" style={{ width: "80px" }}>
           {mesesShort[index - 1]} - {AnyoSeleccionado}
         </th>
       );
@@ -531,24 +540,23 @@ export default () => {
         <thead style={{ fontSize: "10px" }}>
           <tr>
             {CostosAnalitico.length > 0 && (
-              <th style={{ fontSize: "9px" }}>ITEM</th>
+              <th style={{ fontSize: "9px", width: "70px" }}>ITEM</th>
             )}
             <th
               style={{
-                display: "flex",
-                justifyContent: "space-between",
                 border: "none",
+                width: "400px",
               }}
             >
               {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
               {ModoEdicion && Permisos["analitico_agregar_costo"] == 1 && (
-                <span>
+                <span style={{ position: "absolute", right: "0px" }}>
                   <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
                 </span>
               )}
             </th>
             {PresupuestosAprobados.map((item, i) => (
-              <th key={i}>
+              <th key={i} style={{ position: "relative", width: "80px" }}>
                 <div
                   onClick={() => {
                     if (ShowIcons != i) {
@@ -562,7 +570,7 @@ export default () => {
                 >
                   <span>{item.nombre}</span>
                   {PresupuestosAprobados.length - 1 == i && (
-                    <span>
+                    <span style={{ position: "absolute", right: "0px" }}>
                       {ModoEdicion &&
                         Permisos["analitico_agregar_presupuesto"] == 1 && (
                           <ModalNuevoPresupuesto
@@ -611,12 +619,12 @@ export default () => {
             {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
             {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
             {AnyosEjecutados.map((item, i) => (
-              <th colSpan="2">
+              <th colSpan="2" style={{ position: "relative" }}>
                 <span>TOTAL EJECUTADO {item.anyo}</span>
                 {ModoEdicion &&
                   Permisos["analitico_agregar_anyoejecutado"] == 1 &&
                   AnyosEjecutados.length - 1 == i && (
-                    <span>
+                    <span style={{ position: "absolute", right: "0px" }}>
                       <ModalNuevoAnyo
                         recargar={() => {
                           cargarEspecificas();
@@ -634,14 +642,13 @@ export default () => {
           {CostosAnalitico.map((item, i) => (
             <>
               <tr key={i + "-1"}>
-                <th style={{ fontSize: "9px" }}>{i + 1}</th>
                 <th
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    border: "none",
-                  }}
+                  style={{ fontSize: "9px" }}
+                  className="whiteThem-table-sticky"
                 >
+                  {i + 1}
+                </th>
+                <th className="whiteThem-table-sticky2">
                   <span
                     style={{
                       cursor: "pointer",
@@ -654,7 +661,7 @@ export default () => {
                   >
                     {item.nombre}
                   </span>
-                  <span>
+                  <span style={{ position: "absolute", right: "0px" }}>
                     {ModoEdicion &&
                       Permisos["analitico_agregar_especifica"] == 1 && (
                         <FaPlusCircle
@@ -687,6 +694,7 @@ export default () => {
                       colSpan={
                         EstadoEdicion != "especifica_" + item2.id ? 1 : 2
                       }
+                      className="whiteThem-table-sticky"
                     >
                       {EstadoEdicion != "especifica_" + item2.id ? (
                         <span
@@ -718,20 +726,19 @@ export default () => {
                       )}
                     </td>
                     {EstadoEdicion != "especifica_" + item2.id && (
-                      <td>
+                      <td className="whiteThem-table-sticky2">
                         {item2.descripcion}
                         {ModoEdicion &&
                           Permisos["analitico_eliminar_especifica"] == 1 && (
                             <span
                               style={{
                                 cursor: "pointer",
+                                position: "absolute",
+                                right: "0px",
                               }}
                             >
                               <FaTrash
                                 onClick={() => eliminarEspecifica(item2.id)}
-                                style={{
-                                  paddingLeft: "5px",
-                                }}
                                 size="15"
                               />
                             </span>
