@@ -54,7 +54,6 @@ export default ({ recargar }) => {
         presupuestoanalitico_costos_id: IndexCostoSeleccionado.value,
       });
       recargar();
-      alert("Registro exitoso");
     } catch (error) {
       if (error.response.data.message == "ER_DUP_ENTRY") {
         alert("Costo ya asignado");
