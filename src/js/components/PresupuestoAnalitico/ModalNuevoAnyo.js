@@ -43,9 +43,7 @@ export default ({ recargar }) => {
         };
         await axios.put(`${UrlServer}/v1/analitico/avanceAnual`, [clone]);
         recargar();
-
         alert("Registro exitoso");
-        window.location.reload(false);
       } else {
         throw "NECESITA_ESPECIFICA";
       }
