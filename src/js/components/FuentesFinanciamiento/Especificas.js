@@ -366,7 +366,7 @@ export default ({ Id_fuente, Anyo }) => {
         </th>
       );
       tempRender.push(
-        <th style={{ whiteSpace: "nowrap" }}>
+        <th style={{ whiteSpace: "nowrap", background: "#47484a" }}>
           {"P/" + mesesShort[i - 1] + " - " + Anyo}
         </th>
       );
