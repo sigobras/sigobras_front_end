@@ -549,11 +549,13 @@ export default () => {
               }}
             >
               {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
-              {ModoEdicion && Permisos["analitico_agregar_costo"] == 1 && (
-                <span style={{ position: "absolute", right: "0px" }}>
-                  <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
-                </span>
-              )}
+              {CostosAnalitico.length > 0 &&
+                ModoEdicion &&
+                Permisos["analitico_agregar_costo"] == 1 && (
+                  <span style={{ position: "absolute", right: "0px" }}>
+                    <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
+                  </span>
+                )}
             </th>
             {PresupuestosAprobados.map((item, i) => (
               <th key={i} style={{ position: "relative", width: "80px" }}>
