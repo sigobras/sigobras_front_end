@@ -26,7 +26,11 @@ export default ({ value, onBlur, style = {}, type }) => {
           setFlagCambios(false);
         }
       }}
-      style={{ ...style, background: FlagCambios ? "#17a2b840" : "#42ff0038" }}
+      style={{
+        ...style,
+        background: FlagCambios ? "#17a2b840" : "#42ff0038",
+        paddingRight: "2px",
+      }}
     />
   );
 };
