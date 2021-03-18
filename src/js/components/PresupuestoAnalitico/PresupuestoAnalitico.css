@@ -1,4 +1,6 @@
 .whiteThem-table thead th {
+  font-size: 10px;
+  border: 1px solid black;
   position: relative;
   position: sticky;
   top: 0;
@@ -9,40 +11,31 @@
   color: black;
   border: 1px solid black;
 }
-.whiteThem-table tbody tr td,
-.whiteThem-table tbody tr th {
+.whiteThem-table tbody td,
+.whiteThem-table tbody th {
   padding: 0px;
   font-size: 11px;
   vertical-align: top;
   border: 1px solid black;
+  white-space: nowrap;
 }
 .whiteThem-table tbody th {
   background: #c6c8ca;
   font-weight: 700;
   border: 1px solid black;
+  text-align: right;
 }
 .whiteThem-table tbody td {
   background: white;
   border: 1px solid black;
-}
-
-.whiteThem-table-input {
-  height: 16px;
-  font-size: 11px;
-  /* background: #42ff0038; */
   text-align: right;
-  /* padding: 15px 5px; */
+}
+.whiteThem-table input,
+.whiteThem-table select {
+  height: 16px;
+  font-size: 12px;
+  text-align: right;
   line-height: 28px;
   border: none;
-  /* width: 70px; */
-}
-.whiteThem-table-item {
-  width: 70px;
-}
-.whiteThem-table-descripcion {
-  /* width: 400px; */
-  font-size: 10px;
-}
-.whiteThem-table-propiedades {
-  width: 90px;
+  padding: 0px;
 }

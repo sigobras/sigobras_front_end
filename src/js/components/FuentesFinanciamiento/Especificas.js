@@ -23,6 +23,7 @@ import {
 import { MdCancel, MdSave } from "react-icons/md";
 import AsyncSelect from "react-select/async";
 
+import CustomInput from "../../libs/CustomInput";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, formatMoney, mesesShort } from "../Utils/Funciones";
 export default ({ Id_fuente, Anyo }) => {
@@ -48,11 +49,28 @@ export default ({ Id_fuente, Anyo }) => {
     if (Array.isArray(res.data)) setEspecificas(res.data);
   }
   async function agregarEspecifica() {
+    var maxId = 0;
+    Especificas.forEach((item) => {
+      if (item.id_clasificador > maxId) {
+        maxId = item.id_clasificador;
+      }
+    });
+    var res = await axios.get(
+      `${UrlServer}/v1/clasificadorPresupuestario/analitico/predecir`,
+      {
+        params: {
+          id: maxId,
+          id_ficha: sessionStorage.getItem("idobra"),
+        },
+      }
+    );
+
+    var nextId = res.data ? res.data.id : maxId;
     var res = await axios.post(
       `${UrlServer}/v1/fuentesFinancieamiento/especificas`,
       {
         fuentesfinanciamiento_asignados_id: Id_fuente,
-        clasificadores_presupuestarios_id: "1505",
+        clasificadores_presupuestarios_id: nextId,
         pia: "0",
       }
     );
@@ -84,7 +102,11 @@ export default ({ Id_fuente, Anyo }) => {
   //costoslist
   const [CostosList, setCostosList] = useState([]);
   async function cargarCostosList() {
-    var res = await axios.get(`${UrlServer}/v1/analiticoCostos`);
+    var res = await axios.get(`${UrlServer}/v1/analiticoCostos/analitico`, {
+      params: {
+        id_ficha: sessionStorage.getItem("idobra"),
+      },
+    });
     setCostosList(res.data);
   }
   //costos
@@ -108,21 +130,14 @@ export default ({ Id_fuente, Anyo }) => {
         maxId = item.id_costo;
       }
     });
-    console.log(
-      "costos",
-      Costos,
-      "maxid",
-      maxId,
-      fuentesfinanciamiento_analitico_id
-    );
     var res = await axios.get(`${UrlServer}/v1/analiticoCostos/predecir`, {
       params: {
         id: maxId,
+        id_ficha: sessionStorage.getItem("idobra"),
       },
     });
 
     var nextId = res.data ? res.data.id : maxId;
-    console.log("next id", nextId);
     var res = await axios.post(
       `${UrlServer}/v1/fuentesFinancieamiento/costos`,
       {
@@ -133,11 +148,12 @@ export default ({ Id_fuente, Anyo }) => {
     cargarCostos();
   }
   async function eliminarCosto(id) {
-    console.log("eliminando", id);
-    var res = await axios.delete(
-      `${UrlServer}/v1/fuentesFinancieamiento/costos/${id}`
-    );
-    cargarCostos();
+    if (confirm("Esta seguro de eliminar el titulo?")) {
+      var res = await axios.delete(
+        `${UrlServer}/v1/fuentesFinancieamiento/costos/${id}`
+      );
+      cargarCostos();
+    }
   }
   async function actualizarCosto(
     presupuestoanalitico_costos_id,
@@ -166,7 +182,7 @@ export default ({ Id_fuente, Anyo }) => {
         fuentesfinanciamiento_costoasignado_id,
         anyo: Anyo,
         mes,
-        monto,
+        monto: monto || 0,
       }
     );
     cargarCostos();
@@ -617,21 +633,21 @@ export default ({ Id_fuente, Anyo }) => {
                       <td>
                         {EstadoEdicion != "costo_" + item2.id ? (
                           <>
-                            {item2.nombre}
+                            <span
+                              onClick={() =>
+                                setEstadoEdicion("costo_" + item2.id)
+                              }
+                              style={{
+                                cursor: "pointer",
+                              }}
+                            >
+                              {item2.nombre}
+                            </span>
                             <span
                               style={{
                                 cursor: "pointer",
                               }}
                             >
-                              <FaEdit
-                                onClick={() =>
-                                  setEstadoEdicion("costo_" + item2.id)
-                                }
-                                style={{
-                                  paddingLeft: "5px",
-                                }}
-                                size="15"
-                              />
                               <FaTrash
                                 onClick={() => eliminarCosto(item2.id)}
                                 style={{
@@ -669,33 +685,6 @@ export default ({ Id_fuente, Anyo }) => {
     </div>
   );
 };
-function CustomInput({ value, onBlur, style, type }) {
-  const [Value, setValue] = useState(value);
-  const [FlagCambios, setFlagCambios] = useState(false);
-  function handleInputChange(e) {
-    setFlagCambios(true);
-    if (type == "text") {
-      setValue(e.target.value);
-    } else {
-      setValue(formatMoney(e.target.value));
-    }
-  }
-  return (
-    <Input
-      value={Value}
-      onChange={handleInputChange}
-      onBlur={() => {
-        if (FlagCambios) {
-          var valorModificado =
-            type == "text" ? Value : Value.replace(/[^0-9\.-]+/g, "");
-          onBlur(valorModificado);
-          setFlagCambios(false);
-        }
-      }}
-      style={{ ...style, background: FlagCambios ? "#17a2b840" : "#42ff0038" }}
-    />
-  );
-}
 function CustomSelect({
   value,
   Opciones = [],
@@ -738,14 +727,15 @@ function CustomAsyncSelect({ value, guardar }) {
     });
   }
   async function clasificadorOptions(inputValue) {
-    var res = await axios.get(`${UrlServer}/v1/clasificadorPresupuestario/`, {
-      params: {
-        textoBuscado: inputValue,
-        limit: 10,
-        id_inicio: 1475,
-        id_final: 1688,
-      },
-    });
+    var res = await axios.get(
+      `${UrlServer}/v1/clasificadorPresupuestario/analitico`,
+      {
+        params: {
+          textoBuscado: inputValue,
+          id_ficha: sessionStorage.getItem("idobra"),
+        },
+      }
+    );
     var temp = [];
     if (Array.isArray(res.data)) {
       res.data.forEach((item) => {

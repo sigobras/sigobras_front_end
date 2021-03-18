@@ -266,13 +266,7 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
     </div>
   );
 };
-function FuentesFinancieamiento({
-  id_ficha,
-  anyo,
-  setMensajeGuardando,
-  FuentesFinanciamientoList,
-  Permisos,
-}) {
+function FuentesFinancieamiento({ id_ficha, anyo }) {
   useEffect(() => {
     cargarData();
   }, []);
@@ -287,67 +281,6 @@ function FuentesFinancieamiento({
     });
     setData(res.data);
   }
-  //agregar
-  function agregarData() {
-    var clone = [...Data];
-    clone.push({
-      id: null,
-      anyo: anyo,
-      nombre: "",
-      fichas_id_ficha: id_ficha,
-      fuentesfinanciamiento_id: "",
-    });
-    setData(clone);
-  }
-  //input edicion
-  const [ModoEdicion, setModoEdicion] = useState(-1);
-  const [FlagCambios, setFlagCambios] = useState([]);
-  function handleInputChange(index, e) {
-    var clone2 = [...FlagCambios];
-    clone2[index] = true;
-    setFlagCambios(clone2);
-    var clone = [...Data];
-    clone[index][e.target.name] = e.target.value;
-    if (e.target.name == "fuentesfinanciamiento_id") {
-      var temp = FuentesFinanciamientoList.find(
-        (item, i) => item.id == e.target.value
-      );
-      clone[index]["nombre"] = temp.nombre;
-    }
-    setData(clone);
-  }
-  async function guardarData() {
-    try {
-      var dataProcesada = [];
-      Data.forEach((item) => {
-        dataProcesada.push({
-          id: item.id,
-          anyo: item.anyo,
-          monto: item.monto,
-          fichas_id_ficha: item.fichas_id_ficha,
-          fuentesfinanciamiento_id: item.fuentesfinanciamiento_id,
-        });
-      });
-      var res = await axios.put(
-        `${UrlServer}/v1/fuentesFinancieamiento`,
-        dataProcesada
-      );
-    } catch (error) {
-      alert("Ocurrio un error");
-    }
-    setFlagCambios([]);
-    cargarData();
-  }
-  async function eliminarData(id) {
-    if (confirm("Desea borrar este dato permanentemente")) {
-      try {
-        await axios.delete(`${UrlServer}/v1/fuentesFinancieamiento/${id}`);
-        cargarData();
-      } catch (error) {
-        console.log("Error", error);
-      }
-    }
-  }
   return (
     <div
       style={{
@@ -356,84 +289,10 @@ function FuentesFinancieamiento({
       }}
     >
       {Data.map((item, i) => (
-        <div
-          key={i}
-          style={{
-            position: "relative",
-            background: FlagCambios[i] ? "#17a2b840" : "#42ff0038",
-            display: "flex",
-          }}
-        >
-          {ModoEdicion == i ? (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <span>
-                <Input
-                  type="select"
-                  value={item.fuentesfinanciamiento_id}
-                  onChange={(e) => handleInputChange(i, e)}
-                  name="fuentesfinanciamiento_id"
-                  onBlur={() => {
-                    setModoEdicion(-1);
-                  }}
-                  disabled={!Permisos["agregar_fuentesfinanciamiento"]}
-                >
-                  <option value="">SELECCIONE</option>
-                  {FuentesFinanciamientoList.map((item, i) => (
-                    <option value={item.id}>{item.nombre}</option>
-                  ))}
-                </Input>
-              </span>
-              <span>
-                <Input
-                  value={item.monto}
-                  onChange={(e) => handleInputChange(i, e)}
-                  name="monto"
-                  onBlur={() => {
-                    setModoEdicion(-1);
-                  }}
-                  disabled={!Permisos["agregar_fuentesfinanciamiento"]}
-                />
-              </span>
-            </div>
-          ) : (
-            <div
-              onClick={() => setModoEdicion(i)}
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <span>{item.nombre}</span>
-              {"   "}
-              <span>S/.{Redondea(item.monto)}</span>
-            </div>
-          )}
-          <span>
-            <RiDeleteBin6Line
-              onClick={() => eliminarData(item.id)}
-              style={{
-                color: "red",
-                cursor: "pointer",
-              }}
-            />
-          </span>
+        <div key={i}>
+          <span>{item.nombre}</span> <span>S/.{Redondea(item.monto)}</span>
         </div>
       ))}
-      {FlagCambios.length > 0 && (
-        <Button onClick={() => guardarData()}>Guardar</Button>
-      )}
-      {Permisos["agregar_fuentesfinanciamiento"] ? (
-        <BotonNuevo size="80" onClick={() => agregarData()} />
-      ) : (
-        ""
-      )}
     </div>
   );
 }
