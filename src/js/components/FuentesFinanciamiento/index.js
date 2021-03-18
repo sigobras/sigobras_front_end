@@ -14,7 +14,7 @@ import {
   dropdownOpen,
 } from "reactstrap";
 import axios from "axios";
-import { FaUpload, FaFileAlt, FaPlusCircle } from "react-icons/fa";
+import { FaUpload, FaFileAlt, FaPlusCircle, FaTrash } from "react-icons/fa";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
@@ -62,9 +62,26 @@ export default () => {
     setFuentesFinanciamientoLista(res.data);
   }
   async function agregarFuenteFinanciamiento() {
-    var res = await axios.put(`${UrlServer}/v1/fuentesFinancieamiento`, {
+    var maxId = 0;
+    FuentesFinanciamiento.forEach((item) => {
+      if (item.fuentesfinanciamiento_id > maxId) {
+        maxId = item.fuentesfinanciamiento_id;
+      }
+    });
+
+    var res = await axios.get(
+      `${UrlServer}/v1/fuentesFinancieamiento/predecir`,
+      {
+        params: {
+          id: maxId,
+        },
+      }
+    );
+    var nextId = res.data ? res.data.id : maxId;
+    var res2 = await axios.put(`${UrlServer}/v1/fuentesFinancieamiento`, {
       fichas_id_ficha: sessionStorage.getItem("idobra"),
       anyo: AnyoSeleccionado,
+      fuentesfinanciamiento_id: nextId,
     });
     cargarFuentesFinanciamiento();
   }
@@ -137,9 +154,30 @@ export default () => {
               </Input>
             </span>
             <span>
-              <Button onClick={() => eliminarData(item.id)} color="danger">
-                eliminar
+              <FaTrash
+                onClick={() => eliminarData(item.id)}
+                style={{ cursor: "pointer" }}
+              />
+              {/* <Button
+                type="button"
+                style={{
+                  borderRadius: "13px",
+                  margin: "5px",
+                  backgroundColor: "#171819",
+                }}
+              >
+                Agregar Especifica
               </Button>
+              <Button
+                type="button"
+                style={{
+                  borderRadius: "13px",
+                  margin: "5px",
+                  backgroundColor: "#171819",
+                }}
+              >
+                Agregar PIM
+              </Button> */}
             </span>
           </span>
           <Especificas Id_fuente={item.id} Anyo={AnyoSeleccionado} />
