@@ -465,7 +465,12 @@ export default () => {
       {AnyosEjecutados.length == 0 && (
         <span>
           {"Paso 3. Nuevo Año Ejecutado(opcional) =>"}
-          <ModalNuevoAnyo recargar={cargarPresupuestosAprobados} />
+          <ModalNuevoAnyo
+            recargar={() => {
+              cargarEspecificas();
+              cargarAnyosEjecutados();
+            }}
+          />
         </span>
       )}
       <table className="whiteThem-table" style={{ width: "max-content" }}>
@@ -500,6 +505,7 @@ export default () => {
                     }
                   }}
                   className="d-flex"
+                  style={{ cursor: "pointer" }}
                 >
                   <span>{item.nombre}</span>
                   {PresupuestosAprobados.length - 1 == i && (
@@ -507,7 +513,10 @@ export default () => {
                       {PresupuestosAprobados.length == 0 &&
                         " Agregar nuevo presupuesto =>"}
                       <ModalNuevoPresupuesto
-                        recargar={cargarPresupuestosAprobados}
+                        recargar={() => {
+                          cargarPresupuestosAprobados();
+                          cargarEspecificas();
+                        }}
                       />
                     </span>
                   )}
@@ -534,7 +543,7 @@ export default () => {
                         />{" "}
                         <ModalNuevoPresupuesto
                           data={item}
-                          recargar={recarcargarPresupuestosAprobadosgar}
+                          recargar={cargarPresupuestosAprobados}
                         />
                       </span>
                     </div>
@@ -549,7 +558,12 @@ export default () => {
                 <span>TOTAL EJECUTADO {item.anyo}</span>
                 {AnyosEjecutados.length - 1 == i && (
                   <span>
-                    <ModalNuevoAnyo recargar={cargarPresupuestosAprobados} />
+                    <ModalNuevoAnyo
+                      recargar={() => {
+                        cargarEspecificas();
+                        cargarAnyosEjecutados();
+                      }}
+                    />
                   </span>
                 )}
               </th>

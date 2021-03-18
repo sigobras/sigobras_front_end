@@ -17,7 +17,7 @@ import {
   FormGroup,
   Label,
 } from "reactstrap";
-import { FaPen, FaMediumM, FaPlusCircle } from "react-icons/fa";
+import { FaUpload, FaMediumM, FaPlusCircle } from "react-icons/fa";
 import axios from "axios";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
@@ -109,7 +109,7 @@ export default ({ recargar, data }) => {
   return (
     <span>
       {data ? (
-        <FaPen onClick={toggle} style={{ cursor: "pointer" }} />
+        <FaUpload onClick={toggle} style={{ cursor: "pointer" }} />
       ) : (
         <FaPlusCircle
           color="orange"
