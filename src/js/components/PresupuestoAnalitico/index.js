@@ -21,7 +21,6 @@ import ModalCostosAnalitico from "./ModalCostosAnalitico";
 import ModalNuevoPresupuesto from "./ModalNuevoPresupuesto";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
-import PresupuestoEspecifica from "./PresupuestoEspecifica";
 import ModalNuevoAnyo from "./ModalNuevoAnyo";
 import CustomInput from "../../libs/CustomInput";
 
@@ -33,7 +32,39 @@ export default () => {
     cargarEspecificas();
     cargarAnyosEjecutados();
     cargarPresupuestosAprobados();
+    cargarPermiso(`
+    analitico_modoedicion,
+    analitico_agregar_presupuesto,
+    analitico_editar_presupuesto,
+    analitico_eliminar_presupuesto,
+    analitico_agregar_costo,
+    analitico_editar_costo,
+    analitico_eliminar_costo,
+    analitico_agregar_anyoejecutado,
+    analitco_eliminar_anyoejecutado,
+    analitico_agregar_especifica,
+    analitico_editar_especifica,
+    analitico_eliminar_especifica,
+    analitico_agregar_avanceanual,
+    analitico_agregar_presupuestomonto
+    `);
   }, []);
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
   //presupuestos
   const [PresupuestosAprobados, setPresupuestosAprobados] = useState([]);
@@ -233,24 +264,32 @@ export default () => {
       if (key.startsWith("presupuesto_")) {
         tempRender.push(
           <td>
-            <CustomInput
-              value={Redondea(item[key], 2, false, "")}
-              onBlur={(value) => {
-                guardarPresupuesto(value, item.id, key.split("_")[1]);
-              }}
-            />
+            {Permisos["analitico_agregar_presupuestomonto"] ? (
+              <CustomInput
+                value={Redondea(item[key], 2, false, "")}
+                onBlur={(value) => {
+                  guardarPresupuesto(value, item.id, key.split("_")[1]);
+                }}
+              />
+            ) : (
+              Redondea(item[key], 2, false, "")
+            )}
           </td>
         );
       }
       if (key.startsWith("avanceAnual_")) {
         tempRender.push(
           <td>
-            <CustomInput
-              value={Redondea(item[key], 2, false, "")}
-              onBlur={(value) =>
-                guardarAvanceAnual(value, item.id, key.split("_")[1])
-              }
-            />
+            {Permisos["analitico_agregar_avanceanual"] == 1 ? (
+              <CustomInput
+                value={Redondea(item[key], 2, false, "")}
+                onBlur={(value) =>
+                  guardarAvanceAnual(value, item.id, key.split("_")[1])
+                }
+              />
+            ) : (
+              Redondea(item[key], 2, false, "")
+            )}
           </td>
         );
         tempRender.push(
@@ -341,6 +380,7 @@ export default () => {
     });
     setCostosCollapse(clone);
   }
+  const [ModoEdicion, setModoEdicion] = useState(false);
   //render
   function RenderMesesTitulo() {
     var tempRender = [];
@@ -440,6 +480,14 @@ export default () => {
 
   return (
     <div style={{ overflowX: "auto", minHeight: "580px" }}>
+      {Permisos["analitico_modoedicion"] == 1 && (
+        <Button
+          color={ModoEdicion ? "primary" : "danger"}
+          onClick={() => setModoEdicion(!ModoEdicion)}
+        >
+          Modo edicion
+        </Button>
+      )}
       {CostosAnalitico.length > 0 && (
         <Button onClick={() => cambiarCostosCollapseTodos(true)}>
           Expandir todo
@@ -450,29 +498,35 @@ export default () => {
           Contraer todo
         </Button>
       )}
-      {PresupuestosAprobados.length == 0 && (
-        <span>
-          {"Paso 1. Nuevo presupuesto =>"}
-          <ModalNuevoPresupuesto recargar={cargarPresupuestosAprobados} />
-        </span>
-      )}{" "}
-      {CostosAnalitico.length == 0 && (
-        <span>
-          {"Paso 2. Nuevo costo =>"}
-          <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
-        </span>
-      )}{" "}
-      {AnyosEjecutados.length == 0 && (
-        <span>
-          {"Paso 3. Nuevo Año Ejecutado(opcional) =>"}
-          <ModalNuevoAnyo
-            recargar={() => {
-              cargarEspecificas();
-              cargarAnyosEjecutados();
-            }}
-          />
-        </span>
-      )}
+      {ModoEdicion &&
+        Permisos["analitico_agregar_presupuesto"] == 1 &&
+        PresupuestosAprobados.length == 0 && (
+          <span>
+            {"Paso 1. Nuevo presupuesto =>"}
+            <ModalNuevoPresupuesto recargar={cargarPresupuestosAprobados} />
+          </span>
+        )}{" "}
+      {ModoEdicion &&
+        Permisos["analitico_agregar_costo"] == 1 &&
+        CostosAnalitico.length == 0 && (
+          <span>
+            {"Paso 2. Nuevo costo =>"}
+            <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
+          </span>
+        )}{" "}
+      {ModoEdicion &&
+        Permisos["analitico_agregar_anyoejecutado"] == 1 &&
+        AnyosEjecutados.length == 0 && (
+          <span>
+            {"Paso 3. Nuevo Año Ejecutado(opcional) =>"}
+            <ModalNuevoAnyo
+              recargar={() => {
+                cargarEspecificas();
+                cargarAnyosEjecutados();
+              }}
+            />
+          </span>
+        )}
       <table className="whiteThem-table" style={{ width: "max-content" }}>
         <thead style={{ fontSize: "10px" }}>
           <tr>
@@ -487,9 +541,8 @@ export default () => {
               }}
             >
               {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
-              {PresupuestosAprobados.length > 0 && (
+              {ModoEdicion && Permisos["analitico_agregar_costo"] == 1 && (
                 <span>
-                  {CostosAnalitico.length == 0 && "Agregar nuevo costo =>"}
                   <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
                 </span>
               )}
@@ -510,14 +563,15 @@ export default () => {
                   <span>{item.nombre}</span>
                   {PresupuestosAprobados.length - 1 == i && (
                     <span>
-                      {PresupuestosAprobados.length == 0 &&
-                        " Agregar nuevo presupuesto =>"}
-                      <ModalNuevoPresupuesto
-                        recargar={() => {
-                          cargarPresupuestosAprobados();
-                          cargarEspecificas();
-                        }}
-                      />
+                      {ModoEdicion &&
+                        Permisos["analitico_agregar_presupuesto"] == 1 && (
+                          <ModalNuevoPresupuesto
+                            recargar={() => {
+                              cargarPresupuestosAprobados();
+                              cargarEspecificas();
+                            }}
+                          />
+                        )}
                     </span>
                   )}
                 </div>
@@ -541,10 +595,13 @@ export default () => {
                           }
                           style={{ cursor: "pointer" }}
                         />{" "}
-                        <ModalNuevoPresupuesto
-                          data={item}
-                          recargar={cargarPresupuestosAprobados}
-                        />
+                        {ModoEdicion &&
+                          Permisos["analitico_editar_presupuesto"] == 1 && (
+                            <ModalNuevoPresupuesto
+                              data={item}
+                              recargar={cargarPresupuestosAprobados}
+                            />
+                          )}
                       </span>
                     </div>
                   </div>
@@ -556,16 +613,18 @@ export default () => {
             {AnyosEjecutados.map((item, i) => (
               <th colSpan="2">
                 <span>TOTAL EJECUTADO {item.anyo}</span>
-                {AnyosEjecutados.length - 1 == i && (
-                  <span>
-                    <ModalNuevoAnyo
-                      recargar={() => {
-                        cargarEspecificas();
-                        cargarAnyosEjecutados();
-                      }}
-                    />
-                  </span>
-                )}
+                {ModoEdicion &&
+                  Permisos["analitico_agregar_anyoejecutado"] == 1 &&
+                  AnyosEjecutados.length - 1 == i && (
+                    <span>
+                      <ModalNuevoAnyo
+                        recargar={() => {
+                          cargarEspecificas();
+                          cargarAnyosEjecutados();
+                        }}
+                      />
+                    </span>
+                  )}
               </th>
             ))}
             {CostosAnalitico.length > 0 && RenderMesesTitulo()}
@@ -596,20 +655,26 @@ export default () => {
                     {item.nombre}
                   </span>
                   <span>
-                    <FaPlusCircle
-                      color="#000000"
-                      size="15"
-                      onClick={() => {
-                        agregarEspecifica(item.id);
-                      }}
-                      style={{ cursor: "pointer" }}
-                    />
-                    <FaTrash
-                      color="#000000"
-                      size="15"
-                      onClick={() => eliminarCosto(item.id)}
-                      style={{ cursor: "pointer" }}
-                    />
+                    {ModoEdicion &&
+                      Permisos["analitico_agregar_especifica"] == 1 && (
+                        <FaPlusCircle
+                          color="#000000"
+                          size="15"
+                          onClick={() => {
+                            agregarEspecifica(item.id);
+                          }}
+                          style={{ cursor: "pointer" }}
+                        />
+                      )}
+                    {ModoEdicion &&
+                      Permisos["analitico_eliminar_costo"] == 1 && (
+                        <FaTrash
+                          color="#000000"
+                          size="15"
+                          onClick={() => eliminarCosto(item.id)}
+                          style={{ cursor: "pointer" }}
+                        />
+                      )}
                   </span>
                 </th>
                 {RenderCostosData(item)}
@@ -625,9 +690,14 @@ export default () => {
                     >
                       {EstadoEdicion != "especifica_" + item2.id ? (
                         <span
-                          onClick={() =>
-                            setEstadoEdicion("especifica_" + item2.id)
-                          }
+                          onClick={() => {
+                            if (
+                              ModoEdicion &&
+                              Permisos["analitico_editar_especifica"] == 1
+                            ) {
+                              setEstadoEdicion("especifica_" + item2.id);
+                            }
+                          }}
                         >
                           {item2.clasificador}
                         </span>
@@ -650,19 +720,22 @@ export default () => {
                     {EstadoEdicion != "especifica_" + item2.id && (
                       <td>
                         {item2.descripcion}
-                        <span
-                          style={{
-                            cursor: "pointer",
-                          }}
-                        >
-                          <FaTrash
-                            onClick={() => eliminarEspecifica(item2.id)}
-                            style={{
-                              paddingLeft: "5px",
-                            }}
-                            size="15"
-                          />
-                        </span>
+                        {ModoEdicion &&
+                          Permisos["analitico_eliminar_especifica"] == 1 && (
+                            <span
+                              style={{
+                                cursor: "pointer",
+                              }}
+                            >
+                              <FaTrash
+                                onClick={() => eliminarEspecifica(item2.id)}
+                                style={{
+                                  paddingLeft: "5px",
+                                }}
+                                size="15"
+                              />
+                            </span>
+                          )}
                       </td>
                     )}
                     {RenderEspecificaData(item2)}
