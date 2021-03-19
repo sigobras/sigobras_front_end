@@ -20,11 +20,11 @@
   width: 50px;
 }
 .whiteThem-table tbody th {
-  background: #c6c8ca;
+  background: #e8e8e8;
   font-weight: 700;
 }
 .whiteThem-table tbody td {
-  background: white;
+  background: #fffde5;
 }
 .whiteThem-table input,
 .whiteThem-table select {
@@ -38,6 +38,7 @@
   color: #242526;
   font-weight: 100;
 }
+
 /* .whiteThem-table-stickyTitulo {
   position: sticky;
   left: 80px;

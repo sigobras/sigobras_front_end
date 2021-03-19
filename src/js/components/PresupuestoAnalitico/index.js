@@ -70,7 +70,15 @@ export default () => {
     }
     setPermisos(tempList);
   }
+  const [AnyosList, setAnyosList] = useState(() => {
+    var temp = [];
+    for (let index = 2021; index >= 2010; index--) {
+      temp.push(index);
+    }
+    return temp;
+  });
   const [AnyoSeleccionado, setAnyoSeleccionado] = useState(2021);
+  const [dropdownOpen, setdropdownOpen] = useState(false);
   //presupuestos
   const [PresupuestosAprobados, setPresupuestosAprobados] = useState([]);
   async function cargarPresupuestosAprobados() {
@@ -423,7 +431,7 @@ export default () => {
     // AvanceAnual;
     for (let index = 1; index <= 12; index++) {
       tempRender.push(
-        <th colSpan="2">
+        <th colSpan="2" style={{ background: "#575a5b", color: "white" }}>
           {mesesShort[index - 1]} - {AnyoSeleccionado}
         </th>
       );
@@ -450,16 +458,39 @@ export default () => {
         }
         if (key.startsWith("presupuesto_")) {
           tempRender.push(
-            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
+            <th
+              style={{
+                textAlign: "right",
+                background: "#3a3b3c",
+                color: "#cecece",
+              }}
+            >
+              {Redondea(accu)}
+            </th>
           );
           ultimoPresupuesto = accu;
         }
         if (key.startsWith("avanceAnual_")) {
           tempRender.push(
-            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
+            <th
+              style={{
+                textAlign: "right",
+                background: "#3a3b3c",
+                color: "#cecece",
+              }}
+            >
+              {Redondea(accu)}
+            </th>
           );
           tempRender.push(
-            <th style={{ textAlign: "right" }} className="porcentaje">
+            <th
+              style={{
+                textAlign: "right",
+                background: "#3a3b3c",
+                color: "#cecece",
+              }}
+              className="porcentaje"
+            >
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
@@ -467,10 +498,25 @@ export default () => {
         }
         if (key.startsWith("avanceMensual")) {
           tempRender.push(
-            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
+            <th
+              style={{
+                textAlign: "right",
+                background: "#3a3b3c",
+                color: "#cecece",
+              }}
+            >
+              {Redondea(accu)}
+            </th>
           );
           tempRender.push(
-            <th style={{ textAlign: "right" }} className="porcentaje">
+            <th
+              style={{
+                textAlign: "right",
+                background: "#3a3b3c",
+                color: "#cecece",
+              }}
+              className="porcentaje"
+            >
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
@@ -482,13 +528,20 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length,
       0,
-      <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
+      <th
+        style={{ textAlign: "right", background: "#3a3b3c", color: "#cecece" }}
+      >
+        {Redondea(acumulado)}
+      </th>
     );
     //porcentaje acumulado
     tempRender.splice(
       PresupuestosAprobados.length + 1,
       0,
-      <th style={{ textAlign: "right" }} className="porcentaje">
+      <th
+        style={{ textAlign: "right", background: "#3a3b3c", color: "#cecece" }}
+        className="porcentaje"
+      >
         {Redondea((acumulado / ultimoPresupuesto) * 100)} %
       </th>
     );
@@ -496,7 +549,9 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 2,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th
+        style={{ textAlign: "right", background: "#3a3b3c", color: "#cecece" }}
+      >
         {Redondea(ultimoPresupuesto - acumulado)}
       </th>
     );
@@ -505,7 +560,10 @@ export default () => {
       PresupuestosAprobados.length + 3,
       0,
       // <th>saldo porcentaje</th>
-      <th style={{ textAlign: "right" }} className="porcentaje">
+      <th
+        style={{ textAlign: "right", background: "#3a3b3c", color: "#cecece" }}
+        className="porcentaje"
+      >
         {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
         %
       </th>
@@ -513,27 +571,62 @@ export default () => {
 
     return tempRender;
   }
-
+  useEffect(() => {
+    cargarCostosAnalitico();
+    cargarEspecificas();
+    cargarAnyosEjecutados();
+    cargarPresupuestosAprobados();
+    return () => {};
+  }, [AnyoSeleccionado]);
   return (
     <div style={{ overflowX: "auto", minHeight: "580px" }}>
-      {Permisos["analitico_modoedicion"] == 1 && (
-        <Button
-          color={ModoEdicion ? "primary" : "danger"}
-          onClick={() => setModoEdicion(!ModoEdicion)}
-        >
-          Modo edicion
-        </Button>
-      )}
-      {CostosAnalitico.length > 0 && (
-        <Button onClick={() => cambiarCostosCollapseTodos(true)}>
-          Expandir todo
-        </Button>
-      )}
-      {CostosAnalitico.length > 0 && (
-        <Button onClick={() => cambiarCostosCollapseTodos(false)}>
-          Contraer todo
-        </Button>
-      )}
+      <span className="d-flex">
+        <Nav tabs style={{ paddingTop: "0px", margin: "0px", height: "29px" }}>
+          <Dropdown
+            nav
+            isOpen={dropdownOpen}
+            toggle={() => setdropdownOpen(!dropdownOpen)}
+          >
+            <DropdownToggle nav caret>
+              {AnyoSeleccionado == 0 ? "--" : AnyoSeleccionado}
+            </DropdownToggle>
+
+            <DropdownMenu>
+              {AnyosList.map((item, i) => (
+                <DropdownItem onClick={() => setAnyoSeleccionado(item)} key={i}>
+                  {item}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        </Nav>
+        {Permisos["analitico_modoedicion"] == 1 && (
+          <Button
+            color={ModoEdicion ? "primary" : "danger"}
+            onClick={() => setModoEdicion(!ModoEdicion)}
+            style={{ marginLeft: "4px", height: "25px", fontSize: "10px" }}
+          >
+            Modo edición
+          </Button>
+        )}
+        {CostosAnalitico.length > 0 && (
+          <Button
+            onClick={() => cambiarCostosCollapseTodos(true)}
+            style={{ marginLeft: "4px", height: "25px", fontSize: "10px" }}
+          >
+            Expandir todo
+          </Button>
+        )}
+        {CostosAnalitico.length > 0 && (
+          <Button
+            onClick={() => cambiarCostosCollapseTodos(false)}
+            style={{ marginLeft: "4px", height: "25px", fontSize: "10px" }}
+          >
+            Contraer todo
+          </Button>
+        )}
+      </span>
+
       {ModoEdicion &&
         Permisos["analitico_agregar_costo"] == 1 &&
         CostosAnalitico.length == 0 && (
@@ -574,13 +667,20 @@ export default () => {
               <th
                 style={{
                   width: "400px",
+                  position: "relative",
                 }}
               >
-                {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
+                {CostosAnalitico.length > 0 && <span>DESCRIPCIÓN</span>}{" "}
                 {CostosAnalitico.length > 0 &&
                   ModoEdicion &&
                   Permisos["analitico_agregar_costo"] == 1 && (
-                    <span style={{ position: "absolute", right: "0px" }}>
+                    <span
+                      style={{
+                        position: "absolute",
+                        right: "0px",
+                        paddingRight: "4px",
+                      }}
+                    >
                       <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
                     </span>
                   )}
@@ -644,7 +744,11 @@ export default () => {
                             Permisos["analitico_eliminar_presupuesto"] == 1 && (
                               <FaRegTrashAlt
                                 onClick={() => eliminarPresupuesto(item.id)}
-                                style={{ cursor: "pointer" }}
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "4px",
+                                }}
+                                size="12"
                               />
                             )}
                         </span>
@@ -661,7 +765,7 @@ export default () => {
                     color: "black",
                   }}
                 >
-                  ACUMULADO
+                  ACUMULADO AL {AnyoSeleccionado}
                 </th>
               )}
               {CostosAnalitico.length > 0 && (
@@ -672,7 +776,7 @@ export default () => {
                     color: "black",
                   }}
                 >
-                  SALDO
+                  SALDO AL {AnyoSeleccionado}
                 </th>
               )}
               {AnyosEjecutados.map((item, i) => (
@@ -710,7 +814,7 @@ export default () => {
                         Permisos["analitco_eliminar_anyoejecutado"] == 1 && (
                           <FaRegTrashAlt
                             onClick={() => eliminarAnyoEjecutado(item.anyo)}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: "pointer", marginRight: "4px" }}
                           />
                         )}
                     </div>
@@ -751,20 +855,20 @@ export default () => {
                         Permisos["analitico_agregar_especifica"] == 1 && (
                           <FaPlusCircle
                             color="#242526"
-                            size="15"
+                            size="12"
                             onClick={() => {
                               agregarEspecifica(item.id);
                             }}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: "pointer", marginRight: "4px" }}
                           />
                         )}
                       {ModoEdicion &&
                         Permisos["analitico_eliminar_costo"] == 1 && (
                           <FaRegTrashAlt
                             color="#000000"
-                            size="15"
+                            size="12"
                             onClick={() => eliminarCosto(item.id)}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: "pointer", marginRight: "4px" }}
                           />
                         )}
                     </span>
@@ -833,7 +937,11 @@ export default () => {
                               >
                                 <FaRegTrashAlt
                                   onClick={() => eliminarEspecifica(item2.id)}
-                                  size="15"
+                                  size="12"
+                                  style={{
+                                    cursor: "pointer",
+                                    marginRight: "4px",
+                                  }}
                                 />
                               </span>
                             )}
@@ -847,8 +955,16 @@ export default () => {
             ))}
             {PresupuestosAprobados.length > 0 && (
               <tr>
-                <th></th>
-                <th style={{ textAlign: "right" }}>PRESUPUESTO TOTAL</th>
+                <th
+                  style={{
+                    textAlign: "right",
+                    background: "#3a3b3c",
+                    color: "#cecece",
+                  }}
+                  colSpan="2"
+                >
+                  PRESUPUESTO TOTAL
+                </th>
                 {RenderTotales()}
               </tr>
             )}

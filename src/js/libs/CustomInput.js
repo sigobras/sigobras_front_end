@@ -28,7 +28,7 @@ export default ({ value, onBlur, style = {}, type }) => {
       }}
       style={{
         ...style,
-        background: FlagCambios ? "#17a2b840" : "#42ff0038",
+        background: FlagCambios ? "#17a2b840" : "#8effa938",
         padding: "0px 4px 0px 4px",
         color: "black",
         textAlign: "right",
