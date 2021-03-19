@@ -600,7 +600,10 @@ export default ({ Id_fuente, Anyo }) => {
                       )}
                     </th>
                     {EstadoEdicion != "especifica_" + item.id && (
-                      <th className="whiteThem-table-sticky2">
+                      <th
+                        className="whiteThem-table-sticky2"
+                        style={{ position: "relative" }}
+                      >
                         {item.descripcion}
                         <span
                           style={{
@@ -640,7 +643,10 @@ export default ({ Id_fuente, Anyo }) => {
                   ).map((item2, i2) => (
                     <tr key={i2}>
                       <td className="whiteThem-table-sticky">{i2 + 1}</td>
-                      <td className="whiteThem-table-sticky2">
+                      <td
+                        className="whiteThem-table-sticky2"
+                        style={{ position: "relative" }}
+                      >
                         {EstadoEdicion != "costo_" + item2.id ? (
                           <>
                             <span
