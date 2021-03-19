@@ -87,7 +87,7 @@ export default ({ recargar }) => {
           </ModalBody>
           <ModalFooter>
             <Button color="primary" type="submit">
-              Guardar
+              Añadir
             </Button>{" "}
             <Button color="secondary" onClick={toggle}>
               Cancel

@@ -13,7 +13,12 @@ import {
   PopoverBody,
 } from "reactstrap";
 import axios from "axios";
-import { FaUpload, FaFileAlt, FaPlusCircle, FaTrash } from "react-icons/fa";
+import {
+  FaUpload,
+  FaFileAlt,
+  FaPlusCircle,
+  FaRegTrashAlt,
+} from "react-icons/fa";
 import { MdCancel, MdSave } from "react-icons/md";
 import AsyncSelect from "react-select/async";
 
@@ -84,14 +89,22 @@ export default () => {
     var res = await axios.put(`${UrlServer}/v1/analitico/presupuesto`, {
       presupuesto_analitico_id,
       presupuestos_aprobados_id,
-      monto,
+      monto: monto || 0,
     });
     cargarEspecificas();
+  }
+  async function eliminarPresupuesto(id) {
+    if (confirm("Desea eliminar este presupuesto?")) {
+      var res = await axios.delete(
+        `${UrlServer}/v1/presupuestosAprobados/${id}`
+      );
+      cargarPresupuestosAprobados();
+      cargarEspecificas();
+    }
   }
   //costos
   const [CostosAnalitico, setCostosAnalitico] = useState([]);
   async function cargarCostosAnalitico() {
-    console.log("cargarCostosAnalitico");
     var res = await axios.get(`${UrlServer}/v1/analiticoCostos`, {
       params: {
         id_ficha: sessionStorage.getItem("idobra"),
@@ -138,12 +151,10 @@ export default () => {
         }
         if (key.startsWith("avanceAnual_")) {
           tempRender.push(
-            <th style={{ textAlign: "right", width: "80px" }}>
-              {Redondea(accu)}
-            </th>
+            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
           );
           tempRender.push(
-            <th style={{ textAlign: "right" }}>
+            <th style={{ textAlign: "right" }} className="porcentaje">
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
@@ -151,12 +162,10 @@ export default () => {
         }
         if (key.startsWith("avanceMensual")) {
           tempRender.push(
-            <th style={{ textAlign: "right", width: "80px" }}>
-              {Redondea(accu)}
-            </th>
+            <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
           );
           tempRender.push(
-            <th style={{ textAlign: "right" }}>
+            <th style={{ textAlign: "right" }} className="porcentaje">
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
@@ -168,16 +177,14 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length,
       0,
-      <th style={{ textAlign: "right", background: "orange" }}>
-        {Redondea(acumulado)}
-      </th>
+      <th style={{ textAlign: "right" }}>{Redondea(acumulado)}</th>
       // <th style={{ textAlign: "right" }}>"acumulado"</th>
     );
     //porcentaje acumulado
     tempRender.splice(
       PresupuestosAprobados.length + 1,
       0,
-      <th style={{ textAlign: "right", background: "orange" }}>
+      <th style={{ textAlign: "right" }} className="porcentaje">
         {Redondea((acumulado / ultimoPresupuesto) * 100)} %
       </th>
     );
@@ -185,7 +192,12 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 2,
       0,
-      <th style={{ textAlign: "right", background: "orange" }}>
+      <th
+        style={{
+          textAlign: "right",
+          color: ultimoPresupuesto - acumulado < 0 ? "#cc0000" : "black",
+        }}
+      >
         {Redondea(ultimoPresupuesto - acumulado)}
       </th>
     );
@@ -193,7 +205,7 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 3,
       0,
-      <th style={{ textAlign: "right", background: "orange" }}>
+      <th style={{ textAlign: "right" }} className="porcentaje">
         {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
         %
       </th>
@@ -210,6 +222,7 @@ export default () => {
         anyo: AnyoSeleccionado,
       },
     });
+    console.log("especificas", res.data);
     setEspecificas(res.data);
   }
   async function agregarEspecifica(presupuestoanalitico_costosasignados_id) {
@@ -232,7 +245,7 @@ export default () => {
     await axios.put(`${UrlServer}/v1/analitico/avanceAnual`, {
       presupuesto_analitico_id,
       anyo,
-      monto,
+      monto: monto || 0,
     });
     cargarEspecificas();
   }
@@ -269,65 +282,65 @@ export default () => {
       const key = properties[i];
       if (key.startsWith("presupuesto_")) {
         tempRender.push(
-          <td>
-            {Permisos["analitico_agregar_presupuestomonto"] ? (
-              <CustomInput
-                value={Redondea(item[key], 2, false, "")}
-                onBlur={(value) => {
-                  guardarPresupuesto(value, item.id, key.split("_")[1]);
-                }}
-                style={{ textAlign: "right" }}
-              />
-            ) : (
-              Redondea(item[key], 2, false, "")
-            )}
-          </td>
+          ModoEdicion ? (
+            <td style={{ padding: "0px" }}>
+              {Permisos["analitico_agregar_presupuestomonto"] && (
+                <CustomInput
+                  value={Redondea(item[key], 2, false, "")}
+                  onBlur={(value) => {
+                    guardarPresupuesto(value, item.id, key.split("_")[1]);
+                  }}
+                />
+              )}
+            </td>
+          ) : (
+            <td style={{ textAlign: "right" }}>
+              {Redondea(item[key], 2, false, "")}
+            </td>
+          )
         );
         ultimoPresupuesto = item[key];
       }
       if (key.startsWith("avanceAnual_")) {
         tempRender.push(
-          <td>
-            {Permisos["analitico_agregar_avanceanual"] == 1 ? (
-              <CustomInput
-                value={Redondea(item[key], 2, false, "")}
-                onBlur={(value) =>
-                  guardarAvanceAnual(value, item.id, key.split("_")[1])
-                }
-                style={{ textAlign: "right" }}
-              />
-            ) : (
-              Redondea(item[key], 2, false, "")
-            )}
-          </td>
+          ModoEdicion ? (
+            <td style={{ padding: "0px" }}>
+              {Permisos["analitico_agregar_avanceanual"] == 1 && (
+                <CustomInput
+                  key={key}
+                  value={Redondea(item[key], 2, false, "")}
+                  onBlur={(value) =>
+                    guardarAvanceAnual(value, item.id, key.split("_")[1])
+                  }
+                />
+              )}
+            </td>
+          ) : (
+            <td style={{ textAlign: "right" }}>
+              {Redondea(item[key], 2, false, "")}
+            </td>
+          )
         );
         tempRender.push(
-          <td style={{ textAlign: "right", width: "10px" }}>
+          <th style={{ textAlign: "right" }} className="porcentaje">
             {item[key]
               ? Redondea((item[key] / ultimoPresupuesto) * 100) + "%"
               : ""}
-          </td>
+          </th>
         );
         //calculando acumulado
         if (item[key]) acumulado += item[key];
       }
       if (key.startsWith("avanceMensual")) {
         tempRender.push(
-          <td style={{ width: "90px" }}>{Redondea(item[key])}</td>
-          // <td>
-          //   <CustomInput
-          //     value={Redondea(item[key], 2, false, "")}
-          //     onBlur={(value) => guardarAvanceMensual(value)}
-          //     style={{ width: "90px" }}
-          //   />
-          // </td>
+          <td style={{ textAlign: "right" }}>{Redondea(item[key])}</td>
         );
         tempRender.push(
-          <td style={{ textAlign: "right", width: "10px" }}>
+          <th style={{ textAlign: "right" }} className="porcentaje">
             {item[key]
               ? Redondea((item[key] / ultimoPresupuesto) * 100) + "%"
               : ""}
-          </td>
+          </th>
         );
         //calculando acumulado
         if (item[key]) acumulado += item[key];
@@ -343,7 +356,7 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 1,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right" }} className="porcentaje">
         {Redondea((acumulado / ultimoPresupuesto) * 100)} %
       </th>
     );
@@ -351,7 +364,12 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 2,
       0,
-      <td style={{ textAlign: "right" }}>
+      <td
+        style={{
+          textAlign: "right",
+          color: ultimoPresupuesto - acumulado < 0 ? "red" : "black",
+        }}
+      >
         {Redondea(ultimoPresupuesto - acumulado)}
       </td>
     );
@@ -359,7 +377,7 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 3,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right" }} className="porcentaje">
         {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
         %
       </th>
@@ -377,8 +395,17 @@ export default () => {
     });
     setAnyosEjecutados(res.data);
   }
+  async function eliminarAnyoEjecutado(anyo) {
+    if (confirm("Esta seguro de eliminar este dato?")) {
+      var res = await axios.delete(
+        `${UrlServer}/v1/analitico/anyosEjecutados/${anyo}`
+      );
+      cargarAnyosEjecutados();
+      cargarEspecificas();
+    }
+  }
   //opciones
-  const [ShowIcons, setShowIcons] = useState(-1);
+  const [ShowIcons, setShowIcons] = useState("");
   const [RefEspecificas, setRefEspecificas] = useState([]);
   const [CostosCollapse, setCostosCollapse] = useState([]);
   const [EstadoEdicion, setEstadoEdicion] = useState("");
@@ -396,7 +423,7 @@ export default () => {
     // AvanceAnual;
     for (let index = 1; index <= 12; index++) {
       tempRender.push(
-        <th colSpan="2" style={{ width: "80px" }}>
+        <th colSpan="2">
           {mesesShort[index - 1]} - {AnyoSeleccionado}
         </th>
       );
@@ -432,7 +459,7 @@ export default () => {
             <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
           );
           tempRender.push(
-            <th style={{ textAlign: "right" }}>
+            <th style={{ textAlign: "right" }} className="porcentaje">
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
@@ -443,7 +470,7 @@ export default () => {
             <th style={{ textAlign: "right" }}>{Redondea(accu)}</th>
           );
           tempRender.push(
-            <th style={{ textAlign: "right" }}>
+            <th style={{ textAlign: "right" }} className="porcentaje">
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
@@ -461,7 +488,7 @@ export default () => {
     tempRender.splice(
       PresupuestosAprobados.length + 1,
       0,
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right" }} className="porcentaje">
         {Redondea((acumulado / ultimoPresupuesto) * 100)} %
       </th>
     );
@@ -478,7 +505,7 @@ export default () => {
       PresupuestosAprobados.length + 3,
       0,
       // <th>saldo porcentaje</th>
-      <th style={{ textAlign: "right" }}>
+      <th style={{ textAlign: "right" }} className="porcentaje">
         {Redondea(((ultimoPresupuesto - acumulado) / ultimoPresupuesto) * 100)}{" "}
         %
       </th>
@@ -531,8 +558,8 @@ export default () => {
             {"Paso 3. Nuevo Año Ejecutado(opcional) =>"}
             <ModalNuevoAnyo
               recargar={() => {
-                cargarEspecificas();
                 cargarAnyosEjecutados();
+                cargarEspecificas();
               }}
             />
           </span>
@@ -542,11 +569,10 @@ export default () => {
           <thead style={{ fontSize: "10px" }}>
             <tr>
               {CostosAnalitico.length > 0 && (
-                <th style={{ fontSize: "9px", width: "70px" }}>ITEM</th>
+                <th style={{ fontSize: "9px" }}>ITEM</th>
               )}
               <th
                 style={{
-                  border: "none",
                   width: "400px",
                 }}
               >
@@ -560,13 +586,13 @@ export default () => {
                   )}
               </th>
               {PresupuestosAprobados.map((item, i) => (
-                <th key={i} style={{ position: "relative", width: "80px" }}>
+                <th key={i}>
                   <div
                     onClick={() => {
-                      if (ShowIcons != i) {
-                        setShowIcons(i);
+                      if (ShowIcons != "presupuesto_" + i) {
+                        setShowIcons("presupuesto_" + i);
                       } else {
-                        setShowIcons(-1);
+                        setShowIcons("");
                       }
                     }}
                     className="d-flex"
@@ -574,7 +600,7 @@ export default () => {
                   >
                     <span>{item.nombre}</span>
                     {PresupuestosAprobados.length - 1 == i && (
-                      <span style={{ position: "absolute", right: "0px" }}>
+                      <span>
                         {ModoEdicion &&
                           Permisos["analitico_agregar_presupuesto"] == 1 && (
                             <ModalNuevoPresupuesto
@@ -587,7 +613,7 @@ export default () => {
                       </span>
                     )}
                   </div>
-                  {ShowIcons == i && (
+                  {ShowIcons == "presupuesto_" + i && (
                     <div>
                       {item.resolucion && (
                         <div
@@ -614,29 +640,81 @@ export default () => {
                                 recargar={cargarPresupuestosAprobados}
                               />
                             )}
+                          {ModoEdicion &&
+                            Permisos["analitico_eliminar_presupuesto"] == 1 && (
+                              <FaRegTrashAlt
+                                onClick={() => eliminarPresupuesto(item.id)}
+                                style={{ cursor: "pointer" }}
+                              />
+                            )}
                         </span>
                       </div>
                     </div>
                   )}
                 </th>
               ))}
-              {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
-              {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
+              {CostosAnalitico.length > 0 && (
+                <th
+                  colSpan="2"
+                  style={{
+                    background: "orange",
+                    color: "black",
+                  }}
+                >
+                  ACUMULADO
+                </th>
+              )}
+              {CostosAnalitico.length > 0 && (
+                <th
+                  colSpan="2"
+                  style={{
+                    background: "orange",
+                    color: "black",
+                  }}
+                >
+                  SALDO
+                </th>
+              )}
               {AnyosEjecutados.map((item, i) => (
-                <th colSpan="2" style={{ position: "relative" }}>
-                  <span>TOTAL EJECUTADO {item.anyo}</span>
-                  {ModoEdicion &&
-                    Permisos["analitico_agregar_anyoejecutado"] == 1 &&
-                    AnyosEjecutados.length - 1 == i && (
-                      <span style={{ position: "absolute", right: "0px" }}>
-                        <ModalNuevoAnyo
-                          recargar={() => {
-                            cargarEspecificas();
-                            cargarAnyosEjecutados();
-                          }}
-                        />
-                      </span>
-                    )}
+                <th colSpan="2">
+                  <div className="d-flex">
+                    <span
+                      onClick={() => {
+                        if (ShowIcons != "anyoEjectuado_" + i) {
+                          setShowIcons("anyoEjectuado_" + i);
+                        } else {
+                          setShowIcons("");
+                        }
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      TOTAL EJECUTADO {item.anyo}
+                    </span>
+                    {ModoEdicion &&
+                      Permisos["analitico_agregar_anyoejecutado"] == 1 &&
+                      AnyosEjecutados.length - 1 == i && (
+                        <span>
+                          <ModalNuevoAnyo
+                            recargar={() => {
+                              cargarEspecificas();
+                              cargarAnyosEjecutados();
+                            }}
+                          />
+                        </span>
+                      )}
+                  </div>
+
+                  {ShowIcons == "anyoEjectuado_" + i && (
+                    <div>
+                      {ModoEdicion &&
+                        Permisos["analitco_eliminar_anyoejecutado"] == 1 && (
+                          <FaRegTrashAlt
+                            onClick={() => eliminarAnyoEjecutado(item.anyo)}
+                            style={{ cursor: "pointer" }}
+                          />
+                        )}
+                    </div>
+                  )}
                 </th>
               ))}
               {CostosAnalitico.length > 0 && RenderMesesTitulo()}
@@ -672,7 +750,7 @@ export default () => {
                       {ModoEdicion &&
                         Permisos["analitico_agregar_especifica"] == 1 && (
                           <FaPlusCircle
-                            color="#000000"
+                            color="#242526"
                             size="15"
                             onClick={() => {
                               agregarEspecifica(item.id);
@@ -682,7 +760,7 @@ export default () => {
                         )}
                       {ModoEdicion &&
                         Permisos["analitico_eliminar_costo"] == 1 && (
-                          <FaTrash
+                          <FaRegTrashAlt
                             color="#000000"
                             size="15"
                             onClick={() => eliminarCosto(item.id)}
@@ -695,27 +773,31 @@ export default () => {
                 </tr>
                 {Especificas.filter((item2) => item2.id_costo == item.id).map(
                   (item2, j) => (
-                    <tr style={{ display: CostosCollapse[i] ? "" : "none" }}>
+                    <tr
+                      style={{
+                        display: CostosCollapse[i] ? "" : "none",
+                      }}
+                    >
                       <td
-                        style={{ cursor: "pointer" }}
+                        style={{
+                          cursor: "pointer",
+                        }}
                         colSpan={
                           EstadoEdicion != "especifica_" + item2.id ? 1 : 2
                         }
                         className="whiteThem-table-sticky"
+                        onClick={() => {
+                          if (
+                            ModoEdicion &&
+                            Permisos["analitico_editar_especifica"] == 1 &&
+                            EstadoEdicion != "especifica_" + item2.id
+                          ) {
+                            setEstadoEdicion("especifica_" + item2.id);
+                          }
+                        }}
                       >
                         {EstadoEdicion != "especifica_" + item2.id ? (
-                          <span
-                            onClick={() => {
-                              if (
-                                ModoEdicion &&
-                                Permisos["analitico_editar_especifica"] == 1
-                              ) {
-                                setEstadoEdicion("especifica_" + item2.id);
-                              }
-                            }}
-                          >
-                            {item2.clasificador}
-                          </span>
+                          <span>{item2.clasificador}</span>
                         ) : (
                           <span style={{ display: "flex" }}>
                             <CustomAsyncSelect
@@ -735,7 +817,9 @@ export default () => {
                       {EstadoEdicion != "especifica_" + item2.id && (
                         <td
                           className="whiteThem-table-sticky2"
-                          style={{ position: "relative" }}
+                          style={{
+                            position: "relative",
+                          }}
                         >
                           {item2.descripcion}
                           {ModoEdicion &&
@@ -747,7 +831,7 @@ export default () => {
                                   right: "0px",
                                 }}
                               >
-                                <FaTrash
+                                <FaRegTrashAlt
                                   onClick={() => eliminarEspecifica(item2.id)}
                                   size="15"
                                 />
