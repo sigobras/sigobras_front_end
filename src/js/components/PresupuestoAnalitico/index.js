@@ -508,21 +508,22 @@ export default () => {
         </Button>
       )}
       {ModoEdicion &&
-        Permisos["analitico_agregar_presupuesto"] == 1 &&
-        PresupuestosAprobados.length == 0 && (
-          <span>
-            {"Paso 1. Nuevo presupuesto =>"}
-            <ModalNuevoPresupuesto recargar={cargarPresupuestosAprobados} />
-          </span>
-        )}{" "}
-      {ModoEdicion &&
         Permisos["analitico_agregar_costo"] == 1 &&
         CostosAnalitico.length == 0 && (
           <span>
-            {"Paso 2. Nuevo costo =>"}
+            {"Paso 1. Nuevo costo =>"}
             <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
           </span>
-        )}{" "}
+        )}
+      {ModoEdicion &&
+        Permisos["analitico_agregar_presupuesto"] == 1 &&
+        CostosAnalitico.length >= 0 &&
+        PresupuestosAprobados.length == 0 && (
+          <span>
+            {"Paso 2. Nuevo presupuesto =>"}
+            <ModalNuevoPresupuesto recargar={cargarPresupuestosAprobados} />
+          </span>
+        )}
       {ModoEdicion &&
         Permisos["analitico_agregar_anyoejecutado"] == 1 &&
         AnyosEjecutados.length == 0 && (
@@ -536,232 +537,240 @@ export default () => {
             />
           </span>
         )}
-      <table className="whiteThem-table" style={{ width: "max-content" }}>
-        <thead style={{ fontSize: "10px" }}>
-          <tr>
-            {CostosAnalitico.length > 0 && (
-              <th style={{ fontSize: "9px", width: "70px" }}>ITEM</th>
-            )}
-            <th
-              style={{
-                border: "none",
-                width: "400px",
-              }}
-            >
-              {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
-              {CostosAnalitico.length > 0 &&
-                ModoEdicion &&
-                Permisos["analitico_agregar_costo"] == 1 && (
-                  <span style={{ position: "absolute", right: "0px" }}>
-                    <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
-                  </span>
-                )}
-            </th>
-            {PresupuestosAprobados.map((item, i) => (
-              <th key={i} style={{ position: "relative", width: "80px" }}>
-                <div
-                  onClick={() => {
-                    if (ShowIcons != i) {
-                      setShowIcons(i);
-                    } else {
-                      setShowIcons(-1);
-                    }
-                  }}
-                  className="d-flex"
-                  style={{ cursor: "pointer" }}
-                >
-                  <span>{item.nombre}</span>
-                  {PresupuestosAprobados.length - 1 == i && (
+      {CostosAnalitico.length > 0 && (
+        <table className="whiteThem-table" style={{ width: "max-content" }}>
+          <thead style={{ fontSize: "10px" }}>
+            <tr>
+              {CostosAnalitico.length > 0 && (
+                <th style={{ fontSize: "9px", width: "70px" }}>ITEM</th>
+              )}
+              <th
+                style={{
+                  border: "none",
+                  width: "400px",
+                }}
+              >
+                {CostosAnalitico.length > 0 && <span>DESCRIPCION</span>}{" "}
+                {CostosAnalitico.length > 0 &&
+                  ModoEdicion &&
+                  Permisos["analitico_agregar_costo"] == 1 && (
                     <span style={{ position: "absolute", right: "0px" }}>
-                      {ModoEdicion &&
-                        Permisos["analitico_agregar_presupuesto"] == 1 && (
-                          <ModalNuevoPresupuesto
-                            recargar={() => {
-                              cargarPresupuestosAprobados();
-                              cargarEspecificas();
-                            }}
-                          />
-                        )}
+                      <ModalCostosAnalitico recargar={cargarCostosAnalitico} />
                     </span>
                   )}
-                </div>
-                {ShowIcons == i && (
-                  <div>
-                    {item.resolucion && (
-                      <div
-                        style={{
-                          fontSize: "9px",
-                        }}
-                      >
-                        {item.resolucion}
-                      </div>
-                    )}
-
-                    <div>
-                      <span>
-                        <FaFileAlt
-                          onClick={() =>
-                            DescargarArchivo(`${UrlServer}${item.archivo}`)
-                          }
-                          style={{ cursor: "pointer" }}
-                        />{" "}
+              </th>
+              {PresupuestosAprobados.map((item, i) => (
+                <th key={i} style={{ position: "relative", width: "80px" }}>
+                  <div
+                    onClick={() => {
+                      if (ShowIcons != i) {
+                        setShowIcons(i);
+                      } else {
+                        setShowIcons(-1);
+                      }
+                    }}
+                    className="d-flex"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <span>{item.nombre}</span>
+                    {PresupuestosAprobados.length - 1 == i && (
+                      <span style={{ position: "absolute", right: "0px" }}>
                         {ModoEdicion &&
-                          Permisos["analitico_editar_presupuesto"] == 1 && (
+                          Permisos["analitico_agregar_presupuesto"] == 1 && (
                             <ModalNuevoPresupuesto
-                              data={item}
-                              recargar={cargarPresupuestosAprobados}
+                              recargar={() => {
+                                cargarPresupuestosAprobados();
+                                cargarEspecificas();
+                              }}
                             />
                           )}
                       </span>
-                    </div>
+                    )}
                   </div>
-                )}
-              </th>
-            ))}
-            {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
-            {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
-            {AnyosEjecutados.map((item, i) => (
-              <th colSpan="2" style={{ position: "relative" }}>
-                <span>TOTAL EJECUTADO {item.anyo}</span>
-                {ModoEdicion &&
-                  Permisos["analitico_agregar_anyoejecutado"] == 1 &&
-                  AnyosEjecutados.length - 1 == i && (
-                    <span style={{ position: "absolute", right: "0px" }}>
-                      <ModalNuevoAnyo
-                        recargar={() => {
-                          cargarEspecificas();
-                          cargarAnyosEjecutados();
-                        }}
-                      />
-                    </span>
-                  )}
-              </th>
-            ))}
-            {CostosAnalitico.length > 0 && RenderMesesTitulo()}
-          </tr>
-        </thead>
-        <tbody>
-          {CostosAnalitico.map((item, i) => (
-            <>
-              <tr key={i + "-1"}>
-                <th
-                  style={{ fontSize: "9px" }}
-                  className="whiteThem-table-sticky"
-                >
-                  {i + 1}
-                </th>
-                <th className="whiteThem-table-sticky2">
-                  <span
-                    style={{
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      var clone = [...CostosCollapse];
-                      clone[i] = !clone[i];
-                      setCostosCollapse(clone);
-                    }}
-                  >
-                    {item.nombre}
-                  </span>
-                  <span style={{ position: "absolute", right: "0px" }}>
-                    {ModoEdicion &&
-                      Permisos["analitico_agregar_especifica"] == 1 && (
-                        <FaPlusCircle
-                          color="#000000"
-                          size="15"
-                          onClick={() => {
-                            agregarEspecifica(item.id);
-                          }}
-                          style={{ cursor: "pointer" }}
-                        />
-                      )}
-                    {ModoEdicion &&
-                      Permisos["analitico_eliminar_costo"] == 1 && (
-                        <FaTrash
-                          color="#000000"
-                          size="15"
-                          onClick={() => eliminarCosto(item.id)}
-                          style={{ cursor: "pointer" }}
-                        />
-                      )}
-                  </span>
-                </th>
-                {RenderCostosData(item)}
-              </tr>
-              {Especificas.filter((item2) => item2.id_costo == item.id).map(
-                (item2, j) => (
-                  <tr style={{ display: CostosCollapse[i] ? "" : "none" }}>
-                    <td
-                      style={{ cursor: "pointer" }}
-                      colSpan={
-                        EstadoEdicion != "especifica_" + item2.id ? 1 : 2
-                      }
-                      className="whiteThem-table-sticky"
-                    >
-                      {EstadoEdicion != "especifica_" + item2.id ? (
-                        <span
-                          onClick={() => {
-                            if (
-                              ModoEdicion &&
-                              Permisos["analitico_editar_especifica"] == 1
-                            ) {
-                              setEstadoEdicion("especifica_" + item2.id);
-                            }
+                  {ShowIcons == i && (
+                    <div>
+                      {item.resolucion && (
+                        <div
+                          style={{
+                            fontSize: "9px",
                           }}
                         >
-                          {item2.clasificador}
-                        </span>
-                      ) : (
-                        <span style={{ display: "flex" }}>
-                          <CustomAsyncSelect
-                            value={item2}
-                            guardar={(valor) =>
-                              actualizarEspecifica(valor, item2.id, item.id)
-                            }
-                          />
-                          <MdCancel
-                            onClick={() => setEstadoEdicion("")}
-                            style={{ cursor: "pointer" }}
-                            size={"20"}
-                          />
-                        </span>
+                          {item.resolucion}
+                        </div>
                       )}
-                    </td>
-                    {EstadoEdicion != "especifica_" + item2.id && (
-                      <td className="whiteThem-table-sticky2">
-                        {item2.descripcion}
-                        {ModoEdicion &&
-                          Permisos["analitico_eliminar_especifica"] == 1 && (
-                            <span
-                              style={{
-                                cursor: "pointer",
-                                position: "absolute",
-                                right: "0px",
-                              }}
-                            >
-                              <FaTrash
-                                onClick={() => eliminarEspecifica(item2.id)}
-                                size="15"
+
+                      <div>
+                        <span>
+                          <FaFileAlt
+                            onClick={() =>
+                              DescargarArchivo(`${UrlServer}${item.archivo}`)
+                            }
+                            style={{ cursor: "pointer" }}
+                          />{" "}
+                          {ModoEdicion &&
+                            Permisos["analitico_editar_presupuesto"] == 1 && (
+                              <ModalNuevoPresupuesto
+                                data={item}
+                                recargar={cargarPresupuestosAprobados}
                               />
-                            </span>
-                          )}
-                      </td>
+                            )}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </th>
+              ))}
+              {CostosAnalitico.length > 0 && <th colSpan="2">Acumulado</th>}
+              {CostosAnalitico.length > 0 && <th colSpan="2">Saldo</th>}
+              {AnyosEjecutados.map((item, i) => (
+                <th colSpan="2" style={{ position: "relative" }}>
+                  <span>TOTAL EJECUTADO {item.anyo}</span>
+                  {ModoEdicion &&
+                    Permisos["analitico_agregar_anyoejecutado"] == 1 &&
+                    AnyosEjecutados.length - 1 == i && (
+                      <span style={{ position: "absolute", right: "0px" }}>
+                        <ModalNuevoAnyo
+                          recargar={() => {
+                            cargarEspecificas();
+                            cargarAnyosEjecutados();
+                          }}
+                        />
+                      </span>
                     )}
-                    {RenderEspecificaData(item2)}
-                  </tr>
-                )
-              )}
-            </>
-          ))}
-          {PresupuestosAprobados.length > 0 && (
-            <tr>
-              <th></th>
-              <th style={{ textAlign: "right" }}>PRESUPUESTO TOTAL</th>
-              {RenderTotales()}
+                </th>
+              ))}
+              {CostosAnalitico.length > 0 && RenderMesesTitulo()}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {CostosAnalitico.map((item, i) => (
+              <>
+                <tr key={i + "-1"}>
+                  <th
+                    style={{ fontSize: "9px" }}
+                    className="whiteThem-table-sticky"
+                  >
+                    {i + 1}
+                  </th>
+                  <th
+                    className="whiteThem-table-sticky2"
+                    style={{ position: "relative" }}
+                  >
+                    <span
+                      style={{
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        var clone = [...CostosCollapse];
+                        clone[i] = !clone[i];
+                        setCostosCollapse(clone);
+                      }}
+                    >
+                      {item.nombre}
+                    </span>
+                    <span style={{ position: "absolute", right: "0px" }}>
+                      {ModoEdicion &&
+                        Permisos["analitico_agregar_especifica"] == 1 && (
+                          <FaPlusCircle
+                            color="#000000"
+                            size="15"
+                            onClick={() => {
+                              agregarEspecifica(item.id);
+                            }}
+                            style={{ cursor: "pointer" }}
+                          />
+                        )}
+                      {ModoEdicion &&
+                        Permisos["analitico_eliminar_costo"] == 1 && (
+                          <FaTrash
+                            color="#000000"
+                            size="15"
+                            onClick={() => eliminarCosto(item.id)}
+                            style={{ cursor: "pointer" }}
+                          />
+                        )}
+                    </span>
+                  </th>
+                  {RenderCostosData(item)}
+                </tr>
+                {Especificas.filter((item2) => item2.id_costo == item.id).map(
+                  (item2, j) => (
+                    <tr style={{ display: CostosCollapse[i] ? "" : "none" }}>
+                      <td
+                        style={{ cursor: "pointer" }}
+                        colSpan={
+                          EstadoEdicion != "especifica_" + item2.id ? 1 : 2
+                        }
+                        className="whiteThem-table-sticky"
+                      >
+                        {EstadoEdicion != "especifica_" + item2.id ? (
+                          <span
+                            onClick={() => {
+                              if (
+                                ModoEdicion &&
+                                Permisos["analitico_editar_especifica"] == 1
+                              ) {
+                                setEstadoEdicion("especifica_" + item2.id);
+                              }
+                            }}
+                          >
+                            {item2.clasificador}
+                          </span>
+                        ) : (
+                          <span style={{ display: "flex" }}>
+                            <CustomAsyncSelect
+                              value={item2}
+                              guardar={(valor) =>
+                                actualizarEspecifica(valor, item2.id, item.id)
+                              }
+                            />
+                            <MdCancel
+                              onClick={() => setEstadoEdicion("")}
+                              style={{ cursor: "pointer" }}
+                              size={"20"}
+                            />
+                          </span>
+                        )}
+                      </td>
+                      {EstadoEdicion != "especifica_" + item2.id && (
+                        <td
+                          className="whiteThem-table-sticky2"
+                          style={{ position: "relative" }}
+                        >
+                          {item2.descripcion}
+                          {ModoEdicion &&
+                            Permisos["analitico_eliminar_especifica"] == 1 && (
+                              <span
+                                style={{
+                                  cursor: "pointer",
+                                  position: "absolute",
+                                  right: "0px",
+                                }}
+                              >
+                                <FaTrash
+                                  onClick={() => eliminarEspecifica(item2.id)}
+                                  size="15"
+                                />
+                              </span>
+                            )}
+                        </td>
+                      )}
+                      {RenderEspecificaData(item2)}
+                    </tr>
+                  )
+                )}
+              </>
+            ))}
+            {PresupuestosAprobados.length > 0 && (
+              <tr>
+                <th></th>
+                <th style={{ textAlign: "right" }}>PRESUPUESTO TOTAL</th>
+                {RenderTotales()}
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
