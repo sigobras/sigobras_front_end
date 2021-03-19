@@ -70,16 +70,6 @@ export default ({ recargar, data }) => {
           "content-type": "multipart/form-data",
         },
       };
-      var res1 = await axios.get(`${UrlServer}/v1/presupuestosAprobados`, {
-        params: {
-          id_ficha: sessionStorage.getItem("idobra"),
-          fecha: FormularioData.fecha,
-        },
-      });
-      console.log("res1", res1.data);
-      if (res1.data.length > 0) {
-        throw "CONFLICTOS_FECHAS";
-      }
       if (data) {
         var res = await axios.put(
           `${UrlServer}/v1/presupuestosAprobados/${FormularioData.id}`,
@@ -93,7 +83,6 @@ export default ({ recargar, data }) => {
           config
         );
       }
-
       recargar();
       setModal(false);
       alert(res.data.message);

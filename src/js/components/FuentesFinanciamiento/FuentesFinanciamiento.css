@@ -1,7 +1,6 @@
 .whiteThem-table thead th {
   font-size: 10px;
   border: 1px solid black;
-  position: relative;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -15,7 +14,6 @@
 .whiteThem-table tbody th {
   padding: 0px;
   font-size: 11px;
-  vertical-align: top;
   border: 1px solid black;
   white-space: nowrap;
 }
@@ -23,18 +21,17 @@
   background: #c6c8ca;
   font-weight: 700;
   border: 1px solid black;
-  text-align: right;
+  width: 50px;
 }
 .whiteThem-table tbody td {
   background: white;
   border: 1px solid black;
-  text-align: right;
+  width: 50px;
 }
 .whiteThem-table input,
 .whiteThem-table select {
   height: 16px;
   font-size: 12px;
-  text-align: right;
   line-height: 28px;
   border: none;
   padding: 0px;
@@ -50,5 +47,5 @@
 }
 .whiteThem-table-sticky2 {
   position: sticky;
-  left: 50px;
+  left: 80px;
 } */
