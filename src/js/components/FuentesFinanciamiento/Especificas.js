@@ -74,6 +74,7 @@ export default forwardRef(
           },
         }
       );
+      console.log("cargarEspecificas", res.data);
       if (Array.isArray(res.data)) {
         setEspecificas(res.data);
         var clone = [...CantidadEspecificas];
@@ -131,6 +132,66 @@ export default forwardRef(
       );
       cargarEspecificas();
       setEstadoEdicion("");
+    }
+    function renderEspecificasContenido(item) {
+      var tempRender = [];
+      var acumulado = 0;
+      var ultimoPresupuesto = item.pia;
+      //render variaciones
+      for (let i = 0; i < VariacionesPim.length; i++) {
+        const element = VariacionesPim[i];
+        ultimoPresupuesto = item["variacionPim_" + element.id];
+        tempRender.push(
+          ModoEdicion &&
+            Permisos["fuentefinanciamiento_editar_pimmonto"] == 1 ? (
+            <td style={{ padding: "0px" }}>
+              <CustomInput
+                key={item["variacionPim_" + element.id]}
+                value={Redondea(
+                  item["variacionPim_" + element.id],
+                  2,
+                  false,
+                  ""
+                )}
+                onBlur={(value) =>
+                  guardarVariacionesPimMonto(value, item.id, element.id)
+                }
+              />
+            </td>
+          ) : (
+            <td style={{ textAlign: "right" }}>
+              {Redondea(item["variacionPim_" + element.id], 2, false, "")}
+            </td>
+          )
+        );
+      }
+      //render meses
+      var acumulado = 0;
+      for (let i = 1; i <= 12; i++) {
+        var totalMes = 0;
+        var totalProgramadoMes = 0;
+        for (let j = 0; j < Costos.length; j++) {
+          const Costo = Costos[j];
+          if (Costo.id_analitico == item.id) {
+            totalMes += Costo["avanceMensual_" + i];
+            totalProgramadoMes += Costo["programadoMensual_" + i];
+          }
+        }
+        acumulado += totalMes;
+        tempRender.push(<th>{Redondea(totalMes)}</th>);
+        tempRender.push(<th>{Redondea(totalProgramadoMes)}</th>);
+      }
+      tempRender.splice(
+        VariacionesPim.length,
+        0,
+        <th>{Redondea(acumulado)}</th>
+      );
+      tempRender.splice(
+        VariacionesPim.length + 1,
+        0,
+        <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
+      );
+      return tempRender;
     }
     //costoslist
     const [CostosList, setCostosList] = useState([]);
@@ -196,11 +257,6 @@ export default forwardRef(
       fuentesfinanciamiento_analitico_id,
       id
     ) {
-      console.log("actualizando", {
-        id,
-        fuentesfinanciamiento_analitico_id,
-        presupuestoanalitico_costos_id,
-      });
       var res = await axios.put(
         `${UrlServer}/v1/fuentesFinancieamiento/costos/`,
         {
@@ -262,17 +318,42 @@ export default forwardRef(
       setCantidadPim(clone);
     }
     async function agregarVariacionPim() {
-      var nombreGenerado = "PIM " + (VariacionesPim.length + 1);
-      var res = await axios.post(
-        `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim`,
-        {
-          nombre: nombreGenerado,
-          fuentesfinanciamiento_asignados_id: Id_fuente,
-          anyo: Anyo,
+      try {
+        var nombreGenerado = "PIM " + (VariacionesPim.length + 1);
+        var res = await axios.post(
+          `${UrlServer}/v1/fuentesFinancieamiento/variacionesPim`,
+          {
+            nombre: nombreGenerado,
+            fuentesfinanciamiento_asignados_id: Id_fuente,
+            anyo: Anyo,
+          }
+        );
+        if (VariacionesPim.length) {
+          var ultimoPimId = VariacionesPim[VariacionesPim.length - 1].id;
         }
-      );
-      cargarVariacionesPim();
-      cargarEspecificas();
+        //se ingresa especificas
+        var variacionPimMontos = [];
+        for (let index = 0; index < Especificas.length; index++) {
+          const element = Especificas[index];
+          variacionPimMontos.push({
+            fuentesfinanciamiento_analitico_id: element.id,
+            variacionespim_id: res.data.id,
+            monto:
+              VariacionesPim.length > 0
+                ? element["variacionPim_" + ultimoPimId]
+                : element["pia"],
+          });
+        }
+        var res2 = await axios.put(
+          `${UrlServer}/v1/fuentesFinancieamiento/variacionesPimMonto`,
+          variacionPimMontos
+        );
+        cargarVariacionesPim();
+        cargarEspecificas();
+      } catch (error) {
+        alert("Ocurrio un error");
+        console.log("ERROR ", error);
+      }
     }
     async function actualizarVariacionPim(nombre, id) {
       var res = await axios.put(
@@ -432,64 +513,56 @@ export default forwardRef(
       return tempRender;
     }
     //render
-    function renderEspecificasContenido(item) {
-      var tempRender = [];
-      var acumulado = 0;
-      var ultimoPresupuesto = item.pia;
-      //render variaciones
-      for (let i = 0; i < VariacionesPim.length; i++) {
-        const element = VariacionesPim[i];
-        ultimoPresupuesto = item["variacionPim_" + element.id];
-        tempRender.push(
-          ModoEdicion &&
-            Permisos["fuentefinanciamiento_editar_pimmonto"] == 1 ? (
-            <td style={{ padding: "0px" }}>
-              <CustomInput
-                value={Redondea(
-                  item["variacionPim_" + element.id],
-                  2,
-                  false,
-                  ""
-                )}
-                onBlur={(value) =>
-                  guardarVariacionesPimMonto(value, item.id, element.id)
-                }
-              />
-            </td>
-          ) : (
-            <td style={{ textAlign: "right" }}>
-              {Redondea(item["variacionPim_" + element.id], 2, false, "")}
-            </td>
-          )
-        );
-      }
-      //render meses
-      var acumulado = 0;
-      for (let i = 1; i <= 12; i++) {
-        var totalMes = 0;
-        var totalProgramadoMes = 0;
-        for (let j = 0; j < Costos.length; j++) {
-          const Costo = Costos[j];
-          if (Costo.id_analitico == item.id) {
-            totalMes += Costo["avanceMensual_" + i];
-            totalProgramadoMes += Costo["programadoMensual_" + i];
+
+    var refCostosArray = [];
+    function onKeyDown(event, item, propertyIndex, tipo) {
+      var properties = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      if (
+        event.keyCode === 13 ||
+        event.keyCode === 40 ||
+        event.keyCode === 38 ||
+        event.keyCode === 37 ||
+        event.keyCode === 39
+      ) {
+        // izquierda
+        if (event.keyCode === 37) {
+          if (propertyIndex != 1 || tipo != "p") {
+            var col = tipo == "n" ? propertyIndex : propertyIndex - 1;
+            refCostosArray[item.id + "_" + col + tipo].focus();
           }
         }
-        acumulado += totalMes;
-        tempRender.push(<th>{Redondea(totalMes)}</th>);
-        tempRender.push(<th>{Redondea(totalProgramadoMes)}</th>);
+        // arriba
+        if (event.keyCode === 38) {
+          var index = Costos.findIndex((item2) => item2.id == item.id);
+          if (index) {
+            refCostosArray[
+              Costos[index - 1].id +
+                "_" +
+                propertyIndex +
+                (tipo == "p" ? "n" : "p")
+            ].focus();
+          }
+        }
+        //derecha
+        if (event.keyCode === 39) {
+          if (propertyIndex != 12 || tipo != "n") {
+            var col = tipo == "p" ? propertyIndex : propertyIndex + 1;
+            refCostosArray[item.id + "_" + col + tipo].focus();
+          }
+        }
+        // abajo
+        if (event.keyCode === 13 || event.keyCode === 40) {
+          var index = Costos.findIndex((item2) => item2.id == item.id);
+          if (index < Costos.length - 1) {
+            refCostosArray[
+              Costos[index + 1].id +
+                "_" +
+                propertyIndex +
+                (tipo == "p" ? "n" : "p")
+            ].focus();
+          }
+        }
       }
-      tempRender.splice(
-        VariacionesPim.length,
-        0,
-        <th>{Redondea(acumulado)}</th>
-      );
-      tempRender.splice(
-        VariacionesPim.length + 1,
-        0,
-        <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
-      );
-      return tempRender;
     }
     function renderCostosData(item) {
       var tempRender = [];
@@ -504,6 +577,12 @@ export default forwardRef(
               <CustomInput
                 value={Redondea(item["avanceMensual_" + i], 2, false, "")}
                 onBlur={(value) => guardarAvanceMensual(value, item.id, i)}
+                innerRef={(ref) => {
+                  refCostosArray[item.id + "_" + i + "n"] = ref;
+                }}
+                onKeyDown={(e) => {
+                  onKeyDown(e, item, i, "p");
+                }}
               />
             </td>
           ) : (
@@ -520,6 +599,12 @@ export default forwardRef(
               <CustomInput
                 value={Redondea(item["programadoMensual_" + i], 2, false, "")}
                 onBlur={(value) => guardarProgramadoMensual(value, item.id, i)}
+                innerRef={(ref) => {
+                  refCostosArray[item.id + "_" + i + "p"] = ref;
+                }}
+                onKeyDown={(e) => {
+                  onKeyDown(e, item, i, "n");
+                }}
               />
             </td>
           ) : (
@@ -707,7 +792,11 @@ export default forwardRef(
                 <>
                   <tr>
                     <th
-                      style={{ cursor: "pointer" }}
+                      style={{
+                        cursor: "pointer",
+                        zIndex:
+                          EstadoEdicion != "especifica_" + item.id ? 1 : 2,
+                      }}
                       colSpan={EstadoEdicion != "especifica_" + item.id ? 1 : 2}
                       className="whiteThem-table-sticky"
                     >
@@ -743,10 +832,7 @@ export default forwardRef(
                       )}
                     </th>
                     {EstadoEdicion != "especifica_" + item.id && (
-                      <th
-                        className="whiteThem-table-sticky2"
-                        style={{ position: "relative" }}
-                      >
+                      <th className="whiteThem-table-sticky2">
                         <span style={{ paddingRight: "45px" }}>
                           {item.descripcion}
                         </span>
@@ -809,10 +895,7 @@ export default forwardRef(
                   ).map((item2, i2) => (
                     <tr key={i2}>
                       <td className="whiteThem-table-sticky">{i2 + 1}</td>
-                      <td
-                        className="whiteThem-table-sticky2"
-                        style={{ position: "relative" }}
-                      >
+                      <td className="whiteThem-table-sticky2">
                         {EstadoEdicion != "costo_" + item2.id ? (
                           <>
                             <span

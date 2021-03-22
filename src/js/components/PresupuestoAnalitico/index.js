@@ -276,6 +276,52 @@ export default () => {
       cargarEspecificas();
     }
   }
+  function onKeyDown(event, item, propertyIndex) {
+    var properties = Object.keys(item).filter(
+      (element) =>
+        element.startsWith("presupuesto_") || element.startsWith("avanceAnual_")
+    );
+    if (
+      event.keyCode === 13 ||
+      event.keyCode === 40 ||
+      event.keyCode === 38 ||
+      event.keyCode === 37 ||
+      event.keyCode === 39
+    ) {
+      // izquierda
+      if (event.keyCode === 37) {
+        if (propertyIndex > 0) {
+          var col = propertyIndex - 1;
+          refEspecificasArray[item.id + "_" + col].focus();
+        }
+      }
+      // arriba
+      if (event.keyCode === 38) {
+        var index = Especificas.findIndex((item2) => item2.id == item.id);
+        if (index) {
+          refEspecificasArray[
+            Especificas[index - 1].id + "_" + propertyIndex
+          ].focus();
+        }
+      }
+      //derecha
+      if (event.keyCode === 39) {
+        if (propertyIndex < properties.length - 1) {
+          var col = propertyIndex + 1;
+          refEspecificasArray[item.id + "_" + col].focus();
+        }
+      }
+      // abajo
+      if (event.keyCode === 13 || event.keyCode === 40) {
+        var index = Especificas.findIndex((item2) => item2.id == item.id);
+        if (index < Especificas.length - 1) {
+          refEspecificasArray[
+            Especificas[index + 1].id + "_" + propertyIndex
+          ].focus();
+        }
+      }
+    }
+  }
   function RenderEspecificaData(item) {
     var tempRender = [];
     var properties = Object.keys(item).filter(
@@ -297,6 +343,12 @@ export default () => {
                   value={Redondea(item[key], 2, false, "")}
                   onBlur={(value) => {
                     guardarPresupuesto(value, item.id, key.split("_")[1]);
+                  }}
+                  innerRef={(ref) => {
+                    refEspecificasArray[item.id + "_" + i] = ref;
+                  }}
+                  onKeyDown={(e) => {
+                    onKeyDown(e, item, i, properties);
                   }}
                 />
               )}
@@ -320,6 +372,12 @@ export default () => {
                   onBlur={(value) =>
                     guardarAvanceAnual(value, item.id, key.split("_")[1])
                   }
+                  innerRef={(ref) => {
+                    refEspecificasArray[item.id + "_" + i] = ref;
+                  }}
+                  onKeyDown={(e) => {
+                    onKeyDown(e, item, i, properties);
+                  }}
                 />
               )}
             </td>
@@ -415,6 +473,7 @@ export default () => {
   //opciones
   const [ShowIcons, setShowIcons] = useState("");
   const [RefEspecificas, setRefEspecificas] = useState([]);
+  var refEspecificasArray = [];
   const [CostosCollapse, setCostosCollapse] = useState([]);
   const [EstadoEdicion, setEstadoEdicion] = useState("");
   function cambiarCostosCollapseTodos(estado) {
@@ -727,12 +786,14 @@ export default () => {
 
                       <div>
                         <span>
-                          <FaFileAlt
-                            onClick={() =>
-                              DescargarArchivo(`${UrlServer}${item.archivo}`)
-                            }
-                            style={{ cursor: "pointer" }}
-                          />{" "}
+                          {item.archivo && (
+                            <FaFileAlt
+                              onClick={() =>
+                                DescargarArchivo(`${UrlServer}${item.archivo}`)
+                              }
+                              style={{ cursor: "pointer" }}
+                            />
+                          )}
                           {ModoEdicion &&
                             Permisos["analitico_editar_presupuesto"] == 1 && (
                               <ModalNuevoPresupuesto
@@ -834,10 +895,7 @@ export default () => {
                   >
                     {i + 1}
                   </th>
-                  <th
-                    className="whiteThem-table-sticky2"
-                    style={{ position: "relative" }}
-                  >
+                  <th className="whiteThem-table-sticky2">
                     <span
                       style={{
                         cursor: "pointer",
@@ -885,6 +943,8 @@ export default () => {
                       <td
                         style={{
                           cursor: "pointer",
+                          zIndex:
+                            EstadoEdicion != "especifica_" + item2.id ? 1 : 2,
                         }}
                         colSpan={
                           EstadoEdicion != "especifica_" + item2.id ? 1 : 2
@@ -919,12 +979,7 @@ export default () => {
                         )}
                       </td>
                       {EstadoEdicion != "especifica_" + item2.id && (
-                        <td
-                          className="whiteThem-table-sticky2"
-                          style={{
-                            position: "relative",
-                          }}
-                        >
+                        <td className="whiteThem-table-sticky2">
                           {item2.descripcion}
                           {ModoEdicion &&
                             Permisos["analitico_eliminar_especifica"] == 1 && (
@@ -1042,7 +1097,6 @@ function CustomAsyncSelect({ value, guardar }) {
           cacheOptions
           defaultOptions
           loadOptions={clasificadorOptions}
-          // styles={customStyles}
           value={{
             value: Value.id_clasificador,
             label: Value.clasificador + " - " + Value.descripcion,
