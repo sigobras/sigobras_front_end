@@ -3,7 +3,14 @@ import { Input } from "reactstrap";
 
 import { formatMoney } from "../components/Utils/Funciones";
 
-export default ({ value, onBlur, style = {}, type }) => {
+export default ({
+  value,
+  onBlur,
+  style = {},
+  type,
+  innerRef = () => {},
+  onKeyDown = () => {},
+}) => {
   const [Value, setValue] = useState(value);
   const [FlagCambios, setFlagCambios] = useState(false);
   function handleInputChange(e) {
@@ -33,6 +40,10 @@ export default ({ value, onBlur, style = {}, type }) => {
         color: "black",
         textAlign: "right",
       }}
+      innerRef={(ref) => {
+        innerRef(ref);
+      }}
+      onKeyDown={onKeyDown}
     />
   );
 };
