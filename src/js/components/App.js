@@ -169,9 +169,9 @@ export default () => {
             <div className="float-right">
               <UserNav key={DataObra.id_ficha} />
             </div>
-            <div className="float-right">
+            {/* <div className="float-right">
               <NotificacionNav key={DataObra.id_ficha} />
-            </div>
+            </div> */}
             <div className="float-right">
               {sessionStorage.getItem("estadoObra") != null && (
                 <Btns EstadoObra={EstadoObra} />
