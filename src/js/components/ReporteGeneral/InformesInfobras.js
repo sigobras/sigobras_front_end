@@ -302,6 +302,7 @@ function NuevoInforme({
                     name="observacion"
                     type="text"
                     onChange={handleInputChange}
+                    autoComplete="off"
                   />
                 </FormGroup>
               </Col>
@@ -316,6 +317,7 @@ function NuevoInforme({
                     type="select"
                     onChange={handleInputChange}
                     required
+                    autoComplete="off"
                   >
                     <option value="">{"SELECCIONE"}</option>
                     {InformesUbicaciones.map((item, i) => (
@@ -334,6 +336,7 @@ function NuevoInforme({
                     onChange={handleInputChange}
                     value={InputObject.fecha_recepcion}
                     name="fecha_recepcion"
+                    autoComplete="off"
                   />
                 </FormGroup>
               </Col>
@@ -347,6 +350,7 @@ function NuevoInforme({
                     onChange={handleInputChange}
                     value={InputObject.fecharegisto_infobras}
                     name="fecharegisto_infobras"
+                    autoComplete="off"
                   />
                 </FormGroup>
               </Col>
@@ -535,6 +539,7 @@ function DescripcionInforme({ id }) {
                       ? "#17a2b840"
                       : "#42ff0038",
                   }}
+                  autoComplete="off"
                 />
               </td>
               <td>
@@ -548,6 +553,7 @@ function DescripcionInforme({ id }) {
                       ? "#17a2b840"
                       : "#42ff0038",
                   }}
+                  autoComplete="off"
                 />
               </td>
               <td>
@@ -561,6 +567,7 @@ function DescripcionInforme({ id }) {
                       ? "#17a2b840"
                       : "#42ff0038",
                   }}
+                  autoComplete="off"
                 />
               </td>
               <td>
@@ -693,6 +700,7 @@ const DescripcionDetalles = forwardRef(
             style={{
               background: FlagCambios[item.id] ? "#17a2b840" : "#42ff0038",
             }}
+            autoComplete="off"
           />
         </td>
         <td>
@@ -704,6 +712,7 @@ const DescripcionDetalles = forwardRef(
             style={{
               background: FlagCambios[item.id] ? "#17a2b840" : "#42ff0038",
             }}
+            autoComplete="off"
           />
         </td>
         <td>
@@ -715,6 +724,7 @@ const DescripcionDetalles = forwardRef(
             style={{
               background: FlagCambios[item.id] ? "#17a2b840" : "#42ff0038",
             }}
+            autoComplete="off"
           />
         </td>
         <td>
