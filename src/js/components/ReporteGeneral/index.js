@@ -166,6 +166,7 @@ export default ({ recargar }) => {
         id_Estado: EstadosObraeleccionada,
       },
     });
+    console.log("obras", res.data);
     setObras(res.data);
   }
   //seleccionar anyo
