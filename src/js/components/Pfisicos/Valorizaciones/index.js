@@ -120,12 +120,18 @@ export default () => {
       </Nav>
       <CardHeader>{Componenteseleccionado.nombre}</CardHeader>
       {Componenteseleccionado.numero == 0 ? (
-        <ValorizacionResumen PeriodoSeleccionado={PeriodoSeleccionado} />
+        <ValorizacionResumen
+          PeriodoSeleccionado={PeriodoSeleccionado}
+          key={JSON.stringify(PeriodoSeleccionado)}
+        />
       ) : (
         <ValorizacionComponente
           PeriodoSeleccionado={PeriodoSeleccionado}
           Componenteseleccionado={Componenteseleccionado}
-          key={JSON.stringify(Componenteseleccionado)}
+          key={
+            JSON.stringify(Componenteseleccionado) +
+            JSON.stringify(PeriodoSeleccionado)
+          }
         />
       )}
     </div>

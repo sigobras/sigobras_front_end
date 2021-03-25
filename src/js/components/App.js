@@ -447,7 +447,6 @@ export default () => {
                     {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
                     <Route path="/Proyectos" component={Proyectos} />
                     {/* PROCESOS GERENCIALES            */}
-
                     <Route
                       path="/ReportesGenerales"
                       component={ReportesGenerales}
@@ -492,6 +491,10 @@ export default () => {
                       component={FuentesFinanciamiento}
                     />
                     <Route path="/Test" component={Test} />
+                    <Route
+                      path="/ModificacionExpediente"
+                      component={ModificacionExpediente}
+                    />
                   </Switch>
                 </Suspense>
               </div>
