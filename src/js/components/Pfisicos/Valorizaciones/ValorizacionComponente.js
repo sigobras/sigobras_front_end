@@ -139,7 +139,9 @@ export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
               <td>{item.descripcion}</td>
               <td>
                 {item.tipo === "partida"
-                  ? item.metrado + " " + item.unidad_medida.replace("/DIA", "")
+                  ? Redondea(item.metrado) +
+                    " " +
+                    item.unidad_medida.replace("/DIA", "")
                   : ""}
               </td>
               <td>{Redondea(item.costo_unitario)}</td>
