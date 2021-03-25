@@ -6,7 +6,7 @@
 }
 .reporteGeneral-table {
   border-collapse: separate;
-  background: white;
+  background: #fffde5;
 }
 
 .reporteGeneral-table input {
@@ -49,13 +49,13 @@
   color: white;
 }
 .reporteGeneral-body {
-  background: white;
+  background: #fffde5;
   color: black;
 }
 .reporteGeneral-bodySticky {
   position: sticky;
   left: 0px;
-  background: white;
+  background: #fffde5;
   color: black;
   z-index: 1;
 }
@@ -63,7 +63,7 @@
   position: sticky;
   left: 300px;
   /* background: #242526; */
-  background: white;
+  background: #fffde5;
   color: black;
   border-color: white;
 }
