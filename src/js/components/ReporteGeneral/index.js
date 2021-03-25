@@ -38,6 +38,9 @@ import "react-toastify/dist/ReactToastify.css";
 export default ({ recargar }) => {
   useEffect(() => {
     cargarListOrders();
+    fetchProvincias();
+    fetchSectores();
+    fetchEstadosObra();
   }, []);
   const interfaces = [
     {
@@ -158,6 +161,9 @@ export default ({ recargar }) => {
     var res = await axios.get(`${UrlServer}/v1/obras/resumen`, {
       params: {
         id_acceso: sessionStorage.getItem("idacceso"),
+        id_unidadEjecutora: ProvinciaSeleccionada,
+        idsectores: SectoreSeleccionado,
+        id_Estado: EstadosObraeleccionada,
       },
     });
     setObras(res.data);
@@ -236,6 +242,48 @@ export default ({ recargar }) => {
       setListOrdersIndex(id);
     }
   }
+  // FILTROS
+  //provincias
+  const [Provincias, setProvincias] = useState([]);
+  async function fetchProvincias() {
+    var res = await axios.get(`${UrlServer}/v1/unidadEjecutora`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+      },
+    });
+    setProvincias(res.data);
+    if (!sessionStorage.getItem("provinciaSeleccionada")) {
+      sessionStorage.setItem("provinciaSeleccionada", 0);
+    } else {
+      setProvinciaSeleccionada(sessionStorage.getItem("provinciaSeleccionada"));
+    }
+  }
+  const [ProvinciaSeleccionada, setProvinciaSeleccionada] = useState(0);
+
+  //sectores
+  const [Sectores, setSectores] = useState([]);
+  const [SectoreSeleccionado, setSectoreSeleccionado] = useState(0);
+  async function fetchSectores() {
+    var res = await axios.get(`${UrlServer}/v1/sectores`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_unidadEjecutora: ProvinciaSeleccionada,
+      },
+    });
+    setSectores(res.data);
+  }
+  //estados
+  const [EstadosObra, setEstadosObra] = useState([]);
+  const [EstadosObraeleccionada, setEstadosObraeleccionada] = useState(0);
+  async function fetchEstadosObra() {
+    var res = await axios.get(`${UrlServer}/v1/obrasEstados`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+      },
+    });
+    setEstadosObra(res.data);
+  }
+
   useEffect(() => {
     if (ListOrdersCargado) {
       cargarListOrdersIndex();
@@ -252,8 +300,33 @@ export default ({ recargar }) => {
       }
     }
   }, [ListOrdersIndex, ListOrdersCargado, ListOrdersIndexCargado]);
+  useEffect(() => {
+    fetchSectores();
+    setSectoreSeleccionado(0);
+    fetchEstadosObra();
+    setEstadosObraeleccionada(0);
+  }, [ProvinciaSeleccionada]);
+
+  useEffect(() => {
+    if (ProvinciaSeleccionada != -1) {
+      cargarObras();
+    }
+  }, [ProvinciaSeleccionada, SectoreSeleccionado, EstadosObraeleccionada]);
   return (
     <div>
+      <span
+        style={{
+          position: "fixed",
+          right: "10px",
+          bottom: "10px",
+          background: "#00000061",
+          padding: "10px",
+          borderRadius: "10px",
+        }}
+      >
+        {" "}
+        {MensajeGuardando ? "  Guardando..." : ""}
+      </span>
       <span className="d-flex justify-content-between">
         <span className="d-flex">
           <Nav
@@ -296,12 +369,86 @@ export default ({ recargar }) => {
               </Button>
             )}{" "}
           </span>{" "}
-          <span style={{ paddingLeft: "10px" }}>
-            {" "}
-            {MensajeGuardando ? "  Guardando..." : "  Guardado"}
-          </span>
+          <Input
+            type="select"
+            onChange={(e) => {
+              setProvinciaSeleccionada(e.target.value);
+              sessionStorage.setItem("provinciaSeleccionada", e.target.value);
+            }}
+            value={ProvinciaSeleccionada}
+            style={{
+              backgroundColor: "#171819",
+              borderColor: "#171819",
+              color: "#ffffff",
+              cursor: "pointer",
+              height: "25px",
+              fontSize: "10px",
+              paddingRight: "27px",
+              width: "200px",
+            }}
+          >
+            <option value="0">Todas las provincias</option>
+            {Provincias.map((item, i) => (
+              <option key={i} value={item.id_unidadEjecutora}>
+                {item.nombre}
+              </option>
+            ))}
+          </Input>
+          <Input
+            type="select"
+            onChange={(e) => setSectoreSeleccionado(e.target.value)}
+            value={SectoreSeleccionado}
+            style={{
+              backgroundColor: "#171819",
+              borderColor: "#171819",
+              color: "#ffffff",
+              cursor: "pointer",
+              height: "25px",
+              fontSize: "10px",
+            }}
+          >
+            <option value="0">Todos los sectores</option>
+            {Sectores.map((item, i) => (
+              <option key={i} value={item.idsectores}>
+                {item.nombre}
+              </option>
+            ))}
+          </Input>
+          <Input
+            type="select"
+            onChange={(e) => setEstadosObraeleccionada(e.target.value)}
+            value={EstadosObraeleccionada}
+            style={{
+              backgroundColor: "#171819",
+              borderColor: "#171819",
+              color: "#ffffff",
+              cursor: "pointer",
+              height: "25px",
+              fontSize: "10px",
+            }}
+          >
+            <option value="0">Todos los estados</option>
+            {EstadosObra.map((item, index) => (
+              <option key={index} value={item.id_Estado}>
+                {item.nombre}
+              </option>
+            ))}
+          </Input>
         </span>
         <span className="d-flex">
+          {ListOrders.length > 0 && (
+            <Button
+              onClick={() => actualizarOrdenInterfaces()}
+              style={{ height: "25px", width: "110px", fontSize: "10px" }}
+              color="danger"
+            >
+              Establecer
+            </Button>
+          )}
+          <NuevoMenu
+            calcularNuevoOrden={calcularNuevoOrden}
+            recargar={recarga}
+          />
           {ListOrders.length > 0 && (
             <Input
               type="select"
@@ -310,11 +457,11 @@ export default ({ recargar }) => {
               }}
               value={ListOrdersIndex}
               style={{
-                background: "#171819",
-                border: "#171819",
-                color: "white",
+                backgroundColor: "#171819",
+                borderColor: "#171819",
+                color: "#ffffff",
+                cursor: "pointer",
                 height: "25px",
-                width: "150px",
                 fontSize: "10px",
               }}
             >
@@ -328,19 +475,6 @@ export default ({ recargar }) => {
               ))}
             </Input>
           )}
-          {ListOrders.length > 0 && (
-            <Button
-              onClick={() => actualizarOrdenInterfaces()}
-              style={{ height: "25px", width: "110px", fontSize: "10px" }}
-              color="danger"
-            >
-              Guardando cambios
-            </Button>
-          )}
-          <NuevoMenu
-            calcularNuevoOrden={calcularNuevoOrden}
-            recargar={recarga}
-          />
         </span>
       </span>
       {ModoEdicion && (
@@ -561,7 +695,7 @@ function NuevoMenu({ calcularNuevoOrden, recargar }) {
       <Button
         color="success"
         onClick={toggle}
-        style={{ height: "25px", width: "110px", fontSize: "10px" }}
+        style={{ height: "25px", width: "74px", fontSize: "10px" }}
       >
         Nuevo menu
       </Button>
