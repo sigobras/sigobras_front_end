@@ -21,6 +21,14 @@
   background: #42ff0038;
   padding: 0px;
 }
+.select-black {
+  background: #171819;
+  border: #171819;
+  color: white;
+  height: 25px;
+  font-size: 10px;
+  cursor: pointer;
+}
 .reporteGeneral-table textarea {
   font-size: 11px;
   background: #42ff0038;
