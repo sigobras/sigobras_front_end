@@ -112,7 +112,7 @@ export default ({ id_partida }) => {
           </div>
 
           <div className="form-group mt-2">
-            <label htmlFor="comment">FECHA</label>
+            <label htmlFor="comment">FECHA EN LA QUE SE TOMÓ LA IMAGEN</label>
             <Input
               type="date"
               value={Fecha}
