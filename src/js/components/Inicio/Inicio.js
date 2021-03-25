@@ -360,6 +360,21 @@ export default ({ recargar }) => {
                       {Redondea(
                         item.g_total_presu - item.avancefinanciero_acumulado
                       )}
+                    </span>{" "}
+                    <span
+                      style={{
+                        color: "#17a2b8",
+                      }}
+                    >
+                      PIM 2021 S./
+                      {Redondea(item.pim_anyoactual)}
+                    </span>{" "}
+                    <span
+                      style={{
+                        color: "orange",
+                      }}
+                    >
+                      META 2021 -{item.meta_anyoactual}
                     </span>
                   </div>
                   <Plazos_info item={item} />
