@@ -1,0 +1,10 @@
+.historial-metrados-sticky1 {
+  position: sticky;
+  left: 0px;
+  background: #242526;
+}
+.historial-metrados-sticky2 {
+  position: sticky;
+  left: 25px;
+  background: #242526;
+}

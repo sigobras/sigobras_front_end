@@ -150,6 +150,7 @@ export default ({ recargar }) => {
         sort_by: "poblacion-desc",
       },
     });
+    console.log("obras", res.data);
     setObras(res.data);
     if (!sessionStorage.getItem("idobra")) {
       recargar(res.data[0]);
@@ -360,6 +361,21 @@ export default ({ recargar }) => {
                       {Redondea(
                         item.g_total_presu - item.avancefinanciero_acumulado
                       )}
+                    </span>{" "}
+                    <span
+                      style={{
+                        color: "#17a2b8",
+                      }}
+                    >
+                      PIM 2021 S./
+                      {Redondea(item.pim_anyoactual)}
+                    </span>{" "}
+                    <span
+                      style={{
+                        color: "orange",
+                      }}
+                    >
+                      META 2021 -{item.meta_anyoactual}
                     </span>
                   </div>
                   <Plazos_info item={item} />
@@ -871,44 +887,50 @@ const Obras_labels = forwardRef(({ id_ficha }, ref) => {
 });
 function Plazos_info({ item }) {
   return (
-    <div
-      style={{
-        display: "flex",
-      }}
-    >
+    <span>
       {item.plazoinicial_fecha && (
-        <div
+        <span
           style={{
             color: "#17a2b8",
           }}
         >
           Inicio de obra
-        </div>
-      )}
-      &nbsp;
-      <div>{fechaFormatoClasico(item.plazoinicial_fecha)}</div> &nbsp;
+        </span>
+      )}{" "}
+      <span>{fechaFormatoClasico(item.plazoinicial_fecha)}</span>{" "}
+      {!item.plazoaprobado_ultimo_fecha &&
+        !item.plazosinaprobar_ultimo_fecha && (
+          <>
+            <span
+              style={{
+                color: "#17a2b8",
+              }}
+            >
+              Fecha de culminación
+            </span>{" "}
+            <span>{fechaFormatoClasico(item.plazoinicial_fechafinal)}</span>
+          </>
+        )}{" "}
       {item.plazoaprobado_ultimo_fecha && (
-        <div
+        <span
           style={{
             color: "#17a2b8",
           }}
         >
           Ultimo plazo aprobado
-        </div>
-      )}
-      &nbsp;
-      <div>{fechaFormatoClasico(item.plazoaprobado_ultimo_fecha)}</div> &nbsp;
+        </span>
+      )}{" "}
+      <span>{fechaFormatoClasico(item.plazoaprobado_ultimo_fecha)}</span>{" "}
       {item.plazosinaprobar_ultimo_fecha && (
-        <div
+        <span
           style={{
             color: "#17a2b8",
           }}
         >
           Ultimo plazo sin aprobar
-        </div>
-      )}
-      &nbsp;
-      <div>{fechaFormatoClasico(item.plazosinaprobar_ultimo_fecha)}</div>
-    </div>
+        </span>
+      )}{" "}
+      <span>{fechaFormatoClasico(item.plazosinaprobar_ultimo_fecha)}</span>
+    </span>
   );
 }

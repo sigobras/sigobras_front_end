@@ -6,7 +6,7 @@
 }
 .reporteGeneral-table {
   border-collapse: separate;
-  background: white;
+  background: #fffde5;
 }
 
 .reporteGeneral-table input {
@@ -43,27 +43,26 @@
   color: white;
 }
 .reporteGeneral-cabezeraSticky {
-  position: sticky;
+  /* position: sticky;*/
   left: 0px;
   background: #242526;
   color: white;
 }
 .reporteGeneral-body {
-  background: white;
+  background: #fffde5;
   color: black;
 }
 .reporteGeneral-bodySticky {
-  position: sticky;
+  /* position: sticky;*/
   left: 0px;
-  background: white;
+  background: #fffde5;
   color: black;
   z-index: 1;
 }
 .reporteGeneral-bodySticky-analitico {
-  position: sticky;
+  /* position: sticky;*/
   left: 300px;
-  /* background: #242526; */
-  background: white;
+  background: #fffde5;
   color: black;
   border-color: white;
 }

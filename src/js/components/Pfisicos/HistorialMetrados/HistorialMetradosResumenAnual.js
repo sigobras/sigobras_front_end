@@ -129,7 +129,7 @@ export default ({ Anyo }) => {
     series: ResumenAnualDataChart,
   };
   return (
-    <>
+    <div style={{ overflowX: "auto" }}>
       <HighchartsReact
         highcharts={Highcharts}
         options={OptionsResumenAnualDataChart}
@@ -148,6 +148,7 @@ export default ({ Anyo }) => {
                 i++
               ) {
                 rows.push(<th>{mesesShort[i - 1]}</th>);
+                rows.push(<th>%</th>);
               }
               return rows;
             })()}
@@ -158,8 +159,13 @@ export default ({ Anyo }) => {
         <tbody>
           {ResumenAnualData.data.map((item, i) => (
             <tr key={i}>
-              <td>{item.numero}</td>
-              <td>{item.nombre}</td>
+              <td className="historial-metrados-sticky1">{item.numero}</td>
+              <td
+                className="historial-metrados-sticky2"
+                style={{ whiteSpace: "nowrap" }}
+              >
+                {item.nombre}
+              </td>
               <td>{Redondea(item.presupuesto)}</td>
               {(() => {
                 var rows = [];
@@ -168,13 +174,12 @@ export default ({ Anyo }) => {
                   i <= ResumenAnualData.mes_final;
                   i++
                 ) {
+                  rows.push(<td>{Redondea(item["m" + i])} </td>);
                   rows.push(
-                    <td>
-                      {Redondea(item["m" + i])}{" "}
+                    <td style={{ color: "#0080ff" }}>
                       {item["m" + i] > 0
-                        ? "(" +
-                          Redondea((item["m" + i] / item.presupuesto) * 100) +
-                          "%)"
+                        ? Redondea((item["m" + i] / item.presupuesto) * 100) +
+                          "%"
                         : ""}
                     </td>
                   );
@@ -225,13 +230,11 @@ export default ({ Anyo }) => {
                 ResumenAnualData.data.forEach((item) => {
                   avance_total += item["m" + i];
                 });
+                rows.push(<td>{Redondea(avance_total)} </td>);
                 rows.push(
-                  <td>
-                    {Redondea(avance_total)}{" "}
+                  <td style={{ color: "#0080ff" }}>
                     {avance_total > 0
-                      ? "(" +
-                        Redondea((avance_total / presupuesto_total) * 100) +
-                        "%)"
+                      ? Redondea((avance_total / presupuesto_total) * 100) + "%"
                       : ""}
                   </td>
                 );
@@ -269,7 +272,6 @@ export default ({ Anyo }) => {
           </tr>
         </tbody>
       </table>
-      ,
-    </>
+    </div>
   );
 };
