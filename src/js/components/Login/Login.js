@@ -21,10 +21,11 @@ import {
 import Slider from "./Slider";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import LogoSigobras from "../../../images/sigobras-neon.jpg";
+
+import "react-toastify/dist/ReactToastify.min.css";
 //publico
 const ResumenObras = lazy(() => import("./ResumenObras"));
 
-import "../../../css/login.css";
 export default () => {
   const [UsuarioDatos, setUsuarioDatos] = useState({
     usuario: "",
@@ -42,36 +43,42 @@ export default () => {
     setisLoading(true);
     try {
       var res = await axios.post(UrlServer + "/login2", UsuarioDatos);
-      // var res = await axios.post(UrlServer + "/v1/accesos/login", UsuarioDatos);
-      console.log("res", res);
-      if (res.status == 200) {
-        toast.success("USUARIO CORRECTO");
-        sessionStorage.setItem("idacceso", res.data.id_acceso);
-        window.location.href = "/";
-      } else {
-        toast.error("Usuario o contraseña incorrectos");
-      }
+      toast.success("USUARIO CORRECTO", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+      });
+      sessionStorage.setItem("idacceso", res.data.id_acceso);
+      window.location.href = "/";
     } catch (error) {
-      toast.error("Usuario o contraseña incorrectos");
+      toast.error("USUARIO O PASSWORD INCORRECTOS", {
+        position: "top-right",
+        autoClose: 1000,
+        closeOnClick: true,
+        pauseOnHover: true,
+      });
     }
     setisLoading(false);
   }
 
   return (
     <Router>
+      <ToastContainer />
       <nav className="navbar navbar-expand-lg  bg-dark">
         <a className="navbar-brand" href="/">
           <img src={LogoSigobras} alt="login sigobras " width="50px" />
           <span className="textSigobras h5 ml-2">SIGOBRAS</span>
         </a>
-        <ul className="nav navbar-nav">
+        {/* <ul className="nav navbar-nav">
           <li className="nav-item">
             <Link to="/ResumenObras" className="nav-link">
               {" "}
               Resumen Obras
             </Link>
           </li>
-        </ul>
+        </ul> */}
         <ul className="nav navbar-nav flex-row justify-content-between ml-auto">
           <li>
             <Button id="contactos" outline color="warning" className="mr-2">
