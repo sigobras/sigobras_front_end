@@ -6,6 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea } from "../Utils/Funciones";
 import BotonNuevo from "../../libs/BotonNuevo";
+import CustomInput from "../../libs/CustomInput";
 
 import "./ReporteGeneral.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -86,23 +87,23 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
     });
   };
 
-  async function guardarData() {
-    setMensajeGuardando(true);
-    if (DataFormularioResumen.presupuesto_aprobado) {
-      await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
-        anyo: AnyoSeleccionado - 1,
-        presupuesto_aprobado: DataFormularioResumen.presupuesto_aprobado,
-      });
-    }
-    if (DataFormularioResumen.pia || DataFormularioResumen.pim) {
-      await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
-        anyo: AnyoSeleccionado,
-        pia: DataFormularioResumen.pia,
-        pim: DataFormularioResumen.pim,
-      });
-    }
-    setMensajeGuardando(false);
-    cargarData();
+  async function guardarPia(pia) {
+    await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
+      anyo: AnyoSeleccionado,
+      pia,
+    });
+  }
+  async function guardarPim(pim) {
+    await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
+      anyo: AnyoSeleccionado,
+      pim,
+    });
+  }
+  async function guardarPresupuestoAprobado(presupuesto_aprobado) {
+    await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
+      anyo: AnyoSeleccionado - 1,
+      presupuesto_aprobado,
+    });
   }
   const [FuentesFinanciamientoList, setFuentesFinanciamientoList] = useState(
     []
@@ -127,68 +128,35 @@ export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
             </tr>
             <tr>
               <td>Presp. Aprob.</td>
-              <td
-                onClick={() => setModoEdicion("presupuesto_aprobado")}
-                className="reporteGeneral-table-input"
-              >
-                {Permisos["actualizar_presupuestoaprobado"] &&
-                ModoEdicion == "presupuesto_aprobado" ? (
-                  <Input
-                    type="text"
-                    value={DataFormulario.presupuesto_aprobado}
-                    onChange={(e) =>
-                      handleInputChange("presupuesto_aprobado", e.target.value)
-                    }
-                    onBlur={() => {
-                      setModoEdicion("");
-                      guardarData();
-                    }}
-                  ></Input>
-                ) : (
-                  Redondea(DataFormulario.presupuesto_aprobado)
-                )}
+              <td>
+                <CustomInput
+                  value={Redondea(DataFormulario.presupuesto_aprobado)}
+                  onBlur={(value) => {
+                    guardarPresupuestoAprobado(value);
+                  }}
+                />
               </td>
               <td>PIA</td>
-              <td
-                onClick={() => setModoEdicion("pia")}
-                className="reporteGeneral-table-input"
-              >
-                {Permisos["actualizar_pia"] && ModoEdicion == "pia" ? (
-                  <Input
-                    type="text"
-                    value={DataFormulario.pia}
-                    onChange={(e) => handleInputChange("pia", e.target.value)}
-                    onBlur={() => {
-                      setModoEdicion("");
-                      guardarData();
-                    }}
-                  ></Input>
-                ) : (
-                  Redondea(DataFormulario.pia)
-                )}
+              <td>
+                <CustomInput
+                  value={Redondea(DataFormulario.pia)}
+                  onBlur={(value) => {
+                    guardarPia(value);
+                  }}
+                />
               </td>
             </tr>
             <tr>
               <td rowSpan="2">Ejec. a Dic. {AnyoSeleccionado - 1}</td>
               <td>{Redondea(AvanceFinancieroAcumulado.financiero_monto)}</td>
               <td>PIM</td>
-              <td
-                onClick={() => setModoEdicion("pim")}
-                className="reporteGeneral-table-input"
-              >
-                {Permisos["actualizar_pim"] && ModoEdicion == "pim" ? (
-                  <Input
-                    type="text"
-                    value={DataFormulario.pim}
-                    onChange={(e) => handleInputChange("pim", e.target.value)}
-                    onBlur={() => {
-                      setModoEdicion("");
-                      guardarData();
-                    }}
-                  ></Input>
-                ) : (
-                  Redondea(DataFormulario.pim)
-                )}
+              <td>
+                <CustomInput
+                  value={Redondea(DataFormulario.pim)}
+                  onBlur={(value) => {
+                    guardarPim(value);
+                  }}
+                />
               </td>
             </tr>
             <tr>
