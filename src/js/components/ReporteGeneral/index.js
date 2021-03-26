@@ -527,7 +527,15 @@ export default ({ recargar }) => {
                           <item2.interfaz
                             data={item}
                             AnyoSeleccionado={AnyoSeleccionado}
-                            key={AnyoSeleccionado}
+                            key={
+                              AnyoSeleccionado +
+                              "_" +
+                              ProvinciaSeleccionada +
+                              "_" +
+                              SectoreSeleccionado +
+                              "_" +
+                              EstadosObraeleccionada
+                            }
                             recargar={recargar}
                             setMensajeGuardando={setMensajeGuardando}
                           />
