@@ -164,6 +164,7 @@ export default ({ recargar }) => {
         id_unidadEjecutora: ProvinciaSeleccionada,
         idsectores: SectoreSeleccionado,
         id_Estado: EstadosObraeleccionada,
+        sort_by: "poblacion-desc",
       },
     });
     console.log("obras", res.data);
@@ -309,7 +310,11 @@ export default ({ recargar }) => {
   }, [ProvinciaSeleccionada]);
 
   useEffect(() => {
-    if (ProvinciaSeleccionada != -1) {
+    if (
+      ListOrdersCargado &&
+      ListOrdersIndexCargado &&
+      ProvinciaSeleccionada != -1
+    ) {
       cargarObras();
     }
   }, [ProvinciaSeleccionada, SectoreSeleccionado, EstadosObraeleccionada]);
@@ -509,41 +514,80 @@ export default ({ recargar }) => {
               )}
             </tr>
             {Obras.map((item, i) => (
-              <tr key={i}>
-                <td className="reporteGeneral-bodySticky  ">
-                  <ProyectoData
-                    numero={i + 1}
-                    data={item}
-                    AnyoSeleccionado={AnyoSeleccionado}
-                    key={AnyoSeleccionado}
-                    setMensajeGuardando={setMensajeGuardando}
-                  />
-                </td>
-                {ListInterfaces.map(
-                  (item2, i2) =>
-                    item2.activado && (
-                      <td key={i2} className="reporteGeneral-body">
-                        {
-                          <item2.interfaz
-                            data={item}
-                            AnyoSeleccionado={AnyoSeleccionado}
-                            key={
-                              AnyoSeleccionado +
-                              "_" +
-                              ProvinciaSeleccionada +
-                              "_" +
-                              SectoreSeleccionado +
-                              "_" +
-                              EstadosObraeleccionada
-                            }
-                            recargar={recargar}
-                            setMensajeGuardando={setMensajeGuardando}
-                          />
-                        }
-                      </td>
-                    )
+              <>
+                {(i == 0 ||
+                  (i > 0 &&
+                    item.unidad_ejecutora_nombre !=
+                      Obras[i - 1].unidad_ejecutora_nombre)) && (
+                  <tr key={i}>
+                    <td
+                      colSpan="8"
+                      style={{
+                        color: "#cecece",
+                        fontSize: "1.2rem",
+                        fontWeight: "700",
+                        textAlign: "left",
+                      }}
+                    >
+                      {item.unidad_ejecutora_nombre}
+                    </td>
+                  </tr>
                 )}
-              </tr>
+                {(i == 0 ||
+                  item.unidad_ejecutora_nombre !=
+                    Obras[i - 1].unidad_ejecutora_nombre ||
+                  (i > 0 &&
+                    item.sector_nombre != Obras[i - 1].sector_nombre)) && (
+                  <tr key={i + "2"}>
+                    <td
+                      colSpan="8"
+                      style={{
+                        color: "#ffa500",
+                        fontSize: "1rem",
+                        fontWeight: "700",
+                        textAlign: "left",
+                      }}
+                    >
+                      {item.sector_nombre}
+                    </td>
+                  </tr>
+                )}
+                <tr key={i}>
+                  <td className="reporteGeneral-bodySticky  ">
+                    <ProyectoData
+                      numero={i + 1}
+                      data={item}
+                      AnyoSeleccionado={AnyoSeleccionado}
+                      key={AnyoSeleccionado}
+                      setMensajeGuardando={setMensajeGuardando}
+                    />
+                  </td>
+                  {ListInterfaces.map(
+                    (item2, i2) =>
+                      item2.activado && (
+                        <td key={i2} className="reporteGeneral-body">
+                          {
+                            <item2.interfaz
+                              data={item}
+                              AnyoSeleccionado={AnyoSeleccionado}
+                              key={
+                                AnyoSeleccionado +
+                                "_" +
+                                ProvinciaSeleccionada +
+                                "_" +
+                                SectoreSeleccionado +
+                                "_" +
+                                EstadosObraeleccionada
+                              }
+                              recargar={recargar}
+                              setMensajeGuardando={setMensajeGuardando}
+                            />
+                          }
+                        </td>
+                      )
+                  )}
+                </tr>
+              </>
             ))}
           </tbody>
         </table>

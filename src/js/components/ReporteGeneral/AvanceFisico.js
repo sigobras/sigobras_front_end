@@ -76,11 +76,23 @@ export default ({ data, AnyoSeleccionado }) => {
           </tr>
           {(() => {
             var dataTemp = [];
+            var background = "";
+            function esFechaActual(mes) {
+              var currentMonth = new Date().getMonth();
+              var currentYear = new Date().getFullYear();
+              if (currentYear == AnyoSeleccionado && currentMonth == mes) {
+                return "#17a2b8";
+              } else {
+                return "";
+              }
+            }
             for (let i = 1; i <= 6; i++) {
               dataTemp.push(
                 <tr key={i}>
                   <th style={{ width: "70px" }}>{mesesShort[i - 1]}</th>
-                  <td style={{ width: "70px" }}>
+                  <td
+                    style={{ width: "70px", background: esFechaActual(i - 1) }}
+                  >
                     {Redondea(
                       (buscarMes(i) / data.presupuesto_costodirecto) * 100
                     )}
