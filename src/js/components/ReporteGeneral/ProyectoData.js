@@ -46,7 +46,7 @@ export default ({ numero, data, AnyoSeleccionado, setMensajeGuardando }) => {
   const [ModoEdicion, setModoEdicion] = useState("");
   async function guardarData() {
     setMensajeGuardando(true);
-    var res = await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
+    await axios.put(`${UrlServer}/v1/datosAnuales/${data.id_ficha}`, {
       anyo: AnyoSeleccionado,
       meta: Meta,
     });
@@ -94,7 +94,19 @@ export default ({ numero, data, AnyoSeleccionado, setMensajeGuardando }) => {
           </tr>
           <tr>
             <th>Estado Obra</th>
-            <td>{data.estado_obra}</td>
+            <td
+              style={{
+                background:
+                  data.estado_obra == "Ejecucion"
+                    ? "green"
+                    : data.estado_obra == "Corte"
+                    ? "red"
+                    : "orange",
+                color: "white",
+              }}
+            >
+              {data.estado_obra}
+            </td>
           </tr>
           <tr>
             <th>Codigo UI</th>
