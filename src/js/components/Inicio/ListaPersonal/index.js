@@ -133,14 +133,12 @@ export default ({ id_ficha, codigo_obra }) => {
   async function guardarDesignacionesNull(index, name) {
     try {
       var clone = [...HistorialPersonal];
-      clone[index][name] = "";
-      setHistorialPersonal(clone);
+      clone[index][name] = null;
       await axios.put(`${UrlServer}/v1/designaciones/${clone[index].id}`, {
         fecha_inicio: clone[index].fecha_inicio,
         fecha_final: clone[index].fecha_final,
         tipoUndefined: true,
       });
-      setHistorialPersonal(clone);
       cargarHistorialPersonal();
     } catch (error) {
       alert("Ocurrio un error");
@@ -274,7 +272,9 @@ export default ({ id_ficha, codigo_obra }) => {
                       <td style={{ display: "flex" }}>
                         <Input
                           type="date"
-                          value={item.fecha_final}
+                          value={
+                            item.fecha_final == null ? "" : item.fecha_final
+                          }
                           onChange={(e) =>
                             handleInputChange(i, "fecha_final", e.target.value)
                           }
