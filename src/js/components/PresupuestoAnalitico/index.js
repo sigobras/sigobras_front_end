@@ -395,7 +395,8 @@ export default () => {
           </th>
         );
         //calculando acumulado
-        if (item[key]) acumulado += item[key];
+        if (item[key] && key.split("_")[1] != AnyoSeleccionado)
+          acumulado += item[key];
       }
       if (key.startsWith("avanceMensual")) {
         tempRender.push(
