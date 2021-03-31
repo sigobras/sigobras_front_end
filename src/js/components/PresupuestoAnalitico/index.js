@@ -465,7 +465,13 @@ export default () => {
   async function eliminarAnyoEjecutado(anyo) {
     if (confirm("Esta seguro de eliminar este dato?")) {
       var res = await axios.delete(
-        `${UrlServer}/v1/analitico/anyosEjecutados/${anyo}`
+        `${UrlServer}/v1/analitico/anyosEjecutados/`,
+        {
+          params: {
+            anyo,
+            id_ficha: sessionStorage.getItem("idobra"),
+          },
+        }
       );
       cargarAnyosEjecutados();
       cargarEspecificas();
