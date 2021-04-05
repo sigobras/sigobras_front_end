@@ -299,6 +299,9 @@ export default () => {
                   style={{ marginTop: "10px" }}
                 >
                   <div className="PresuObra mr-2">{DataObra.codigo}</div>
+                  <div className="PresuObra mr-2">
+                    {"CUI " + DataObra.codigo_unificado}
+                  </div>
                 </div>
 
                 <div
