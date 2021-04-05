@@ -49,12 +49,12 @@ export default ({ data, AnyoSeleccionado }) => {
       },
     });
     setData(res.data);
+    console.log("data", res.data);
     var total = res.data.reduce((acc, item) => acc + item.fisico_monto, 0);
     setDataTotal(total);
   }
   function buscarMes(mes) {
-    var temp = Data.find((item) => item.mes == mes);
-    return temp ? temp.fisico_monto : 0;
+    return Data.find((item) => item.mes == mes);
   }
   return (
     <div style={{ width: "300px" }}>
@@ -64,7 +64,9 @@ export default ({ data, AnyoSeleccionado }) => {
       >
         <tbody>
           <tr>
-            <th style={{ width: "70px" }}>A Dic. {AnyoSeleccionado - 1}</th>
+            <th colSpan="2" style={{ width: "70px" }}>
+              A Dic. {AnyoSeleccionado - 1}
+            </th>
             <td style={{ width: "70px" }}>
               {Redondea(
                 (AcumuladoPrevio.fisico_monto / data.presupuesto_costodirecto) *
@@ -72,7 +74,7 @@ export default ({ data, AnyoSeleccionado }) => {
               )}
               %
             </td>
-            <td colSpan="2">S/.{Redondea(AcumuladoPrevio.fisico_monto)}</td>
+            <td colSpan="3">S/.{Redondea(AcumuladoPrevio.fisico_monto)}</td>
           </tr>
           {(() => {
             var dataTemp = [];
@@ -87,6 +89,14 @@ export default ({ data, AnyoSeleccionado }) => {
               }
             }
             for (let i = 1; i <= 6; i++) {
+              var mes1 = buscarMes(i) || {
+                fisico_monto: 0,
+                fisico_programado_monto: 0,
+              };
+              var mes2 = buscarMes(i + 6) || {
+                fisico_monto: 0,
+                fisico_programado_monto: 0,
+              };
               dataTemp.push(
                 <tr key={i}>
                   <th style={{ width: "70px" }}>{mesesShort[i - 1]}</th>
@@ -94,14 +104,38 @@ export default ({ data, AnyoSeleccionado }) => {
                     style={{ width: "70px", background: esFechaActual(i - 1) }}
                   >
                     {Redondea(
-                      (buscarMes(i) / data.presupuesto_costodirecto) * 100
+                      (mes1.fisico_monto / data.presupuesto_costodirecto) * 100
+                    )}
+                    %
+                  </td>
+                  <td
+                    style={{ width: "70px", background: esFechaActual(i - 1) }}
+                  >
+                    Prog.
+                    {Redondea(
+                      (mes1.fisico_programado_monto /
+                        data.presupuesto_costodirecto) *
+                        100
                     )}
                     %
                   </td>
                   <th style={{ width: "70px" }}>{mesesShort[i + 5]}</th>
-                  <td style={{ width: "70px" }}>
+                  <td
+                    style={{ width: "70px", background: esFechaActual(i - 1) }}
+                  >
                     {Redondea(
-                      (buscarMes(i + 6) / data.presupuesto_costodirecto) * 100
+                      (mes2.fisico_monto / data.presupuesto_costodirecto) * 100
+                    )}
+                    %
+                  </td>
+                  <td
+                    style={{ width: "70px", background: esFechaActual(i - 1) }}
+                  >
+                    Prog.
+                    {Redondea(
+                      (mes2.fisico_programado_monto /
+                        data.presupuesto_costodirecto) *
+                        100
                     )}
                     %
                   </td>
@@ -111,7 +145,9 @@ export default ({ data, AnyoSeleccionado }) => {
             return dataTemp;
           })()}
           <tr>
-            <th style={{ width: "70px" }}>A. Actual</th>
+            <th colSpan="2" style={{ width: "70px" }}>
+              A. Actual
+            </th>
             <td style={{ width: "70px" }}>
               {Redondea(
                 (AcumuladoActual.fisico_monto / data.presupuesto_costodirecto) *
@@ -119,7 +155,7 @@ export default ({ data, AnyoSeleccionado }) => {
               )}
               %
             </td>
-            <td colSpan="2">S/.{Redondea(AcumuladoActual.fisico_monto)}</td>
+            <td colSpan="3">S/.{Redondea(AcumuladoActual.fisico_monto)}</td>
           </tr>
         </tbody>
       </table>
