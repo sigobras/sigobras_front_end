@@ -166,7 +166,7 @@ export default () => {
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
-          acumulado += accu;
+          if (key.split("_")[1] != AnyoSeleccionado) acumulado += accu;
         }
         if (key.startsWith("avanceMensual")) {
           tempRender.push(
@@ -560,7 +560,7 @@ export default () => {
               {Redondea((accu / ultimoPresupuesto) * 100)} %
             </th>
           );
-          acumulado += accu;
+          if (key.split("_")[1] != AnyoSeleccionado) acumulado += accu;
         }
         if (key.startsWith("avanceMensual")) {
           tempRender.push(
