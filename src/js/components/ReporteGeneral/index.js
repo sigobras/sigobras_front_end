@@ -558,7 +558,16 @@ export default ({ recargar }) => {
                       numero={i + 1}
                       data={item}
                       AnyoSeleccionado={AnyoSeleccionado}
-                      key={AnyoSeleccionado}
+                      key={
+                        JSON.stringify(item) +
+                        AnyoSeleccionado +
+                        "_" +
+                        ProvinciaSeleccionada +
+                        "_" +
+                        SectoreSeleccionado +
+                        "_" +
+                        EstadosObraeleccionada
+                      }
                       setMensajeGuardando={setMensajeGuardando}
                     />
                   </td>
@@ -571,6 +580,7 @@ export default ({ recargar }) => {
                               data={item}
                               AnyoSeleccionado={AnyoSeleccionado}
                               key={
+                                JSON.stringify(item) +
                                 AnyoSeleccionado +
                                 "_" +
                                 ProvinciaSeleccionada +
