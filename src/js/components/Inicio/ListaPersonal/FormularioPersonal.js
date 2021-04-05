@@ -41,7 +41,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
     }
   }
   const [DataFormulario, setDataFormulario] = useState({});
-  const [IdCargoSeleccionado, setIdCargoSeleccionado] = useState(id_cargo);
+  const [IdCargoSeleccionado, setIdCargoSeleccionado] = useState("");
 
   const [CargosLimitados, setCargosLimitados] = useState([]);
   async function getCargos() {
@@ -162,7 +162,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
                       className="form-control"
                       required
                     >
-                      <option disabled hidden>
+                      <option disabled hidden value="">
                         SELECCIONE
                       </option>
                       {CargosLimitados.map((item, i) => (

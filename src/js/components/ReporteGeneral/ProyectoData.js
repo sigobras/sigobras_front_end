@@ -32,7 +32,7 @@ export default ({ numero, data, AnyoSeleccionado, setMensajeGuardando }) => {
     setPermisos(tempList);
   }
   //meta
-  const [Meta, setMeta] = useState(data.meta);
+  const [Meta, setMeta] = useState("");
   async function cargarMeta() {
     var res = await axios.get(`${UrlServer}/v1/datosAnuales`, {
       params: {

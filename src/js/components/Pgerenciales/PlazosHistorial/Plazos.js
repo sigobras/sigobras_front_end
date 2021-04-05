@@ -131,11 +131,11 @@ export default () => {
             <th colSpan="3" style={{ textAlign: "center" }}>
               RESOLUCIÓN
             </th>
-            <th style={{ width: "70px" }}>FECHA INICIAL</th>
-            <th style={{ width: "70px" }}>FECHA FINAL</th>
+            <th style={{ width: "75px" }}>FECHA INICIAL</th>
+            <th style={{ width: "75px" }}>FECHA FINAL</th>
             <th>DIÁS</th>
             <th>PLAZO APROBADO</th>
-            <th style={{ width: "70px", textAlign: "center" }}>APROBADO EL</th>
+            <th style={{ width: "75px", textAlign: "center" }}>APROBADO EL</th>
             <th>OPCIONES</th>
           </tr>
         </thead>

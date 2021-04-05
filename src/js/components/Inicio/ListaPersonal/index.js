@@ -198,7 +198,10 @@ export default ({ id_ficha, codigo_obra }) => {
                 {Permisos["agregar_personal"] == 1 && (
                   <FormularioPersonal
                     id_ficha={id_ficha}
-                    recargar={fetchCargosPersonal}
+                    recargar={() => {
+                      fetchCargosPersonal();
+                      cargarHistorialPersonal();
+                    }}
                     id_cargo={IdCargoSeleccionado}
                   />
                 )}
