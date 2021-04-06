@@ -174,6 +174,8 @@ export default ({ recargar }) => {
                 "avancefinanciero_acumulado"
               )}
             </th>
+            <th>Cronograma Valorizado</th>
+            <th>Cronograma Financiero</th>
             <th>Fecha de Conclusión Hipotética</th>
 
             <th id={"fotosHeader1"}>Fotos Quincena Anterior</th>
@@ -189,7 +191,6 @@ export default ({ recargar }) => {
                 var fechas1 = fechasAnteriorQuincena();
                 return (
                   <div>
-                    Primera quincena
                     <div>{fechaFormatoClasico(fechas1.fecha_inicial)}</div>
                     <div>{fechaFormatoClasico(fechas1.fecha_final)}</div>
                   </div>
@@ -206,7 +207,6 @@ export default ({ recargar }) => {
                 var fechas2 = fechasActualQuincena();
                 return (
                   <div>
-                    Segunda quincena
                     <div>{fechaFormatoClasico(fechas2.fecha_inicial)}</div>
                     <div>{fechaFormatoClasico(fechas2.fecha_final)}</div>
                   </div>
@@ -313,6 +313,12 @@ export default ({ recargar }) => {
                   avance={item.avancefinanciero_acumulado}
                   total={item.g_total_presu}
                 />
+              </td>
+              <td>
+                <CronogramaValorizado id_ficha={item.id_ficha} />
+              </td>
+              <td>
+                <CronogramaFinanciero id_ficha={item.id_ficha} />
               </td>
               <td>
                 <div>
@@ -528,7 +534,6 @@ function FotosCantidad({ id_ficha, fechas }) {
     </div>
   );
 }
-
 function EstadoObra({ item }) {
   return (
     <Button
@@ -648,6 +653,91 @@ function InformesInfobras({ id_ficha, item }) {
           <span style={{ color: "#17a2b8" }}> {item.anyo}</span>
         </div>
       ))}
+    </div>
+  );
+}
+function CronogramaValorizado({ id_ficha }) {
+  useEffect(() => {
+    cargarCurvaS_Acumulados();
+    cargarCostoDirecto();
+  }, []);
+  //acumulados
+  const [CurvaS_Acumulados, setCurvaS_Acumulados] = useState({
+    programado_acumulado: 0,
+  });
+  async function cargarCurvaS_Acumulados() {
+    const res = await axios.post(`${UrlServer}/getDataCurvaSAcumulados`, {
+      id_ficha,
+      anyo: new Date().getFullYear(),
+    });
+    setCurvaS_Acumulados(res.data);
+  }
+  //costoDirecto
+  const [CostoDirecto, setCostoDirecto] = useState({ monto: 0 });
+  async function cargarCostoDirecto() {
+    const res = await axios.get(`${UrlServer}/v1/componentes/costoDirecto`, {
+      params: {
+        id_ficha,
+      },
+    });
+    setCostoDirecto(res.data);
+  }
+  return (
+    <div>
+      <div>
+        {Math.abs(CostoDirecto.monto - CurvaS_Acumulados.programado_acumulado) <
+        0.01 ? (
+          <ImWink2 size="20" color="#219e12" />
+        ) : (
+          <ImSad2 size="20" color="#9e1212" />
+        )}
+      </div>
+      S/.{Redondea(CostoDirecto.monto - CurvaS_Acumulados.programado_acumulado)}
+    </div>
+  );
+}
+function CronogramaFinanciero({ id_ficha }) {
+  useEffect(() => {
+    fetchPimMonto();
+    fetchprogramadoAcumulado();
+  }, []);
+  //pim
+  const [PimMonto, setPimMonto] = useState(0);
+  async function fetchPimMonto() {
+    const res = await axios.get(`${UrlServer}/v1/fuentesFinancieamiento/pim`, {
+      params: {
+        id_ficha,
+        anyo: new Date().getFullYear(),
+      },
+    });
+    setPimMonto(res.data.pim);
+  }
+  //acumulado anyo especifico
+  const [programadoAcumulado, setprogramadoAcumulado] = useState(0);
+  async function fetchprogramadoAcumulado() {
+    const res = await axios.get(
+      `${UrlServer}/v1/fuentesFinancieamiento/pim/programado`,
+      {
+        params: {
+          id_ficha,
+          anyo: new Date().getFullYear(),
+        },
+      }
+    );
+    setprogramadoAcumulado(res.data.programado);
+  }
+  return (
+    <div>
+      {PimMonto != 0 && (
+        <div>
+          {PimMonto - programadoAcumulado == 0 ? (
+            <ImWink2 size="20" color="#219e12" />
+          ) : (
+            <ImSad2 size="20" color="#9e1212" />
+          )}
+        </div>
+      )}
+      S/.{Redondea(PimMonto - programadoAcumulado)}
     </div>
   );
 }

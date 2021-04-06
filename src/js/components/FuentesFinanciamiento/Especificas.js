@@ -295,7 +295,7 @@ export default forwardRef(
           fuentesfinanciamiento_costoasignado_id,
           anyo: Anyo,
           mes,
-          programado,
+          programado: programado || 0,
         }
       );
       cargarCostos();
@@ -384,7 +384,7 @@ export default forwardRef(
         {
           fuentesfinanciamiento_analitico_id,
           variacionespim_id,
-          monto,
+          monto: monto || 0,
         }
       );
       cargarEspecificas();
@@ -395,7 +395,7 @@ export default forwardRef(
       var res = await axios.put(
         `${UrlServer}/v1/fuentesFinancieamiento/especificas/${id}`,
         {
-          pia,
+          pia: pia || "0",
         }
       );
       cargarEspecificas();
