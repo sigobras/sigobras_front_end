@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { UrlServer } from "../../Utils/ServerUrlConfig";
-import { Redondea } from "../../Utils/Funciones";
-import "./valorizaciones.css";
+import BigNumber from "bignumber.js";
 import { BsFillTrashFill } from "react-icons/bs";
 import { FaEdit, FaSave } from "react-icons/fa";
 import { AiOutlineFileAdd } from "react-icons/ai";
+
+import { UrlServer } from "../../Utils/ServerUrlConfig";
+import { Redondea } from "../../Utils/Funciones";
+import "./valorizaciones.css";
+
 export default ({ PeriodoSeleccionado }) => {
   useEffect(() => {
     fetchResumenComponentes();
