@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import BigNumber from "bignumber.js";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { Redondea } from "../../Utils/Funciones";
 import "./valorizaciones.css";
@@ -43,13 +44,15 @@ export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
       });
     setPartidas(arr);
 
-    var valor_anterior = 0;
-    var valor_actual = 0;
+    var valor_anterior = new BigNumber(0);
+    var valor_actual = new BigNumber(0);
 
     res.data.forEach((item) => {
-      valor_anterior += item.valor_anterior;
-      valor_actual += item.valor_actual;
+      valor_anterior = valor_anterior.plus(item.valor_anterior || 0);
+      valor_actual = valor_actual.plus(item.valor_actual || 0);
     });
+    valor_anterior = valor_anterior.toNumber();
+    valor_actual = valor_actual.toNumber();
     setPartidasTotales({
       valor_anterior,
       porcentaje_anterior:
