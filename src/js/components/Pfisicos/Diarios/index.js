@@ -133,16 +133,20 @@ export default () => {
       item: "--",
     })
   );
-  async function fectchPartidas() {
+  async function fectchPartidas(source) {
     // setTogglePartidasEstilo(false)
-    const res = await axios.post(`${UrlServer}/getPartidas2`, {
-      id_componente: ComponenteSelecccionado.id_componente,
-      inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
-      fin: Number(CantidadPaginasPartidas),
-      id_iconoCategoria: MenuCategoriasSeleccionado.id_iconoCategoria,
-      id_prioridad: MenuPrioridadesSeleccionado.id_prioridad,
-      texto_buscar: TextoBuscado,
-    });
+    const res = await axios.post(
+      `${UrlServer}/getPartidas2`,
+      {
+        id_componente: ComponenteSelecccionado.id_componente,
+        inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
+        fin: Number(CantidadPaginasPartidas),
+        id_iconoCategoria: MenuCategoriasSeleccionado.id_iconoCategoria,
+        id_prioridad: MenuPrioridadesSeleccionado.id_prioridad,
+        texto_buscar: TextoBuscado,
+      },
+      { cancelToken: source.token }
+    );
     // setPartidas(request.data)
     function addLeadingZeros(num, size) {
       num = num.toString();
@@ -308,7 +312,11 @@ export default () => {
   ]);
   useEffect(() => {
     setPartidas([]);
-    fectchPartidas();
+    let source = axios.CancelToken.source();
+    fectchPartidas(source);
+    return () => {
+      source.cancel();
+    };
   }, [
     ComponenteSelecccionado,
     PaginaActual,
