@@ -136,6 +136,7 @@ export default forwardRef(
     function renderEspecificasContenido(item) {
       var tempRender = [];
       var acumulado = 0;
+      var acumuladoProgramado = 0;
       var ultimoPresupuesto = item.pia;
       //render variaciones
       for (let i = 0; i < VariacionesPim.length; i++) {
@@ -178,6 +179,7 @@ export default forwardRef(
           }
         }
         acumulado += totalMes;
+        acumuladoProgramado += totalProgramadoMes;
         tempRender.push(<th>{Redondea(totalMes)}</th>);
         tempRender.push(<th>{Redondea(totalProgramadoMes)}</th>);
       }
@@ -190,6 +192,16 @@ export default forwardRef(
         VariacionesPim.length + 1,
         0,
         <th>{Redondea(ultimoPresupuesto - acumulado)}</th>
+      );
+      tempRender.splice(
+        VariacionesPim.length + 2,
+        0,
+        <th>{Redondea(acumuladoProgramado)}</th>
+      );
+      tempRender.splice(
+        VariacionesPim.length + 3,
+        0,
+        <th>{Redondea(ultimoPresupuesto - acumuladoProgramado)}</th>
       );
       return tempRender;
     }
@@ -567,9 +579,11 @@ export default forwardRef(
     function renderCostosData(item) {
       var tempRender = [];
       var acumulado = 0;
+      var acumuladoProgramado = 0;
       //render meses
       for (let i = 1; i <= 12; i++) {
         acumulado += item["avanceMensual_" + i];
+        acumuladoProgramado += item["programadoMensual_" + i];
         tempRender.push(
           ModoEdicion &&
             Permisos["fuentefinanciamiento_editar_avancemensual"] == 1 ? (
@@ -620,11 +634,15 @@ export default forwardRef(
         <td style={{ textAlign: "right" }}>{Redondea(acumulado)}</td>
       );
       tempRender.splice(1, 0, <td></td>);
+      tempRender.splice(2, 0, <td>{Redondea(acumuladoProgramado)}</td>);
+      tempRender.splice(3, 0, <td></td>);
+
       return tempRender;
     }
     function renderTotales() {
       var tempRender = [];
       var acumulado = 0;
+      var acumuladoProgramado = 0;
       var ultimoPresupuesto = 0;
       //pia
       var piaTotal = 0;
@@ -675,6 +693,7 @@ export default forwardRef(
           totalProgramadoMes += Costo["programadoMensual_" + i];
         }
         acumulado += totalMes;
+        acumuladoProgramado += totalProgramadoMes;
         tempRender.push(
           <th
             style={{
@@ -737,6 +756,32 @@ export default forwardRef(
           {Redondea(ultimoPresupuesto - acumulado)}
         </th>
       );
+      tempRender.splice(
+        VariacionesPim.length + 4,
+        0,
+        <th
+          style={{
+            textAlign: "right",
+            background: "#3a3b3c",
+            color: "#cecece",
+          }}
+        >
+          {Redondea(acumuladoProgramado)}
+        </th>
+      );
+      tempRender.splice(
+        VariacionesPim.length + 5,
+        0,
+        <th
+          style={{
+            textAlign: "right",
+            background: "#3a3b3c",
+            color: "#cecece",
+          }}
+        >
+          {Redondea(ultimoPresupuesto - acumuladoProgramado)}
+        </th>
+      );
       return tempRender;
     }
     const [EstadoEdicion, setEstadoEdicion] = useState("");
@@ -784,6 +829,8 @@ export default forwardRef(
                 <th style={{ background: "orange", color: "black" }}>
                   SALDO {Anyo}
                 </th>
+                <th>PROGRAMADO {Anyo}</th>
+                <th>SALDO PROGRAMDO {Anyo}</th>
                 {renderMesesTitulo()}
               </tr>
             </thead>
