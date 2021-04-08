@@ -42,8 +42,6 @@ export default ({ id_partida }) => {
   const [Fecha, setFecha] = useState(FechaActual());
   //save
   async function savePartidaFoto() {
-    console.log("savePartidaFoto");
-    console.log("codigoObra", sessionStorage.getItem("codigoObra"));
     const formData = new FormData();
     formData.append("accesos_id_acceso", sessionStorage.getItem("idacceso"));
     formData.append("codigo_obra", sessionStorage.getItem("codigoObra"));
@@ -57,13 +55,23 @@ export default ({ id_partida }) => {
       },
     };
     if (confirm("¿Esta seguro de guardar la imagen al sistema?")) {
-      var res = await axios.post(
-        `${UrlServer}/avancePartidaImagen`,
-        formData,
-        config
-      );
-      console.log("res", res.data);
-      alert("exito");
+      try {
+        var res = await axios.post(
+          `${UrlServer}/avancePartidaImagen`,
+          formData,
+          config
+        );
+        alert("exito");
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data.message == "fecha_no_permitida"
+        ) {
+          alert("fecha no permitida");
+        } else {
+          alert("Ocurrio un error");
+        }
+      }
     }
   }
   return (
@@ -117,6 +125,7 @@ export default ({ id_partida }) => {
               type="date"
               value={Fecha}
               onChange={(e) => setFecha(e.target.value)}
+              max={FechaActual()}
             />
           </div>
         </ModalBody>

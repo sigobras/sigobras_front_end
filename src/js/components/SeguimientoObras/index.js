@@ -54,39 +54,40 @@ export default ({ recargar }) => {
     }
   }
 
-  const [fechasAnteriorQuincenaData] = useState(fechasAnteriorQuincena());
-  const [fechasActualQuincenaData] = useState(fechasActualQuincena());
-  function fechasAnteriorQuincena() {
+  const [fechasAnteriorPeriodoData] = useState(fechasAnteriorPeriodo());
+  const [fechasActualPeriodoData] = useState(fechasActualPeriodo());
+  function fechasAnteriorPeriodo() {
     var d = new Date();
-    var dia = d.getDate();
-    var dia_inicial = dia > 15 ? 1 : 16;
-    var dia_final = dia > 15 ? 15 : 31;
+    d.setDate(1);
+    d.setHours(-1);
+    var anyo = d.getFullYear();
+    var mes = d.getMonth() + 1;
+    var dia_inicial = 1;
+    var dia_final = new Date(anyo, mes, 0).getDate();
+    var fecha_inicial = anyo + "-" + mes + "-" + dia_inicial;
+    var fecha_final = anyo + "-" + mes + "-" + dia_final;
+    return {
+      fecha_inicial,
+      fecha_final,
+      diasEjecutados: dia_final,
+    };
+  }
+  function fechasActualPeriodo() {
+    var d = new Date();
+    var anyo = d.getFullYear();
+    var mes = d.getMonth() + 1;
+    var dia_inicial = 1;
+    var dia_final = new Date(anyo, mes + 1, 0).getDate();
+    var fecha_inicial = anyo + "-" + mes + "-" + dia_inicial;
+    var fecha_final = anyo + "-" + mes + "-" + dia_final;
+    var diasEjecutados = new Date().getDate();
+    return {
+      fecha_inicial,
+      fecha_final,
+      diasEjecutados,
+    };
+  }
 
-    var mes = d.getMonth() + 1;
-    mes = dia > 15 ? mes : mes == 1 ? 12 : mes - 1;
-    var anyo = d.getFullYear();
-    anyo = dia < 15 ? anyo - 1 : anyo;
-    var fecha_inicial = anyo + "-" + mes + "-" + dia_inicial;
-    var fecha_final = anyo + "-" + mes + "-" + dia_final;
-    return {
-      fecha_inicial,
-      fecha_final,
-    };
-  }
-  function fechasActualQuincena() {
-    var d = new Date();
-    var mes = d.getMonth() + 1;
-    var anyo = d.getFullYear();
-    var dia = d.getDate();
-    var dia_inicial = dia > 15 ? 16 : 1;
-    var dia_final = dia > 15 ? 31 : 15;
-    var fecha_inicial = anyo + "-" + mes + "-" + dia_inicial;
-    var fecha_final = anyo + "-" + mes + "-" + dia_final;
-    return {
-      fecha_inicial,
-      fecha_final,
-    };
-  }
   function compareProgramadoMes(dateString) {
     if (typeof dateString != "string") {
       return false;
@@ -178,48 +179,15 @@ export default ({ recargar }) => {
             <th>Cronograma Financiero</th>
             <th>Fecha de Conclusión Hipotética</th>
 
-            <th id={"fotosHeader1"}>Fotos Quincena Anterior</th>
-            <th id={"fotosHeader2"}>Fotos Quincena Actual </th>
+            <th id={"fotosHeader1"}>Fotos Mes Anterior</th>
+            <th id={"fotosHeader2"}>Fotos Mes Actual </th>
             <th>Fotos Total</th>
-            <Tooltip
-              placement={"top"}
-              isOpen={TooltipFotosHeader}
-              target={"fotosHeader1"}
-              toggle={toggleTooltipFotosHeader}
-            >
-              {(() => {
-                var fechas1 = fechasAnteriorQuincena();
-                return (
-                  <div>
-                    <div>{fechaFormatoClasico(fechas1.fecha_inicial)}</div>
-                    <div>{fechaFormatoClasico(fechas1.fecha_final)}</div>
-                  </div>
-                );
-              })()}
-            </Tooltip>
-            <Tooltip
-              placement={"top"}
-              isOpen={TooltipFotosHeader2}
-              target={"fotosHeader2"}
-              toggle={toggleTooltipFotosHeader2}
-            >
-              {(() => {
-                var fechas2 = fechasActualQuincena();
-                return (
-                  <div>
-                    <div>{fechaFormatoClasico(fechas2.fecha_inicial)}</div>
-                    <div>{fechaFormatoClasico(fechas2.fecha_final)}</div>
-                  </div>
-                );
-              })()}
-            </Tooltip>
             <th>
               {cabezeraOrderBy(
                 "Último Día de Metrado",
                 "avancefisico_ultimafecha"
               )}
             </th>
-
             <th>{cabezeraOrderBy("PIM", "pim_anyoactual")}</th>
             <th>Último Financiero Editado</th>
             <th>Informes No Presentados a Infobras</th>
@@ -335,13 +303,13 @@ export default ({ recargar }) => {
               <td>
                 <FotosCantidad
                   id_ficha={item.id_ficha}
-                  fechas={fechasAnteriorQuincenaData}
+                  fechas={fechasAnteriorPeriodoData}
                 />
               </td>
               <td>
                 <FotosCantidad
                   id_ficha={item.id_ficha}
-                  fechas={fechasActualQuincenaData}
+                  fechas={fechasActualPeriodoData}
                 />
               </td>
               <td>
@@ -523,8 +491,7 @@ function FotosCantidad({ id_ficha, fechas }) {
   return (
     <div>
       <div>
-        {" "}
-        {fotosCantidad1 >= 5 ? (
+        {fechas.diasEjecutados / fotosCantidad1 <= 3 ? (
           <ImWink2 size="20" color="#219e12" />
         ) : (
           <ImSad2 size="20" color="#9e1212" />
