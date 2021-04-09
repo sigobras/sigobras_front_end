@@ -119,7 +119,7 @@ export default () => {
   }
   return (
     <div>
-      {Permisos["agregar_plazo"] == 1 && (
+      {Permisos["agregar_plazo"] >= 1 && (
         <PlazosFormulario id_padre={null} recarga={fetchPLazosPadres} />
       )}
       <Table>
@@ -180,19 +180,19 @@ export default () => {
               <td>{item.plazo_aprobado == 1 ? "Aprobado" : "Sin aprobar"}</td>
               <td>{fechaFormatoClasico(item.fecha_aprobada)}</td>
               <td style={{ display: "flex" }}>
-                {Permisos["agregar_plazo"] == 1 && (
+                {Permisos["agregar_plazo"] >= 1 && (
                   <PlazosFormulario
                     id_padre={item.id}
                     recarga={activeChildFunctions}
                   />
                 )}
-                {Permisos["actualizar_plazo"] == 1 && (
+                {Permisos["actualizar_plazo"] >= 1 && (
                   <PlazosFormularioEdicion
                     data={item}
                     recarga={fetchPLazosPadres}
                   />
                 )}
-                {Permisos["eliminar_plazo"] == 1 && (
+                {Permisos["eliminar_plazo"] >= 1 && (
                   <Button
                     color="info"
                     outline
@@ -336,7 +336,7 @@ const PLazosHijos = forwardRef(
         <td>{item.descripcion}</td>
         <td>{item.documento_resolucion_estado}</td>
         <td>
-          {Permisos["actualizar_archivoplazo"] == 1 && (
+          {
             <TooltipUploadIcon
               item={item}
               uploadFile={uploadFile}
@@ -344,7 +344,7 @@ const PLazosHijos = forwardRef(
               UsuarioData={UsuarioData}
               Permisos={Permisos}
             />
-          )}
+          }
         </td>
         <td></td>
         <td>{fechaFormatoClasico(item.fecha_inicio)}</td>
@@ -353,13 +353,13 @@ const PLazosHijos = forwardRef(
         <td></td>
         <td>{item.fecha_aprobada}</td>
         <td style={{ display: "flex" }}>
-          {Permisos["actualizar_plazo"] == 1 && (
+          {Permisos["actualizar_plazo"] >= 1 && (
             <PlazosFormularioEdicion
               data={item}
               recarga={fetchCargarPlazosHijos}
             />
           )}
-          {Permisos["eliminar_plazo"] == 1 && (
+          {Permisos["eliminar_plazo"] >= 1 && (
             <Button
               color="info"
               outline
@@ -437,7 +437,7 @@ function TooltipUploadIcon({ item, uploadFile, DescargarArchivo, Permisos }) {
           }}
         >
           <div>Subido por : </div>
-          <div>{item.usuario_nombre}</div>
+          <div style={{ whiteSpace: "nowrap" }}>{item.usuario_nombre}</div>
         </div>
       )}
     </div>
