@@ -10,6 +10,7 @@ import { Nav, NavItem, NavLink, Button } from "reactstrap";
 import classnames from "classnames";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { mesesShort } from "../../Utils/Funciones";
+import "./CuadroMetrados.css";
 export default () => {
   useEffect(() => {
     fetchAnyos();
@@ -67,6 +68,17 @@ export default () => {
     });
     setAvances(res.data);
   }
+  async function fetchAvancesResumen() {
+    var res = await axios.get(`${UrlServer}/v1/avance/cuadroMetradosResumen`, {
+      params: {
+        anyo: AnyoSeleccionado,
+        mes: MesSeleccionado,
+        id_componente: ComponenteSeleccionado,
+      },
+    });
+    setAvances(res.data);
+  }
+  const [MostrarCompleto, setMostrarCompleto] = useState(true);
   useEffect(() => {
     fetchMeses();
   }, [AnyoSeleccionado]);
@@ -78,9 +90,13 @@ export default () => {
     console.log("MesSeleccionado", MesSeleccionado);
     console.log("ComponenteSeleccionado", ComponenteSeleccionado);
     if (AnyoSeleccionado && MesSeleccionado && ComponenteSeleccionado) {
-      fetchAvances();
+      if (MostrarCompleto) {
+        fetchAvances();
+      } else {
+        fetchAvancesResumen();
+      }
     }
-  }, [MesSeleccionado, ComponenteSeleccionado]);
+  }, [MesSeleccionado, ComponenteSeleccionado, MostrarCompleto]);
   function renderMesesCabezera() {
     var render = [];
     if (Avances && Avances[0]) {
@@ -100,15 +116,17 @@ export default () => {
       var properties = Object.keys(item).filter((element) =>
         element.startsWith("dia_")
       );
+      var total = 0;
       for (let index = 0; index < properties.length; index++) {
         const key = properties[index];
-        render.push(
-          <td style={item[key] > 0 ? { color: "red" } : {}}>{item[key]}</td>
-        );
+        render.push(<td>{item[key] == 0 ? "" : item[key]}</td>);
+        total += item[key];
       }
+      render.push(<td>{total == 0 ? "" : total}</td>);
     }
     return render;
   }
+
   return (
     <div>
       <Nav tabs>
@@ -137,6 +155,12 @@ export default () => {
             </NavLink>
           </NavItem>
         ))}
+        <Button
+          onClick={() => setMostrarCompleto(!MostrarCompleto)}
+          color="primary"
+        >
+          {MostrarCompleto ? "Resumen" : "Completo"}
+        </Button>
       </Nav>
       <Nav tabs>
         {Componentes.map((item, i) => (
@@ -153,12 +177,13 @@ export default () => {
         ))}
       </Nav>
       <div style={{ overflowX: "auto" }}>
-        <table className="table">
+        <table className="whiteThem-table">
           <thead>
             <tr>
-              <th>item</th>
-              <th>descripcion</th>
+              <th>ITEM</th>
+              <th>DESCRIPCION</th>
               {renderMesesCabezera()}
+              <th>TOTAL</th>
             </tr>
           </thead>
           <tbody>
