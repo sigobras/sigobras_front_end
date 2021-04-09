@@ -798,7 +798,7 @@ export default () => {
                               onClick={() =>
                                 DescargarArchivo(`${UrlServer}${item.archivo}`)
                               }
-                              style={{ cursor: "pointer" }}
+                              style={{ cursor: "pointer", marginRight: "5px" }}
                             />
                           )}
                           {ModoEdicion &&
@@ -815,6 +815,7 @@ export default () => {
                                 style={{
                                   cursor: "pointer",
                                   marginRight: "4px",
+                                  marginLeft: "5px",
                                 }}
                                 size="12"
                               />
