@@ -52,6 +52,7 @@ export default () => {
     cargarPermiso(
       "ingresar_metrado,ingresar_fotospartidas,ver_chatpartidas,actualizar_iconopartidas"
     );
+    fetchEstadoObra();
   }, []);
   //permisos
   const [Permisos, setPermisos] = useState(false);
@@ -330,6 +331,14 @@ export default () => {
     paginatorRef.current.scrollIntoView({ behavior: "smooth" });
     console.log("autoScroll");
   };
+  //estado de obra
+  const [EstadoObra, setEstadoObra] = useState("");
+  async function fetchEstadoObra() {
+    var res = await axios.post(`${UrlServer}/getEstadoObra`, {
+      id_ficha: sessionStorage.getItem("idobra"),
+    });
+    setEstadoObra(res.data.nombre);
+  }
   return (
     <div>
       <Nav tabs>
@@ -671,11 +680,12 @@ export default () => {
                                 />
                               </td>
                               <td>
-                                {UsuarioData.cargo_nombre == "RESIDENTE" && (
+                                {Permisos["ingresar_metrado"] == 1 && (
                                   <ModalIngresoMetrado
                                     Partida={PartidaSelecccionado}
                                     Actividad={item}
                                     recargaActividad={onSaveMetrado}
+                                    EstadoObra={EstadoObra}
                                   />
                                 )}
                               </td>
