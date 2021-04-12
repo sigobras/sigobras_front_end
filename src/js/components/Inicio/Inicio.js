@@ -732,7 +732,7 @@ function ComponenteAvance({ id_componente }) {
   }, []);
   const [ComponenteAvance, setComponenteAvance] = useState(0);
   async function fetchData() {
-    var res = await axios.get(`${UrlServer}/v1/avance/fisico/componente`, {
+    var res = await axios.get(`${UrlServer}/v1/avance/componente`, {
       params: {
         id_componente,
       },
@@ -749,7 +749,7 @@ function ComponenteBarraPorcentaje({ id_componente, componente }) {
     0
   );
   async function fetchData() {
-    var res = await axios.get(`${UrlServer}/v1/avance/fisico/componente`, {
+    var res = await axios.get(`${UrlServer}/v1/avance/componente`, {
       params: {
         id_componente,
       },

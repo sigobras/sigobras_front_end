@@ -1,0 +1,54 @@
+.whiteThem-table thead th {
+  font-size: 10px;
+  border: 1px solid black;
+  padding: 0px 4px 0px 4px;
+  text-align: center;
+  background: #3a3b3c;
+  border: 1px solid black;
+}
+.whiteThem-table tbody {
+  background: #e8e8e8;
+  color: black;
+  border: 1px solid black;
+}
+.whiteThem-table tbody td,
+.whiteThem-table tbody th {
+  font-size: 11px;
+  border: 1px solid black;
+  white-space: nowrap;
+  padding: 0px 4px 0px 4px;
+  width: 50px;
+}
+.whiteThem-table tbody th {
+  background: #e8e8e8;
+  font-weight: 700;
+}
+.whiteThem-table tbody td {
+  background: #fffde5;
+}
+.whiteThem-table input,
+.whiteThem-table select {
+  height: 16px;
+  font-size: 12px;
+  line-height: 28px;
+  border: none;
+  padding: 0px;
+}
+.whiteThem-table .porcentaje {
+  color: #242526;
+  font-weight: 100;
+}
+
+.whiteThem-table-stickyTitulo {
+  position: sticky;
+  left: 80px;
+  background: #242526;
+}
+.whiteThem-table-sticky {
+  position: sticky;
+  left: 0px;
+}
+.whiteThem-table-sticky2 {
+  position: sticky;
+  left: 64px;
+}
