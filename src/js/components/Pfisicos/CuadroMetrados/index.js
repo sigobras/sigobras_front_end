@@ -48,10 +48,6 @@ export default () => {
     });
     setComponentes(res.data);
     if (res.data.length) {
-      console.log(
-        "componente seleccionado",
-        res.data[res.data.length - 1].id_componente
-      );
       setComponenteSeleccionado(res.data[res.data.length - 1]);
     }
   }
@@ -78,7 +74,7 @@ export default () => {
     });
     setAvances(res.data);
   }
-  const [MostrarCompleto, setMostrarCompleto] = useState(true);
+  const [MostrarCompleto, setMostrarCompleto] = useState(false);
   useEffect(() => {
     fetchMeses();
   }, [AnyoSeleccionado]);
@@ -113,7 +109,7 @@ export default () => {
         );
         var esDomingo = date.getDay() == 0;
         var esSabado = date.getDay() == 6;
-        render.push(<th style={{ minWidth: "27px" }}>{key.split("_")[1]}</th>);
+        render.push(<th className="dia">{key.split("_")[1]}</th>);
       }
     }
     return render;
@@ -149,8 +145,12 @@ export default () => {
         );
         total += item[key];
       }
-      render.push(<td>{total == 0 ? "" : Redondea(total)}</td>);
-      render.push(<td>{Redondea(item.metrado - total)}</td>);
+      render.push(
+        <td style={{ fontWeight: 700 }}>{total == 0 ? "" : Redondea(total)}</td>
+      );
+      render.push(
+        <td style={{ fontWeight: 700 }}>{Redondea(item.metrado - total)}</td>
+      );
     }
     return render;
   }
@@ -211,25 +211,29 @@ export default () => {
           ComponenteSeleccionado.nombre_componente}
       </CardHeader>
       <div style={{ overflowX: "auto" }}>
-        <table className="whiteThem-table">
+        <table className="table table-hover whiteThem-table">
           <thead>
             <tr>
-              <th>ITEM</th>
-              <th>DESCRIPCION</th>
-              <th>METRADO ANTERIOR</th>
+              <th className="item">ITEM</th>
+              <th className="descripcion">DESCRIPCION</th>
+              <th className="metrado">METRADO ANTERIOR</th>
               {renderMesesCabezera()}
-              <th>TOTAL</th>
-              <th>SALDO</th>
+              <th className="total">TOTAL</th>
+              <th className="saldo">SALDO</th>
             </tr>
           </thead>
           <tbody>
             {Avances.map((item, i) => (
-              <tr key={i} style={{ whiteSpace: "nowrap" }}>
-                <td>{item.item}</td>
-                <td>{item.descripcion}</td>
-                <td>
+              <tr key={i}>
+                <td className="whiteThem-table-sticky">{item.item}</td>
+                <td className="whiteThem-table-sticky2">
+                  <div class="cut-text ">{item.descripcion}</div>
+                </td>
+                <td style={{ whiteSpace: "nowrap" }}>
                   {item.metrado &&
-                    Redondea(item.metrado) + " " + item.unidad_medida}
+                    Redondea(item.metrado) +
+                      " " +
+                      item.unidad_medida.replace("/DIA", "")}
                 </td>
                 {renderMesesBody(item)}
               </tr>

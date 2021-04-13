@@ -1,3 +1,7 @@
+.whiteThem-table {
+  table-layout: fixed;
+  width: 100px;
+}
 .whiteThem-table thead th {
   font-size: 10px;
   border: 1px solid black;
@@ -15,9 +19,7 @@
 .whiteThem-table tbody th {
   font-size: 11px;
   border: 1px solid black;
-  white-space: nowrap;
   padding: 0px 4px 0px 4px;
-  width: 50px;
 }
 .whiteThem-table tbody th {
   background: #e8e8e8;
@@ -38,6 +40,22 @@
   color: #242526;
   font-weight: 100;
 }
+.whiteThem-table .item {
+  width: 90px;
+}
+.whiteThem-table .descripcion {
+  width: 350px;
+}
+.whiteThem-table .metrado {
+  width: 100px;
+}
+.whiteThem-table .dia {
+  width: 27px;
+}
+.whiteThem-table .total,
+.whiteThem-table .saldo {
+  width: 50px;
+}
 
 .whiteThem-table-stickyTitulo {
   position: sticky;
@@ -50,5 +68,10 @@
 }
 .whiteThem-table-sticky2 {
   position: sticky;
-  left: 64px;
+  left: 90px;
+}
+.cut-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
