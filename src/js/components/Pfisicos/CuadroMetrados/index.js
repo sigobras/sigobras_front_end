@@ -6,10 +6,10 @@ import React, {
   useRef,
 } from "react";
 import axios from "axios";
-import { Nav, NavItem, NavLink, Button } from "reactstrap";
+import { Nav, NavItem, NavLink, Button, CardHeader } from "reactstrap";
 import classnames from "classnames";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
-import { mesesShort } from "../../Utils/Funciones";
+import { mesesShort, Redondea } from "../../Utils/Funciones";
 import "./CuadroMetrados.css";
 export default () => {
   useEffect(() => {
@@ -48,11 +48,7 @@ export default () => {
     });
     setComponentes(res.data);
     if (res.data.length) {
-      console.log(
-        "componente seleccionado",
-        res.data[res.data.length - 1].id_componente
-      );
-      setComponenteSeleccionado(res.data[res.data.length - 1].id_componente);
+      setComponenteSeleccionado(res.data[res.data.length - 1]);
     }
   }
   const [ComponenteSeleccionado, setComponenteSeleccionado] = useState(0);
@@ -63,7 +59,7 @@ export default () => {
       params: {
         anyo: AnyoSeleccionado,
         mes: MesSeleccionado,
-        id_componente: ComponenteSeleccionado,
+        id_componente: ComponenteSeleccionado.id_componente,
       },
     });
     setAvances(res.data);
@@ -73,12 +69,12 @@ export default () => {
       params: {
         anyo: AnyoSeleccionado,
         mes: MesSeleccionado,
-        id_componente: ComponenteSeleccionado,
+        id_componente: ComponenteSeleccionado.id_componente,
       },
     });
     setAvances(res.data);
   }
-  const [MostrarCompleto, setMostrarCompleto] = useState(true);
+  const [MostrarCompleto, setMostrarCompleto] = useState(false);
   useEffect(() => {
     fetchMeses();
   }, [AnyoSeleccionado]);
@@ -86,10 +82,11 @@ export default () => {
     fetchComponentes();
   }, [MesSeleccionado]);
   useEffect(() => {
-    console.log("AnyoSeleccionado", AnyoSeleccionado);
-    console.log("MesSeleccionado", MesSeleccionado);
-    console.log("ComponenteSeleccionado", ComponenteSeleccionado);
-    if (AnyoSeleccionado && MesSeleccionado && ComponenteSeleccionado) {
+    if (
+      AnyoSeleccionado &&
+      MesSeleccionado &&
+      ComponenteSeleccionado.id_componente
+    ) {
       if (MostrarCompleto) {
         fetchAvances();
       } else {
@@ -105,7 +102,14 @@ export default () => {
       );
       for (let index = 0; index < properties.length; index++) {
         const key = properties[index];
-        render.push(<th>{key.split("_")[1]}</th>);
+        var date = new Date(
+          AnyoSeleccionado,
+          MesSeleccionado - 1,
+          key.split("_")[1]
+        );
+        var esDomingo = date.getDay() == 0;
+        var esSabado = date.getDay() == 6;
+        render.push(<th className="dia">{key.split("_")[1]}</th>);
       }
     }
     return render;
@@ -119,10 +123,34 @@ export default () => {
       var total = 0;
       for (let index = 0; index < properties.length; index++) {
         const key = properties[index];
-        render.push(<td>{item[key] == 0 ? "" : item[key]}</td>);
+        var date = new Date(
+          AnyoSeleccionado,
+          MesSeleccionado - 1,
+          key.split("_")[1]
+        );
+        var esDomingo = date.getDay() == 0;
+        var esSabado = date.getDay() == 6;
+        render.push(
+          <td
+            style={
+              esDomingo
+                ? { background: "#97999a" }
+                : esSabado
+                ? { background: "#cdd1d4" }
+                : {}
+            }
+          >
+            {item[key] == 0 ? "" : item[key]}
+          </td>
+        );
         total += item[key];
       }
-      render.push(<td>{total == 0 ? "" : total}</td>);
+      render.push(
+        <td style={{ fontWeight: 700 }}>{total == 0 ? "" : Redondea(total)}</td>
+      );
+      render.push(
+        <td style={{ fontWeight: 700 }}>{Redondea(item.metrado - total)}</td>
+      );
     }
     return render;
   }
@@ -167,30 +195,46 @@ export default () => {
           <NavItem key={i}>
             <NavLink
               className={classnames({
-                active: item.id_componente == ComponenteSeleccionado,
+                active:
+                  item.id_componente == ComponenteSeleccionado.id_componente,
               })}
-              onClick={() => setComponenteSeleccionado(item.id_componente)}
+              onClick={() => setComponenteSeleccionado(item)}
             >
               C-{item.numero}
             </NavLink>
           </NavItem>
         ))}
       </Nav>
+      <CardHeader>
+        {ComponenteSeleccionado.numero +
+          " " +
+          ComponenteSeleccionado.nombre_componente}
+      </CardHeader>
       <div style={{ overflowX: "auto" }}>
-        <table className="whiteThem-table">
+        <table className="table table-hover whiteThem-table">
           <thead>
             <tr>
-              <th>ITEM</th>
-              <th>DESCRIPCION</th>
+              <th className="item">ITEM</th>
+              <th className="descripcion">DESCRIPCION</th>
+              <th className="metrado">METRADO ANTERIOR</th>
               {renderMesesCabezera()}
-              <th>TOTAL</th>
+              <th className="total">TOTAL</th>
+              <th className="saldo">SALDO</th>
             </tr>
           </thead>
           <tbody>
             {Avances.map((item, i) => (
-              <tr key={i} style={{ whiteSpace: "nowrap" }}>
-                <td>{item.item}</td>
-                <td>{item.descripcion}</td>
+              <tr key={i}>
+                <td className="whiteThem-table-sticky">{item.item}</td>
+                <td className="whiteThem-table-sticky2">
+                  <div class="cut-text ">{item.descripcion}</div>
+                </td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  {item.metrado &&
+                    Redondea(item.metrado) +
+                      " " +
+                      item.unidad_medida.replace("/DIA", "")}
+                </td>
                 {renderMesesBody(item)}
               </tr>
             ))}
