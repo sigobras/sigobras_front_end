@@ -218,6 +218,7 @@ export default () => {
             <tr>
               <th className="item">ITEM</th>
               <th className="descripcion">DESCRIPCIÓN</th>
+              <th className="descripcion">UNIDAD DE MEDIDA</th>
               <th className="metrado">METRADO TOTAL</th>
               <th className="metrado_anterior">ACUMULADO ANTERIOR</th>
               {renderMesesCabezera()}
@@ -232,17 +233,14 @@ export default () => {
                 <td className="whiteThem-table-sticky2">
                   <div class="cut-text ">{item.descripcion}</div>
                 </td>
-                <td style={{ whiteSpace: "nowrap" }}>
-                  {item.metrado &&
-                    Redondea(item.metrado) +
-                      " " +
-                      item.unidad_medida.replace("/DIA", "")}
+                <td className="whiteThem-table-sticky3">
+                  {item.unidad_medida && item.unidad_medida.replace("/DIA", "")}
                 </td>
                 <td style={{ whiteSpace: "nowrap" }}>
-                  {item.metrado_anterior &&
-                    Redondea(item.metrado_anterior) +
-                      " " +
-                      item.unidad_medida.replace("/DIA", "")}
+                  {item.metrado && Redondea(item.metrado)}
+                </td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  {item.metrado_anterior && Redondea(item.metrado_anterior)}
                 </td>
                 {renderMesesBody(item)}
               </tr>

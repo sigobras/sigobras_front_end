@@ -1,5 +1,5 @@
 .whiteThem-table {
-  width: 100px;
+  width: 1000px;
 }
 .whiteThem-table thead th {
   font-size: 10px;
@@ -70,10 +70,15 @@
 }
 .whiteThem-table-sticky2 {
   position: sticky;
-  left: 80px;
+  left: 78px;
+}
+.whiteThem-table-sticky3 {
+  position: sticky;
+  left: 430px;
 }
 .cut-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 350px;
 }
