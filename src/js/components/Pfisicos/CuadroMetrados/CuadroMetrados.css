@@ -1,5 +1,4 @@
 .whiteThem-table {
-  table-layout: fixed;
   width: 100px;
 }
 .whiteThem-table thead th {
@@ -71,7 +70,7 @@
 }
 .whiteThem-table-sticky2 {
   position: sticky;
-  left: 90px;
+  left: 80px;
 }
 .cut-text {
   white-space: nowrap;
