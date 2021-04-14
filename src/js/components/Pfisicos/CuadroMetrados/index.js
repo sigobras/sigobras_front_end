@@ -149,7 +149,9 @@ export default () => {
         <td style={{ fontWeight: 700 }}>{total == 0 ? "" : Redondea(total)}</td>
       );
       render.push(
-        <td style={{ fontWeight: 700 }}>{Redondea(item.metrado - total)}</td>
+        <td style={{ fontWeight: 700 }}>
+          {Redondea(item.metrado - item.metrado_anterior - total)}
+        </td>
       );
     }
     return render;
@@ -216,7 +218,8 @@ export default () => {
             <tr>
               <th className="item">ITEM</th>
               <th className="descripcion">DESCRIPCION</th>
-              <th className="metrado">METRADO ANTERIOR</th>
+              <th className="metrado">METRADO</th>
+              <th className="metrado_anterior">METRADO ANTERIOR</th>
               {renderMesesCabezera()}
               <th className="total">TOTAL</th>
               <th className="saldo">SALDO</th>
@@ -232,6 +235,12 @@ export default () => {
                 <td style={{ whiteSpace: "nowrap" }}>
                   {item.metrado &&
                     Redondea(item.metrado) +
+                      " " +
+                      item.unidad_medida.replace("/DIA", "")}
+                </td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  {item.metrado_anterior &&
+                    Redondea(item.metrado_anterior) +
                       " " +
                       item.unidad_medida.replace("/DIA", "")}
                 </td>
