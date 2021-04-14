@@ -217,9 +217,9 @@ export default () => {
           <thead>
             <tr>
               <th className="item">ITEM</th>
-              <th className="descripcion">DESCRIPCION</th>
-              <th className="metrado">METRADO</th>
-              <th className="metrado_anterior">METRADO ANTERIOR</th>
+              <th className="descripcion">DESCRIPCIÓN</th>
+              <th className="metrado">METRADO TOTAL</th>
+              <th className="metrado_anterior">ACUMULADO ANTERIOR</th>
               {renderMesesCabezera()}
               <th className="total">TOTAL</th>
               <th className="saldo">SALDO</th>
