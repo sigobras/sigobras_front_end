@@ -47,7 +47,15 @@ export default () => {
     fuentefinanciamiento_editar_pimmonto,
     fuentefinanciamiento_editar_avancemensual,
     fuentefinanciamiento_editar_programadomensual,
-    fuentefinanciamiento_editar_modoedicion
+    fuentefinanciamiento_editar_modoedicion,
+    fuentefinanciamiento_agregar_tipocomprobante,
+    fuentefinanciamiento_actualizar_tipocomprobante,
+    fuentefinanciamiento_eliminar_tipocomprobante,
+    fuentefinanciamiento_agregar_comprobante,
+    fuentefinanciamiento_actualizar_comprobante,
+    fuentefinanciamiento_eliminar_comprobante,
+    fuentefinanciamiento_actualizar_comprobanteArchivo,
+    fuentefinanciamiento_eliminar_comprobanteArchivo
     `);
   }, []);
   const [Permisos, setPermisos] = useState(false);
