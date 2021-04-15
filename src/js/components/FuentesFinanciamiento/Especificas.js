@@ -32,6 +32,7 @@ import AsyncSelect from "react-select/async";
 import CustomInput from "../../libs/CustomInput";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, formatMoney, mesesShort } from "../Utils/Funciones";
+import AvanceMensualDetalle from "./AvanceMensualDetalle/index";
 export default forwardRef(
   (
     {
@@ -51,6 +52,7 @@ export default forwardRef(
       cargarVariacionesPim();
       cargarCostos();
       cargarCostosList();
+      cargarTipoComprobantes();
     }, []);
 
     useImperativeHandle(ref, () => ({
@@ -576,7 +578,7 @@ export default forwardRef(
         }
       }
     }
-    function renderCostosData(item) {
+    function renderCostosData(item, especifica) {
       var tempRender = [];
       var acumulado = 0;
       var acumuladoProgramado = 0;
@@ -588,20 +590,47 @@ export default forwardRef(
           ModoEdicion &&
             Permisos["fuentefinanciamiento_editar_avancemensual"] == 1 ? (
             <td style={{ padding: "0px" }}>
-              <CustomInput
-                value={Redondea(item["avanceMensual_" + i], 2, false, "")}
-                onBlur={(value) => guardarAvanceMensual(value, item.id, i)}
-                innerRef={(ref) => {
-                  refCostosArray[item.id + "_" + i + "n"] = ref;
-                }}
-                onKeyDown={(e) => {
-                  onKeyDown(e, item, i, "p");
-                }}
-              />
+              <div className="d-flex">
+                <CustomInput
+                  value={Redondea(item["avanceMensual_" + i], 2, false, "")}
+                  onBlur={(value) => guardarAvanceMensual(value, item.id, i)}
+                  innerRef={(ref) => {
+                    refCostosArray[item.id + "_" + i + "n"] = ref;
+                  }}
+                  onKeyDown={(e) => {
+                    onKeyDown(e, item, i, "p");
+                  }}
+                  style={{ height: "23px", padding: "0px 2px" }}
+                />
+                <span style={{ background: "#8effa938" }}>
+                  {item["idAvanceMensual_" + i] != 0 && (
+                    <AvanceMensualDetalle
+                      especifica={especifica}
+                      id_avancemensual={item["idAvanceMensual_" + i]}
+                      ModoEdicion={ModoEdicion}
+                      TipoComprobantes={TipoComprobantes}
+                      avance={item["avanceMensual_" + i]}
+                      Permisos={Permisos}
+                    />
+                  )}
+                </span>
+              </div>
             </td>
           ) : (
             <td style={{ textAlign: "right" }}>
               {Redondea(item["avanceMensual_" + i], 2, false, "")}
+              <span style={{ margin: "2px" }}>
+                {item["idAvanceMensual_" + i] != 0 && (
+                  <AvanceMensualDetalle
+                    especifica={especifica}
+                    id_avancemensual={item["idAvanceMensual_" + i]}
+                    ModoEdicion={ModoEdicion}
+                    TipoComprobantes={TipoComprobantes}
+                    avance={item["avanceMensual_" + i]}
+                    Permisos={Permisos}
+                  />
+                )}
+              </span>
             </td>
           )
         );
@@ -619,6 +648,7 @@ export default forwardRef(
                 onKeyDown={(e) => {
                   onKeyDown(e, item, i, "n");
                 }}
+                style={{ height: "23px" }}
               />
             </td>
           ) : (
@@ -785,6 +815,12 @@ export default forwardRef(
       return tempRender;
     }
     const [EstadoEdicion, setEstadoEdicion] = useState("");
+    //tipos comprobantes
+    const [TipoComprobantes, setTipoComprobantes] = useState([]);
+    async function cargarTipoComprobantes() {
+      var res = await axios.get(`${UrlServer}/v1/tiposcomprobantes`);
+      setTipoComprobantes(res.data);
+    }
 
     return (
       <div>
@@ -999,7 +1035,7 @@ export default forwardRef(
                         )}
                       </td>
                       <td colSpan={1 + VariacionesPim.length}></td>
-                      {renderCostosData(item2)}
+                      {renderCostosData(item2, item)}
                     </tr>
                   ))}
                 </>

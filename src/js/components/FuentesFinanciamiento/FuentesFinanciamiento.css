@@ -17,7 +17,7 @@
   border: 1px solid black;
   white-space: nowrap;
   padding: 0px 4px 0px 4px;
-  width: 50px;
+  /* width: 50px; */
 }
 .whiteThem-table tbody th {
   background: #e8e8e8;
@@ -50,4 +50,34 @@
 .whiteThem-table-sticky2 {
   position: sticky;
   left: 61px;
+}
+.whiteThem-table .comprobante-numero {
+  width: 10px;
+}
+.whiteThem-table .comprobante-tipo-comprobante {
+  width: 10px;
+}
+.whiteThem-table .comprobante-fecha {
+  width: 10px;
+}
+.whiteThem-table .comprobante-siaf {
+  width: 10px;
+}
+.whiteThem-table .comprobante-numero-comprobante {
+  width: 10px;
+}
+.whiteThem-table .comprobante-numero-pecosa {
+  width: 10px;
+}
+.whiteThem-table .comprobante-monto-total {
+  width: 10px;
+}
+.whiteThem-table .comprobante-razon-social {
+  width: 300px;
+}
+.whiteThem-table .comprobante-observacion {
+  width: 300px;
+}
+.whiteThem-table .comprobante-opciones {
+  width: 10px;
 }
