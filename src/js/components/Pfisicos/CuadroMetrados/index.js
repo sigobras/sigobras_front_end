@@ -109,7 +109,11 @@ export default () => {
         );
         var esDomingo = date.getDay() == 0;
         var esSabado = date.getDay() == 6;
-        render.push(<th className="dia">{key.split("_")[1]}</th>);
+        render.push(
+          <th className="dia" rowSpan="2">
+            {key.split("_")[1]}
+          </th>
+        );
       }
     }
     return render;
@@ -153,6 +157,46 @@ export default () => {
           {Redondea(item.metrado - item.metrado_anterior - total)}
         </td>
       );
+    }
+    var properties = Object.keys(item).filter((element) =>
+      element.startsWith("recurso_")
+    );
+    for (let i = 0; i < properties.length; i++) {
+      const key = properties[i];
+      render.push(
+        <td>
+          {Redondea(item[key] * (item.metrado - item.metrado_anterior - total))}
+        </td>
+      );
+    }
+    return render;
+  }
+  function renderRecursosNombres() {
+    var render = [];
+    if (Avances.length) {
+      var item = Avances[0];
+      var properties = Object.keys(item).filter((element) =>
+        element.startsWith("recurso_")
+      );
+      render.push(
+        <th className="recursotitulo" colSpan={properties.length}>
+          SALDO
+        </th>
+      );
+    }
+    return render;
+  }
+  function renderRecursosNombres2() {
+    var render = [];
+    if (Avances.length) {
+      var item = Avances[0];
+      var properties = Object.keys(item).filter((element) =>
+        element.startsWith("recurso_")
+      );
+      for (let i = 0; i < properties.length; i++) {
+        const key = properties[i];
+        render.push(<th className="recurso">{key.split("_")[1]}</th>);
+      }
     }
     return render;
   }
@@ -212,28 +256,62 @@ export default () => {
           " " +
           ComponenteSeleccionado.nombre_componente}
       </CardHeader>
+
       <div style={{ overflowX: "auto" }}>
-        <table className="table table-hover whiteThem-table">
+        <table className="table-hover whiteThem-table  cuadroMetrados">
+          <col span="1" style={{ width: "80px" }}></col>
           <thead>
             <tr>
-              <th className="item">ITEM</th>
-              <th className="descripcion">DESCRIPCIÓN</th>
-              <th className="descripcion">UNIDAD DE MEDIDA</th>
-              <th className="metrado">METRADO TOTAL</th>
-              <th className="metrado_anterior">ACUMULADO ANTERIOR</th>
+              <th className="item stickyTitulo" rowSpan="2">
+                ITEM
+              </th>
+              <th className="descripcion stickyTitulo2" rowSpan="2">
+                DESCRIPCIÓN
+              </th>
+              <th className="unidad_medida stickyTitulo3" rowSpan="2">
+                UNIDAD DE MEDIDA
+              </th>
+              <th className="metrado" rowSpan="2">
+                METRADO TOTAL
+              </th>
+              <th className="metrado_anterior" rowSpan="2">
+                ACUMULADO ANTERIOR
+              </th>
               {renderMesesCabezera()}
-              <th className="total">TOTAL</th>
-              <th className="saldo">SALDO</th>
+              <th className="total" rowSpan="2">
+                TOTAL
+              </th>
+              <th className="saldo" rowSpan="2">
+                SALDO
+              </th>
+              {renderRecursosNombres()}
             </tr>
+            <tr>{renderRecursosNombres2()}</tr>
           </thead>
           <tbody>
             {Avances.map((item, i) => (
               <tr key={i}>
-                <td className="whiteThem-table-sticky">{item.item}</td>
-                <td className="whiteThem-table-sticky2">
+                <td
+                  className="sticky"
+                  style={
+                    item.tipo == "titulo"
+                      ? { color: "orange", fontWeight: 700 }
+                      : {}
+                  }
+                >
+                  {item.item}
+                </td>
+                <td
+                  className="sticky2"
+                  style={
+                    item.tipo == "titulo"
+                      ? { color: "orange", fontWeight: 700 }
+                      : {}
+                  }
+                >
                   <div class="cut-text ">{item.descripcion}</div>
                 </td>
-                <td className="whiteThem-table-sticky3">
+                <td className="sticky3">
                   {item.unidad_medida && item.unidad_medida.replace("/DIA", "")}
                 </td>
                 <td style={{ whiteSpace: "nowrap" }}>

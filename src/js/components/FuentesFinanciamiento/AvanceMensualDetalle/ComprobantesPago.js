@@ -133,12 +133,7 @@ export default forwardRef(
               <th className="comprobante-siaf">SIAF</th>
               <th className="comprobante-numero-comprobante">N° C/P</th>
               <th className="comprobante-numero-pecosa">Nº PECOSA </th>
-              <th
-                style={{ background: "orange", color: "black" }}
-                className="comprobante-monto-total"
-              >
-                MONTO TOTAL
-              </th>
+              <th className="comprobante-monto-total">MONTO TOTAL</th>
               <th className="comprobante-razon-social">RAZON SOCIAL</th>
               <th className="comprobante-observacion">OBSERVACION</th>
               <th className="comprobante-opciones">OPCIONES</th>

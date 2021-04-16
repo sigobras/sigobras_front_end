@@ -51,33 +51,45 @@
   position: sticky;
   left: 61px;
 }
-.whiteThem-table .comprobante-numero {
+.comprobante-numero {
   width: 10px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-tipo-comprobante {
+.comprobante-tipo-comprobante {
   width: 10px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-fecha {
+.comprobante-fecha {
   width: 10px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-siaf {
+.comprobante-siaf {
   width: 10px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-numero-comprobante {
+.comprobante-numero-comprobante {
   width: 10px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-numero-pecosa {
+.comprobante-numero-pecosa {
   width: 10px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-monto-total {
+.comprobante-monto-total {
   width: 10px;
+  white-space: nowrap;
+  background: orange;
+  color: black;
 }
-.whiteThem-table .comprobante-razon-social {
+.comprobante-razon-social {
   width: 300px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-observacion {
+.comprobante-observacion {
   width: 300px;
+  white-space: nowrap;
 }
-.whiteThem-table .comprobante-opciones {
+.comprobante-opciones {
   width: 10px;
+  white-space: nowrap;
 }
