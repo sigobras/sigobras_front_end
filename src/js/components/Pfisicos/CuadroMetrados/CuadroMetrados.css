@@ -1,84 +1,75 @@
-.whiteThem-table {
-  width: 1000px;
+.cuadroMetrados {
+  table-layout: fixed;
+  width: 2000px;
+  white-space: nowrap;
 }
-.whiteThem-table thead th {
-  font-size: 10px;
-  border: 1px solid black;
-  padding: 0px 4px 0px 4px;
-  text-align: center;
-  background: #3a3b3c;
-  border: 1px solid black;
+.cuadroMetrados th,
+.cuadroMetrados td {
+  width: auto;
 }
-.whiteThem-table tbody {
-  background: #e8e8e8;
-  color: black;
-  border: 1px solid black;
-}
-.whiteThem-table tbody td,
-.whiteThem-table tbody th {
-  font-size: 11px;
-  border: 1px solid black;
-  padding: 0px 4px 0px 4px;
-}
-.whiteThem-table tbody th {
-  background: #e8e8e8;
-  font-weight: 700;
-}
-.whiteThem-table tbody td {
-  background: #fffde5;
-}
-.whiteThem-table input,
-.whiteThem-table select {
-  height: 16px;
-  font-size: 12px;
-  line-height: 28px;
-  border: none;
-  padding: 0px;
-}
-.whiteThem-table .porcentaje {
-  color: #242526;
-  font-weight: 100;
-}
-.whiteThem-table .item {
-  width: 90px;
-}
-.whiteThem-table .descripcion {
-  width: 350px;
-}
-.whiteThem-table .metrado {
-  width: 100px;
-}
-.whiteThem-table .metrado_anterior {
-  width: 100px;
-}
-.whiteThem-table .dia {
-  width: 27px;
-}
-.whiteThem-table .total,
-.whiteThem-table .saldo {
-  width: 50px;
-}
-
-.whiteThem-table-stickyTitulo {
+.cuadroMetrados .stickyTitulo {
   position: sticky;
-  left: 80px;
+  left: 0px;
   background: #242526;
 }
-.whiteThem-table-sticky {
+.cuadroMetrados .stickyTitulo2 {
+  position: sticky;
+  left: 78px;
+  background: #242526;
+}
+.cuadroMetrados .stickyTitulo3 {
+  position: sticky;
+  left: 430px;
+  background: #242526;
+}
+.cuadroMetrados .sticky {
   position: sticky;
   left: 0px;
 }
-.whiteThem-table-sticky2 {
+.cuadroMetrados .sticky2 {
   position: sticky;
   left: 78px;
 }
-.whiteThem-table-sticky3 {
+.cuadroMetrados .sticky3 {
   position: sticky;
-  left: 430px;
+  left: 510px;
 }
 .cut-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 350px;
+  width: 430px;
+}
+.cuadroMetrados .item {
+  width: 78px;
+}
+.cuadroMetrados .descripcion {
+  width: 430px;
+}
+.cuadroMetrados .unidad_medida {
+  width: 49px;
+  white-space: normal;
+}
+.cuadroMetrados .metrado {
+  width: 15%;
+  white-space: normal;
+}
+.cuadroMetrados .metrado_anterior {
+  width: 19%;
+  white-space: normal;
+}
+.cuadroMetrados .dia {
+  width: 10%;
+}
+.cuadroMetrados .total {
+  width: 20%;
+}
+.cuadroMetrados .saldo {
+  width: 20%;
+}
+.cuadroMetrados .recursotitulo {
+  width: 100%;
+}
+.cuadroMetrados .recurso {
+  width: 60px;
 }
