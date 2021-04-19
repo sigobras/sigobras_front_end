@@ -68,6 +68,7 @@ const PresupuestoAnalitico = lazy(() => import("./PresupuestoAnalitico"));
 const Test = lazy(() => import("./Test"));
 const FuentesFinanciamiento = lazy(() => import("./FuentesFinanciamiento"));
 const CuadroMetrados = lazy(() => import("./Pfisicos/CuadroMetrados"));
+const HistorialImagenes = lazy(() => import("./HistorialImagenes"));
 
 export default () => {
   useEffect(() => {
@@ -500,6 +501,10 @@ export default () => {
                       component={ModificacionExpediente}
                     />
                     <Route path="/CuadroMetrados" component={CuadroMetrados} />
+                    <Route
+                      path="/HistorialImagenes"
+                      component={HistorialImagenes}
+                    />
                   </Switch>
                 </Suspense>
               </div>
