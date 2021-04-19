@@ -152,7 +152,7 @@ export default ({ Partida, Actividad, recargaActividad, EstadoObra }) => {
             <label htmlFor="fehca">FECHA :</label>
             <input
               type="date"
-              min={FechaActual2Meses()}
+              // min={FechaActual2Meses()}
               max={FechaActual()}
               onChange={(e) => onChangeModalData("fecha", e.target.value)}
               className="form-control"
