@@ -1,4 +1,9 @@
 // redondea a dos decimales
+Number.prototype.CustomToFixed = function (decimals) {
+  return (
+    Math.round(this * Math.pow(10, decimals)) / Math.pow(10, decimals)
+  ).toString();
+};
 function Redondea(
   x,
   decimales = 2,
@@ -27,11 +32,11 @@ function Redondea(
   }
   if (Math.abs(x) < 0.01) {
     return Number.parseFloat(x)
-      .toFixed(decimales_pequenyos)
+      .CustomToFixed(decimales_pequenyos)
       .replace(/\d(?=(\d{3})+\.)/g, "$&,");
   } else {
     return Number.parseFloat(x)
-      .toFixed(decimales)
+      .CustomToFixed(decimales)
       .replace(/\d(?=(\d{3})+\.)/g, "$&,");
   }
 }
