@@ -2,7 +2,7 @@
 Number.prototype.CustomToFixed = function (decimals) {
   return (
     Math.round(this * Math.pow(10, decimals)) / Math.pow(10, decimals)
-  ).toString();
+  ).toFixed(decimals);
 };
 function Redondea(
   x,
