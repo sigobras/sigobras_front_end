@@ -155,6 +155,7 @@ export default () => {
               }
               onClick={() => {
                 setComponenteSeleccionado(item);
+                setLabelSeleccionada();
               }}
             >
               C-{item.numero}
@@ -165,6 +166,7 @@ export default () => {
           {Resumen ? "Completo" : "Resumen"}
         </Button>
       </Nav>
+      <CardHeader>{ComponenteSeleccionado.nombre}</CardHeader>
       <div className="d-flex">
         <table className="table-hover whiteThem-table">
           <thead>

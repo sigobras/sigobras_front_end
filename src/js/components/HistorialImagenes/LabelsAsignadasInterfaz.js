@@ -66,19 +66,21 @@ export default ({
   }
   return (
     <div>
-      <Input
-        type="select"
-        onChange={(e) => {
-          setLabelSeleccionada(e.target.value);
-          recargar(e.target.value);
-        }}
-        value={LabelSeleccionada}
-      >
-        <option value="">todos</option>
-        {LabelsAsignadas.map((item, i) => (
-          <option value={item.id}>{item.nombre}</option>
-        ))}
-      </Input>
+      {LabelsAsignadas.length > 0 && (
+        <Input
+          type="select"
+          onChange={(e) => {
+            setLabelSeleccionada(e.target.value);
+            recargar(e.target.value);
+          }}
+          value={LabelSeleccionada}
+        >
+          <option value="">Todas las etiquetas</option>
+          {LabelsAsignadas.map((item, i) => (
+            <option value={item.id}>{item.nombre}</option>
+          ))}
+        </Input>
+      )}
     </div>
   );
 };

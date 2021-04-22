@@ -45,11 +45,29 @@ import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
 import ImagenesLabels from "./ImagenesLabels";
 
 export default ({ partida, anyo, mes }) => {
+  //permisos
+  const [Permisos, setPermisos] = useState(false);
+  async function cargarPermiso(nombres_clave) {
+    const res = await axios.get(`${UrlServer}/v1/interfazPermisos/activo`, {
+      params: {
+        id_acceso: sessionStorage.getItem("idacceso"),
+        id_ficha: sessionStorage.getItem("idobra"),
+        nombres_clave,
+      },
+    });
+    var tempList = [];
+    var tempArray = res.data;
+    for (const key in tempArray) {
+      tempList[key] = res.data[key];
+    }
+    setPermisos(tempList);
+  }
   //modal
   const [modal, setModal] = useState(false);
   const toggle = () => {
     if (!modal) {
       cargarImagenes();
+      cargarPermiso("historialimagenes_eliminar_imagen");
     }
     setModal(!modal);
   };
@@ -75,6 +93,26 @@ export default ({ partida, anyo, mes }) => {
     }
     setLoading(false);
   }
+  async function eliminarImagen(tipo, id) {
+    if (
+      confirm(
+        "Esta accion es irreversible y se perderan datos , estas seguro de eliminar esta imagen?"
+      )
+    ) {
+      try {
+        var res = await axios.delete(`${UrlServer}/v1/partidasImagenes/`, {
+          params: {
+            tipo,
+            id,
+          },
+        });
+        alert("Eliminado exitosamente");
+        cargarImagenes();
+      } catch (error) {
+        alert("Ocurrio un error");
+      }
+    }
+  }
   //otros
   const [Loading, setLoading] = useState(false);
   const [FlagImagenes, setFlagImagenes] = useState(true);
@@ -96,18 +134,6 @@ export default ({ partida, anyo, mes }) => {
         contentClassName="custom-modal-content"
       >
         <ModalBody>
-          <div
-            style={{
-              cursor: "pointer",
-              position: "absolute",
-              top: "3px",
-              right: "13px",
-              fontSize: "23px",
-            }}
-            onClick={toggle}
-          >
-            X
-          </div>
           <div className="modal-imagenes">
             <div className="fotos">
               <div
@@ -187,6 +213,18 @@ export default ({ partida, anyo, mes }) => {
               </div>
             </div>
             <div className="datos">
+              <div
+                style={{
+                  cursor: "pointer",
+                  position: "absolute",
+                  top: "1px",
+                  right: "1px",
+                  fontSize: "23px",
+                }}
+                onClick={toggle}
+              >
+                X
+              </div>
               <div style={{ fontWeight: "700", textAlign: "left" }}>
                 <span>{partida.item}</span> <span>{partida.descripcion}</span>
               </div>
@@ -198,10 +236,17 @@ export default ({ partida, anyo, mes }) => {
                     {fechaFormatoClasico(Imagenes[ImagenSeleccionada].fecha)}
                   </div>
                   <hr style={{ background: "white" }} />
-                  <ImagenesLabels
-                    ImagenData={Imagenes[ImagenSeleccionada]}
-                    recargar={recargarLabels}
-                  />
+                  <div className="d-flex" style={{ textAlign: "right" }}>
+                    <span>Crear nueva etiqueta</span>
+                    <span style={{ paddingLeft: "20px" }}>
+                      <ImagenesLabels
+                        ImagenData={Imagenes[ImagenSeleccionada]}
+                        recargar={recargarLabels}
+                      />
+                    </span>
+                  </div>
+
+                  <hr style={{ background: "white" }} />
                   <ImagenesLabelsListado
                     key={JSON.stringify(Imagenes[ImagenSeleccionada])}
                     ImagenData={Imagenes[ImagenSeleccionada]}
@@ -209,7 +254,25 @@ export default ({ partida, anyo, mes }) => {
                   />
                 </>
               )}
+              {Permisos["historialimagenes_eliminar_imagen"] == 1 && (
+                <div
+                  style={{ position: "absolute", bottom: "0px", right: "0px" }}
+                >
+                  <Button
+                    color="danger"
+                    onClick={() =>
+                      eliminarImagen(
+                        Imagenes[ImagenSeleccionada].tipo,
+                        Imagenes[ImagenSeleccionada].id
+                      )
+                    }
+                  >
+                    Eliminar Imagen
+                  </Button>
+                </div>
+              )}
             </div>
+
             <div className="indicadores">
               <ol
                 className="carousel-indicators"
@@ -243,7 +306,7 @@ export default ({ partida, anyo, mes }) => {
                       filter:
                         ImagenSeleccionada == i
                           ? "brightness(1)"
-                          : "brightness(0.5)",
+                          : "brightness(0.3)",
                     }}
                   />
                 ))}
@@ -350,51 +413,56 @@ const ImagenesLabelsListado = forwardRef(({ ImagenData }, ref) => {
   }
   return (
     <div>
-      {Labels.map((item, i) => [
-        <Button
-          key={i + "1"}
-          type="button"
-          style={{
-            borderRadius: "13px",
-            "--perceived-lightness":
-              "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
-            "--lightness-switch":
-              " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
-            padding: " 0 10px",
-            lineheight: " 22px!important",
-            "--lightness-threshold": " 0.6",
-            "--background-alpha": " 0.18",
-            "--border-alpha": " 0.3",
-            "--lighten-by":
-              " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
-            background:
-              " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
-            color:
-              " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
-            bordercolor:
-              " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
-            "--label-r": hexToRgb(item.color).r,
-            "--label-g": hexToRgb(item.color).g,
-            "--label-b": hexToRgb(item.color).b,
-            "--label-h": hexToRgb(item.color).h,
-            "--label-s": hexToRgb(item.color).s,
-            "--label-l": hexToRgb(item.color).l,
-            margin: "5px",
-          }}
-          id={"Tooltip-" + item.id}
-        >
-          {item.nombre}
-        </Button>,
-        <Tooltip
-          key={i + "2"}
-          placement={"bottom"}
-          isOpen={tooltipOpen == item.id}
-          target={"Tooltip-" + item.id}
-          toggle={() => toggle(item.id)}
-        >
-          {item.descripcion}
-        </Tooltip>,
-      ])}
+      {Labels.map((item, i) => (
+        <>
+          <Button
+            key={i + "1"}
+            type="button"
+            style={{
+              borderRadius: "13px",
+              "--perceived-lightness":
+                "calc((var(--label-r)*0.2126 + var(--label-g)*0.7152 + var(--label-b)*0.0722)/255)",
+              "--lightness-switch":
+                " max(0,min(calc((var(--perceived-lightness) - var(--lightness-threshold))*-1000),1))",
+              padding: " 0 10px",
+              lineheight: " 22px!important",
+              "--lightness-threshold": " 0.6",
+              "--background-alpha": " 0.18",
+              "--border-alpha": " 0.3",
+              "--lighten-by":
+                " calc((var(--lightness-threshold) - var(--perceived-lightness))*100*var(--lightness-switch))",
+              background:
+                " rgba(var(--label-r),var(--label-g),var(--label-b),var(--background-alpha))",
+              color:
+                " hsl(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%))",
+              bordercolor:
+                " hsla(var(--label-h),calc(var(--label-s)*1%),calc((var(--label-l) + var(--lighten-by))*1%),var(--border-alpha))",
+              "--label-r": hexToRgb(item.color).r,
+              "--label-g": hexToRgb(item.color).g,
+              "--label-b": hexToRgb(item.color).b,
+              "--label-h": hexToRgb(item.color).h,
+              "--label-s": hexToRgb(item.color).s,
+              "--label-l": hexToRgb(item.color).l,
+              margin: "5px",
+            }}
+            id={"Tooltip-" + item.id}
+          >
+            {item.nombre}
+          </Button>
+          <Tooltip
+            key={i + "2"}
+            placement={"bottom"}
+            isOpen={tooltipOpen == item.id}
+            target={"Tooltip-" + item.id}
+            toggle={() => toggle(item.id)}
+          >
+            <div>{item.descripcion}</div>
+            <div>
+              {`Asignado por: ${item.cargo_nombre} ${item.usuario_nombre} ${item.usuario_apellido_paterno}`}
+            </div>
+          </Tooltip>
+        </>
+      ))}
     </div>
   );
 });

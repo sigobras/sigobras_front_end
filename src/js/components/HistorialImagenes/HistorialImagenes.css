@@ -26,6 +26,7 @@
   grid-area: datos;
   background: #181818;
   padding: 15px;
+  position: relative;
 }
 .modal-imagenes .indicadores {
   grid-area: indicadores;

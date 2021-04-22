@@ -227,6 +227,7 @@ export default () => {
           </NavItem>
         ))}
       </Nav>
+      <CardHeader>{ComponenteSeleccionado.nombre}</CardHeader>
       <div className="d-flex">
         <table className="table-hover whiteThem-table">
           <thead>

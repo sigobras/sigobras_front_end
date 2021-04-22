@@ -169,6 +169,7 @@ export default ({ ImagenData, recargar }) => {
       avanceactividades_id_AvanceActividades:
         ImagenData.tipo == "avanceActividades" ? ImagenData.id : null,
       imagenes_labels_id,
+      accesos_id: sessionStorage.getItem("idacceso"),
     });
     cargarImagenesLabels();
     recargar();
