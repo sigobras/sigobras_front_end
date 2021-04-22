@@ -75,6 +75,26 @@ export default ({ partida, anyo, mes }) => {
     }
     setLoading(false);
   }
+  async function eliminarImagen(tipo, id) {
+    if (
+      confirm(
+        "Esta accion es irreversible y se perderan datos , estas seguro de eliminar esta imagen?"
+      )
+    ) {
+      try {
+        var res = await axios.delete(`${UrlServer}/v1/partidasImagenes/`, {
+          params: {
+            tipo,
+            id,
+          },
+        });
+        alert("Eliminado exitosamente");
+        cargarImagenes();
+      } catch (error) {
+        alert("Ocurrio un error");
+      }
+    }
+  }
   //otros
   const [Loading, setLoading] = useState(false);
   const [FlagImagenes, setFlagImagenes] = useState(true);
@@ -96,18 +116,6 @@ export default ({ partida, anyo, mes }) => {
         contentClassName="custom-modal-content"
       >
         <ModalBody>
-          <div
-            style={{
-              cursor: "pointer",
-              position: "absolute",
-              top: "3px",
-              right: "13px",
-              fontSize: "23px",
-            }}
-            onClick={toggle}
-          >
-            X
-          </div>
           <div className="modal-imagenes">
             <div className="fotos">
               <div
@@ -187,6 +195,18 @@ export default ({ partida, anyo, mes }) => {
               </div>
             </div>
             <div className="datos">
+              <div
+                style={{
+                  cursor: "pointer",
+                  position: "absolute",
+                  top: "1px",
+                  right: "1px",
+                  fontSize: "23px",
+                }}
+                onClick={toggle}
+              >
+                X
+              </div>
               <div style={{ fontWeight: "700", textAlign: "left" }}>
                 <span>{partida.item}</span> <span>{partida.descripcion}</span>
               </div>
@@ -209,7 +229,23 @@ export default ({ partida, anyo, mes }) => {
                   />
                 </>
               )}
+              <div
+                style={{ position: "absolute", bottom: "0px", right: "0px" }}
+              >
+                <Button
+                  color="danger"
+                  onClick={() =>
+                    eliminarImagen(
+                      Imagenes[ImagenSeleccionada].tipo,
+                      Imagenes[ImagenSeleccionada].id
+                    )
+                  }
+                >
+                  Eliminar Imagen
+                </Button>
+              </div>
             </div>
+
             <div className="indicadores">
               <ol
                 className="carousel-indicators"
