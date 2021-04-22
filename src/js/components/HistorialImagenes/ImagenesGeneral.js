@@ -155,6 +155,7 @@ export default () => {
               }
               onClick={() => {
                 setComponenteSeleccionado(item);
+                setLabelSeleccionada();
               }}
             >
               C-{item.numero}
