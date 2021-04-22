@@ -247,6 +247,7 @@ export default () => {
                     partida={item}
                     anyo={AnyoSeleccionado}
                     mes={MesSeleccionado}
+                    imagenes_labels_id={LabelSeleccionada}
                   />
                 </td>
                 {renderData(item)}
