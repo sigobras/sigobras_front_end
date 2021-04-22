@@ -44,7 +44,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
 import ImagenesLabels from "./ImagenesLabels";
 
-export default ({ partida, anyo, mes }) => {
+export default ({ partida, anyo, mes, imagenes_labels_id }) => {
   //permisos
   const [Permisos, setPermisos] = useState(false);
   async function cargarPermiso(nombres_clave) {
@@ -83,11 +83,11 @@ export default ({ partida, anyo, mes }) => {
         params: {
           anyo,
           mes,
+          imagenes_labels_id,
         },
       }
     );
     setImagenes(res.data);
-    console.log("imagenes", res.data);
     if (res.data.length == 0) {
       setFlagImagenes(false);
     }
@@ -118,7 +118,6 @@ export default ({ partida, anyo, mes }) => {
   const [FlagImagenes, setFlagImagenes] = useState(true);
   const refLabels = useRef();
   function recargarLabels() {
-    console.log("recargando", refLabels);
     refLabels.current.recargar();
   }
   return (
@@ -321,12 +320,10 @@ export default ({ partida, anyo, mes }) => {
 const ImagenesLabelsListado = forwardRef(({ ImagenData }, ref) => {
   useImperativeHandle(ref, () => ({
     recargar() {
-      console.log("recarga interna");
       cargarLabels();
     },
   }));
   useEffect(() => {
-    console.log("ImagenData", ImagenData);
     if (ImagenData) {
       cargarLabels();
     }

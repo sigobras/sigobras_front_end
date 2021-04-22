@@ -182,7 +182,10 @@ export default () => {
               <tr key={item.id_partida}>
                 <td>{item.item}</td>
                 <td>
-                  <ModalImagenes partida={item} />
+                  <ModalImagenes
+                    partida={item}
+                    imagenes_labels_id={LabelSeleccionada}
+                  />
                 </td>
                 {renderData(item)}
               </tr>
