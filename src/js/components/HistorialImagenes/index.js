@@ -47,9 +47,9 @@ export default () => {
       <Button
         onClick={() => setImagenesGeneralInterfaz(!ImagenesGeneralInterfaz)}
       >
-        {ImagenesGeneralInterfaz ? "resumen mensual" : "resumen general"}
+        {!ImagenesGeneralInterfaz ? "resumen mensual" : "resumen general"}
       </Button>
-      {ImagenesGeneralInterfaz ? <ImagenesGeneral /> : <ImagenesMeses />}
+      {!ImagenesGeneralInterfaz ? <ImagenesGeneral /> : <ImagenesMeses />}
     </div>
   );
 };

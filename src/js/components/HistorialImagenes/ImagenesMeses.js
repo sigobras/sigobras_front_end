@@ -36,6 +36,8 @@ import {
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort } from "../Utils/Funciones";
+import ModalImagenes from "./ModalImagenes";
+import LabelsAsignadasInterfaz from "./LabelsAsignadasInterfaz";
 
 export default () => {
   useEffect(() => {
@@ -95,10 +97,12 @@ export default () => {
         mes: MesSeleccionado,
         id_componente: ComponenteSeleccionado.id_componente,
         resumen: Resumen,
+        imagenes_labels_id: LabelSeleccionada,
       },
     });
     setPartidas(res.data);
   }
+  const [LabelSeleccionada, setLabelSeleccionada] = useState();
 
   useEffect(() => {
     if (AnyoSeleccionado) {
@@ -114,7 +118,7 @@ export default () => {
     if (ComponenteSeleccionado.id_componente) {
       cargarPartidas();
     }
-  }, [ComponenteSeleccionado, Resumen]);
+  }, [ComponenteSeleccionado, Resumen, LabelSeleccionada]);
   function renderTitulos() {
     var render = [];
     if (Partidas.length) {
@@ -135,9 +139,42 @@ export default () => {
     var properties = Object.keys(item).filter((element) =>
       element.startsWith("dia_")
     );
+    var total = 0;
     for (let i = 0; i < properties.length; i++) {
       var key = properties[i];
       render.push(<td key={key}> {item[key] == 0 ? "" : item[key]}</td>);
+      total += item[key];
+    }
+    render.push(<td>{total}</td>);
+    return render;
+  }
+  function renderTotales() {
+    var render = [
+      <td colSpan="2" style={{ textAlign: "right", fontWeight: "700" }}>
+        TOTAL
+      </td>,
+    ];
+    if (Partidas.length) {
+      var item = Partidas[0];
+      var properties = Object.keys(item).filter((element) =>
+        element.startsWith("dia_")
+      );
+      var total = 0;
+      for (let i = 0; i < properties.length; i++) {
+        var key = properties[i];
+        var subtotal = 0;
+        for (let j = 0; j < Partidas.length; j++) {
+          const partida = Partidas[j];
+          subtotal += partida[key];
+        }
+        render.push(
+          <td key={key} style={{ fontWeight: "700" }}>
+            {subtotal == 0 ? "" : subtotal}
+          </td>
+        );
+        total += subtotal;
+      }
+      render.push(<td style={{ fontWeight: "700" }}>{total}</td>);
     }
 
     return render;
@@ -190,24 +227,51 @@ export default () => {
           </NavItem>
         ))}
       </Nav>
-      <table className="table-hover whiteThem-table">
-        <thead>
-          <tr>
-            <th>ITEM</th>
-            <th>DESCRIPCION</th>
-            {renderTitulos()}
-          </tr>
-        </thead>
-        <tbody>
-          {Partidas.map((item, i) => (
-            <tr key={item.id_partida}>
-              <td>{item.item}</td>
-              <td>{item.descripcion}</td>
-              {renderData(item)}
+      <div className="d-flex">
+        <table className="table-hover whiteThem-table">
+          <thead>
+            <tr>
+              <th>ITEM</th>
+              <th>DESCRIPCION</th>
+              {renderTitulos()}
+              <th>TOTAL</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {Partidas.map((item, i) => (
+              <tr key={item.id_partida}>
+                <td>{item.item}</td>
+                <td>
+                  <ModalImagenes
+                    partida={item}
+                    anyo={AnyoSeleccionado}
+                    mes={MesSeleccionado}
+                  />
+                </td>
+                {renderData(item)}
+              </tr>
+            ))}
+            <tr>{renderTotales()}</tr>
+          </tbody>
+        </table>
+        {AnyoSeleccionado != 0 &&
+          MesSeleccionado != 0 &&
+          ComponenteSeleccionado.id_componente != 0 && (
+            <LabelsAsignadasInterfaz
+              key={
+                AnyoSeleccionado +
+                "_" +
+                MesSeleccionado +
+                "_" +
+                ComponenteSeleccionado.id_componente
+              }
+              anyo={AnyoSeleccionado}
+              mes={MesSeleccionado}
+              id_componente={ComponenteSeleccionado.id_componente}
+              recargar={(value) => setLabelSeleccionada(value)}
+            />
+          )}
+      </div>
     </div>
   );
 };

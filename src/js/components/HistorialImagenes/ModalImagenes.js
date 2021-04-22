@@ -44,7 +44,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
 import ImagenesLabels from "./ImagenesLabels";
 
-export default ({ partida }) => {
+export default ({ partida, anyo, mes }) => {
   //modal
   const [modal, setModal] = useState(false);
   const toggle = () => {
@@ -60,7 +60,13 @@ export default ({ partida }) => {
     setLoading(true);
     setFlagImagenes(true);
     var res = await axios.get(
-      `${UrlServer}/v1/partidasImagenes/${partida.id_partida}`
+      `${UrlServer}/v1/partidasImagenes/${partida.id_partida}`,
+      {
+        params: {
+          anyo,
+          mes,
+        },
+      }
     );
     setImagenes(res.data);
     console.log("imagenes", res.data);
