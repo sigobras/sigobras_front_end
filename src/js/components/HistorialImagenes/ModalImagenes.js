@@ -40,6 +40,7 @@ import {
   Tooltip,
 } from "reactstrap";
 import parse from "html-react-parser";
+import { MdScreenRotation } from "react-icons/md";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
@@ -121,6 +122,10 @@ export default ({ partida, anyo, mes, imagenes_labels_id }) => {
   function recargarLabels() {
     refLabels.current.recargar();
   }
+  const [ImagenPosition, setImagenPosition] = useState(0);
+  function girarImagen() {
+    setImagenPosition(ImagenPosition + 90);
+  }
   return (
     <div>
       <span onClick={toggle} style={{ cursor: "pointer" }}>
@@ -167,10 +172,20 @@ export default ({ partida, anyo, mes, imagenes_labels_id }) => {
                           maxHeight: "650px",
                           marginLeft: "auto",
                           marginRight: "auto",
+                          transform: `rotate( ${ImagenPosition}deg )`,
                         }}
                       />
                     </div>
                   ))}
+                  <MdScreenRotation
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      bottom: "0px",
+                      right: "50%",
+                    }}
+                    onClick={() => girarImagen()}
+                  />
                 </div>
                 <a
                   className="carousel-control-prev"
