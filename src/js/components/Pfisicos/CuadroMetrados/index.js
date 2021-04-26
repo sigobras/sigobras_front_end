@@ -258,73 +258,76 @@ export default () => {
       </CardHeader>
 
       <div style={{ overflowX: "auto" }}>
-        <table className="table-hover whiteThem-table  cuadroMetrados">
-          <col span="1" style={{ width: "80px" }}></col>
-          <thead>
-            <tr>
-              <th className="item stickyTitulo" rowSpan="2">
-                ITEM
-              </th>
-              <th className="descripcion stickyTitulo2" rowSpan="2">
-                DESCRIPCIÓN
-              </th>
-              <th className="unidad_medida stickyTitulo3" rowSpan="2">
-                UNIDAD DE MEDIDA
-              </th>
-              <th className="metrado" rowSpan="2">
-                METRADO TOTAL
-              </th>
-              <th className="metrado_anterior" rowSpan="2">
-                ACUMULADO ANTERIOR
-              </th>
-              {renderMesesCabezera()}
-              <th className="total" rowSpan="2">
-                TOTAL
-              </th>
-              <th className="saldo" rowSpan="2">
-                SALDO
-              </th>
-              {renderRecursosNombres()}
-            </tr>
-            <tr>{renderRecursosNombres2()}</tr>
-          </thead>
-          <tbody>
-            {Avances.map((item, i) => (
-              <tr key={i}>
-                <td
-                  className="sticky"
-                  style={
-                    item.tipo == "titulo"
-                      ? { color: "orange", fontWeight: 700 }
-                      : {}
-                  }
-                >
-                  {item.item}
-                </td>
-                <td
-                  className="sticky2"
-                  style={
-                    item.tipo == "titulo"
-                      ? { color: "orange", fontWeight: 700 }
-                      : {}
-                  }
-                >
-                  <div class="cut-text ">{item.descripcion}</div>
-                </td>
-                <td className="sticky3">
-                  {item.unidad_medida && item.unidad_medida.replace("/DIA", "")}
-                </td>
-                <td style={{ whiteSpace: "nowrap" }}>
-                  {item.metrado && Redondea(item.metrado)}
-                </td>
-                <td style={{ whiteSpace: "nowrap" }}>
-                  {item.metrado_anterior && Redondea(item.metrado_anterior)}
-                </td>
-                {renderMesesBody(item)}
+        <div style={{ width: "2500px" }}>
+          <table className="table-hover whiteThem-table  cuadroMetrados">
+            <col span="1" style={{ width: "80px" }}></col>
+            <thead>
+              <tr>
+                <th className="item stickyTitulo" rowSpan="2">
+                  ITEM
+                </th>
+                <th className="descripcion stickyTitulo2" rowSpan="2">
+                  DESCRIPCIÓN
+                </th>
+                <th className="unidad_medida stickyTitulo3" rowSpan="2">
+                  UNIDAD DE MEDIDA
+                </th>
+                <th className="metrado" rowSpan="2">
+                  METRADO TOTAL
+                </th>
+                <th className="metrado_anterior" rowSpan="2">
+                  ACUMULADO ANTERIOR
+                </th>
+                {renderMesesCabezera()}
+                <th className="total" rowSpan="2">
+                  TOTAL
+                </th>
+                <th className="saldo" rowSpan="2">
+                  SALDO
+                </th>
+                {renderRecursosNombres()}
               </tr>
-            ))}
-          </tbody>
-        </table>
+              <tr>{renderRecursosNombres2()}</tr>
+            </thead>
+            <tbody>
+              {Avances.map((item, i) => (
+                <tr key={i}>
+                  <td
+                    className="sticky"
+                    style={
+                      item.tipo == "titulo"
+                        ? { color: "orange", fontWeight: 700 }
+                        : {}
+                    }
+                  >
+                    {item.item}
+                  </td>
+                  <td
+                    className="sticky2"
+                    style={
+                      item.tipo == "titulo"
+                        ? { color: "orange", fontWeight: 700 }
+                        : {}
+                    }
+                  >
+                    <div class="cut-text ">{item.descripcion}</div>
+                  </td>
+                  <td className="sticky3">
+                    {item.unidad_medida &&
+                      item.unidad_medida.replace("/DIA", "")}
+                  </td>
+                  <td style={{ whiteSpace: "nowrap" }}>
+                    {item.metrado && Redondea(item.metrado)}
+                  </td>
+                  <td style={{ whiteSpace: "nowrap" }}>
+                    {item.metrado_anterior && Redondea(item.metrado_anterior)}
+                  </td>
+                  {renderMesesBody(item)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
