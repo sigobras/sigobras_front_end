@@ -24,7 +24,11 @@ export default ({ data }) => {
   return (
     <div>
       <div onClick={() => toggle()} style={{ cursor: "pointer" }}>
-        {data.nombre}
+        {data.nombre +
+          " " +
+          data.apellido_paterno +
+          " " +
+          data.apellido_materno}
       </div>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader>{data.cargo_nombre}</ModalHeader>

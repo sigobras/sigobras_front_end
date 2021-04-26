@@ -23,7 +23,6 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
         sort_by: "cargos_tipo_id,nivel",
       },
     });
-    console.log("setUsuariosPersonal", res.data);
     setUsuariosPersonal(res.data);
   }
   //personal inactivo
@@ -72,7 +71,13 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
             {UsuariosPersonal.map((item, i) => (
               <tr key={i}>
                 <td>{i + 1}</td>
-                <td>{item.nombre_usuario}</td>
+                <td>
+                  {item.nombre +
+                    " " +
+                    item.apellido_paterno +
+                    " " +
+                    item.apellido_materno}
+                </td>
                 <td>{item.cargo_nombre}</td>
                 <td>{item.celular}</td>
                 <td>{item.dni}</td>
@@ -132,7 +137,13 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
               {UsuariosPersonalInactivos.map((item, i) => (
                 <tr key={i}>
                   <td>{i + 1}</td>
-                  <td>{item.nombre_usuario}</td>
+                  <td>
+                    {item.nombre +
+                      " " +
+                      item.apellido_paterno +
+                      " " +
+                      item.apellido_materno}
+                  </td>
                   <td>
                     {Permisos["actualizar_memorandumpersonal"] == 1 && (
                       <div
