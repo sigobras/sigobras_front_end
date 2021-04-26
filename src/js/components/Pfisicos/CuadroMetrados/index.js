@@ -195,7 +195,11 @@ export default () => {
       );
       for (let i = 0; i < properties.length; i++) {
         const key = properties[i];
-        render.push(<th className="recurso">{key.split("_")[1]}</th>);
+        render.push(
+          <th className="recurso">
+            {key.substring(8, key.length).replace(/_/g, " ")}
+          </th>
+        );
       }
     }
     return render;
