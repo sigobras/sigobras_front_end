@@ -293,6 +293,17 @@ export default () => {
   }
   //CAJA DE TEXTO
   const [TextoBuscado, setTextoBuscado] = useState("");
+
+  //datos de avance de componente
+  const [ComponenteAvance, setComponenteAvance] = useState(0);
+  async function cargarComponenteAvance() {
+    const res = await axios.get(`${UrlServer}/v1/avance/componente`, {
+      params: {
+        id_componente: ComponenteSelecccionado.id_componente,
+      },
+    });
+    setComponenteAvance(res.data.avance);
+  }
   useEffect(() => {
     fectchConteoPartidas();
   }, [
@@ -315,6 +326,7 @@ export default () => {
     setPartidas([]);
     let source = axios.CancelToken.source();
     fectchPartidas(source);
+    cargarComponenteAvance();
     return () => {
       source.cancel();
     };
@@ -361,9 +373,64 @@ export default () => {
           </NavItem>
         ))}
       </Nav>
-      <CardHeader>
-        {ComponenteSelecccionado.nombre}
-        <div className="float-right">
+      <CardHeader style={{ position: "relative" }}>
+        <span>
+          <div>
+            <span>{ComponenteSelecccionado.nombre}</span>
+            {"   "}
+            <span style={{ fontWeight: "700" }}>
+              {Redondea(
+                (ComponenteAvance / ComponenteSelecccionado.presupuesto) * 100
+              )}
+              %
+            </span>
+          </div>
+          <div
+            style={{
+              width: "200px",
+            }}
+          >
+            <div
+              style={{
+                height: "3px",
+                width: "100%",
+                background: "#c3bbbb",
+              }}
+            >
+              <div
+                style={{
+                  width: `${
+                    (ComponenteAvance / ComponenteSelecccionado.presupuesto) *
+                    100
+                  }%`,
+                  height: "100%",
+                  background:
+                    (ComponenteAvance / ComponenteSelecccionado.presupuesto) *
+                      100 >
+                    85
+                      ? "#a4fb01"
+                      : (ComponenteAvance /
+                          ComponenteSelecccionado.presupuesto) *
+                          100 >
+                        30
+                      ? "#0080ff"
+                      : "#ff2e00",
+                  transition: "all .9s ease-in",
+                }}
+              />
+            </div>
+          </div>
+          <span>S/. {Redondea(ComponenteAvance)}</span>{" "}
+        </span>
+
+        <div
+          style={{
+            width: "300px",
+            position: "absolute",
+            right: "20px",
+            top: "10px",
+          }}
+        >
           <InputGroup size="sm">
             <InputGroupAddon addonType="prepend">
               <InputGroupText>
