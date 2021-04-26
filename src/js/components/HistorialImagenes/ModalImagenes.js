@@ -529,6 +529,7 @@ function ComentariosInterfaz({ ImagenData }) {
           color: "white",
           marginTop: "10px",
           marginBottom: "10px",
+          overflowWrap: "anywhere",
         }}
         className="comentario-input"
         id="comentario-input"
@@ -556,6 +557,7 @@ function ComentariosInterfaz({ ImagenData }) {
             color: "white",
             marginTop: "10px",
             marginBottom: "10px",
+            overflowWrap: "anywhere",
           }}
         >
           <div
