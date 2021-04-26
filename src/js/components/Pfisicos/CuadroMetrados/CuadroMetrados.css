@@ -1,6 +1,6 @@
 .cuadroMetrados {
   table-layout: fixed;
-  width: 2000px;
+  width: 100%;
   white-space: nowrap;
 }
 .cuadroMetrados th,
@@ -72,4 +72,5 @@
 }
 .cuadroMetrados .recurso {
   width: 60px;
+  white-space: normal;
 }

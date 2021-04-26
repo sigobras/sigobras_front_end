@@ -10,7 +10,6 @@ function Redondea(
   soloPositivos = false,
   respuestaVacio = "-"
 ) {
-  // console.log("x =>>", x)
   var decimales_pequenyos = decimales;
   if (Array.isArray(decimales)) {
     decimales_pequenyos = decimales[1];
@@ -27,9 +26,9 @@ function Redondea(
   if (x < 0 && soloPositivos) {
     return respuestaVacio;
   }
-  if (decimales == 2 && Math.abs(x) < 0.01) {
-    return respuestaVacio;
-  }
+  // if (decimales == 2 && Math.abs(x) < 0.01) {
+  //   return respuestaVacio;
+  // }
   if (Math.abs(x) < 0.01) {
     return Number.parseFloat(x)
       .CustomToFixed(decimales_pequenyos)

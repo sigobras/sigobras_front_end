@@ -49,7 +49,6 @@ export default ({ data, AnyoSeleccionado }) => {
       },
     });
     setData(res.data);
-    console.log("data", res.data);
     var total = res.data.reduce((acc, item) => acc + item.fisico_monto, 0);
     setDataTotal(total);
   }
@@ -103,41 +102,59 @@ export default ({ data, AnyoSeleccionado }) => {
                   <td
                     style={{ width: "70px", background: esFechaActual(i - 1) }}
                   >
-                    {Redondea(
-                      (mes1.fisico_monto / data.presupuesto_costodirecto) * 100
-                    )}
-                    %
+                    {/* <div>{Redondea(mes1.fisico_monto)}</div> */}
+                    <div>
+                      {Redondea(
+                        (mes1.fisico_monto / data.presupuesto_costodirecto) *
+                          100,
+                        [2, 4]
+                      )}
+                      %
+                    </div>
                   </td>
                   <td
                     style={{ width: "70px", background: esFechaActual(i - 1) }}
                   >
-                    Prog.
-                    {Redondea(
-                      (mes1.fisico_programado_monto /
-                        data.presupuesto_costodirecto) *
-                        100
-                    )}
-                    %
+                    {/* <div>S/.{Redondea(mes1.fisico_programado_monto)}</div> */}
+                    <div>
+                      Prog.
+                      {Redondea(
+                        (mes1.fisico_programado_monto /
+                          data.presupuesto_costodirecto) *
+                          100,
+                        [2, 4]
+                      )}
+                      %
+                    </div>
                   </td>
                   <th style={{ width: "70px" }}>{mesesShort[i + 5]}</th>
                   <td
                     style={{ width: "70px", background: esFechaActual(i - 1) }}
                   >
-                    {Redondea(
-                      (mes2.fisico_monto / data.presupuesto_costodirecto) * 100
-                    )}
-                    %
+                    {/* <div>S/.{Redondea(mes2.fisico_monto)}</div> */}
+                    <div>
+                      {Redondea(
+                        (mes2.fisico_monto / data.presupuesto_costodirecto) *
+                          100,
+                        [2, 4]
+                      )}
+                      %
+                    </div>
                   </td>
                   <td
                     style={{ width: "70px", background: esFechaActual(i - 1) }}
                   >
-                    Prog.
-                    {Redondea(
-                      (mes2.fisico_programado_monto /
-                        data.presupuesto_costodirecto) *
-                        100
-                    )}
-                    %
+                    {/* <div>{Redondea(mes2.fisico_programado_monto, [2, 4])}%</div> */}
+                    <div>
+                      Prog.
+                      {Redondea(
+                        (mes2.fisico_programado_monto /
+                          data.presupuesto_costodirecto) *
+                          100,
+                        [2, 4]
+                      )}
+                      %
+                    </div>
                   </td>
                 </tr>
               );
