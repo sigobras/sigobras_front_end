@@ -39,6 +39,7 @@ import {
   Spinner,
   Tooltip,
 } from "reactstrap";
+import parse from "html-react-parser";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
@@ -250,6 +251,11 @@ export default ({ partida, anyo, mes, imagenes_labels_id }) => {
                     key={JSON.stringify(Imagenes[ImagenSeleccionada])}
                     ImagenData={Imagenes[ImagenSeleccionada]}
                     ref={refLabels}
+                  />
+                  <hr style={{ background: "white" }} />
+                  <ComentariosInterfaz
+                    key={ImagenSeleccionada}
+                    ImagenData={Imagenes[ImagenSeleccionada]}
                   />
                 </>
               )}
@@ -463,3 +469,101 @@ const ImagenesLabelsListado = forwardRef(({ ImagenData }, ref) => {
     </div>
   );
 });
+function ComentariosInterfaz({ ImagenData }) {
+  useEffect(() => {
+    cargarComentarios();
+  }, []);
+  const [Comentarios, setComentarios] = useState([]);
+  async function cargarComentarios() {
+    var res = await axios.get(`${UrlServer}/v1/imagenesComentarios`, {
+      params: {
+        id_partidaImagen:
+          ImagenData.tipo == "partidaImagen" ? ImagenData.id : null,
+        id_AvanceActividades:
+          ImagenData.tipo == "avanceActividades" ? ImagenData.id : null,
+        id_ficha: sessionStorage.getItem("idobra"),
+      },
+    });
+    setComentarios(res.data);
+  }
+  const [ComentarioText, setComentarioText] = useState("");
+  function handleInputChange(e) {
+    var value = document.getElementById("comentario-input").innerHTML;
+    var onlyText = value.replace(/<br>/g, "");
+    if (onlyText) {
+      setComentarioText(value);
+    } else {
+      document.getElementById("comentario-input").innerHTML = "";
+    }
+  }
+  async function guardarComentario() {
+    try {
+      if (ComentarioText) {
+        var res = await axios.post(`${UrlServer}/v1/imagenesComentarios`, {
+          partidasimagenes_id_partidaImagen:
+            ImagenData.tipo == "partidaImagen" ? ImagenData.id : null,
+          avanceactividades_id_AvanceActividades:
+            ImagenData.tipo == "avanceActividades" ? ImagenData.id : null,
+          accesos_id: sessionStorage.getItem("idacceso"),
+          comentario: ComentarioText,
+        });
+        document.getElementById("comentario-input").innerHTML = "";
+        cargarComentarios();
+      }
+    } catch (error) {
+      alert("Ocurrio un error");
+    }
+  }
+  return (
+    <div
+      style={{
+        overflowY: "auto",
+        maxHeight: "500px",
+      }}
+    >
+      <div
+        style={{
+          background: "#3a3b3c",
+          borderRadius: "19px",
+          padding: "8px 12px",
+          color: "white",
+          marginTop: "10px",
+          marginBottom: "10px",
+        }}
+        className="comentario-input"
+        id="comentario-input"
+        contentEditable={true}
+        data-placeholder="Escribe un comentario"
+        onInput={(event) => {
+          if (event.keyCode != 13) {
+            handleInputChange(event);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.keyCode == 13) {
+            if (!event.shiftKey) {
+              guardarComentario();
+            }
+          }
+        }}
+      ></div>
+      {Comentarios.map((item, i) => (
+        <div
+          style={{
+            background: "#3a3b3c",
+            borderRadius: "19px",
+            padding: "8px 12px",
+            color: "white",
+            marginTop: "10px",
+            marginBottom: "10px",
+          }}
+        >
+          <div
+            style={{ fontWeight: "500", fontSize: "10px", color: "#939596" }}
+          >{`${item.cargo_nombre} ${item.usuario_nombre} ${item.usuario_apellido_paterno}`}</div>
+          <div>{parse(item.comentario || " ")}</div>
+        </div>
+      ))}
+    </div>
+  );
+}

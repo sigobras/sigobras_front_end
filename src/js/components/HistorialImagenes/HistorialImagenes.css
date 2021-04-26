@@ -54,3 +54,10 @@
   width: 34px;
   height: 34px;
 }
+/* comentarios */
+.comentario-input {
+  display: inline-block;
+}
+.comentario-input:empty:before {
+  content: attr(data-placeholder);
+}
