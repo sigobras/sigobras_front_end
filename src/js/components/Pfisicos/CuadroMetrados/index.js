@@ -144,7 +144,7 @@ export default () => {
                 : {}
             }
           >
-            {item[key] == 0 ? "" : item[key]}
+            {item[key] == 0 ? "" : Redondea(item[key], [2, 5])}
           </td>
         );
         total += item[key];
@@ -262,7 +262,7 @@ export default () => {
       </CardHeader>
 
       <div style={{ overflowX: "auto" }}>
-        <div style={{ width: "2500px" }}>
+        <div style={{ width: "2800px" }}>
           <table className="table-hover whiteThem-table  cuadroMetrados">
             <col span="1" style={{ width: "80px" }}></col>
             <thead>
