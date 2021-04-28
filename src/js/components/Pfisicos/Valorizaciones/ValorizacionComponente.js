@@ -60,9 +60,14 @@ export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
       valor_actual,
       porcentaje_actual:
         (valor_actual / Componenteseleccionado.presupuesto) * 100,
-      valor_total: valor_anterior + valor_actual,
+      valor_total: BigNumber(valor_anterior || 0)
+        .plus(valor_actual || 0)
+        .toNumber(),
       porcentaje_total:
-        ((valor_anterior + valor_actual) / Componenteseleccionado.presupuesto) *
+        (BigNumber(valor_anterior || 0)
+          .plus(valor_actual || 0)
+          .toNumber() /
+          Componenteseleccionado.presupuesto) *
         100,
       valor_saldo:
         Componenteseleccionado.presupuesto - valor_anterior - valor_actual,
@@ -148,7 +153,13 @@ export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
                   : ""}
               </td>
               <td>{Redondea(item.costo_unitario)}</td>
-              <td>{Redondea(item.metrado * item.costo_unitario)}</td>
+              <td>
+                {Redondea(
+                  BigNumber(item.metrado || 0)
+                    .times(item.costo_unitario || 0)
+                    .toNumber()
+                )}
+              </td>
 
               <td>{Redondea(item.metrado_anterior)}</td>
               <td>{Redondea(item.valor_anterior)}</td>
@@ -158,11 +169,25 @@ export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
               <td className="bg-mm">{Redondea(item.valor_actual)}</td>
               <td>{Redondea((item.metrado_actual / item.metrado) * 100)}</td>
 
-              <td>{Redondea(item.metrado_anterior + item.metrado_actual)}</td>
-              <td>{Redondea(item.valor_anterior + item.valor_actual)}</td>
               <td>
                 {Redondea(
-                  ((item.metrado_anterior + item.metrado_actual) /
+                  BigNumber(item.metrado_anterior || 0)
+                    .plus(item.metrado_actual || 0)
+                    .toNumber()
+                )}
+              </td>
+              <td>
+                {Redondea(
+                  BigNumber(item.valor_anterior || 0)
+                    .plus(item.valor_actual || 0)
+                    .toNumber()
+                )}
+              </td>
+              <td>
+                {Redondea(
+                  (BigNumber(item.valor_anterior || 0)
+                    .plus(item.valor_actual || 0)
+                    .toNumber() /
                     item.metrado) *
                     100
                 )}
