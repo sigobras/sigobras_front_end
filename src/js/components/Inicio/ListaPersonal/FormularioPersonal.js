@@ -127,7 +127,7 @@ export default ({ id_ficha, dataPersonal, recargar, id_cargo }) => {
       var res = await axios.get(
         `${UrlServer}/v1/usuarios/dni/${DataFormulario.dni}`
       );
-      setDataFormulario(res.data);
+      setDataFormulario({ ...DataFormulario, ...res.data });
       setModoDatosPorDNI(true);
     } catch (error) {
       alert("no se encontro el usuario");
