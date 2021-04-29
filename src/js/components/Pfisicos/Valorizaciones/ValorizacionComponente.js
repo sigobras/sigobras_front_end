@@ -185,8 +185,8 @@ export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
               </td>
               <td>
                 {Redondea(
-                  (BigNumber(item.valor_anterior || 0)
-                    .plus(item.valor_actual || 0)
+                  (BigNumber(item.metrado_anterior || 0)
+                    .plus(item.metrado_actual || 0)
                     .toNumber() /
                     item.metrado) *
                     100
