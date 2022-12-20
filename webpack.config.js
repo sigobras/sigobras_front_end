@@ -1,6 +1,8 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const PORT = process.env.PORT || "3000";
 var path = require("path");
+const webpack = require("webpack");
+require("dotenv").config({ path: "./.env" });
 
 module.exports = {
   mode: "production",
@@ -54,7 +56,6 @@ module.exports = {
     publicPath: "/",
   },
   devServer: {
-    host: "0.0.0.0",
     port: PORT,
     historyApiFallback: true,
   },
@@ -67,6 +68,9 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: "./src/index.html",
       filename: "./index.html",
+    }),
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(process.env),
     }),
   ],
 };
