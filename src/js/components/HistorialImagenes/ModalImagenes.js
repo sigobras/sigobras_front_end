@@ -165,7 +165,7 @@ export default ({ partida, anyo, mes, imagenes_labels_id }) => {
                     >
                       <img
                         className="d-block img-fluid"
-                        src={UrlServer + item.imagen}
+                        src={item.imagen}
                         alt="First slide"
                         style={{
                           // height: "500px",
@@ -313,11 +313,7 @@ export default ({ partida, anyo, mes, imagenes_labels_id }) => {
                       setImagenSeleccionada(i);
                     }}
                     className="d-block"
-                    src={
-                      UrlServer +
-                      item.imagen +
-                      "?width=100&height=100&crop=cover"
-                    }
+                    src={item.imagen}
                     style={{
                       height: "36px",
                       marginRight: "5px",
