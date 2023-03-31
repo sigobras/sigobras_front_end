@@ -44,7 +44,7 @@ export default ({ id_ficha }) => {
             maxHeight: "500px",
           }}
         >
-          <h1>No hay imagenes</h1>
+          <strong>No hay imagenes</strong>
         </div>
       ) : (
         <div
