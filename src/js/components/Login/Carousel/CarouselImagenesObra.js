@@ -8,6 +8,7 @@ export default ({ id_ficha }) => {
     setLoading(true);
     fetchImagenesObra();
     setImagenActiva(0);
+    alert('Donde estoy')
     return () => {};
   }, []);
   const [Loading, setLoading] = useState(false);
@@ -44,7 +45,7 @@ export default ({ id_ficha }) => {
             maxHeight: "500px",
           }}
         >
-          <strong>No hay imagenes</strong>
+          <h1>No hay imagenes</h1>
         </div>
       ) : (
         <div
