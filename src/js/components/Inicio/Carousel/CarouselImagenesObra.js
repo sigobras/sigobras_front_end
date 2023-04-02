@@ -32,12 +32,12 @@ export default ({ id_ficha }) => {
     }
     const [ImagenActiva, setImagenActiva] = useState(0)
 
-    
+
     return (
         <div>
             {
-                FlagImagenes == false ? 
-                <div 
+                FlagImagenes == false ?
+                <div
                 style={{
                     width: "700px",
                     display:"flex",
@@ -48,11 +48,11 @@ export default ({ id_ficha }) => {
                     maxHeight: "500px",
                 }}
                 >
-                    <h1>No hay imagenes</h1>                        
+                    <h1>No hay imagenes</h1>
                 </div>
                 :
                 <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
-                    
+
                     <ol className="carousel-indicators">
                         {ImagenesObra.map((item, i) =>
                             <li data-target="#carouselExampleIndicators"
@@ -82,14 +82,14 @@ export default ({ id_ficha }) => {
                             >
                                 <Spinner style={{ width: '3rem', height: '3rem' }} type="grow" />
                             </div>
-                                    
+
                         }
                         {ImagenesObra.map((item, i) =>
                             <div className={ImagenActiva == i ? "carousel-item active" : "carousel-item"}>
-                                
+
                                 <img
                                     className="d-block img-fluid"
-                                    src={UrlServer + item.url}
+                                    src={item.url}
                                     alt="First slide"
                                     style={{
                                         height: "500px",
@@ -128,10 +128,10 @@ export default ({ id_ficha }) => {
                         </span>
                         <span className="sr-only">
                             Previous
-                            
+
                             </span>
                     </a>
-                    
+
                     <a
                         className="carousel-control-next"
                         href="#"
