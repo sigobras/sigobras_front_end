@@ -17,7 +17,7 @@ applications:
             - yarn build
             - yarn test --coverage
       artifacts:
-        baseDirectory: build
+        baseDirectory: /dist
         files:
           - '**/*'
       cache:
