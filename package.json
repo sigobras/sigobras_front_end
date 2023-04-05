@@ -29,6 +29,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
+    "react-scripts": "^5.0.1",
     "sonar-scanner": "^3.1.0",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
