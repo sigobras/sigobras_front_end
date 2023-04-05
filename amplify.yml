@@ -1,0 +1,25 @@
+version: 1
+applications:
+  - appRoot: .
+    commands:
+      - command: npx sonar-scanner
+    environment:
+      variables:
+        SONAR_TOKEN: $SONAR_TOKEN
+        SONAR_HOST_URL: $SONAR_HOST_URL
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - yarn install
+        build:
+          commands:
+            - yarn build
+            - yarn test --coverage
+      artifacts:
+        baseDirectory: build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
