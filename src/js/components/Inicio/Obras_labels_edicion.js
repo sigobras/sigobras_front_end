@@ -278,7 +278,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                       <Input
                         type="textarea"
                         id="label-description-"
-                        name="label[description]"
+                        // name="label[description]"
                         placeholder="Description (optional)"
                         aria-describedby="label--description-error"
                         maxlength="250"

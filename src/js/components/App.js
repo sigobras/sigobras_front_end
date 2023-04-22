@@ -69,6 +69,10 @@ const Test = lazy(() => import("./Test"));
 const FuentesFinanciamiento = lazy(() => import("./FuentesFinanciamiento"));
 const CuadroMetrados = lazy(() => import("./Pfisicos/CuadroMetrados"));
 const HistorialImagenes = lazy(() => import("./HistorialImagenes"));
+//SEGUIMIENTO Y MONITOREO
+const ReporteMonitoreoSeguimiento = lazy(() =>
+  import("../../components/organisms/ReportTable/")
+);
 
 export default () => {
   useEffect(() => {
@@ -293,6 +297,16 @@ export default () => {
                           <span> GESTION DOCUMENTARIA </span>{" "}
                         </NavLink>
                       </li>
+
+                      <li className="lii" key="33">
+                        <NavLink
+                          to="/ReporteMonitoreoSeguimiento"
+                          activeclassname="nav-link"
+                        >
+                          {" "}
+                          <span> REPORTE MONITOREO - SEGUIMIENTO </span>{" "}
+                        </NavLink>
+                      </li>
                     </>
                   )}
                 </ul>
@@ -504,6 +518,10 @@ export default () => {
                     <Route
                       path="/HistorialImagenes"
                       component={HistorialImagenes}
+                    />
+                    <Route
+                      path="/ReporteMonitoreoSeguimiento"
+                      component={ReporteMonitoreoSeguimiento}
                     />
                   </Switch>
                 </Suspense>
