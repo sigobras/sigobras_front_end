@@ -286,13 +286,13 @@ export default () => {
                   </td>
                   <td
                     className="col-md-6"
-                    style={{ position: "relative" }}
+                    style={{ position: "relative", cursor: "pointer"}}
                     onClick={() => {
                       RefCheckBox[item.id].recarga();
                     }}
-                    style={{
-                      cursor: "pointer",
-                    }}
+                    // style={{
+                    //   cursor: "pointer",
+                    // }}
                   >
                     <div>
                       {item.descripcion}

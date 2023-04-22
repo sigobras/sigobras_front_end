@@ -7,12 +7,15 @@ import { UrlServer } from "./js/components/Utils/ServerUrlConfig";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/style.css";
-import "./css/bs4.css";
+// import "./css/bs4.css";
 import "react-table/react-table.css";
 import "react-toastify/dist/ReactToastify.css";
 
 const AppAng = lazy(() => import("./js/components/App"));
 const wrapper = document.getElementById("zoe");
+
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme";
 
 axios.defaults.baseURL = UrlServer;
 
@@ -22,7 +25,9 @@ if (sessionStorage.getItem("idacceso") === null) {
   wrapper
     ? ReactDOM.render(
         <Suspense fallback={<div>Loading...</div>}>
-          <AppAng />
+          <ThemeProvider theme={theme}>
+            <AppAng />
+          </ThemeProvider>
         </Suspense>,
         wrapper
       )

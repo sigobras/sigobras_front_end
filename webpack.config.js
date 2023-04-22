@@ -48,8 +48,16 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: 'ts-loader',
+      },
     ],
   },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js'],
+  }, 
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "main.[contenthash].js",

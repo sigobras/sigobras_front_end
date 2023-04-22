@@ -305,7 +305,7 @@ export default ({ ImagenData, recargar }) => {
                       <Input
                         type="textarea"
                         id="label-description-"
-                        name="label[description]"
+                        // name="label[description]"
                         placeholder="Description (optional)"
                         aria-describedby="label--description-error"
                         maxLength="250"
@@ -424,6 +424,7 @@ export default ({ ImagenData, recargar }) => {
                     <td
                       style={{
                         display: "flex",
+                        cursor: "pointer",
                       }}
                       onClick={() => {
                         if (item.asignado) {
@@ -432,9 +433,9 @@ export default ({ ImagenData, recargar }) => {
                           asignarLabel(item.id);
                         }
                       }}
-                      style={{
-                        cursor: "pointer",
-                      }}
+                      // style={{
+                      //   cursor: "pointer",
+                      // }}
                     >
                       {item.asignado ? (
                         <FaCheckCircle
