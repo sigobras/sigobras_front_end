@@ -83,46 +83,65 @@ const ReportTable: React.FC = () => {
     }
 
     return (
-        <TableContainer sx={{ maxHeight: 700 }}>
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                <TableHead>
-                    <TableRow>
-                        {titulos.map((titulo) => (
+        <>
+            <Button
+                className={classes.button}
+                onClick={handleAddRow}
+            />
+            <TableContainer >
+                <Table>
+                    <TableHead>
+                        <TableRow>
                             <TableCell
-                                key={titulo.value}
                                 className={classes.header}
-                            >
-                                {titulo.nombre}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {Datos.map((row, index) => (
-                        <TableRow key={row.id}>
+                                style={{ minWidth: 40 }}
+                            >N°</TableCell>
                             {titulos.map((titulo) => (
-                                <TableCellEditable
+                                <TableCell
                                     key={titulo.value}
-                                    value={row[titulo.value]}
-                                    disabled={titulo.readOnly}
-                                    onChange={(e) =>
-                                        handleChange(e, index, titulo.value, row.id)
-                                    }
-                                />
+                                    className={classes.header}
+                                    style={{ minWidth: titulo.minWidth }}
+                                >
+                                    {titulo.nombre}
+                                </TableCell>
                             ))}
                         </TableRow>
-                    ))}
-                    <TableRow>
+                    </TableHead>
+                    <TableBody className={classes.tableBody}>
+                        {Datos.map((row, index) => (
+                            <TableRow key={index}>
+                                <TableCellEditable
+                                    value={index + 1}
+                                    disabled
+                                    onChange={(e) =>
+                                        handleChange(e, index, e.target.value, row.id)
+                                    }
+                                />
+                                {titulos.map((titulo) => (
+                                    <TableCellEditable
+                                        key={titulo.value}
+                                        value={row[titulo.value]}
+                                        disabled={titulo.readOnly}
+                                        onChange={(e) =>
+                                            handleChange(e, index, titulo.value, row.id)
+                                        }
+                                    />
+                                ))}
+                            </TableRow>
+                        ))}
+                        {/* <TableRow>
                         <TableCell>
                             <Button
                                 className={classes.button}
                                 onClick={handleAddRow}
                             />
                         </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableRow> */}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
+
     );
 };
 
