@@ -11,15 +11,17 @@ interface Props {
   value: string | number | null;
   disabled: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type: string;
 }
 
-const TableCellEditable: React.FC<Props> = ({ value, disabled, onChange }) => {
+const TableCellEditable: React.FC<Props> = ({ value, disabled, onChange, type }) => {
   return (
     <ExcelStyledTableCell>
       <Input
         value={value !== null ? value.toString() : ''}
         disabled={disabled}
         onChange={onChange}
+        type={type}
       />
     </ExcelStyledTableCell>
   );

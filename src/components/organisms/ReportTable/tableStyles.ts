@@ -13,6 +13,14 @@ const useStyles = makeStyles({
   tableBody: {
     backgroundColor: "#fffde5",
   },
+  disabled: {
+    padding: "1px 1px !important",
+    width: "100% !important",
+    margin: "1px !important",
+    WebkitTextFillColor: "#000000",
+    border: "1px solid black !important",
+    borderRadius: "0 !important",
+  },
 });
 
 export default useStyles;
