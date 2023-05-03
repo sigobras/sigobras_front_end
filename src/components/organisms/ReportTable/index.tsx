@@ -11,7 +11,7 @@ import {
     Box,
 } from '@mui/material';
 import reporte from '../../../interfaces/reporteMonitoreo';
-import titulos from '../../../data/titulos';
+import { titulos, estructuraTitulos } from '../../../data/titulos';
 import TableCellEditable from '../../molecules/TableCellEditable';
 import Button from '../../atoms/Button';
 import {
@@ -46,7 +46,6 @@ const ReportTable: React.FC = () => {
     async function handleAddRow() {
         try {
             await addRow();
-            loadReportData();
         } catch (error) {
             console.error('error', error);
         }
@@ -69,6 +68,30 @@ const ReportTable: React.FC = () => {
         saveData(newData, fieldName, id, value);
     };
 
+    function getFormattedData(colLabel: string, indice: number) {
+        type CalculationFunctions = {
+            [key: string]: () => string | number;
+            pia: () => "Con Pia" | "Sin PIA";
+            total_cemento: () => number;
+            saldo: () => number;
+            expediente_1: () => number;
+            expediente_2: () => number;
+        };
+
+        const calculations: CalculationFunctions = {
+            pia: () => Datos[indice].pia_2023 > 0 ? 'Con Pia' : 'Sin PIA',
+            total_cemento: () => Number(Datos[indice].cantidad_cemento) + Number(Datos[indice].cantidad_vencidos_cemento),
+            saldo: () => Number(Datos[indice].pim) - Number(Datos[indice].total_certificado),
+            expediente_1: () => Number(Datos[indice].expediente),
+            expediente_2: () => Number(Datos[indice].expediente)
+        };
+
+        return calculations[colLabel]
+            ? calculations[colLabel]()
+            : Datos[indice][colLabel];
+    }
+
+
     if (loading) {
         return (
             <Box
@@ -82,6 +105,7 @@ const ReportTable: React.FC = () => {
         );
     }
 
+
     return (
         <>
             <Button
@@ -92,13 +116,23 @@ const ReportTable: React.FC = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell
-                                className={classes.header}
-                                style={{ minWidth: 40 }}
-                            >N°</TableCell>
-                            {titulos.map((titulo) => (
+
+                            {estructuraTitulos.nivel_1.map((titulo) => (
                                 <TableCell
-                                    key={titulo.value}
+                                    key={titulo.nombre}
+                                    className={classes.header}
+                                    colSpan={titulo.colspan}
+                                    rowSpan={titulo.rowspan}
+                                    style={{ minWidth: titulo.minWidth }}
+                                >
+                                    {titulo.nombre}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                        <TableRow>
+                            {estructuraTitulos.nivel_2.map((titulo) => (
+                                <TableCell
+                                    key={titulo.nombre}
                                     className={classes.header}
                                     style={{ minWidth: titulo.minWidth }}
                                 >
@@ -109,34 +143,34 @@ const ReportTable: React.FC = () => {
                     </TableHead>
                     <TableBody className={classes.tableBody}>
                         {Datos.map((row, index) => (
-                            <TableRow key={index}>
-                                <TableCellEditable
-                                    value={index + 1}
-                                    disabled
-                                    onChange={(e) =>
-                                        handleChange(e, index, e.target.value, row.id)
-                                    }
-                                />
+                            <TableRow key={row.id}>
+                                <TableCell
+                                    className={classes.disabled}
+                                >
+                                    {index + 1}
+                                </TableCell>
+
                                 {titulos.map((titulo) => (
-                                    <TableCellEditable
-                                        key={titulo.value}
-                                        value={row[titulo.value]}
-                                        disabled={titulo.readOnly}
-                                        onChange={(e) =>
-                                            handleChange(e, index, titulo.value, row.id)
-                                        }
-                                    />
+                                    titulo.readOnly ?
+                                        <TableCell
+                                            key={row.id + titulo.value}
+                                            className={classes.disabled}
+                                        >
+                                            {getFormattedData(titulo.value, index)}
+                                        </TableCell>
+                                        :
+                                        <TableCellEditable
+                                            key={titulo.value}
+                                            value={row[titulo.value] || ''}
+                                            disabled={titulo.readOnly}
+                                            onChange={(e) =>
+                                                handleChange(e, index, titulo.value, row.id)
+                                            }
+                                            type={titulo.type}
+                                        />
                                 ))}
                             </TableRow>
                         ))}
-                        {/* <TableRow>
-                        <TableCell>
-                            <Button
-                                className={classes.button}
-                                onClick={handleAddRow}
-                            />
-                        </TableCell>
-                    </TableRow> */}
                     </TableBody>
                 </Table>
             </TableContainer>
