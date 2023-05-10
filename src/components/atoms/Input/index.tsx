@@ -3,14 +3,10 @@ import { TextField, styled } from '@mui/material';
 
 const ExcelStyledTextField = styled(TextField)({
   width: '100%',
-  margin: '1px',
   '& .MuiInputBase-root': {
     color: 'black',
     borderRadius: '0',
-  },
-  '& .MuiOutlinedInput-input': {
-    padding: '1px 1px',
-    color: 'black',
+    fontSize: '11px',
     '&:focus': {
       borderColor: '#6B7FFF',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.4)',
@@ -18,7 +14,7 @@ const ExcelStyledTextField = styled(TextField)({
   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      border: '1px solid black',
+      border: 'none',
     },
     '&:hover fieldset': {
       borderColor: '#6B7FFF',

@@ -2,9 +2,11 @@ import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
   header: {
-    backgroundColor: "#17a2b8",
+    backgroundColor: "#3a3b3c",
     color: "#000",
-    padding: "5px !important",
+    padding: "1px !important",
+    border: "1px solid black ",
+    fontSize: '11px !important',
   },
   button: {
     backgroundColor: "blue !important",
@@ -19,7 +21,7 @@ const useStyles = makeStyles({
     margin: "1px !important",
     WebkitTextFillColor: "#000000",
     border: "1px solid black !important",
-    borderRadius: "0 !important",
+    fontSize: '11px !important',
   },
 });
 

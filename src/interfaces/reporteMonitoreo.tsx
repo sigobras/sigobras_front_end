@@ -61,7 +61,7 @@ interface reporte {
   cantidad_cemento: number;
   fecha_vencimiento_cemento: string;
   cantidad_vencidos_cemento: number;
-  fecha_vencimiento_cemento_1: string;
+  prestamo: string;
   observaciones: string;
   estado: string;
   avance_fisico_porcentaje: string;
