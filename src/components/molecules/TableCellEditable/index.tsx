@@ -4,7 +4,7 @@ import Input from '../../atoms/Input';
 
 const ExcelStyledTableCell = styled(TableCell)({
   padding: '0',
-  border: 'none'
+  border: '1px solid black',
 });
 
 interface Props {
