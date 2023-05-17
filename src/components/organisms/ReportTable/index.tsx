@@ -86,16 +86,21 @@ const ReportTable: React.FC = () => {
 
         };
 
-        if (format === 'porcentaje') {
-            return agregarPorcentaje(Datos[indice][colLabel])
-        }
-        if (format === 'money') {
-            return agregarFormatoNumero(Datos[indice][colLabel])
+        let value: any;
+        if (calculations[colLabel]) {
+            value = calculations[colLabel]();
+        } else {
+            value = Datos[indice][colLabel];
         }
 
-        return calculations[colLabel]
-            ? calculations[colLabel]()
-            : Datos[indice][colLabel];
+        if (format === 'porcentaje') {
+            return agregarPorcentaje(value)
+        }
+        if (format === 'money') {
+            return agregarFormatoNumero(value)
+        }
+
+        return value
     }
 
     function agregarPorcentaje(str: any) {
@@ -104,9 +109,8 @@ const ReportTable: React.FC = () => {
         }
         return str.endsWith('%') ? str : str + '%'; // si ya tiene '%', devuelve el string original, de lo contrario agrega '%'
     }
-
     function agregarFormatoNumero(numero: any) {
-        if (numero == null) {
+        if (numero == null || numero == '') {
             return 0;
         }
 
@@ -211,7 +215,6 @@ const ReportTable: React.FC = () => {
                                         :
                                         <TableCellEditable
                                             key={titulo.value}
-                                            // value={titulo.format === 'porcentaje' ? agregarPorcentaje(row[titulo.value] || '')  : row[titulo.value] || ''}
                                             value={getFormattedValue(row[titulo.value], titulo.format)}
                                             disabled={titulo.readOnly}
                                             onChange={(e) =>
