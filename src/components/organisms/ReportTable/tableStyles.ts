@@ -22,6 +22,7 @@ const useStyles = makeStyles({
     WebkitTextFillColor: "#000000",
     border: "1px solid black !important",
     fontSize: '11px !important',
+    backgroundColor: "#3a3b3c !important",
   },
 });
 
