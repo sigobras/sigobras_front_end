@@ -217,6 +217,7 @@ const ReportTable: React.FC = () => {
                                             key={titulo.value}
                                             value={getFormattedValue(row[titulo.value], titulo.format)}
                                             disabled={titulo.readOnly}
+                                            multiline= {titulo.multiline}
                                             onChange={(e) =>
                                                 handleChange(e, index, titulo.value, row.id)
                                             }

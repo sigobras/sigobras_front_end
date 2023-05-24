@@ -28,16 +28,18 @@ const ExcelStyledTextField = styled(TextField)({
 interface Props {
   value: string;
   disabled: boolean;
+  multiline: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
 }
 
-const Input: React.FC<Props> = ({ value, disabled, onChange, type }) => {
+const Input: React.FC<Props> = ({ value, disabled,multiline ,onChange, type }) => {
   return (
     <ExcelStyledTextField
       variant="outlined"
       size="small"
       defaultValue={value}
+      multiline = {multiline}
       disabled={disabled}
       onChange={onChange}
       type={type}
