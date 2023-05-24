@@ -10,16 +10,18 @@ const ExcelStyledTableCell = styled(TableCell)({
 interface Props {
   value: string | number | null;
   disabled: boolean;
+  multiline: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: string;
 }
 
-const TableCellEditable: React.FC<Props> = ({ value, disabled, onChange, type }) => {
+const TableCellEditable: React.FC<Props> = ({ value, disabled, multiline,onChange, type }) => {
   return (
     <ExcelStyledTableCell>
       <Input
         value={value !== null ? value.toString() : ''}
         disabled={disabled}
+        multiline = {multiline}
         onChange={onChange}
         type={type}
       />
