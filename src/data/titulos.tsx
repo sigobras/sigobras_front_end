@@ -40,8 +40,8 @@ const titulos = [
   { 'nombre': "FECHA DE REINICIO DE OBRA", 'value': 'fecha_reinicio_obra', 'readOnly': false, 'minWidth': 150, 'type': 'date', 'format': 'normal', 'multiline' : false},
   { 'nombre': "AMPLIACIONES DE PLAZO TRAMITADAS", 'value': 'ampliaciones_plazo_tramitadas', 'readOnly': false, 'minWidth': 400, 'type': 'text', 'format': 'normal', 'multiline' : false},
   { 'nombre': "FECHA CULMINACION NUEVO", 'value': 'fecha_culminacion_nuevo', 'readOnly': false, 'minWidth': 100, 'type': 'date', 'format': 'normal', 'multiline' : false},
-  { 'nombre': "OBSERVACIONES", 'value': 'obrsercaiones_fecha_control_plazos', 'readOnly': false, 'minWidth': 180, 'type': 'text', 'format': 'normal', 'multiline' : false},
-  { 'nombre': "DOUCMENTACION DE REINICIO DE OBRA", 'value': 'documentacion_reinicio_obra', 'readOnly': false, 'minWidth': 150, 'type': 'text', 'format': 'normal', 'multiline' : false},
+  { 'nombre': "OBSERVACIONES", 'value': 'observaciones_fecha_control_plazos', 'readOnly': false, 'minWidth': 250, 'type': 'text', 'format': 'normal', 'multiline' : true},
+  { 'nombre': "DOCUMENTACION DE REINICIO DE OBRA", 'value': 'documentacion_reinicio_obra', 'readOnly': false, 'minWidth': 150, 'type': 'text', 'format': 'normal', 'multiline' : false},
   { 'nombre': "INFORME DE CORTE RESIDENTE SALIENTE", 'value': 'informe_corte_residente_saliente', 'readOnly': false, 'minWidth': 150, 'type': 'text', 'format': 'normal', 'multiline' : false},
   { 'nombre': "INFORME DE CORTE RESIDENTE ENTRANTE", 'value': 'informe_corte_residente_entrante', 'readOnly': false, 'minWidth': 150, 'type': 'text', 'format': 'normal', 'multiline' : false},
   { 'nombre': "ASIGNACION PRESUPUESTAL (CUADRO NECESIDADES)", 'value': 'asignacion_presupuestal', 'readOnly': false, 'minWidth': 150, 'type': 'text', 'format': 'normal', 'multiline' : false},
@@ -77,9 +77,9 @@ const estructuraTitulos = {
   nivel_1: [
     { 'nombre': "N°", colspan: 1, rowspan: 2, 'minWidth': 40 },
     { 'nombre': "PROVINCIAS", colspan: 1, rowspan: 2, 'minWidth': 150 },
-    { 'nombre': "COORDINADORES 1ra", colspan: 1, rowspan: 2, 'minWidth': 180 },
-    { 'nombre': "COORDINADORES 1da", colspan: 1, rowspan: 2, 'minWidth': 180 },
-    { 'nombre': "COORDINADORES 3ra", colspan: 1, rowspan: 2, 'minWidth': 180 },
+    { 'nombre': "COORDINADOR 1", colspan: 1, rowspan: 2, 'minWidth': 180 },
+    { 'nombre': "COORDINADOR 2", colspan: 1, rowspan: 2, 'minWidth': 180 },
+    { 'nombre': "COORDINADOR 3", colspan: 1, rowspan: 2, 'minWidth': 180 },
     { 'nombre': "CUI", colspan: 1, rowspan: 2, 'minWidth': 80 },
     { 'nombre': "NOMBRE DEL PROYECTO", colspan: 1, rowspan: 2, 'minWidth': 500 },
     { 'nombre': "SECTOR", colspan: 1, rowspan: 2, 'minWidth': 200 },
@@ -132,8 +132,8 @@ const estructuraTitulos = {
     { 'nombre': "FECHA DE REINICIO DE OBRA", 'minWidth': 150 },
     { 'nombre': "AMPLIACIONES DE PLAZO TRAMITADAS", 'minWidth': 100 },
     { 'nombre': "FECHA CULMINACION NUEVO", 'minWidth': 100 },
-    { 'nombre': "OBSERVACIONES", 'minWidth': 150 },
-    { 'nombre': "DOUCMENTACION DE REINICIO DE OBRA", 'minWidth': 150 },
+    { 'nombre': "OBSERVACIONES", 'minWidth': 400 },
+    { 'nombre': "DOCUMENTACION DE REINICIO DE OBRA", 'minWidth': 150 },
     { 'nombre': "INFORME DE CORTE RESIDENTE SALIENTE", 'minWidth': 150 },
     { 'nombre': "INFORME DE CORTE RESIDENTE ENTRANTE", 'minWidth': 150 },
     { 'nombre': "ASIGNACION PRESUPUESTAL (CUADRO NECESIDADES)", 'minWidth': 150 },
@@ -160,7 +160,7 @@ const estructuraTitulos = {
     { 'nombre': "TOTAL CEMENTO", 'minWidth': 80 },
     { 'nombre': "OBSERVACIONES", 'minWidth': 400 },
     { 'nombre': "AVANCE FISICO %", 'minWidth': 100 },
-    { 'nombre': "RESTRICCIONES PARA NO LLEGAR A LA META DEL AVANCE FISICO 2023", 'minWidth': 500 },
+    { 'nombre': "RESTRICCIONES PARA NO LLEGAR A LA META DEL AVANCE FISICO 2023", 'minWidth': 400 },
   ]
 }
 

@@ -110,27 +110,29 @@ const ReportTable: React.FC = () => {
         return str.endsWith('%') ? str : str + '%'; // si ya tiene '%', devuelve el string original, de lo contrario agrega '%'
     }
     function agregarFormatoNumero(numero: any) {
-        if (numero == null || numero == '') {
+
+        if (numero == null || numero == '' || isNaN(numero)) {
             return 0;
         }
-
-        // Extraer la parte entera y la parte decimal del número
-        let [parteEntera, parteDecimal] = numero.toString().match(/^([\d,.]+)(?:\.(\d{2}))?$/).slice(1);
-
+    
+        // Extraer el signo, la parte entera y la parte decimal del número
+        let [signo, parteEntera, parteDecimal] = numero.toString().match(/^(-?)([\d,.]+)(?:\.(\d{2}))?$/).slice(1);
+    
         // Reemplazar todas las comas y puntos por un punto
         parteEntera = parteEntera.replace(/[,.]/g, '.');
-
+    
         // Agregar comas de formato a la parte entera
         parteEntera = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-        // Combinar la parte entera y la parte decimal con un punto
-        let resultado = parteEntera;
+    
+        // Combinar el signo, la parte entera y la parte decimal con un punto
+        let resultado = signo + parteEntera;
         if (parteDecimal != null) {
             resultado += '.' + parteDecimal;
         }
-
+    
         return resultado;
     }
+    
 
     function getFormattedValue(label: string | number, format: string) {
         if (format === 'porcentaje') {
@@ -173,7 +175,7 @@ const ReportTable: React.FC = () => {
                                         className={classes.header}
                                         colSpan={titulo.colspan}
                                         rowSpan={titulo.rowspan}
-                                        style={{ minWidth: titulo.minWidth }}
+                                        style={{ minWidth: titulo.minWidth, textAlign: 'center' }}
                                     >
                                         {titulo.nombre}
                                     </TableCell>
@@ -186,7 +188,7 @@ const ReportTable: React.FC = () => {
                                     <TableCell
                                         key={titulo.nombre}
                                         className={classes.header}
-                                        style={{ minWidth: titulo.minWidth }}
+                                        style={{ minWidth: titulo.minWidth, textAlign: 'center' }}
                                     >
                                         {titulo.nombre}
                                     </TableCell>
@@ -217,7 +219,7 @@ const ReportTable: React.FC = () => {
                                             key={titulo.value}
                                             value={getFormattedValue(row[titulo.value], titulo.format)}
                                             disabled={titulo.readOnly}
-                                            multiline= {titulo.multiline}
+                                            multiline={titulo.multiline}
                                             onChange={(e) =>
                                                 handleChange(e, index, titulo.value, row.id)
                                             }
