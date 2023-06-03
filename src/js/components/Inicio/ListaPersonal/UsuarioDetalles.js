@@ -17,7 +17,6 @@ import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 
 import { UrlServer } from "../../Utils/ServerUrlConfig";
-import Usuario from "../../../../../public/images/Usuario.png";
 export default ({ data }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
@@ -34,9 +33,6 @@ export default ({ data }) => {
         <ModalHeader>{data.cargo_nombre}</ModalHeader>
         <ModalBody>
           <Row>
-            <Col md="6">
-              <img src={Usuario} className="w-75" alt="users sigobras" />
-            </Col>
             <Col md="6">
               <ListGroup>
                 <b>{data.nombre.toUpperCase()}</b>
