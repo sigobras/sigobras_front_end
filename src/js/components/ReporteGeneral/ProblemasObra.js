@@ -10,7 +10,7 @@ import { Redondea, mesesShort } from "../Utils/Funciones";
 import DatosEspecificos from "./DatosEspecificos";
 import BotonNuevo from "../../libs/BotonNuevo";
 
-import "./ReporteGeneral.css";
+import "./ReporteGeneral.module.css";
 import "react-toastify/dist/ReactToastify.css";
 export default ({ data, recargar }) => {
   useEffect(() => {

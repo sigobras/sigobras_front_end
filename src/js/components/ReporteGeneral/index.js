@@ -32,7 +32,7 @@ import PresupuestoAnalitico from "./PresupuestoAnalitico";
 import ProblemasObra from "./ProblemasObra";
 import InformesInfobras from "./InformesInfobras";
 
-import "./ReporteGeneral.css";
+import "./ReporteGeneral.module.css";
 import "react-toastify/dist/ReactToastify.css";
 
 export default ({ recargar }) => {

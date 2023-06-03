@@ -8,7 +8,7 @@ import { Redondea } from "../Utils/Funciones";
 import BotonNuevo from "../../libs/BotonNuevo";
 import CustomInput from "../../libs/CustomInput";
 
-import "./ReporteGeneral.css";
+import "./ReporteGeneral.module.css";
 import "react-toastify/dist/ReactToastify.css";
 export default ({ data, AnyoSeleccionado, setMensajeGuardando }) => {
   useEffect(() => {

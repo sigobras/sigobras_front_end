@@ -15,7 +15,7 @@ import { fechaFormatoClasico } from "../../Utils/Funciones";
 import PlazosFormulario from "./PlazosFormulario";
 import PlazosFormularioEdicion from "./PlazosFormularioEdicion";
 
-import "../PlazosHistorial/Plazos.css";
+import "../PlazosHistorial/Plazos.module.css";
 
 export default () => {
   useEffect(() => {

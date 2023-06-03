@@ -7,7 +7,7 @@ import { AiOutlineFileAdd } from "react-icons/ai";
 
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { Redondea } from "../../Utils/Funciones";
-import "./valorizaciones.css";
+import "./valorizaciones.module.css";
 
 export default ({ PeriodoSeleccionado }) => {
   useEffect(() => {

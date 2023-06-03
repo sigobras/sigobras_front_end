@@ -25,7 +25,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
 import Especificas from "./Especificas";
 
-import "./FuentesFinanciamiento.css";
+import "./FuentesFinanciamiento.module.css";
 export default () => {
   useEffect(() => {
     cargarFuentesFinanciamientoLista();

@@ -17,7 +17,7 @@ import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 
 import { UrlServer } from "../../Utils/ServerUrlConfig";
-import Usuario from "../../../../images/usuario.png";
+import Usuario from "../../../../../public/images/Usuario.png";
 export default ({ data }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);

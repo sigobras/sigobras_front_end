@@ -29,7 +29,7 @@ import { Redondea, DescargarArchivo, mesesShort } from "../Utils/Funciones";
 import ModalNuevoAnyo from "./ModalNuevoAnyo";
 import CustomInput from "../../libs/CustomInput";
 
-import "./PresupuestoAnalitico.css";
+import "./PresupuestoAnalitico.module.css";
 
 export default () => {
   useEffect(() => {

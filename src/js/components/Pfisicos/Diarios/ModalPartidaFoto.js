@@ -10,7 +10,6 @@ import {
   ModalFooter,
   Input,
 } from "reactstrap";
-import LogoSigobras from "./../../../../images/logoSigobras.png";
 
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { FechaActual } from "../../Utils/Funciones";

@@ -25,7 +25,7 @@ import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { mesesShort } from "../../Utils/Funciones";
 import BotonNuevo from "../../../libs/BotonNuevo";
 
-import "./PersonalCostoDirecto.css";
+import "./PersonalCostoDirecto.module.css";
 export default () => {
   //modal
   const [modal, setModal] = useState(false);

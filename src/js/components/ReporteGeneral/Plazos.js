@@ -8,7 +8,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea, mesesShort, fechaFormatoClasico } from "../Utils/Funciones";
 import DatosEspecificos from "./DatosEspecificos";
 
-import "./ReporteGeneral.css";
+import "./ReporteGeneral.module.css";
 import "react-toastify/dist/ReactToastify.css";
 export default ({ data, recargar }) => {
   useEffect(() => {

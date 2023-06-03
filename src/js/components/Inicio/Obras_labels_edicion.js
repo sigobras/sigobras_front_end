@@ -19,7 +19,7 @@ import axios from "axios";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
 
-import "./Obras_labels.css";
+import "./Obras_labels.module.css";
 
 export default ({ id_ficha, recargarObraLabels, codigo }) => {
   const [modal, setModal] = useState(false);
@@ -404,7 +404,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                       display: "flex",
                     }}
                   >
-                    <LabelAsignada
+                    {/* <LabelAsignada
                       id_ficha={id_ficha}
                       id_label={item.id}
                       ref={(ref) => {
@@ -412,7 +412,7 @@ export default ({ id_ficha, recargarObraLabels, codigo }) => {
                         clone[item.id] = ref;
                         setRefLabels(clone);
                       }}
-                    />
+                    /> */}
 
                     <Button
                       // outline

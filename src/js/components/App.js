@@ -17,7 +17,6 @@ import axios from "axios";
 import { Redondea, meses, Redondea1 } from "./Utils/Funciones";
 import FinancieroBarraPorcentaje from "./Inicio/FinancieroBarraPorcentaje";
 import FisicoBarraPorcentaje from "./Inicio/FisicoBarraPorcentaje";
-import LogoSigobras from "../../images/logoSigobras.png";
 import { UrlServer } from "./Utils/ServerUrlConfig";
 import UserNav from "./Otros/UserNav";
 import NotificacionNav from "./Otros/NotificacionNav";

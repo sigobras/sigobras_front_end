@@ -41,7 +41,7 @@ import {
 import { FaSuperpowers, FaPlus } from "react-icons/fa";
 import { DebounceInput } from "react-debounce-input";
 import DocumentoAdquisicion from "./DocumentoAdquisicion";
-import "./RecursosObraResumen.css";
+import "./RecursosObraResumen.module.css";
 import { ToastContainer, toast } from "react-toastify";
 
 export default () => {

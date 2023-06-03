@@ -7,7 +7,7 @@ import HighchartsReact from 'highcharts-react-official'
 // import { options} from "../Planner/Charts"
 
 // import '../../../../css/proyeccion.css'
-import "../../../../css/proyeccion.css";
+import "./planner.module.css";
 
 
 

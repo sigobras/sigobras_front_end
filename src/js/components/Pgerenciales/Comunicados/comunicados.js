@@ -3,7 +3,7 @@ import { Container, Nav, NavItem, NavLink, Button, Row, Col, Form, FormGroup, La
 import axios from 'axios';
 import {Picky} from "react-picky";
 import { UrlServer } from '../../Utils/ServerUrlConfig';
-import "../Comunicados/comunicados.css"
+import "../Comunicados/comunicados.module.css"
 
 
 class Comunicados extends Component {

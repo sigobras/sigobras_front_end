@@ -4,11 +4,10 @@ import { DebounceInput } from "react-debounce-input";
 import axios from "axios";
 import { UrlServer } from "../components/Utils/ServerUrlConfig";
 import { socket } from "../components/Utils/socket";
-import "./PartidasChat.css";
+import "./PartidasChat.module.css";
 
 import { FaPaperPlane } from "react-icons/fa";
 import { MdComment } from "react-icons/md";
-import LogoSigobras from "./../../images/logoSigobras.png";
 
 function Comentarios({
   id_partida,

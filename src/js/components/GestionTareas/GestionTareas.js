@@ -14,11 +14,10 @@ import { toast } from "react-toastify";
 
 import { Picky } from 'react-picky';
 import 'react-picky/dist/picky.css'; 
-import "../../../css/GTareas.css"
+// import "../../../css/GTareas.css"
 
 import { FechaActual, Extension } from "../Utils/Funciones"
 import { UrlServer} from "../Utils/ServerUrlConfig"
-import LogoSigobras from './../../../images/logoSigobras.png'
 
 
 
