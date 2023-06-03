@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Tooltip } from "reactstrap";
-import Circle from "react-circle";
+import { Tooltip } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 import { Redondea, Redondea1 } from "../Utils/Funciones";
 
@@ -12,28 +13,24 @@ export default ({ tipo, id_ficha, avance, total }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const toggle = () => setTooltipOpen(!tooltipOpen);
+
   return (
     <div>
-      {tipo == "circle" && (
-        <div>
-          <Circle
-            progress={Redondea1(FinancieroAvance.financiero_avance_porcentaje)}
-            size="25"
-            showPercentage={false}
-            lineWidth={50}
-            progressColor="orange"
+      {tipo === "circle" && (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <CircularProgress
+            variant="determinate"
+            value={Redondea1(FinancieroAvance.financiero_avance_porcentaje)}
+            size={25}
+            color="warning"
           />
-          <div
-            style={{
-              color: "#ffa500",
-            }}
-          >
+          <div style={{ color: "#ffa500" }}>
             {Redondea1(FinancieroAvance.financiero_avance_porcentaje) + "%"}
           </div>
           <div>{"S/." + Redondea(avance)}</div>
-        </div>
+        </Box>
       )}
-      {tipo == "barra" && (
+      {tipo === "barra" && (
         <div
           style={{
             width: "100%",
@@ -81,17 +78,9 @@ export default ({ tipo, id_ficha, avance, total }) => {
                   fontSize: "13px",
                 }}
               >
-                -({Redondea(FinancieroAvance.financiero_avance_porcentaje)} %)
+                -({Redondea(FinancieroAvance.financiero_avance_porcentaje)}%)
               </div>
             </span>
-            <Tooltip
-              placement={"bottom"}
-              isOpen={tooltipOpen}
-              target={"FinancieroBarraPorcentaje-" + id_ficha + RandNumber}
-              toggle={toggle}
-            >
-              S/.{Redondea(avance)}
-            </Tooltip>
           </div>
         </div>
       )}

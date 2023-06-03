@@ -38,7 +38,7 @@ import { UrlServer } from "../Utils/ServerUrlConfig";
 import { Redondea } from "../Utils/Funciones";
 import ImagenesGeneral from "./ImagenesGeneral";
 import ImagenesMeses from "./ImagenesMeses";
-import "./HistorialImagenes.css";
+import "./HistorialImagenes.module.css";
 
 export default () => {
   const [ImagenesGeneralInterfaz, setImagenesGeneralInterfaz] = useState(true);

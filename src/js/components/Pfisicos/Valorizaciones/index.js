@@ -11,7 +11,7 @@ import {
   DropdownMenu,
 } from "reactstrap";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
-import "./valorizaciones.css";
+import "./valorizaciones.module.css";
 import ValorizacionResumen from "./ValorizacionResumen";
 import ValorizacionComponente from "./ValorizacionComponente";
 export default () => {

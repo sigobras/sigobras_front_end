@@ -10,7 +10,7 @@ import { Nav, NavItem, NavLink, Button, CardHeader } from "reactstrap";
 import classnames from "classnames";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { mesesShort, Redondea } from "../../Utils/Funciones";
-import "./CuadroMetrados.css";
+import "./CuadroMetrados.module.css";
 export default () => {
   useEffect(() => {
     fetchAnyos();

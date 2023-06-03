@@ -17,8 +17,8 @@ import { BsPlusCircleFill } from "react-icons/bs";
 
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 
-import "../PlazosHistorial/Plazos.css";
-import "./PlazosFormulario.css";
+import "../PlazosHistorial/Plazos.module.css";
+import "./PlazosFormulario.module.css";
 export default forwardRef(({ id_padre, recarga }, ref) => {
   useEffect(() => {
     fetchPlazosTipoPadre();

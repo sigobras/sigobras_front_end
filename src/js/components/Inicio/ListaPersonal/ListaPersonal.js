@@ -7,7 +7,7 @@ import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { DescargarArchivo } from "../../Utils/Funciones";
 import FormularioPersonal from "./FormularioPersonal";
 
-export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
+export default ({ id_ficha, UsuarioData, cargos_tipo_id }) => {
   useEffect(() => {
     fetchUsuariosPersonal();
     fetchUsuariosPersonalInactivos();
@@ -82,19 +82,15 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
                 <td>{item.celular}</td>
                 <td>{item.dni}</td>
                 <td>{item.email}</td>
+                <td>{<HabilitarButton item={item} recargar={recargar} />}</td>
                 <td>
-                  {Permisos["actualizar_habilitarpersonal"] == 1 && (
-                    <HabilitarButton item={item} recargar={recargar} />
-                  )}
-                </td>
-                <td>
-                  {Permisos["actualizar_datospersonal"] == 1 && (
+                  {
                     <FormularioPersonal
                       id_ficha={id_ficha}
                       dataPersonal={item}
                       recargar={recargar}
                     />
-                  )}
+                  }
                 </td>
               </tr>
             ))}
@@ -145,7 +141,7 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
                       item.apellido_materno}
                   </td>
                   <td>
-                    {Permisos["actualizar_memorandumpersonal"] == 1 && (
+                    {
                       <div
                         onClick={() => uploadFile(item.id_acceso)}
                         style={{
@@ -155,7 +151,7 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
                       >
                         <FaUpload size={10} color={"#ffffff"} />
                       </div>
-                    )}
+                    }
                   </td>
                   <td>
                     {item.memorandum !== null && (
@@ -177,19 +173,15 @@ export default ({ id_ficha, UsuarioData, cargos_tipo_id, Permisos }) => {
                   <td>{item.celular}</td>
                   <td>{item.dni}</td>
                   <td>{item.email}</td>
+                  <td>{<HabilitarButton item={item} recargar={recargar} />}</td>
                   <td>
-                    {Permisos["actualizar_habilitarpersonal"] == 1 && (
-                      <HabilitarButton item={item} recargar={recargar} />
-                    )}
-                  </td>
-                  <td>
-                    {Permisos["actualizar_datospersonal"] == 1 && (
+                    {
                       <FormularioPersonal
                         id_ficha={id_ficha}
                         dataPersonal={item}
                         recargar={recargar}
                       />
-                    )}
+                    }
                   </td>
                 </tr>
               ))}

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Tooltip } from "reactstrap";
-import Circle from "react-circle";
+import { Tooltip } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 import { Redondea, Redondea1 } from "../Utils/Funciones";
+
 export default ({ tipo, id_ficha, avance, total }) => {
   const [RandNumber, setRandNumber] = useState(Math.floor(Math.random() * 10));
   const [FisicoAvance] = useState({
@@ -11,28 +13,24 @@ export default ({ tipo, id_ficha, avance, total }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const toggle = () => setTooltipOpen(!tooltipOpen);
+
   return (
     <div>
-      {tipo == "circle" && (
-        <div style={{}}>
-          <Circle
-            progress={Redondea1(FisicoAvance.fisico_avance_porcentaje)}
-            size="25"
-            showPercentage={false}
-            lineWidth={50}
-            progressColor="#17a2b8"
+      {tipo === "circle" && (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <CircularProgress
+            variant="determinate"
+            value={Redondea1(FisicoAvance.fisico_avance_porcentaje)}
+            size={25}
+            color="info"
           />
-          <div
-            style={{
-              color: "#17a2b8",
-            }}
-          >
+          <div style={{ color: "#17a2b8" }}>
             {Redondea1(FisicoAvance.fisico_avance_porcentaje) + "%"}
           </div>
           <div>{"S/." + Redondea(avance)}</div>
-        </div>
+        </Box>
       )}
-      {tipo == "barra" && (
+      {tipo === "barra" && (
         <div
           style={{
             width: "100%",
@@ -82,17 +80,9 @@ export default ({ tipo, id_ficha, avance, total }) => {
                   fontSize: "13px",
                 }}
               >
-                -({Redondea(FisicoAvance.fisico_avance_porcentaje)} %)
+                -({Redondea(FisicoAvance.fisico_avance_porcentaje)}%)
               </div>
             </span>
-            <Tooltip
-              placement={"top"}
-              isOpen={tooltipOpen}
-              target={"FisicoBarraPorcentaje-" + id_ficha + RandNumber}
-              toggle={toggle}
-            >
-              S/.{Redondea(avance)}
-            </Tooltip>
           </div>
         </div>
       )}

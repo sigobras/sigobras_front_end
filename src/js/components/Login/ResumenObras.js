@@ -8,7 +8,6 @@ import FisicoBarraPorcentaje from "./FisicoBarraPorcentaje";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
 import CarouselNavs from "./Carousel/CarouselNavs";
 
-import "../../../css/inicio.css";
 export default () => {
   //funciones
   useEffect(() => {

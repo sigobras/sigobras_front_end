@@ -19,7 +19,7 @@ import FormularioPrincipal from "./FormularioPrincipal";
 import CurvaS_Chart from "./CurvaS_Chart";
 import CurvaS_Cabezera from "./CurvaS_Cabecera";
 
-import "./curva_s.css";
+import "./curva_s.module.css";
 
 export default ({ Obra }) => {
   //functions

@@ -3,8 +3,8 @@ import axios from 'axios';
 import { MdEdit } from "react-icons/md";
 import { Button, Input, ModalBody, ModalHeader, ModalFooter, Modal, Row, Col, FormGroup, Label } from 'reactstrap';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
-import "../PlazosHistorial/Plazos.css";
-import "./PlazosFormularioEdicion.css"
+import "../PlazosHistorial/Plazos.module.css";
+import "./PlazosFormularioEdicion.module.css"
 
 export default ({ data, recarga }) => {
     useEffect(() => {

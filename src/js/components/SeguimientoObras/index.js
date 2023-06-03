@@ -19,7 +19,7 @@ import {
 import FisicoBarraPorcentaje from "../Inicio/FisicoBarraPorcentaje";
 import FinancieroBarraPorcentaje from "../Inicio/FinancieroBarraPorcentaje";
 
-import "./index.css";
+import "./SeguimientoObras.module.css";
 
 export default ({ recargar }) => {
   const history = useHistory();

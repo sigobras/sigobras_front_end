@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import HistorialMetrados from "./HistorialMetrados";
 import { CardHeader } from "reactstrap";
-import "./HistorialMetrados.css";
+import "./HistorialMetrados.module.css";
 export default () => {
   if (sessionStorage.getItem("idacceso") !== null) {
     return (

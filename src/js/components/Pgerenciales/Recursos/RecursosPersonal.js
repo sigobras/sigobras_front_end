@@ -7,7 +7,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { UrlServer } from '../../Utils/ServerUrlConfig';
 import { Redondea, diasdelasemana, Redondea1 } from '../../Utils/Funciones';
-import "../Recursos/RecursosPersonal.css";
+import "../Recursos/RecursosPersonal.module.css";
 
 
 

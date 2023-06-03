@@ -3,7 +3,7 @@ import axios from "axios";
 import BigNumber from "bignumber.js";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import { Redondea } from "../../Utils/Funciones";
-import "./valorizaciones.css";
+import "./valorizaciones.module.css";
 export default ({ PeriodoSeleccionado, Componenteseleccionado }) => {
   useEffect(() => {
     fetchPartidas();

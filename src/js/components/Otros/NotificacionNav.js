@@ -7,7 +7,6 @@ import {
   NavLink,
 } from "reactstrap";
 import { FaBell } from "react-icons/fa";
-import LoadingXD from "../../../images/loaderXS.gif";
 import axios from "axios";
 import { UrlServer } from "../Utils/ServerUrlConfig";
 import { socket } from "../Utils/socket";

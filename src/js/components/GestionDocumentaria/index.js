@@ -32,7 +32,7 @@ import {
   FaPaperclip,
 } from "react-icons/fa";
 import ModalRespuesta from "./ModalRespuesta";
-import "./index.css";
+import "./GestionDocumentaria.module.css";
 import { socket } from "../Utils/socket";
 
 export default () => {
