@@ -11,18 +11,13 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import { UrlServer } from "../js/components/Utils/ServerUrlConfig";
-import App from "../js/components/App";
-import Login from "../js/components/Login/Home";
 import Layout from "../components/organisms/Layout";
-import { useRouter } from "next/router";
 import withAuth from "../hoc/withAuth";
 import store from "../redux/store";
 
 axios.defaults.baseURL = UrlServer;
 
 function MyApp({ Component, pageProps }) {
-
-
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
