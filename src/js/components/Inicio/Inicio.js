@@ -29,19 +29,23 @@ import Image from "next/image";
 const ObrasComponent = () => {
   const dispatch = useDispatch();
 
-  const { provincias, provinciaSeleccionada, setProvinciaSeleccionada } =
-    useProvincias();
+  const {
+    provincias,
+    provinciaSeleccionada,
+    setProvinciaSeleccionada,
+  } = useProvincias();
   const sectores = useSectores(provinciaSeleccionada);
   const estadosObra = useEstadosObra();
+
+  const [sectoreSeleccionado, setSectoreSeleccionado] = useState(0);
+  const [estadosObraeleccionada, setEstadosObraeleccionada] = useState(0);
+  const [labelsHabilitado, setLabelsHabilitado] = useState(false);
+
   const obras = useObras(
     provinciaSeleccionada,
     sectoreSeleccionado,
     estadosObraeleccionada
   );
-
-  const [sectoreSeleccionado, setSectoreSeleccionado] = useState(0);
-  const [estadosObraeleccionada, setEstadosObraeleccionada] = useState(0);
-  const [labelsHabilitado, setLabelsHabilitado] = useState(false);
 
   useEffect(() => {
     setSectoreSeleccionado(0);
