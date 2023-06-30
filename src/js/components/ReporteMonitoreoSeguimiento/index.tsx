@@ -19,7 +19,7 @@ export default () => {
       const res = await axios.get(`${UrlServer}/v1/reporteMonitoreoSeguimiento`);
       setDatos(res.data)
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
     }
   }
 
@@ -28,7 +28,7 @@ export default () => {
       await axios.post(`${UrlServer}/v1/reporteMonitoreoSeguimiento`)
       cargarDatos()
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
     }
   }
 
