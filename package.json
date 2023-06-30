@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "sonar": "sonar-scanner"
+    "sonar": "sonar-scanner",
+    "lint": "tsc --noEmit && eslint './src/*/.{ts,tsx}' --fix"
   },
   "keywords": [],
   "author": "SIGOBRAS",
