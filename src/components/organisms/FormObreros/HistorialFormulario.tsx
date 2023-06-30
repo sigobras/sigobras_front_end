@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { CargoNoTecnico } from '../../../interfaces/CargoNoTecnico';
 import { useUpdateHistorial } from '../../../hooks/usePersonalNoTecnico';
 
-const HistorialFormulario = ({ cargos, item, borrarHistorialPersonalNoTecnico }: any) => {
+const HistorialFormulario = ({ item, borrarHistorialPersonalNoTecnico, nombreCargo }: any) => {
     const [valueForm, setValueForm] = useState({
         mes_ano: item.mes_ano.slice(0, 7),
         dias_trabajados: item.dias_trabajados,
@@ -30,27 +25,19 @@ const HistorialFormulario = ({ cargos, item, borrarHistorialPersonalNoTecnico }:
 
     return (
         <>
-            <Grid xs={12} sm={3} md={3}>
-                <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Cargo</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Cargo"
-                        value={item.id_cargo}
-                        onChange={event => handleFieldChange('id_cargo', event.target.value)}
-                        disabled
-                    >
-                        {cargos.map((cargo: CargoNoTecnico) => (
-                            <MenuItem key={cargo.id} value={cargo.id}>
-                                {cargo.nombre}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            <Grid xs={12} sm={4} md={4}>
+                <TextField
+                    fullWidth
+                    type="text"
+                    id="demo-simple-select"
+                    label="Cargo"
+                    variant="outlined"
+                    disabled
+                    value={nombreCargo(item.id_cargo)}
+                />
             </Grid>
 
-            <Grid xs={12} sm={3} md={3}>
+            <Grid xs={12} sm={4} md={4}>
                 <TextField
                     fullWidth
                     value={valueForm.mes_ano}
@@ -77,7 +64,7 @@ const HistorialFormulario = ({ cargos, item, borrarHistorialPersonalNoTecnico }:
                     onBlur={event => handleOnBlur('dias_trabajados', event.target.value)}
                 />
             </Grid>
-            <Grid xs={12} sm={3} md={3}>
+            <Grid xs={12} sm={1} md={1}>
                 <IconButton
                     sx={{
                         width: 40,

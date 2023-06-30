@@ -15,17 +15,17 @@ const PersonButtonModal = ({ nombres, apellido_paterno, apellido_materno, direcc
     };
 
     return (
-        <>
+        <TableCell >
+
             <Button
                 onClick={handleOpen}
                 disableElevation
                 disableRipple
-                sx={{ backgroundColor: 'transparent', textTransform: 'none' }}
+                sx={{ backgroundColor: 'transparent', textTransform: 'none', textAlign: 'left' }}
             >
-                <TableCell component="th" scope="row" align="right" sx={{ display: 'flex', alignItems: 'center' }}>
-                    {`${nombres} ${apellido_paterno} ${apellido_materno}`}
-                </TableCell>
+                {`${nombres} ${apellido_paterno} ${apellido_materno}`}
             </Button>
+
             {
                 open === true &&
                 <ModalHistorialFormulario
@@ -43,7 +43,7 @@ const PersonButtonModal = ({ nombres, apellido_paterno, apellido_materno, direcc
                 />
             }
 
-        </>
+        </TableCell>
     );
 };
 

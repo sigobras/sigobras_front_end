@@ -42,11 +42,14 @@ export function useGrabarPersonalNoTecnico() {
 export function usePersonal(id_ficha: String) {
     const [personal, setPersonal] = useState<Person[]>([]);
 
+    async function fetchPersonal(): Promise<Person[]> {
+        const data = await getPersonalNoTecnico(id_ficha);
+        setPersonal(Object.values(data[0]));
+        return Object.values(data[0]);
+      }
+      
     useEffect(() => {
-        async function fetchPersonal() {
-            const data = await getPersonalNoTecnico(id_ficha);
-            setPersonal(Object.values(data[0]));
-        }
+
         fetchPersonal();
     }, [id_ficha]);
 
@@ -57,7 +60,7 @@ export function usePersonal(id_ficha: String) {
             setPersonal(updatedPersonalArray);
         }
     }
-    return { personal, deleteAsignacion, setPersonal };
+    return { personal, deleteAsignacion, setPersonal, fetchPersonal };
 }
 
 export const editPersonal = async (id: number, data: formulario, id_asignacion: number, nuevo_cargo: number) => {

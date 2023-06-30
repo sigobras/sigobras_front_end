@@ -31,6 +31,7 @@ export interface Person {
     celular: string;
     email: string;
     id_asignacion: number;
+    cargo: string;
     ['asignacion.id_cargos_obreros']: number;
 }
 

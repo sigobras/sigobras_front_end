@@ -13,31 +13,16 @@ import PersonButtonModal from './PersonButtonModal';
 import IconButton from "@mui/material/IconButton";
 import ModalFormularioPersonal from './ModalFormularioPersonal';
 import { editPersonal, usePersonalNoTecnico } from '../../../hooks/usePersonalNoTecnico';
+import { formatearFechaDiaMesAnio } from '../../../js/components/Utils/Funciones';
 
-const PersonalList = ({ listaPersonal, deleteAsignacion, setPersonal }: any) => {
+const PersonalList = ({ listaPersonal, deleteAsignacion, setPersonal, fetchPersonal }: any) => {
   const cargos = usePersonalNoTecnico()
 
   const onSubmit = async (data: any) => {
 
-    const [asignacionData, personalData] = await editPersonal(data.id, data.dataFormulario, data.id_asignacion, data.dataFormulario.id_cargo);
+    await editPersonal(data.id, data.dataFormulario, data.id_asignacion, data.dataFormulario.id_cargo);
 
-    const index = listaPersonal.findIndex(({ id_personal }: any) => id_personal === data.id)
-    const cargo = cargos.find(({ id }: any) => id === data.dataFormulario.id_cargo)?.nombre
-
-    const newListaPersonal = [...listaPersonal]
-    let fechaFormateada = personalData.fecha_nacimiento;
-    if (typeof fechaFormateada === 'string') {
-      const fecha = new Date(fechaFormateada);
-      fechaFormateada = fecha.toISOString().slice(0, 10);
-    }
-    newListaPersonal[index] = {
-      ...personalData,
-      id_cargo: asignacionData.id_cargos_obreros,
-      fecha_nacimiento: fechaFormateada,
-      id_asignacion: asignacionData.id,
-      id_personal: personalData.id,
-      cargo
-    }
+    const newListaPersonal = await fetchPersonal()
     setPersonal(newListaPersonal)
 
   };
@@ -47,14 +32,14 @@ const PersonalList = ({ listaPersonal, deleteAsignacion, setPersonal }: any) => 
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Personal No Tecnico</TableCell>
+            <TableCell>Personal No Técnico</TableCell>
             <TableCell align="left">DNI</TableCell>
             <TableCell align="left">Cargo</TableCell>
-            <TableCell align="right">Fecha de Nacimiento</TableCell>
-            <TableCell align="right">Dirección</TableCell>
-            <TableCell align="right">Celular</TableCell>
-            <TableCell align="right">Email</TableCell>
-            <TableCell align="right">Opciones</TableCell>
+            <TableCell align="left">Fecha de Nacimiento</TableCell>
+            <TableCell align="left">Dirección</TableCell>
+            <TableCell align="left">Celular</TableCell>
+            <TableCell align="left">Email</TableCell>
+            <TableCell align="left">Opciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -76,11 +61,11 @@ const PersonalList = ({ listaPersonal, deleteAsignacion, setPersonal }: any) => 
               />
               <TableCell align="left">{personal.dni}</TableCell>
               <TableCell align="left">{personal.cargo}</TableCell>
-              <TableCell align="right">{personal.fecha_nacimiento}</TableCell>
-              <TableCell align="right">{personal.direccion}</TableCell>
-              <TableCell align="right">{personal.celular}</TableCell>
-              <TableCell align="right">{personal.email}</TableCell>
-              <TableCell align="right">
+              <TableCell align="left">{formatearFechaDiaMesAnio(personal.fecha_nacimiento)}</TableCell>
+              <TableCell align="left">{personal.direccion}</TableCell>
+              <TableCell align="left">{personal.celular}</TableCell>
+              <TableCell align="left">{personal.email}</TableCell>
+              <TableCell align="left">
                 <Stack
                   direction="row"
                   spacing={1}
