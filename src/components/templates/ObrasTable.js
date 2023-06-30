@@ -34,6 +34,7 @@ import OutlinedLabel from "../organisms/OutlinedLabel";
 import PlazosInfo from "../organisms/PlazosInfo";
 import ObrasLabels from "../organisms/ObrasLabels";
 import PersonalComponent from "../organisms/PersonalComponent";
+import FormObreros from "../organisms/FormObreros";
 const ObrasTable = ({ obras }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -221,7 +222,9 @@ const ObrasTable = ({ obras }) => {
                       id_ficha={item.id_ficha}
                       codigo_obra={item.codigo}
                     />
+                    <FormObreros id_ficha={item.id_ficha} />
                   </div>
+
                   <div className="d-flex">
                     <CurvaS Obra={item} />
                     <ObrasLabelsEdicion
