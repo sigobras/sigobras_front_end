@@ -157,7 +157,7 @@ const ModalHistorialFormulario = ({ nombres, apellido_paterno, apellido_materno,
                                                             {nombreCargo(item.id_cargo)}
                                                         </div>
                                                     }
-                                                    secondary={`Cantidad: ${item.cantidad_dias}`}
+                                                    secondary={`Cantidad: ${item.cantidad_dias} Días`}
                                                 />
                                             </ListItem>
                                         ))}
