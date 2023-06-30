@@ -3,6 +3,7 @@ import HighchartsReact from "highcharts-react-official";
 
 class Chart extends React.Component {
   constructor(props) {
+    
     super(props);
     this.state = { seconds: 0 };
     this.chart;
