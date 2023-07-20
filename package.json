@@ -65,7 +65,7 @@
     "react-table": "^7.8.0",
     "react-toastify": "^5.1.1",
     "reactstrap": "^8.6.0",
-    "read-excel-file": "^4.0.1",
+    "read-excel-file": "^5.6.1",
     "socket.io-client": "^2.3.1",
     "style-loader": "^0.23.1",
     "uuid": "^8.3.1"
