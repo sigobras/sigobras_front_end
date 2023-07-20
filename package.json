@@ -62,7 +62,7 @@
     "react-router-dom": "^5.0.0",
     "react-select": "^4.1.0",
     "react-stepzilla": "^6.0.0",
-    "react-table": "^6.10.0",
+    "react-table": "^7.8.0",
     "react-toastify": "^5.1.1",
     "reactstrap": "^8.6.0",
     "read-excel-file": "^4.0.1",
