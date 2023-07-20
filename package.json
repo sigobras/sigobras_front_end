@@ -48,7 +48,7 @@
     "jspdf": "^2.3.1",
     "jspdf-autotable": "^3.5.13",
     "match-sorter": "^3.0.0",
-    "npm": "^7.0.5",
+    "npm": "^8.11.0",
     "pdfmake": "^0.1.56",
     "react-bootstrap-dialog": "^0.11.0",
     "react-chartjs-2": "^2.10.0",
