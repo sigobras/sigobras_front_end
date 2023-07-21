@@ -1,8 +1,7 @@
-
 .sliderImage {
-  width: 100%;
-  height: 300px;
-  /* set the desired height */
-  object-fit: cover;
-  /* adjust how the image is displayed */
+	width: 100%;
+	height: 300px;
+	/* set the desired height */
+	object-fit: cover;
+	/* adjust how the image is displayed */
 }
