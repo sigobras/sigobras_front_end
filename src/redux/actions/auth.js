@@ -1,11 +1,11 @@
 export const login = () => {
-  return {
-    type: "LOGIN",
-  };
+	return {
+		type: 'LOGIN',
+	};
 };
 
 export const logout = () => {
-  return {
-    type: "LOGOUT",
-  };
+	return {
+		type: 'LOGOUT',
+	};
 };

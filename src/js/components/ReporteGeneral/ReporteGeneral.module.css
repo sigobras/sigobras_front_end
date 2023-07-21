@@ -1,79 +1,79 @@
 .reporteGeneral-table tbody tr td,
 .reporteGeneral-table tbody tr th {
-  padding: 0px;
-  font-size: 11px;
-  vertical-align: top;
+	padding: 0px;
+	font-size: 11px;
+	vertical-align: top;
 }
 .reporteGeneral-table {
-  border-collapse: separate;
-  background: #fffde5;
+	border-collapse: separate;
+	background: #fffde5;
 }
 
 .reporteGeneral-table input {
-  height: 16px;
-  font-size: 11px;
-  background: #42ff0038;
-  color: black;
+	height: 16px;
+	font-size: 11px;
+	background: #42ff0038;
+	color: black;
 }
 .reporteGeneral-table select {
-  height: 16px;
-  font-size: 11px;
-  background: #42ff0038;
-  padding: 0px;
+	height: 16px;
+	font-size: 11px;
+	background: #42ff0038;
+	padding: 0px;
 }
 .select-black {
-  background: #171819;
-  border: #171819;
-  color: white;
-  height: 25px;
-  font-size: 10px;
-  cursor: pointer;
+	background: #171819;
+	border: #171819;
+	color: white;
+	height: 25px;
+	font-size: 10px;
+	cursor: pointer;
 }
 .reporteGeneral-table textarea {
-  font-size: 11px;
-  background: #42ff0038;
+	font-size: 11px;
+	background: #42ff0038;
 }
 .reporteGeneral-table-input {
-  height: 16px;
-  font-size: 11px;
-  background: #42ff0038;
+	height: 16px;
+	font-size: 11px;
+	background: #42ff0038;
 }
 .reporteGeneral-cabezera {
-  background: #242526;
-  color: white;
+	background: #242526;
+	color: white;
 }
 .reporteGeneral-cabezeraSticky {
-  /* position: sticky;*/
-  left: 0px;
-  background: #242526;
-  color: white;
+	/* position: sticky;*/
+	left: 0px;
+	background: #242526;
+	color: white;
 }
 .reporteGeneral-body {
-  background: #fffde5;
-  color: black;
+	background: #fffde5;
+	color: black;
 }
 .reporteGeneral-bodySticky {
-  /* position: sticky;*/
-  left: 0px;
-  background: #fffde5;
-  color: black;
-  z-index: 1;
+	/* position: sticky;*/
+	left: 0px;
+	background: #fffde5;
+	color: black;
+	z-index: 1;
 }
 .reporteGeneral-bodySticky-analitico {
-  /* position: sticky;*/
-  left: 300px;
-  background: #fffde5;
-  color: black;
-  border-color: white;
+	/* position: sticky;*/
+	left: 300px;
+	background: #fffde5;
+	color: black;
+	border-color: white;
 }
 .reporteGeneral-titulos th {
-  color: black;
-  background: #c6c8ca;
-  font-weight: 700;
+	color: black;
+	background: #c6c8ca;
+	font-weight: 700;
 }
 .reporteGeneral-avanceFisico {
-  background: #17a2b8;
+	background: #17a2b8;
 }
 .reporteGeneral-avanceFinanciero {
-  background: orange;
+	background: orange;
 }

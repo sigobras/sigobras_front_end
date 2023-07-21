@@ -1,63 +1,63 @@
 .custom-modal-dialog {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 .custom-modal-content {
-  height: 100%;
-  min-height: 100%;
-  border-radius: 0;
-  width: 100% !important;
-  max-width: 100% !important;
+	height: 100%;
+	min-height: 100%;
+	border-radius: 0;
+	width: 100% !important;
+	max-width: 100% !important;
 }
 @media (min-width: 576px) {
-  .custom-modal-dialog {
-    max-width: 100% !important;
-  }
+	.custom-modal-dialog {
+		max-width: 100% !important;
+	}
 }
 /* grid */
 .modal-imagenes .fotos {
-  grid-area: fotos;
-  background: black;
+	grid-area: fotos;
+	background: black;
 }
 .modal-imagenes .datos {
-  grid-area: datos;
-  background: #181818;
-  padding: 15px;
-  position: relative;
+	grid-area: datos;
+	background: #181818;
+	padding: 15px;
+	position: relative;
 }
 .modal-imagenes .indicadores {
-  grid-area: indicadores;
-  position: relative;
+	grid-area: indicadores;
+	position: relative;
 }
 .modal-imagenes {
-  height: 730px;
-  background: black;
-  display: grid;
-  grid-template-columns: 4fr 2fr;
-  grid-template-rows: 90% 10%;
-  grid-template-areas:
-    "fotos  datos"
-    "indicadores   indicadores";
+	height: 730px;
+	background: black;
+	display: grid;
+	grid-template-columns: 4fr 2fr;
+	grid-template-rows: 90% 10%;
+	grid-template-areas:
+		'fotos  datos'
+		'indicadores   indicadores';
 }
 /* labels */
 .formulario-labels {
-  display: flex;
+	display: flex;
 }
 
 .formulario-labels > dl {
-  margin: 10px;
+	margin: 10px;
 }
 .paleta-color button {
-  width: 34px;
-  height: 34px;
+	width: 34px;
+	height: 34px;
 }
 /* comentarios */
 .comentario-input {
-  display: inline-block;
+	display: inline-block;
 }
 .comentario-input:empty:before {
-  content: attr(data-placeholder);
+	content: attr(data-placeholder);
 }

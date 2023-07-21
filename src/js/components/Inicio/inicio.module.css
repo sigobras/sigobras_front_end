@@ -1,84 +1,84 @@
 .aviso p {
-  color: #000000;
-  border-radius: 10px;
-  text-align: justify;
-  height: auto;
-  width: auto;
-  font-family: "Patrick Hand SC", cursive;
-  font-size: medium;
-  font-weight: bold;
-  /* border: 1px solid rgba(51, 153, 204, 0.267); */
-  background: rgba(237, 237, 237, 1);
-  background: -moz-linear-gradient(
-    top,
-    rgba(237, 237, 237, 1) 0%,
-    rgba(227, 227, 227, 1) 47%,
-    rgba(219, 219, 219, 1) 100%
-  );
-  background: -webkit-gradient(
-    left top,
-    left bottom,
-    color-stop(0%, rgba(237, 237, 237, 1)),
-    color-stop(47%, rgba(227, 227, 227, 1)),
-    color-stop(100%, rgba(219, 219, 219, 1))
-  );
-  background: -webkit-linear-gradient(
-    top,
-    rgba(237, 237, 237, 1) 0%,
-    rgba(227, 227, 227, 1) 47%,
-    rgba(219, 219, 219, 1) 100%
-  );
-  background: -o-linear-gradient(
-    top,
-    rgba(237, 237, 237, 1) 0%,
-    rgba(227, 227, 227, 1) 47%,
-    rgba(219, 219, 219, 1) 100%
-  );
-  background: -ms-linear-gradient(
-    top,
-    rgba(237, 237, 237, 1) 0%,
-    rgba(227, 227, 227, 1) 47%,
-    rgba(219, 219, 219, 1) 100%
-  );
-  background: linear-gradient(
-    to bottom,
-    rgba(237, 237, 237, 1) 0%,
-    rgba(227, 227, 227, 1) 47%,
-    rgba(219, 219, 219, 1) 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#dbdbdb', GradientType=0 );
+	color: #000000;
+	border-radius: 10px;
+	text-align: justify;
+	height: auto;
+	width: auto;
+	font-family: 'Patrick Hand SC', cursive;
+	font-size: medium;
+	font-weight: bold;
+	/* border: 1px solid rgba(51, 153, 204, 0.267); */
+	background: rgba(237, 237, 237, 1);
+	background: -moz-linear-gradient(
+		top,
+		rgba(237, 237, 237, 1) 0%,
+		rgba(227, 227, 227, 1) 47%,
+		rgba(219, 219, 219, 1) 100%
+	);
+	background: -webkit-gradient(
+		left top,
+		left bottom,
+		color-stop(0%, rgba(237, 237, 237, 1)),
+		color-stop(47%, rgba(227, 227, 227, 1)),
+		color-stop(100%, rgba(219, 219, 219, 1))
+	);
+	background: -webkit-linear-gradient(
+		top,
+		rgba(237, 237, 237, 1) 0%,
+		rgba(227, 227, 227, 1) 47%,
+		rgba(219, 219, 219, 1) 100%
+	);
+	background: -o-linear-gradient(
+		top,
+		rgba(237, 237, 237, 1) 0%,
+		rgba(227, 227, 227, 1) 47%,
+		rgba(219, 219, 219, 1) 100%
+	);
+	background: -ms-linear-gradient(
+		top,
+		rgba(237, 237, 237, 1) 0%,
+		rgba(227, 227, 227, 1) 47%,
+		rgba(219, 219, 219, 1) 100%
+	);
+	background: linear-gradient(
+		to bottom,
+		rgba(237, 237, 237, 1) 0%,
+		rgba(227, 227, 227, 1) 47%,
+		rgba(219, 219, 219, 1) 100%
+	);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#dbdbdb', GradientType=0 );
 }
 
 .fondo {
-  color: #ffffff;
-  text-align: center;
-  height: 60px;
-  width: 1000;
-  /* border: 1px solid rgba(51, 153, 204, 0.267); */
-  /* background: #a5a5a5; */
-  /* background-image: url("../images/banner7.jpg"); */
-  margin-bottom: 5px;
-  background-size: cover;
-  background-position: 50% 0%;
-  /* border-radius: 15px; */
-  font-size: large;
+	color: #ffffff;
+	text-align: center;
+	height: 60px;
+	width: 1000;
+	/* border: 1px solid rgba(51, 153, 204, 0.267); */
+	/* background: #a5a5a5; */
+	/* background-image: url("../images/banner7.jpg"); */
+	margin-bottom: 5px;
+	background-size: cover;
+	background-position: 50% 0%;
+	/* border-radius: 15px; */
+	font-size: large;
 }
 .textoaviso {
-  padding-top: 2px;
-  text-align: left;
-  font-size: 13px;
-  margin-bottom: 3px;
-  margin-top: 3px;
+	padding-top: 2px;
+	text-align: left;
+	font-size: 13px;
+	margin-bottom: 3px;
+	margin-top: 3px;
 }
 
 /* texto del aviso */
 .banner-container {
-  max-width: 100%;
-  overflow: hidden;
+	max-width: 100%;
+	overflow: hidden;
 }
 
 .banner-container img {
-  width: 100%;
-  height: auto;
-  display: block;
+	width: 100%;
+	height: auto;
+	display: block;
 }

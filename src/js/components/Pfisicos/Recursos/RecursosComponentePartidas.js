@@ -7,8 +7,5 @@ import RecursosComponenteResumen from './RecursosComponenteResumen';
 import RecursosComponentePartidas from './RecursosComponentePartidas';
 
 export default () => {
-
-    return (
-        <div>Interfaz de componentes partidas</div>
-    )
-}
+	return <div>Interfaz de componentes partidas</div>;
+};

@@ -83,7 +83,7 @@ class RecordObras extends Component {
 		this.setState({
 			event: event.target.value,
 		});
-		var DataFiltrado = this.state.DataRecorObra;
+		let DataFiltrado = this.state.DataRecorObra;
 
 		DataFiltrado = DataFiltrado.filter(item => {
 			return (
@@ -252,9 +252,9 @@ class List extends Component {
 			pdf.addImage(logoGRPuno, 'JPEG', 10, 4, 100, 10);
 			pdf.addImage(logoSigobras, 'JPEG', 270, 4, 15, 11);
 
-			var res1 = pdf.autoTableHtmlToJson(document.getElementById('tbl1'));
-			var res2 = pdf.autoTableHtmlToJson(document.getElementById('tbl2'));
-			var res3 = pdf.autoTableHtmlToJson(document.getElementById('tbl3'));
+			const res1 = pdf.autoTableHtmlToJson(document.getElementById('tbl1'));
+			const res2 = pdf.autoTableHtmlToJson(document.getElementById('tbl2'));
+			const res3 = pdf.autoTableHtmlToJson(document.getElementById('tbl3'));
 			pdf.autoTable(res1.columns, res1.data, {
 				theme: 'striped',
 				startY: pdf.autoTableEndPosY() + 20,
@@ -602,14 +602,14 @@ class List extends Component {
 										>
 											<tbody>
 												<tr className='d-none'>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
 												</tr>
 												<tr>
 													<td colSpan='8' className='bg-info text-center'>
@@ -620,10 +620,10 @@ class List extends Component {
 												<tr>
 													<td>ENTIDAD FINANCIERA</td>
 													<td>: {DataCabeceraReporte.entidad_financiera}</td>
-													<td rowSpan='4'></td>
+													<td rowSpan='4' />
 													<td>PRESUPUESTO BASE</td>
 													<td>S/. {DataCabeceraReporte.presupuesto}</td>
-													<td rowSpan='4'></td>
+													<td rowSpan='4' />
 													<td>PLAZO DE EJECUCION INICIAL</td>
 													<td>
 														{DataCabeceraReporte.plazo_ejecucion_inicial} DIAS
@@ -643,10 +643,10 @@ class List extends Component {
 												<tr>
 													<td>FUENTE DE INFORMACION</td>
 													<td>: {DataCabeceraReporte.fuente_informacion}</td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
+													<td />
+													<td />
+													<td />
+													<td />
 												</tr>
 											</tbody>
 										</table>
@@ -657,23 +657,23 @@ class List extends Component {
 										>
 											<tbody>
 												<tr className='d-none'>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
-													<td></td>
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
+													<td />
 
 													{/* <td></td>
                                         <td></td>
@@ -771,9 +771,9 @@ class List extends Component {
 										>
 											<tbody>
 												<tr className='d-none'>
-													<td></td>
-													<td></td>
-													<td></td>
+													<td />
+													<td />
+													<td />
 												</tr>
 												<tr>
 													<td>
