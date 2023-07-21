@@ -1,5 +1,5 @@
 // redondea a dos decimales
-Number.prototype.CustomToFixed = function (decimals) {
+Number.prototype.CustomToFixed = function(decimals) {
   return (
     Math.round(this * Math.pow(10, decimals)) / Math.pow(10, decimals)
   ).toFixed(decimals);
@@ -388,6 +388,12 @@ function DescargarArchivo(data) {
     link.click();
   }
 }
+
+function formatearFechaDiaMesAnio(fecha) {
+  const arrayFecha = fecha.split("-");
+  return arrayFecha[2] + "-" + arrayFecha[1] + "-" + arrayFecha[0];
+}
+
 module.exports = {
   Redondea,
   PrimerDiaDelMesActual,
@@ -411,4 +417,5 @@ module.exports = {
   stringToDateObject,
   RedondeaDecimales,
   DescargarArchivo,
+  formatearFechaDiaMesAnio,
 };
