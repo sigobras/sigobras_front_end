@@ -1,10 +1,7 @@
-module.exports = {
-    // ...
-    // Otras configuraciones de Next.js
-    // ...
-  
-    // Configuración de Babel
-    babel: {
-      presets: ["next/babel"],
-    },
-  };
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+	reactStrictMode: true,
+	swcMinify: true,
+};
+
+module.exports = nextConfig;

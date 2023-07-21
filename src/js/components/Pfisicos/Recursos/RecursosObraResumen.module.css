@@ -1,7 +1,7 @@
 .showme {
-    display: none;
-  }
-  
-  .showhim:hover .showme {
-    display: block;
-  }
+	display: none;
+}
+
+.showhim:hover .showme {
+	display: block;
+}

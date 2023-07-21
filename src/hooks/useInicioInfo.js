@@ -1,110 +1,100 @@
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { UrlServer } from "../utils/ServerUrlConfig";
-import { useDispatch } from "react-redux";
-import { setSelectedWork } from "../redux/actions/work";
+import { useEffect, useState } from 'react';
+import {
+	fetchEstadosObra,
+	fetchObras,
+	fetchProvincias,
+	fetchSectores,
+} from '../services/inicioService';
 
-const useProvincias = () => {
-  const [provincias, setProvincias] = useState([]);
-  const [provinciaSeleccionada, setProvinciaSeleccionada] = useState(0);
+export const useProvincias = id_acceso => {
+	const [provincias, setProvincias] = useState([]);
 
-  useEffect(() => {
-    const fetchProvincias = async () => {
-      const res = await axios.get(`${UrlServer}/v1/unidadEjecutora`, {
-        params: {
-          id_acceso: sessionStorage.getItem("idacceso"),
-        },
-      });
-      setProvincias(res.data);
-      if (!sessionStorage.getItem("provinciaSeleccionada")) {
-        sessionStorage.setItem("provinciaSeleccionada", 0);
-      } else {
-        setProvinciaSeleccionada(
-          sessionStorage.getItem("provinciaSeleccionada")
-        );
-      }
-    };
+	useEffect(() => {
+		if (id_acceso) {
+			const fetchProvinciasData = async () => {
+				try {
+					const data = await fetchProvincias(id_acceso);
+					setProvincias(data);
+				} catch (error) {
+					// Manejo de errores
+				}
+			};
 
-    fetchProvincias();
-  }, []);
+			fetchProvinciasData();
+		}
+	}, [id_acceso]);
 
-  return { provincias, provinciaSeleccionada, setProvinciaSeleccionada };
+	return provincias;
 };
 
-const useSectores = (provinciaSeleccionada) => {
-  const [sectores, setSectores] = useState([]);
+export const useSectores = (id_acceso, provinciaSeleccionada) => {
+	const [sectores, setSectores] = useState([]);
 
-  useEffect(() => {
-    const fetchSectores = async () => {
-      const res = await axios.get(`${UrlServer}/v1/sectores`, {
-        params: {
-          id_acceso: sessionStorage.getItem("idacceso"),
-          id_unidadEjecutora: provinciaSeleccionada,
-        },
-      });
-      setSectores(res.data);
-    };
+	useEffect(() => {
+		if (id_acceso) {
+			const fetchSectoresData = async () => {
+				try {
+					const data = await fetchSectores(provinciaSeleccionada, id_acceso);
+					setSectores(data);
+				} catch (error) {
+					// Manejo de errores
+				}
+			};
 
-    fetchSectores();
-  }, [provinciaSeleccionada]);
+			fetchSectoresData();
+		}
+	}, [id_acceso, provinciaSeleccionada]);
 
-  return sectores;
+	return sectores;
 };
 
-const useEstadosObra = () => {
-  const [estadosObra, setEstadosObra] = useState([]);
+export const useEstadosObra = id_acceso => {
+	const [estadosObra, setEstadosObra] = useState([]);
 
-  useEffect(() => {
-    const fetchEstadosObra = async () => {
-      const res = await axios.get(`${UrlServer}/v1/obrasEstados`, {
-        params: {
-          id_acceso: sessionStorage.getItem("idacceso"),
-        },
-      });
-      setEstadosObra(res.data);
-    };
+	useEffect(() => {
+		if (id_acceso) {
+			const fetchEstadosObraData = async () => {
+				try {
+					const data = await fetchEstadosObra(id_acceso);
+					setEstadosObra(data);
+				} catch (error) {
+					// Manejo de errores
+				}
+			};
 
-    fetchEstadosObra();
-  }, []);
+			fetchEstadosObraData();
+		}
+	}, [id_acceso]);
 
-  return estadosObra;
+	return estadosObra;
 };
 
-const useObras = (
-  provinciaSeleccionada,
-  sectoreSeleccionado,
-  estadosObraeleccionada
+export const useObras = (
+	provinciaSeleccionada,
+	sectorSeleccionado,
+	estadosObraSeleccionada,
+	id_acceso,
 ) => {
-  const dispatch = useDispatch();
-  const [obras, setObras] = useState([]);
+	const [obras, setObras] = useState([]);
 
-  useEffect(() => {
-    const fetchObras = async () => {
-      const res = await axios.get(`${UrlServer}/v1/obras`, {
-        params: {
-          id_acceso: sessionStorage.getItem("idacceso"),
-          id_unidadEjecutora: provinciaSeleccionada,
-          idsectores: sectoreSeleccionado,
-          id_Estado: estadosObraeleccionada,
-          sort_by: "poblacion-desc",
-        },
-      });
-      setObras(res.data);
-      if (!sessionStorage.getItem("idobra")) {
-        setSelectedWorkHandler(res.data[0]);
-      }
-    };
+	useEffect(() => {
+		const obtenerObras = async () => {
+			const obrasFiltradas = await fetchObras(
+				provinciaSeleccionada,
+				sectorSeleccionado,
+				estadosObraSeleccionada,
+				id_acceso,
+			);
+			setObras(obrasFiltradas);
+		};
 
-    if (provinciaSeleccionada !== -1) {
-      fetchObras();
-    }
-  }, [provinciaSeleccionada, sectoreSeleccionado, estadosObraeleccionada]);
+		obtenerObras();
+	}, [
+		provinciaSeleccionada,
+		sectorSeleccionado,
+		estadosObraSeleccionada,
+		id_acceso,
+	]);
 
-  const setSelectedWorkHandler = (data) => {
-    sessionStorage.setItem("selectedWork", data);
-    dispatch(setSelectedWork(data));
-  };
-
-  return obras;
+	return obras;
 };
-export { useProvincias, useSectores, useEstadosObra, useObras };

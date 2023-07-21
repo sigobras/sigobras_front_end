@@ -1,76 +1,76 @@
 .cuadroMetrados {
-  table-layout: fixed;
-  width: 100%;
-  white-space: nowrap;
+	table-layout: fixed;
+	width: 100%;
+	white-space: nowrap;
 }
 .cuadroMetrados th,
 .cuadroMetrados td {
-  width: auto;
+	width: auto;
 }
 .cuadroMetrados .stickyTitulo {
-  position: sticky;
-  left: 0px;
-  background: #242526;
+	position: sticky;
+	left: 0px;
+	background: #242526;
 }
 .cuadroMetrados .stickyTitulo2 {
-  position: sticky;
-  left: 78px;
-  background: #242526;
+	position: sticky;
+	left: 78px;
+	background: #242526;
 }
 .cuadroMetrados .stickyTitulo3 {
-  position: sticky;
-  left: 430px;
-  background: #242526;
+	position: sticky;
+	left: 430px;
+	background: #242526;
 }
 .cuadroMetrados .sticky {
-  position: sticky;
-  left: 0px;
+	position: sticky;
+	left: 0px;
 }
 .cuadroMetrados .sticky2 {
-  position: sticky;
-  left: 78px;
+	position: sticky;
+	left: 78px;
 }
 .cuadroMetrados .sticky3 {
-  position: sticky;
-  left: 510px;
+	position: sticky;
+	left: 510px;
 }
 .cut-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 430px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 430px;
 }
 .cuadroMetrados .item {
-  width: 78px;
+	width: 78px;
 }
 .cuadroMetrados .descripcion {
-  width: 430px;
+	width: 430px;
 }
 .cuadroMetrados .unidad_medida {
-  width: 49px;
-  white-space: normal;
+	width: 49px;
+	white-space: normal;
 }
 .cuadroMetrados .metrado {
-  width: 15%;
-  white-space: normal;
+	width: 15%;
+	white-space: normal;
 }
 .cuadroMetrados .metrado_anterior {
-  width: 19%;
-  white-space: normal;
+	width: 19%;
+	white-space: normal;
 }
 .cuadroMetrados .dia {
-  width: 10%;
+	width: 10%;
 }
 .cuadroMetrados .total {
-  width: 20%;
+	width: 20%;
 }
 .cuadroMetrados .saldo {
-  width: 20%;
+	width: 20%;
 }
 .cuadroMetrados .recursotitulo {
-  width: 100%;
+	width: 100%;
 }
 .cuadroMetrados .recurso {
-  width: 60px;
-  white-space: normal;
+	width: 60px;
+	white-space: normal;
 }

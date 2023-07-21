@@ -1,19 +1,19 @@
-import { SET_SELECTED_WORK } from "../actions/work";
+import { SET_SELECTED_WORK } from '../actions/work';
 
 const initialState = {
-  selectedWork: {},
+	selectedWork: {},
 };
 
 function rootReducer(state = initialState, action) {
-  switch (action.type) {
-    case SET_SELECTED_WORK:
-      return {
-        ...state,
-        selectedWork: action.work,
-      };
-    default:
-      return state;
-  }
+	switch (action.type) {
+		case SET_SELECTED_WORK:
+			return {
+				...state,
+				selectedWork: action.work,
+			};
+		default:
+			return state;
+	}
 }
 
 export default rootReducer;

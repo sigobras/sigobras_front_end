@@ -1,8 +1,8 @@
-import React from "react";
-import HomePage from "../js/components/Login/Home";
+import React from 'react';
+import HomePage from '../js/components/Login/Home';
 
 const Landing = () => {
-  return <HomePage />;
+	return <HomePage />;
 };
 
 export default Landing;

@@ -1,107 +1,109 @@
 import React, { Component } from 'react';
 
 class DragDrop extends Component {
-  constructor(props) {
-    super(props);
-      this.state = {
-        tasks: [
-          {
-            name: "Learn Angular",
-            category: "ejecucion",
-            bgcolor: "red" 
-          },
-          { 
-            name: "React",
-            category: "ejecucion", 
-            bgcolor: "blue"
-          },
-          { 
-            name: "Vue", 
-            category: "ejecucion", 
-            bgcolor: "yellow" 
-          }
-        ]
-      }
+	constructor(props) {
+		super(props);
+		this.state = {
+			tasks: [
+				{
+					name: 'Learn Angular',
+					category: 'ejecucion',
+					bgcolor: 'red',
+				},
+				{
+					name: 'React',
+					category: 'ejecucion',
+					bgcolor: 'blue',
+				},
+				{
+					name: 'Vue',
+					category: 'ejecucion',
+					bgcolor: 'yellow',
+				},
+			],
+		};
 
-      this.onDragStart =  this.onDragStart.bind(this)
-      this.onDragOver =  this.onDragOver.bind(this)
-      this.onDrop =  this.onDrop.bind(this)
-  }
-  
-  onDragStart(ev, id) {
-    console.log('moviendo :', id);
-    ev.dataTransfer.setData("id", id);
-  }
+		this.onDragStart = this.onDragStart.bind(this);
+		this.onDragOver = this.onDragOver.bind(this);
+		this.onDrop = this.onDrop.bind(this);
+	}
 
-  onDragOver(ev) {
-    ev.preventDefault();
-  }
+	onDragStart(ev, id) {
+		console.log('moviendo :', id);
+		ev.dataTransfer.setData('id', id);
+	}
 
-  onDrop(ev, cat) {
-    console.log("onDrop ", cat)
-    let id = ev.dataTransfer.getData("id");
+	onDragOver(ev) {
+		ev.preventDefault();
+	}
 
-    let tasks = this.state.tasks.filter((task)=> {
-        if (task.name == id) {
-          task.category = cat;
-        }
-        return task;
-      });
+	onDrop(ev, cat) {
+		console.log('onDrop ', cat);
+		const id = ev.dataTransfer.getData('id');
 
-    this.setState({
-      ...this.state,
-      tasks
-    });
-  }
+		const tasks = this.state.tasks.filter(task => {
+			if (task.name == id) {
+				task.category = cat;
+			}
+			return task;
+		});
 
-  render() {
-    var tasks = {
-      ejecucion: [],
-      completado: []
-    }
+		this.setState({
+			...this.state,
+			tasks,
+		});
+	}
 
-    this.state.tasks.forEach((t) => {
-      tasks[t.category].push(
-        <div key={t.name}
-          onDragStart={(e) => this.onDragStart(e, t.name)}
-          draggable
-          className="draggable"
-          style={{ backgroundColor: t.bgcolor }}
-        >
-          {t.name}
-        </div>
-      );
-    });
+	render() {
+		const tasks = {
+			ejecucion: [],
+			completado: [],
+		};
 
-    return (
-      <div className="container-fluid">
-        <div className="row">
-        
-          <div className="col-6">
+		this.state.tasks.forEach(t => {
+			tasks[t.category].push(
+				<div
+					key={t.name}
+					onDragStart={e => this.onDragStart(e, t.name)}
+					draggable
+					className='draggable'
+					style={{ backgroundColor: t.bgcolor }}
+				>
+					{t.name}
+				</div>,
+			);
+		});
 
-            <div className="card"
-              onDragOver={(e) => this.onDragOver(e)}
-              onDrop={(e) => { this.onDrop(e, "ejecucion") }}>
-              <span>TAREAS </span>
-              {tasks.ejecucion}
-            </div>
+		return (
+			<div className='container-fluid'>
+				<div className='row'>
+					<div className='col-6'>
+						<div
+							className='card'
+							onDragOver={e => this.onDragOver(e)}
+							onDrop={e => {
+								this.onDrop(e, 'ejecucion');
+							}}
+						>
+							<span>TAREAS </span>
+							{tasks.ejecucion}
+						</div>
+					</div>
 
-          </div>
-
-          <div className="col-6">
-
-            <div className="card"
-              onDragOver={(e) => this.onDragOver(e)}
-              onDrop={(e) => this.onDrop(e, "completado")}>
-              <span>COMPLETADAS</span>
-              {tasks.completado}
-            </div>
-
-          </div>
-        </div>
-      </div>
-    );
-  }
+					<div className='col-6'>
+						<div
+							className='card'
+							onDragOver={e => this.onDragOver(e)}
+							onDrop={e => this.onDrop(e, 'completado')}
+						>
+							<span>COMPLETADAS</span>
+							{tasks.completado}
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 }
 
-export default DragDrop
+export default DragDrop;

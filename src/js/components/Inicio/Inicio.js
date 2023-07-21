@@ -1,77 +1,72 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { FaList, FaEye, FaEyeSlash } from "react-icons/fa";
-import { Button, Input, Tooltip } from "reactstrap";
-import { useDispatch } from "react-redux";
-
-import { UrlServer } from "../Utils/ServerUrlConfig";
-import FinancieroBarraPorcentaje from "./FinancieroBarraPorcentaje";
-import FisicoBarraPorcentaje from "./FisicoBarraPorcentaje";
-import ModalListaPersonal from "./ListaPersonal";
-import Curva_S from "./Cuva_S";
-import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
-import Obras_labels_edicion from "./Obras_labels_edicion";
-import CarouselNavs from "./Carousel/CarouselNavs";
-import PersonalCostoDirecto from "./PersonalCostoDirecto";
-
-import styles from "./inicio.module.css";
-
-import FiltrosComponent from "../../../components/organisms/FiltrosObras";
-import ObrasTable from "../../../components/templates/ObrasTable";
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import {
-  useEstadosObra,
-  useObras,
-  useProvincias,
-  useSectores,
-} from "../../../hooks/useInicioInfo";
-import Image from "next/image";
+	useEstadosObra,
+	useObras,
+	useProvincias,
+	useSectores,
+} from '../../../hooks/useInicioInfo';
+import styles from './inicio.module.css';
+import FiltrosComponent from '../../../components/organisms/FiltrosObras';
+import ObrasTable from '../../../components/templates/ObrasTable';
 
 const ObrasComponent = () => {
-  const dispatch = useDispatch();
+	const { data } = useSession();
+	const id_acceso = data?.user?.id;
+	const [provinciaSeleccionada, setProvinciaSeleccionada] = useState(0);
+	const [sectorSeleccionado, setSectorSeleccionado] = useState(0);
+	const [estadosObraSeleccionada, setEstadosObraSeleccionada] = useState(0);
 
-  const {
-    provincias,
-    provinciaSeleccionada,
-    setProvinciaSeleccionada,
-  } = useProvincias();
-  const sectores = useSectores(provinciaSeleccionada);
-  const estadosObra = useEstadosObra();
+	let provincias = [];
+	let sectores = [];
+	let estadosObra = [];
 
-  const [sectoreSeleccionado, setSectoreSeleccionado] = useState(0);
-  const [estadosObraeleccionada, setEstadosObraeleccionada] = useState(0);
-  const [labelsHabilitado, setLabelsHabilitado] = useState(false);
+	provincias = useProvincias(id_acceso);
+	sectores = useSectores(id_acceso, provinciaSeleccionada);
+	estadosObra = useEstadosObra(id_acceso);
 
-  const obras = useObras(
-    provinciaSeleccionada,
-    sectoreSeleccionado,
-    estadosObraeleccionada
-  );
+	const obras = useObras(
+		provinciaSeleccionada,
+		sectorSeleccionado,
+		estadosObraSeleccionada,
+	);
+	const setSelectedWorkHandler = item => {
+		console.log({ item });
+		localStorage.setItem('id_expediente', item.id_expediente);
+		localStorage.setItem('id_ficha', item.id_ficha);
+	};
+	useEffect(() => {
+		if (
+			obras.length > 0 &&
+			!localStorage.getItem('id_expediente') &&
+			!localStorage.getItem('id_ficha')
+		) {
+			setSelectedWorkHandler(obras[0]);
+		}
+	}, [obras]);
 
-  useEffect(() => {
-    setSectoreSeleccionado(0);
-    setEstadosObraeleccionada(0);
-  }, [provinciaSeleccionada]);
-
-  return (
-    <div>
-      <div className={styles["banner-container"]}>
-        <img src="./images/banner.jpg" alt="Banner" />
-      </div>
-      <FiltrosComponent
-        provincias={provincias}
-        provinciaSeleccionada={provinciaSeleccionada}
-        setProvinciaSeleccionada={setProvinciaSeleccionada}
-        sectores={sectores}
-        sectoreSeleccionado={sectoreSeleccionado}
-        setSectoreSeleccionado={setSectoreSeleccionado}
-        estadosObra={estadosObra}
-        estadosObraeleccionada={estadosObraeleccionada}
-        setEstadosObraeleccionada={setEstadosObraeleccionada}
-        labelsHabilitado={labelsHabilitado}
-        setLabelsHabilitado={setLabelsHabilitado}
-      />
-      <ObrasTable obras={obras} />
-    </div>
-  );
+	return (
+		<div>
+			<div className={styles['banner-container']}>
+				<img src='./images/banner.jpg' alt='Banner' />
+			</div>
+			<FiltrosComponent
+				provincias={provincias}
+				provinciaSeleccionada={provinciaSeleccionada}
+				setProvinciaSeleccionada={setProvinciaSeleccionada}
+				sectores={sectores}
+				sectorSeleccionado={sectorSeleccionado}
+				setSectorSeleccionado={setSectorSeleccionado}
+				estadosObra={estadosObra}
+				estadosObraSeleccionada={estadosObraSeleccionada}
+				setEstadosObraSeleccionada={setEstadosObraSeleccionada}
+			/>
+			<ObrasTable
+				obras={obras}
+				setSelectedWorkHandler={setSelectedWorkHandler}
+			/>
+		</div>
+	);
 };
+
 export default ObrasComponent;

@@ -1,78 +1,59 @@
 import { Typography } from '@mui/material';
-import { makeStyles, useTheme } from '@mui/styles';
 import React from 'react';
+import { styled } from '@mui/system';
 import { fechaFormatoClasico } from '../../js/components/Utils/Funciones';
-const PlazosInfo = ({ item }) => {
-    const theme = useTheme();
-    const useStyles = makeStyles(() => ({
-      container: {
-        display: "flex",
-        alignItems: "center",
-        margin: 0,
-        padding: 0,
-      },
-      button: {
-        borderRadius: "13px",
-        padding: "0 10px",
-        lineHeight: "22px!important",
-        margin: "5px",
-        cursor: "default",
-        margin: 0,
-        padding: 0,
-      },
-      label: {
-        color: theme.palette.primary.main,
-        marginRight: "5px",
-        fontSize: "12px",
-      },
-      text: {
-        fontSize: "14px",
-      },
-    }));
-    const classes = useStyles();
-  
-    return (
-      <div className={classes.container}>
-        {item.plazoinicial_fecha && (
-          <>
-            <Typography className={classes.label}>Inicio de obra</Typography>
-            <Typography className={classes.text}>
-              {fechaFormatoClasico(item.plazoinicial_fecha)}
-            </Typography>
-          </>
-        )}
-        {!item.plazoaprobado_ultimo_fecha &&
-          !item.plazosinaprobar_ultimo_fecha && (
-            <>
-              <Typography className={classes.label}>
-                Fecha de culminación
-              </Typography>
-              <Typography className={classes.text}>
-                {fechaFormatoClasico(item.plazoinicial_fechafinal)}
-              </Typography>
-            </>
-          )}
-        {item.plazoaprobado_ultimo_fecha && (
-          <>
-            <Typography className={classes.label}>
-              Ultimo plazo aprovado
-            </Typography>
-            <Typography className={classes.text}>
-              {fechaFormatoClasico(item.plazoaprobado_ultimo_fecha)}
-            </Typography>
-          </>
-        )}
-        {item.plazosinaprobar_ultimo_fecha && (
-          <>
-            <Typography className={classes.label}>
-              Ultimo plazo por aprovado
-            </Typography>
-            <Typography className={classes.text}>
-              {fechaFormatoClasico(item.plazosinaprobar_ultimo_fecha)}
-            </Typography>
-          </>
-        )}
-      </div>
-    );
-  };
-  export default PlazosInfo
+
+const Container = styled('div')({
+	display: 'flex',
+	alignItems: 'center',
+	margin: 0,
+	padding: 0,
+});
+
+const Label = styled(Typography)(({ theme }) => ({
+	color: theme.palette.primary.main,
+	marginRight: '5px',
+	fontSize: '12px',
+}));
+
+const Text = styled(Typography)({
+	fontSize: '14px',
+});
+
+const PlazosInfo = ({
+	plazoinicial_fecha,
+	plazoinicial_fechafinal,
+	plazoaprobado_ultimo_fecha,
+	plazosinaprobar_ultimo_fecha,
+}) => {
+	return (
+		<Container>
+			{plazoinicial_fecha && (
+				<>
+					<Label>Inicio de obra</Label>
+					<Text>{fechaFormatoClasico(plazoinicial_fecha)}</Text>
+				</>
+			)}
+			{!plazoaprobado_ultimo_fecha && !plazosinaprobar_ultimo_fecha && (
+				<>
+					<Label>Fecha de culminación</Label>
+					<Text>{fechaFormatoClasico(plazoinicial_fechafinal)}</Text>
+				</>
+			)}
+			{plazoaprobado_ultimo_fecha && (
+				<>
+					<Label>Ultimo plazo aprovado</Label>
+					<Text>{fechaFormatoClasico(plazoaprobado_ultimo_fecha)}</Text>
+				</>
+			)}
+			{plazosinaprobar_ultimo_fecha && (
+				<>
+					<Label>Ultimo plazo por aprovado</Label>
+					<Text>{fechaFormatoClasico(plazosinaprobar_ultimo_fecha)}</Text>
+				</>
+			)}
+		</Container>
+	);
+};
+
+export default PlazosInfo;
