@@ -12,21 +12,19 @@ const items = [
     id: 1,
     caption: "PROCESOS FÍSICOS",
     altText: "",
-    src:
-      "https://blog.infaimon.com/wp-content/uploads/2017/12/iStock-516607254.jpg",
+    src: "/images/carousel-image-1.jpg",
   },
   {
     id: 2,
     caption: "PROCESOS GERENCIALES",
     altText: "",
-    src: "https://e.rpp-noticias.io/normal/2017/05/23/412741_411981.jpg",
+    src: "/images/carousel-image-2.jpg",
   },
   {
     id: 3,
     caption: "PROCESOS FINANCIEROS",
     altText: "",
-    src:
-      "https://img.elcomercio.pe/files/article_content_ec_fotos/uploads/2017/09/08/59b32061b73ce.jpeg",
+    src: "/images/carousel-image-3.jpg",
   },
 ];
 

@@ -8,7 +8,7 @@ import "./PartidasChat.css";
 
 import { FaPaperPlane } from "react-icons/fa";
 import { MdComment } from "react-icons/md";
-import LogoSigobras from "./../../images/logoSigobras.png";
+import LogoSigobras from "./../../../public/images/logoSigobras.png";
 
 function Comentarios({
   id_partida,

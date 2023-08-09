@@ -23,7 +23,6 @@ body {
   left: 0;
   z-index: 100;
   /* Behind the navbar */
-  padding: 50px 0 0;
   /* Height of navbar */
   /* box-shadow: inset -1px 0 0 rgb(255, 255, 255); */
   font-size: 0.8rem;
@@ -58,15 +57,6 @@ body {
 
 [role="main"] {
   padding-top: 4px;
-}
-
-/* Navbar */
-.navbar-brand {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  font-size: 1rem;
-  /* background-color: rgba(0, 0, 0, 0.25); */
-  /* box-shadow: inset -1px 0 0 rgb(255, 255, 255); */
 }
 
 /* nav izquierda menu principal */
@@ -183,7 +173,7 @@ body {
 /* SCROLL ANG95 */
 .scroll_contenido {
   position: absolute;
-  height: calc(100vh - 83px);
+  /* height: calc(100vh - 83px); */
   overflow-x: hidden;
   overflow-y: auto;
   width: 100%;
@@ -819,4 +809,22 @@ table.table thead th {
   position: sticky;
   left: 80px;
   background: #242526;
+}
+
+/* Estilo para el scroll vertical */
+::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #333; /* Color de fondo del scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Color del thumb del scrollbar */
+  border-radius: 4px; /* Bordes redondeados del thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Color del thumb del scrollbar al pasar el mouse */
 }

@@ -1,0 +1,10 @@
+.banner-container {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.banner-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

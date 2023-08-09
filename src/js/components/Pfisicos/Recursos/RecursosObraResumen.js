@@ -7,7 +7,6 @@ import React, {
   useRef,
 } from "react";
 import {
-  InputGroupAddon,
   InputGroupText,
   InputGroup,
   Nav,
@@ -164,10 +163,8 @@ export default () => {
     RefComprobante[descripcion].recarga();
   }
 
-  const [
-    InterfazDocumentoAdquisicion,
-    setInterfazDocumentoAdquisicion,
-  ] = useState(false);
+  const [InterfazDocumentoAdquisicion, setInterfazDocumentoAdquisicion] =
+    useState(false);
 
   /// COmponente para formulario de recursos nuevos
   const refRecursoFormulario = useRef(null);
@@ -186,15 +183,11 @@ export default () => {
       const [NuevoPrecio, setNuevoPrecio] = useState(0);
       const [NuevoParcial, setNuevoParcial] = useState("");
       const [NuevoDiferencia, setNuevoDiferencia] = useState("");
-      const [
-        NuevoDiferenciaPorcentaje,
-        setNuevoDiferenciaPorcentaje,
-      ] = useState("");
+      const [NuevoDiferenciaPorcentaje, setNuevoDiferenciaPorcentaje] =
+        useState("");
 
-      const [
-        NuevoSelectRecursosFormulario,
-        setNuevoSelectRecursosFormulario,
-      ] = useState("SELECCIONE");
+      const [NuevoSelectRecursosFormulario, setNuevoSelectRecursosFormulario] =
+        useState("SELECCIONE");
 
       // const [UpdateRecursosFormulario, setUpdateRecursosFormulario] = useState([])
       async function updateRecursosFormulario() {
@@ -337,10 +330,8 @@ export default () => {
     console.log("fetchRecursosNuevos", res.data);
   }
 
-  const [
-    ToggleFormularioRecursoNuevo,
-    setToggleFormularioRecursoNuevo,
-  ] = useState(false);
+  const [ToggleFormularioRecursoNuevo, setToggleFormularioRecursoNuevo] =
+    useState(false);
   const [UsuarioData, setUsuarioData] = useState({});
   async function fetchUsuarioData() {
     const res = await axios.post(`${UrlServer}/getDatosUsuario`, {
@@ -370,69 +361,67 @@ export default () => {
         <Col xs="12">
           <div className="float-right">
             <InputGroup size="sm">
-              <InputGroupAddon addonType="prepend">
-                {ModoEditar && (
-                  <Fragment>
-                    {ToggleFormularioRecursoNuevo && (
-                      <Button
-                        outline
-                        color="success"
-                        onClick={() => {
-                          console.log(
-                            "refRecursoFormulario",
-                            refRecursoFormulario
-                          );
-                          refRecursoFormulario.current.save();
-                        }}
-                      >
-                        <MdSave />
-                      </Button>
-                    )}
-
+              {ModoEditar && (
+                <Fragment>
+                  {ToggleFormularioRecursoNuevo && (
                     <Button
                       outline
-                      color="info"
-                      onClick={() =>
-                        setToggleFormularioRecursoNuevo(
-                          !ToggleFormularioRecursoNuevo
-                        )
-                      }
+                      color="success"
+                      onClick={() => {
+                        console.log(
+                          "refRecursoFormulario",
+                          refRecursoFormulario
+                        );
+                        refRecursoFormulario.current.save();
+                      }}
                     >
-                      <FaPlus />
+                      <MdSave />
                     </Button>
-                  </Fragment>
-                )}
-                {(UsuarioData.cargo_nombre == "RESIDENTE" ||
-                  UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
-                  <Button
-                    outline
-                    color="primary"
-                    onClick={() => {
-                      if (ModoEditar) {
-                        setInterfazDocumentoAdquisicion(false);
-                      }
-                      toggleModoEditar();
-                    }}
-                    title="asignar codigos y editar "
-                  >
-                    <MdCompareArrows /> <MdModeEdit />
-                  </Button>
-                )}
-                {ModoEditar && (
+                  )}
+
                   <Button
                     outline
                     color="info"
                     onClick={() =>
-                      setInterfazDocumentoAdquisicion(
-                        !InterfazDocumentoAdquisicion
+                      setToggleFormularioRecursoNuevo(
+                        !ToggleFormularioRecursoNuevo
                       )
                     }
-                    title="organizar"
                   >
-                    <MdExtension />
+                    <FaPlus />
                   </Button>
-                )}
-              </InputGroupAddon>
+                </Fragment>
+              )}
+              {(UsuarioData.cargo_nombre == "RESIDENTE" ||
+                UsuarioData.cargo_nombre == "ADMINISTRADOR GENERAL") && (
+                <Button
+                  outline
+                  color="primary"
+                  onClick={() => {
+                    if (ModoEditar) {
+                      setInterfazDocumentoAdquisicion(false);
+                    }
+                    toggleModoEditar();
+                  }}
+                  title="asignar codigos y editar "
+                >
+                  <MdCompareArrows /> <MdModeEdit />
+                </Button>
+              )}
+              {ModoEditar && (
+                <Button
+                  outline
+                  color="info"
+                  onClick={() =>
+                    setInterfazDocumentoAdquisicion(
+                      !InterfazDocumentoAdquisicion
+                    )
+                  }
+                  title="organizar"
+                >
+                  <MdExtension />
+                </Button>
+              )}
               <Input
                 type="text"
                 onChange={(event) => setTextoBuscado(event.target.value)}
@@ -594,38 +583,34 @@ export default () => {
       <div className="float-right mr-2 ">
         <div className="d-flex text-dark">
           <InputGroup size="sm">
-            <InputGroupAddon addonType="prepend">
-              <Button
-                className="btn btn-light pt-0"
-                onClick={() => onChangePaginaActual(PaginaActual - 1)}
-                disabled={PaginaActual <= 1}
-              >
-                <MdChevronLeft />
-              </Button>
-              <input
-                type="text"
-                style={{ width: "30px" }}
-                value={PaginaActual}
-                // disabled
-                onChange={(event) => setPaginaActual(event.target.value)}
-              />
-              <InputGroupText>
-                {`de  ${Math.ceil(ConteoRecursos / CantidadPaginasRecursos)}`}
-              </InputGroupText>
-            </InputGroupAddon>
+            <Button
+              className="btn btn-light pt-0"
+              onClick={() => onChangePaginaActual(PaginaActual - 1)}
+              disabled={PaginaActual <= 1}
+            >
+              <MdChevronLeft />
+            </Button>
+            <input
+              type="text"
+              style={{ width: "30px" }}
+              value={PaginaActual}
+              // disabled
+              onChange={(event) => setPaginaActual(event.target.value)}
+            />
+            <InputGroupText>
+              {`de  ${Math.ceil(ConteoRecursos / CantidadPaginasRecursos)}`}
+            </InputGroupText>
 
-            <InputGroupAddon addonType="append">
-              <Button
-                className="btn btn-light pt-0"
-                onClick={() => onChangePaginaActual(PaginaActual + 1)}
-                disabled={
-                  PaginaActual >=
-                  Math.ceil(ConteoRecursos / CantidadPaginasRecursos)
-                }
-              >
-                <MdChevronRight />
-              </Button>
-            </InputGroupAddon>
+            <Button
+              className="btn btn-light pt-0"
+              onClick={() => onChangePaginaActual(PaginaActual + 1)}
+              disabled={
+                PaginaActual >=
+                Math.ceil(ConteoRecursos / CantidadPaginasRecursos)
+              }
+            >
+              <MdChevronRight />
+            </Button>
           </InputGroup>
         </div>
       </div>
@@ -766,14 +751,11 @@ function EditarRecursoNuevo({ recurso, ModoEditar }) {
     ...recurso,
   });
   const [InputRecursoNuevo, setInputRecursoNuevo] = useState({ ...recurso });
-  const [
-    ToggleInputDescripcionNuevo,
-    setToggleInputDescripcionNuevo,
-  ] = useState(false);
+  const [ToggleInputDescripcionNuevo, setToggleInputDescripcionNuevo] =
+    useState(false);
   const [ToggleInputUnidadNuevo, setToggleInputUnidadNuevo] = useState(false);
-  const [ToggleInputCantidadNuevo, setToggleInputCantidadNuevo] = useState(
-    false
-  );
+  const [ToggleInputCantidadNuevo, setToggleInputCantidadNuevo] =
+    useState(false);
   const [ToggleInputPrecioNuevo, setToggleInputPrecioNuevo] = useState(false);
 
   //Unidad

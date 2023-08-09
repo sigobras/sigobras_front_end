@@ -3,7 +3,6 @@ import axios from "axios";
 import { Button, Tooltip } from "reactstrap";
 import { ImSad2, ImWink2 } from "react-icons/im";
 import { TiWarning } from "react-icons/ti";
-import { useHistory } from "react-router-dom";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
 import { UrlServer } from "../Utils/ServerUrlConfig";
@@ -22,8 +21,6 @@ import FinancieroBarraPorcentaje from "../Inicio/FinancieroBarraPorcentaje";
 import "./index.css";
 
 export default ({ recargar }) => {
-  const history = useHistory();
-
   const [Obras, setObras] = useState([]);
   const [SortBy, setSortBy] = useState("");
   const [SortByModificador, setSortByModificador] = useState("");
@@ -143,7 +140,7 @@ export default ({ recargar }) => {
       }}
     >
       <table
-        className="table seguimiento-obras text-center"
+        className="table table-dark seguimiento-obras text-center"
         style={{ width: "max-content" }}
       >
         <thead>
@@ -190,7 +187,6 @@ export default ({ recargar }) => {
             </th>
             <th>{cabezeraOrderBy("PIM", "pim_anyoactual")}</th>
             <th>Último Financiero Editado</th>
-            <th>Informes No Presentados a Infobras</th>
           </tr>
         </thead>
         <tbody>
@@ -335,9 +331,6 @@ export default ({ recargar }) => {
                   item={item}
                 />
               </td>
-              <td>
-                <InformesInfobras id_ficha={item.id_ficha} item={item} />
-              </td>
             </tr>
           ))}
         </tbody>
@@ -376,22 +369,24 @@ function PrimerPlazo({ item }) {
       <div id={"PrimerPlazo" + item.id_ficha}>
         {getDaysBetweenDates(new Date(), item.plazoinicial_fecha) - 1} d/c
       </div>
-      {!item.plazoaprobado_ultimo_fecha && !item.plazosinaprobar_ultimo_fecha && (
-        <div>
-          <div
-            style={{
-              color: "#17a2b8",
-            }}
-          >
-            {fechaFormatoClasico(item.plazoinicial_fechafinal)}
-          </div>
+      {!item.plazoaprobado_ultimo_fecha &&
+        !item.plazosinaprobar_ultimo_fecha && (
+          <div>
+            <div
+              style={{
+                color: "#17a2b8",
+              }}
+            >
+              {fechaFormatoClasico(item.plazoinicial_fechafinal)}
+            </div>
 
-          <div id={"PrimerPlazo" + item.id_ficha}>
-            {getDaysBetweenDates(new Date(), item.plazoinicial_fechafinal) - 1}{" "}
-            d/c
+            <div id={"PrimerPlazo" + item.id_ficha}>
+              {getDaysBetweenDates(new Date(), item.plazoinicial_fechafinal) -
+                1}{" "}
+              d/c
+            </div>
           </div>
-        </div>
-      )}
+        )}
       <Tooltip
         placement="bottom"
         isOpen={tooltipOpen}

@@ -1,27 +1,98 @@
 // libraris
-import React, { useState, useEffect, Suspense, lazy } from "react";
-import { FaChevronRight, FaChevronUp } from "react-icons/fa";
-import { MdDehaze } from "react-icons/md";
-import { Collapse } from "reactstrap";
-import {
-  BrowserRouter as Router,
-  Route,
-  NavLink,
-  Switch,
-  Redirect,
-} from "react-router-dom";
-import Circle from "react-circle";
-import { ToastContainer } from "react-toastify";
+import React, { useState, useEffect, lazy } from "react";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import axios from "axios";
 
-import { Redondea, meses, Redondea1 } from "./Utils/Funciones";
-import FinancieroBarraPorcentaje from "./Inicio/FinancieroBarraPorcentaje";
-import FisicoBarraPorcentaje from "./Inicio/FisicoBarraPorcentaje";
-import LogoSigobras from "../../images/logoSigobras.png";
 import { UrlServer } from "./Utils/ServerUrlConfig";
 import UserNav from "./Otros/UserNav";
-import NotificacionNav from "./Otros/NotificacionNav";
 import Btns from "./Otros/Btns";
+import LogoSigobras from "../../../public/images/sigobras-neon.jpg";
+
+import { styled, useTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import MuiDrawer from "@mui/material/Drawer";
+import MuiAppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+
+const drawerWidth = 240;
+
+const openedMixin = (theme) => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
 
 const Inicio = lazy(() => import("./Inicio/Inicio"));
 const MDdiario = lazy(() => import("./Pfisicos/Diarios"));
@@ -41,9 +112,6 @@ const Comunicados = lazy(() =>
 );
 const RecursosMo = lazy(() =>
   import("../components/Pgerenciales/Recursos/RecursosPersonal")
-);
-const plazosHistorial = lazy(() =>
-  import("../components/Pgerenciales/PlazosHistorial/Plazos")
 );
 //planificacion
 const Planner = lazy(() =>
@@ -117,14 +185,7 @@ export default () => {
     setDataDelta(res.data);
   }
   const [navbarExpland, setnavbarExpland] = useState(false);
-  function ButtonToogle() {
-    setnavbarExpland(!navbarExpland);
-    localStorage.setItem("opcionBtnToogle", navbarExpland);
-  }
   const [collapse, setcollapse] = useState(-1);
-  function CollapseMenu(index) {
-    setcollapse(index != collapse ? index : -1);
-  }
   const [EstadoObra, setEstadoObra] = useState("");
   async function fetchEstadoObra(id_ficha) {
     var request = await axios.post(`${UrlServer}/getEstadoObra`, {
@@ -144,374 +205,204 @@ export default () => {
     setDataObra(ficha);
   }
 
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <Router>
-      <div>
-        <nav className="navbar fixed-top FondoBarra flex-md-nowrap p-1 border-button">
-          <div>
-            <img
-              src={LogoSigobras}
-              className="rounded p-0 m-0"
-              alt="logo sigobras"
-              width="45"
-              height="28"
-            />
-            <span className="textSigobras h5 ml-2"> SIGOBRAS </span>
-            <i className="small"> V. 1.0</i>
-          </div>
-          <div>
-            <span
-              className="text-white ButtonToogleMenu"
-              onClick={ButtonToogle}
+    <BrowserRouter>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: "none" }),
+              }}
             >
-              <MdDehaze size={20} />
-            </span>
-          </div>
-          <div className="ml-auto">
-            <div className="float-right">
-              <UserNav key={DataObra.id_ficha} />
-            </div>
-            {/* <div className="float-right">
-              <NotificacionNav key={DataObra.id_ficha} />
-            </div> */}
-            <div className="float-right">
-              {sessionStorage.getItem("estadoObra") != null && (
-                <Btns EstadoObra={EstadoObra} />
-              )}
-            </div>
-          </div>
-        </nav>
-
-        <div className="container-fluid ">
-          <ToastContainer
-            position="bottom-right"
-            autoClose={1000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnVisibilityChange
-            draggable
-            pauseOnHover
-          />
-          <div className="row">
-            <nav
-              className={
-                JSON.parse(localStorage.getItem("opcionBtnToogle"))
-                  ? "navbarExplandLeft sidebar"
-                  : "navbarCollapseLeft sidebar"
-              }
-            >
-              <div className="sidebar-sticky">
-                <ul className="nav flex-column ull">
-                  <li className="lii">
-                    <NavLink to="/inicio" activeclassname="nav-link">
-                      <span> INICIO</span>
-                    </NavLink>
-                  </li>
-                  {DataMenus.map((menus, i) => (
-                    <li className="lii" key={i}>
-                      <a className="nav-link" onClick={() => CollapseMenu(i)}>
-                        {menus.nombreMenu}
-                        <div className="float-right">
-                          {collapse === i ? (
-                            <FaChevronUp />
-                          ) : (
-                            <FaChevronRight />
-                          )}
-                        </div>
-                      </a>
-                      <Collapse isOpen={collapse === i}>
-                        <ul className="nav flex-column ull ">
-                          {menus.submenus.map((item, i2) => (
-                            <li className="lii pl-3" key={i2}>
-                              <NavLink
-                                to={item.ruta}
-                                activeclassname="nav-link"
-                              >
-                                {item.nombreMenu}
-                              </NavLink>
-                            </li>
-                          ))}
-                        </ul>
-                      </Collapse>
-                    </li>
-                  ))}
-                  {DataMenus.length > 0 && (
-                    <>
-                      <li className="lii" key="11">
-                        <a
-                          className="nav-link"
-                          onClick={() => CollapseMenu("REPORTES")}
-                        >
-                          REPORTES
-                          <div className="float-right">
-                            {collapse === "REPORTES" ? (
-                              <FaChevronUp />
-                            ) : (
-                              <FaChevronRight />
-                            )}
-                          </div>
-                        </a>
-                        <Collapse isOpen={collapse === "REPORTES"}>
-                          <ul className="nav flex-column ull ">
-                            <li className="lii pl-3">
-                              <NavLink
-                                to="/SeguimientoObras"
-                                activeclassname="nav-link"
-                              >
-                                <span> Seguimiento de Obras </span>
-                              </NavLink>
-                            </li>
-                            <li className="lii pl-3">
-                              <NavLink
-                                to="/ReportesGenerales"
-                                activeclassname="nav-link"
-                              >
-                                {" "}
-                                <span> Reportes Para Imprimir </span>{" "}
-                              </NavLink>
-                            </li>
-                            <li className="lii pl-3">
-                              <NavLink
-                                to="/reporteGeneral"
-                                activeclassname="nav-link"
-                              >
-                                {" "}
-                                <span> Reportes General </span>{" "}
-                              </NavLink>
-                            </li>
-                          </ul>
-                        </Collapse>
-                      </li>
-                      <li className="lii" key="22">
-                        <NavLink
-                          to="/GestionDocumentaria"
-                          activeclassname="nav-link"
-                        >
-                          {" "}
-                          <span> GESTION DOCUMENTARIA </span>{" "}
-                        </NavLink>
-                      </li>
-                    </>
+              <MenuIcon />
+            </IconButton>
+            <div className="d-flex justify-content-between">
+              <a className="navbar-brand">
+                <img src={LogoSigobras} alt="login sigobras " width="50px" />
+                <span className="textSigobras h5 ml-2">SIGOBRAS</span>
+              </a>
+              <ul className="nav navbar-nav flex-row justify-content-between ml-auto">
+                <li style={{ paddingRight: "5px" }}>
+                  <UserNav key={DataObra.id_ficha} />
+                </li>
+                <li style={{ paddingRight: "5px" }}>
+                  {sessionStorage.getItem("estadoObra") != null && (
+                    <Btns EstadoObra={EstadoObra} />
                   )}
-                </ul>
-                <div
-                  className="ContentpresupuestoObra"
-                  style={{ marginTop: "10px" }}
-                >
-                  <div className="PresuObra mr-2">{DataObra.codigo}</div>
-                  <div className="PresuObra mr-2">
-                    {"CUI " + DataObra.codigo_unificado}
-                  </div>
-                </div>
-
-                <div
-                  className="abajoCirculos pl-2 pr-2"
-                  style={{
-                    paddingTop: "5px",
+                </li>
+              </ul>
+            </div>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon />
+              ) : (
+                <ChevronLeftIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <List>
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+                href={"/"}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
                   }}
                 >
-                  <div className="row">
-                    <div
-                      className="col-12"
-                      style={{
-                        height: "83px",
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"INICIO"}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <List>
+            {DataMenus.map(({ nombreMenu: text, submenus }, index) => (
+              <>
+                <ListItem key={text} disablePadding sx={{ display: "block" }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
                       }}
                     >
-                      <div
-                        style={{
-                          textAlign: "center",
-                          height: "83px",
+                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={text}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <List>
+                  {submenus.map((item) => (
+                    <ListItem
+                      key={item.nombreMenu}
+                      disablePadding
+                      sx={{ display: "block", ml: open ? 2 : 0 }}
+                    >
+                      <ListItemButton
+                        sx={{
+                          minHeight: 48,
+                          justifyContent: open ? "initial" : "center",
+                          px: 2.5,
                         }}
+                        // component={Link}
+                        href={item.ruta}
                       >
-                        <Circle
-                          animate={true}
-                          animationDuration="1s"
-                          responsive={true}
-                          progress={
-                            Redondea1(
-                              (DataDelta.fisico_monto /
-                                DataDelta.fisico_programado_monto) *
-                                100
-                            ) || 0
-                          }
-                          progressColor="orange"
-                          bgColor="whitesmoke"
-                          textColor="orange"
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            mr: open ? 3 : "auto",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={item.nombreMenu}
+                          sx={{ opacity: open ? 1 : 0 }}
                         />
-                        <label className="text-center">
-                          DELTA{" "}
-                          {meses[DataDelta.mes - 1] &&
-                            meses[DataDelta.mes - 1].toUpperCase()}
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="detallesObra pl-2 pr-2">
-                  <div
-                    className="ContentpresupuestoObra"
-                    style={{
-                      paddingTop: "5px",
-                      color: " #101010",
-                      fontWeight: "600",
-                    }}
-                  >
-                    <div
-                      className="PresuObra mr-2"
-                      style={{
-                        background: "orange",
-                      }}
-                    >
-                      PROGRAMADO {Redondea(DataDelta.fisico_programado_monto)}
-                    </div>
-                    <div
-                      className="PresuObra"
-                      style={{
-                        background: "orange",
-                      }}
-                    >
-                      {" "}
-                      EJECUTADO {Redondea(DataDelta.fisico_monto)}
-                    </div>
-                  </div>
-                </div>
-                {DataObra.id_ficha && (
-                  <div
-                    style={{
-                      marginTop: "10px",
-                      marginLeft: "8px",
-                      marginRight: "8px",
-                    }}
-                  >
-                    <FisicoBarraPorcentaje
-                      key={DataObra.id_ficha}
-                      tipo="barra"
-                      id_ficha={DataObra.id_ficha}
-                      avance={DataObra.avancefisico_acumulado}
-                      total={DataObra.presupuesto_costodirecto}
-                    />
-                  </div>
-                )}
-                <div
-                  style={{
-                    marginTop: "10px",
-                    marginLeft: "8px",
-                    marginRight: "8px",
-                  }}
-                >
-                  <FinancieroBarraPorcentaje
-                    key={DataObra.id_ficha}
-                    tipo="barra"
-                    id_ficha={DataObra.id_ficha}
-                    avance={DataObra.avancefinanciero_acumulado}
-                    total={DataObra.g_total_presu}
-                  />
-                </div>
-                <div
-                  className="detallesObra pl-2 pr-2"
-                  style={{
-                    paddingBottom: "15px",
-                  }}
-                >
-                  <div className="ContentpresupuestoObra">
-                    <div className="PresuObra mr-2">
-                      {" "}
-                      TOTAL S/. {Redondea(DataObra.g_total_presu)}
-                    </div>
-                    <div className="PresuObra">
-                      {" "}
-                      CD . S/. {Redondea(CostoDirecto)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </nav>
-            <main role="main" className="col ml-sm-auto col-lg px-0">
-              <div className="d-flex mb-0 border-button pt-5 p-1 m-0"></div>
-              <div className="scroll_contenido">
-                <Suspense fallback={<div>Loading...</div>}>
-                  <Switch>
-                    <Redirect exact from="/" to="Inicio" />
-                    <Route
-                      path="/Inicio"
-                      render={(props) => (
-                        <Inicio {...props} recargar={recargar} />
-                      )}
-                    />
-                    <Route path="/MDdiario" component={MDdiario} />
-                    <Route path="/MDHistorial" component={MDHistorial} />
-                    <Redirect exact from="/ParalizacionObra" to="MDdiario" />
-                    <Route path="/RecursosObra" component={RecursosObra} />
-                    <Route
-                      path="/HistorialImagenesObra"
-                      component={HistorialImagenesObra}
-                    />
-                    <Route path="/General" component={General} />
-                    {/* <Route path="/Valorizaciones2" component={Valorizaciones2} /> */}
-                    <Route path="/Proyectos" component={Proyectos} />
-                    {/* PROCESOS GERENCIALES            */}
-                    <Route
-                      path="/ReportesGenerales"
-                      component={ReportesGenerales}
-                    />
-                    <Route path="/planner" component={Planner} />
-                    <Route path="/comunicados" component={Comunicados} />
-                    <Route path="/recursosmanodeobra" component={RecursosMo} />
-                    <Route
-                      path="/plazosHistorial"
-                      component={plazosHistorial}
-                    />
-                    {/* Gestion de Tareas */}
-                    <Route path="/GestionTareas" component={GestionTareas} />
-                    {/* PROCESOS DOCUMENTARIOS */}
-                    <Route path="/DOCUEMENTOS" component={Index} />
-                    <Route
-                      path="/GestionDocumentaria"
-                      component={GestionDocumentaria}
-                    />
-                    <Route
-                      path="/CostosIndirectos"
-                      component={CostosIndirectos}
-                    />
-                    <Route
-                      path="/SeguimientoObras"
-                      render={(props) => (
-                        <SeguimientoObras {...props} recargar={recargar} />
-                      )}
-                    />
-                    <Route
-                      path="/ReporteGeneral"
-                      render={(props) => (
-                        <ReporteGeneral {...props} recargar={recargar} />
-                      )}
-                    />
-                    <Route
-                      path="/PresupuestoAnalitico"
-                      component={PresupuestoAnalitico}
-                    />
-                    <Route
-                      path="/FuentesFinanciamiento"
-                      component={FuentesFinanciamiento}
-                    />
-                    <Route path="/Test" component={Test} />
-                    <Route
-                      path="/ModificacionExpediente"
-                      component={ModificacionExpediente}
-                    />
-                    <Route path="/CuadroMetrados" component={CuadroMetrados} />
-                    <Route
-                      path="/HistorialImagenes"
-                      component={HistorialImagenes}
-                    />
-                  </Switch>
-                </Suspense>
-              </div>
-            </main>
-          </div>
-        </div>
-      </div>
-    </Router>
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+              </>
+            ))}
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1 }}>
+          <DrawerHeader />
+          <Routes>
+            <Route path="/" element={<Inicio recargar={recargar} />} />
+            <Route path="/MDdiario" element={<MDdiario />} />
+            <Route path="/MDHistorial" element={<MDHistorial />} />
+            <Route path="/RecursosObra" element={<RecursosObra />} />
+            <Route
+              path="/HistorialImagenesObra"
+              element={<HistorialImagenesObra />}
+            />
+            <Route path="/General" element={<General />} />
+            <Route path="/Proyectos" element={<Proyectos />} />
+            <Route path="/ReportesGenerales" element={<ReportesGenerales />} />
+            <Route path="/planner" element={<Planner />} />
+            <Route path="/comunicados" element={<Comunicados />} />
+            <Route path="/recursosmanodeobra" element={<RecursosMo />} />
+            <Route path="/plazosHistorial" element={<plazosHistorial />} />
+            <Route path="/GestionTareas" element={<GestionTareas />} />
+            <Route path="/DOCUEMENTOS" element={<Index />} />
+            <Route
+              path="/GestionDocumentaria"
+              element={<GestionDocumentaria />}
+            />
+            <Route path="/CostosIndirectos" element={<CostosIndirectos />} />
+            <Route
+              path="/SeguimientoObras"
+              element={<SeguimientoObras recargar={recargar} />}
+            />
+            <Route
+              path="/ReporteGeneral"
+              element={<ReporteGeneral recargar={recargar} />}
+            />
+            <Route
+              path="/PresupuestoAnalitico"
+              element={<PresupuestoAnalitico />}
+            />
+            <Route
+              path="/FuentesFinanciamiento"
+              element={<FuentesFinanciamiento />}
+            />
+            <Route path="/Test" element={Test} />
+            <Route
+              path="/ModificacionExpediente"
+              element={<ModificacionExpediente />}
+            />
+            <Route path="/CuadroMetrados" element={<CuadroMetrados />} />
+            <Route path="/HistorialImagenes" element={<HistorialImagenes />} />
+          </Routes>
+        </Box>
+      </Box>
+    </BrowserRouter>
   );
 };
