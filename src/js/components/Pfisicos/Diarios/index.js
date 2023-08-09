@@ -21,7 +21,6 @@ import {
 } from "react-icons/md";
 import { TiWarning } from "react-icons/ti";
 import {
-  InputGroupAddon,
   InputGroupText,
   InputGroup,
   Nav,
@@ -134,55 +133,53 @@ export default () => {
       item: "--",
     })
   );
-  async function fectchPartidas(source) {
-    // setTogglePartidasEstilo(false)
-    const res = await axios.post(
-      `${UrlServer}/getPartidas2`,
-      {
-        id_componente: ComponenteSelecccionado.id_componente,
-        inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
-        fin: Number(CantidadPaginasPartidas),
-        id_iconoCategoria: MenuCategoriasSeleccionado.id_iconoCategoria,
-        id_prioridad: MenuPrioridadesSeleccionado.id_prioridad,
-        texto_buscar: TextoBuscado,
-      },
-      { cancelToken: source.token }
-    );
-    // setPartidas(request.data)
-    function addLeadingZeros(num, size) {
-      num = num.toString();
-      while (num.length < size) num = "0" + num;
-      return num;
-    }
-    // setPartidas(res.data)
+  async function fetchPartidas(source) {
+    try {
+      const response = await axios.post(
+        `${UrlServer}/getPartidas2`,
+        {
+          id_componente: ComponenteSelecccionado.id_componente,
+          inicio: (PaginaActual - 1) * CantidadPaginasPartidas,
+          fin: Number(CantidadPaginasPartidas),
+          id_iconoCategoria: MenuCategoriasSeleccionado.id_iconoCategoria,
+          id_prioridad: MenuPrioridadesSeleccionado.id_prioridad,
+          texto_buscar: TextoBuscado,
+        },
+        { cancelToken: source.token }
+      );
 
-    var arr = res.data
-      .map((item) => {
+      const addLeadingZeros = (num, size) => {
+        num = num.toString();
+        while (num.length < size) num = "0" + num;
+        return num;
+      };
+
+      const updatedData = response.data.map((item) => {
         item.item2 = item.item
           .split(".")
           .map((n) => addLeadingZeros(n, 10))
           .join("");
         return item;
-      })
-      .sort((a, b) => {
-        if (a.item2 < b.item2) {
-          return -1;
-        }
-        if (a.item2 > b.item2) {
-          return 1;
-        }
-        return 0;
       });
-    setPartidas(arr);
 
-    if (!TogglePartidasEstilo) {
-      setTimeout(() => {
-        setTogglePartidasEstilo(true);
-      }, 500);
-    }
-    if (FlagPaginaActual) {
-      autoScroll();
-      setFlagPaginaActual(false);
+      const sortedData = updatedData.sort((a, b) =>
+        a.item2.localeCompare(b.item2)
+      );
+
+      setPartidas(sortedData);
+
+      if (!TogglePartidasEstilo) {
+        setTimeout(() => {
+          setTogglePartidasEstilo(true);
+        }, 500);
+      }
+
+      if (FlagPaginaActual) {
+        autoScroll();
+        setFlagPaginaActual(false);
+      }
+    } catch (error) {
+      // Manejo de errores, por ejemplo: console.error(error);
     }
   }
   const [PartidaSelecccionado, setPartidaSelecccionado] = useState({
@@ -283,10 +280,8 @@ export default () => {
   //menu prioridades
   const [MenuPrioridades, setMenuPrioridades] = useState(false);
   const toggleMenuPrioridades = () => setMenuPrioridades(!MenuPrioridades);
-  const [
-    MenuPrioridadesSeleccionado,
-    setMenuPrioridadesSeleccionado,
-  ] = useState({ id_prioridad: 0 });
+  const [MenuPrioridadesSeleccionado, setMenuPrioridadesSeleccionado] =
+    useState({ id_prioridad: 0 });
   async function onChangeMenuPrioridades(prioridad) {
     setMenuPrioridades(false);
     setMenuPrioridadesSeleccionado(prioridad);
@@ -325,7 +320,7 @@ export default () => {
   useEffect(() => {
     setPartidas([]);
     let source = axios.CancelToken.source();
-    fectchPartidas(source);
+    fetchPartidas(source);
     cargarComponenteAvance();
     return () => {
       source.cancel();
@@ -353,12 +348,17 @@ export default () => {
   }
   return (
     <div>
-      <Nav tabs>
+      <Nav tabs className="bg-dark">
         {Componentes.map((item) => (
-          <NavItem key={item.id_componente} style={{ position: "relative" }}>
+          <NavItem key={item.id_componente} style={{ cursor: "pointer" }}>
             <NavLink
               active={item.numero === ComponenteSelecccionado.numero}
               onClick={() => onChangeComponentesSeleccion(item)}
+              style={
+                item.numero === ComponenteSelecccionado.numero
+                  ? {}
+                  : { color: "white" }
+              }
             >
               COMP {item.numero}
             </NavLink>
@@ -431,12 +431,10 @@ export default () => {
             top: "10px",
           }}
         >
-          <InputGroup size="sm">
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>
-                <MdSearch size={19} />
-              </InputGroupText>
-            </InputGroupAddon>
+          <InputGroup size="sm" className="d-flex">
+            <InputGroupText>
+              <MdSearch size={19} />
+            </InputGroupText>
             <Input
               placeholder="descripción o item"
               onChange={(e) => setTextoBuscado(e.target.value)}
@@ -446,7 +444,7 @@ export default () => {
       </CardHeader>
       <CardBody>
         <table
-          className="table table-sm"
+          className="table table-dark"
           style={
             !TogglePartidasEstilo
               ? {
@@ -811,7 +809,7 @@ export default () => {
                     left: "50%",
                   }}
                 >
-                  <InputGroupAddon addonType="prepend">
+                  <InputGroup>
                     <Button
                       className="btn btn-light pt-0"
                       onClick={() => {
@@ -821,21 +819,11 @@ export default () => {
                     >
                       <MdChevronLeft />
                     </Button>
-                    <input
-                      type="text"
-                      style={{ width: "30px" }}
-                      value={PaginaActual}
-                      disabled
-                      onChange={(event) => setPaginaActual(event.target.value)}
-                    />
                     <InputGroupText>
-                      {`de  ${Math.ceil(
+                      {`${PaginaActual} de  ${Math.ceil(
                         ConteoPartidas / CantidadPaginasPartidas
                       )}`}
                     </InputGroupText>
-                  </InputGroupAddon>
-
-                  <InputGroupAddon addonType="append">
                     <Button
                       className="btn btn-light pt-0"
                       onClick={() => {
@@ -848,7 +836,7 @@ export default () => {
                     >
                       <MdChevronRight />
                     </Button>
-                  </InputGroupAddon>
+                  </InputGroup>
                 </InputGroup>
               </div>
             </div>

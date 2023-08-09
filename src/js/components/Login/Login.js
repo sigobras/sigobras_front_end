@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy, Fragment } from "react";
 import {
   Button,
   Spinner,
@@ -9,218 +9,201 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import { TiArrowSortedDown } from "react-icons/ti";
 import axios from "axios";
-import {
-  BrowserRouter as Router,
-  Route,
-  NavLink,
-  Link,
-  Switch,
-  Redirect,
-} from "react-router-dom";
-
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 import Slider from "./Slider";
 import { UrlServer } from "../Utils/ServerUrlConfig";
-import LogoSigobras from "../../../images/sigobras-neon.jpg";
-
+import LogoSigobras from "../../../../public/images/sigobras-neon.jpg";
 import "react-toastify/dist/ReactToastify.min.css";
-//publico
+
 const ResumenObras = lazy(() => import("./ResumenObras"));
 
-export default () => {
+const Navbar = ({ isLoading, handleChange, handleSubmit, UsuarioDatos }) => (
+  <Fragment>
+    <ToastContainer />
+    <nav className="navbar navbar-dark bg-dark">
+      <a className="navbar-brand" href="/">
+        <img src={LogoSigobras} alt="login sigobras " width="50px" />
+        <span className="textSigobras h5 ml-2">SIGOBRAS</span>
+      </a>
+      <ul className="nav navbar-nav flex-row justify-content-between ml-auto">
+        <li style={{ paddingRight: "5px" }}>
+          <Button id="contactos" outline color="warning" className="mr-2">
+            Contacténos <TiArrowSortedDown />
+          </Button>
+          <ContactPopover />
+        </li>
+        <li style={{ paddingRight: "5px" }}>
+          <Button id="login" outline color="primary">
+            Ingresar <TiArrowSortedDown />
+          </Button>
+          <LoginPopover
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            UsuarioDatos={UsuarioDatos}
+            isLoading={isLoading}
+          />
+        </li>
+      </ul>
+    </nav>
+  </Fragment>
+);
+
+const ContactPopover = () => (
+  <UncontrolledPopover placement="bottom" target="contactos">
+    <PopoverHeader>Contácto</PopoverHeader>
+    <PopoverBody>
+      <p>
+        <b>Celular N° : </b>
+        <span>951 396 279</span>
+      </p>
+      <p>
+        <b>Email :</b>
+        <span> manager@sigobras.com</span>
+      </p>
+    </PopoverBody>
+  </UncontrolledPopover>
+);
+
+const LoginPopover = ({
+  handleChange,
+  handleSubmit,
+  UsuarioDatos,
+  isLoading,
+}) => (
+  <UncontrolledPopover placement="bottom" target="login">
+    <PopoverHeader>Acceda a SIGOBRAS </PopoverHeader>
+    <PopoverBody>
+      <form onSubmit={handleSubmit} autoComplete="off">
+        <div className="form-group">
+          <input
+            type="text"
+            className="form-control"
+            name="usuario"
+            placeholder="Usuario"
+            onChange={handleChange}
+            required
+            autoFocus
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            className="form-control"
+            name="password"
+            placeholder="Contraseña"
+            required
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <button
+            type="submit"
+            disabled={!UsuarioDatos.usuario || !UsuarioDatos.password}
+            className="btn btn-primary btn-lg btn-block"
+          >
+            {isLoading ? <Spinner color="warnnig" type="grow" /> : "INGRESAR"}
+          </button>
+        </div>
+      </form>
+    </PopoverBody>
+  </UncontrolledPopover>
+);
+
+export default function App() {
   const [UsuarioDatos, setUsuarioDatos] = useState({
     usuario: "",
     password: "",
   });
   const [isLoading, setisLoading] = useState(false);
-  function handleChange(e) {
-    setUsuarioDatos({
-      ...UsuarioDatos,
-      [e.target.name]: e.target.value,
-    });
-  }
-  async function handleSubmit(e) {
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUsuarioDatos((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setisLoading(true);
+
     try {
-      var res = await axios.post(UrlServer + "/login2", UsuarioDatos);
-      toast.success("USUARIO CORRECTO", {
-        position: "top-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-      });
+      const res = await axios.post(`${UrlServer}/login2`, UsuarioDatos);
+      toast.success("USUARIO CORRECTO", toastConfig("top-right"));
       sessionStorage.setItem("idacceso", res.data.id_acceso);
       window.location.href = "/";
     } catch (error) {
-      toast.error("USUARIO O PASSWORD INCORRECTOS", {
-        position: "top-right",
-        autoClose: 1000,
-        closeOnClick: true,
-        pauseOnHover: true,
-      });
+      toast.error("USUARIO O PASSWORD INCORRECTOS", toastConfig("top-right"));
     }
+
     setisLoading(false);
-  }
+  };
+
+  const toastConfig = (position) => ({
+    position,
+    autoClose: 1000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+  });
 
   return (
     <Router>
-      <ToastContainer />
-      <nav className="navbar navbar-expand-lg  bg-dark">
-        <a className="navbar-brand" href="/">
-          <img src={LogoSigobras} alt="login sigobras " width="50px" />
-          <span className="textSigobras h5 ml-2">SIGOBRAS</span>
-        </a>
-        {/* <ul className="nav navbar-nav">
-          <li className="nav-item">
-            <Link to="/ResumenObras" className="nav-link">
-              {" "}
-              Resumen Obras
-            </Link>
-          </li>
-        </ul> */}
-        <ul className="nav navbar-nav flex-row justify-content-between ml-auto">
-          <li>
-            <Button id="contactos" outline color="warning" className="mr-2">
-              Contacténos <TiArrowSortedDown />
-            </Button>
-            <UncontrolledPopover placement="bottom" target="contactos">
-              <PopoverHeader>Contácto</PopoverHeader>
-              <PopoverBody>
-                <p>
-                  <b>Celular N° : </b>
-                  <br />
-                  <span>951 396 279</span>
-                </p>
-                <p>
-                  <b>Email :</b>
-                  <br /> <span> manager@sigobras.com</span>
-                </p>
-              </PopoverBody>
-            </UncontrolledPopover>
-          </li>
-          <li>
-            <Button id="login" outline color="primary">
-              Ingresar <TiArrowSortedDown />
-            </Button>
-            <UncontrolledPopover placement="bottom" target="login">
-              <PopoverHeader>Acceda a SIGOBRAS </PopoverHeader>
-              <PopoverBody>
-                <form onSubmit={handleSubmit} autoComplete="off">
-                  <div className="form-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="usuario"
-                      placeholder="Usuario"
-                      onChange={handleChange}
-                      required
-                      autoFocus
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      type="password"
-                      className="form-control"
-                      name="password"
-                      placeholder="Contraseña"
-                      required
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <button
-                      type="submit"
-                      disabled={
-                        !(
-                          UsuarioDatos.usuario.length > 0 &&
-                          UsuarioDatos.password.length > 0
-                        )
-                      }
-                      className="btn btn-primary btn-lg btn-block"
-                    >
-                      {isLoading ? (
-                        <Spinner color="warnnig" type="grow" />
-                      ) : (
-                        "INGRESAR"
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </PopoverBody>
-            </UncontrolledPopover>
-          </li>
-        </ul>
-      </nav>
-
+      <Navbar
+        isLoading={isLoading}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        UsuarioDatos={UsuarioDatos}
+      />
       <div className="container-fluid">
         <Suspense fallback={<div>Loading...</div>}>
-          <Switch>
-            <Route path="/ResumenObras">
-              <ResumenObras />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/ResumenObras" element={<ResumenObras />} />
+          </Routes>
         </Suspense>
       </div>
     </Router>
   );
-};
+}
+
 function Home() {
   return (
-    <div>
-      <div className="row">
-        <div className="col-sm-12">
-          <div style={{ position: "absolute", zIndex: 10, marginTop: "2%" }}>
-            {/* <img src={LogoSigobras} alt="login sigobras " width="80px" /> */}
-          </div>
-          <Slider />
-        </div>
-      </div>
+    <Fragment>
+      <Slider />
       <div className="row mr-1">
-        <div className="col-sm-4">
-          <div className="contentLemas">
-            <label>
-              <b>¿QUIENES SOMOS?</b>
-            </label>
-            <div>
-              <p>
-                Somos SIGOBRAS, una empresa dedicada al desarrollo de
-                tecnologías para una gestión más óptima de la información de las
-                obras.
-              </p>
-              <p>
-                La innovación y la flexibilidad de interacción con nuestros
-                clientes es un pilar clave para nosotros.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-4">
-          <div className="contentLemas">
-            <label>
-              <b>MISIÓN</b>
-            </label>
-            <div>
-              Ayudar a las entidades a gestionar sus recursos y evitarles
-              pérdidas económicas en el proceso constructivo.
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-4">
-          <div className="contentLemas">
-            <label>
-              <b>VISIÓN</b>
-            </label>
-            <div>
-              Nos orientaremos a crear un sistema INTELIGENTE utilizando
-              tecnologías de desarrollo de vanguardia.
-            </div>
-          </div>
-        </div>
+        <InfoBox title="¿QUIENES SOMOS?" content={aboutUsContent} />
+        <InfoBox title="MISIÓN" content={missionContent} />
+        <InfoBox title="VISIÓN" content={visionContent} />
       </div>
-    </div>
+    </Fragment>
   );
 }
+
+const aboutUsContent = (
+  <Fragment>
+    <p>
+      Somos SIGOBRAS, una empresa dedicada al desarrollo de tecnologías para una
+      gestión más óptima de la información de las obras.
+    </p>
+    <p>
+      La innovación y la flexibilidad de interacción con nuestros clientes es un
+      pilar clave para nosotros.
+    </p>
+  </Fragment>
+);
+
+const missionContent =
+  "Ayudar a las entidades a gestionar sus recursos y evitarles pérdidas económicas en el proceso constructivo.";
+
+const visionContent =
+  "Nos orientaremos a crear un sistema INTELIGENTE utilizando tecnologías de desarrollo de vanguardia.";
+
+const InfoBox = ({ title, content }) => (
+  <div className="col-sm-4">
+    <div className="contentLemas">
+      <label>
+        <b>{title}</b>
+      </label>
+      <div>{content}</div>
+    </div>
+  </div>
+);

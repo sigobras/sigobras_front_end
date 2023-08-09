@@ -3,7 +3,7 @@ import axios from "axios";
 import { DebounceInput } from "react-debounce-input";
 import { FaPlus, FaCheck } from "react-icons/fa";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import LogoSigobras from "./../../../../images/logoSigobras.png";
+import LogoSigobras from "./../../../../../public/images/logoSigobras.png";
 import { UrlServer } from "../../Utils/ServerUrlConfig";
 import {
   FechaActual2Meses,

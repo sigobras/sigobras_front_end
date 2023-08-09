@@ -16,9 +16,9 @@ import Curva_S from "./Cuva_S";
 import { Redondea, hexToRgb, fechaFormatoClasico } from "../Utils/Funciones";
 import Obras_labels_edicion from "./Obras_labels_edicion";
 import CarouselNavs from "./Carousel/CarouselNavs";
-import PersonalCostoDirecto from "./PersonalCostoDirecto";
 
 import "../../../css/inicio.css";
+import "./inicio.css";
 export default ({ recargar }) => {
   //funciones
   useEffect(() => {
@@ -55,10 +55,8 @@ export default ({ recargar }) => {
     RefLabels[id_ficha].recarga();
   }
   //componentes
-  const [
-    ObraComponentesSeleccionada,
-    setObraComponentesSeleccionada,
-  ] = useState({});
+  const [ObraComponentesSeleccionada, setObraComponentesSeleccionada] =
+    useState({});
   async function onChangeObraComponentesSeleccionada(id_ficha) {
     setComponentes([]);
     if (ObraComponentesSeleccionada == id_ficha) {
@@ -80,10 +78,8 @@ export default ({ recargar }) => {
     setComponentes(res.data);
   }
   const [DatosCostosIndirectos, setDatosCostosIndirectos] = useState([]);
-  const [
-    DatosCostosIndirectosCantidad,
-    setDatosCostosIndirectosCantidad,
-  ] = useState(0);
+  const [DatosCostosIndirectosCantidad, setDatosCostosIndirectosCantidad] =
+    useState(0);
   async function fetchDatosCostosIndirectos(id_ficha) {
     const res = await axios.get(
       `${UrlServer}/v1/obrasCostosIndirectos/adicionales`,
@@ -179,7 +175,10 @@ export default ({ recargar }) => {
           <p> -- {comunicado.texto_mensaje}</p>
         </div>
       ))}
-      <div className="fondo"></div>
+      <div className="banner-container">
+        <img src="images/banner.jpg" />
+      </div>
+
       <div
         style={{
           display: "flex",
@@ -258,62 +257,182 @@ export default ({ recargar }) => {
           </Button>
         )}
       </div>
-      {
-        <table className="table table-sm">
-          <thead>
-            <tr>
-              <th className="text-center">N°</th>
-              <th>OBRA</th>
-              <th className="text-center">ESTADO</th>
-              <th
-                style={{ width: "70px", minWidth: "50px", textAlign: "center" }}
-              >
-                UDM
-              </th>
-              <th className="text-center">AVANCE </th>
-              <th className="text-center">OPCIONES</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Obras.map((item, i) => [
-              (i == 0 ||
-                (i > 0 &&
-                  item.unidad_ejecutora_nombre !=
-                    Obras[i - 1].unidad_ejecutora_nombre)) && (
-                <tr key={i}>
-                  <td
-                    colSpan="8"
-                    style={{
-                      color: "#cecece",
-                      fontSize: "1.2rem",
-                      fontWeight: "700",
-                    }}
-                  >
-                    {item.unidad_ejecutora_nombre}
-                  </td>
-                </tr>
-              ),
-
-              (i == 0 ||
+      <table className="table table-dark">
+        <thead>
+          <tr>
+            <th className="text-center">N°</th>
+            <th>OBRA</th>
+            <th className="text-center">ESTADO</th>
+            <th
+              style={{ width: "70px", minWidth: "50px", textAlign: "center" }}
+            >
+              UDM
+            </th>
+            <th className="text-center">AVANCE </th>
+            <th className="text-center">OPCIONES</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Obras.map((item, i) => [
+            (i == 0 ||
+              (i > 0 &&
                 item.unidad_ejecutora_nombre !=
-                  Obras[i - 1].unidad_ejecutora_nombre ||
-                (i > 0 &&
-                  item.sector_nombre != Obras[i - 1].sector_nombre)) && (
-                <tr key={i + "2"}>
-                  <td
-                    colSpan="8"
+                  Obras[i - 1].unidad_ejecutora_nombre)) && (
+              <tr key={i}>
+                <td
+                  colSpan="8"
+                  style={{
+                    color: "#cecece",
+                    fontSize: "1.2rem",
+                    fontWeight: "700",
+                  }}
+                >
+                  {item.unidad_ejecutora_nombre}
+                </td>
+              </tr>
+            ),
+
+            (i == 0 ||
+              item.unidad_ejecutora_nombre !=
+                Obras[i - 1].unidad_ejecutora_nombre ||
+              (i > 0 && item.sector_nombre != Obras[i - 1].sector_nombre)) && (
+              <tr key={i + "2"}>
+                <td
+                  colSpan="8"
+                  style={{
+                    color: "#ffa500",
+                    fontSize: "1rem",
+                    fontWeight: "700",
+                  }}
+                >
+                  {item.sector_nombre}
+                </td>
+              </tr>
+            ),
+            <tr
+              key={item.id_ficha}
+              style={
+                sessionStorage.getItem("idobra") == item.id_ficha
+                  ? {
+                      backgroundColor: "#171819",
+                    }
+                  : {}
+              }
+            >
+              <td>{i + 1}</td>
+              <td
+                onClick={() => {
+                  recargar(item);
+                }}
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                <Button
+                  type="button"
+                  style={{
+                    borderRadius: "13px",
+                    // padding: " 0 10px",
+                    margin: "5px",
+                    backgroundColor: "#171819",
+                  }}
+                  // onClick={() => { recargar(item) }}
+                >
+                  {item.codigo}
+                </Button>
+                {item.g_meta + "/CUI - " + item.codigo_unificado}
+                <div>
+                  <span
                     style={{
-                      color: "#ffa500",
-                      fontSize: "1rem",
-                      fontWeight: "700",
+                      color: "#17a2b8",
                     }}
                   >
-                    {item.sector_nombre}
-                  </td>
-                </tr>
-              ),
+                    PRESUPUESTO S./{Redondea(item.g_total_presu)}
+                  </span>{" "}
+                  <span
+                    style={{
+                      color: "orange",
+                    }}
+                  >
+                    SALDO FINANCIERO S./
+                    {Redondea(
+                      item.g_total_presu - item.avancefinanciero_acumulado
+                    )}
+                  </span>{" "}
+                  <span
+                    style={{
+                      color: "#17a2b8",
+                    }}
+                  >
+                    PIM 2021 S./
+                    {Redondea(item.pim_anyoactual)}
+                  </span>{" "}
+                  <span
+                    style={{
+                      color: "orange",
+                    }}
+                  >
+                    META 2021 -{item.meta_anyoactual}
+                  </span>
+                </div>
+                <Plazos_info item={item} />
+              </td>
+              <td>
+                <EstadoObra item={item} />
+              </td>
+              <td className="text-center">
+                {calcular_dias(item.avancefisico_ultimafecha, new Date()) - 1}{" "}
+                días{" "}
+                <div>{fechaFormatoClasico(item.avancefisico_ultimafecha)}</div>
+              </td>
+              <td
+                style={{
+                  width: "15%",
+                }}
+              >
+                <FisicoBarraPorcentaje
+                  tipo="barra"
+                  id_ficha={item.id_ficha}
+                  avance={item.avancefisico_acumulado}
+                  total={item.presupuesto_costodirecto}
+                />
+                <FinancieroBarraPorcentaje
+                  tipo="barra"
+                  id_ficha={item.id_ficha}
+                  avance={item.avancefinanciero_acumulado}
+                  total={item.g_total_presu}
+                />
+              </td>
+              <td>
+                <div className="d-flex">
+                  <button
+                    className="btn btn-outline-info btn-sm mr-1"
+                    title="Avance Componentes"
+                    onClick={() =>
+                      onChangeObraComponentesSeleccionada(item.id_ficha)
+                    }
+                  >
+                    <FaList />
+                  </button>
+                  <ModalListaPersonal
+                    id_ficha={item.id_ficha}
+                    codigo_obra={item.codigo}
+                  />
+                  {/* <PersonalCostoDirecto /> */}
+                </div>
+                <div className="d-flex">
+                  <Curva_S Obra={item} />
+                  <Obras_labels_edicion
+                    id_ficha={item.id_ficha}
+                    recargarObraLabels={recargarObraLabels}
+                    codigo={item.codigo}
+                  />
+                  <CarouselNavs id_ficha={item.id_ficha} codigo={item.codigo} />
+                </div>
+              </td>
+            </tr>,
+            LabelsHabilitado && (
               <tr
-                key={item.id_ficha}
                 style={
                   sessionStorage.getItem("idobra") == item.id_ficha
                     ? {
@@ -321,369 +440,100 @@ export default ({ recargar }) => {
                       }
                     : {}
                 }
+                key={i + "3"}
               >
-                <td>{i + 1}</td>
-                <td
-                  onClick={() => {
-                    recargar(item);
-                  }}
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  <Button
-                    type="button"
-                    style={{
-                      borderRadius: "13px",
-                      // padding: " 0 10px",
-                      margin: "5px",
-                      backgroundColor: "#171819",
-                    }}
-                    // onClick={() => { recargar(item) }}
-                  >
-                    {item.codigo}
-                  </Button>
-                  {item.g_meta + "/CUI - " + item.codigo_unificado}
-                  <div>
-                    <span
-                      style={{
-                        color: "#17a2b8",
-                      }}
-                    >
-                      PRESUPUESTO S./{Redondea(item.g_total_presu)}
-                    </span>{" "}
-                    <span
-                      style={{
-                        color: "orange",
-                      }}
-                    >
-                      SALDO FINANCIERO S./
-                      {Redondea(
-                        item.g_total_presu - item.avancefinanciero_acumulado
-                      )}
-                    </span>{" "}
-                    <span
-                      style={{
-                        color: "#17a2b8",
-                      }}
-                    >
-                      PIM 2021 S./
-                      {Redondea(item.pim_anyoactual)}
-                    </span>{" "}
-                    <span
-                      style={{
-                        color: "orange",
-                      }}
-                    >
-                      META 2021 -{item.meta_anyoactual}
-                    </span>
-                  </div>
-                  <Plazos_info item={item} />
-                </td>
-                <td>
-                  <EstadoObra item={item} />
-                </td>
-                <td className="text-center">
-                  {calcular_dias(item.avancefisico_ultimafecha, new Date()) - 1}{" "}
-                  días{" "}
-                  <div>
-                    {fechaFormatoClasico(item.avancefisico_ultimafecha)}
-                  </div>
-                </td>
                 <td
                   style={{
-                    width: "15%",
+                    "border-top": "none",
+                  }}
+                ></td>
+                <td
+                  colSpan="8"
+                  style={{
+                    "border-top": "none",
                   }}
                 >
-                  <FisicoBarraPorcentaje
-                    tipo="barra"
+                  <Obras_labels
+                    key={item.id_ficha}
                     id_ficha={item.id_ficha}
-                    avance={item.avancefisico_acumulado}
-                    total={item.presupuesto_costodirecto}
-                  />
-                  <FinancieroBarraPorcentaje
-                    tipo="barra"
-                    id_ficha={item.id_ficha}
-                    avance={item.avancefinanciero_acumulado}
-                    total={item.g_total_presu}
-                  />
-                </td>
-                <td>
-                  <div className="d-flex">
-                    <button
-                      className="btn btn-outline-info btn-sm mr-1"
-                      title="Avance Componentes"
-                      onClick={() =>
-                        onChangeObraComponentesSeleccionada(item.id_ficha)
-                      }
-                    >
-                      <FaList />
-                    </button>
-                    <ModalListaPersonal
-                      id_ficha={item.id_ficha}
-                      codigo_obra={item.codigo}
-                    />
-                    {/* <PersonalCostoDirecto /> */}
-                  </div>
-                  <div className="d-flex">
-                    <Curva_S Obra={item} />
-                    <Obras_labels_edicion
-                      id_ficha={item.id_ficha}
-                      recargarObraLabels={recargarObraLabels}
-                      codigo={item.codigo}
-                    />
-                    <CarouselNavs
-                      id_ficha={item.id_ficha}
-                      codigo={item.codigo}
-                    />
-                  </div>
-                </td>
-              </tr>,
-              LabelsHabilitado && (
-                <tr
-                  style={
-                    sessionStorage.getItem("idobra") == item.id_ficha
-                      ? {
-                          backgroundColor: "#171819",
-                        }
-                      : {}
-                  }
-                  key={i + "3"}
-                >
-                  <td
-                    style={{
-                      "border-top": "none",
+                    ref={(ref) => {
+                      var clone = RefLabels;
+                      clone[item.id_ficha] = ref;
+                      setRefLabels(clone);
                     }}
-                  ></td>
-                  <td
-                    colSpan="8"
+                  />
+                </td>
+              </tr>
+            ),
+            ObraComponentesSeleccionada == item.id_ficha && (
+              <tr key={"1." + i}>
+                <td colSpan="8">
+                  <table
+                    className="table table-bordered table-sm"
                     style={{
-                      "border-top": "none",
+                      width: "100%",
                     }}
                   >
-                    <Obras_labels
-                      key={item.id_ficha}
-                      id_ficha={item.id_ficha}
-                      ref={(ref) => {
-                        var clone = RefLabels;
-                        clone[item.id_ficha] = ref;
-                        setRefLabels(clone);
-                      }}
-                    />
-                  </td>
-                </tr>
-              ),
-              ObraComponentesSeleccionada == item.id_ficha && (
-                <tr key={"1." + i}>
-                  <td colSpan="8">
-                    <table
-                      className="table table-bordered table-sm"
-                      style={{
-                        width: "100%",
-                      }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>N°</th>
-                          <th>COMPONENTE</th>
-                          <th>PRESUPUESTO CD</th>
-                          <th>EJECUCIÓN FÍSICA</th>
-                          <th>BARRRA PORCENTUAL</th>
-                        </tr>
-                      </thead>
-                      <tbody style={{ backgroundColor: "#333333" }}>
-                        {Componentes.map((item) => (
-                          <tr key={Componentes.id_componente}>
-                            <td>{item.numero}</td>
-
-                            <td
-                              style={{ fontSize: "0.75rem", color: "#8caeda" }}
-                            >
-                              {item.nombre}
-                            </td>
-
-                            <td> S/. {Redondea(item.presupuesto)}</td>
-                            <td>
-                              <ComponenteAvance
-                                id_componente={item.id_componente}
-                              />
-                            </td>
-                            <td>
-                              <ComponenteBarraPorcentaje
-                                id_componente={item.id_componente}
-                                componente={item}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                        <tr>
-                          <td>TOTAL COSTO DIRECTO</td>
+                    <thead>
+                      <tr>
+                        <th>N°</th>
+                        <th>COMPONENTE</th>
+                        <th>PRESUPUESTO CD</th>
+                        <th>EJECUCIÓN FÍSICA</th>
+                        <th>BARRRA PORCENTUAL</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{ backgroundColor: "#333333" }}>
+                      {Componentes.map((item) => (
+                        <tr key={Componentes.id_componente}>
+                          <td>{item.numero}</td>
 
                           <td style={{ fontSize: "0.75rem", color: "#8caeda" }}>
                             {item.nombre}
                           </td>
 
+                          <td> S/. {Redondea(item.presupuesto)}</td>
                           <td>
-                            {" "}
-                            S/.{" "}
-                            {Redondea(
-                              Componentes.reduce(
-                                (acc, item2) => acc + item2.presupuesto,
-                                0
-                              )
-                            )}
+                            <ComponenteAvance
+                              id_componente={item.id_componente}
+                            />
                           </td>
-                          <td></td>
-                          <td></td>
+                          <td>
+                            <ComponenteBarraPorcentaje
+                              id_componente={item.id_componente}
+                              componente={item}
+                            />
+                          </td>
                         </tr>
-                      </tbody>
-                    </table>
-                    {/* <div
-                      style={{
-                        color: "rgb(206, 206, 206)",
-                        fontSize: "1.2rem",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Costos Indirectos
-                    </div>
-                    <table
-                      className="table table-bordered table-sm"
-                      style={{
-                        width: "100%",
-                      }}
-                    >
-                      <thead>
-                        <tr>
-                          <th>N°</th>
-                          <th>DESCRIPCION</th>
-                          <th>EXPEDIENTE TECNICO APROBADO</th>
-                          {(() => {
-                            var adicionales = [];
-                            for (
-                              let j = 0;
-                              j < DatosCostosIndirectosCantidad;
-                              j++
-                            ) {
-                              adicionales.push(
-                                <th>ADICIONAL APROBADO {j + 1}</th>
-                              );
-                            }
-                            return adicionales;
-                          })()}
-                          <th>PARCIAL</th>
-                        </tr>
-                      </thead>
-                      <tbody style={{ backgroundColor: "#333333" }}>
-                        {DatosCostosIndirectos.map((item, i) => (
-                          <tr key={DatosCostosIndirectos.id}>
-                            <th scope="row">{i + 1}</th>
-                            <td
-                              style={{ fontSize: "0.75rem", color: "#8caeda" }}
-                            >
-                              {item.nombre}
-                            </td>
-                            <td>{Redondea(item.monto_expediente)}</td>
-                            {(() => {
-                              var adicionales = [];
-                              for (
-                                let j = 0;
-                                j < DatosCostosIndirectosCantidad;
-                                j++
-                              ) {
-                                adicionales.push(
-                                  <td>
-                                    {Redondea(item["monto_adicional_" + j])}
-                                  </td>
-                                );
-                              }
-                              return adicionales;
-                            })()}
-                            <td>
-                              {(() => {
-                                var parcial = item.monto_expediente;
-                                for (
-                                  let j = 0;
-                                  j < DatosCostosIndirectosCantidad;
-                                  j++
-                                ) {
-                                  parcial += item["monto_adicional_" + j];
-                                }
-                                return Redondea(parcial);
-                              })()}
-                            </td>
-                          </tr>
-                        ))}
-                        <tr>
-                          <th></th>
-                          <th>TOTAL</th>
-                          <th>
-                            {(() =>
-                              Redondea(
-                                DatosCostosIndirectos.reduce(
-                                  (accumulator, item) =>
-                                    accumulator + item.monto_expediente,
-                                  0
-                                )
-                              ))()}
-                          </th>
+                      ))}
+                      <tr>
+                        <td>TOTAL COSTO DIRECTO</td>
 
-                          {(() => {
-                            var adicionales = [];
+                        <td style={{ fontSize: "0.75rem", color: "#8caeda" }}>
+                          {item.nombre}
+                        </td>
 
-                            for (
-                              let j = 0;
-                              j < DatosCostosIndirectosCantidad;
-                              j++
-                            ) {
-                              var total = 0;
-                              for (
-                                let k = 0;
-                                k < DatosCostosIndirectos.length;
-                                k++
-                              ) {
-                                const item2 = DatosCostosIndirectos[k];
-                                total += item2["monto_adicional_" + j];
-                              }
-                              adicionales.push(<th>{Redondea(total)}</th>);
-                            }
-                            return adicionales;
-                          })()}
-                          <th>
-                            {(() => {
-                              var costoDirecto = DatosCostosIndirectos.reduce(
-                                (accumulator, item) =>
-                                  accumulator + item.monto_expediente,
-                                0
-                              );
-
-                              for (
-                                let j = 0;
-                                j < DatosCostosIndirectosCantidad;
-                                j++
-                              ) {
-                                for (
-                                  let k = 0;
-                                  k < DatosCostosIndirectos.length;
-                                  k++
-                                ) {
-                                  const item2 = DatosCostosIndirectos[k];
-                                  costoDirecto += item2["monto_adicional_" + j];
-                                }
-                              }
-                              return Redondea(costoDirecto);
-                            })()}
-                          </th>
-                        </tr>
-                      </tbody>
-                    </table> */}
-                  </td>
-                </tr>
-              ),
-            ])}
-          </tbody>
-        </table>
-      }
+                        <td>
+                          {" "}
+                          S/.{" "}
+                          {Redondea(
+                            Componentes.reduce(
+                              (acc, item2) => acc + item2.presupuesto,
+                              0
+                            )
+                          )}
+                        </td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            ),
+          ])}
+        </tbody>
+      </table>
     </div>
   );
 };
@@ -745,9 +595,8 @@ function ComponenteBarraPorcentaje({ id_componente, componente }) {
   useEffect(() => {
     fetchData();
   }, []);
-  const [ComponenteAvancePorcentaje, setComponenteAvancePorcentaje] = useState(
-    0
-  );
+  const [ComponenteAvancePorcentaje, setComponenteAvancePorcentaje] =
+    useState(0);
   async function fetchData() {
     var res = await axios.get(`${UrlServer}/v1/avance/componente`, {
       params: {
