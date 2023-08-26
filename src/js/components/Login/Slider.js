@@ -6,25 +6,28 @@ import {
 	CarouselIndicators,
 	CarouselCaption,
 } from 'reactstrap';
+import carouselImage1 from '../../../../public/images/carousel-image-1.jpg';
+import carouselImage2 from '../../../../public/images/carousel-image-2.jpg';
+import carouselImage3 from '../../../../public/images/carousel-image-3.jpg';
 
 const items = [
 	{
 		id: 1,
 		caption: 'PROCESOS FÍSICOS',
 		altText: '',
-		src: 'images/carousel-image-1.jpg',
+		src: carouselImage1,
 	},
 	{
 		id: 2,
 		caption: 'PROCESOS GERENCIALES',
 		altText: '',
-		src: 'images/carousel-image-2.jpg',
+		src: carouselImage2,
 	},
 	{
 		id: 3,
 		caption: 'PROCESOS FINANCIEROS',
 		altText: '',
-		src: 'images/carousel-image-3.jpg',
+		src: carouselImage3,
 	},
 ];
 
