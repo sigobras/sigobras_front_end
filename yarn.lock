@@ -6992,10 +6992,10 @@ html-minifier-terser@^7.0.0:
     relateurl "^0.2.7"
     terser "^5.15.1"
 
-html-react-parser@4.2.0:
-  version "4.2.0"
-  resolved "https://registry.npmjs.org/html-react-parser/-/html-react-parser-4.2.0.tgz"
-  integrity sha512-gzU55AS+FI6qD7XaKe5BLuLFM2Xw0/LodfMWZlxV9uOHe7LCD5Lukx/EgYuBI3c0kLu0XlgFXnSzO0qUUn3Vrg==
+html-react-parser@4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/html-react-parser/-/html-react-parser-4.2.1.tgz#5fcccc9d7d61ef145c6a0c69c6531094188d9682"
+  integrity sha512-Dxzdowj5Zu/+7mr8X8PzCFbPXGuwCwGB2u4cB6oxZGES9inw85qlvnlfPD75VGKUGjcgsXs+9Dpj+THWNQyOBw==
   dependencies:
     domhandler "5.0.3"
     html-dom-parser "4.0.0"
@@ -14315,6 +14315,7 @@ worker-farm@^1.6.0, worker-farm@^1.7.0:
     errno "~0.1.7"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
