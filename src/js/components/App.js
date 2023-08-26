@@ -1,43 +1,41 @@
 // libraris
-import React, { useState, useEffect, lazy } from 'react';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
+import React, { lazy, useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { UrlServer } from './Utils/ServerUrlConfig';
-import UserNav from './Otros/UserNav';
-import Btns from './Otros/Btns';
 import LogoSigobras from '../../../public/images/sigobras-neon.jpg';
+import Btns from './Otros/Btns';
+import UserNav from './Otros/UserNav';
+import { UrlServer } from './Utils/ServerUrlConfig';
 
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from '@mui/icons-material/Menu';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MuiAppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Divider from '@mui/material/Divider';
+import MuiDrawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import Toolbar from '@mui/material/Toolbar';
+import { styled, useTheme } from '@mui/material/styles';
 
 import {
-	FaHammer,
 	FaBuilding,
-	FaTruck,
 	FaClipboardList,
+	FaHammer,
+	FaTruck,
 	FaWrench,
 } from 'react-icons/fa';
-import { IoConstructOutline, IoBuild, IoCube } from 'react-icons/io5';
 import { GiBrickWall, GiCrane } from 'react-icons/gi';
-import { RiRoadMapLine, RiPaintBrushLine, RiSurveyLine } from 'react-icons/ri';
-import { Tooltip } from '@mui/material';
+import { IoBuild, IoConstructOutline, IoCube } from 'react-icons/io5';
+import { RiPaintBrushLine, RiRoadMapLine, RiSurveyLine } from 'react-icons/ri';
 
 const menuIcons = [
 	<FaHammer />,
@@ -140,6 +138,9 @@ const Comunicados = lazy(() =>
 );
 const RecursosMo = lazy(() =>
 	import('../components/Pgerenciales/Recursos/RecursosPersonal')
+);
+const PlazosHistorial = lazy(() =>
+	import('../components/Pgerenciales/PlazosHistorial/Plazos')
 );
 //planificacion
 const Planner = lazy(() =>
@@ -404,7 +405,7 @@ export default () => {
 						<Route path='/planner' element={<Planner />} />
 						<Route path='/comunicados' element={<Comunicados />} />
 						<Route path='/recursosmanodeobra' element={<RecursosMo />} />
-						<Route path='/plazosHistorial' element={<plazosHistorial />} />
+						<Route path='/plazosHistorial' element={<PlazosHistorial />} />
 						<Route path='/GestionTareas' element={<GestionTareas />} />
 						<Route path='/DOCUEMENTOS' element={<Index />} />
 						<Route
