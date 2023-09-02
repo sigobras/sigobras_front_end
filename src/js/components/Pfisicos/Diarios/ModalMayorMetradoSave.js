@@ -247,7 +247,7 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 					)}
 					{
 						<Button
-							color={PartidaMayorMetradoSeleccionado & isUpdate ? 'warning' : 'success'}
+							color={PartidaMayorMetradoSeleccionado && isUpdate ? 'warning' : 'success'}
 							outline
 							className='me-2'
 							onClick={
