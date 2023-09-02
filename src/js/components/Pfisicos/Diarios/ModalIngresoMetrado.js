@@ -12,7 +12,8 @@ import {
 } from "../../Utils/Funciones";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default ({ Partida, Actividad, recargaActividad, EstadoObra }) => {
+import ModalMayorMetradoSave from "./ModalMayorMetradoSave";
+export default ({ Partida, Actividad, recargaActividad, EstadoObra,TipoComponenteSelecccionado }) => {
   useEffect(() => {
     fectchAvanceActividad();
   }, []);
@@ -65,6 +66,16 @@ export default ({ Partida, Actividad, recargaActividad, EstadoObra }) => {
         recargaActividad(Partida.id_partida, Actividad.id_actividad);
       }
     } catch (error) {
+      if (error.response) {
+        // El servidor respondió con un código de error (por ejemplo, 404, 500)
+        console.error('Error de servidor:', error.response.data);
+      } else if (error.request) {
+        // La solicitud no pudo llegar al servidor (puede ser un problema de red)
+        console.error('Error de red:', error.request);
+      } else {
+        // Ocurrió un error en la configuración de la solicitud
+        console.error('Error de solicitud:', error.message);
+      }
       toast.error(error.response.data.message, {
         position: "top-right",
         autoClose: 1000,
@@ -85,7 +96,11 @@ export default ({ Partida, Actividad, recargaActividad, EstadoObra }) => {
           }}
         />
       ) : (
-        <FaCheck size={15} color={"#08ff1d"} />
+        <>
+          <FaCheck size={15} color={"#08ff1d"} />
+          {TipoComponenteSelecccionado === 'origen' && <ModalMayorMetradoSave PartidaSelecccionado={Partida} Actividad={Actividad}/>}
+         
+       </>
       )}
       <Modal isOpen={modal} toggle={toggle} size="sm">
         <ToastContainer />

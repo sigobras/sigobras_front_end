@@ -20,7 +20,7 @@ const ResumenObras = lazy(() => import("./ResumenObras"));
 const Navbar = ({ isLoading, handleChange, handleSubmit, UsuarioDatos }) => (
   <Fragment>
     <ToastContainer />
-    <nav className="navbar navbar-dark bg-dark">
+    <nav className="navbar navbar-dark bg-dark p-2">
       <a className="navbar-brand" href="/">
         <img src={LogoSigobras} alt="login sigobras " width="50px" />
         <span className="textSigobras h5 ml-2">SIGOBRAS</span>
@@ -77,7 +77,7 @@ const LoginPopover = ({
         <div className="form-group">
           <input
             type="text"
-            className="form-control"
+            className="form-control mb-2"
             name="usuario"
             placeholder="Usuario"
             onChange={handleChange}
@@ -88,7 +88,7 @@ const LoginPopover = ({
         <div className="form-group">
           <input
             type="password"
-            className="form-control"
+            className="form-control mb-2"
             name="password"
             placeholder="Contraseña"
             required
@@ -99,7 +99,7 @@ const LoginPopover = ({
           <button
             type="submit"
             disabled={!UsuarioDatos.usuario || !UsuarioDatos.password}
-            className="btn btn-primary btn-lg btn-block"
+            className="btn btn-primary btn-block"
           >
             {isLoading ? <Spinner color="warnnig" type="grow" /> : "INGRESAR"}
           </button>
@@ -169,7 +169,7 @@ function Home() {
   return (
     <Fragment>
       <Slider />
-      <div className="row mr-1">
+      <div className="row justify-content-around m-2">
         <InfoBox title="¿QUIENES SOMOS?" content={aboutUsContent} />
         <InfoBox title="MISIÓN" content={missionContent} />
         <InfoBox title="VISIÓN" content={visionContent} />
@@ -198,7 +198,7 @@ const visionContent =
   "Nos orientaremos a crear un sistema INTELIGENTE utilizando tecnologías de desarrollo de vanguardia.";
 
 const InfoBox = ({ title, content }) => (
-  <div className="col-sm-4">
+  <div className=" p-4 text-center" style={{border:'1px solid white',borderRadius:10 ,width:'30%'}}>
     <div className="contentLemas">
       <label>
         <b>{title}</b>
