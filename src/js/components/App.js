@@ -35,7 +35,9 @@ import {
 } from 'react-icons/fa';
 import { GiBrickWall, GiCrane } from 'react-icons/gi';
 import { IoBuild, IoConstructOutline, IoCube } from 'react-icons/io5';
-import { RiPaintBrushLine, RiRoadMapLine, RiSurveyLine } from 'react-icons/ri';
+import { RiRoadMapLine, RiPaintBrushLine, RiSurveyLine } from 'react-icons/ri';
+import { Tooltip } from '@mui/material';
+import InicioMDiario from './Pfisicos/Diarios/InicioMDiario.js';
 
 const menuIcons = [
 	<FaHammer />,
@@ -121,7 +123,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const Inicio = lazy(() => import('./Inicio/Inicio'));
-const MDdiario = lazy(() => import('./Pfisicos/Diarios'));
+const MDdiario = lazy(() => import('./Pfisicos/Diarios/InicioMDiario.js'));
 const MDHistorial = lazy(() =>
 	import('./Pfisicos/HistorialMetrados/Historial')
 );
@@ -392,7 +394,7 @@ export default () => {
 					<DrawerHeader />
 					<Routes>
 						<Route path='/' element={<Inicio recargar={recargar} />} />
-						<Route path='/MDdiario' element={<MDdiario />} />
+						<Route path='/MDdiario' element={<InicioMDiario />} />
 						<Route path='/MDHistorial' element={<MDHistorial />} />
 						<Route path='/RecursosObra' element={<RecursosObra />} />
 						<Route
