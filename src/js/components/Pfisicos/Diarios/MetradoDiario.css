@@ -1,29 +1,44 @@
 /* TABS */
 .tabTP {
-  border: 1px solid #F2A93B !important;
+  border: 1px solid white !important;
   width: 150px;
   text-align: center;
+  font-weight: bold;
 }
 
 .tabTP.active {
   background-color: #F2A93B !important;
-
+  
 }
 
 /* MODAL */
 
 .modal-xl {
-  margin-top: 10%;
+  margin-top: 7%;
 }
 .modal-lg{
-  margin-top: 10%;
+  margin-top: 7%;
 }
-.modal-lg .modal-content{
-  border-color: #DC3545;
+.modal-so{
+  margin-top: 7%;
 }
+.modal-delete .modal-content{
+  border-color: #DC3545 ;
+}
+.modal-delete .modal-header{
+  /* background-color: #DC3545; */
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+
+.close {
+  color: red !important; /* Cambia el color del botón de cierre a rojo */
+}
+
 .modal-content {
-  background-color: BLACK !important;
-  border-color: #0080FF;
+  background-color: #121212 !important;
+  border-color: #F2A93B ;
+  border-radius: 20px;
 }
 .text-btn{
   font-size: 10px;

@@ -10,10 +10,10 @@ import {
   ModalFooter,
   Input,
 } from "reactstrap";
-import LogoSigobras from "./../../../../../public/images/logoSigobras.png";
+import { logoSigobras } from "../../../Reportes/Complementos/ImgB64";
+import { FechaActual } from "../../../Utils/Funciones";
+import { UrlServer } from "../../../Utils/ServerUrlConfig";
 
-import { UrlServer } from "../../Utils/ServerUrlConfig";
-import { FechaActual } from "../../Utils/Funciones";
 export default ({ id_partida }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
@@ -77,9 +77,9 @@ export default ({ id_partida }) => {
   return (
     <div>
       <MdAddAPhoto size={20} onClick={toggle} />
-      <Modal isOpen={modal} toggle={toggle} size="sm">
+      <Modal isOpen={modal} toggle={toggle} className="modal-so">
         <ModalHeader>
-          <img src={LogoSigobras} width="30px" alt="logo sigobras" />
+          <img src={logoSigobras} width="30px" alt="logo sigobras" />
           SIGOBRAS S.A.C.
         </ModalHeader>
         <ModalBody>

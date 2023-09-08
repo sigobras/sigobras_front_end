@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
 	Button,
 	Modal,
@@ -6,11 +6,18 @@ import {
 	ModalBody,
 	ModalFooter,
 } from 'reactstrap';
-import { MdAdd, MdOutlineCheck, MdClose, MdDeleteForever, MdEditNote } from 'react-icons/md';
+import { MdAdd, MdOutlineCheck, MdClose, MdDeleteForever, MdEditSquare, MdAssignmentAdd } from 'react-icons/md';
 import { Fragment } from 'react';
-import { ToastContainer } from "react-toastify";
-import { useModalMayorMetrado } from './hooks/useModalMayorMetrado';
-const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMetradoSeleccionado, isUpdate }) => {
+import { useModalMayorMetrado } from '../hooks/useModalMayorMetrado';
+const ModalMayorMetradoSave = ({
+	PartidaSelecccionado,
+	Actividad,
+	PartidaMayorMetradoSeleccionado,
+	isUpdate,
+	saveActividadMayorMetradoOnMM,
+	savePartidaMayorMetrado,
+	updateActividadMayorMetradoOnMM
+}) => {
 	const renderError = (name, index) => (
 		errors?.actividades?.[index]?.[name] && (
 			<p className='alertMD' role='alert'>
@@ -18,13 +25,14 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 			</p>
 		)
 	);
-	const { toggleModal, modalIsOpen, handleSubmit, onAddSubmit, getValues, errors, register, validationErrors, onSaveActividad, onSaveActividadOnMM, handleInputChange } = useModalMayorMetrado(PartidaSelecccionado, Actividad, PartidaMayorMetradoSeleccionado, isUpdate);
+	const { toggleModal, modalIsOpen, handleSubmit, onAddSubmit, getValues, errors, register, validationErrors, onSaveActividad, onSaveActividadOnMM, handleInputChange, removeActivity } = useModalMayorMetrado(PartidaSelecccionado, Actividad, PartidaMayorMetradoSeleccionado, isUpdate, saveActividadMayorMetradoOnMM, savePartidaMayorMetrado, updateActividadMayorMetradoOnMM);
 	return (
 		<Fragment>
 			{
 				isUpdate
-					? <MdEditNote
-						size={18}
+					?
+					<MdEditSquare
+						size={15}
 						onClick={toggleModal}
 						color={"#F2A93B"}
 						className='ms-1'
@@ -32,26 +40,14 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 							cursor: "pointer",
 						}} />
 					: (<Button
-						color='light'
+						color='success'
+						outline
 						onClick={toggleModal}
-						className='btn btn-sm ms-2 pt-0 pb-0 text-btn'
+						className='btn btn-sm btn-outline-success ms-2 p-1 text-btn border-0'
 					>
-						NUEVO <MdAdd size={14} style={{ color: "white", backgroundColor: "#0080FF", borderRadius: 50 }} />
+						<MdAssignmentAdd size={15} />
 					</Button>)
 			}
-
-			<ToastContainer
-				position="bottom-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme="dark"
-			/>
 			<Modal
 				isOpen={modalIsOpen}
 				toggle={toggleModal}
@@ -59,7 +55,7 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 				tabIndex={5}
 			>
 				<ModalHeader toggle={toggleModal}>
-					<span className='text-modal'>MAYOR METRADO {isUpdate && '- EDITAR ACTIVIDAD'}</span>
+					<span className='text-modal'> MAYOR METRADO {isUpdate && '- EDITAR ACTIVIDAD'}</span>
 					<br />
 					<span>{PartidaSelecccionado.item} - {PartidaSelecccionado.descripcion}</span>
 				</ModalHeader>
@@ -94,7 +90,7 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 							<tbody className='p-4'>
 								{getValues('actividades').map((actividad, index) => (
 									<tr key={index}>
-										<td className='text-center pt-3'>{index + 1}</td>
+										<td className='text-center' style={{ verticalAlign: 'middle' }}>{index + 1}</td>
 										<td>
 											<input
 												className={'form-control col-5 bg-dark text-white ' + (errors?.actividades?.[index]?.nombre ? 'border border-danger' : '')}
@@ -103,6 +99,7 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 												})}
 												placeholder='Nombre de la actividad'
 												autoComplete='off'
+												size={60}
 												disabled={Actividad || isUpdate && true}
 											/>
 											{renderError('nombre', index)}
@@ -209,7 +206,7 @@ const ModalMayorMetradoSave = ({ PartidaSelecccionado, Actividad, PartidaMayorMe
 												{...register(`actividades[${index}].tipo`, {
 													required: 'Este campo es requerido.',
 													pattern: {
-														value: /^[a-zA-Z\s]*$/,
+														value: /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜñÑ]*$/,
 														message: 'Ingrese un texto válido.',
 													},
 												})}

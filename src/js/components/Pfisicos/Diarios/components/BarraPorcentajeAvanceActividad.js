@@ -1,41 +1,40 @@
 import React, {
   useState,
   useEffect,
-  forwardRef,
   useImperativeHandle,
+  forwardRef,
 } from "react";
 import axios from "axios";
-import { UrlServer } from "../../Utils/ServerUrlConfig";
-import { Redondea, Redondea1 } from "../../Utils/Funciones";
-export default forwardRef(({ id_partida }, ref) => {
+import { UrlServer } from "../../../Utils/ServerUrlConfig";
+import { Redondea, Redondea1 } from "../../../Utils/Funciones";
+export default forwardRef(({ id_actividad }, ref) => {
   useEffect(() => {
-    fectchAvancePartida();
+    fectchAvanceActividad();
   }, []);
-  const [AvancePartida, setAvancePartida] = useState({});
-  const [AvancePartidaPorcentaje, setAvancePartidaPorcentaje] = useState(0);
-  async function fectchAvancePartida() {
-    const request = await axios.post(`${UrlServer}/getAvancePartida`, {
-      id_partida: id_partida,
+  const [AvanceActividad, setAvanceActividad] = useState({});
+  const [AvanceActividadPorcentaje, setAvanceActividadPorcentaje] = useState(0);
+  async function fectchAvanceActividad() {
+    const request = await axios.post(`${UrlServer}/getAvanceActividad`, {
+      id_actividad: id_actividad,
     });
-    setAvancePartida(request.data);
-    setAvancePartidaPorcentaje(
+    setAvanceActividad(request.data);
+    setAvanceActividadPorcentaje(
       Redondea1((request.data.avance_metrado / request.data.metrado) * 100)
     );
   }
   useImperativeHandle(ref, () => ({
     recarga() {
-      fectchAvancePartida();
+      fectchAvanceActividad();
     },
   }));
-
   return (
     <div>
       <div className="clearfix">
         <span className="float-left text-warning">
-          Avance: {Redondea(AvancePartida.avance_metrado)}
+          Avance: {Redondea(AvanceActividad.avance_metrado)}
         </span>
         <span className="float-right text-warning">
-          S/. {Redondea(AvancePartida.avance_soles)}
+          S/. {Redondea(AvanceActividad.avance_soles)}
         </span>
       </div>
       {/* BARRA DE PROCENTAJE PARTIDAS   */}
@@ -48,12 +47,12 @@ export default forwardRef(({ id_partida }, ref) => {
       >
         <div
           style={{
-            width: `${AvancePartidaPorcentaje}%`,
+            width: `${AvanceActividadPorcentaje}%`,
             height: "100%",
             background:
-              AvancePartidaPorcentaje > 85
+              AvanceActividadPorcentaje > 85
                 ? "#a4fb01"
-                : AvancePartidaPorcentaje > 30
+                : AvanceActividadPorcentaje > 30
                 ? "#0080ff"
                 : "#ff2e00",
             transition: "all .9s ease-in",
@@ -63,10 +62,11 @@ export default forwardRef(({ id_partida }, ref) => {
       <div className="clearfix">
         <span className="float-left text-info">
           Saldo:{" "}
-          {Redondea(AvancePartida.metrado - AvancePartida.avance_metrado)}
+          {Redondea(AvanceActividad.metrado - AvanceActividad.avance_metrado)}
         </span>
         <span className="float-right text-info">
-          S/.{Redondea(AvancePartida.presupuesto - AvancePartida.avance_soles)}
+          S/.
+          {Redondea(AvanceActividad.presupuesto - AvanceActividad.avance_soles)}
         </span>
       </div>
     </div>

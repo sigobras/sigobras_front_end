@@ -20,29 +20,35 @@ import {
 	InputGroupText,
 } from 'reactstrap';
 import { Redondea } from '../../Utils/Funciones';
-import BarraPorcentajeAvancePartida from './BarraPorcentajeAvancePartida';
-import ModalPartidaFoto from './ModalPartidaFoto';
+import BarraPorcentajeAvancePartida from './components/BarraPorcentajeAvancePartida';
+import ModalPartidaFoto from './components/ModalPartidaFoto';
 import PartidasChat from '../../../libs/PartidasChat';
-import BarraPorcentajeAvanceActividad from './BarraPorcentajeAvanceActividad';
-import ModalIngresoMetrado from './ModalIngresoMetrado';
+import BarraPorcentajeAvanceActividad from './components/BarraPorcentajeAvanceActividad';
+import ModalIngresoMetrado from './components/ModalIngresoMetrado';
 import { TiWarning } from 'react-icons/ti';
-import ModalMayorMetradoSave from './ModalMayorMetradoSave';
+import ModalMayorMetradoSave from './components/ModalMayorMetradoSave';
 import axios from 'axios';
 import { UrlServer } from '../../Utils/ServerUrlConfig';
-import ModalDeleteActividadPartida from './ModalDeleteActividadPartida';
-import { useModalMayorMetrado } from './hooks/useModalMayorMetrado';
+import ModalDeleteActividadPartida from './components/ModalDeleteActividadPartida';
+import { ToastContainer } from 'react-toastify';
 
-const TableComponentsParts = ({
+const TableComponentsView = ({
 	TipoComponenteSelecccionado,
 	Permisos,
 	ComponenteSelecccionado,
 	Partidas,
 	PartidaSelecccionado,
 	onChangePartidasSeleccion,
+	handleDeletePartida,
 	TogglePartidasEstilo,
 	Actividades,
+	fectchActividades,
 	RefActividades,
 	setRefActividades,
+	handleDeleteActivity,
+	saveActividadMayorMetradoOnMM,
+	savePartidaMayorMetrado,
+	updateActividadMayorMetradoOnMM,
 	Categorias,
 	CategoriasComponente,
 	MenuCategorias,
@@ -301,20 +307,35 @@ const TableComponentsParts = ({
 								<td colSpan='8'>
 									<div className='p-1'>
 										<div className='row'>
-											<div className='col-sm-9 text-info pb-1 d-flex'>
+											<div className='col-sm-9 text-info pb-1 d-flex '>
 												{PartidaSelecccionado.descripcion}{' '}
 												<MdFlashOn size={20} className='text-danger' />
 												rendimiento: {PartidaSelecccionado.rendimiento}{' '}
 												{PartidaSelecccionado.unidad_medida}
 												{
 													TipoComponenteSelecccionado === 'origen'
-														? <ModalMayorMetradoSave PartidaSelecccionado={PartidaSelecccionado} />
+														? <ModalMayorMetradoSave
+															PartidaSelecccionado={PartidaSelecccionado}
+															saveActividadMayorMetradoOnMM={saveActividadMayorMetradoOnMM}
+															savePartidaMayorMetrado={savePartidaMayorMetrado}
+														/>
 														: TipoComponenteSelecccionado === 'mayor metrado'
-															? <ModalMayorMetradoSave PartidaMayorMetradoSeleccionado={true} PartidaSelecccionado={PartidaSelecccionado} />
+															? <ModalMayorMetradoSave
+																PartidaMayorMetradoSeleccionado={true}
+																PartidaSelecccionado={PartidaSelecccionado}
+																saveActividadMayorMetradoOnMM={saveActividadMayorMetradoOnMM}
+																savePartidaMayorMetrado={savePartidaMayorMetrado}
+															/>
 															: null
 												}
-												{TipoComponenteSelecccionado === 'mayor metrado' && <ModalDeleteActividadPartida PartidaMayorMetradoSeleccionado={true} PartidaSelecccionado={PartidaSelecccionado} Actividad={item} isActividad={false} />}
-
+												{TipoComponenteSelecccionado === 'mayor metrado' &&
+													<ModalDeleteActividadPartida
+														PartidaMayorMetradoSeleccionado={true}
+														PartidaSelecccionado={PartidaSelecccionado}
+														Actividad={item} isActividad={false}
+														handleDeletePartida={handleDeletePartida}
+														ComponenteSelecccionado={ComponenteSelecccionado}
+													/>}
 
 											</div>
 										</div>
@@ -385,11 +406,33 @@ const TableComponentsParts = ({
 																	recargaActividad={onSaveMetrado}
 																	EstadoObra={EstadoObra}
 																	TipoComponenteSelecccionado={TipoComponenteSelecccionado}
+																	savePartidaMayorMetrado={savePartidaMayorMetrado}
+
 																/>
 															)}
-															{TipoComponenteSelecccionado === 'mayor metrado' && <ModalMayorMetradoSave PartidaMayorMetradoSeleccionado={true} PartidaSelecccionado={PartidaSelecccionado} isUpdate={true} Actividad={item}/>}
-															{TipoComponenteSelecccionado === 'mayor metrado' && <ModalDeleteActividadPartida PartidaSelecccionado={PartidaSelecccionado}
-																Actividad={item} isActividad={true} PartidaMayorMetradoSeleccionado={true}/>}
+															{
+																TipoComponenteSelecccionado === 'mayor metrado' &&
+																<ModalMayorMetradoSave
+																	PartidaMayorMetradoSeleccionado={true}
+																	PartidaSelecccionado={PartidaSelecccionado}
+																	isUpdate={true}
+																	Actividad={item}
+																	savePartidaMayorMetrado={savePartidaMayorMetrado}
+																	updateActividadMayorMetradoOnMM={updateActividadMayorMetradoOnMM}
+
+																/>
+															}
+															{
+																TipoComponenteSelecccionado === 'mayor metrado' &&
+																<ModalDeleteActividadPartida
+																	PartidaSelecccionado={PartidaSelecccionado}
+																	Actividad={item}
+																	isActividad={true}
+																	PartidaMayorMetradoSeleccionado={true}
+																	fectchActividades={fectchActividades}
+																	handleDeleteActivity={handleDeleteActivity}
+																/>
+															}
 														</td>
 													</tr>
 												))}
@@ -401,7 +444,20 @@ const TableComponentsParts = ({
 						),
 					])}
 				</tbody>
+				
 			</table>
+			<ToastContainer
+				position="bottom-right"
+				autoClose={2500}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				theme="dark"
+			/>
 			<div
 				className='clearfix'
 				style={
@@ -482,7 +538,7 @@ const TableComponentsParts = ({
 	);
 };
 
-export default TableComponentsParts;
+export default TableComponentsView;
 function IconosPartidas({
 	Id_partida,
 	Id_iconoCategoria,

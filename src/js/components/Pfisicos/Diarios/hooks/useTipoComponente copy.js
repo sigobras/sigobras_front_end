@@ -37,7 +37,6 @@ export const useTipoComponente = id_expediente => {
 		setTipoComponenteSelecccionado(tipoComponente);
 		const component = await getComponents(tipoComponente);
 		onChangeComponentesSeleccion(component[0]);
-		setPartidaSelecccionado({ numero: 0, nombre: "" });
 		getAdvanceComponent(component[0].id_componente)
 	};
 

@@ -14,11 +14,15 @@ import { UrlServer } from "../../Utils/ServerUrlConfig";
 import "./valorizaciones.css";
 import ValorizacionResumen from "./ValorizacionResumen";
 import ValorizacionComponente from "./ValorizacionComponente";
+import { useTipoComponente } from "../Diarios/hooks/useTipoComponente";
 export default () => {
   useEffect(() => {
     fetchAnyos();
-    fetchComponentes();
+    getComponents('origen');
   }, []);
+	const id_expediente = sessionStorage.getItem('id_expediente');
+  const {TipoComponenteSelecccionado,onChangeTipoComponenteSeleccion, ComponentesPorTipo, Componente, getComponents} = useTipoComponente(id_expediente)
+
   //anyos
   const [Anyos, setAnyos] = useState([]);
   async function fetchAnyos() {
@@ -47,18 +51,17 @@ export default () => {
   }
   const [PeriodoSeleccionado, setPeriodoSeleccionado] = useState("--");
   //Componentes
-  const [Componentes, setComponentes] = useState([]);
-  async function fetchComponentes() {
-    const res = await axios.post(`${UrlServer}/getValGeneralComponentes`, {
-      id_ficha: sessionStorage.getItem("idobra"),
-    });
+ /*  const [Componentes, setComponentes] = useState([]);
+  async function fetchComponentes(tipo) {
+    const res = await axios.get(
+			`${UrlServer}/v1/componentes?id_expediente=${id_expediente}&tipo=${tipo}`
+		);
     setComponentes(res.data);
-  }
+  } */
   const [Componenteseleccionado, setComponenteseleccionado] = useState({
     numero: 0,
     nombre: "RESUMEN DE VALORIZACIÓN",
   });
-
   useEffect(() => {
     if (AnyoSeleccionado != 0) {
       fetchPeriodos();
@@ -66,6 +69,52 @@ export default () => {
   }, [AnyoSeleccionado]);
   return (
     <div>
+      <Nav tabs className='bg-dark' style={{ justifyContent: 'flex-end' }}>
+				<NavItem style={{ cursor: 'pointer' }}>
+					<NavLink
+						active={TipoComponenteSelecccionado === 'origen'}
+						onClick={() => onChangeTipoComponenteSeleccion('origen')}
+						className='tabTP'
+						style={
+							TipoComponenteSelecccionado === 'origen'
+								? {
+									color: 'white',
+									textTransform: 'uppercase',
+									fontWeight: 'bold',
+								}
+								: { color: 'white', textTransform: 'uppercase' }
+						}
+					>
+						Partidas
+					</NavLink>
+
+				</NavItem>
+				{ComponentesPorTipo.map(({ tipo, cantidad }) =>
+					cantidad ? (
+						<NavItem key={tipo} style={{ cursor: 'pointer' }}>
+							<NavLink
+								active={tipo === TipoComponenteSelecccionado}
+								onClick={() => onChangeTipoComponenteSeleccion(tipo)}
+								className='tabTP'
+								style={
+									tipo === TipoComponenteSelecccionado
+										? {
+											color: 'white',
+											textTransform: 'uppercase',
+											fontWeight: 'bold',
+										}
+										: { color: 'white', textTransform: 'uppercase' }
+								}
+							>
+								{
+									tipo == 'mayor metrado' ? 'MM' : 'PN'
+								}
+							</NavLink>
+
+						</NavItem>
+					) : null
+				)}
+			</Nav>
       <Nav tabs>
         <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
           <DropdownToggle nav caret>
@@ -107,7 +156,10 @@ export default () => {
             RESUMEN
           </NavLink>
         </NavItem>
-        {Componentes.map((item, i) => (
+        {Componente
+        .slice() 
+        .sort((a, b) => a.numero - b.numero) 
+        .map((item, i) => (
           <NavItem key={i}>
             <NavLink
               active={Componenteseleccionado.numero == item.numero}

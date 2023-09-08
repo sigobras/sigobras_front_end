@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTipoComponente } from './hooks/useTipoComponente';
-import CardInfoComponent from './CardInfoComponent';
+import CardInfoComponent from './components/CardInfoComponent';
 import { Nav, NavItem, NavLink } from 'reactstrap';
-import TableComponentsParts from './TableComponentParts';
+import TableComponentsView from './TableComponentView';
 import './MetradoDiario.css'
 
-const InicioMDiario = () => {
+const InicioMDiarioController = () => {
 	const id_expediente = sessionStorage.getItem('id_expediente');
 	const {
 		Componente,
@@ -20,9 +20,15 @@ const InicioMDiario = () => {
 		Partidas,
 		PartidaSelecccionado,
 		onChangePartidasSeleccion,
+		handleDeletePartida,
 		Actividades,
+		fectchActividades,
 		RefActividades,
 		setRefActividades,
+		handleDeleteActivity,
+		saveActividadMayorMetradoOnMM,
+		savePartidaMayorMetrado,
+		updateActividadMayorMetradoOnMM,
 		TogglePartidasEstilo,
 		Categorias,
 		CategoriasComponente,
@@ -50,7 +56,6 @@ const InicioMDiario = () => {
 		onSaveMetrado,
 		ComponentesMensajes,
 	} = useTipoComponente(id_expediente);
-
 	return (
 		<div>
 			<Nav tabs className='bg-dark' style={{ justifyContent: 'flex-end' }}>
@@ -100,29 +105,32 @@ const InicioMDiario = () => {
 				)}
 			</Nav>
 			<Nav tabs className='bg-dark'>
-				{Componente.map(item => (
-					<NavItem key={item.id_componente} style={{ cursor: 'pointer' }}>
-						<NavLink
-							active={item.numero === ComponenteSelecccionado.numero}
-							onClick={() => onChangeComponentesSeleccion(item)}
-							style={
-								item.numero === ComponenteSelecccionado.numero
-									? {}
-									: { color: 'white' }
-							}
-						>
-							COMP {item.numero}
-						</NavLink>
-						<ComponentesMensajes
-							id_componente={item.id_componente}
-							ref={(ref) => {
-								var clone = RefComponentes;
-								clone[item.id_componente] = ref;
-								setRefComponentes(clone);
-							}}
-						/>
-					</NavItem>
-				))}
+				{Componente
+					.slice() 
+					.sort((a, b) => a.numero - b.numero) 
+					.map(item => (
+						<NavItem key={item.id_componente} style={{ cursor: 'pointer' }}>
+							<NavLink
+								active={item.numero === ComponenteSelecccionado.numero}
+								onClick={() => onChangeComponentesSeleccion(item)}
+								style={
+									item.numero === ComponenteSelecccionado.numero
+										? {}
+										: { color: 'white' }
+								}
+							>
+								COMP {item.numero}
+							</NavLink>
+							<ComponentesMensajes
+								id_componente={item.id_componente}
+								ref={(ref) => {
+									var clone = RefComponentes;
+									clone[item.id_componente] = ref;
+									setRefComponentes(clone);
+								}}
+							/>
+						</NavItem>
+					))}
 			</Nav>
 			<CardInfoComponent
 				ComponenteSelecccionado={ComponenteSelecccionado}
@@ -130,16 +138,19 @@ const InicioMDiario = () => {
 				setTextoBuscado={setTextoBuscado}
 			></CardInfoComponent>
 
-			<TableComponentsParts
+			<TableComponentsView
 				TipoComponenteSelecccionado={TipoComponenteSelecccionado}
 				Permisos={Permisos}
 				Partidas={Partidas}
 				Actividades={Actividades}
+				fectchActividades={fectchActividades}
 				RefActividades={RefActividades}
 				setRefActividades={setRefActividades}
+				handleDeleteActivity={handleDeleteActivity}
 				ComponenteSelecccionado={ComponenteSelecccionado}
 				PartidaSelecccionado={PartidaSelecccionado}
 				TogglePartidasEstilo={TogglePartidasEstilo}
+				handleDeletePartida={handleDeletePartida}
 				Categorias={Categorias}
 				CategoriasComponente={CategoriasComponente}
 				MenuCategorias={MenuCategorias}
@@ -164,9 +175,12 @@ const InicioMDiario = () => {
 				recargaComponenteMensajes={recargaComponenteMensajes}
 				EstadoObra={EstadoObra}
 				onSaveMetrado={onSaveMetrado}
-			></TableComponentsParts>
+				saveActividadMayorMetradoOnMM={saveActividadMayorMetradoOnMM}
+				savePartidaMayorMetrado={savePartidaMayorMetrado}
+				updateActividadMayorMetradoOnMM={updateActividadMayorMetradoOnMM}
+			></TableComponentsView>
 		</div>
 	);
 };
 
-export default InicioMDiario;
+export default InicioMDiarioController;
