@@ -3,17 +3,14 @@ import axios from "axios";
 import { DebounceInput } from "react-debounce-input";
 import { FaPlus, FaCheck } from "react-icons/fa";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import LogoSigobras from "./../../../../../public/images/logoSigobras.png";
-import { UrlServer } from "../../Utils/ServerUrlConfig";
-import {
-  FechaActual2Meses,
-  FechaActual,
-  Redondea,
-} from "../../Utils/Funciones";
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ModalMayorMetradoSave from "./ModalMayorMetradoSave";
-export default ({ Partida, Actividad, recargaActividad, EstadoObra,TipoComponenteSelecccionado }) => {
+import { FechaActual, FechaActual2Meses, Redondea } from "../../../Utils/Funciones";
+import { logoSigobras } from "../../../Reportes/Complementos/ImgB64";
+import { UrlServer } from "../../../Utils/ServerUrlConfig";
+export default ({ Partida, Actividad, recargaActividad, EstadoObra,TipoComponenteSelecccionado,savePartidaMayorMetrado }) => {
   useEffect(() => {
     fectchAvanceActividad();
   }, []);
@@ -98,14 +95,14 @@ export default ({ Partida, Actividad, recargaActividad, EstadoObra,TipoComponent
       ) : (
         <>
           <FaCheck size={15} color={"#08ff1d"} />
-          {TipoComponenteSelecccionado === 'origen' && <ModalMayorMetradoSave PartidaSelecccionado={Partida} Actividad={Actividad}/>}
+          {TipoComponenteSelecccionado === 'origen' && <ModalMayorMetradoSave PartidaSelecccionado={Partida} Actividad={Actividad} savePartidaMayorMetrado={savePartidaMayorMetrado}/>}
          
        </>
       )}
-      <Modal isOpen={modal} toggle={toggle} size="sm">
+      <Modal isOpen={modal} toggle={toggle} className='modal-so'>
         <ToastContainer />
         <ModalHeader>
-          <img src={LogoSigobras} width="60px" alt="logo sigobras" />
+          <img src={logoSigobras} width="60px" alt="logo sigobras" />
         </ModalHeader>
         <ModalBody>
           <label className="text-center mt-0">{Partida.descripcion}</label>

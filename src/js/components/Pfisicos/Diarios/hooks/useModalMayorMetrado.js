@@ -2,9 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { Redondea } from '../../../Utils/Funciones';
 import { toast } from 'react-toastify';
-import { guardarPartidaMayorMetrado, guardarActividadMayorMetrado,actualizarActividadMayorMetrado, eliminarActividadMayorMetrado, eliminarPartidaMayorMetrado } from '../../../../../services/metradoDiario';
 
-export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMayorMetradoSeleccionado, isUpdate) => {
+export const useModalMayorMetrado = (
+    PartidaSelecccionado,
+    Actividad,
+    PartidaMayorMetradoSeleccionado,
+    isUpdate,
+    saveActividadMayorMetradoOnMM,
+    savePartidaMayorMetrado,
+    updateActividadMayorMetradoOnMM
+) => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
     const toggleModal = () => {
@@ -87,7 +94,7 @@ export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMay
     };
     const toastConfig = {
         position: "bottom-right",
-        autoClose: 5000,
+        autoClose: 2000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -114,10 +121,10 @@ export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMay
 
         } else {
             setValidationErrors(true);
-            toast.error('No se pueden guardar actividades con errores.',toastConfig);
+            toast.error('No se pueden guardar actividades con errores.', toastConfig);
         }
     };
-   
+
     const onSaveActividadOnMM = async () => {
         const validationResult = await trigger();
         if (validationResult) {
@@ -142,7 +149,7 @@ export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMay
 
             setValidationErrors(false);
             if (isUpdate) {
-                updateActividadMayorMetradoOnMM(dataToSend.actividades[0])
+                updateActividadMayorMetradoOnMM(Actividad, dataToSend.actividades[0])
                 if (isUpdate) {
                     toast.warning('La actividad ha sido actualizada', toastConfig);
                 }
@@ -158,7 +165,7 @@ export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMay
             toggleModal();
         } else {
             setValidationErrors(true);
-            toast.error('No se pueden guardar actividades con errores.',toastConfig);
+            toast.error('No se pueden guardar actividades con errores.', toastConfig);
         }
     }
     const handleInputChange = (index) => {
@@ -182,37 +189,7 @@ export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMay
         setValue('actividades', updatedActividades);
         reset({ actividades: updatedActividades });
     };
-    const savePartidaMayorMetrado = async (data) => {
-        const res = await guardarPartidaMayorMetrado(data);
-    }
-    const saveActividadMayorMetradoOnMM = async (data) => {
-        const res = await guardarActividadMayorMetrado(data);
-    };
-    const updateActividadMayorMetradoOnMM = async (data) => {
-        const res = await actualizarActividadMayorMetrado(Actividad.id_actividad,data);
-    };
 
-
-
-    //BORRAR PARTIDAS Y ACTIVIDADES
-    const handleDeleteActivity = async () => {
-        try {
-            await eliminarActividadMayorMetrado(Actividad.id_actividad);
-            toggleModal();
-            toast.success('La actividad se eliminó con exito! ', toastConfig);
-        } catch (error) {
-            toast.error('Error al eliminar la actividad', toastConfig);
-        }
-    }
-    const handleDeletePartida = async () => {
-        try {
-            await eliminarPartidaMayorMetrado(PartidaSelecccionado.id_partida);
-            toggleModal();
-            toast.success('La partida se eliminó con exito! ', toastConfig);
-        } catch (error) {
-            toast.error('Error al eliminar la partida', toastConfig);
-        }
-    }
     useEffect(() => {
         if (Object.keys(errors).length === 0) {
             setValidationErrors(false);
@@ -233,9 +210,6 @@ export const useModalMayorMetrado = (PartidaSelecccionado, Actividad, PartidaMay
         onSaveActividadOnMM,
         handleInputChange,
         removeActivity,
-        savePartidaMayorMetrado,
-        handleDeleteActivity,
-        handleDeletePartida
     }
 }
 

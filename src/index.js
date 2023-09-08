@@ -10,7 +10,7 @@ import "./css/style.css";
 import "react-toastify/dist/ReactToastify.css";
 
 const AppAng = lazy(() => import("./js/components/App"));
-const wrapper = document.getElementById("zoe");
+const wrapper = document.getElementById("root");
 
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";

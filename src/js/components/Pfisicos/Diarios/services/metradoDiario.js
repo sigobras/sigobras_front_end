@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { UrlServer } from '../js/components/Utils/ServerUrlConfig';
+import { UrlServer } from '../../../Utils/ServerUrlConfig';
 
 export async function obtenerTiposComponentes(id_expediente) {
 	try {
