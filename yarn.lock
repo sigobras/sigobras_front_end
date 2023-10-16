@@ -8396,10 +8396,10 @@ jsonpointer@^5.0.0:
   resolved "https://registry.npmjs.org/jsonpointer/-/jsonpointer-5.0.1.tgz"
   integrity sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==
 
-jspdf-autotable@3.5.31:
-  version "3.5.31"
-  resolved "https://registry.npmjs.org/jspdf-autotable/-/jspdf-autotable-3.5.31.tgz"
-  integrity sha512-Lc1KuLGDQWW/5t57Z/+c2E94XQV3jV2QVU3xMRiwvcm/nMx79aCkpPCsxLzJZVFneZvz4XoA8+egQR1QajYiWw==
+jspdf-autotable@3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/jspdf-autotable/-/jspdf-autotable-3.7.0.tgz#2e14d90eeb1b692f0c5a33482f37c7c9cd41d9f1"
+  integrity sha512-K6R5U4W4E2RoINRMUvcAKmTwGMyN5DE634G35dcXyGuqzhjY4AgOBDss5+M91HEznvZ28k7rk0gAo8WfeDIXLw==
 
 jspdf@2.5.1:
   version "2.5.1"
@@ -11480,6 +11480,11 @@ react-grid-gallery@1.0.0:
   resolved "https://registry.npmjs.org/react-grid-gallery/-/react-grid-gallery-1.0.0.tgz"
   integrity sha512-S1gr6WXBlPFVrE0x2BHuu7jhyaB61mabcMQyx+8KCgAyKzGza0WF67AfAnS9Q00aurFEq4IP8eqb2Bk5F4RAmQ==
 
+react-hook-form@^7.45.4:
+  version "7.47.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.47.0.tgz#a42f07266bd297ddf1f914f08f4b5f9783262f31"
+  integrity sha512-F/TroLjTICipmHeFlMrLtNLceO2xr1jU3CyiNla5zdwsGUGu2UOxxR4UyJgLlhMwLW/Wzp4cpJ7CPfgJIeKdSg==
+
 react-icons@4.10.1:
   version "4.10.1"
   resolved "https://registry.npmjs.org/react-icons/-/react-icons-4.10.1.tgz"
@@ -14315,6 +14320,7 @@ worker-farm@^1.6.0, worker-farm@^1.7.0:
     errno "~0.1.7"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
